@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="theme-color"
+        content="#ffffff"
+    >
+
+    <title>Get Started | Zenova Educations</title>
+
+    <link
+        rel="stylesheet"
+        href="onboarding.css"
+    >
+
+</head>
+
+<body>
+
+    <main class="onboarding-page">
+
+        <!-- Top -->
+
+        <header class="top-bar">
+
+            <div class="brand">
+                ZENOVA
+            </div>
+
+            <div
+                id="stepCounter"
+                class="step-counter"
+            >
+                1 / 2
+            </div>
+
+        </header>
+
+
+        <!-- Progress -->
+
+        <div class="progress-track">
+
+            <div
+                id="progressBar"
+                class="progress-bar"
+            ></div>
+
+        </div>
+
+
+        <!-- Content -->
+
+        <section class="content">
+
+
+            <!-- STEP 1 : NAME -->
+
+            <div
+                id="nameStep"
+                class="step active"
+            >
+
+                <p class="eyebrow">
+                    LET'S GET STARTED
+                </p>
+
+                <h1>
+                    What should we<br>
+                    call you?
+                </h1>
+
+                <p class="description">
+                    Enter your name to personalise
+                    your Zenova learning experience.
+                </p>
+
+
+                <div class="input-group">
+
+                    <label for="studentName">
+                        Full name
+                    </label>
+
+                    <input
+                        id="studentName"
+                        type="text"
+                        autocomplete="name"
+                        placeholder="Enter your name"
+                        maxlength="80"
+                    >
+
+                    <p
+                        id="nameError"
+                        class="field-error"
+                    ></p>
+
+                </div>
+
+
+                <button
+                    id="nameContinue"
+                    class="primary-button"
+                    type="button"
+                >
+                    Continue
+                    <span>→</span>
+                </button>
+
+            </div>
+
+
+            <!-- STEP 2 : CLASS -->
+
+            <div
+                id="classStep"
+                class="step"
+            >
+
+                <p class="eyebrow">
+                    YOUR ACADEMICS
+                </p>
+
+                <h1>
+                    What are you<br>
+                    studying?
+                </h1>
+
+                <p class="description">
+                    Choose your current class.
+                </p>
+
+
+                <div class="class-grid">
+
+                    <button
+                        class="option-card"
+                        data-class="8th"
+                        type="button"
+                    >
+                        <strong>8th</strong>
+                        <span>Class 8</span>
+                    </button>
+
+
+                    <button
+                        class="option-card"
+                        data-class="9th"
+                        type="button"
+                    >
+                        <strong>9th</strong>
+                        <span>Class 9</span>
+                    </button>
+
+
+                    <button
+                        class="option-card"
+                        data-class="10th"
+                        type="button"
+                    >
+                        <strong>10th</strong>
+                        <span>SSLC</span>
+                    </button>
+
+
+                    <button
+                        class="option-card"
+                        data-class="1st PUC"
+                        type="button"
+                    >
+                        <strong>1st PUC</strong>
+                        <span>First Year</span>
+                    </button>
+
+
+                    <button
+                        class="option-card"
+                        data-class="2nd PUC"
+                        type="button"
+                    >
+                        <strong>2nd PUC</strong>
+                        <span>Second Year</span>
+                    </button>
+
+                </div>
+
+
+                <p
+                    id="classError"
+                    class="field-error"
+                ></p>
+
+            </div>
+
+
+            <!-- STEP 3 : 10TH BOARD -->
+
+            <div
+                id="boardStep"
+                class="step"
+            >
+
+                <button
+                    class="back-button"
+                    type="button"
+                    data-back="class"
+                >
+                    ← Back
+                </button>
+
+                <p class="eyebrow">
+                    10TH STANDARD
+                </p>
+
+                <h1>
+                    Which board<br>
+                    are you studying?
+                </h1>
+
+                <p class="description">
+                    Select your board.
+                </p>
+
+
+                <div class="vertical-options">
+
+                    <button
+                        class="large-option"
+                        data-board="Karnataka State Board"
+                        type="button"
+                    >
+                        <span>
+                            Karnataka State Board
+                        </span>
+                        <b>→</b>
+                    </button>
+
+
+                    <button
+                        class="large-option"
+                        data-board="CBSE"
+                        type="button"
+                    >
+                        <span>CBSE</span>
+                        <b>→</b>
+                    </button>
+
+
+                    <button
+                        class="large-option"
+                        data-board="ICSE"
+                        type="button"
+                    >
+                        <span>ICSE</span>
+                        <b>→</b>
+                    </button>
+
+
+                    <button
+                        class="large-option"
+                        data-board="Other"
+                        type="button"
+                    >
+                        <span>Other</span>
+                        <b>→</b>
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- STEP 4 : PUC STREAM -->
+
+            <div
+                id="streamStep"
+                class="step"
+            >
+
+                <button
+                    class="back-button"
+                    type="button"
+                    data-back="class"
+                >
+                    ← Back
+                </button>
+
+                <p
+                    id="pucLabel"
+                    class="eyebrow"
+                >
+                    PUC
+                </p>
+
+                <h1>
+                    Choose your<br>
+                    stream.
+                </h1>
+
+                <p class="description">
+                    Select the stream you are currently studying.
+                </p>
+
+
+                <div class="stream-options">
+
+                    <button
+                        class="large-option"
+                        data-stream="Science"
+                        type="button"
+                    >
+                        <div>
+                            <strong>Science</strong>
+                            <small>PCMB / PCMC</small>
+                        </div>
+                        <b>→</b>
+                    </button>
+
+
+                    <button
+                        class="large-option"
+                        data-stream="Commerce"
+                        type="button"
+                    >
+                        <div>
+                            <strong>Commerce</strong>
+                            <small>Commerce studies</small>
+                        </div>
+                        <b>→</b>
+                    </button>
+
+
+                    <button
+                        class="large-option"
+                        data-stream="Arts"
+                        type="button"
+                    >
+                        <div>
+                            <strong>Arts</strong>
+                            <small>Humanities</small>
+                        </div>
+                        <b>→</b>
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- STEP 5 : SCIENCE COMBINATION -->
+
+            <div
+                id="combinationStep"
+                class="step"
+            >
+
+                <button
+                    class="back-button"
+                    type="button"
+                    data-back="stream"
+                >
+                    ← Back
+                </button>
+
+                <p class="eyebrow">
+                    SCIENCE
+                </p>
+
+                <h1>
+                    Choose your<br>
+                    combination.
+                </h1>
+
+                <p class="description">
+                    This helps us show you the right
+                    learning content and batches.
+                </p>
+
+
+                <div class="vertical-options">
+
+                    <button
+                        class="large-option"
+                        data-combination="PCMB"
+                        type="button"
+                    >
+                        <span>PCMB</span>
+                        <b>→</b>
+                    </button>
+
+
+                    <button
+                        class="large-option"
+                        data-combination="PCMC"
+                        type="button"
+                    >
+                        <span>PCMC</span>
+                        <b>→</b>
+                    </button>
+
+
+                    <button
+                        class="large-option"
+                        data-combination="PCMS"
+                        type="button"
+                    >
+                        <span>PCMS</span>
+                        <b>→</b>
+                    </button>
+
+
+                    <button
+                        class="large-option"
+                        data-combination="Other"
+                        type="button"
+                    >
+                        <span>Other</span>
+                        <b>→</b>
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- STEP 6 : LEARNING GOAL -->
+
+            <div
+                id="goalStep"
+                class="step"
+            >
+
+                <button
+                    class="back-button"
+                    type="button"
+                    data-back="previous"
+                >
+                    ← Back
+                </button>
+
+                <p class="eyebrow">
+                    ONE LAST THING
+                </p>
+
+                <h1>
+                    What are you<br>
+                    preparing for?
+                </h1>
+
+                <p class="description">
+                    You can change this later.
+                </p>
+
+
+                <div class="goal-grid">
+
+                    <button
+                        class="goal-option"
+                        data-goal="Board Examination"
+                        type="button"
+                    >
+                        Board
+                    </button>
+
+
+                    <button
+                        class="goal-option"
+                        data-goal="KCET"
+                        type="button"
+                    >
+                        KCET
+                    </button>
+
+
+                    <button
+                        class="goal-option"
+                        data-goal="NEET"
+                        type="button"
+                    >
+                        NEET
+                    </button>
+
+
+                    <button
+                        class="goal-option"
+                        data-goal="JEE"
+                        type="button"
+                    >
+                        JEE
+                    </button>
+
+
+                    <button
+                        class="goal-option"
+                        data-goal="Board + KCET"
+                        type="button"
+                    >
+                        Board + KCET
+                    </button>
+
+
+                    <button
+                        class="goal-option"
+                        data-goal="Other"
+                        type="button"
+                    >
+                        Other
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- FINAL -->
+
+            <div
+                id="completeStep"
+                class="step"
+            >
+
+                <div class="success-mark">
+                    ✓
+                </div>
+
+                <p class="eyebrow">
+                    PROFILE READY
+                </p>
+
+                <h1>
+                    Welcome to<br>
+                    Zenova.
+                </h1>
+
+                <p
+                    id="welcomeName"
+                    class="description"
+                ></p>
+
+                <button
+                    id="enterZenova"
+                    class="primary-button"
+                    type="button"
+                >
+                    Enter Zenova
+                    <span>→</span>
+                </button>
+
+            </div>
+
+
+        </section>
+
+
+        <!-- Bottom -->
+
+        <footer>
+
+            Your profile helps us personalise
+            your learning experience.
+
+        </footer>
+
+
+    </main>
+
+
+    <script
+        type="module"
+        src="zN8kP4.js"
+    ></script>
+
+</body>
+
+</html>
