@@ -2,7 +2,6 @@
 <html lang="en">
 
 <head>
-
     <meta charset="UTF-8">
 
     <meta
@@ -17,32 +16,19 @@
 
     <title>Zenova Educations</title>
 
-    <link
-        rel="stylesheet"
-        href="home.css"
-    >
-
+    <link rel="stylesheet" href="home.css">
 </head>
-
 
 <body>
 
+<!-- ================================
+     LOADING SCREEN
+================================ -->
 
-<!-- =====================================================
-     INITIAL LOADING SCREEN
-===================================================== -->
-
-<div
-    id="zenovaLoader"
-    class="zenova-loader"
->
+<div id="zenovaLoader" class="zenova-loader">
 
     <div class="loader-ring">
-
-        <div class="loader-z">
-            Z
-        </div>
-
+        <div class="loader-z">Z</div>
     </div>
 
     <div class="loader-brand">
@@ -56,23 +42,18 @@
 </div>
 
 
-
-<!-- =====================================================
+<!-- ================================
      APP
-===================================================== -->
+================================ -->
 
-<div
-    id="zenovaApp"
-    class="zenova-app hidden"
->
+<div id="zenovaApp" class="zenova-app hidden">
 
 
-<!-- =====================================================
-     HEADER
-===================================================== -->
+<!-- ================================
+     TOP HEADER
+================================ -->
 
 <header class="top-header">
-
 
     <button
         id="menuButton"
@@ -83,15 +64,12 @@
         <svg viewBox="0 0 24 24">
 
             <path d="M4 7h16"></path>
-
             <path d="M4 12h16"></path>
-
             <path d="M4 17h16"></path>
 
         </svg>
 
     </button>
-
 
 
     <div class="zenova-brand">
@@ -105,7 +83,6 @@
         </div>
 
     </div>
-
 
 
     <button
@@ -124,7 +101,6 @@
 
         </svg>
 
-
         <span
             id="notificationBadge"
             class="notification-badge hidden"
@@ -134,25 +110,22 @@
 
     </button>
 
-
 </header>
 
 
 
-<!-- =====================================================
+<!-- ================================
      MAIN
-===================================================== -->
+================================ -->
 
 <main class="home-container">
 
 
-
-<!-- =====================================================
+<!-- ================================
      STUDENT INTRO
-===================================================== -->
+================================ -->
 
 <section class="student-intro">
-
 
     <div>
 
@@ -174,7 +147,6 @@
     </div>
 
 
-
     <button
         id="profileShortcut"
         class="profile-circle"
@@ -187,25 +159,70 @@
 
     </button>
 
-
 </section>
 
 
 
-<!-- =====================================================
-     HERO BANNER
-===================================================== -->
+<!-- ================================
+     MOVING BANNER
+================================ -->
 
-<section
-    id="heroSection"
-    class="hero-section hidden"
->
-
+<section class="hero-section">
 
     <div
         id="heroSlider"
         class="hero-slider"
     >
+
+        <!-- Development banners -->
+
+        <div class="hero-slide active">
+
+            <div class="placeholder-banner">
+                <span>ZENOVA</span>
+                <strong>
+                    Your learning journey<br>
+                    starts here.
+                </strong>
+                <small>
+                    Learn • Practice • Achieve
+                </small>
+            </div>
+
+        </div>
+
+
+        <div class="hero-slide">
+
+            <div class="placeholder-banner banner-two">
+                <span>ZENOVA BATCHES</span>
+                <strong>
+                    Find the right batch<br>
+                    for your goals.
+                </strong>
+                <small>
+                    Online • Offline • Hybrid
+                </small>
+            </div>
+
+        </div>
+
+
+        <div class="hero-slide">
+
+            <div class="placeholder-banner banner-three">
+                <span>ZENOVA LEARNING</span>
+                <strong>
+                    Learn today.<br>
+                    Become tomorrow.
+                </strong>
+                <small>
+                    Classes • Tests • Notes • AI
+                </small>
+            </div>
+
+        </div>
+
     </div>
 
 
@@ -213,19 +230,33 @@
         id="heroDots"
         class="hero-dots"
     >
-    </div>
 
+        <button
+            class="hero-dot active"
+            data-index="0"
+        ></button>
+
+        <button
+            class="hero-dot"
+            data-index="1"
+        ></button>
+
+        <button
+            class="hero-dot"
+            data-index="2"
+        ></button>
+
+    </div>
 
 </section>
 
 
 
-<!-- =====================================================
+<!-- ================================
      QUICK ACCESS
-===================================================== -->
+================================ -->
 
 <section class="home-section">
-
 
     <div class="section-title-row">
 
@@ -244,11 +275,8 @@
     </div>
 
 
-
     <div class="quick-access-grid">
 
-
-        <!-- BATCHES -->
 
         <button
             class="quick-item"
@@ -259,17 +287,13 @@
 
                 <svg viewBox="0 0 24 24">
 
-                    <path
-                        d="M3 8l9-5 9 5-9 5z"
-                    ></path>
+                    <path d="M3 8l9-5 9 5-9 5z"></path>
 
                     <path
                         d="M6 10v7c3 2 9 2 12 0v-7"
                     ></path>
 
-                    <path
-                        d="M21 9v6"
-                    ></path>
+                    <path d="M21 9v6"></path>
 
                 </svg>
 
@@ -283,11 +307,9 @@
 
 
 
-        <!-- FREE CLASSES -->
-
         <button
             class="quick-item"
-            data-route="free"
+            data-route="live"
         >
 
             <div class="quick-icon">
@@ -311,14 +333,12 @@
             </div>
 
             <span>
-                Free Classes
+                Live Classes
             </span>
 
         </button>
 
 
-
-        <!-- TESTS -->
 
         <button
             class="quick-item"
@@ -338,9 +358,7 @@
                     ></rect>
 
                     <path d="M9 8h6"></path>
-
                     <path d="M9 12h6"></path>
-
                     <path d="M9 16h4"></path>
 
                 </svg>
@@ -355,8 +373,6 @@
 
 
 
-        <!-- RESULTS -->
-
         <button
             class="quick-item"
             data-route="results"
@@ -367,11 +383,8 @@
                 <svg viewBox="0 0 24 24">
 
                     <path d="M4 20V11"></path>
-
                     <path d="M10 20V6"></path>
-
                     <path d="M16 20V9"></path>
-
                     <path d="M22 20V4"></path>
 
                 </svg>
@@ -384,23 +397,17 @@
 
         </button>
 
-
     </div>
-
 
 </section>
 
 
 
-<!-- =====================================================
+<!-- ================================
      ANNOUNCEMENTS
-===================================================== -->
+================================ -->
 
-<section
-    id="announcementSection"
-    class="home-section hidden"
->
-
+<section class="home-section">
 
     <div class="section-title-row">
 
@@ -419,26 +426,135 @@
     </div>
 
 
-    <div
-        id="announcementList"
-        class="announcement-list"
-    >
-    </div>
+    <div class="announcement-list">
 
+
+        <article
+            class="announcement-card"
+            data-route="announcements"
+        >
+
+            <div class="announcement-date">
+
+                <strong>
+                    28
+                </strong>
+
+                <span>
+                    AUG
+                </span>
+
+            </div>
+
+
+            <div class="announcement-info">
+
+                <strong>
+                    New learning programs are here
+                </strong>
+
+                <p>
+                    Explore new Zenova batches and programs.
+                </p>
+
+            </div>
+
+
+            <div class="announcement-arrow">
+                →
+            </div>
+
+        </article>
+
+
+
+        <article
+            class="announcement-card"
+            data-route="announcements"
+        >
+
+            <div class="announcement-date">
+
+                <strong>
+                    26
+                </strong>
+
+                <span>
+                    AUG
+                </span>
+
+            </div>
+
+
+            <div class="announcement-info">
+
+                <strong>
+                    Upcoming test series
+                </strong>
+
+                <p>
+                    Prepare with structured tests and analysis.
+                </p>
+
+            </div>
+
+
+            <div class="announcement-arrow">
+                →
+            </div>
+
+        </article>
+
+
+
+        <article
+            class="announcement-card"
+            data-route="announcements"
+        >
+
+            <div class="announcement-date">
+
+                <strong>
+                    24
+                </strong>
+
+                <span>
+                    AUG
+                </span>
+
+            </div>
+
+
+            <div class="announcement-info">
+
+                <strong>
+                    Zenova learning updates
+                </strong>
+
+                <p>
+                    New classes, notes and resources added.
+                </p>
+
+            </div>
+
+
+            <div class="announcement-arrow">
+                →
+            </div>
+
+        </article>
+
+    </div>
 
 </section>
 
 
 
-<!-- =====================================================
+<!-- ================================
      RECOMMENDED BATCHES
-===================================================== -->
+================================ -->
 
-<section
-    id="recommendedSection"
-    class="home-section hidden"
->
-
+<section class="home-section">
 
     <div class="section-title-row">
 
@@ -457,45 +573,199 @@
     </div>
 
 
-    <div
-        id="recommendedList"
-        class="horizontal-scroll"
-    >
-    </div>
+    <div class="horizontal-scroll">
 
+
+        <article
+            class="batch-card"
+            data-route="batches"
+        >
+
+            <div class="batch-image">
+
+                <div class="batch-placeholder">
+                    ZENOVA
+                </div>
+
+                <span class="batch-mode">
+                    ONLINE
+                </span>
+
+            </div>
+
+
+            <div class="batch-details">
+
+                <h3>
+                    SSLC Complete Program
+                </h3>
+
+                <p>
+                    Classes • Tests • Notes
+                </p>
+
+
+                <div class="batch-bottom">
+
+                    <strong class="batch-price">
+                        ₹4,800
+                    </strong>
+
+                    <span class="batch-arrow">
+                        →
+                    </span>
+
+                </div>
+
+            </div>
+
+        </article>
+
+
+
+        <article
+            class="batch-card"
+            data-route="batches"
+        >
+
+            <div class="batch-image">
+
+                <div class="batch-placeholder">
+                    ZENOVA
+                </div>
+
+                <span class="batch-mode">
+                    HYBRID
+                </span>
+
+            </div>
+
+
+            <div class="batch-details">
+
+                <h3>
+                    1st PUC Complete Program
+                </h3>
+
+                <p>
+                    PUC • KCET • NEET
+                </p>
+
+
+                <div class="batch-bottom">
+
+                    <strong class="batch-price">
+                        ₹4,800
+                    </strong>
+
+                    <span class="batch-arrow">
+                        →
+                    </span>
+
+                </div>
+
+            </div>
+
+        </article>
+
+
+
+        <article
+            class="batch-card"
+            data-route="batches"
+        >
+
+            <div class="batch-image">
+
+                <div class="batch-placeholder">
+                    ZENOVA
+                </div>
+
+                <span class="batch-mode">
+                    ONLINE
+                </span>
+
+            </div>
+
+
+            <div class="batch-details">
+
+                <h3>
+                    KCET Master Program
+                </h3>
+
+                <p>
+                    Complete entrance preparation
+                </p>
+
+
+                <div class="batch-bottom">
+
+                    <strong class="batch-price">
+                        ₹2,400
+                    </strong>
+
+                    <span class="batch-arrow">
+                        →
+                    </span>
+
+                </div>
+
+            </div>
+
+        </article>
+
+
+    </div>
 
 </section>
 
 
 
-<!-- =====================================================
-     BIG CAMPAIGN
-===================================================== -->
+<!-- ================================
+     BIG LAUNCH BANNER
+================================ -->
 
-<section
-    id="campaignSection"
-    class="campaign-section hidden"
->
+<section class="campaign-section">
 
-    <div
-        id="campaignContainer"
-        class="campaign-container"
-    >
+    <div class="campaign-container">
+
+        <div class="campaign-overlay">
+
+            <span class="campaign-tag">
+                SOMETHING NEW
+            </span>
+
+            <h2>
+                A new way to<br>
+                learn is coming.
+            </h2>
+
+            <p>
+                Discover the next generation
+                of learning with Zenova.
+            </p>
+
+            <button
+                class="campaign-button"
+                data-route="batches"
+            >
+                EXPLORE NOW →
+            </button>
+
+        </div>
+
     </div>
 
 </section>
 
 
 
-<!-- =====================================================
+<!-- ================================
      START LEARNING
-===================================================== -->
+================================ -->
 
-<section
-    id="learningSection"
-    class="home-section"
->
-
+<section class="home-section">
 
     <div class="section-title-row">
 
@@ -514,26 +784,44 @@
     </div>
 
 
-    <div
-        id="learningContainer"
-        class="learning-card"
-    >
-    </div>
+    <div class="learning-card">
 
+
+        <div class="learning-empty">
+
+            <p class="learning-label">
+                YOUR LEARNING JOURNEY
+            </p>
+
+            <h3>
+                Start learning with Zenova.
+            </h3>
+
+            <p>
+                Explore our programs and find
+                the right batch for you.
+            </p>
+
+            <button
+                class="learning-action"
+                data-route="batches"
+            >
+                EXPLORE BATCHES
+            </button>
+
+        </div>
+
+    </div>
 
 </section>
 
 
 
-<!-- =====================================================
-     UPCOMING LIVE CLASSES
-===================================================== -->
+<!-- ================================
+     UPCOMING CLASSES
+================================ -->
 
-<section
-    id="liveSection"
-    class="home-section hidden"
->
-
+<section class="home-section">
 
     <div class="section-title-row">
 
@@ -552,26 +840,99 @@
     </div>
 
 
-    <div
-        id="liveList"
-        class="schedule-list"
-    >
-    </div>
+    <div class="schedule-list">
 
+
+        <article class="schedule-card">
+
+            <div class="schedule-left">
+
+                <div class="schedule-time">
+
+                    <strong>
+                        06:00
+                    </strong>
+
+                    <span>
+                        PM
+                    </span>
+
+                </div>
+
+
+                <div class="schedule-info">
+
+                    <h3>
+                        Mathematics
+                    </h3>
+
+                    <p>
+                        Live class • Today
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="schedule-arrow">
+                →
+            </div>
+
+        </article>
+
+
+
+        <article class="schedule-card">
+
+            <div class="schedule-left">
+
+                <div class="schedule-time">
+
+                    <strong>
+                        07:30
+                    </strong>
+
+                    <span>
+                        PM
+                    </span>
+
+                </div>
+
+
+                <div class="schedule-info">
+
+                    <h3>
+                        Physics
+                    </h3>
+
+                    <p>
+                        Live class • Tomorrow
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="schedule-arrow">
+                →
+            </div>
+
+        </article>
+
+
+    </div>
 
 </section>
 
 
 
-<!-- =====================================================
+<!-- ================================
      UPCOMING TESTS
-===================================================== -->
+================================ -->
 
-<section
-    id="upcomingTestsSection"
-    class="home-section hidden"
->
-
+<section class="home-section">
 
     <div class="section-title-row">
 
@@ -590,26 +951,59 @@
     </div>
 
 
-    <div
-        id="upcomingTestsList"
-        class="schedule-list"
-    >
-    </div>
+    <div class="schedule-list">
 
+
+        <article class="schedule-card">
+
+            <div class="schedule-left">
+
+                <div class="schedule-time">
+
+                    <strong>
+                        02
+                    </strong>
+
+                    <span>
+                        SEP
+                    </span>
+
+                </div>
+
+
+                <div class="schedule-info">
+
+                    <h3>
+                        Weekly Mathematics Test
+                    </h3>
+
+                    <p>
+                        50 Questions • 60 Minutes
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="schedule-arrow">
+                →
+            </div>
+
+        </article>
+
+
+    </div>
 
 </section>
 
 
 
-<!-- =====================================================
+<!-- ================================
      FREE LEARNING
-===================================================== -->
+================================ -->
 
-<section
-    id="freeLearningSection"
-    class="home-section hidden"
->
-
+<section class="home-section">
 
     <div class="section-title-row">
 
@@ -628,26 +1022,85 @@
     </div>
 
 
-    <div
-        id="freeLearningList"
-        class="horizontal-scroll"
-    >
-    </div>
+    <div class="horizontal-scroll">
 
+
+        <article class="free-card">
+
+            <div class="free-placeholder">
+                VIDEO
+            </div>
+
+            <div class="free-card-content">
+
+                <strong>
+                    Physics Basics
+                </strong>
+
+                <p>
+                    Free class
+                </p>
+
+            </div>
+
+        </article>
+
+
+
+        <article class="free-card">
+
+            <div class="free-placeholder">
+                CLASS
+            </div>
+
+            <div class="free-card-content">
+
+                <strong>
+                    Mathematics Concepts
+                </strong>
+
+                <p>
+                    Free learning
+                </p>
+
+            </div>
+
+        </article>
+
+
+
+        <article class="free-card">
+
+            <div class="free-placeholder">
+                NOTES
+            </div>
+
+            <div class="free-card-content">
+
+                <strong>
+                    Study Smart
+                </strong>
+
+                <p>
+                    Free resources
+                </p>
+
+            </div>
+
+        </article>
+
+
+    </div>
 
 </section>
 
 
 
-<!-- =====================================================
-     PROGRESS
-===================================================== -->
+<!-- ================================
+     YOUR PROGRESS
+================================ -->
 
-<section
-    id="progressSection"
-    class="home-section hidden"
->
-
+<section class="home-section">
 
     <div class="section-title-row">
 
@@ -658,23 +1111,38 @@
     </div>
 
 
-    <div
-        id="progressContainer"
-        class="progress-card"
-    >
-    </div>
+    <div class="progress-card">
 
+        <div class="progress-heading">
+
+            <strong>
+                Overall learning progress
+            </strong>
+
+            <span>
+                0%
+            </span>
+
+        </div>
+
+
+        <div class="large-progress">
+
+            <div style="width:0%"></div>
+
+        </div>
+
+    </div>
 
 </section>
 
 
 
-<!-- =====================================================
+<!-- ================================
      ZENOVA AI
-===================================================== -->
+================================ -->
 
 <section class="ai-section">
-
 
     <div class="ai-content">
 
@@ -698,26 +1166,19 @@
         id="aiButton"
         class="ai-button"
     >
-
         Ask AI
-
-        <span>
-            →
-        </span>
-
+        <span>→</span>
     </button>
-
 
 </section>
 
 
 
-<!-- =====================================================
-     WHY ZENOVA
-===================================================== -->
+<!-- ================================
+     EXPERIENCE
+================================ -->
 
 <section class="zenova-experience">
-
 
     <p class="experience-label">
         THE ZENOVA EXPERIENCE
@@ -732,12 +1193,9 @@
 
     <div class="experience-grid">
 
-
         <div class="experience-item">
 
-            <span>
-                01
-            </span>
+            <span>01</span>
 
             <strong>
                 Expert Faculty
@@ -748,9 +1206,7 @@
 
         <div class="experience-item">
 
-            <span>
-                02
-            </span>
+            <span>02</span>
 
             <strong>
                 Live Classes
@@ -761,9 +1217,7 @@
 
         <div class="experience-item">
 
-            <span>
-                03
-            </span>
+            <span>03</span>
 
             <strong>
                 Smart Tests
@@ -774,9 +1228,7 @@
 
         <div class="experience-item">
 
-            <span>
-                04
-            </span>
+            <span>04</span>
 
             <strong>
                 AI Learning
@@ -784,21 +1236,18 @@
 
         </div>
 
-
     </div>
 
-
 </section>
-
 
 
 </main>
 
 
 
-<!-- =====================================================
+<!-- ================================
      BOTTOM NAVIGATION
-===================================================== -->
+================================ -->
 
 <nav class="bottom-navigation">
 
@@ -810,13 +1259,8 @@
 
         <svg viewBox="0 0 24 24">
 
-            <path
-                d="M3 11.5L12 4l9 7.5"
-            ></path>
-
-            <path
-                d="M5 10v10h14V10"
-            ></path>
+            <path d="M3 11.5L12 4l9 7.5"></path>
+            <path d="M5 10v10h14V10"></path>
 
         </svg>
 
@@ -886,9 +1330,7 @@
 
             <svg viewBox="0 0 24 24">
 
-                <path
-                    d="M9 6v12l10-6z"
-                ></path>
+                <path d="M9 6v12l10-6z"></path>
 
             </svg>
 
@@ -918,9 +1360,7 @@
             ></rect>
 
             <path d="M9 8h6"></path>
-
             <path d="M9 12h6"></path>
-
             <path d="M9 16h4"></path>
 
         </svg>
@@ -962,14 +1402,13 @@
 </nav>
 
 
-
 </div>
 
 
 
-<!-- =====================================================
+<!-- ================================
      SIDE MENU
-===================================================== -->
+================================ -->
 
 <div
     id="menuOverlay"
@@ -981,7 +1420,6 @@
     id="sideMenu"
     class="side-menu"
 >
-
 
     <div class="side-menu-header">
 
@@ -1008,67 +1446,53 @@
     </div>
 
 
-
     <div class="side-menu-links">
-
 
         <button data-route="live">
             Live Classes
         </button>
 
-
         <button data-route="library">
             Digital Library
         </button>
-
 
         <button data-route="ai">
             Zenova AI
         </button>
 
-
         <button data-route="doubts">
             Doubt Solving
         </button>
-
 
         <button data-route="timetable">
             Timetable
         </button>
 
-
         <button data-route="announcements">
             Announcements
         </button>
-
 
         <button data-route="results">
             Results
         </button>
 
-
         <button data-route="support">
             Help & Support
         </button>
-
 
         <button data-route="profile">
             Profile
         </button>
 
-
     </div>
 
-
 </aside>
-
 
 
 <script
     type="module"
     src="home-core-X92m.js"
 ></script>
-
 
 </body>
 </html>
