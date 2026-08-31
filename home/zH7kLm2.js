@@ -1,6 +1,7 @@
 // ============================================================
 // ZENOVA EDUCATIONS
-// UNIVERSAL HOME CONTROLLER
+// UNIVERSAL HOME
+// FIREBASE CONNECTED VERSION
 // ============================================================
 
 import {
@@ -10,8 +11,7 @@ import {
 
 import {
     onAuthStateChanged
-} from
-"https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
 
 import {
     doc,
@@ -19,11 +19,9 @@ import {
     collection,
     query,
     where,
-    orderBy,
-    limit,
-    getDocs
-} from
-"https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+    getDocs,
+    limit
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
 
 // ============================================================
@@ -38,128 +36,68 @@ const app =
 
 
 // ============================================================
-// GLOBAL STATE
+// GLOBAL DATA
 // ============================================================
 
 let currentUser = null;
-
 let student = null;
-
 let enrollments = [];
 
-let heroTimer = null;
-
 
 // ============================================================
-// START
+// AUTH CHECK
 // ============================================================
 
-onAuthStateChanged(
-    auth,
-    async (user) => {
+onAuthStateChanged(auth, async (user) => {
 
-        if (!user) {
+    console.log("Zenova Auth:", user ? user.uid : "NOT LOGGED IN");
 
-            window.location.replace(
-                "../login/"
-            );
+    if (!user) {
 
-            return;
-
-        }
-
-        currentUser = user;
-
-        try {
-
-            await loadHome();
-
-        } catch (error) {
-
-            console.error(
-                "Zenova Home Error:",
-                error
-            );
-
-            showFatalError();
-
-        }
+        window.location.replace("../login/");
+        return;
 
     }
-);
 
+    currentUser = user;
 
-// ============================================================
-// LOAD COMPLETE HOME
-// ============================================================
+    try {
 
-async function loadHome() {
+        // Student profile is essential.
+        const profile = await loadStudentProfile();
 
-    /*
-     * We intentionally keep the entire Home hidden
-     * until the important Firebase information is ready.
-     */
+        if (!profile) {
+            return;
+        }
 
-    const [
-        profileData,
-        bannerData,
-        announcementData,
-        batchData,
-        campaignData,
-        freeData,
-        resultData,
-        enrollmentData
-    ] = await Promise.all([
+        student = profile;
 
-        loadStudentProfile(),
+        // Render essential profile immediately.
+        renderStudentProfile(student);
 
-        loadHeroBanners(),
+        /*
+         * The rest of Home is optional.
+         * If one Firebase collection fails,
+         * the rest of the Home still works.
+         */
 
-        loadAnnouncements(),
+        await loadOptionalHomeData();
 
-        loadRecommendedBatches(),
+        hideLoader();
+        showApp();
 
-        loadCampaign(),
+    } catch (error) {
 
-        loadFreeLearning(),
+        console.error(
+            "ZENOVA HOME FIREBASE ERROR:",
+            error
+        );
 
-        loadResults(),
+        showFatalError(error);
 
-        loadEnrollments()
+    }
 
-    ]);
-
-
-    student =
-        profileData;
-
-    enrollments =
-        enrollmentData;
-
-
-    renderStudentProfile(student);
-
-    renderHero(bannerData);
-
-    renderAnnouncements(announcementData);
-
-    renderRecommendedBatches(batchData);
-
-    renderCampaign(campaignData);
-
-    renderFreeLearning(freeData);
-
-    renderResults(resultData);
-
-    renderLearning();
-
-    await loadPersonalSections();
-
-    hideLoader();
-
-    showApp();
-
-}
+});
 
 
 // ============================================================
@@ -167,6 +105,8 @@ async function loadHome() {
 // ============================================================
 
 async function loadStudentProfile() {
+
+    console.log("Loading student profile...");
 
     const ref =
         doc(
@@ -178,26 +118,234 @@ async function loadStudentProfile() {
     const snapshot =
         await getDoc(ref);
 
+    console.log(
+        "Student profile exists:",
+        snapshot.exists()
+    );
 
     if (!snapshot.exists()) {
 
-        /*
-         * The user is authenticated but has
-         * not completed onboarding.
-         */
+        console.log(
+            "Student profile not found. Sending to onboarding."
+        );
 
         window.location.replace(
             "../onboarding/"
         );
 
-        throw new Error(
-            "Student profile does not exist."
+        return null;
+
+    }
+
+    return snapshot.data();
+
+}
+
+
+// ============================================================
+// OPTIONAL HOME DATA
+// ============================================================
+
+async function loadOptionalHomeData() {
+
+    /*
+     * IMPORTANT:
+     *
+     * Promise.allSettled means one failed collection
+     * will NOT destroy the complete Home page.
+     */
+
+    const results =
+        await Promise.allSettled([
+
+            loadHeroBanners(),
+
+            loadAnnouncements(),
+
+            loadRecommendedBatches(),
+
+            loadCampaign(),
+
+            loadFreeLearning(),
+
+            loadResults(),
+
+            loadEnrollments()
+
+        ]);
+
+
+    const [
+
+        bannersResult,
+        announcementsResult,
+        batchesResult,
+        campaignResult,
+        freeResult,
+        resultsResult,
+        enrollmentsResult
+
+    ] = results;
+
+
+    // --------------------------------------------------------
+    // HERO
+    // --------------------------------------------------------
+
+    if (
+        bannersResult.status === "fulfilled"
+    ) {
+
+        renderHero(
+            bannersResult.value
+        );
+
+    } else {
+
+        console.warn(
+            "Home banners unavailable:",
+            bannersResult.reason
         );
 
     }
 
 
-    return snapshot.data();
+    // --------------------------------------------------------
+    // ANNOUNCEMENTS
+    // --------------------------------------------------------
+
+    if (
+        announcementsResult.status === "fulfilled"
+    ) {
+
+        renderAnnouncements(
+            announcementsResult.value
+        );
+
+    } else {
+
+        console.warn(
+            "Announcements unavailable:",
+            announcementsResult.reason
+        );
+
+    }
+
+
+    // --------------------------------------------------------
+    // BATCHES
+    // --------------------------------------------------------
+
+    if (
+        batchesResult.status === "fulfilled"
+    ) {
+
+        renderRecommendedBatches(
+            batchesResult.value
+        );
+
+    } else {
+
+        console.warn(
+            "Recommended batches unavailable:",
+            batchesResult.reason
+        );
+
+    }
+
+
+    // --------------------------------------------------------
+    // CAMPAIGN
+    // --------------------------------------------------------
+
+    if (
+        campaignResult.status === "fulfilled"
+    ) {
+
+        renderCampaign(
+            campaignResult.value
+        );
+
+    } else {
+
+        console.warn(
+            "Campaign unavailable:",
+            campaignResult.reason
+        );
+
+    }
+
+
+    // --------------------------------------------------------
+    // FREE LEARNING
+    // --------------------------------------------------------
+
+    if (
+        freeResult.status === "fulfilled"
+    ) {
+
+        renderFreeLearning(
+            freeResult.value
+        );
+
+    } else {
+
+        console.warn(
+            "Free learning unavailable:",
+            freeResult.reason
+        );
+
+    }
+
+
+    // --------------------------------------------------------
+    // RESULTS
+    // --------------------------------------------------------
+
+    if (
+        resultsResult.status === "fulfilled"
+    ) {
+
+        renderResults(
+            resultsResult.value
+        );
+
+    } else {
+
+        console.warn(
+            "Results unavailable:",
+            resultsResult.reason
+        );
+
+    }
+
+
+    // --------------------------------------------------------
+    // ENROLLMENTS
+    // --------------------------------------------------------
+
+    if (
+        enrollmentsResult.status === "fulfilled"
+    ) {
+
+        enrollments =
+            enrollmentsResult.value;
+
+    } else {
+
+        console.warn(
+            "Enrollments unavailable:",
+            enrollmentsResult.reason
+        );
+
+        enrollments = [];
+
+    }
+
+
+    renderLearning();
+
+    await loadPersonalSections();
 
 }
 
@@ -214,6 +362,13 @@ async function loadHeroBanners() {
             "homeBanners"
         );
 
+    /*
+     * No orderBy here.
+     *
+     * This avoids unnecessary composite-index
+     * problems while we are developing.
+     */
+
     const q =
         query(
             ref,
@@ -222,24 +377,30 @@ async function loadHeroBanners() {
                 "==",
                 true
             ),
-            orderBy(
-                "order",
-                "asc"
-            ),
             limit(10)
         );
-
 
     const snapshot =
         await getDocs(q);
 
 
-    return snapshot.docs.map(
-        doc => ({
-            id: doc.id,
-            ...doc.data()
-        })
+    const banners =
+        snapshot.docs.map(
+            item => ({
+                id: item.id,
+                ...item.data()
+            })
+        );
+
+
+    banners.sort(
+        (a, b) =>
+            Number(a.order || 999) -
+            Number(b.order || 999)
     );
+
+
+    return banners;
 
 }
 
@@ -264,11 +425,7 @@ async function loadAnnouncements() {
                 "==",
                 true
             ),
-            orderBy(
-                "date",
-                "desc"
-            ),
-            limit(5)
+            limit(10)
         );
 
 
@@ -276,18 +433,37 @@ async function loadAnnouncements() {
         await getDocs(q);
 
 
-    return snapshot.docs.map(
-        doc => ({
-            id: doc.id,
-            ...doc.data()
-        })
+    const announcements =
+        snapshot.docs.map(
+            item => ({
+                id: item.id,
+                ...item.data()
+            })
+        );
+
+
+    announcements.sort(
+        (a, b) => {
+
+            const aDate =
+                getDateValue(a.date);
+
+            const bDate =
+                getDateValue(b.date);
+
+            return bDate - aDate;
+
+        }
     );
+
+
+    return announcements;
 
 }
 
 
 // ============================================================
-// RECOMMENDED BATCHES
+// BATCHES
 // ============================================================
 
 async function loadRecommendedBatches() {
@@ -298,7 +474,6 @@ async function loadRecommendedBatches() {
             "batches"
         );
 
-
     const q =
         query(
             ref,
@@ -307,11 +482,7 @@ async function loadRecommendedBatches() {
                 "==",
                 true
             ),
-            orderBy(
-                "priority",
-                "desc"
-            ),
-            limit(10)
+            limit(20)
         );
 
 
@@ -319,43 +490,63 @@ async function loadRecommendedBatches() {
         await getDocs(q);
 
 
-    const allBatches =
+    let batches =
         snapshot.docs.map(
-            doc => ({
-                id: doc.id,
-                ...doc.data()
+            item => ({
+                id: item.id,
+                ...item.data()
             })
         );
 
 
+    batches.sort(
+        (a, b) =>
+            Number(b.priority || 0) -
+            Number(a.priority || 0)
+    );
+
+
     /*
-     * Initial recommendation filtering.
-     *
-     * Later we will build a much stronger
-     * recommendation engine.
+     * Class based recommendation.
      */
 
-    return allBatches.filter(
-        batch => {
+    if (
+        student &&
+        student.className
+    ) {
 
-            if (
-                !batch.targetClasses ||
-                !Array.isArray(
-                    batch.targetClasses
-                )
-            ) {
+        const matching =
+            batches.filter(
+                batch => {
 
-                return true;
+                    if (
+                        !Array.isArray(
+                            batch.targetClasses
+                        )
+                    ) {
 
-            }
+                        return false;
 
+                    }
 
-            return batch.targetClasses.includes(
-                student?.className
+                    return batch.targetClasses.includes(
+                        student.className
+                    );
+
+                }
             );
 
+
+        if (matching.length) {
+
+            batches = matching;
+
         }
-    ).slice(0, 6);
+
+    }
+
+
+    return batches.slice(0, 10);
 
 }
 
@@ -380,11 +571,7 @@ async function loadCampaign() {
                 "==",
                 true
             ),
-            orderBy(
-                "order",
-                "asc"
-            ),
-            limit(1)
+            limit(10)
         );
 
 
@@ -392,19 +579,30 @@ async function loadCampaign() {
         await getDocs(q);
 
 
-    if (
-        snapshot.empty
-    ) {
+    if (snapshot.empty) {
 
         return null;
 
     }
 
 
-    return {
-        id: snapshot.docs[0].id,
-        ...snapshot.docs[0].data()
-    };
+    const campaigns =
+        snapshot.docs.map(
+            item => ({
+                id: item.id,
+                ...item.data()
+            })
+        );
+
+
+    campaigns.sort(
+        (a, b) =>
+            Number(a.order || 999) -
+            Number(b.order || 999)
+    );
+
+
+    return campaigns[0] || null;
 
 }
 
@@ -429,11 +627,7 @@ async function loadFreeLearning() {
                 "==",
                 true
             ),
-            orderBy(
-                "order",
-                "asc"
-            ),
-            limit(8)
+            limit(10)
         );
 
 
@@ -441,12 +635,23 @@ async function loadFreeLearning() {
         await getDocs(q);
 
 
-    return snapshot.docs.map(
-        doc => ({
-            id: doc.id,
-            ...doc.data()
-        })
+    const items =
+        snapshot.docs.map(
+            item => ({
+                id: item.id,
+                ...item.data()
+            })
+        );
+
+
+    items.sort(
+        (a, b) =>
+            Number(a.order || 999) -
+            Number(b.order || 999)
     );
+
+
+    return items;
 
 }
 
@@ -471,11 +676,7 @@ async function loadResults() {
                 "==",
                 true
             ),
-            orderBy(
-                "score",
-                "desc"
-            ),
-            limit(6)
+            limit(10)
         );
 
 
@@ -483,12 +684,23 @@ async function loadResults() {
         await getDocs(q);
 
 
-    return snapshot.docs.map(
-        doc => ({
-            id: doc.id,
-            ...doc.data()
-        })
+    const results =
+        snapshot.docs.map(
+            item => ({
+                id: item.id,
+                ...item.data()
+            })
+        );
+
+
+    results.sort(
+        (a, b) =>
+            Number(b.score || 0) -
+            Number(a.score || 0)
     );
+
+
+    return results;
 
 }
 
@@ -517,7 +729,8 @@ async function loadEnrollments() {
                 "status",
                 "==",
                 "active"
-            )
+            ),
+            limit(20)
         );
 
 
@@ -526,9 +739,9 @@ async function loadEnrollments() {
 
 
     return snapshot.docs.map(
-        doc => ({
-            id: doc.id,
-            ...doc.data()
+        item => ({
+            id: item.id,
+            ...item.data()
         })
     );
 
@@ -536,7 +749,7 @@ async function loadEnrollments() {
 
 
 // ============================================================
-// PROFILE RENDER
+// STUDENT PROFILE UI
 // ============================================================
 
 function renderStudentProfile(data) {
@@ -552,7 +765,7 @@ function renderStudentProfile(data) {
 
     if (data.className) {
 
-        academic +=
+        academic =
             data.className;
 
     }
@@ -560,10 +773,14 @@ function renderStudentProfile(data) {
 
     if (data.board) {
 
+        const board =
+            shortBoard(data.board);
+
+
         academic +=
             academic
-                ? ` • ${shortBoard(data.board)}`
-                : shortBoard(data.board);
+                ? ` • ${board}`
+                : board;
 
     }
 
@@ -585,7 +802,7 @@ function renderStudentProfile(data) {
     document.getElementById(
         "studentPoints"
     ).textContent =
-        `${data.points || 0} Points`;
+        `${Number(data.points || 0)} Points`;
 
 }
 
@@ -607,7 +824,7 @@ function shortBoard(board) {
 
 
 // ============================================================
-// HERO RENDER
+// HERO UI
 // ============================================================
 
 function renderHero(banners) {
@@ -628,7 +845,10 @@ function renderHero(banners) {
         );
 
 
-    if (!banners.length) {
+    if (
+        !banners ||
+        !banners.length
+    ) {
 
         section.classList.add(
             "hidden"
@@ -649,23 +869,28 @@ function renderHero(banners) {
             (banner, index) => `
 
                 <div
-                    class="hero-slide ${index === 0 ? "active" : ""}"
-                    data-link="${escapeAttr(
-                        banner.link || ""
-                    )}"
+                    class="hero-slide ${
+                        index === 0
+                            ? "active"
+                            : ""
+                    }"
+                    data-link="${
+                        escapeAttr(
+                            banner.link || ""
+                        )
+                    }"
                 >
 
                     <img
-                        src="${escapeAttr(
-                            banner.imageUrl || ""
-                        )}"
-                        alt="${escapeAttr(
-                            banner.title || "Zenova"
-                        )}"
-                        loading="${
-                            index === 0
-                                ? "eager"
-                                : "lazy"
+                        src="${
+                            escapeAttr(
+                                banner.imageUrl || ""
+                            )
+                        }"
+                        alt="${
+                            escapeAttr(
+                                banner.title || "Zenova"
+                            )
                         }"
                     >
 
@@ -686,9 +911,6 @@ function renderHero(banners) {
                             : ""
                     }"
                     data-slide="${index}"
-                    aria-label="Slide ${
-                        index + 1
-                    }"
                 ></button>
 
             `
@@ -708,6 +930,11 @@ function renderHero(banners) {
 
 function setupHeroSlider(total) {
 
+    if (total <= 1) {
+        return;
+    }
+
+
     let current = 0;
 
 
@@ -722,7 +949,7 @@ function setupHeroSlider(total) {
         );
 
 
-    function showSlide(index) {
+    function show(index) {
 
         current =
             (index + total) % total;
@@ -761,7 +988,7 @@ function setupHeroSlider(total) {
                 "click",
                 () => {
 
-                    showSlide(
+                    show(
                         Number(
                             dot.dataset.slide
                         )
@@ -774,52 +1001,22 @@ function setupHeroSlider(total) {
     );
 
 
-    slides.forEach(
-        slide => {
+    setInterval(
+        () => {
 
-            slide.addEventListener(
-                "click",
-                () => {
-
-                    const link =
-                        slide.dataset.link;
-
-
-                    if (link) {
-
-                        window.location.href =
-                            link;
-
-                    }
-
-                }
+            show(
+                current + 1
             );
 
-        }
+        },
+        5000
     );
-
-
-    if (total > 1) {
-
-        heroTimer =
-            setInterval(
-                () => {
-
-                    showSlide(
-                        current + 1
-                    );
-
-                },
-                5000
-            );
-
-    }
 
 }
 
 
 // ============================================================
-// ANNOUNCEMENTS RENDER
+// ANNOUNCEMENTS UI
 // ============================================================
 
 function renderAnnouncements(
@@ -837,7 +1034,10 @@ function renderAnnouncements(
         );
 
 
-    if (!announcements.length) {
+    if (
+        !announcements ||
+        !announcements.length
+    ) {
 
         section.classList.add(
             "hidden"
@@ -854,64 +1054,69 @@ function renderAnnouncements(
 
 
     container.innerHTML =
-        announcements.slice(0, 3).map(
-            item => {
+        announcements
+            .slice(0, 3)
+            .map(
+                item => {
 
-                const date =
-                    formatDate(
-                        item.date
-                    );
+                    const date =
+                        formatDate(
+                            item.date
+                        );
 
 
-                return `
+                    return `
 
-                    <article
-                        class="announcement"
-                        data-link="${
-                            escapeAttr(
-                                item.link || ""
-                            )
-                        }"
-                    >
+                        <article
+                            class="announcement"
+                            data-link="${
+                                escapeAttr(
+                                    item.link || ""
+                                )
+                            }"
+                        >
 
-                        <div class="announcement-date">
+                            <div class="announcement-date">
 
-                            <strong>
-                                ${date.day}
-                            </strong>
+                                <strong>
+                                    ${date.day}
+                                </strong>
 
-                            <span>
-                                ${date.month}
-                            </span>
+                                <span>
+                                    ${date.month}
+                                </span>
 
-                        </div>
+                            </div>
 
-                        <div class="announcement-text">
 
-                            <strong>
-                                ${escapeHtml(
-                                    item.title || ""
-                                )}
-                            </strong>
+                            <div class="announcement-text">
 
-                            <p>
-                                ${escapeHtml(
-                                    item.description || ""
-                                )}
-                            </p>
+                                <strong>
+                                    ${escapeHtml(
+                                        item.title || ""
+                                    )}
+                                </strong>
 
-                        </div>
+                                <p>
+                                    ${escapeHtml(
+                                        item.description || ""
+                                    )}
+                                </p>
 
-                        <div class="announcement-arrow">
-                            ›
-                        </div>
+                            </div>
 
-                    </article>
 
-                `;
+                            <div class="announcement-arrow">
+                                ›
+                            </div>
 
-            }
-        ).join("");
+                        </article>
+
+                    `;
+
+                }
+            )
+            .join("");
 
 
     container
@@ -944,7 +1149,7 @@ function renderAnnouncements(
 
 
 // ============================================================
-// RECOMMENDED BATCHES
+// BATCH UI
 // ============================================================
 
 function renderRecommendedBatches(
@@ -962,7 +1167,10 @@ function renderRecommendedBatches(
         );
 
 
-    if (!batches.length) {
+    if (
+        !batches ||
+        !batches.length
+    ) {
 
         section.classList.add(
             "hidden"
@@ -979,76 +1187,94 @@ function renderRecommendedBatches(
 
 
     container.innerHTML =
-        batches.map(
-            batch => `
+        batches
+            .slice(0, 8)
+            .map(
+                batch => `
 
-                <article
-                    class="batch-card"
-                    data-id="${
-                        escapeAttr(batch.id)
-                    }"
-                >
+                    <article
+                        class="batch-card"
+                        data-id="${
+                            escapeAttr(
+                                batch.id
+                            )
+                        }"
+                    >
 
-                    <div class="batch-image">
+                        <div class="batch-image">
 
-                        <img
-                            src="${escapeAttr(
-                                batch.imageUrl || ""
-                            )}"
-                            alt="${escapeAttr(
-                                batch.name || ""
-                            )}"
-                            loading="lazy"
-                        >
-
-                        <span class="mode-label">
-                            ${escapeHtml(
-                                batch.mode || "ONLINE"
-                            )}
-                        </span>
-
-                    </div>
-
-
-                    <div class="batch-info">
-
-                        <h3>
-                            ${escapeHtml(
-                                batch.name || ""
-                            )}
-                        </h3>
-
-                        <p>
-                            ${escapeHtml(
-                                batch.shortDescription || ""
-                            )}
-                        </p>
-
-
-                        <div class="batch-bottom">
-
-                            <strong
-                                class="batch-price"
+                            <img
+                                src="${
+                                    escapeAttr(
+                                        batch.imageUrl || ""
+                                    )
+                                }"
+                                alt="${
+                                    escapeAttr(
+                                        batch.name || ""
+                                    )
+                                }"
+                                loading="lazy"
                             >
-                                ₹${formatMoney(
-                                    batch.price || 0
-                                )}
-                            </strong>
 
-                            <span
-                                class="batch-arrow"
-                            >
-                                ›
+                            <span class="mode-label">
+                                ${
+                                    escapeHtml(
+                                        batch.mode ||
+                                        "ONLINE"
+                                    )
+                                }
                             </span>
 
                         </div>
 
-                    </div>
 
-                </article>
+                        <div class="batch-info">
 
-            `
-        ).join("");
+                            <h3>
+                                ${
+                                    escapeHtml(
+                                        batch.name || ""
+                                    )
+                                }
+                            </h3>
+
+
+                            <p>
+                                ${
+                                    escapeHtml(
+                                        batch.shortDescription || ""
+                                    )
+                                }
+                            </p>
+
+
+                            <div class="batch-bottom">
+
+                                <strong
+                                    class="batch-price"
+                                >
+                                    ₹${
+                                        formatMoney(
+                                            batch.price || 0
+                                        )
+                                    }
+                                </strong>
+
+
+                                <span class="batch-arrow">
+                                    ›
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </article>
+
+                `
+            )
+            .join("");
 
 
     container
@@ -1063,9 +1289,11 @@ function renderRecommendedBatches(
                     () => {
 
                         window.location.href =
-                            `../batch/?id=${encodeURIComponent(
-                                card.dataset.id
-                            )}`;
+                            `../batch/?id=${
+                                encodeURIComponent(
+                                    card.dataset.id
+                                )
+                            }`;
 
                     }
                 );
@@ -1077,7 +1305,7 @@ function renderRecommendedBatches(
 
 
 // ============================================================
-// CAMPAIGN
+// CAMPAIGN UI
 // ============================================================
 
 function renderCampaign(
@@ -1117,43 +1345,52 @@ function renderCampaign(
             campaign.imageUrl
                 ? `
                     <img
-                        src="${escapeAttr(
-                            campaign.imageUrl
-                        )}"
+                        src="${
+                            escapeAttr(
+                                campaign.imageUrl
+                            )
+                        }"
                         alt=""
-                        loading="lazy"
                     >
                 `
                 : ""
         }
+
 
         <div class="campaign-overlay">
 
             ${
                 campaign.tag
                     ? `
-                        <span
-                            class="campaign-tag"
-                        >
-                            ${escapeHtml(
-                                campaign.tag
-                            )}
+                        <span class="campaign-tag">
+                            ${
+                                escapeHtml(
+                                    campaign.tag
+                                )
+                            }
                         </span>
                     `
                     : ""
             }
 
+
             <h2>
-                ${escapeHtml(
-                    campaign.title || ""
-                )}
+                ${
+                    escapeHtml(
+                        campaign.title || ""
+                    )
+                }
             </h2>
 
+
             <p>
-                ${escapeHtml(
-                    campaign.description || ""
-                )}
+                ${
+                    escapeHtml(
+                        campaign.description || ""
+                    )
+                }
             </p>
+
 
             ${
                 campaign.buttonText
@@ -1162,9 +1399,11 @@ function renderCampaign(
                             class="campaign-button"
                             id="campaignButton"
                         >
-                            ${escapeHtml(
-                                campaign.buttonText
-                            )}
+                            ${
+                                escapeHtml(
+                                    campaign.buttonText
+                                )
+                            }
                         </button>
                     `
                     : ""
@@ -1181,7 +1420,10 @@ function renderCampaign(
         );
 
 
-    if (button && campaign.link) {
+    if (
+        button &&
+        campaign.link
+    ) {
 
         button.addEventListener(
             "click",
@@ -1199,7 +1441,7 @@ function renderCampaign(
 
 
 // ============================================================
-// FREE LEARNING
+// FREE LEARNING UI
 // ============================================================
 
 function renderFreeLearning(
@@ -1217,7 +1459,10 @@ function renderFreeLearning(
         );
 
 
-    if (!items.length) {
+    if (
+        !items ||
+        !items.length
+    ) {
 
         section.classList.add(
             "hidden"
@@ -1247,27 +1492,36 @@ function renderFreeLearning(
                 >
 
                     <img
-                        src="${escapeAttr(
-                            item.imageUrl || ""
-                        )}"
-                        alt="${escapeAttr(
-                            item.title || ""
-                        )}"
+                        src="${
+                            escapeAttr(
+                                item.imageUrl || ""
+                            )
+                        }"
+                        alt="${
+                            escapeAttr(
+                                item.title || ""
+                            )
+                        }"
                         loading="lazy"
                     >
+
 
                     <div>
 
                         <strong>
-                            ${escapeHtml(
-                                item.title || ""
-                            )}
+                            ${
+                                escapeHtml(
+                                    item.title || ""
+                                )
+                            }
                         </strong>
 
                         <p>
-                            ${escapeHtml(
-                                item.description || ""
-                            )}
+                            ${
+                                escapeHtml(
+                                    item.description || ""
+                                )
+                            }
                         </p>
 
                     </div>
@@ -1308,7 +1562,7 @@ function renderFreeLearning(
 
 
 // ============================================================
-// RESULTS
+// RESULTS UI
 // ============================================================
 
 function renderResults(
@@ -1326,7 +1580,10 @@ function renderResults(
         );
 
 
-    if (!results.length) {
+    if (
+        !results ||
+        !results.length
+    ) {
 
         section.classList.add(
             "hidden"
@@ -1343,35 +1600,42 @@ function renderResults(
 
 
     container.innerHTML =
-        results.slice(0, 3).map(
-            result => `
+        results
+            .slice(0, 3)
+            .map(
+                result => `
 
-                <div class="result-card">
+                    <div class="result-card">
 
-                    <strong>
-                        ${escapeHtml(
-                            result.scoreText ||
-                            `${result.score || 0}%`
-                        )}
-                    </strong>
+                        <strong>
+                            ${
+                                escapeHtml(
+                                    result.scoreText ||
+                                    `${result.score || 0}%`
+                                )
+                            }
+                        </strong>
 
-                    <span>
-                        ${escapeHtml(
-                            result.exam ||
-                            "Zenova Student"
-                        )}
-                    </span>
+                        <span>
+                            ${
+                                escapeHtml(
+                                    result.exam ||
+                                    "Zenova Student"
+                                )
+                            }
+                        </span>
 
-                </div>
+                    </div>
 
-            `
-        ).join("");
+                `
+            )
+            .join("");
 
 }
 
 
 // ============================================================
-// LEARNING
+// LEARNING UI
 // ============================================================
 
 function renderLearning() {
@@ -1387,12 +1651,14 @@ function renderLearning() {
         );
 
 
-    if (!enrollments.length) {
+    /*
+     * NO PURCHASE
+     */
 
-        /*
-         * No purchase:
-         * Show a useful CTA rather than "No data".
-         */
+    if (
+        !enrollments ||
+        !enrollments.length
+    ) {
 
         section.classList.remove(
             "hidden"
@@ -1410,13 +1676,16 @@ function renderLearning() {
                     YOUR LEARNING JOURNEY
                 </span>
 
+
                 <h3>
                     Find the right program for you
                 </h3>
 
+
                 <p>
                     Explore Zenova batches and start learning.
                 </p>
+
 
                 <button
                     class="continue-button"
@@ -1453,11 +1722,7 @@ function renderLearning() {
 
 
     /*
-     * For now use the latest enrollment.
-     *
-     * Later this will use actual
-     * learning progress from the content
-     * system.
+     * PURCHASED
      */
 
     const enrollment =
@@ -1469,6 +1734,12 @@ function renderLearning() {
     );
 
 
+    const progress =
+        Number(
+            enrollment.progress || 0
+        );
+
+
     container.innerHTML = `
 
         <div class="learning-thumbnail">
@@ -1477,9 +1748,11 @@ function renderLearning() {
                 enrollment.batchImageUrl
                     ? `
                         <img
-                            src="${escapeAttr(
-                                enrollment.batchImageUrl
-                            )}"
+                            src="${
+                                escapeAttr(
+                                    enrollment.batchImageUrl
+                                )
+                            }"
                             alt=""
                         >
                     `
@@ -1495,20 +1768,26 @@ function renderLearning() {
                 CONTINUE WHERE YOU LEFT
             </span>
 
+
             <h3>
-                ${escapeHtml(
-                    enrollment.lastContentTitle ||
-                    enrollment.batchName ||
-                    "Your Batch"
-                )}
+                ${
+                    escapeHtml(
+                        enrollment.lastContentTitle ||
+                        enrollment.batchName ||
+                        "Your Batch"
+                    )
+                }
             </h3>
 
+
             <p>
-                ${escapeHtml(
-                    enrollment.lastContentSubtitle ||
-                    enrollment.batchName ||
-                    ""
-                )}
+                ${
+                    escapeHtml(
+                        enrollment.lastContentSubtitle ||
+                        enrollment.batchName ||
+                        ""
+                    )
+                }
             </p>
 
 
@@ -1518,23 +1797,14 @@ function renderLearning() {
 
                     <div
                         class="progress-fill"
-                        style="width:${
-                            Number(
-                                enrollment.progress || 0
-                            )
-                        }%"
+                        style="width:${progress}%"
                     ></div>
 
                 </div>
 
-                <span
-                    class="progress-percent"
-                >
-                    ${
-                        Number(
-                            enrollment.progress || 0
-                        )
-                    }%
+
+                <span class="progress-percent">
+                    ${progress}%
                 </span>
 
             </div>
@@ -1576,7 +1846,9 @@ function renderLearning() {
 
 async function loadPersonalSections() {
 
-    if (!enrollments.length) {
+    if (
+        !enrollments.length
+    ) {
 
         return;
 
@@ -1584,22 +1856,45 @@ async function loadPersonalSections() {
 
 
     /*
-     * These collections will be built properly
-     * when we build the timetable and test systems.
+     * These are intentionally independent.
      */
 
     try {
 
-        await Promise.all([
-            loadUpcomingClasses(),
-            loadUpcomingTests(),
-            loadProgress()
-        ]);
+        await loadUpcomingClasses();
 
     } catch (error) {
 
         console.warn(
-            "Some personal Home data unavailable:",
+            "Upcoming classes unavailable:",
+            error
+        );
+
+    }
+
+
+    try {
+
+        await loadUpcomingTests();
+
+    } catch (error) {
+
+        console.warn(
+            "Upcoming tests unavailable:",
+            error
+        );
+
+    }
+
+
+    try {
+
+        await loadProgress();
+
+    } catch (error) {
+
+        console.warn(
+            "Progress unavailable:",
             error
         );
 
@@ -1614,17 +1909,6 @@ async function loadPersonalSections() {
 
 async function loadUpcomingClasses() {
 
-    const section =
-        document.getElementById(
-            "classesSection"
-        );
-
-    const container =
-        document.getElementById(
-            "classesList"
-        );
-
-
     const batchIds =
         enrollments
             .map(
@@ -1634,17 +1918,14 @@ async function loadUpcomingClasses() {
             .filter(Boolean);
 
 
-    if (!batchIds.length) {
+    if (
+        !batchIds.length
+    ) {
 
         return;
 
     }
 
-
-    /*
-     * This is intentionally prepared for the
-     * timetable collection we will build next.
-     */
 
     const ref =
         collection(
@@ -1652,6 +1933,11 @@ async function loadUpcomingClasses() {
             "classes"
         );
 
+
+    /*
+     * We don't use orderBy here.
+     * This avoids composite-index problems.
+     */
 
     const q =
         query(
@@ -1666,11 +1952,7 @@ async function loadUpcomingClasses() {
                 "==",
                 true
             ),
-            orderBy(
-                "startTime",
-                "asc"
-            ),
-            limit(3)
+            limit(10)
         );
 
 
@@ -1678,7 +1960,9 @@ async function loadUpcomingClasses() {
         await getDocs(q);
 
 
-    if (snapshot.empty) {
+    if (
+        snapshot.empty
+    ) {
 
         return;
 
@@ -1687,7 +1971,32 @@ async function loadUpcomingClasses() {
 
     const classes =
         snapshot.docs.map(
-            doc => doc.data()
+            item => ({
+                id: item.id,
+                ...item.data()
+            })
+        );
+
+
+    classes.sort(
+        (a, b) =>
+            getDateValue(
+                a.startTime
+            ) -
+            getDateValue(
+                b.startTime
+            )
+    );
+
+
+    const section =
+        document.getElementById(
+            "classesSection"
+        );
+
+    const container =
+        document.getElementById(
+            "classesList"
         );
 
 
@@ -1697,55 +2006,70 @@ async function loadUpcomingClasses() {
 
 
     container.innerHTML =
-        classes.map(
-            item => `
+        classes
+            .slice(0, 3)
+            .map(
+                item => `
 
-                <article class="simple-item">
+                    <article class="simple-item">
 
-                    <div class="simple-item-left">
+                        <div class="simple-item-left">
 
-                        <div class="simple-date">
+                            <div class="simple-date">
 
-                            <strong>
-                                ${formatShortDay(
-                                    item.startTime
-                                )}
-                            </strong>
+                                <strong>
+                                    ${
+                                        formatShortDay(
+                                            item.startTime
+                                        )
+                                    }
+                                </strong>
 
-                            <span>
-                                ${formatTime(
-                                    item.startTime
-                                )}
-                            </span>
+                                <span>
+                                    ${
+                                        formatTime(
+                                            item.startTime
+                                        )
+                                    }
+                                </span>
+
+                            </div>
+
+
+                            <div>
+
+                                <h3>
+                                    ${
+                                        escapeHtml(
+                                            item.title ||
+                                            "Class"
+                                        )
+                                    }
+                                </h3>
+
+                                <p>
+                                    ${
+                                        escapeHtml(
+                                            item.subject ||
+                                            ""
+                                        )
+                                    }
+                                </p>
+
+                            </div>
 
                         </div>
 
-                        <div>
 
-                            <h3>
-                                ${escapeHtml(
-                                    item.title || "Class"
-                                )}
-                            </h3>
+                        <span class="simple-arrow">
+                            ›
+                        </span>
 
-                            <p>
-                                ${escapeHtml(
-                                    item.subject || ""
-                                )}
-                            </p>
+                    </article>
 
-                        </div>
-
-                    </div>
-
-                    <span class="simple-arrow">
-                        ›
-                    </span>
-
-                </article>
-
-            `
-        ).join("");
+                `
+            )
+            .join("");
 
 }
 
@@ -1756,17 +2080,6 @@ async function loadUpcomingClasses() {
 
 async function loadUpcomingTests() {
 
-    const section =
-        document.getElementById(
-            "testsSection"
-        );
-
-    const container =
-        document.getElementById(
-            "testsList"
-        );
-
-
     const batchIds =
         enrollments
             .map(
@@ -1776,7 +2089,9 @@ async function loadUpcomingTests() {
             .filter(Boolean);
 
 
-    if (!batchIds.length) {
+    if (
+        !batchIds.length
+    ) {
 
         return;
 
@@ -1803,11 +2118,7 @@ async function loadUpcomingTests() {
                 "==",
                 true
             ),
-            orderBy(
-                "startTime",
-                "asc"
-            ),
-            limit(3)
+            limit(10)
         );
 
 
@@ -1815,11 +2126,44 @@ async function loadUpcomingTests() {
         await getDocs(q);
 
 
-    if (snapshot.empty) {
+    if (
+        snapshot.empty
+    ) {
 
         return;
 
     }
+
+
+    const tests =
+        snapshot.docs.map(
+            item => ({
+                id: item.id,
+                ...item.data()
+            })
+        );
+
+
+    tests.sort(
+        (a, b) =>
+            getDateValue(
+                a.startTime
+            ) -
+            getDateValue(
+                b.startTime
+            )
+    );
+
+
+    const section =
+        document.getElementById(
+            "testsSection"
+        );
+
+    const container =
+        document.getElementById(
+            "testsList"
+        );
 
 
     section.classList.remove(
@@ -1828,14 +2172,10 @@ async function loadUpcomingTests() {
 
 
     container.innerHTML =
-        snapshot.docs.map(
-            document => {
-
-                const item =
-                    document.data();
-
-
-                return `
+        tests
+            .slice(0, 3)
+            .map(
+                item => `
 
                     <article class="simple-item">
 
@@ -1844,36 +2184,48 @@ async function loadUpcomingTests() {
                             <div class="simple-date">
 
                                 <strong>
-                                    ${formatShortDay(
-                                        item.startTime
-                                    )}
+                                    ${
+                                        formatShortDay(
+                                            item.startTime
+                                        )
+                                    }
                                 </strong>
 
                                 <span>
-                                    ${formatTime(
-                                        item.startTime
-                                    )}
+                                    ${
+                                        formatTime(
+                                            item.startTime
+                                        )
+                                    }
                                 </span>
 
                             </div>
 
+
                             <div>
 
                                 <h3>
-                                    ${escapeHtml(
-                                        item.title || "Test"
-                                    )}
+                                    ${
+                                        escapeHtml(
+                                            item.title ||
+                                            "Test"
+                                        )
+                                    }
                                 </h3>
 
                                 <p>
-                                    ${escapeHtml(
-                                        item.subject || ""
-                                    )}
+                                    ${
+                                        escapeHtml(
+                                            item.subject ||
+                                            ""
+                                        )
+                                    }
                                 </p>
 
                             </div>
 
                         </div>
+
 
                         <span class="simple-arrow">
                             ›
@@ -1881,10 +2233,9 @@ async function loadUpcomingTests() {
 
                     </article>
 
-                `;
-
-            }
-        ).join("");
+                `
+            )
+            .join("");
 
 }
 
@@ -1895,6 +2246,21 @@ async function loadUpcomingTests() {
 
 async function loadProgress() {
 
+    if (
+        !enrollments.length
+    ) {
+
+        return;
+
+    }
+
+
+    const progress =
+        Number(
+            student?.overallProgress || 0
+        );
+
+
     const section =
         document.getElementById(
             "progressSection"
@@ -1904,19 +2270,6 @@ async function loadProgress() {
         document.getElementById(
             "progressContent"
         );
-
-
-    const progress =
-        Number(
-            student?.overallProgress || 0
-        );
-
-
-    if (!enrollments.length) {
-
-        return;
-
-    }
 
 
     section.classList.remove(
@@ -1938,6 +2291,7 @@ async function loadProgress() {
 
         </div>
 
+
         <div class="progress-large-track">
 
             <div
@@ -1956,9 +2310,7 @@ async function loadProgress() {
 // NAVIGATION
 // ============================================================
 
-function navigate(
-    destination
-) {
+function navigate(destination) {
 
     const routes = {
 
@@ -2002,7 +2354,10 @@ function navigate(
             "../timetable/",
 
         support:
-            "../support/"
+            "../support/",
+
+        notifications:
+            "../notifications/"
 
     };
 
@@ -2020,7 +2375,7 @@ function navigate(
 
 
 // ============================================================
-// NAVIGATION EVENTS
+// ALL DATA-ACTION BUTTONS
 // ============================================================
 
 document
@@ -2049,31 +2404,39 @@ document
 // AI
 // ============================================================
 
-document
-    .getElementById(
+const aiButton =
+    document.getElementById(
         "aiButton"
-    )
-    .addEventListener(
+    );
+
+
+if (aiButton) {
+
+    aiButton.addEventListener(
         "click",
         () => {
 
-            navigate(
-                "ai"
-            );
+            navigate("ai");
 
         }
     );
+
+}
 
 
 // ============================================================
 // NOTIFICATIONS
 // ============================================================
 
-document
-    .getElementById(
+const notificationButton =
+    document.getElementById(
         "notificationButton"
-    )
-    .addEventListener(
+    );
+
+
+if (notificationButton) {
+
+    notificationButton.addEventListener(
         "click",
         () => {
 
@@ -2083,6 +2446,8 @@ document
 
         }
     );
+
+}
 
 
 // ============================================================
@@ -2099,41 +2464,52 @@ const menuOverlay =
         "menuOverlay"
     );
 
-
-document
-    .getElementById(
+const menuButton =
+    document.getElementById(
         "menuButton"
-    )
-    .addEventListener(
-        "click",
-        openMenu
+    );
+
+const closeMenuButton =
+    document.getElementById(
+        "closeMenu"
     );
 
 
-document
-    .getElementById(
-        "closeMenu"
-    )
-    .addEventListener(
+if (menuButton) {
+
+    menuButton.addEventListener(
+        "click",
+        () => {
+
+            sideMenu.classList.add(
+                "open"
+            );
+
+            menuOverlay.classList.remove(
+                "hidden"
+            );
+
+        }
+    );
+
+}
+
+
+if (closeMenuButton) {
+
+    closeMenuButton.addEventListener(
         "click",
         closeMenu
     );
 
-
-menuOverlay.addEventListener(
-    "click",
-    closeMenu
-);
+}
 
 
-function openMenu() {
+if (menuOverlay) {
 
-    sideMenu.classList.add(
-        "open"
-    );
-
-    menuOverlay.classList.remove(
-        "hidden"
+    menuOverlay.addEventListener(
+        "click",
+        closeMenu
     );
 
 }
@@ -2153,12 +2529,13 @@ function closeMenu() {
 
 
 // ============================================================
-// LOADER CONTROL
+// LOADING
 // ============================================================
 
 function hideLoader() {
 
-    loader.style.opacity = "0";
+    loader.style.opacity =
+        "0";
 
     loader.style.transition =
         "opacity .25s ease";
@@ -2188,10 +2565,16 @@ function showApp() {
 
 
 // ============================================================
-// FATAL ERROR
+// ERROR SCREEN
 // ============================================================
 
-function showFatalError() {
+function showFatalError(error) {
+
+    console.error(
+        "FINAL HOME ERROR:",
+        error
+    );
+
 
     loader.innerHTML = `
 
@@ -2204,22 +2587,26 @@ function showFatalError() {
 
             <div
                 style="
-                    font-size:22px;
+                    font-size:24px;
                     font-weight:800;
+                    letter-spacing:3px;
                 "
             >
                 ZENOVA
             </div>
+
 
             <p
                 style="
                     margin-top:12px;
                     color:#777;
                     font-size:11px;
+                    line-height:1.6;
                 "
             >
                 We couldn't load your learning space.
             </p>
+
 
             <button
                 onclick="location.reload()"
@@ -2229,8 +2616,9 @@ function showFatalError() {
                     border:0;
                     border-radius:8px;
                     background:#111;
-                    color:white;
+                    color:#fff;
                     font-size:10px;
+                    cursor:pointer;
                 "
             >
                 TRY AGAIN
@@ -2247,15 +2635,10 @@ function showFatalError() {
 // DATE HELPERS
 // ============================================================
 
-function formatDate(value) {
+function getDateValue(value) {
 
     if (!value) {
-
-        return {
-            day: "--",
-            month: ""
-        };
-
+        return 0;
     }
 
 
@@ -2278,11 +2661,24 @@ function formatDate(value) {
     }
 
 
-    if (
-        Number.isNaN(
-            date.getTime()
-        )
-    ) {
+    const time =
+        date.getTime();
+
+
+    return Number.isNaN(time)
+        ? 0
+        : time;
+
+}
+
+
+function formatDate(value) {
+
+    const time =
+        getDateValue(value);
+
+
+    if (!time) {
 
         return {
             day: "--",
@@ -2290,6 +2686,10 @@ function formatDate(value) {
         };
 
     }
+
+
+    const date =
+        new Date(time);
 
 
     return {
@@ -2300,12 +2700,14 @@ function formatDate(value) {
             ).padStart(2, "0"),
 
         month:
-            date.toLocaleString(
-                "en-IN",
-                {
-                    month: "short"
-                }
-            ).toUpperCase()
+            date
+                .toLocaleString(
+                    "en-IN",
+                    {
+                        month: "short"
+                    }
+                )
+                .toUpperCase()
 
     };
 
@@ -2314,57 +2716,45 @@ function formatDate(value) {
 
 function formatShortDay(value) {
 
-    const date =
-        value?.toDate
-            ? value.toDate()
-            : new Date(value);
+    const time =
+        getDateValue(value);
 
 
-    if (
-        Number.isNaN(
-            date.getTime()
-        )
-    ) {
+    if (!time) {
 
         return "--";
 
     }
 
 
-    return date
-        .getDate()
-        .toString()
-        .padStart(2, "0");
+    return String(
+        new Date(time).getDate()
+    ).padStart(2, "0");
 
 }
 
 
 function formatTime(value) {
 
-    const date =
-        value?.toDate
-            ? value.toDate()
-            : new Date(value);
+    const time =
+        getDateValue(value);
 
 
-    if (
-        Number.isNaN(
-            date.getTime()
-        )
-    ) {
+    if (!time) {
 
         return "";
 
     }
 
 
-    return date.toLocaleTimeString(
-        "en-IN",
-        {
-            hour: "numeric",
-            minute: "2-digit"
-        }
-    );
+    return new Date(time)
+        .toLocaleTimeString(
+            "en-IN",
+            {
+                hour: "numeric",
+                minute: "2-digit"
+            }
+        );
 
 }
 
@@ -2375,24 +2765,42 @@ function formatTime(value) {
 
 function formatMoney(value) {
 
-    return Number(value)
-        .toLocaleString("en-IN");
+    return Number(
+        value || 0
+    ).toLocaleString(
+        "en-IN"
+    );
 
 }
 
 
 // ============================================================
-// SECURITY HELPERS
+// SECURITY / HTML ESCAPING
 // ============================================================
 
 function escapeHtml(value) {
 
     return String(value)
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
+        .replaceAll(
+            "&",
+            "&amp;"
+        )
+        .replaceAll(
+            "<",
+            "&lt;"
+        )
+        .replaceAll(
+            ">",
+            "&gt;"
+        )
+        .replaceAll(
+            '"',
+            "&quot;"
+        )
+        .replaceAll(
+            "'",
+            "&#039;"
+        );
 
 }
 
