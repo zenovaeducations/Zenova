@@ -7,7 +7,7 @@
 
     <meta
         name="viewport"
-        content="width=device-width, initial-scale=1.0"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0"
     >
 
     <meta
@@ -15,7 +15,7 @@
         content="#ffffff"
     >
 
-    <title>Home | Zenova Educations</title>
+    <title>Zenova Educations</title>
 
     <link
         rel="stylesheet"
@@ -24,811 +24,308 @@
 
 </head>
 
+
 <body>
 
-    <!-- =====================================================
-         GLOBAL LOADER
-    ====================================================== -->
 
-    <div
-        id="pageLoader"
-        class="page-loader"
-    >
+<!-- =====================================================
+     INITIAL LOADING SCREEN
+===================================================== -->
 
-        <div class="loader-mark">
+<div
+    id="zenovaLoader"
+    class="zenova-loader"
+>
 
-            <span>Z</span>
+    <div class="loader-ring">
 
+        <div class="loader-z">
+            Z
         </div>
 
-        <div class="loader-line"></div>
+    </div>
 
-        <p>PREPARING YOUR LEARNING SPACE</p>
+    <div class="loader-brand">
+        ZENOVA
+    </div>
+
+    <div class="loader-subtitle">
+        EDUCATIONS
+    </div>
+
+</div>
+
+
+
+<!-- =====================================================
+     APP
+===================================================== -->
+
+<div
+    id="zenovaApp"
+    class="zenova-app hidden"
+>
+
+
+<!-- =====================================================
+     HEADER
+===================================================== -->
+
+<header class="top-header">
+
+
+    <button
+        id="menuButton"
+        class="header-icon"
+        aria-label="Menu"
+    >
+
+        <svg viewBox="0 0 24 24">
+
+            <path d="M4 7h16"></path>
+
+            <path d="M4 12h16"></path>
+
+            <path d="M4 17h16"></path>
+
+        </svg>
+
+    </button>
+
+
+
+    <div class="zenova-brand">
+
+        <div class="zenova-brand-main">
+            ZENOVA
+        </div>
+
+        <div class="zenova-brand-sub">
+            EDUCATIONS
+        </div>
 
     </div>
 
 
-    <!-- =====================================================
-         APPLICATION
-    ====================================================== -->
 
-    <div
-        id="app"
-        class="app hidden"
+    <button
+        id="notificationButton"
+        class="header-icon notification-button"
+        aria-label="Notifications"
     >
 
+        <svg viewBox="0 0 24 24">
 
-        <!-- =================================================
-             HEADER
-        ================================================== -->
+            <path
+                d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"
+            ></path>
 
-        <header class="top-header">
+            <path d="M10 21h4"></path>
 
-            <button
-                id="menuButton"
-                class="icon-button"
-                aria-label="Open menu"
-            >
+        </svg>
+
+
+        <span
+            id="notificationBadge"
+            class="notification-badge hidden"
+        >
+            0
+        </span>
+
+    </button>
+
+
+</header>
+
+
+
+<!-- =====================================================
+     MAIN
+===================================================== -->
+
+<main class="home-container">
+
+
+
+<!-- =====================================================
+     STUDENT INTRO
+===================================================== -->
+
+<section class="student-intro">
+
+
+    <div>
+
+        <p class="welcome-small">
+            Hello,
+        </p>
+
+        <h1 id="studentName">
+            Student
+        </h1>
+
+        <p
+            id="studentAcademic"
+            class="student-academic"
+        >
+            Loading...
+        </p>
+
+    </div>
+
+
+
+    <button
+        id="profileShortcut"
+        class="profile-circle"
+        aria-label="Profile"
+    >
+
+        <span id="profileInitial">
+            S
+        </span>
+
+    </button>
+
+
+</section>
+
+
+
+<!-- =====================================================
+     HERO BANNER
+===================================================== -->
+
+<section
+    id="heroSection"
+    class="hero-section hidden"
+>
+
+
+    <div
+        id="heroSlider"
+        class="hero-slider"
+    >
+    </div>
+
+
+    <div
+        id="heroDots"
+        class="hero-dots"
+    >
+    </div>
+
+
+</section>
+
+
+
+<!-- =====================================================
+     QUICK ACCESS
+===================================================== -->
+
+<section class="home-section">
+
+
+    <div class="section-title-row">
+
+        <h2>
+            QUICK ACCESS
+        </h2>
+
+        <button
+            class="section-link"
+            data-route="quick"
+        >
+            View all
+            <span>→</span>
+        </button>
+
+    </div>
+
+
+
+    <div class="quick-access-grid">
+
+
+        <!-- BATCHES -->
+
+        <button
+            class="quick-item"
+            data-route="batches"
+        >
+
+            <div class="quick-icon">
 
                 <svg viewBox="0 0 24 24">
 
-                    <path d="M4 7h16"></path>
-                    <path d="M4 12h16"></path>
-                    <path d="M4 17h16"></path>
+                    <path
+                        d="M3 8l9-5 9 5-9 5z"
+                    ></path>
+
+                    <path
+                        d="M6 10v7c3 2 9 2 12 0v-7"
+                    ></path>
+
+                    <path
+                        d="M21 9v6"
+                    ></path>
 
                 </svg>
-
-            </button>
-
-
-            <div class="brand">
-
-                <div class="brand-name">
-                    ZENOVA<span>▲</span>
-                </div>
-
-                <div class="brand-subtitle">
-                    EDUCATIONS
-                </div>
 
             </div>
 
+            <span>
+                Batches
+            </span>
 
-            <button
-                id="notificationButton"
-                class="icon-button notification-button"
-                aria-label="Notifications"
-            >
+        </button>
 
-                <svg viewBox="0 0 24 24">
 
-                    <path
-                        d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"
-                    ></path>
 
-                    <path
-                        d="M10 21h4"
-                    ></path>
+        <!-- FREE CLASSES -->
 
-                </svg>
+        <button
+            class="quick-item"
+            data-route="free"
+        >
 
-                <span
-                    id="notificationBadge"
-                    class="notification-badge hidden"
-                >
-                    0
-                </span>
-
-            </button>
-
-        </header>
-
-
-        <!-- =================================================
-             MAIN
-        ================================================== -->
-
-        <main class="home-content">
-
-
-            <!-- =============================================
-                 WELCOME
-            ============================================== -->
-
-            <section class="welcome-section">
-
-                <div>
-
-                    <p class="hello">
-                        Hello,
-                    </p>
-
-                    <h1 id="studentName">
-                        Student
-                    </h1>
-
-                    <p
-                        id="studentAcademic"
-                        class="academic"
-                    >
-                        Loading
-                    </p>
-
-                </div>
-
-
-                <div class="points-card">
-
-                    <div class="points-icon">
-
-                        <svg viewBox="0 0 24 24">
-
-                            <circle
-                                cx="12"
-                                cy="12"
-                                r="9"
-                            ></circle>
-
-                            <path
-                                d="M12 7l1.5 3 3.3.5-2.4 2.3.6 3.2-3-1.6-3 1.6.6-3.2-2.4-2.3 3.3-.5z"
-                            ></path>
-
-                        </svg>
-
-                    </div>
-
-                    <span id="studentPoints">
-                        0 Points
-                    </span>
-
-                </div>
-
-            </section>
-
-
-            <!-- =============================================
-                 HERO SLIDER
-            ============================================== -->
-
-            <section
-                id="heroSection"
-                class="hero-section hidden"
-            >
-
-                <div
-                    id="heroSlider"
-                    class="hero-slider"
-                ></div>
-
-                <div
-                    id="heroDots"
-                    class="hero-dots"
-                ></div>
-
-            </section>
-
-
-            <!-- =============================================
-                 QUICK ACCESS
-            ============================================== -->
-
-            <section class="section">
-
-                <div class="section-heading">
-
-                    <h2>
-                        QUICK ACCESS
-                    </h2>
-
-                    <button
-                        id="quickAccessViewAll"
-                        class="view-all"
-                    >
-                        View All
-                        <span>›</span>
-                    </button>
-
-                </div>
-
-
-                <div class="quick-grid">
-
-                    <button
-                        class="quick-card"
-                        data-action="batches"
-                    >
-
-                        <div class="quick-icon">
-
-                            <svg viewBox="0 0 24 24">
-
-                                <path
-                                    d="M3 8l9-5 9 5-9 5z"
-                                ></path>
-
-                                <path
-                                    d="M6 10v7c3 2 9 2 12 0v-7"
-                                ></path>
-
-                                <path
-                                    d="M21 9v6"
-                                ></path>
-
-                            </svg>
-
-                        </div>
-
-                        <span>
-                            Batches
-                        </span>
-
-                    </button>
-
-
-                    <button
-                        class="quick-card"
-                        data-action="free"
-                    >
-
-                        <div class="quick-icon">
-
-                            <svg viewBox="0 0 24 24">
-
-                                <rect
-                                    x="3"
-                                    y="5"
-                                    width="18"
-                                    height="14"
-                                    rx="2"
-                                ></rect>
-
-                                <path
-                                    d="M10 9l5 3-5 3z"
-                                ></path>
-
-                            </svg>
-
-                        </div>
-
-                        <span>
-                            Free Classes
-                        </span>
-
-                    </button>
-
-
-                    <button
-                        class="quick-card"
-                        data-action="tests"
-                    >
-
-                        <div class="quick-icon">
-
-                            <svg viewBox="0 0 24 24">
-
-                                <rect
-                                    x="5"
-                                    y="3"
-                                    width="14"
-                                    height="18"
-                                    rx="2"
-                                ></rect>
-
-                                <path d="M9 8h6"></path>
-                                <path d="M9 12h6"></path>
-                                <path d="M9 16h4"></path>
-
-                            </svg>
-
-                        </div>
-
-                        <span>
-                            Tests
-                        </span>
-
-                    </button>
-
-
-                    <button
-                        class="quick-card"
-                        data-action="results"
-                    >
-
-                        <div class="quick-icon">
-
-                            <svg viewBox="0 0 24 24">
-
-                                <path d="M4 20V10"></path>
-                                <path d="M10 20V5"></path>
-                                <path d="M16 20V8"></path>
-                                <path d="M22 20V3"></path>
-
-                            </svg>
-
-                        </div>
-
-                        <span>
-                            Results
-                        </span>
-
-                    </button>
-
-                </div>
-
-            </section>
-
-
-            <!-- =============================================
-                 ANNOUNCEMENTS
-            ============================================== -->
-
-            <section
-                id="announcementsSection"
-                class="section hidden"
-            >
-
-                <div class="section-heading">
-
-                    <h2>
-                        ANNOUNCEMENTS
-                    </h2>
-
-                    <button
-                        class="view-all"
-                        data-action="announcements"
-                    >
-                        View All
-                        <span>›</span>
-                    </button>
-
-                </div>
-
-
-                <div
-                    id="announcementsList"
-                    class="announcement-list"
-                ></div>
-
-            </section>
-
-
-            <!-- =============================================
-                 RECOMMENDED
-            ============================================== -->
-
-            <section
-                id="recommendedSection"
-                class="section hidden"
-            >
-
-                <div class="section-heading">
-
-                    <h2>
-                        RECOMMENDED FOR YOU
-                    </h2>
-
-                    <button
-                        class="view-all"
-                        data-action="batches"
-                    >
-                        View All
-                        <span>›</span>
-                    </button>
-
-                </div>
-
-
-                <div
-                    id="recommendedList"
-                    class="batch-scroller"
-                ></div>
-
-            </section>
-
-
-            <!-- =============================================
-                 BIG CAMPAIGN
-            ============================================== -->
-
-            <section
-                id="campaignSection"
-                class="campaign-section hidden"
-            >
-
-                <div
-                    id="campaignContent"
-                    class="campaign-content"
-                ></div>
-
-            </section>
-
-
-            <!-- =============================================
-                 START LEARNING
-            ============================================== -->
-
-            <section
-                id="learningSection"
-                class="section hidden"
-            >
-
-                <div class="section-heading">
-
-                    <h2>
-                        START LEARNING
-                    </h2>
-
-                    <button
-                        class="view-all"
-                        data-action="study"
-                    >
-                        View All
-                        <span>›</span>
-                    </button>
-
-                </div>
-
-
-                <div
-                    id="learningContent"
-                    class="learning-card"
-                ></div>
-
-            </section>
-
-
-            <!-- =============================================
-                 UPCOMING CLASSES
-            ============================================== -->
-
-            <section
-                id="classesSection"
-                class="section hidden"
-            >
-
-                <div class="section-heading">
-
-                    <h2>
-                        UPCOMING CLASSES
-                    </h2>
-
-                    <button
-                        class="view-all"
-                        data-action="timetable"
-                    >
-                        View All
-                        <span>›</span>
-                    </button>
-
-                </div>
-
-
-                <div
-                    id="classesList"
-                    class="simple-list"
-                ></div>
-
-            </section>
-
-
-            <!-- =============================================
-                 UPCOMING TESTS
-            ============================================== -->
-
-            <section
-                id="testsSection"
-                class="section hidden"
-            >
-
-                <div class="section-heading">
-
-                    <h2>
-                        UPCOMING TESTS
-                    </h2>
-
-                    <button
-                        class="view-all"
-                        data-action="tests"
-                    >
-                        View All
-                        <span>›</span>
-                    </button>
-
-                </div>
-
-
-                <div
-                    id="testsList"
-                    class="simple-list"
-                ></div>
-
-            </section>
-
-
-            <!-- =============================================
-                 FREE LEARNING
-            ============================================== -->
-
-            <section
-                id="freeLearningSection"
-                class="section hidden"
-            >
-
-                <div class="section-heading">
-
-                    <h2>
-                        FREE LEARNING
-                    </h2>
-
-                    <button
-                        class="view-all"
-                        data-action="free"
-                    >
-                        View All
-                        <span>›</span>
-                    </button>
-
-                </div>
-
-
-                <div
-                    id="freeLearningList"
-                    class="free-scroll"
-                ></div>
-
-            </section>
-
-
-            <!-- =============================================
-                 RESULTS
-            ============================================== -->
-
-            <section
-                id="resultsSection"
-                class="section hidden"
-            >
-
-                <div class="section-heading">
-
-                    <h2>
-                        ZENOVA RESULTS
-                    </h2>
-
-                    <button
-                        class="view-all"
-                        data-action="results"
-                    >
-                        View All
-                        <span>›</span>
-                    </button>
-
-                </div>
-
-
-                <div
-                    id="resultsList"
-                    class="results-grid"
-                ></div>
-
-            </section>
-
-
-            <!-- =============================================
-                 PROGRESS
-            ============================================== -->
-
-            <section
-                id="progressSection"
-                class="section hidden"
-            >
-
-                <div class="section-heading">
-
-                    <h2>
-                        YOUR PROGRESS
-                    </h2>
-
-                </div>
-
-
-                <div
-                    id="progressContent"
-                    class="progress-card"
-                ></div>
-
-            </section>
-
-
-            <!-- =============================================
-                 ZENOVA AI
-            ============================================== -->
-
-            <section
-                id="aiSection"
-                class="ai-section"
-            >
-
-                <div>
-
-                    <p class="ai-label">
-                        ZENOVA AI
-                    </p>
-
-                    <h2>
-                        Have a doubt?
-                    </h2>
-
-                    <p>
-                        Ask Zenova and keep learning.
-                    </p>
-
-                </div>
-
-                <button
-                    id="aiButton"
-                    class="ai-button"
-                >
-                    Ask AI
-                    <span>→</span>
-                </button>
-
-            </section>
-
-
-            <!-- =============================================
-                 WHY ZENOVA
-            ============================================== -->
-
-            <section class="why-section">
-
-                <p class="eyebrow">
-                    THE ZENOVA EXPERIENCE
-                </p>
-
-                <h2>
-                    Learn better.<br>
-                    Achieve more.
-                </h2>
-
-                <div class="feature-row">
-
-                    <div>
-                        <strong>01</strong>
-                        <span>Expert Faculty</span>
-                    </div>
-
-                    <div>
-                        <strong>02</strong>
-                        <span>Live Learning</span>
-                    </div>
-
-                    <div>
-                        <strong>03</strong>
-                        <span>Smart Tests</span>
-                    </div>
-
-                    <div>
-                        <strong>04</strong>
-                        <span>AI Support</span>
-                    </div>
-
-                </div>
-
-            </section>
-
-
-        </main>
-
-
-        <!-- =================================================
-             BOTTOM NAVIGATION
-        ================================================== -->
-
-        <nav class="bottom-nav">
-
-
-            <button
-                class="bottom-item active"
-                data-action="home"
-            >
-
-                <svg viewBox="0 0 24 24">
-
-                    <path
-                        d="M3 11.5L12 4l9 7.5"
-                    ></path>
-
-                    <path
-                        d="M5 10v10h14V10"
-                    ></path>
-
-                </svg>
-
-                <span>
-                    Home
-                </span>
-
-            </button>
-
-
-            <button
-                class="bottom-item"
-                data-action="batches"
-            >
+            <div class="quick-icon">
 
                 <svg viewBox="0 0 24 24">
 
                     <rect
-                        x="4"
-                        y="4"
-                        width="6"
-                        height="6"
-                        rx="1"
+                        x="3"
+                        y="5"
+                        width="18"
+                        height="14"
+                        rx="2"
                     ></rect>
-
-                    <rect
-                        x="14"
-                        y="4"
-                        width="6"
-                        height="6"
-                        rx="1"
-                    ></rect>
-
-                    <rect
-                        x="4"
-                        y="14"
-                        width="6"
-                        height="6"
-                        rx="1"
-                    ></rect>
-
-                    <rect
-                        x="14"
-                        y="14"
-                        width="6"
-                        height="6"
-                        rx="1"
-                    ></rect>
-
-                </svg>
-
-                <span>
-                    Batches
-                </span>
-
-            </button>
-
-
-            <button
-                class="bottom-item"
-                data-action="study"
-            >
-
-                <svg viewBox="0 0 24 24">
-
-                    <circle
-                        cx="12"
-                        cy="12"
-                        r="8.5"
-                    ></circle>
 
                     <path
-                        d="M10 8.5l5 3.5-5 3.5z"
+                        d="M10 9l5 3-5 3z"
                     ></path>
 
                 </svg>
 
-                <span>
-                    Study Now
-                </span>
+            </div>
 
-            </button>
+            <span>
+                Free Classes
+            </span>
+
+        </button>
 
 
-            <button
-                class="bottom-item"
-                data-action="tests"
-            >
+
+        <!-- TESTS -->
+
+        <button
+            class="quick-item"
+            data-route="tests"
+        >
+
+            <div class="quick-icon">
 
                 <svg viewBox="0 0 24 24">
 
@@ -841,137 +338,737 @@
                     ></rect>
 
                     <path d="M9 8h6"></path>
+
                     <path d="M9 12h6"></path>
+
                     <path d="M9 16h4"></path>
 
                 </svg>
 
-                <span>
-                    Tests
-                </span>
+            </div>
 
-            </button>
+            <span>
+                Tests
+            </span>
+
+        </button>
 
 
-            <button
-                class="bottom-item"
-                data-action="profile"
-            >
+
+        <!-- RESULTS -->
+
+        <button
+            class="quick-item"
+            data-route="results"
+        >
+
+            <div class="quick-icon">
 
                 <svg viewBox="0 0 24 24">
 
-                    <circle
-                        cx="12"
-                        cy="8"
-                        r="3.5"
-                    ></circle>
+                    <path d="M4 20V11"></path>
 
-                    <path
-                        d="M5 20c.8-3.5 3-5 7-5s6.2 1.5 7 5"
-                    ></path>
+                    <path d="M10 20V6"></path>
+
+                    <path d="M16 20V9"></path>
+
+                    <path d="M22 20V4"></path>
 
                 </svg>
 
-                <span>
-                    Profile
-                </span>
+            </div>
 
-            </button>
+            <span>
+                Results
+            </span>
 
-
-        </nav>
+        </button>
 
 
     </div>
 
 
-    <!-- =====================================================
-         SIDE MENU
-    ====================================================== -->
+</section>
+
+
+
+<!-- =====================================================
+     ANNOUNCEMENTS
+===================================================== -->
+
+<section
+    id="announcementSection"
+    class="home-section hidden"
+>
+
+
+    <div class="section-title-row">
+
+        <h2>
+            ANNOUNCEMENTS
+        </h2>
+
+        <button
+            class="section-link"
+            data-route="announcements"
+        >
+            View all
+            <span>→</span>
+        </button>
+
+    </div>
+
 
     <div
-        id="menuOverlay"
-        class="menu-overlay hidden"
-    ></div>
+        id="announcementList"
+        class="announcement-list"
+    >
+    </div>
 
 
-    <aside
-        id="sideMenu"
-        class="side-menu"
+</section>
+
+
+
+<!-- =====================================================
+     RECOMMENDED BATCHES
+===================================================== -->
+
+<section
+    id="recommendedSection"
+    class="home-section hidden"
+>
+
+
+    <div class="section-title-row">
+
+        <h2>
+            RECOMMENDED FOR YOU
+        </h2>
+
+        <button
+            class="section-link"
+            data-route="batches"
+        >
+            View all
+            <span>→</span>
+        </button>
+
+    </div>
+
+
+    <div
+        id="recommendedList"
+        class="horizontal-scroll"
+    >
+    </div>
+
+
+</section>
+
+
+
+<!-- =====================================================
+     BIG CAMPAIGN
+===================================================== -->
+
+<section
+    id="campaignSection"
+    class="campaign-section hidden"
+>
+
+    <div
+        id="campaignContainer"
+        class="campaign-container"
+    >
+    </div>
+
+</section>
+
+
+
+<!-- =====================================================
+     START LEARNING
+===================================================== -->
+
+<section
+    id="learningSection"
+    class="home-section"
+>
+
+
+    <div class="section-title-row">
+
+        <h2>
+            START LEARNING
+        </h2>
+
+        <button
+            class="section-link"
+            data-route="study"
+        >
+            Study now
+            <span>→</span>
+        </button>
+
+    </div>
+
+
+    <div
+        id="learningContainer"
+        class="learning-card"
+    >
+    </div>
+
+
+</section>
+
+
+
+<!-- =====================================================
+     UPCOMING LIVE CLASSES
+===================================================== -->
+
+<section
+    id="liveSection"
+    class="home-section hidden"
+>
+
+
+    <div class="section-title-row">
+
+        <h2>
+            UPCOMING CLASSES
+        </h2>
+
+        <button
+            class="section-link"
+            data-route="timetable"
+        >
+            View all
+            <span>→</span>
+        </button>
+
+    </div>
+
+
+    <div
+        id="liveList"
+        class="schedule-list"
+    >
+    </div>
+
+
+</section>
+
+
+
+<!-- =====================================================
+     UPCOMING TESTS
+===================================================== -->
+
+<section
+    id="upcomingTestsSection"
+    class="home-section hidden"
+>
+
+
+    <div class="section-title-row">
+
+        <h2>
+            UPCOMING TESTS
+        </h2>
+
+        <button
+            class="section-link"
+            data-route="tests"
+        >
+            View all
+            <span>→</span>
+        </button>
+
+    </div>
+
+
+    <div
+        id="upcomingTestsList"
+        class="schedule-list"
+    >
+    </div>
+
+
+</section>
+
+
+
+<!-- =====================================================
+     FREE LEARNING
+===================================================== -->
+
+<section
+    id="freeLearningSection"
+    class="home-section hidden"
+>
+
+
+    <div class="section-title-row">
+
+        <h2>
+            FREE LEARNING
+        </h2>
+
+        <button
+            class="section-link"
+            data-route="free"
+        >
+            View all
+            <span>→</span>
+        </button>
+
+    </div>
+
+
+    <div
+        id="freeLearningList"
+        class="horizontal-scroll"
+    >
+    </div>
+
+
+</section>
+
+
+
+<!-- =====================================================
+     PROGRESS
+===================================================== -->
+
+<section
+    id="progressSection"
+    class="home-section hidden"
+>
+
+
+    <div class="section-title-row">
+
+        <h2>
+            YOUR PROGRESS
+        </h2>
+
+    </div>
+
+
+    <div
+        id="progressContainer"
+        class="progress-card"
+    >
+    </div>
+
+
+</section>
+
+
+
+<!-- =====================================================
+     ZENOVA AI
+===================================================== -->
+
+<section class="ai-section">
+
+
+    <div class="ai-content">
+
+        <p class="ai-label">
+            ZENOVA AI
+        </p>
+
+        <h2>
+            Learn without limits.
+        </h2>
+
+        <p>
+            Ask questions, understand concepts
+            and keep moving forward.
+        </p>
+
+    </div>
+
+
+    <button
+        id="aiButton"
+        class="ai-button"
     >
 
-        <div class="menu-header">
+        Ask AI
 
-            <div>
+        <span>
+            →
+        </span>
 
-                <strong>
-                    ZENOVA
-                </strong>
+    </button>
 
-                <span>
-                    EDUCATIONS
-                </span>
 
-            </div>
+</section>
 
-            <button
-                id="closeMenu"
-                class="close-menu"
-            >
-                ×
-            </button>
+
+
+<!-- =====================================================
+     WHY ZENOVA
+===================================================== -->
+
+<section class="zenova-experience">
+
+
+    <p class="experience-label">
+        THE ZENOVA EXPERIENCE
+    </p>
+
+
+    <h2>
+        Everything you need<br>
+        to learn better.
+    </h2>
+
+
+    <div class="experience-grid">
+
+
+        <div class="experience-item">
+
+            <span>
+                01
+            </span>
+
+            <strong>
+                Expert Faculty
+            </strong>
 
         </div>
 
 
-        <div class="menu-links">
+        <div class="experience-item">
 
-            <button data-action="live">
+            <span>
+                02
+            </span>
+
+            <strong>
                 Live Classes
-            </button>
-
-            <button data-action="library">
-                Digital Library
-            </button>
-
-            <button data-action="ai">
-                Zenova AI
-            </button>
-
-            <button data-action="doubts">
-                Doubt Solving
-            </button>
-
-            <button data-action="timetable">
-                Timetable
-            </button>
-
-            <button data-action="announcements">
-                Announcements
-            </button>
-
-            <button data-action="results">
-                Results
-            </button>
-
-            <button data-action="support">
-                Help & Support
-            </button>
-
-            <button data-action="profile">
-                Profile
-            </button>
+            </strong>
 
         </div>
 
-    </aside>
+
+        <div class="experience-item">
+
+            <span>
+                03
+            </span>
+
+            <strong>
+                Smart Tests
+            </strong>
+
+        </div>
 
 
-    <script
-        type="module"
-        src="zH7kLm2.js"
-    ></script>
+        <div class="experience-item">
+
+            <span>
+                04
+            </span>
+
+            <strong>
+                AI Learning
+            </strong>
+
+        </div>
+
+
+    </div>
+
+
+</section>
+
+
+
+</main>
+
+
+
+<!-- =====================================================
+     BOTTOM NAVIGATION
+===================================================== -->
+
+<nav class="bottom-navigation">
+
+
+    <button
+        class="bottom-item active"
+        data-route="home"
+    >
+
+        <svg viewBox="0 0 24 24">
+
+            <path
+                d="M3 11.5L12 4l9 7.5"
+            ></path>
+
+            <path
+                d="M5 10v10h14V10"
+            ></path>
+
+        </svg>
+
+        <span>
+            Home
+        </span>
+
+    </button>
+
+
+
+    <button
+        class="bottom-item"
+        data-route="batches"
+    >
+
+        <svg viewBox="0 0 24 24">
+
+            <rect
+                x="4"
+                y="4"
+                width="6"
+                height="6"
+                rx="1"
+            ></rect>
+
+            <rect
+                x="14"
+                y="4"
+                width="6"
+                height="6"
+                rx="1"
+            ></rect>
+
+            <rect
+                x="4"
+                y="14"
+                width="6"
+                height="6"
+                rx="1"
+            ></rect>
+
+            <rect
+                x="14"
+                y="14"
+                width="6"
+                height="6"
+                rx="1"
+            ></rect>
+
+        </svg>
+
+        <span>
+            Batches
+        </span>
+
+    </button>
+
+
+
+    <button
+        class="bottom-item study-button"
+        data-route="study"
+    >
+
+        <div class="study-icon">
+
+            <svg viewBox="0 0 24 24">
+
+                <path
+                    d="M9 6v12l10-6z"
+                ></path>
+
+            </svg>
+
+        </div>
+
+        <span>
+            Study
+        </span>
+
+    </button>
+
+
+
+    <button
+        class="bottom-item"
+        data-route="tests"
+    >
+
+        <svg viewBox="0 0 24 24">
+
+            <rect
+                x="5"
+                y="3"
+                width="14"
+                height="18"
+                rx="2"
+            ></rect>
+
+            <path d="M9 8h6"></path>
+
+            <path d="M9 12h6"></path>
+
+            <path d="M9 16h4"></path>
+
+        </svg>
+
+        <span>
+            Tests
+        </span>
+
+    </button>
+
+
+
+    <button
+        class="bottom-item"
+        data-route="profile"
+    >
+
+        <svg viewBox="0 0 24 24">
+
+            <circle
+                cx="12"
+                cy="8"
+                r="3.5"
+            ></circle>
+
+            <path
+                d="M5 20c1-3.5 3.2-5 7-5s6 1.5 7 5"
+            ></path>
+
+        </svg>
+
+        <span>
+            Profile
+        </span>
+
+    </button>
+
+
+</nav>
+
+
+
+</div>
+
+
+
+<!-- =====================================================
+     SIDE MENU
+===================================================== -->
+
+<div
+    id="menuOverlay"
+    class="menu-overlay hidden"
+></div>
+
+
+<aside
+    id="sideMenu"
+    class="side-menu"
+>
+
+
+    <div class="side-menu-header">
+
+        <div>
+
+            <strong>
+                ZENOVA
+            </strong>
+
+            <span>
+                EDUCATIONS
+            </span>
+
+        </div>
+
+
+        <button
+            id="closeMenu"
+            class="close-menu"
+        >
+            ×
+        </button>
+
+    </div>
+
+
+
+    <div class="side-menu-links">
+
+
+        <button data-route="live">
+            Live Classes
+        </button>
+
+
+        <button data-route="library">
+            Digital Library
+        </button>
+
+
+        <button data-route="ai">
+            Zenova AI
+        </button>
+
+
+        <button data-route="doubts">
+            Doubt Solving
+        </button>
+
+
+        <button data-route="timetable">
+            Timetable
+        </button>
+
+
+        <button data-route="announcements">
+            Announcements
+        </button>
+
+
+        <button data-route="results">
+            Results
+        </button>
+
+
+        <button data-route="support">
+            Help & Support
+        </button>
+
+
+        <button data-route="profile">
+            Profile
+        </button>
+
+
+    </div>
+
+
+</aside>
+
+
+
+<script
+    type="module"
+    src="home-core-X92m.js"
+></script>
+
 
 </body>
-
 </html>
