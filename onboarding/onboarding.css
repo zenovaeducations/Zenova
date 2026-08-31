@@ -1,0 +1,833 @@
+/* ============================================================
+   ZENOVA EDUCATONS
+   ONBOARDING
+============================================================ */
+
+
+* {
+
+    margin: 0;
+    padding: 0;
+
+    box-sizing: border-box;
+
+}
+
+
+:root {
+
+    --black: #111111;
+
+    --purple: #6542d8;
+
+    --light-purple: #f3f0ff;
+
+    --grey: #707070;
+
+    --border: #e7e7e7;
+
+    --background: #ffffff;
+
+}
+
+
+html,
+body {
+
+    min-height: 100%;
+
+}
+
+
+body {
+
+    background:
+        var(--background);
+
+    color:
+        var(--black);
+
+    font-family:
+        Inter,
+        Poppins,
+        Arial,
+        sans-serif;
+
+}
+
+
+button,
+input {
+
+    font-family: inherit;
+
+}
+
+
+/* ============================================================
+   PAGE
+============================================================ */
+
+.onboarding-page {
+
+    min-height: 100vh;
+
+    min-height: 100svh;
+
+    display: flex;
+
+    flex-direction: column;
+
+    background: #ffffff;
+
+}
+
+
+/* ============================================================
+   TOP BAR
+============================================================ */
+
+.top-bar {
+
+    height: 68px;
+
+    padding:
+        0 22px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+}
+
+
+.brand {
+
+    font-size: 14px;
+
+    font-weight: 800;
+
+    letter-spacing: 3px;
+
+}
+
+
+.step-counter {
+
+    color:
+        #8a8a8a;
+
+    font-size: 10px;
+
+    font-weight: 600;
+
+}
+
+
+/* ============================================================
+   PROGRESS
+============================================================ */
+
+.progress-track {
+
+    width: 100%;
+
+    height: 2px;
+
+    background:
+        #eeeeee;
+
+}
+
+
+.progress-bar {
+
+    height: 100%;
+
+    width: 50%;
+
+    background:
+        var(--purple);
+
+    transition:
+        width .35s ease;
+
+}
+
+
+/* ============================================================
+   CONTENT
+============================================================ */
+
+.content {
+
+    width: 100%;
+
+    max-width: 620px;
+
+    margin:
+        0 auto;
+
+    padding:
+        55px 24px 30px;
+
+    flex: 1;
+
+}
+
+
+.step {
+
+    display: none;
+
+    animation:
+        stepEnter .3s ease;
+
+}
+
+
+.step.active {
+
+    display: block;
+
+}
+
+
+/* ============================================================
+   TEXT
+============================================================ */
+
+.eyebrow {
+
+    color:
+        var(--purple);
+
+    font-size: 9px;
+
+    font-weight: 700;
+
+    letter-spacing: 2px;
+
+}
+
+
+h1 {
+
+    margin-top: 11px;
+
+    font-size:
+        clamp(32px, 8vw, 46px);
+
+    line-height: 1.08;
+
+    letter-spacing:
+        -.8px;
+
+    font-weight: 700;
+
+}
+
+
+.description {
+
+    margin-top: 15px;
+
+    max-width: 440px;
+
+    color:
+        var(--grey);
+
+    font-size: 12px;
+
+    line-height: 1.7;
+
+}
+
+
+/* ============================================================
+   INPUT
+============================================================ */
+
+.input-group {
+
+    margin-top: 42px;
+
+}
+
+
+.input-group label {
+
+    display: block;
+
+    margin-bottom: 9px;
+
+    font-size: 10px;
+
+    font-weight: 600;
+
+    color: #444444;
+
+}
+
+
+.input-group input {
+
+    width: 100%;
+
+    height: 57px;
+
+    border:
+        1px solid
+        var(--border);
+
+    border-radius: 11px;
+
+    padding:
+        0 16px;
+
+    outline: none;
+
+    font-size: 13px;
+
+    color:
+        var(--black);
+
+    background:
+        #ffffff;
+
+    transition:
+        border-color .2s ease,
+        box-shadow .2s ease;
+
+}
+
+
+.input-group input:focus {
+
+    border-color:
+        var(--purple);
+
+    box-shadow:
+        0 0 0 3px
+        rgba(101,66,216,.07);
+
+}
+
+
+.input-group input::placeholder {
+
+    color:
+        #aaaaaa;
+
+}
+
+
+/* ============================================================
+   BUTTON
+============================================================ */
+
+.primary-button {
+
+    width: 100%;
+
+    height: 55px;
+
+    margin-top: 25px;
+
+    border: 0;
+
+    border-radius: 11px;
+
+    background:
+        var(--black);
+
+    color:
+        #ffffff;
+
+    font-size: 12px;
+
+    font-weight: 600;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 13px;
+
+    cursor: pointer;
+
+    transition:
+        transform .15s ease,
+        background .2s ease;
+
+}
+
+
+.primary-button:hover {
+
+    background:
+        #252525;
+
+}
+
+
+.primary-button:active {
+
+    transform:
+        scale(.985);
+
+}
+
+
+.primary-button span {
+
+    font-size: 16px;
+
+}
+
+
+/* ============================================================
+   CLASS GRID
+============================================================ */
+
+.class-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, 1fr);
+
+    gap: 11px;
+
+    margin-top: 35px;
+
+}
+
+
+.option-card {
+
+    min-height: 105px;
+
+    padding: 17px;
+
+    border:
+        1px solid
+        var(--border);
+
+    border-radius: 13px;
+
+    background:
+        #ffffff;
+
+    text-align: left;
+
+    cursor: pointer;
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: space-between;
+
+    transition:
+        border-color .2s ease,
+        background .2s ease,
+        transform .15s ease;
+
+}
+
+
+.option-card:hover {
+
+    border-color:
+        #cfcfcf;
+
+}
+
+
+.option-card:active {
+
+    transform:
+        scale(.98);
+
+}
+
+
+.option-card strong {
+
+    font-size: 20px;
+
+    font-weight: 700;
+
+}
+
+
+.option-card span {
+
+    color:
+        #8b8b8b;
+
+    font-size: 9px;
+
+}
+
+
+/* ============================================================
+   LARGE OPTIONS
+============================================================ */
+
+.vertical-options {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 10px;
+
+    margin-top: 32px;
+
+}
+
+
+.large-option {
+
+    width: 100%;
+
+    min-height: 62px;
+
+    padding:
+        0 17px;
+
+    border:
+        1px solid
+        var(--border);
+
+    border-radius: 12px;
+
+    background:
+        #ffffff;
+
+    color:
+        var(--black);
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    text-align: left;
+
+    cursor: pointer;
+
+    transition:
+        border-color .2s ease,
+        background .2s ease,
+        transform .15s ease;
+
+}
+
+
+.large-option:hover {
+
+    border-color:
+        #c9c9c9;
+
+}
+
+
+.large-option:active {
+
+    transform:
+        scale(.985);
+
+}
+
+
+.large-option span {
+
+    font-size: 12px;
+
+    font-weight: 600;
+
+}
+
+
+.large-option b {
+
+    color:
+        #999999;
+
+    font-size: 16px;
+
+}
+
+
+.large-option div {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 4px;
+
+}
+
+
+.large-option div strong {
+
+    font-size: 12px;
+
+}
+
+
+.large-option div small {
+
+    color:
+        #8a8a8a;
+
+    font-size: 9px;
+
+}
+
+
+/* ============================================================
+   GOALS
+============================================================ */
+
+.goal-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, 1fr);
+
+    gap: 10px;
+
+    margin-top: 32px;
+
+}
+
+
+.goal-option {
+
+    min-height: 60px;
+
+    border:
+        1px solid
+        var(--border);
+
+    border-radius: 12px;
+
+    background:
+        #ffffff;
+
+    font-size: 11px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        border-color .2s ease,
+        background .2s ease,
+        transform .15s ease;
+
+}
+
+
+.goal-option:hover {
+
+    border-color:
+        #c9c9c9;
+
+}
+
+
+.goal-option:active {
+
+    transform:
+        scale(.98);
+
+}
+
+
+/* ============================================================
+   BACK
+============================================================ */
+
+.back-button {
+
+    border: 0;
+
+    background: transparent;
+
+    color: #777777;
+
+    font-size: 10px;
+
+    padding: 0;
+
+    margin-bottom: 32px;
+
+    cursor: pointer;
+
+}
+
+
+/* ============================================================
+   ERROR
+============================================================ */
+
+.field-error {
+
+    margin-top: 7px;
+
+    color:
+        #b3261e;
+
+    font-size: 9px;
+
+    min-height: 12px;
+
+}
+
+
+/* ============================================================
+   COMPLETE
+============================================================ */
+
+.success-mark {
+
+    width: 58px;
+
+    height: 58px;
+
+    border-radius: 50%;
+
+    background:
+        #f3f0ff;
+
+    color:
+        var(--purple);
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 22px;
+
+    font-weight: 600;
+
+    margin-bottom: 28px;
+
+}
+
+
+#completeStep .primary-button {
+
+    margin-top: 35px;
+
+}
+
+
+/* ============================================================
+   FOOTER
+============================================================ */
+
+footer {
+
+    padding:
+        18px 24px 25px;
+
+    text-align: center;
+
+    color:
+        #a0a0a0;
+
+    font-size: 8px;
+
+    line-height: 1.5;
+
+}
+
+
+/* ============================================================
+   ANIMATION
+============================================================ */
+
+@keyframes stepEnter {
+
+    from {
+
+        opacity: 0;
+
+        transform:
+            translateY(8px);
+
+    }
+
+    to {
+
+        opacity: 1;
+
+        transform:
+            translateY(0);
+
+    }
+
+}
+
+
+/* ============================================================
+   DESKTOP
+============================================================ */
+
+@media (min-width: 700px) {
+
+    .content {
+
+        padding-top: 80px;
+
+    }
+
+}
+
+
+/* ============================================================
+   SMALL PHONES
+============================================================ */
+
+@media (max-height: 680px) {
+
+    .content {
+
+        padding-top: 35px;
+
+    }
+
+    h1 {
+
+        font-size: 30px;
+
+    }
+
+    .input-group {
+
+        margin-top: 28px;
+
+    }
+
+    .class-grid {
+
+        margin-top: 25px;
+
+    }
+
+}
