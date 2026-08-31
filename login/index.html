@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="theme-color"
+        content="#050505"
+    >
+
+    <title>Login | Zenova Educations</title>
+
+    <link
+        rel="stylesheet"
+        href="login.css"
+    >
+
+</head>
+
+
+<body>
+
+    <main class="login-page">
+
+
+        <!-- Background decoration -->
+
+        <div class="background-glow"></div>
+
+        <div class="background-orb orb-one"></div>
+
+        <div class="background-orb orb-two"></div>
+
+
+        <!-- Login container -->
+
+        <section class="login-container">
+
+
+            <!-- Brand -->
+
+            <div class="brand">
+
+                <div class="brand-mark">
+                    Z
+                </div>
+
+                <h1>
+                    ZENOVA
+                </h1>
+
+                <span>
+                    EDUCATIONS
+                </span>
+
+            </div>
+
+
+            <!-- Welcome -->
+
+            <div class="welcome">
+
+                <p class="eyebrow">
+                    WELCOME BACK
+                </p>
+
+                <h2>
+                    Your learning<br>
+                    journey continues.
+                </h2>
+
+                <p class="welcome-description">
+                    Sign in to access your classes,
+                    batches, tests and learning space.
+                </p>
+
+            </div>
+
+
+            <!-- Login card -->
+
+            <div class="login-card">
+
+
+                <!-- Google login -->
+
+                <button
+                    type="button"
+                    id="googleLoginButton"
+                    class="google-button"
+                >
+
+                    <span class="google-icon">
+
+                        <svg
+                            viewBox="0 0 24 24"
+                            aria-hidden="true"
+                        >
+
+                            <path
+                                fill="#4285F4"
+                                d="M21.35 12.27c0-.71-.06-1.39-.18-2.05H12v3.88h5.24a4.48 4.48 0 0 1-1.94 2.94v2.44h3.14c1.84-1.69 2.91-4.18 2.91-7.21z"
+                            ></path>
+
+                            <path
+                                fill="#34A853"
+                                d="M12 21.77c2.63 0 4.84-.87 6.45-2.35l-3.14-2.44c-.87.58-1.98.93-3.31.93-2.54 0-4.69-1.72-5.46-4.03H3.3v2.52A9.74 9.74 0 0 0 12 21.77z"
+                            ></path>
+
+                            <path
+                                fill="#FBBC05"
+                                d="M6.54 13.88A5.85 5.85 0 0 1 6.23 12c0-.65.11-1.28.31-1.88V7.6H3.3A9.76 9.76 0 0 0 2.27 12c0 1.58.38 3.07 1.03 4.4l3.24-2.52z"
+                            ></path>
+
+                            <path
+                                fill="#EA4335"
+                                d="M12 6.09c1.43 0 2.71.49 3.72 1.45l2.79-2.79C16.83 3.18 14.63 2.23 12 2.23a9.74 9.74 0 0 0-8.7 5.37l3.24 2.52C7.31 7.81 9.46 6.09 12 6.09z"
+                            ></path>
+
+                        </svg>
+
+                    </span>
+
+                    <span>
+                        Continue with Google
+                    </span>
+
+                </button>
+
+
+                <!-- Divider -->
+
+                <div class="divider">
+
+                    <span></span>
+
+                    <p>
+                        SECURE LOGIN
+                    </p>
+
+                    <span></span>
+
+                </div>
+
+
+                <!-- Security information -->
+
+                <div class="security-row">
+
+
+                    <div class="security-icon">
+
+                        <svg
+                            viewBox="0 0 24 24"
+                            aria-hidden="true"
+                        >
+
+                            <rect
+                                x="5"
+                                y="10"
+                                width="14"
+                                height="10"
+                                rx="2"
+                            ></rect>
+
+                            <path
+                                d="M8 10V7a4 4 0 0 1 8 0v3"
+                            ></path>
+
+                            <circle
+                                cx="12"
+                                cy="15"
+                                r="1"
+                            ></circle>
+
+                        </svg>
+
+                    </div>
+
+
+                    <div>
+
+                        <strong>
+                            Secure access
+                        </strong>
+
+                        <p>
+                            Your account is protected by
+                            Google & Firebase Authentication.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+            <!-- Terms -->
+
+            <p class="terms">
+
+                By continuing, you agree to Zenova's
+
+                <button
+                    type="button"
+                    id="termsButton"
+                >
+                    Terms
+                </button>
+
+                and
+
+                <button
+                    type="button"
+                    id="privacyButton"
+                >
+                    Privacy Policy
+                </button>
+
+            </p>
+
+
+            <!-- Loading -->
+
+            <div
+                id="loginLoader"
+                class="login-loader hidden"
+            >
+
+                <div class="loader-ring"></div>
+
+                <p>
+                    SECURELY SIGNING YOU IN
+                </p>
+
+            </div>
+
+
+            <!-- Error -->
+
+            <div
+                id="loginError"
+                class="login-error hidden"
+            >
+
+                <div class="error-icon">
+
+                    <svg
+                        viewBox="0 0 24 24"
+                    >
+
+                        <circle
+                            cx="12"
+                            cy="12"
+                            r="9"
+                        ></circle>
+
+                        <path
+                            d="M12 8V13"
+                        ></path>
+
+                        <circle
+                            cx="12"
+                            cy="16.5"
+                            r=".7"
+                            fill="currentColor"
+                            stroke="none"
+                        ></circle>
+
+                    </svg>
+
+                </div>
+
+                <div>
+
+                    <strong>
+                        Sign-in unsuccessful
+                    </strong>
+
+                    <p id="errorMessage">
+                        Please try again.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+        </section>
+
+
+        <!-- Bottom branding -->
+
+        <footer class="login-footer">
+
+            <span>
+                ZENOVA
+            </span>
+
+            <div></div>
+
+            <p>
+                LEARN • GROW • ACHIEVE
+            </p>
+
+        </footer>
+
+
+    </main>
+
+
+    <script
+        type="module"
+        src="zL7xQp91.js"
+    ></script>
+
+</body>
+
+</html>
