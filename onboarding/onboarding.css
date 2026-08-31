@@ -1,833 +1,654 @@
-/* ============================================================
-   ZENOVA EDUCATONS
-   ONBOARDING
-============================================================ */
-
-
 * {
-
+    box-sizing: border-box;
     margin: 0;
     padding: 0;
-
-    box-sizing: border-box;
-
 }
-
 
 :root {
-
-    --black: #111111;
-
-    --purple: #6542d8;
-
-    --light-purple: #f3f0ff;
-
-    --grey: #707070;
-
-    --border: #e7e7e7;
-
-    --background: #ffffff;
-
+    --black: #0b0b0d;
+    --text: #111116;
+    --muted: #777780;
+    --border: #e5e5e8;
+    --light: #f7f7f8;
+    --purple: #6d3df5;
+    --purple-light: #f2edff;
+    --white: #ffffff;
 }
 
-
-html,
 body {
-
-    min-height: 100%;
-
-}
-
-
-body {
-
-    background:
-        var(--background);
-
-    color:
-        var(--black);
-
     font-family:
         Inter,
-        Poppins,
-        Arial,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
         sans-serif;
 
-}
-
-
-button,
-input {
-
-    font-family: inherit;
-
-}
-
-
-/* ============================================================
-   PAGE
-============================================================ */
-
-.onboarding-page {
-
+    background: #ffffff;
+    color: var(--text);
     min-height: 100vh;
+}
 
-    min-height: 100svh;
 
-    display: flex;
+/* =========================
+   LOADER
+========================= */
 
-    flex-direction: column;
+.page-loader {
+    position: fixed;
+    inset: 0;
 
     background: #ffffff;
 
-}
-
-
-/* ============================================================
-   TOP BAR
-============================================================ */
-
-.top-bar {
-
-    height: 68px;
-
-    padding:
-        0 22px;
-
     display: flex;
+    flex-direction: column;
 
     align-items: center;
+    justify-content: center;
 
-    justify-content: space-between;
-
-}
-
-
-.brand {
-
-    font-size: 14px;
-
-    font-weight: 800;
-
-    letter-spacing: 3px;
-
-}
-
-
-.step-counter {
-
-    color:
-        #8a8a8a;
-
-    font-size: 10px;
-
-    font-weight: 600;
-
-}
-
-
-/* ============================================================
-   PROGRESS
-============================================================ */
-
-.progress-track {
-
-    width: 100%;
-
-    height: 2px;
-
-    background:
-        #eeeeee;
-
-}
-
-
-.progress-bar {
-
-    height: 100%;
-
-    width: 50%;
-
-    background:
-        var(--purple);
+    z-index: 9999;
 
     transition:
-        width .35s ease;
+        opacity .3s ease,
+        visibility .3s ease;
+}
 
+.page-loader.hidden {
+    opacity: 0;
+    visibility: hidden;
+}
+
+.loader-logo {
+    width: 54px;
+    height: 54px;
+
+    border: 2px solid #111;
+    border-radius: 50%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 32px;
+    font-weight: 900;
+}
+
+.loader-name {
+    margin-top: 18px;
+
+    font-size: 23px;
+    font-weight: 900;
+
+    letter-spacing: 4px;
+}
+
+.loader-sub {
+    margin-top: 4px;
+
+    font-size: 9px;
+    letter-spacing: 5px;
+
+    color: #888;
 }
 
 
-/* ============================================================
-   CONTENT
-============================================================ */
+/* =========================
+   HEADER
+========================= */
 
-.content {
+.top-header {
+    height: 76px;
 
+    border-bottom: 1px solid #eeeeef;
+
+    display: flex;
+    align-items: center;
+
+    padding: 0 28px;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.brand-z {
+    width: 34px;
+    height: 34px;
+
+    border: 1.5px solid #111;
+    border-radius: 50%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-weight: 900;
+    font-size: 21px;
+}
+
+.brand-name {
+    font-size: 15px;
+    font-weight: 900;
+    letter-spacing: 2.5px;
+}
+
+.brand-sub {
+    font-size: 7px;
+    letter-spacing: 3px;
+    color: #777;
+}
+
+
+/* =========================
+   CONTAINER
+========================= */
+
+.onboarding-container {
+    width: min(620px, calc(100% - 40px));
+
+    margin: 55px auto 0;
+}
+
+
+/* =========================
+   PROGRESS
+========================= */
+
+.progress-area {
+    margin-bottom: 48px;
+}
+
+.progress-text {
+    display: flex;
+    justify-content: space-between;
+
+    font-size: 12px;
+    color: #777;
+}
+
+.progress-text span:last-child {
+    font-weight: 700;
+    color: #111;
+}
+
+.progress-track {
     width: 100%;
+    height: 4px;
 
-    max-width: 620px;
+    background: #eeeeef;
 
-    margin:
-        0 auto;
+    border-radius: 20px;
 
-    padding:
-        55px 24px 30px;
+    margin-top: 10px;
 
-    flex: 1;
-
+    overflow: hidden;
 }
 
+.progress-bar {
+    height: 100%;
+    width: 33.333%;
+
+    background: var(--purple);
+
+    transition:
+        width .3s ease;
+}
+
+
+/* =========================
+   INTRO
+========================= */
+
+.intro {
+    margin-bottom: 42px;
+}
+
+.eyebrow {
+    font-size: 10px;
+    font-weight: 800;
+
+    letter-spacing: 2.5px;
+
+    color: var(--purple);
+}
+
+.intro h1 {
+    font-size: clamp(36px, 7vw, 54px);
+
+    line-height: 1.02;
+
+    letter-spacing: -2px;
+
+    margin-top: 14px;
+}
+
+.intro p {
+    max-width: 500px;
+
+    margin-top: 18px;
+
+    color: var(--muted);
+
+    line-height: 1.65;
+
+    font-size: 15px;
+}
+
+
+/* =========================
+   STEPS
+========================= */
 
 .step {
-
     display: none;
 
     animation:
-        stepEnter .3s ease;
-
+        stepIn .25s ease;
 }
-
 
 .step.active {
+    display: block;
+}
 
+@keyframes stepIn {
+
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+}
+
+
+/* =========================
+   FORM
+========================= */
+
+label {
     display: block;
 
+    font-size: 19px;
+    font-weight: 800;
 }
 
+.field-help {
+    margin-top: 7px;
 
-/* ============================================================
-   TEXT
-============================================================ */
+    color: #85858d;
 
-.eyebrow {
-
-    color:
-        var(--purple);
-
-    font-size: 9px;
-
-    font-weight: 700;
-
-    letter-spacing: 2px;
-
+    font-size: 13px;
 }
 
-
-h1 {
-
-    margin-top: 11px;
-
-    font-size:
-        clamp(32px, 8vw, 46px);
-
-    line-height: 1.08;
-
-    letter-spacing:
-        -.8px;
-
-    font-weight: 700;
-
-}
-
-
-.description {
-
-    margin-top: 15px;
-
-    max-width: 440px;
-
-    color:
-        var(--grey);
-
-    font-size: 12px;
-
-    line-height: 1.7;
-
-}
-
-
-/* ============================================================
-   INPUT
-============================================================ */
-
-.input-group {
-
-    margin-top: 42px;
-
-}
-
-
-.input-group label {
-
-    display: block;
-
-    margin-bottom: 9px;
-
-    font-size: 10px;
-
-    font-weight: 600;
-
-    color: #444444;
-
-}
-
-
-.input-group input {
-
+input,
+select {
     width: 100%;
 
-    height: 57px;
+    height: 58px;
 
-    border:
-        1px solid
-        var(--border);
+    margin-top: 18px;
 
-    border-radius: 11px;
+    padding: 0 17px;
 
-    padding:
-        0 16px;
+    border: 1px solid var(--border);
+
+    border-radius: 12px;
 
     outline: none;
 
-    font-size: 13px;
+    background: #fff;
 
-    color:
-        var(--black);
+    font-size: 15px;
 
-    background:
-        #ffffff;
+    color: #111;
 
     transition:
-        border-color .2s ease,
+        border .2s ease,
         box-shadow .2s ease;
-
 }
 
-
-.input-group input:focus {
-
-    border-color:
-        var(--purple);
+input:focus,
+select:focus {
+    border-color: var(--purple);
 
     box-shadow:
         0 0 0 3px
-        rgba(101,66,216,.07);
-
+        rgba(109, 61, 245, .08);
 }
 
 
-.input-group input::placeholder {
+/* =========================
+   CLASS GRID
+========================= */
 
-    color:
-        #aaaaaa;
+.class-grid {
+    display: grid;
 
+    grid-template-columns:
+        repeat(2, 1fr);
+
+    gap: 12px;
+
+    margin-top: 20px;
+}
+
+.class-option {
+    min-height: 92px;
+
+    background: #fff;
+
+    border: 1px solid var(--border);
+
+    border-radius: 14px;
+
+    text-align: left;
+
+    padding: 17px;
+
+    cursor: pointer;
+
+    transition:
+        border .2s ease,
+        background .2s ease,
+        transform .15s ease;
+}
+
+.class-option:hover {
+    transform: translateY(-1px);
+}
+
+.class-option strong {
+    display: block;
+
+    font-size: 16px;
+}
+
+.class-option span {
+    display: block;
+
+    margin-top: 7px;
+
+    font-size: 12px;
+
+    color: #888;
+}
+
+.class-option.selected {
+    border-color: var(--purple);
+
+    background:
+        var(--purple-light);
+}
+
+.class-option.selected span {
+    color: #5c36c9;
 }
 
 
-/* ============================================================
-   BUTTON
-============================================================ */
+/* =========================
+   CONDITIONAL DETAILS
+========================= */
+
+.detail-heading {
+    font-size: 19px;
+    font-weight: 800;
+}
+
+.detail-description {
+    margin-top: 7px;
+
+    font-size: 13px;
+
+    color: #85858d;
+
+    line-height: 1.5;
+}
+
+.detail-field {
+    margin-top: 25px;
+}
+
+.detail-field label {
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.detail-options {
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, 1fr);
+
+    gap: 10px;
+
+    margin-top: 10px;
+}
+
+.detail-option {
+    min-height: 54px;
+
+    border: 1px solid var(--border);
+
+    background: #fff;
+
+    border-radius: 11px;
+
+    padding: 12px;
+
+    cursor: pointer;
+
+    font-size: 13px;
+
+    text-align: left;
+}
+
+.detail-option.selected {
+    border-color: var(--purple);
+
+    background:
+        var(--purple-light);
+}
+
+
+/* =========================
+   BUTTONS
+========================= */
 
 .primary-button {
-
     width: 100%;
 
-    height: 55px;
+    height: 58px;
 
     margin-top: 25px;
 
     border: 0;
 
-    border-radius: 11px;
+    border-radius: 12px;
 
-    background:
-        var(--black);
+    background: var(--black);
 
-    color:
-        #ffffff;
+    color: white;
 
-    font-size: 12px;
+    font-size: 14px;
 
-    font-weight: 600;
+    font-weight: 800;
 
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    gap: 13px;
+    letter-spacing: .3px;
 
     cursor: pointer;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
 
     transition:
         transform .15s ease,
-        background .2s ease;
-
+        opacity .2s ease;
 }
-
 
 .primary-button:hover {
-
-    background:
-        #252525;
-
+    transform: translateY(-1px);
 }
 
-
-.primary-button:active {
-
-    transform:
-        scale(.985);
-
+.primary-button:disabled {
+    opacity: .5;
+    cursor: not-allowed;
 }
-
 
 .primary-button span {
-
-    font-size: 16px;
-
+    font-size: 18px;
 }
-
-
-/* ============================================================
-   CLASS GRID
-============================================================ */
-
-.class-grid {
-
-    display: grid;
-
-    grid-template-columns:
-        repeat(2, 1fr);
-
-    gap: 11px;
-
-    margin-top: 35px;
-
-}
-
-
-.option-card {
-
-    min-height: 105px;
-
-    padding: 17px;
-
-    border:
-        1px solid
-        var(--border);
-
-    border-radius: 13px;
-
-    background:
-        #ffffff;
-
-    text-align: left;
-
-    cursor: pointer;
-
-    display: flex;
-
-    flex-direction: column;
-
-    justify-content: space-between;
-
-    transition:
-        border-color .2s ease,
-        background .2s ease,
-        transform .15s ease;
-
-}
-
-
-.option-card:hover {
-
-    border-color:
-        #cfcfcf;
-
-}
-
-
-.option-card:active {
-
-    transform:
-        scale(.98);
-
-}
-
-
-.option-card strong {
-
-    font-size: 20px;
-
-    font-weight: 700;
-
-}
-
-
-.option-card span {
-
-    color:
-        #8b8b8b;
-
-    font-size: 9px;
-
-}
-
-
-/* ============================================================
-   LARGE OPTIONS
-============================================================ */
-
-.vertical-options {
-
-    display: flex;
-
-    flex-direction: column;
-
-    gap: 10px;
-
-    margin-top: 32px;
-
-}
-
-
-.large-option {
-
-    width: 100%;
-
-    min-height: 62px;
-
-    padding:
-        0 17px;
-
-    border:
-        1px solid
-        var(--border);
-
-    border-radius: 12px;
-
-    background:
-        #ffffff;
-
-    color:
-        var(--black);
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: space-between;
-
-    text-align: left;
-
-    cursor: pointer;
-
-    transition:
-        border-color .2s ease,
-        background .2s ease,
-        transform .15s ease;
-
-}
-
-
-.large-option:hover {
-
-    border-color:
-        #c9c9c9;
-
-}
-
-
-.large-option:active {
-
-    transform:
-        scale(.985);
-
-}
-
-
-.large-option span {
-
-    font-size: 12px;
-
-    font-weight: 600;
-
-}
-
-
-.large-option b {
-
-    color:
-        #999999;
-
-    font-size: 16px;
-
-}
-
-
-.large-option div {
-
-    display: flex;
-
-    flex-direction: column;
-
-    gap: 4px;
-
-}
-
-
-.large-option div strong {
-
-    font-size: 12px;
-
-}
-
-
-.large-option div small {
-
-    color:
-        #8a8a8a;
-
-    font-size: 9px;
-
-}
-
-
-/* ============================================================
-   GOALS
-============================================================ */
-
-.goal-grid {
-
-    display: grid;
-
-    grid-template-columns:
-        repeat(2, 1fr);
-
-    gap: 10px;
-
-    margin-top: 32px;
-
-}
-
-
-.goal-option {
-
-    min-height: 60px;
-
-    border:
-        1px solid
-        var(--border);
-
-    border-radius: 12px;
-
-    background:
-        #ffffff;
-
-    font-size: 11px;
-
-    font-weight: 600;
-
-    cursor: pointer;
-
-    transition:
-        border-color .2s ease,
-        background .2s ease,
-        transform .15s ease;
-
-}
-
-
-.goal-option:hover {
-
-    border-color:
-        #c9c9c9;
-
-}
-
-
-.goal-option:active {
-
-    transform:
-        scale(.98);
-
-}
-
-
-/* ============================================================
-   BACK
-============================================================ */
 
 .back-button {
+    display: block;
+
+    margin: 17px auto 0;
+
+    background: none;
 
     border: 0;
 
-    background: transparent;
+    color: #777;
 
-    color: #777777;
-
-    font-size: 10px;
-
-    padding: 0;
-
-    margin-bottom: 32px;
+    font-size: 13px;
 
     cursor: pointer;
-
 }
 
 
-/* ============================================================
-   ERROR
-============================================================ */
+/* =========================
+   ERRORS
+========================= */
 
 .field-error {
+    color: #c62828;
 
-    margin-top: 7px;
+    font-size: 12px;
 
-    color:
-        #b3261e;
+    margin-top: 8px;
 
-    font-size: 9px;
+    min-height: 0;
+}
 
-    min-height: 12px;
+.form-message {
+    text-align: center;
 
+    margin-top: 18px;
+
+    font-size: 13px;
 }
 
 
-/* ============================================================
-   COMPLETE
-============================================================ */
+/* =========================
+   SAVING
+========================= */
 
-.success-mark {
+.saving-message {
+    display: flex;
 
-    width: 58px;
+    justify-content: center;
+    align-items: center;
 
-    height: 58px;
+    gap: 10px;
+
+    margin-top: 22px;
+
+    font-size: 12px;
+
+    color: #777;
+}
+
+.small-spinner {
+    width: 16px;
+    height: 16px;
+
+    border: 2px solid #ddd;
+
+    border-top-color:
+        var(--purple);
 
     border-radius: 50%;
 
-    background:
-        #f3f0ff;
-
-    color:
-        var(--purple);
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    font-size: 22px;
-
-    font-weight: 600;
-
-    margin-bottom: 28px;
-
+    animation:
+        spin .7s linear infinite;
 }
 
-
-#completeStep .primary-button {
-
-    margin-top: 35px;
-
-}
-
-
-/* ============================================================
-   FOOTER
-============================================================ */
-
-footer {
-
-    padding:
-        18px 24px 25px;
-
-    text-align: center;
-
-    color:
-        #a0a0a0;
-
-    font-size: 8px;
-
-    line-height: 1.5;
-
-}
-
-
-/* ============================================================
-   ANIMATION
-============================================================ */
-
-@keyframes stepEnter {
-
-    from {
-
-        opacity: 0;
-
-        transform:
-            translateY(8px);
-
-    }
+@keyframes spin {
 
     to {
-
-        opacity: 1;
-
-        transform:
-            translateY(0);
-
+        transform: rotate(360deg);
     }
 
 }
 
 
-/* ============================================================
-   DESKTOP
-============================================================ */
+/* =========================
+   FOOTER
+========================= */
 
-@media (min-width: 700px) {
+footer {
+    text-align: center;
 
-    .content {
+    margin: 70px 0 25px;
 
-        padding-top: 80px;
+    font-size: 11px;
 
-    }
-
+    color: #aaa;
 }
 
 
-/* ============================================================
-   SMALL PHONES
-============================================================ */
+/* =========================
+   UTILITIES
+========================= */
 
-@media (max-height: 680px) {
+.hidden {
+    display: none !important;
+}
 
-    .content {
 
-        padding-top: 35px;
+/* =========================
+   MOBILE
+========================= */
 
+@media (max-width: 520px) {
+
+    .top-header {
+        height: 65px;
+        padding: 0 20px;
     }
 
-    h1 {
+    .onboarding-container {
+        width:
+            calc(100% - 34px);
 
-        font-size: 30px;
-
+        margin-top: 35px;
     }
 
-    .input-group {
+    .progress-area {
+        margin-bottom: 38px;
+    }
 
-        margin-top: 28px;
+    .intro {
+        margin-bottom: 34px;
+    }
 
+    .intro h1 {
+        font-size: 39px;
     }
 
     .class-grid {
+        gap: 9px;
+    }
 
-        margin-top: 25px;
-
+    .class-option {
+        min-height: 82px;
+        padding: 14px;
     }
 
 }
