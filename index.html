@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="en">
 
 <head>
@@ -16,395 +15,111 @@
         content="#050505"
     >
 
-    <meta
-        name="description"
-        content="Zenova Educations"
-    >
-
     <title>Zenova Educations</title>
-
 
     <style>
 
-        /* =====================================================
-           RESET
-        ===================================================== */
-
         * {
-
             margin: 0;
-
             padding: 0;
-
             box-sizing: border-box;
-
         }
-
 
         html,
         body {
-
             width: 100%;
-
             height: 100%;
-
             overflow: hidden;
-
         }
 
-
         body {
-
             background: #050505;
-
             font-family:
                 Arial,
                 Helvetica,
                 sans-serif;
-
         }
 
-
-        /* =====================================================
-           SPLASH
-        ===================================================== */
-
-        .zenova-splash {
-
+        .splash {
             position: fixed;
-
             inset: 0;
 
-            width: 100%;
-
-            height: 100%;
-
-            background:
-
-                radial-gradient(
-                    circle at center,
-                    rgba(108, 59, 255, 0.13),
-                    transparent 38%
-                ),
-
-                #050505;
-
             display: flex;
-
+            flex-direction: column;
             align-items: center;
-
             justify-content: center;
 
-            flex-direction: column;
-
-            z-index: 99999;
-
+            background: #050505;
         }
 
-
-        /* =====================================================
-           LOGO AREA
-        ===================================================== */
-
-        .logo-container {
-
+        .logo {
             position: relative;
 
-            width: 150px;
-
-            height: 150px;
+            width: 100px;
+            height: 100px;
 
             display: flex;
-
             align-items: center;
-
             justify-content: center;
-
         }
 
-
-        /* =====================================================
-           PURPLE ROTATING RING
-        ===================================================== */
-
-        .loading-ring {
-
+        .ring {
             position: absolute;
 
-            width: 118px;
-
-            height: 118px;
+            width: 82px;
+            height: 82px;
 
             border-radius: 50%;
 
             border: 2px solid
-                rgba(108, 59, 255, 0.14);
+                rgba(108, 59, 255, 0.15);
 
             border-top-color:
                 #6c3bff;
 
-            border-right-color:
-                #8b68ff;
-
             animation:
-                zenovaRotate 1.15s
-                linear infinite;
-
-            box-shadow:
-
-                0 0 18px
-                rgba(108, 59, 255, 0.20),
-
-                inset 0 0 18px
-                rgba(108, 59, 255, 0.08);
-
+                rotate 1s linear infinite;
         }
 
+        .z {
+            color: #ffffff;
 
-        /* =====================================================
-           SECOND RING
-        ===================================================== */
-
-        .loading-ring-small {
-
-            position: absolute;
-
-            width: 92px;
-
-            height: 92px;
-
-            border-radius: 50%;
-
-            border: 1px solid
-                rgba(255, 255, 255, 0.07);
-
-            animation:
-                zenovaRotateReverse 2.2s
-                linear infinite;
-
-        }
-
-
-        /* =====================================================
-           Z MARK
-        ===================================================== */
-
-        .zenova-z {
+            font-size: 38px;
+            font-weight: 800;
 
             position: relative;
-
-            color: #ffffff;
-
-            font-size: 48px;
-
-            font-weight: 800;
-
-            letter-spacing: -5px;
-
-            line-height: 1;
-
             z-index: 2;
-
-            text-shadow:
-
-                0 0 20px
-                rgba(108, 59, 255, 0.5);
-
-            animation:
-                zenovaPulse 2s
-                ease-in-out infinite;
-
         }
-
-
-        /* =====================================================
-           BRAND
-        ===================================================== */
 
         .brand {
-
-            margin-top: 20px;
-
-            text-align: center;
-
-            animation:
-                brandAppear 1s
-                ease forwards;
-
-        }
-
-
-        .brand-name {
+            margin-top: 18px;
 
             color: #ffffff;
 
-            font-size: 22px;
-
+            font-size: 20px;
             font-weight: 800;
 
             letter-spacing: 5px;
-
         }
 
-
-        .brand-subtitle {
-
-            color: #8f8f8f;
-
-            font-size: 7px;
-
-            letter-spacing: 5px;
-
-            margin-top: 7px;
-
-        }
-
-
-        /* =====================================================
-           LOADING TEXT
-        ===================================================== */
-
-        .loading-text {
-
-            margin-top: 30px;
+        .subtitle {
+            margin-top: 6px;
 
             color: #777777;
 
-            font-size: 9px;
+            font-size: 7px;
 
-            letter-spacing: 2px;
-
-            text-transform: uppercase;
-
-            animation:
-                textPulse 1.5s
-                ease-in-out infinite;
-
+            letter-spacing: 4px;
         }
 
-
-        /* =====================================================
-           ANIMATIONS
-        ===================================================== */
-
-        @keyframes zenovaRotate {
+        @keyframes rotate {
 
             from {
-
-                transform:
-                    rotate(0deg);
-
+                transform: rotate(0deg);
             }
 
             to {
-
-                transform:
-                    rotate(360deg);
-
-            }
-
-        }
-
-
-        @keyframes zenovaRotateReverse {
-
-            from {
-
-                transform:
-                    rotate(360deg);
-
-            }
-
-            to {
-
-                transform:
-                    rotate(0deg);
-
-            }
-
-        }
-
-
-        @keyframes zenovaPulse {
-
-            0%,
-            100% {
-
-                transform:
-                    scale(1);
-
-                opacity: 1;
-
-            }
-
-            50% {
-
-                transform:
-                    scale(1.05);
-
-                opacity: 0.88;
-
-            }
-
-        }
-
-
-        @keyframes brandAppear {
-
-            from {
-
-                opacity: 0;
-
-                transform:
-                    translateY(8px);
-
-            }
-
-            to {
-
-                opacity: 1;
-
-                transform:
-                    translateY(0);
-
-            }
-
-        }
-
-
-        @keyframes textPulse {
-
-            0%,
-            100% {
-
-                opacity: 0.45;
-
-            }
-
-            50% {
-
-                opacity: 1;
-
-            }
-
-        }
-
-
-        /* =====================================================
-           REDUCED MOTION
-        ===================================================== */
-
-        @media
-        (prefers-reduced-motion: reduce) {
-
-            .loading-ring,
-            .loading-ring-small,
-            .zenova-z,
-            .brand,
-            .loading-text {
-
-                animation: none;
-
+                transform: rotate(360deg);
             }
 
         }
@@ -416,139 +131,197 @@
 
 <body>
 
+    <div class="splash">
 
-    <!-- =====================================================
-         ZENOVA SPLASH
-    ===================================================== -->
+        <div class="logo">
 
-    <div
-        id="zenovaSplash"
-        class="zenova-splash"
-    >
+            <div class="ring"></div>
 
-
-        <div class="logo-container">
-
-
-            <div
-                class="loading-ring"
-            ></div>
-
-
-            <div
-                class="loading-ring-small"
-            ></div>
-
-
-            <div
-                class="zenova-z"
-            >
+            <div class="z">
                 Z
             </div>
 
-
         </div>
-
 
         <div class="brand">
-
-            <div class="brand-name">
-                ZENOVA
-            </div>
-
-            <div class="brand-subtitle">
-                EDUCATIONS
-            </div>
-
+            ZENOVA
         </div>
 
-
-        <div class="loading-text">
-            Preparing your learning space
+        <div class="subtitle">
+            EDUCATIONS
         </div>
-
 
     </div>
 
 
-
-    <!-- =====================================================
-         ENTRY SCRIPT
-    ===================================================== -->
-
     <script type="module">
 
         import {
-            watchAuth
-        } from "./firebase/auth.js";
+            auth,
+            db
+        } from "./firebase/firebase-config.js";
+
+        import {
+            onAuthStateChanged
+        } from
+        "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+
+        import {
+            doc,
+            getDoc
+        } from
+        "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
 
-        /*
-         * -----------------------------------------------------
-         * ZENOVA ENTRY SYSTEM
-         *
-         * The splash remains visible for a minimum of 3 seconds.
-         *
-         * During this time Firebase checks whether the student
-         * already has an authenticated session.
-         * -----------------------------------------------------
-         */
+        // =====================================================
+        // SPLASH TIMER
+        // =====================================================
 
-
-        const splash =
-            document.getElementById(
-                "zenovaSplash"
-            );
-
-
-        const splashStartTime =
+        const splashStart =
             Date.now();
-
 
         const minimumSplashTime =
             3000;
 
 
-        let firebaseUser =
-            undefined;
-
-
-        let firebaseResolved =
-            false;
-
-
         // =====================================================
-        // FIREBASE AUTH CHECK
+        // AUTH STATE
         // =====================================================
 
-        watchAuth((user) => {
+        onAuthStateChanged(
+            auth,
+            async (user) => {
 
-            firebaseUser = user;
+                try {
 
-            firebaseResolved = true;
+                    // -----------------------------------------
+                    // NOT LOGGED IN
+                    // -----------------------------------------
 
-            attemptRedirect();
+                    if (!user) {
 
-        });
+                        await waitForSplash();
+
+                        window.location.replace(
+                            "./login/"
+                        );
+
+                        return;
+
+                    }
 
 
-        // =====================================================
-        // REDIRECT CONTROLLER
-        // =====================================================
+                    // -----------------------------------------
+                    // USER IS LOGGED IN
+                    // -----------------------------------------
 
-        function attemptRedirect() {
+                    /*
+                     * IMPORTANT:
+                     *
+                     * Being authenticated does NOT mean
+                     * onboarding is completed.
+                     *
+                     * We now check the student's Firestore
+                     * profile.
+                     */
 
-            if (!firebaseResolved) {
+                    const studentRef =
+                        doc(
+                            db,
+                            "students",
+                            user.uid
+                        );
 
-                return;
+
+                    const studentSnapshot =
+                        await getDoc(
+                            studentRef
+                        );
+
+
+                    await waitForSplash();
+
+
+                    // -----------------------------------------
+                    // PROFILE EXISTS
+                    // -----------------------------------------
+
+                    if (
+                        studentSnapshot.exists()
+                    ) {
+
+                        /*
+                         * Returning student.
+                         *
+                         * Skip login.
+                         * Skip onboarding.
+                         */
+
+                        window.location.replace(
+                            "./home/"
+                        );
+
+                        return;
+
+                    }
+
+
+                    // -----------------------------------------
+                    // PROFILE DOES NOT EXIST
+                    // -----------------------------------------
+
+                    /*
+                     * New authenticated student.
+                     *
+                     * They have logged into Google,
+                     * but haven't completed Zenova
+                     * onboarding yet.
+                     */
+
+                    window.location.replace(
+                        "./onboarding/"
+                    );
+
+
+                } catch (error) {
+
+                    console.error(
+                        "Zenova startup error:",
+                        error
+                    );
+
+
+                    /*
+                     * Don't send the student to Home
+                     * when we couldn't determine their
+                     * profile state.
+                     *
+                     * Keeping the system conservative is
+                     * safer than accidentally granting access.
+                     */
+
+                    await waitForSplash();
+
+
+                    window.location.replace(
+                        "./login/"
+                    );
+
+                }
 
             }
+        );
 
+
+        // =====================================================
+        // KEEP SPLASH FOR MINIMUM 3 SECONDS
+        // =====================================================
+
+        function waitForSplash() {
 
             const elapsed =
                 Date.now() -
-                splashStartTime;
-
+                splashStart;
 
             const remaining =
                 Math.max(
@@ -558,57 +331,20 @@
                 );
 
 
-            setTimeout(
-                () => {
+            return new Promise(
+                resolve => {
 
-                    if (firebaseUser) {
+                    setTimeout(
+                        resolve,
+                        remaining
+                    );
 
-                        /*
-                         * User is already logged in.
-                         *
-                         * IMPORTANT:
-                         * Do NOT send them to login.
-                         */
-
-                        window.location.replace(
-                            "./home/"
-                        );
-
-                    } else {
-
-                        /*
-                         * User is not logged in.
-                         */
-
-                        window.location.replace(
-                            "./login/"
-                        );
-
-                    }
-
-                },
-                remaining
+                }
             );
 
         }
 
-
-        // =====================================================
-        // SAFETY FALLBACK
-        // =====================================================
-
-        /*
-         * Firebase normally resolves quickly.
-         *
-         * If there is an unexpected delay, we keep the
-         * beautiful splash instead of showing a broken page.
-         *
-         * We deliberately do NOT redirect without knowing
-         * the authentication state.
-         */
-
     </script>
-
 
 </body>
 
