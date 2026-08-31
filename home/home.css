@@ -2097,3 +2097,130 @@ body {
     }
 
 }
+/* ============================================================
+   HOME DEVELOPMENT IMAGE AREAS
+============================================================ */
+
+.placeholder-banner {
+
+    width: 100%;
+    height: 100%;
+
+    min-height: 170px;
+
+    padding: 22px;
+
+    display: flex;
+    flex-direction: column;
+
+    justify-content: center;
+
+    background: #111111;
+
+    color: #ffffff;
+
+}
+
+.placeholder-banner span {
+
+    font-size: 8px;
+
+    font-weight: 800;
+
+    letter-spacing: 2px;
+
+}
+
+.placeholder-banner strong {
+
+    display: block;
+
+    margin-top: 9px;
+
+    font-size: 24px;
+
+    line-height: 1.08;
+
+    letter-spacing: -.6px;
+
+}
+
+.placeholder-banner small {
+
+    margin-top: 10px;
+
+    color: #bdbdbd;
+
+    font-size: 9px;
+
+}
+
+.banner-two {
+
+    background: #f1f1f1;
+
+    color: #111111;
+
+}
+
+.banner-two small {
+
+    color: #666666;
+
+}
+
+.banner-three {
+
+    background: #171717;
+
+}
+
+
+/* Batch image placeholder */
+
+.batch-placeholder {
+
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    background: #ededed;
+
+    color: #777777;
+
+    font-size: 12px;
+
+    font-weight: 900;
+
+    letter-spacing: 3px;
+
+}
+
+
+/* Free learning placeholder */
+
+.free-placeholder {
+
+    width: 100%;
+    height: 91px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    background: #eeeeee;
+
+    color: #777777;
+
+    font-size: 9px;
+
+    font-weight: 800;
+
+    letter-spacing: 1.5px;
+
+}
