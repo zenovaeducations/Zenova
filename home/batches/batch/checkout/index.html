@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="theme-color"
+        content="#ffffff"
+    >
+
+    <title>Checkout — Zenova Educations</title>
+
+    <link
+        rel="stylesheet"
+        href="checkout.css"
+    >
+
+</head>
+
+<body>
+
+
+<!-- =====================================================
+     LOADING SCREEN
+===================================================== -->
+
+<div
+    id="pageLoader"
+    class="page-loader"
+>
+
+    <div class="loader-ring">
+
+        <div class="loader-z">
+            Z
+        </div>
+
+    </div>
+
+    <div class="loader-brand">
+        ZENOVA
+    </div>
+
+    <div class="loader-subtitle">
+        EDUCATIONS
+    </div>
+
+</div>
+
+
+
+<!-- =====================================================
+     APP
+===================================================== -->
+
+<div
+    id="checkoutApp"
+    class="checkout-app hidden"
+>
+
+
+<!-- =====================================================
+     HEADER
+===================================================== -->
+
+<header class="checkout-header">
+
+    <button
+        id="backButton"
+        class="icon-button"
+        aria-label="Go back"
+    >
+
+        <svg viewBox="0 0 24 24">
+
+            <path d="M19 12H5"></path>
+
+            <path d="M12 19l-7-7 7-7"></path>
+
+        </svg>
+
+    </button>
+
+
+    <div class="header-title">
+        CHECKOUT
+    </div>
+
+
+    <div class="secure-label">
+
+        <svg viewBox="0 0 24 24">
+
+            <rect
+                x="5"
+                y="10"
+                width="14"
+                height="10"
+                rx="2"
+            ></rect>
+
+            <path
+                d="M8 10V7a4 4 0 0 1 8 0v3"
+            ></path>
+
+        </svg>
+
+        SECURE
+
+    </div>
+
+</header>
+
+
+
+<!-- =====================================================
+     MAIN
+===================================================== -->
+
+<main class="checkout-container">
+
+
+    <!-- =================================================
+         BATCH SUMMARY
+    ================================================= -->
+
+    <section class="batch-summary">
+
+        <div
+            id="batchImage"
+            class="batch-image"
+        ></div>
+
+
+        <div class="batch-summary-content">
+
+            <div
+                id="batchClass"
+                class="batch-class"
+            >
+                PROGRAM
+            </div>
+
+
+            <h1
+                id="batchTitle"
+                class="batch-title"
+            >
+                Loading...
+            </h1>
+
+
+            <p
+                id="batchSubtitle"
+                class="batch-subtitle"
+            ></p>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =================================================
+         ORDER SUMMARY
+    ================================================= -->
+
+    <section class="section">
+
+        <div class="section-heading">
+            ORDER SUMMARY
+        </div>
+
+
+        <div class="price-card">
+
+            <div class="price-row">
+
+                <span>
+                    Batch price
+                </span>
+
+                <strong
+                    id="originalPrice"
+                >
+                    ₹0
+                </strong>
+
+            </div>
+
+
+            <div
+                id="discountRow"
+                class="price-row discount-row hidden"
+            >
+
+                <span>
+                    Discount
+                </span>
+
+                <strong
+                    id="discountAmount"
+                >
+                    -₹0
+                </strong>
+
+            </div>
+
+
+            <div class="divider"></div>
+
+
+            <div class="total-row">
+
+                <span>
+                    Total
+                </span>
+
+                <strong
+                    id="finalPrice"
+                >
+                    ₹0
+                </strong>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =================================================
+         STUDENT INFORMATION
+    ================================================= -->
+
+    <section class="section">
+
+        <div class="section-heading">
+            STUDENT DETAILS
+        </div>
+
+
+        <div class="student-card">
+
+            <div class="student-row">
+
+                <div class="student-icon">
+
+                    <svg viewBox="0 0 24 24">
+
+                        <circle
+                            cx="12"
+                            cy="8"
+                            r="3.5"
+                        ></circle>
+
+                        <path
+                            d="M5 20c.7-4 3-6 7-6s6.3 2 7 6"
+                        ></path>
+
+                    </svg>
+
+                </div>
+
+
+                <div class="student-info">
+
+                    <span>
+                        NAME
+                    </span>
+
+                    <strong
+                        id="studentName"
+                    >
+                        —
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <div class="student-row">
+
+                <div class="student-icon">
+
+                    <svg viewBox="0 0 24 24">
+
+                        <rect
+                            x="3"
+                            y="5"
+                            width="18"
+                            height="14"
+                            rx="2"
+                        ></rect>
+
+                        <path
+                            d="M3 8h18"
+                        ></path>
+
+                    </svg>
+
+                </div>
+
+
+                <div class="student-info">
+
+                    <span>
+                        ACCOUNT
+                    </span>
+
+                    <strong
+                        id="studentEmail"
+                    >
+                        —
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =================================================
+         SECURE NOTICE
+    ================================================= -->
+
+    <section class="secure-notice">
+
+        <div class="notice-icon">
+
+            <svg viewBox="0 0 24 24">
+
+                <path
+                    d="M12 3l7 3v5c0 5-3 8-7 10-4-2-7-5-7-10V6z"
+                ></path>
+
+                <path
+                    d="M9 12l2 2 4-4"
+                ></path>
+
+            </svg>
+
+        </div>
+
+
+        <div>
+
+            <strong>
+                Secure checkout
+            </strong>
+
+            <p>
+                Your account and payment
+                information are handled securely.
+            </p>
+
+        </div>
+
+    </section>
+
+
+
+    <div class="bottom-space"></div>
+
+</main>
+
+
+
+<!-- =====================================================
+     BOTTOM PAYMENT BAR
+===================================================== -->
+
+<div class="payment-bar">
+
+    <div class="payment-total">
+
+        <span>
+            TOTAL
+        </span>
+
+        <strong
+            id="bottomPrice"
+        >
+            ₹0
+        </strong>
+
+    </div>
+
+
+    <button
+        id="payButton"
+        class="pay-button"
+    >
+
+        CONTINUE TO PAYMENT
+
+        <svg viewBox="0 0 24 24">
+
+            <path d="M5 12h14"></path>
+
+            <path d="M13 6l6 6-6 6"></path>
+
+        </svg>
+
+    </button>
+
+</div>
+
+
+
+<!-- =====================================================
+     ERROR
+===================================================== -->
+
+<div
+    id="errorState"
+    class="error-state hidden"
+>
+
+    <div class="error-mark">
+        !
+    </div>
+
+
+    <h2>
+        Checkout unavailable
+    </h2>
+
+
+    <p>
+        We couldn't load this batch.
+        Please return and try again.
+    </p>
+
+
+    <button
+        id="errorBackButton"
+        class="dark-button"
+    >
+        BACK TO BATCH
+    </button>
+
+</div>
+
+
+</div>
+
+
+
+<script
+    type="module"
+    src="checkout-core-X7kP.js"
+></script>
+
+</body>
+
+      </html>
