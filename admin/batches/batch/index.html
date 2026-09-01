@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0"
+    >
+
+    <meta
+        name="theme-color"
+        content="#ffffff"
+    >
+
+    <title>Zenova Educations — Batch</title>
+
+    <link
+        rel="stylesheet"
+        href="batch.css"
+    >
+
+</head>
+
+
+<body>
+
+
+<!-- =====================================================
+     LOADER
+===================================================== -->
+
+<div
+    id="pageLoader"
+    class="page-loader"
+>
+
+    <div class="loader-ring">
+
+        <div class="loader-z">
+            Z
+        </div>
+
+    </div>
+
+    <div class="loader-brand">
+        ZENOVA
+    </div>
+
+    <div class="loader-subtitle">
+        EDUCATIONS
+    </div>
+
+</div>
+
+
+
+<!-- =====================================================
+     APP
+===================================================== -->
+
+<div
+    id="batchApp"
+    class="batch-app hidden"
+>
+
+
+<!-- =====================================================
+     TOP BAR
+===================================================== -->
+
+<header class="top-header">
+
+    <button
+        id="backButton"
+        class="icon-button"
+        aria-label="Go back"
+    >
+
+        <svg viewBox="0 0 24 24">
+
+            <path d="M19 12H5"></path>
+
+            <path d="M12 19l-7-7 7-7"></path>
+
+        </svg>
+
+    </button>
+
+
+    <div class="header-brand">
+
+        <strong>
+            ZENOVA
+        </strong>
+
+        <span>
+            EDUCATIONS
+        </span>
+
+    </div>
+
+
+    <button
+        id="shareButton"
+        class="icon-button"
+        aria-label="Share batch"
+    >
+
+        <svg viewBox="0 0 24 24">
+
+            <circle
+                cx="18"
+                cy="5"
+                r="2.5"
+            ></circle>
+
+            <circle
+                cx="6"
+                cy="12"
+                r="2.5"
+            ></circle>
+
+            <circle
+                cx="18"
+                cy="19"
+                r="2.5"
+            ></circle>
+
+            <path d="M8.2 10.8l7.5-4.3"></path>
+
+            <path d="M8.2 13.2l7.5 4.3"></path>
+
+        </svg>
+
+    </button>
+
+</header>
+
+
+
+<!-- =====================================================
+     MAIN
+===================================================== -->
+
+<main class="batch-container">
+
+
+<!-- =====================================================
+     HERO IMAGE
+===================================================== -->
+
+<section class="batch-hero">
+
+    <div
+        id="batchImage"
+        class="batch-image"
+    ></div>
+
+
+    <div
+        id="batchMode"
+        class="batch-mode hidden"
+    ></div>
+
+</section>
+
+
+
+<!-- =====================================================
+     CONTENT
+===================================================== -->
+
+<section class="batch-content">
+
+
+    <!-- CATEGORY -->
+
+    <div
+        id="batchCategory"
+        class="batch-category"
+    ></div>
+
+
+    <!-- TITLE -->
+
+    <h1
+        id="batchTitle"
+        class="batch-title"
+    ></h1>
+
+
+    <!-- SUBTITLE -->
+
+    <p
+        id="batchSubtitle"
+        class="batch-subtitle"
+    ></p>
+
+
+
+    <!-- META -->
+
+    <div
+        id="batchMeta"
+        class="batch-meta"
+    ></div>
+
+
+
+    <!-- PRICE -->
+
+    <section
+        id="pricingSection"
+        class="pricing-section"
+    >
+
+        <div class="price-left">
+
+            <span
+                id="finalPrice"
+                class="final-price"
+            >
+                ₹0
+            </span>
+
+
+            <span
+                id="originalPrice"
+                class="original-price hidden"
+            >
+                ₹0
+            </span>
+
+        </div>
+
+
+        <span
+            id="discount"
+            class="discount hidden"
+        >
+            0% OFF
+        </span>
+
+    </section>
+
+
+
+    <!-- DESCRIPTION -->
+
+    <section class="information-section">
+
+        <div class="section-label">
+            ABOUT THIS BATCH
+        </div>
+
+
+        <p
+            id="batchDescription"
+            class="description"
+        ></p>
+
+    </section>
+
+
+
+    <!-- WHAT'S INCLUDED -->
+
+    <section
+        id="includedSection"
+        class="information-section hidden"
+    >
+
+        <div class="section-label">
+            WHAT'S INCLUDED
+        </div>
+
+
+        <div
+            id="includedList"
+            class="included-list"
+        ></div>
+
+    </section>
+
+
+
+    <!-- TARGET -->
+
+    <section class="information-section">
+
+        <div class="section-label">
+            PROGRAM DETAILS
+        </div>
+
+
+        <div
+            id="detailsList"
+            class="details-list"
+        ></div>
+
+    </section>
+
+
+
+    <!-- BOTTOM SPACE -->
+
+    <div class="bottom-space"></div>
+
+
+</section>
+
+</main>
+
+
+
+<!-- =====================================================
+     PURCHASE BAR
+===================================================== -->
+
+<div class="purchase-bar">
+
+    <div class="purchase-price">
+
+        <span>
+            PRICE
+        </span>
+
+        <strong
+            id="bottomPrice"
+        >
+            ₹0
+        </strong>
+
+    </div>
+
+
+    <button
+        id="purchaseButton"
+        class="purchase-button"
+    >
+        GET THIS BATCH
+    </button>
+
+</div>
+
+
+
+<!-- =====================================================
+     ERROR
+===================================================== -->
+
+<div
+    id="errorState"
+    class="error-state hidden"
+>
+
+    <div class="error-mark">
+        !
+    </div>
+
+
+    <h2>
+        Batch unavailable
+    </h2>
+
+
+    <p>
+        This program could not be found
+        or is no longer available.
+    </p>
+
+
+    <button
+        id="errorBackButton"
+        class="dark-button"
+    >
+        BACK TO BATCHES
+    </button>
+
+</div>
+
+
+
+</div>
+
+
+
+<script
+    type="module"
+    src="batch-core-Q8xN.js"
+></script>
+
+
+</body>
+</html>
