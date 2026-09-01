@@ -1,0 +1,1287 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="theme-color"
+        content="#ffffff"
+    >
+
+    <title>Zenova Admin</title>
+
+    <link
+        rel="stylesheet"
+        href="admin.css"
+    >
+
+</head>
+
+
+<body>
+
+
+<!-- =====================================================
+     ADMIN APP
+===================================================== -->
+
+<div class="admin-app">
+
+
+    <!-- =================================================
+         SIDEBAR
+    ================================================== -->
+
+    <aside
+        id="sidebar"
+        class="sidebar"
+    >
+
+
+        <div class="admin-brand">
+
+            <div class="admin-brand-name">
+                ZENOVA
+            </div>
+
+            <div class="admin-brand-sub">
+                ADMIN
+            </div>
+
+        </div>
+
+
+
+        <nav class="admin-navigation">
+
+
+            <button
+                class="nav-item active"
+                data-page="dashboard"
+            >
+
+                <span class="nav-icon">
+
+                    <svg viewBox="0 0 24 24">
+
+                        <rect
+                            x="3"
+                            y="3"
+                            width="7"
+                            height="7"
+                        ></rect>
+
+                        <rect
+                            x="14"
+                            y="3"
+                            width="7"
+                            height="7"
+                        ></rect>
+
+                        <rect
+                            x="3"
+                            y="14"
+                            width="7"
+                            height="7"
+                        ></rect>
+
+                        <rect
+                            x="14"
+                            y="14"
+                            width="7"
+                            height="7"
+                        ></rect>
+
+                    </svg>
+
+                </span>
+
+                Dashboard
+
+            </button>
+
+
+
+            <div class="nav-heading">
+                HOME
+            </div>
+
+
+            <button
+                class="nav-item"
+                data-page="home"
+            >
+
+                <span class="nav-icon">
+
+                    <svg viewBox="0 0 24 24">
+
+                        <path
+                            d="M3 11.5L12 4l9 7.5"
+                        ></path>
+
+                        <path
+                            d="M5 10v10h14V10"
+                        ></path>
+
+                    </svg>
+
+                </span>
+
+                Home Management
+
+            </button>
+
+
+
+            <button
+                class="nav-item"
+                data-page="banners"
+            >
+
+                <span class="nav-icon">
+
+                    <svg viewBox="0 0 24 24">
+
+                        <rect
+                            x="3"
+                            y="5"
+                            width="18"
+                            height="14"
+                            rx="2"
+                        ></rect>
+
+                        <circle
+                            cx="8"
+                            cy="10"
+                            r="1.5"
+                        ></circle>
+
+                        <path
+                            d="M4 17l5-5 3 3 3-3 5 5"
+                        ></path>
+
+                    </svg>
+
+                </span>
+
+                Home Banners
+
+            </button>
+
+
+
+            <button
+                class="nav-item"
+                data-page="announcements"
+            >
+
+                <span class="nav-icon">
+
+                    <svg viewBox="0 0 24 24">
+
+                        <path
+                            d="M4 12h3l9-5v10l-9-5H4z"
+                        ></path>
+
+                        <path
+                            d="M7 15l1.5 4h3L10 15"
+                        ></path>
+
+                    </svg>
+
+                </span>
+
+                Announcements
+
+                <span class="coming-label">
+                    Soon
+                </span>
+
+            </button>
+
+
+
+            <button
+                class="nav-item"
+                data-page="recommendations"
+            >
+
+                <span class="nav-icon">
+
+                    <svg viewBox="0 0 24 24">
+
+                        <path
+                            d="M12 3l2.8 5.7L21 9.6l-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9z"
+                        ></path>
+
+                    </svg>
+
+                </span>
+
+                Recommended Batches
+
+                <span class="coming-label">
+                    Soon
+                </span>
+
+            </button>
+
+
+
+            <div class="nav-heading">
+                PLATFORM
+            </div>
+
+
+            <button
+                class="nav-item"
+                data-page="students"
+            >
+                Students
+
+                <span class="coming-label">
+                    Soon
+                </span>
+
+            </button>
+
+
+            <button
+                class="nav-item"
+                data-page="batches"
+            >
+                Batches
+
+                <span class="coming-label">
+                    Soon
+                </span>
+
+            </button>
+
+
+            <button
+                class="nav-item"
+                data-page="live"
+            >
+                Live Classes
+
+                <span class="coming-label">
+                    Soon
+                </span>
+
+            </button>
+
+
+            <button
+                class="nav-item"
+                data-page="tests"
+            >
+                Tests
+
+                <span class="coming-label">
+                    Soon
+                </span>
+
+            </button>
+
+
+            <button
+                class="nav-item"
+                data-page="content"
+            >
+                Study Content
+
+                <span class="coming-label">
+                    Soon
+                </span>
+
+            </button>
+
+
+            <button
+                class="nav-item"
+                data-page="payments"
+            >
+                Payments
+
+                <span class="coming-label">
+                    Soon
+                </span>
+
+            </button>
+
+
+            <button
+                class="nav-item"
+                data-page="notifications"
+            >
+                Notifications
+
+                <span class="coming-label">
+                    Soon
+                </span>
+
+            </button>
+
+
+            <button
+                class="nav-item"
+                data-page="settings"
+            >
+                Settings
+
+                <span class="coming-label">
+                    Soon
+                </span>
+
+            </button>
+
+
+        </nav>
+
+
+        <div class="sidebar-footer">
+
+            <span>
+                Zenova Admin
+            </span>
+
+            <small>
+                Testing Mode
+            </small>
+
+        </div>
+
+
+    </aside>
+
+
+
+    <!-- =================================================
+         MAIN AREA
+    ================================================== -->
+
+    <section class="admin-main">
+
+
+        <!-- HEADER -->
+
+        <header class="admin-header">
+
+
+            <button
+                id="mobileMenuButton"
+                class="mobile-menu-button"
+            >
+
+                <svg viewBox="0 0 24 24">
+
+                    <path d="M4 7h16"></path>
+                    <path d="M4 12h16"></path>
+                    <path d="M4 17h16"></path>
+
+                </svg>
+
+            </button>
+
+
+            <div>
+
+                <p class="header-label">
+                    ZENOVA ADMIN
+                </p>
+
+                <h1 id="pageTitle">
+                    Dashboard
+                </h1>
+
+            </div>
+
+
+            <div class="admin-status">
+
+                <span class="status-dot"></span>
+
+                Firebase Connected
+
+            </div>
+
+
+        </header>
+
+
+
+        <!-- CONTENT -->
+
+        <main
+            id="adminContent"
+            class="admin-content"
+        >
+
+
+            <!-- =================================================
+                 DASHBOARD
+            ================================================== -->
+
+            <section
+                id="dashboardPage"
+                class="admin-page active"
+            >
+
+
+                <div class="welcome-panel">
+
+                    <p>
+                        ADMIN CONTROL CENTER
+                    </p>
+
+                    <h2>
+                        Welcome to Zenova.
+                    </h2>
+
+                    <span>
+                        Manage the student platform
+                        from one central place.
+                    </span>
+
+                </div>
+
+
+
+                <div class="dashboard-grid">
+
+
+                    <button
+                        class="dashboard-card"
+                        data-page="banners"
+                    >
+
+                        <div class="dashboard-card-icon">
+
+                            <svg viewBox="0 0 24 24">
+
+                                <rect
+                                    x="3"
+                                    y="5"
+                                    width="18"
+                                    height="14"
+                                    rx="2"
+                                ></rect>
+
+                                <circle
+                                    cx="8"
+                                    cy="10"
+                                    r="1.5"
+                                ></circle>
+
+                                <path
+                                    d="M4 17l5-5 3 3 3-3 5 5"
+                                ></path>
+
+                            </svg>
+
+                        </div>
+
+
+                        <div>
+
+                            <strong>
+                                Home Banners
+                            </strong>
+
+                            <span>
+                                Manage homepage carousel
+                            </span>
+
+                        </div>
+
+
+                        <b>
+                            →
+                        </b>
+
+                    </button>
+
+
+
+                    <button
+                        class="dashboard-card"
+                        data-page="announcements"
+                    >
+
+                        <div class="dashboard-card-icon">
+
+                            <svg viewBox="0 0 24 24">
+
+                                <path
+                                    d="M4 12h3l9-5v10l-9-5H4z"
+                                ></path>
+
+                            </svg>
+
+                        </div>
+
+
+                        <div>
+
+                            <strong>
+                                Announcements
+                            </strong>
+
+                            <span>
+                                Student updates
+                            </span>
+
+                        </div>
+
+
+                        <b>
+                            →
+                        </b>
+
+                    </button>
+
+
+
+                    <button
+                        class="dashboard-card"
+                        data-page="batches"
+                    >
+
+                        <div class="dashboard-card-icon">
+
+                            <svg viewBox="0 0 24 24">
+
+                                <path
+                                    d="M3 8l9-5 9 5-9 5z"
+                                ></path>
+
+                                <path
+                                    d="M6 10v7c3 2 9 2 12 0v-7"
+                                ></path>
+
+                            </svg>
+
+                        </div>
+
+
+                        <div>
+
+                            <strong>
+                                Batches
+                            </strong>
+
+                            <span>
+                                Programs and courses
+                            </span>
+
+                        </div>
+
+
+                        <b>
+                            →
+                        </b>
+
+                    </button>
+
+
+
+                    <button
+                        class="dashboard-card"
+                        data-page="students"
+                    >
+
+                        <div class="dashboard-card-icon">
+
+                            <svg viewBox="0 0 24 24">
+
+                                <circle
+                                    cx="12"
+                                    cy="8"
+                                    r="3"
+                                ></circle>
+
+                                <path
+                                    d="M5 20c1-4 3-6 7-6s6 2 7 6"
+                                ></path>
+
+                            </svg>
+
+                        </div>
+
+
+                        <div>
+
+                            <strong>
+                                Students
+                            </strong>
+
+                            <span>
+                                Student management
+                            </span>
+
+                        </div>
+
+
+                        <b>
+                            →
+                        </b>
+
+                    </button>
+
+
+                </div>
+
+
+            </section>
+
+
+
+            <!-- =================================================
+                 HOME MANAGEMENT
+            ================================================== -->
+
+            <section
+                id="homePage"
+                class="admin-page"
+            >
+
+                <div class="page-introduction">
+
+                    <p>
+                        HOME MANAGEMENT
+                    </p>
+
+                    <h2>
+                        Control the student Home.
+                    </h2>
+
+                    <span>
+                        Every section will eventually
+                        be controlled from here.
+                    </span>
+
+                </div>
+
+
+                <div class="management-grid">
+
+
+                    <button
+                        class="management-card"
+                        data-page="banners"
+                    >
+
+                        <strong>
+                            Home Banners
+                        </strong>
+
+                        <span>
+                            Homepage carousel images
+                        </span>
+
+                        <b>
+                            Manage →
+                        </b>
+
+                    </button>
+
+
+
+                    <button
+                        class="management-card"
+                        data-page="announcements"
+                    >
+
+                        <strong>
+                            Announcements
+                        </strong>
+
+                        <span>
+                            Publish updates
+                        </span>
+
+                        <b>
+                            Coming soon
+                        </b>
+
+                    </button>
+
+
+
+                    <button
+                        class="management-card"
+                        data-page="recommendations"
+                    >
+
+                        <strong>
+                            Recommended Batches
+                        </strong>
+
+                        <span>
+                            Control recommendations
+                        </span>
+
+                        <b>
+                            Coming soon
+                        </b>
+
+                    </button>
+
+
+                </div>
+
+            </section>
+
+
+
+            <!-- =================================================
+                 BANNER MANAGEMENT
+            ================================================== -->
+
+            <section
+                id="bannersPage"
+                class="admin-page"
+            >
+
+
+                <div class="page-toolbar">
+
+
+                    <div>
+
+                        <p>
+                            HOME MANAGEMENT
+                        </p>
+
+                        <h2>
+                            Home Banners
+                        </h2>
+
+                        <span>
+                            Manage the real banners
+                            shown on the student Home.
+                        </span>
+
+                    </div>
+
+
+                    <button
+                        id="addBannerButton"
+                        class="primary-button"
+                    >
+                        + Add Banner
+                    </button>
+
+
+                </div>
+
+
+
+                <!-- BANNER LIST -->
+
+                <div
+                    id="bannerList"
+                    class="banner-admin-list"
+                >
+
+                    <div class="loading-state">
+
+                        <div class="small-spinner"></div>
+
+                        <span>
+                            Loading banners...
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+            </section>
+
+
+
+            <!-- =================================================
+                 COMING SOON PAGES
+            ================================================== -->
+
+            <section
+                id="announcementsPage"
+                class="admin-page"
+            >
+
+                <div class="empty-admin-page">
+
+                    <p>
+                        HOME MANAGEMENT
+                    </p>
+
+                    <h2>
+                        Announcements
+                    </h2>
+
+                    <span>
+                        This module will be connected
+                        to Firebase when we build
+                        Announcement Management.
+                    </span>
+
+                </div>
+
+            </section>
+
+
+
+            <section
+                id="recommendationsPage"
+                class="admin-page"
+            >
+
+                <div class="empty-admin-page">
+
+                    <p>
+                        HOME MANAGEMENT
+                    </p>
+
+                    <h2>
+                        Recommended Batches
+                    </h2>
+
+                    <span>
+                        This module will be connected
+                        when Batch Management is built.
+                    </span>
+
+                </div>
+
+            </section>
+
+
+
+            <section
+                id="studentsPage"
+                class="admin-page"
+            >
+
+                <div class="empty-admin-page">
+
+                    <p>
+                        PLATFORM
+                    </p>
+
+                    <h2>
+                        Students
+                    </h2>
+
+                    <span>
+                        Student Management will be
+                        added here.
+                    </span>
+
+                </div>
+
+            </section>
+
+
+
+            <section
+                id="batchesPage"
+                class="admin-page"
+            >
+
+                <div class="empty-admin-page">
+
+                    <p>
+                        PLATFORM
+                    </p>
+
+                    <h2>
+                        Batches
+                    </h2>
+
+                    <span>
+                        Batch Management will be
+                        added here.
+                    </span>
+
+                </div>
+
+            </section>
+
+
+        </main>
+
+
+    </section>
+
+
+</div>
+
+
+
+<!-- =====================================================
+     ADD / EDIT BANNER MODAL
+===================================================== -->
+
+<div
+    id="bannerModal"
+    class="modal hidden"
+>
+
+
+    <div class="modal-backdrop"></div>
+
+
+    <div class="modal-box">
+
+
+        <div class="modal-header">
+
+            <div>
+
+                <p>
+                    HOME MANAGEMENT
+                </p>
+
+                <h2 id="modalTitle">
+                    Add Banner
+                </h2>
+
+            </div>
+
+
+            <button
+                id="closeBannerModal"
+                class="modal-close"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+
+        <form
+            id="bannerForm"
+            class="banner-form"
+        >
+
+
+            <!-- IMAGE -->
+
+            <div class="form-group">
+
+                <label>
+                    Banner Image
+                </label>
+
+
+                <label
+                    for="bannerImage"
+                    id="imageUploadArea"
+                    class="image-upload-area"
+                >
+
+                    <div
+                        id="imagePreview"
+                        class="image-preview"
+                    >
+
+                        <svg viewBox="0 0 24 24">
+
+                            <rect
+                                x="3"
+                                y="5"
+                                width="18"
+                                height="14"
+                                rx="2"
+                            ></rect>
+
+                            <circle
+                                cx="8"
+                                cy="10"
+                                r="1.5"
+                            ></circle>
+
+                            <path
+                                d="M4 17l5-5 3 3 3-3 5 5"
+                            ></path>
+
+                        </svg>
+
+
+                        <strong>
+                            Upload Banner
+                        </strong>
+
+
+                        <span>
+                            Recommended ratio 2.35 : 1
+                        </span>
+
+                    </div>
+
+
+                    <input
+                        id="bannerImage"
+                        type="file"
+                        accept="image/jpeg,image/png,image/webp"
+                        hidden
+                    >
+
+                </label>
+
+            </div>
+
+
+
+            <!-- TITLE -->
+
+            <div class="form-group">
+
+                <label
+                    for="bannerTitle"
+                >
+                    Title
+                </label>
+
+                <input
+                    id="bannerTitle"
+                    type="text"
+                    placeholder="Optional"
+                    maxlength="120"
+                >
+
+            </div>
+
+
+
+            <!-- DESCRIPTION -->
+
+            <div class="form-group">
+
+                <label
+                    for="bannerDescription"
+                >
+                    Description
+                </label>
+
+                <textarea
+                    id="bannerDescription"
+                    rows="3"
+                    maxlength="250"
+                    placeholder="Optional"
+                ></textarea>
+
+            </div>
+
+
+
+            <!-- BUTTON -->
+
+            <div class="form-row">
+
+
+                <div class="form-group">
+
+                    <label
+                        for="bannerButtonText"
+                    >
+                        Button Text
+                    </label>
+
+                    <input
+                        id="bannerButtonText"
+                        type="text"
+                        placeholder="Optional"
+                        maxlength="40"
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label
+                        for="bannerLink"
+                    >
+                        Destination
+                    </label>
+
+                    <input
+                        id="bannerLink"
+                        type="text"
+                        placeholder="Optional"
+                    >
+
+                </div>
+
+
+            </div>
+
+
+
+            <!-- ORDER / STATUS -->
+
+            <div class="form-row">
+
+
+                <div class="form-group">
+
+                    <label
+                        for="bannerOrder"
+                    >
+                        Display Order
+                    </label>
+
+                    <input
+                        id="bannerOrder"
+                        type="number"
+                        min="1"
+                        value="1"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        Status
+                    </label>
+
+
+                    <label class="switch-row">
+
+                        <input
+                            id="bannerActive"
+                            type="checkbox"
+                            checked
+                        >
+
+                        <span class="switch"></span>
+
+                        <span>
+                            Active
+                        </span>
+
+                    </label>
+
+                </div>
+
+
+            </div>
+
+
+
+            <!-- ACTIONS -->
+
+            <div class="modal-actions">
+
+                <button
+                    type="button"
+                    id="cancelBannerButton"
+                    class="secondary-button"
+                >
+                    Cancel
+                </button>
+
+
+                <button
+                    type="submit"
+                    id="saveBannerButton"
+                    class="primary-button"
+                >
+                    Save Banner
+                </button>
+
+            </div>
+
+
+        </form>
+
+
+    </div>
+
+</div>
+
+
+
+<!-- =====================================================
+     CONFIRM MODAL
+===================================================== -->
+
+<div
+    id="confirmModal"
+    class="modal hidden"
+>
+
+    <div class="modal-backdrop"></div>
+
+
+    <div class="confirm-box">
+
+        <h2>
+            Delete banner?
+        </h2>
+
+        <p>
+            This will permanently remove the
+            banner from Firebase.
+        </p>
+
+
+        <div class="modal-actions">
+
+            <button
+                id="cancelDelete"
+                class="secondary-button"
+            >
+                Cancel
+            </button>
+
+
+            <button
+                id="confirmDelete"
+                class="danger-button"
+            >
+                Delete
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- =====================================================
+     TOAST
+===================================================== -->
+
+<div
+    id="toast"
+    class="toast"
+></div>
+
+
+
+<script
+    type="module"
+    src="admin-core-X92m.js"
+></script>
+
+
+</body>
+</html>
