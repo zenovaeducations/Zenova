@@ -2149,49 +2149,49 @@ function navigate(
             "../home/",
 
         quick:
-            "../quick/",
+            "../home/quick/",
 
         batches:
-            "../batches/",
+            "../home/batches/",
 
         live:
-            "../live/",
+            "../home/live/",
 
         tests:
-            "../tests/",
+            "../home/tests/",
 
         results:
-            "../results/",
+            "../home/results/",
 
         announcements:
-            "../announcements/",
+            "../home/announcements/",
 
         study:
-            "../study/",
+            "../home/study/",
 
         profile:
-            "../profile/",
+            "../home/profile/",
 
         timetable:
-            "../timetable/",
+            "../home/timetable/",
 
         free:
-            "../free/",
+            "../home/free/",
 
         library:
-            "../library/",
+            "../home/library/",
 
         ai:
-            "../ai/",
+            "../home/ai/",
 
         doubts:
-            "../doubts/",
+            "../home/doubts/",
 
         support:
-            "../support/",
+            "../home/support/",
 
         notifications:
-            "../notifications/"
+            "../home/notifications/"
 
     };
 
