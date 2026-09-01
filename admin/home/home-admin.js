@@ -1,3 +1,24 @@
+/* ============================================================
+   ZENOVA ADMIN
+   STUDENT HOME → BANNER MANAGEMENT
+
+   FLOW:
+
+   Computer
+       ↓
+   Firebase Storage
+       ↓
+   downloadURL
+       ↓
+   Firestore
+       ↓
+   Student Home
+
+   Firestore stores the URL.
+   The actual image is stored in Firebase Storage.
+============================================================ */
+
+
 import {
     db,
     storage
@@ -20,7 +41,8 @@ import {
 import {
     ref,
     uploadBytes,
-    getDownloadURL
+    getDownloadURL,
+    deleteObject
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-storage.js";
 
 
@@ -29,56 +51,41 @@ import {
    ELEMENTS
 ============================================================ */
 
-const sidebar =
-    document.getElementById("sidebar");
-
-
-const mobileMenu =
-    document.getElementById("mobileMenu");
-
-
 const loading =
     document.getElementById("loading");
-
 
 const bannerList =
     document.getElementById("bannerList");
 
-
 const empty =
     document.getElementById("empty");
-
 
 const modal =
     document.getElementById("modal");
 
-
 const form =
     document.getElementById("bannerForm");
-
 
 const imageInput =
     document.getElementById("bannerImage");
 
-
 const preview =
     document.getElementById("preview");
-
 
 const uploadMessage =
     document.getElementById("uploadMessage");
 
-
 const saveButton =
     document.getElementById("saveBanner");
-
 
 const firebaseDot =
     document.getElementById("firebaseDot");
 
-
 const firebaseStatus =
     document.getElementById("firebaseStatus");
+
+const sidebar =
+    document.getElementById("sidebar");
 
 
 
@@ -86,30 +93,28 @@ const firebaseStatus =
    MOBILE MENU
 ============================================================ */
 
-mobileMenu.addEventListener(
-    "click",
-    () => {
+document
+    .getElementById("mobileMenu")
+    .addEventListener(
+        "click",
+        () => {
 
-        sidebar.classList.toggle(
-            "open"
-        );
+            sidebar.classList.toggle(
+                "open"
+            );
 
-    }
-);
+        }
+    );
 
 
 
 /* ============================================================
-   LOAD
+   LOAD BANNERS
 ============================================================ */
 
 loadBanners();
 
 
-
-/* ============================================================
-   LOAD BANNERS FROM FIRESTORE
-============================================================ */
 
 async function loadBanners() {
 
@@ -118,12 +123,16 @@ async function loadBanners() {
 
     try {
 
-        const bannerQuery =
+        const bannersRef =
+            collection(
+                db,
+                "homeBanners"
+            );
+
+
+        const bannersQuery =
             query(
-                collection(
-                    db,
-                    "homeBanners"
-                ),
+                bannersRef,
                 orderBy(
                     "order",
                     "asc"
@@ -133,29 +142,24 @@ async function loadBanners() {
 
         const snapshot =
             await getDocs(
-                bannerQuery
+                bannersQuery
             );
 
 
         const banners =
             snapshot.docs.map(
-                item => ({
+                document => ({
 
-                    id: item.id,
+                    id:
+                        document.id,
 
-                    ...item.data()
+                    ...document.data()
 
                 })
             );
 
 
-        firebaseDot.classList.add(
-            "connected"
-        );
-
-
-        firebaseStatus.textContent =
-            "CONNECTED";
+        firebaseConnected();
 
 
         renderBanners(
@@ -166,13 +170,12 @@ async function loadBanners() {
     } catch (error) {
 
         console.error(
-            "Firebase:",
+            "LOAD BANNERS ERROR:",
             error
         );
 
 
-        firebaseStatus.textContent =
-            "ERROR";
+        firebaseError();
 
 
         hideLoading();
@@ -191,13 +194,15 @@ async function loadBanners() {
         empty.querySelector(
             "h3"
         ).textContent =
-            "Unable to load banners";
+            "Unable to load Home";
 
 
         empty.querySelector(
             "p"
         ).textContent =
-            "Check your Firebase configuration and Firestore permissions.";
+            getFirebaseErrorMessage(
+                error
+            );
 
     }
 
@@ -228,9 +233,23 @@ function renderBanners(
             "hidden"
         );
 
+
         empty.classList.remove(
             "hidden"
         );
+
+
+        empty.querySelector(
+            "h3"
+        ).textContent =
+            "No Home banners";
+
+
+        empty.querySelector(
+            "p"
+        ).textContent =
+            "There are currently no banners configured for Student Home.";
+
 
         return;
 
@@ -265,8 +284,8 @@ function renderBanners(
                 <div class="banner-image">
 
                     <img
-                        src="${safeAttr(
-                            banner.imageUrl
+                        src="${safeAttribute(
+                            banner.imageUrl || ""
                         )}"
                         alt=""
                     >
@@ -282,11 +301,13 @@ function renderBanners(
                         )}
                     </span>
 
+
                     <h3>
                         ${safeHtml(
-                            banner.title
+                            banner.title || ""
                         )}
                     </h3>
+
 
                     ${
                         banner.description
@@ -299,6 +320,7 @@ function renderBanners(
                             `
                             : ""
                     }
+
 
                     <div
                         class="banner-status ${
@@ -322,7 +344,7 @@ function renderBanners(
                 <div class="banner-actions">
 
                     <button
-                        class="small-button toggle"
+                        class="small-button toggle-button"
                         data-id="${banner.id}"
                     >
 
@@ -336,7 +358,7 @@ function renderBanners(
 
 
                     <button
-                        class="small-button delete"
+                        class="small-button delete-button"
                         data-id="${banner.id}"
                     >
                         Delete
@@ -355,7 +377,7 @@ function renderBanners(
     );
 
 
-    attachActions(
+    attachBannerActions(
         banners
     );
 
@@ -364,16 +386,17 @@ function renderBanners(
 
 
 /* ============================================================
-   ACTIONS
+   BANNER ACTIONS
 ============================================================ */
 
-function attachActions(
+function attachBannerActions(
     banners
 ) {
 
+
     document
         .querySelectorAll(
-            ".toggle"
+            ".toggle-button"
         )
         .forEach(
             button => {
@@ -393,6 +416,10 @@ function attachActions(
                         if (!banner) {
                             return;
                         }
+
+
+                        button.disabled =
+                            true;
 
 
                         try {
@@ -424,12 +451,18 @@ function attachActions(
                         } catch (error) {
 
                             console.error(
+                                "STATUS ERROR:",
                                 error
                             );
 
+
                             alert(
-                                "Unable to update banner."
+                                "Unable to change banner status."
                             );
+
+
+                            button.disabled =
+                                false;
 
                         }
 
@@ -443,7 +476,7 @@ function attachActions(
 
     document
         .querySelectorAll(
-            ".delete"
+            ".delete-button"
         )
         .forEach(
             button => {
@@ -452,9 +485,22 @@ function attachActions(
                     "click",
                     async () => {
 
+                        const banner =
+                            banners.find(
+                                item =>
+                                    item.id ===
+                                    button.dataset.id
+                            );
+
+
+                        if (!banner) {
+                            return;
+                        }
+
+
                         const confirmed =
                             confirm(
-                                "Delete this banner?"
+                                "Delete this banner permanently?"
                             );
 
 
@@ -463,17 +509,61 @@ function attachActions(
                         }
 
 
+                        button.disabled =
+                            true;
+
+
                         try {
+
+                            /*
+                             * Delete Firestore document.
+                             */
 
                             await deleteDoc(
 
                                 doc(
                                     db,
                                     "homeBanners",
-                                    button.dataset.id
+                                    banner.id
                                 )
 
                             );
+
+
+                            /*
+                             * Delete actual Storage file.
+                             */
+
+                            if (
+                                banner.storagePath
+                            ) {
+
+                                try {
+
+                                    const storageReference =
+                                        ref(
+                                            storage,
+                                            banner.storagePath
+                                        );
+
+
+                                    await deleteObject(
+                                        storageReference
+                                    );
+
+
+                                } catch (
+                                    storageError
+                                ) {
+
+                                    console.warn(
+                                        "Storage deletion failed:",
+                                        storageError
+                                    );
+
+                                }
+
+                            }
 
 
                             await loadBanners();
@@ -482,12 +572,18 @@ function attachActions(
                         } catch (error) {
 
                             console.error(
+                                "DELETE ERROR:",
                                 error
                             );
+
 
                             alert(
                                 "Unable to delete banner."
                             );
+
+
+                            button.disabled =
+                                false;
 
                         }
 
@@ -502,10 +598,10 @@ function attachActions(
 
 
 /* ============================================================
-   ADD BANNER
+   OPEN ADD BANNER
 ============================================================ */
 
-function openModal() {
+function openAddBanner() {
 
     form.reset();
 
@@ -530,6 +626,12 @@ function openModal() {
         true;
 
 
+    document.getElementById(
+        "bannerOrder"
+    ).value =
+        "1";
+
+
     modal.classList.remove(
         "hidden"
     );
@@ -537,23 +639,20 @@ function openModal() {
 }
 
 
+
 document
-    .getElementById(
-        "addBanner"
-    )
+    .getElementById("addBanner")
     .addEventListener(
         "click",
-        openModal
+        openAddBanner
     );
 
 
 document
-    .getElementById(
-        "emptyAdd"
-    )
+    .getElementById("emptyAdd")
     .addEventListener(
         "click",
-        openModal
+        openAddBanner
     );
 
 
@@ -575,23 +674,40 @@ imageInput.addEventListener(
         }
 
 
+        /*
+         * File type.
+         */
+
+        const allowedTypes = [
+            "image/jpeg",
+            "image/png",
+            "image/webp"
+        ];
+
+
         if (
-            !file.type.startsWith(
-                "image/"
+            !allowedTypes.includes(
+                file.type
             )
         ) {
 
             alert(
-                "Please select an image."
+                "Please select JPG, PNG or WebP."
             );
+
 
             imageInput.value =
                 "";
+
 
             return;
 
         }
 
+
+        /*
+         * Maximum 10 MB.
+         */
 
         if (
             file.size >
@@ -602,8 +718,10 @@ imageInput.addEventListener(
                 "Image must be smaller than 10 MB."
             );
 
+
             imageInput.value =
                 "";
+
 
             return;
 
@@ -643,7 +761,84 @@ imageInput.addEventListener(
 
 
 /* ============================================================
-   SAVE
+   UPLOAD IMAGE
+============================================================ */
+
+async function uploadBannerImage(
+    file
+) {
+
+    /*
+     * Unique filename.
+     */
+
+    const extension =
+        file.name
+            .split(".")
+            .pop()
+            .toLowerCase();
+
+
+    const fileName =
+        `${Date.now()}-${crypto.randomUUID()}.${extension}`;
+
+
+    /*
+     * Storage path.
+     */
+
+    const storagePath =
+        `homeBanners/${fileName}`;
+
+
+    const storageReference =
+        ref(
+            storage,
+            storagePath
+        );
+
+
+    /*
+     * Upload actual file.
+     */
+
+    await uploadBytes(
+        storageReference,
+        file,
+        {
+            contentType:
+                file.type,
+
+            cacheControl:
+                "public,max-age=31536000"
+        }
+    );
+
+
+    /*
+     * Get public download URL.
+     */
+
+    const imageUrl =
+        await getDownloadURL(
+            storageReference
+        );
+
+
+    return {
+
+        imageUrl,
+
+        storagePath
+
+    };
+
+}
+
+
+
+/* ============================================================
+   SAVE BANNER
 ============================================================ */
 
 form.addEventListener(
@@ -689,6 +884,11 @@ form.addEventListener(
             ).checked;
 
 
+
+        /* --------------------------------------------
+           VALIDATION
+        --------------------------------------------- */
+
         if (!file) {
 
             alert(
@@ -703,13 +903,32 @@ form.addEventListener(
         if (!title) {
 
             alert(
-                "Please enter a title."
+                "Please enter a banner title."
             );
 
             return;
 
         }
 
+
+        if (
+            !Number.isInteger(order) ||
+            order < 1
+        ) {
+
+            alert(
+                "Display order must be 1 or higher."
+            );
+
+            return;
+
+        }
+
+
+
+        /* --------------------------------------------
+           BUTTON
+        --------------------------------------------- */
 
         saveButton.disabled =
             true;
@@ -719,47 +938,16 @@ form.addEventListener(
             "Uploading...";
 
 
+
         try {
 
             /*
-             * Create unique storage name.
+             * Upload image.
              */
 
-            const extension =
-                file.name
-                    .split(".")
-                    .pop()
-                    .toLowerCase();
-
-
-            const fileName =
-                `${Date.now()}-${crypto.randomUUID()}.${extension}`;
-
-
-            /*
-             * Firebase Storage
-             */
-
-            const storageReference =
-                ref(
-                    storage,
-                    `homeBanners/${fileName}`
-                );
-
-
-            await uploadBytes(
-                storageReference,
-                file
-            );
-
-
-            /*
-             * Get download URL.
-             */
-
-            const imageUrl =
-                await getDownloadURL(
-                    storageReference
+            const uploaded =
+                await uploadBannerImage(
+                    file
                 );
 
 
@@ -768,8 +956,12 @@ form.addEventListener(
 
 
             /*
-             * Firestore stores the URL,
-             * NOT the image.
+             * Firestore stores:
+             *
+             * imageUrl → URL
+             * storagePath → location of file
+             *
+             * It does NOT store the image itself.
              */
 
             await addDoc(
@@ -785,7 +977,11 @@ form.addEventListener(
 
                     description,
 
-                    imageUrl,
+                    imageUrl:
+                        uploaded.imageUrl,
+
+                    storagePath:
+                        uploaded.storagePath,
 
                     link,
 
@@ -804,6 +1000,10 @@ form.addEventListener(
             );
 
 
+            /*
+             * Success.
+             */
+
             closeModal();
 
 
@@ -813,14 +1013,15 @@ form.addEventListener(
         } catch (error) {
 
             console.error(
-                "SAVE BANNER ERROR:",
+                "BANNER SAVE ERROR:",
                 error
             );
 
 
             alert(
-                error.message ||
-                "Unable to save banner."
+                getFirebaseErrorMessage(
+                    error
+                )
             );
 
         } finally {
@@ -869,10 +1070,9 @@ function closeModal() {
 }
 
 
+
 document
-    .getElementById(
-        "closeModal"
-    )
+    .getElementById("closeModal")
     .addEventListener(
         "click",
         closeModal
@@ -880,9 +1080,7 @@ document
 
 
 document
-    .getElementById(
-        "cancelModal"
-    )
+    .getElementById("cancelModal")
     .addEventListener(
         "click",
         closeModal
@@ -916,9 +1114,11 @@ function showLoading() {
         "hidden"
     );
 
+
     bannerList.classList.add(
         "hidden"
     );
+
 
     empty.classList.add(
         "hidden"
@@ -927,10 +1127,120 @@ function showLoading() {
 }
 
 
+
 function hideLoading() {
 
     loading.classList.add(
         "hidden"
+    );
+
+}
+
+
+
+/* ============================================================
+   FIREBASE STATUS
+============================================================ */
+
+function firebaseConnected() {
+
+    firebaseDot.classList.add(
+        "connected"
+    );
+
+
+    firebaseStatus.textContent =
+        "CONNECTED";
+
+}
+
+
+
+function firebaseError() {
+
+    firebaseDot.classList.remove(
+        "connected"
+    );
+
+
+    firebaseStatus.textContent =
+        "ERROR";
+
+}
+
+
+
+/* ============================================================
+   ERROR MESSAGE
+============================================================ */
+
+function getFirebaseErrorMessage(
+    error
+) {
+
+    const code =
+        error?.code || "";
+
+
+    if (
+        code.includes(
+            "storage/unauthorized"
+        )
+    ) {
+
+        return (
+            "Firebase Storage permission denied. " +
+            "Check your Storage Rules."
+        );
+
+    }
+
+
+    if (
+        code.includes(
+            "storage/cors"
+        )
+    ) {
+
+        return (
+            "Firebase Storage CORS is blocking the upload. " +
+            "The Storage bucket configuration needs to be fixed."
+        );
+
+    }
+
+
+    if (
+        code.includes(
+            "permission-denied"
+        )
+    ) {
+
+        return (
+            "Firestore permission denied. " +
+            "Check your Firestore Rules."
+        );
+
+    }
+
+
+    if (
+        code.includes(
+            "storage/unknown"
+        )
+    ) {
+
+        return (
+            "Firebase Storage rejected the upload. " +
+            "Check the Storage bucket and configuration."
+        );
+
+    }
+
+
+    return (
+        error?.message ||
+        "Something went wrong while saving the banner."
     );
 
 }
@@ -948,16 +1258,31 @@ function safeHtml(
     return String(
         value ?? ""
     )
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
+        .replaceAll(
+            "&",
+            "&amp;"
+        )
+        .replaceAll(
+            "<",
+            "&lt;"
+        )
+        .replaceAll(
+            ">",
+            "&gt;"
+        )
+        .replaceAll(
+            '"',
+            "&quot;"
+        )
+        .replaceAll(
+            "'",
+            "&#039;"
+        );
 
 }
 
 
-function safeAttr(
+function safeAttribute(
     value
 ) {
 
