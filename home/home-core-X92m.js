@@ -2152,7 +2152,7 @@ function navigate(
             "../home/quick/",
 
         batches:
-            "../home/batch/",
+            "../home/batches/",
 
         live:
             "../home/live/",
