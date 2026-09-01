@@ -1,13 +1,6 @@
 import {
-    auth,
     db
 } from "../../firebase/firebase-config.js";
-
-
-import {
-    onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
-
 
 import {
     collection,
@@ -22,12 +15,9 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
 
-
 /* ============================================================
    STATE
 ============================================================ */
-
-let currentUser = null;
 
 let batches = [];
 
@@ -39,6 +29,7 @@ let activeFilter = "all";
 
 let searchTerm = "";
 
+let toastTimer;
 
 
 /* ============================================================
@@ -46,216 +37,95 @@ let searchTerm = "";
 ============================================================ */
 
 const loader =
-    document.getElementById(
-        "adminLoader"
-    );
-
+    document.getElementById("adminLoader");
 
 const app =
-    document.getElementById(
-        "adminApp"
-    );
-
+    document.getElementById("adminApp");
 
 const batchList =
-    document.getElementById(
-        "batchList"
-    );
-
+    document.getElementById("batchList");
 
 const emptyState =
-    document.getElementById(
-        "emptyState"
-    );
-
+    document.getElementById("emptyState");
 
 const noResults =
-    document.getElementById(
-        "noResults"
-    );
-
+    document.getElementById("noResults");
 
 const batchModal =
-    document.getElementById(
-        "batchModal"
-    );
-
+    document.getElementById("batchModal");
 
 const deleteModal =
-    document.getElementById(
-        "deleteModal"
-    );
-
+    document.getElementById("deleteModal");
 
 const form =
-    document.getElementById(
-        "batchForm"
-    );
-
+    document.getElementById("batchForm");
 
 const thumbnailInput =
-    document.getElementById(
-        "thumbnailInput"
-    );
-
+    document.getElementById("thumbnailInput");
 
 const thumbnailPreview =
-    document.getElementById(
-        "thumbnailPreview"
-    );
-
+    document.getElementById("thumbnailPreview");
 
 const titleInput =
-    document.getElementById(
-        "titleInput"
-    );
-
+    document.getElementById("titleInput");
 
 const subtitleInput =
-    document.getElementById(
-        "subtitleInput"
-    );
-
+    document.getElementById("subtitleInput");
 
 const descriptionInput =
-    document.getElementById(
-        "descriptionInput"
-    );
-
+    document.getElementById("descriptionInput");
 
 const boardInput =
-    document.getElementById(
-        "boardInput"
-    );
-
+    document.getElementById("boardInput");
 
 const combinationInput =
-    document.getElementById(
-        "combinationInput"
-    );
-
+    document.getElementById("combinationInput");
 
 const examInput =
-    document.getElementById(
-        "examInput"
-    );
-
+    document.getElementById("examInput");
 
 const priceInput =
-    document.getElementById(
-        "priceInput"
-    );
-
+    document.getElementById("priceInput");
 
 const discountInput =
-    document.getElementById(
-        "discountInput"
-    );
-
+    document.getElementById("discountInput");
 
 const paidInput =
-    document.getElementById(
-        "paidInput"
-    );
-
+    document.getElementById("paidInput");
 
 const activeInput =
-    document.getElementById(
-        "activeInput"
-    );
-
+    document.getElementById("activeInput");
 
 const priorityInput =
-    document.getElementById(
-        "priorityInput"
-    );
-
+    document.getElementById("priorityInput");
 
 const saveButton =
-    document.getElementById(
-        "saveButton"
-    );
-
+    document.getElementById("saveButton");
 
 const modalTitle =
-    document.getElementById(
-        "modalTitle"
-    );
-
+    document.getElementById("modalTitle");
 
 const pricePreview =
-    document.getElementById(
-        "pricePreview"
-    );
-
+    document.getElementById("pricePreview");
 
 const toast =
-    document.getElementById(
-        "toast"
-    );
-
+    document.getElementById("toast");
 
 
 /* ============================================================
-   ADMIN AUTHORIZATION
+   START
 ============================================================ */
 
-onAuthStateChanged(
-    auth,
-    async user => {
+document.addEventListener(
+    "DOMContentLoaded",
+    () => {
 
-        if (!user) {
+        setupEvents();
 
-            window.location.replace(
-                "../../login/"
-            );
-
-            return;
-
-        }
-
-
-        /*
-         * Firebase Authentication custom claim.
-         *
-         * Admin account must have:
-         *
-         * admin: true
-         */
-
-        try {
-
-            
-
-
-            currentUser =
-                user;
-
-
-            await loadBatches();
-
-
-            setupEvents();
-
-
-            showApp();
-
-
-        } catch (error) {
-
-            console.error(
-                "Admin authentication:",
-                error
-            );
-
-
-            showAccessDenied();
-
-        }
+        loadBatches();
 
     }
 );
-
 
 
 /* ============================================================
@@ -264,46 +134,61 @@ onAuthStateChanged(
 
 async function loadBatches() {
 
-    const batchesRef =
-        collection(
-            db,
-            "batches"
+    try {
+
+        showLoader();
+
+        const batchesRef =
+            collection(
+                db,
+                "batches"
+            );
+
+        const batchesQuery =
+            query(
+                batchesRef,
+                orderBy(
+                    "priority",
+                    "desc"
+                )
+            );
+
+        const snapshot =
+            await getDocs(
+                batchesQuery
+            );
+
+        batches =
+            snapshot.docs.map(
+                item => ({
+
+                    id: item.id,
+
+                    ...item.data()
+
+                })
+            );
+
+        render();
+
+        hideLoader();
+
+    } catch (error) {
+
+        console.error(
+            "Failed to load batches:",
+            error
         );
 
+        hideLoader();
 
-    const batchesQuery =
-        query(
-            batchesRef,
-            orderBy(
-                "priority",
-                "desc"
-            )
+        showToast(
+            "Could not load batches."
         );
 
-
-    const snapshot =
-        await getDocs(
-            batchesQuery
-        );
-
-
-    batches =
-        snapshot.docs.map(
-            item => ({
-
-                id:
-                    item.id,
-
-                ...item.data()
-
-            })
-        );
-
-
-    render();
+    }
 
 }
-
 
 
 /* ============================================================
@@ -314,70 +199,56 @@ function setupEvents() {
 
 
     document
-        .getElementById(
-            "addBatchButton"
-        )
-        .addEventListener(
+        .getElementById("addBatchButton")
+        ?.addEventListener(
             "click",
             openCreateModal
         );
 
 
     document
-        .getElementById(
-            "emptyAddButton"
-        )
-        .addEventListener(
+        .getElementById("emptyAddButton")
+        ?.addEventListener(
             "click",
             openCreateModal
         );
 
 
     document
-        .getElementById(
-            "closeModal"
-        )
-        .addEventListener(
+        .getElementById("closeModal")
+        ?.addEventListener(
             "click",
             closeBatchModal
         );
 
 
     document
-        .getElementById(
-            "cancelButton"
-        )
-        .addEventListener(
+        .getElementById("cancelButton")
+        ?.addEventListener(
             "click",
             closeBatchModal
         );
 
 
     document
-        .getElementById(
-            "cancelDelete"
-        )
-        .addEventListener(
+        .getElementById("cancelDelete")
+        ?.addEventListener(
             "click",
             closeDeleteModal
         );
 
 
     document
-        .getElementById(
-            "confirmDelete"
-        )
-        .addEventListener(
+        .getElementById("confirmDelete")
+        ?.addEventListener(
             "click",
             deleteBatch
         );
 
 
     document
-        .getElementById(
-            "backButton"
-        )
-        .addEventListener(
+        .getElementById("backButton")
+        ?.addEventListener(
             "click",
             () => {
 
@@ -389,10 +260,8 @@ function setupEvents() {
 
 
     document
-        .getElementById(
-            "searchInput"
-        )
-        .addEventListener(
+        .getElementById("searchInput")
+        ?.addEventListener(
             "input",
             event => {
 
@@ -429,15 +298,12 @@ function setupEvents() {
                                     )
                             );
 
-
                         button.classList.add(
                             "active"
                         );
 
-
                         activeFilter =
                             button.dataset.filter;
-
 
                         render();
 
@@ -448,65 +314,70 @@ function setupEvents() {
         );
 
 
-    thumbnailInput.addEventListener(
-        "change",
-        previewThumbnail
-    );
+    thumbnailInput
+        ?.addEventListener(
+            "change",
+            previewThumbnail
+        );
 
 
-    priceInput.addEventListener(
-        "input",
-        updatePricePreview
-    );
+    priceInput
+        ?.addEventListener(
+            "input",
+            updatePricePreview
+        );
 
 
-    discountInput.addEventListener(
-        "input",
-        updatePricePreview
-    );
+    discountInput
+        ?.addEventListener(
+            "input",
+            updatePricePreview
+        );
 
 
-    form.addEventListener(
-        "submit",
-        saveBatch
-    );
+    form
+        ?.addEventListener(
+            "submit",
+            saveBatch
+        );
 
 
-    batchModal.addEventListener(
-        "click",
-        event => {
+    batchModal
+        ?.addEventListener(
+            "click",
+            event => {
 
-            if (
-                event.target ===
-                batchModal
-            ) {
+                if (
+                    event.target ===
+                    batchModal
+                ) {
 
-                closeBatchModal();
+                    closeBatchModal();
 
-            }
-
-        }
-    );
-
-
-    deleteModal.addEventListener(
-        "click",
-        event => {
-
-            if (
-                event.target ===
-                deleteModal
-            ) {
-
-                closeDeleteModal();
+                }
 
             }
+        );
 
-        }
-    );
+
+    deleteModal
+        ?.addEventListener(
+            "click",
+            event => {
+
+                if (
+                    event.target ===
+                    deleteModal
+                ) {
+
+                    closeDeleteModal();
+
+                }
+
+            }
+        );
 
 }
-
 
 
 /* ============================================================
@@ -515,9 +386,7 @@ function setupEvents() {
 
 function openCreateModal() {
 
-    editingBatchId =
-        null;
-
+    editingBatchId = null;
 
     form.reset();
 
@@ -536,12 +405,17 @@ function openCreateModal() {
         );
 
 
-    document
-        .querySelector(
+    const online =
+        document.querySelector(
             'input[name="mode"][value="Online"]'
-        )
-        .checked =
-        true;
+        );
+
+    if (online) {
+
+        online.checked =
+            true;
+
+    }
 
 
     thumbnailPreview.innerHTML =
@@ -566,7 +440,6 @@ function openCreateModal() {
 }
 
 
-
 /* ============================================================
    EDIT MODAL
 ============================================================ */
@@ -578,14 +451,11 @@ function openEditModal(
     const batch =
         batches.find(
             item =>
-                item.id ===
-                batchId
+                item.id === batchId
         );
 
 
-    if (
-        !batch
-    ) {
+    if (!batch) {
 
         return;
 
@@ -733,7 +603,6 @@ function openEditModal(
 }
 
 
-
 /* ============================================================
    CLOSE MODAL
 ============================================================ */
@@ -744,12 +613,10 @@ function closeBatchModal() {
         "hidden"
     );
 
-
     editingBatchId =
         null;
 
 }
-
 
 
 /* ============================================================
@@ -761,12 +628,10 @@ function previewThumbnail(
 ) {
 
     const file =
-        event.target.files[0];
+        event.target.files?.[0];
 
 
-    if (
-        !file
-    ) {
+    if (!file) {
 
         return;
 
@@ -817,9 +682,8 @@ function previewThumbnail(
 }
 
 
-
 /* ============================================================
-   PRICE
+   PRICE CALCULATION
 ============================================================ */
 
 function updatePricePreview() {
@@ -864,7 +728,6 @@ function updatePricePreview() {
 }
 
 
-
 /* ============================================================
    SAVE BATCH
 ============================================================ */
@@ -880,9 +743,7 @@ async function saveBatch(
         titleInput.value.trim();
 
 
-    if (
-        !title
-    ) {
+    if (!title) {
 
         showToast(
             "Batch title is required."
@@ -907,7 +768,7 @@ async function saveBatch(
 
 
     if (
-        !selectedClasses.length
+        selectedClasses.length === 0
     ) {
 
         showToast(
@@ -963,26 +824,34 @@ async function saveBatch(
 
     const batchData = {
 
-        title,
+        title:
+
+            title,
 
         subtitle:
+
             subtitleInput.value.trim(),
 
         description:
+
             descriptionInput.value.trim(),
 
         targetClasses:
+
             selectedClasses,
 
         board:
+
             boardInput.value.trim(),
 
         targetCombinations:
+
             parseCommaValues(
                 combinationInput.value
             ),
 
         targetExams:
+
             parseCommaValues(
                 examInput.value
             ),
@@ -996,35 +865,29 @@ async function saveBatch(
         finalPrice,
 
         isPaid:
+
             paidInput.checked,
 
         active:
+
             activeInput.checked,
 
         priority:
+
             Math.max(
                 0,
                 Number(
-                    priorityInput.value || 0
+                    priorityInput.value ||
+                    0
                 )
             ),
 
         updatedAt:
+
             serverTimestamp()
 
     };
 
-
-    /*
-     * IMPORTANT:
-     *
-     * Thumbnail upload is intentionally
-     * handled separately once Firebase
-     * Storage is configured.
-     *
-     * For now, editing an existing thumbnail
-     * keeps its current URL.
-     */
 
     try {
 
@@ -1060,9 +923,13 @@ async function saveBatch(
                 serverTimestamp();
 
 
-            batchData.createdBy =
-                currentUser.uid;
-
+            /*
+             * Temporary value.
+             *
+             * We will replace this with
+             * the real Firebase Storage URL
+             * when thumbnail upload is added.
+             */
 
             batchData.thumbnailUrl =
                 "";
@@ -1086,14 +953,13 @@ async function saveBatch(
 
         closeBatchModal();
 
-
         await loadBatches();
 
 
     } catch (error) {
 
         console.error(
-            "Save batch:",
+            "Save batch error:",
             error
         );
 
@@ -1107,14 +973,19 @@ async function saveBatch(
         saveButton.disabled =
             false;
 
+
+        saveButton.textContent =
+            editingBatchId
+                ? "SAVE CHANGES"
+                : "CREATE BATCH";
+
     }
 
 }
 
 
-
 /* ============================================================
-   DELETE
+   DELETE MODAL
 ============================================================ */
 
 function openDeleteModal(
@@ -1138,12 +1009,15 @@ function closeDeleteModal() {
         "hidden"
     );
 
-
     deletingBatchId =
         null;
 
 }
 
+
+/* ============================================================
+   DELETE BATCH
+============================================================ */
 
 async function deleteBatch() {
 
@@ -1171,7 +1045,7 @@ async function deleteBatch() {
 
 
         showToast(
-            "Batch deleted."
+            "Batch deleted successfully."
         );
 
 
@@ -1181,7 +1055,7 @@ async function deleteBatch() {
     } catch (error) {
 
         console.error(
-            "Delete batch:",
+            "Delete batch error:",
             error
         );
 
@@ -1193,7 +1067,6 @@ async function deleteBatch() {
     }
 
 }
-
 
 
 /* ============================================================
@@ -1209,33 +1082,53 @@ function render() {
         batches.filter(
             batch => {
 
+                /*
+                 * Publication filter
+                 */
+
                 if (
                     activeFilter ===
-                    "active" &&
-                    batch.active !== true
+                    "active"
                 ) {
 
-                    return false;
+                    if (
+                        batch.active !==
+                        true
+                    ) {
+
+                        return false;
+
+                    }
 
                 }
 
 
                 if (
                     activeFilter ===
-                    "inactive" &&
-                    batch.active === true
+                    "inactive"
                 ) {
 
-                    return false;
+                    if (
+                        batch.active ===
+                        true
+                    ) {
+
+                        return false;
+
+                    }
 
                 }
 
+
+                /*
+                 * Search
+                 */
 
                 if (
                     searchTerm
                 ) {
 
-                    const text =
+                    const searchable =
                         [
 
                             batch.title,
@@ -1261,7 +1154,7 @@ function render() {
 
 
                     if (
-                        !text.includes(
+                        !searchable.includes(
                             searchTerm
                         )
                     ) {
@@ -1280,7 +1173,7 @@ function render() {
 
 
     if (
-        !batches.length
+        batches.length === 0
     ) {
 
         batchList.innerHTML =
@@ -1305,7 +1198,7 @@ function render() {
 
 
     if (
-        !filtered.length
+        filtered.length === 0
     ) {
 
         batchList.innerHTML =
@@ -1341,42 +1234,66 @@ function render() {
 }
 
 
-
 /* ============================================================
    STATS
 ============================================================ */
 
 function updateStats() {
 
-    document.getElementById(
-        "totalCount"
-    ).textContent =
-        batches.length;
+    const total =
+        document.getElementById(
+            "totalCount"
+        );
 
 
-    document.getElementById(
-        "activeCount"
-    ).textContent =
-        batches.filter(
-            batch =>
-                batch.active === true
-        ).length;
+    const active =
+        document.getElementById(
+            "activeCount"
+        );
 
 
-    document.getElementById(
-        "inactiveCount"
-    ).textContent =
-        batches.filter(
-            batch =>
-                batch.active !== true
-        ).length;
+    const inactive =
+        document.getElementById(
+            "inactiveCount"
+        );
+
+
+    if (total) {
+
+        total.textContent =
+            batches.length;
+
+    }
+
+
+    if (active) {
+
+        active.textContent =
+            batches.filter(
+                batch =>
+                    batch.active ===
+                    true
+            ).length;
+
+    }
+
+
+    if (inactive) {
+
+        inactive.textContent =
+            batches.filter(
+                batch =>
+                    batch.active !==
+                    true
+            ).length;
+
+    }
 
 }
 
 
-
 /* ============================================================
-   ROW
+   CREATE ROW
 ============================================================ */
 
 function createBatchRow(
@@ -1410,7 +1327,9 @@ function createBatchRow(
 
     const price =
         batch.isPaid === false
+
             ? "FREE"
+
             : `₹${Number(
                 batch.finalPrice ??
                 batch.price ??
@@ -1426,15 +1345,11 @@ function createBatchRow(
             class="batch-row"
         >
 
-
             <div
                 class="batch-row-image"
             >
-
                 ${thumbnail}
-
             </div>
-
 
 
             <div
@@ -1466,13 +1381,19 @@ function createBatchRow(
                     class="batch-row-meta"
                 >
 
-                    <span
-                        class="meta-pill"
-                    >
-                        ${escapeHtml(
-                            classes
-                        )}
-                    </span>
+                    ${
+                        classes
+                            ? `
+                                <span
+                                    class="meta-pill"
+                                >
+                                    ${escapeHtml(
+                                        classes
+                                    )}
+                                </span>
+                            `
+                            : ""
+                    }
 
 
                     ${
@@ -1516,7 +1437,6 @@ function createBatchRow(
             </div>
 
 
-
             <div
                 class="batch-row-actions"
             >
@@ -1526,7 +1446,7 @@ function createBatchRow(
                     data-id="${escapeAttr(
                         batch.id
                     )}"
-                    aria-label="Edit"
+                    aria-label="Edit batch"
                 >
 
                     <svg viewBox="0 0 24 24">
@@ -1549,7 +1469,7 @@ function createBatchRow(
                     data-id="${escapeAttr(
                         batch.id
                     )}"
-                    aria-label="Delete"
+                    aria-label="Delete batch"
                 >
 
                     <svg viewBox="0 0 24 24">
@@ -1580,13 +1500,11 @@ function createBatchRow(
 
             </div>
 
-
         </article>
 
     `;
 
 }
-
 
 
 /* ============================================================
@@ -1639,7 +1557,6 @@ function attachRowEvents() {
         );
 
 }
-
 
 
 /* ============================================================
@@ -1705,17 +1622,68 @@ function escapeAttr(
 }
 
 
+/* ============================================================
+   LOADING
+============================================================ */
+
+function showLoader() {
+
+    if (loader) {
+
+        loader.classList.remove(
+            "hidden"
+        );
+
+    }
+
+
+    if (app) {
+
+        app.classList.add(
+            "hidden"
+        );
+
+    }
+
+}
+
+
+function hideLoader() {
+
+    if (loader) {
+
+        loader.classList.add(
+            "hidden"
+        );
+
+    }
+
+
+    if (app) {
+
+        app.classList.remove(
+            "hidden"
+        );
+
+    }
+
+}
+
 
 /* ============================================================
    TOAST
 ============================================================ */
 
-let toastTimer;
-
-
 function showToast(
     message
 ) {
+
+    if (!toast) {
+
+        return;
+
+    }
+
 
     toast.textContent =
         message;
@@ -1742,88 +1710,5 @@ function showToast(
             },
             2500
         );
-
-}
-
-
-
-/* ============================================================
-   APP
-============================================================ */
-
-function showApp() {
-
-    app.classList.remove(
-        "hidden"
-    );
-
-
-    setTimeout(
-        () => {
-
-            loader.classList.add(
-                "hidden"
-            );
-
-        },
-        200
-    );
-
-}
-
-
-function showAccessDenied() {
-
-    loader.innerHTML = `
-
-        <div
-            style="
-                text-align:center;
-                padding:30px;
-            "
-        >
-
-            <div
-                style="
-                    font-size:20px;
-                    font-weight:900;
-                    letter-spacing:3px;
-                "
-            >
-                ZENOVA
-            </div>
-
-
-            <p
-                style="
-                    margin-top:12px;
-                    color:#777;
-                    font-size:10px;
-                "
-            >
-                You do not have permission
-                to access this area.
-            </p>
-
-
-            <button
-                onclick="location.href='../../home/'"
-                style="
-                    margin-top:18px;
-                    padding:10px 15px;
-                    border:0;
-                    border-radius:7px;
-                    background:#111;
-                    color:#fff;
-                    font-size:8px;
-                    font-weight:800;
-                "
-            >
-                GO HOME
-            </button>
-
-        </div>
-
-    `;
 
 }
