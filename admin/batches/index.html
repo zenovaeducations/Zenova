@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="theme-color"
+        content="#ffffff"
+    >
+
+    <title>Zenova Admin — Batches</title>
+
+    <link
+        rel="stylesheet"
+        href="batches.css"
+    >
+
+</head>
+
+
+<body>
+
+
+<!-- =====================================================
+     ADMIN LOADER
+===================================================== -->
+
+<div
+    id="adminLoader"
+    class="admin-loader"
+>
+
+    <div class="loader-ring">
+
+        <div class="loader-z">
+            Z
+        </div>
+
+    </div>
+
+    <strong>
+        ZENOVA
+    </strong>
+
+    <span>
+        ADMIN
+    </span>
+
+</div>
+
+
+
+<!-- =====================================================
+     APPLICATION
+===================================================== -->
+
+<div
+    id="adminApp"
+    class="admin-app hidden"
+>
+
+
+<!-- =====================================================
+     HEADER
+===================================================== -->
+
+<header class="admin-header">
+
+
+    <div class="header-left">
+
+        <button
+            id="backButton"
+            class="icon-button"
+            aria-label="Back"
+        >
+
+            <svg viewBox="0 0 24 24">
+
+                <path d="M19 12H5"></path>
+
+                <path d="M12 19l-7-7 7-7"></path>
+
+            </svg>
+
+        </button>
+
+
+        <div class="header-title">
+
+            <strong>
+                BATCHES
+            </strong>
+
+            <span>
+                HOME MANAGEMENT
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <button
+        id="addBatchButton"
+        class="primary-button"
+    >
+        + ADD BATCH
+    </button>
+
+
+</header>
+
+
+
+<!-- =====================================================
+     MAIN
+===================================================== -->
+
+<main class="admin-container">
+
+
+<!-- =====================================================
+     PAGE INTRO
+===================================================== -->
+
+<section class="page-intro">
+
+    <p>
+        BATCH MANAGEMENT
+    </p>
+
+    <h1>
+        All Batches
+    </h1>
+
+    <span>
+        Create and manage the learning programs
+        available to students.
+    </span>
+
+</section>
+
+
+
+<!-- =====================================================
+     CONTROLS
+===================================================== -->
+
+<section class="controls">
+
+
+    <div class="search-box">
+
+        <svg viewBox="0 0 24 24">
+
+            <circle
+                cx="10.8"
+                cy="10.8"
+                r="6.5"
+            ></circle>
+
+            <path
+                d="M16 16l5 5"
+            ></path>
+
+        </svg>
+
+
+        <input
+            id="searchInput"
+            type="search"
+            placeholder="Search batches..."
+            autocomplete="off"
+        >
+
+    </div>
+
+
+
+    <div class="filter-row">
+
+        <button
+            class="filter-button active"
+            data-filter="all"
+        >
+            All
+        </button>
+
+        <button
+            class="filter-button"
+            data-filter="active"
+        >
+            Published
+        </button>
+
+        <button
+            class="filter-button"
+            data-filter="inactive"
+        >
+            Draft
+        </button>
+
+    </div>
+
+</section>
+
+
+
+<!-- =====================================================
+     STATS
+===================================================== -->
+
+<section class="stats-grid">
+
+
+    <div class="stat-card">
+
+        <span>
+            TOTAL
+        </span>
+
+        <strong id="totalCount">
+            0
+        </strong>
+
+    </div>
+
+
+    <div class="stat-card">
+
+        <span>
+            PUBLISHED
+        </span>
+
+        <strong id="activeCount">
+            0
+        </strong>
+
+    </div>
+
+
+    <div class="stat-card">
+
+        <span>
+            DRAFT
+        </span>
+
+        <strong id="inactiveCount">
+            0
+        </strong>
+
+    </div>
+
+
+</section>
+
+
+
+<!-- =====================================================
+     BATCH LIST
+===================================================== -->
+
+<section class="batch-management">
+
+
+    <div
+        id="batchList"
+        class="batch-list"
+    ></div>
+
+
+</section>
+
+
+
+<!-- =====================================================
+     EMPTY STATE
+===================================================== -->
+
+<section
+    id="emptyState"
+    class="empty-state hidden"
+>
+
+    <div class="empty-icon">
+        Z
+    </div>
+
+    <h2>
+        No batches yet.
+    </h2>
+
+    <p>
+        Create your first learning program
+        to make it available in Zenova.
+    </p>
+
+    <button
+        id="emptyAddButton"
+        class="primary-button"
+    >
+        + CREATE BATCH
+    </button>
+
+</section>
+
+
+
+<!-- =====================================================
+     NO SEARCH RESULTS
+===================================================== -->
+
+<section
+    id="noResults"
+    class="no-results hidden"
+>
+
+    <h2>
+        No matching batches
+    </h2>
+
+    <p>
+        Try another search or filter.
+    </p>
+
+</section>
+
+
+</main>
+
+
+
+<!-- =====================================================
+     BATCH MODAL
+===================================================== -->
+
+<div
+    id="batchModal"
+    class="modal-overlay hidden"
+>
+
+
+    <div
+        class="batch-modal"
+    >
+
+
+        <div class="modal-header">
+
+            <div>
+
+                <p>
+                    BATCH MANAGEMENT
+                </p>
+
+                <h2 id="modalTitle">
+                    Create Batch
+                </h2>
+
+            </div>
+
+
+            <button
+                id="closeModal"
+                class="close-button"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+
+        <!-- FORM -->
+
+        <form
+            id="batchForm"
+            autocomplete="off"
+        >
+
+
+            <!-- THUMBNAIL -->
+
+            <div class="form-section">
+
+                <label>
+                    BATCH THUMBNAIL
+                </label>
+
+
+                <div
+                    id="thumbnailPreview"
+                    class="thumbnail-preview"
+                >
+
+                    <span>
+                        No image selected
+                    </span>
+
+                </div>
+
+
+                <label
+                    class="upload-button"
+                >
+
+                    CHOOSE IMAGE
+
+                    <input
+                        id="thumbnailInput"
+                        type="file"
+                        accept="image/*"
+                        hidden
+                    >
+
+                </label>
+
+
+                <small>
+                    Recommended: 1200 × 800 or similar.
+                </small>
+
+            </div>
+
+
+
+            <!-- BASIC DETAILS -->
+
+            <div class="form-section">
+
+                <label>
+                    TITLE
+                </label>
+
+                <input
+                    id="titleInput"
+                    type="text"
+                    maxlength="120"
+                    required
+                    placeholder="Batch title"
+                >
+
+
+                <label>
+                    SUBTITLE
+                </label>
+
+                <input
+                    id="subtitleInput"
+                    type="text"
+                    maxlength="180"
+                    placeholder="Short subtitle"
+                >
+
+
+                <label>
+                    DESCRIPTION
+                </label>
+
+                <textarea
+                    id="descriptionInput"
+                    maxlength="1500"
+                    rows="5"
+                    placeholder="Describe the batch..."
+                ></textarea>
+
+            </div>
+
+
+
+            <!-- ACADEMIC TARGET -->
+
+            <div class="form-section">
+
+                <div class="form-section-title">
+                    STUDENT TARGET
+                </div>
+
+
+                <label>
+                    CLASSES
+                </label>
+
+                <div
+                    id="classOptions"
+                    class="multi-options"
+                >
+
+                    <label>
+                        <input
+                            type="checkbox"
+                            value="Under 8th"
+                        >
+                        <span>Under 8th</span>
+                    </label>
+
+                    <label>
+                        <input
+                            type="checkbox"
+                            value="8th"
+                        >
+                        <span>8th</span>
+                    </label>
+
+                    <label>
+                        <input
+                            type="checkbox"
+                            value="9th"
+                        >
+                        <span>9th</span>
+                    </label>
+
+                    <label>
+                        <input
+                            type="checkbox"
+                            value="10th"
+                        >
+                        <span>10th</span>
+                    </label>
+
+                    <label>
+                        <input
+                            type="checkbox"
+                            value="1st PUC"
+                        >
+                        <span>1st PUC</span>
+                    </label>
+
+                    <label>
+                        <input
+                            type="checkbox"
+                            value="2nd PUC"
+                        >
+                        <span>2nd PUC</span>
+                    </label>
+
+                </div>
+
+
+                <label>
+                    BOARD
+                </label>
+
+                <input
+                    id="boardInput"
+                    type="text"
+                    placeholder="e.g. Karnataka State Board"
+                >
+
+
+                <label>
+                    COMBINATIONS
+                </label>
+
+                <input
+                    id="combinationInput"
+                    type="text"
+                    placeholder="e.g. PCMB, PCMC"
+                >
+
+
+                <label>
+                    TARGET EXAMS
+                </label>
+
+                <input
+                    id="examInput"
+                    type="text"
+                    placeholder="e.g. KCET, NEET"
+                >
+
+                <small>
+                    For multiple values, separate them with commas.
+                </small>
+
+            </div>
+
+
+
+            <!-- MODE -->
+
+            <div class="form-section">
+
+                <label>
+                    LEARNING MODE
+                </label>
+
+
+                <div class="mode-options">
+
+                    <label>
+
+                        <input
+                            type="radio"
+                            name="mode"
+                            value="Online"
+                            checked
+                        >
+
+                        <span>
+                            Online
+                        </span>
+
+                    </label>
+
+
+                    <label>
+
+                        <input
+                            type="radio"
+                            name="mode"
+                            value="Offline"
+                        >
+
+                        <span>
+                            Offline
+                        </span>
+
+                    </label>
+
+
+                    <label>
+
+                        <input
+                            type="radio"
+                            name="mode"
+                            value="Hybrid"
+                        >
+
+                        <span>
+                            Hybrid
+                        </span>
+
+                    </label>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- PRICING -->
+
+            <div class="form-section">
+
+                <div class="form-section-title">
+                    PRICING
+                </div>
+
+
+                <div class="two-column">
+
+                    <div>
+
+                        <label>
+                            ORIGINAL PRICE
+                        </label>
+
+                        <input
+                            id="priceInput"
+                            type="number"
+                            min="0"
+                            step="1"
+                            placeholder="0"
+                        >
+
+                    </div>
+
+
+                    <div>
+
+                        <label>
+                            DISCOUNT %
+                        </label>
+
+                        <input
+                            id="discountInput"
+                            type="number"
+                            min="0"
+                            max="100"
+                            step="1"
+                            value="0"
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    id="pricePreview"
+                    class="price-preview"
+                >
+
+                    Final price:
+                    <strong>
+                        ₹0
+                    </strong>
+
+                </div>
+
+
+                <label class="switch-row">
+
+                    <span>
+                        Paid batch
+                    </span>
+
+                    <input
+                        id="paidInput"
+                        type="checkbox"
+                        checked
+                    >
+
+                </label>
+
+            </div>
+
+
+
+            <!-- PUBLISH SETTINGS -->
+
+            <div class="form-section">
+
+                <div class="form-section-title">
+                    PUBLISH SETTINGS
+                </div>
+
+
+                <label>
+                    PRIORITY
+                </label>
+
+                <input
+                    id="priorityInput"
+                    type="number"
+                    min="0"
+                    step="1"
+                    value="0"
+                    placeholder="0"
+                >
+
+
+                <label class="switch-row">
+
+                    <span>
+                        Publish batch
+                    </span>
+
+                    <input
+                        id="activeInput"
+                        type="checkbox"
+                        checked
+                    >
+
+                </label>
+
+            </div>
+
+
+
+            <!-- ACTIONS -->
+
+            <div class="form-actions">
+
+                <button
+                    type="button"
+                    id="cancelButton"
+                    class="secondary-button"
+                >
+                    CANCEL
+                </button>
+
+
+                <button
+                    type="submit"
+                    id="saveButton"
+                    class="primary-button"
+                >
+                    CREATE BATCH
+                </button>
+
+            </div>
+
+
+        </form>
+
+    </div>
+
+</div>
+
+
+
+<!-- =====================================================
+     DELETE CONFIRMATION
+===================================================== -->
+
+<div
+    id="deleteModal"
+    class="modal-overlay hidden"
+>
+
+    <div class="confirm-modal">
+
+        <div class="danger-mark">
+            !
+        </div>
+
+        <h2>
+            Delete this batch?
+        </h2>
+
+        <p>
+            This will permanently remove the batch
+            from Firestore.
+        </p>
+
+
+        <div class="confirm-actions">
+
+            <button
+                id="cancelDelete"
+                class="secondary-button"
+            >
+                CANCEL
+            </button>
+
+
+            <button
+                id="confirmDelete"
+                class="danger-button"
+            >
+                DELETE
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- =====================================================
+     TOAST
+===================================================== -->
+
+<div
+    id="toast"
+    class="toast"
+></div>
+
+
+
+<script
+    type="module"
+    src="batches-core-V8kP.js"
+></script>
+
+
+</body>
+</html>
