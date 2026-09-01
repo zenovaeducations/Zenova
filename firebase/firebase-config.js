@@ -1,12 +1,4 @@
-// firebase/firebase-config.js
-
-import {
-    initializeApp
-} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
-
-import {
-    getAuth
-} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
 
 import {
     getFirestore
@@ -18,43 +10,25 @@ import {
 
 
 const firebaseConfig = {
-
     apiKey: "AIzaSyDeO4bUhJ2kScQ7ZbEYwSlfH8Uk5qpGBIo",
-
-    authDomain:
-        "znvapp-2a26f.firebaseapp.com",
-
-    projectId:
-        "znvapp-2a26f",
-
-    storageBucket:
-        "znvapp-2a26f.firebasestorage.app",
-
-    messagingSenderId:
-        "391066000827",
-
-    appId:
-        "1:391066000827:web:9dda02a3464176af2ff89e",
-
-    measurementId:
-        "G-EJFSZLTHML"
-
+    authDomain: "znvapp-2a26f.firebaseapp.com",
+    projectId: "znvapp-2a26f",
+    storageBucket: "znvapp-2a26f.firebasestorage.app",
+    messagingSenderId: "391066000827",
+    appId: "1:391066000827:web:9dda02a3464176af2ff89e",
+    measurementId: "G-EJFSZLTHML"
 };
 
 
-const app =
-    initializeApp(
-        firebaseConfig
-    );
+const app = initializeApp(firebaseConfig);
+
+const db = getFirestore(app);
+
+const storage = getStorage(app);
 
 
-export const auth =
-    getAuth(app);
-
-
-export const db =
-    getFirestore(app);
-
-
-export const storage =
-    getStorage(app);
+export {
+    app,
+    db,
+    storage
+};
