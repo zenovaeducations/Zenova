@@ -748,24 +748,15 @@ function setupNavigation() {
         );
 
 
-    purchaseButton
-        .addEventListener(
-            "click",
-            () => {
+    purchaseButton.addEventListener(
+    "click",
+    () => {
 
-                /*
-                 * Purchase system will be connected
-                 * after the batch details UI.
-                 */
+        window.location.href =
+            `checkout/?id=${encodeURIComponent(batchId)}`;
 
-                console.log(
-                    "Purchase clicked:",
-                    batchId
-                );
-
-            }
-        );
-
+    }
+);
 }
 
 
