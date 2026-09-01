@@ -15,11 +15,11 @@
         content="#ffffff"
     >
 
-    <title>Zenova Educations — Batches</title>
+    <title>Zenova Educations — Batch</title>
 
     <link
         rel="stylesheet"
-        href="batches.css"
+        href="batch.css"
     >
 
 </head>
@@ -45,9 +45,11 @@
 
     </div>
 
+
     <div class="loader-brand">
         ZENOVA
     </div>
+
 
     <div class="loader-subtitle">
         EDUCATIONS
@@ -58,17 +60,17 @@
 
 
 <!-- =====================================================
-     APPLICATION
+     APP
 ===================================================== -->
 
 <div
-    id="batchesApp"
-    class="batches-app hidden"
+    id="batchApp"
+    class="batch-app hidden"
 >
 
 
 <!-- =====================================================
-     TOP HEADER
+     HEADER
 ===================================================== -->
 
 <header class="top-header">
@@ -77,7 +79,7 @@
     <button
         id="backButton"
         class="header-button"
-        aria-label="Go back"
+        aria-label="Back"
     >
 
         <svg viewBox="0 0 24 24">
@@ -91,43 +93,52 @@
     </button>
 
 
-
-    <div class="header-title">
+    <div class="header-brand">
 
         <strong>
-            BATCHES
+            ZENOVA
         </strong>
 
         <span>
-            ZENOVA EDUCATIONS
+            EDUCATIONS
         </span>
 
     </div>
 
 
-
     <button
-        id="searchButton"
+        id="shareButton"
         class="header-button"
-        aria-label="Search batches"
+        aria-label="Share batch"
     >
 
         <svg viewBox="0 0 24 24">
 
             <circle
-                cx="10.8"
-                cy="10.8"
-                r="6.5"
+                cx="18"
+                cy="5"
+                r="2.5"
             ></circle>
 
-            <path
-                d="M16 16l5 5"
-            ></path>
+            <circle
+                cx="6"
+                cy="12"
+                r="2.5"
+            ></circle>
+
+            <circle
+                cx="18"
+                cy="19"
+                r="2.5"
+            ></circle>
+
+            <path d="M8.2 10.8l7.5-4.5"></path>
+
+            <path d="M8.2 13.2l7.5 4.5"></path>
 
         </svg>
 
     </button>
-
 
 </header>
 
@@ -137,435 +148,486 @@
      MAIN
 ===================================================== -->
 
-<main class="batches-container">
+<main class="batch-container">
 
 
 <!-- =====================================================
-     INTRO
+     HERO IMAGE
 ===================================================== -->
 
-<section class="batches-intro">
-
-    <p class="eyebrow">
-        LEARNING PROGRAMS
-    </p>
-
-
-    <h1>
-        Find your<br>
-        learning path.
-    </h1>
-
-
-    <p
-        id="studentContext"
-        class="context-text"
-    >
-        Loading your recommendations...
-    </p>
-
-</section>
-
-
-
-<!-- =====================================================
-     SEARCH
-===================================================== -->
-
-<section
-    id="searchArea"
-    class="search-area hidden"
->
-
-    <div class="search-box">
-
-        <svg viewBox="0 0 24 24">
-
-            <circle
-                cx="10.8"
-                cy="10.8"
-                r="6.5"
-            ></circle>
-
-            <path
-                d="M16 16l5 5"
-            ></path>
-
-        </svg>
-
-
-        <input
-            id="searchInput"
-            type="search"
-            placeholder="Search batches..."
-            autocomplete="off"
-        >
-
-
-        <button
-            id="clearSearch"
-            class="clear-search hidden"
-            aria-label="Clear search"
-        >
-            ×
-        </button>
-
-    </div>
-
-</section>
-
-
-
-<!-- =====================================================
-     FILTERS
-===================================================== -->
-
-<section class="filter-section">
+<section class="batch-hero">
 
     <div
-        id="filterList"
-        class="filter-list"
-    >
-
-        <button
-            class="filter-chip active"
-            data-filter="all"
-        >
-            All
-        </button>
-
-        <button
-            class="filter-chip"
-            data-filter="online"
-        >
-            Online
-        </button>
-
-        <button
-            class="filter-chip"
-            data-filter="offline"
-        >
-            Offline
-        </button>
-
-        <button
-            class="filter-chip"
-            data-filter="hybrid"
-        >
-            Hybrid
-        </button>
-
-    </div>
-
-</section>
-
-
-
-<!-- =====================================================
-     RECOMMENDED SECTION
-===================================================== -->
-
-<section
-    id="recommendedSection"
-    class="batch-section hidden"
->
-
-    <div class="section-heading">
-
-        <div>
-
-            <p class="section-eyebrow">
-                FOR YOU
-            </p>
-
-            <h2>
-                Recommended
-            </h2>
-
-        </div>
-
-    </div>
-
-
-    <div
-        id="recommendedGrid"
-        class="batch-grid"
+        id="batchImage"
+        class="batch-image"
     ></div>
 
-</section>
 
-
-
-<!-- =====================================================
-     ALL BATCHES
-===================================================== -->
-
-<section
-    id="allBatchesSection"
-    class="batch-section"
->
-
-    <div class="section-heading">
-
-        <div>
-
-            <p class="section-eyebrow">
-                ZENOVA PROGRAMS
-            </p>
-
-            <h2>
-                All Batches
-            </h2>
-
-        </div>
-
-
-        <span
-            id="batchCount"
-            class="batch-count"
-        ></span>
-
-    </div>
+    <div
+        id="batchMode"
+        class="batch-mode hidden"
+    ></div>
 
 
     <div
-        id="batchGrid"
-        class="batch-grid"
-    ></div>
-
-</section>
-
-
-
-<!-- =====================================================
-     NO RESULTS
-===================================================== -->
-
-<section
-    id="noResults"
-    class="no-results hidden"
->
-
-    <div class="no-results-icon">
-
-        <svg viewBox="0 0 24 24">
-
-            <circle
-                cx="10.8"
-                cy="10.8"
-                r="6.5"
-            ></circle>
-
-            <path d="M16 16l5 5"></path>
-
-        </svg>
-
-    </div>
-
-
-    <h3>
-        No matching batches
-    </h3>
-
-
-    <p>
-        Try another search or filter.
-    </p>
-
-</section>
-
-
-
-<!-- =====================================================
-     EMPTY STATE
-===================================================== -->
-
-<section
-    id="emptyState"
-    class="empty-state hidden"
->
-
-    <div class="empty-mark">
-        Z
-    </div>
-
-
-    <h2>
-        New programs are coming.
-    </h2>
-
-
-    <p>
-        Your learning options will appear
-        here when they are published.
-    </p>
-
-</section>
-
-
-</main>
-
-
-
-<!-- =====================================================
-     BOTTOM NAVIGATION
-===================================================== -->
-
-<nav class="bottom-navigation">
-
-
-    <button
-        class="bottom-item"
-        data-route="home"
-    >
-
-        <svg viewBox="0 0 24 24">
-
-            <path d="M3 11.5L12 4l9 7.5"></path>
-
-            <path d="M5 10v10h14V10"></path>
-
-        </svg>
-
-        <span>
-            Home
-        </span>
-
-    </button>
-
-
-
-    <button
-        class="bottom-item active"
-        data-route="batches"
-    >
-
-        <svg viewBox="0 0 24 24">
-
-            <rect
-                x="4"
-                y="4"
-                width="6"
-                height="6"
-                rx="1"
-            ></rect>
-
-            <rect
-                x="14"
-                y="4"
-                width="6"
-                height="6"
-                rx="1"
-            ></rect>
-
-            <rect
-                x="4"
-                y="14"
-                width="6"
-                height="6"
-                rx="1"
-            ></rect>
-
-            <rect
-                x="14"
-                y="14"
-                width="6"
-                height="6"
-                rx="1"
-            ></rect>
-
-        </svg>
-
-        <span>
-            Batches
-        </span>
-
-    </button>
-
-
-
-    <button
-        class="bottom-item study-button"
-        data-route="study"
-    >
-
-        <div class="study-icon">
-
-            <svg viewBox="0 0 24 24">
-
-                <path d="M9 6v12l10-6z"></path>
-
-            </svg>
-
-        </div>
-
-        <span>
-            Study
-        </span>
-
-    </button>
-
-
-
-    <button
-        class="bottom-item"
-        data-route="tests"
+        id="paidBadge"
+        class="paid-badge hidden"
     >
 
         <svg viewBox="0 0 24 24">
 
             <rect
                 x="5"
-                y="3"
+                y="10"
                 width="14"
-                height="18"
+                height="10"
                 rx="2"
             ></rect>
 
-            <path d="M9 8h6"></path>
-
-            <path d="M9 12h6"></path>
-
-            <path d="M9 16h4"></path>
-
-        </svg>
-
-        <span>
-            Tests
-        </span>
-
-    </button>
-
-
-
-    <button
-        class="bottom-item"
-        data-route="profile"
-    >
-
-        <svg viewBox="0 0 24 24">
-
-            <circle
-                cx="12"
-                cy="8"
-                r="3.5"
-            ></circle>
-
             <path
-                d="M5 20c1-3.5 3.2-5 7-5s6 1.5 7 5"
+                d="M8 10V7a4 4 0 0 1 8 0v3"
             ></path>
 
         </svg>
 
+        PAID PROGRAM
+
+    </div>
+
+</section>
+
+
+
+<!-- =====================================================
+     TITLE
+===================================================== -->
+
+<section class="batch-heading">
+
+    <div
+        id="batchClass"
+        class="batch-class"
+    ></div>
+
+
+    <h1
+        id="batchTitle"
+    ></h1>
+
+
+    <p
+        id="batchSubtitle"
+    ></p>
+
+</section>
+
+
+
+<!-- =====================================================
+     QUICK INFORMATION
+===================================================== -->
+
+<section
+    id="infoSection"
+    class="info-grid"
+>
+
+    <div class="info-card">
+
         <span>
-            Profile
+            CLASS
         </span>
 
+        <strong
+            id="infoClass"
+        >
+            —
+        </strong>
+
+    </div>
+
+
+    <div class="info-card">
+
+        <span>
+            MODE
+        </span>
+
+        <strong
+            id="infoMode"
+        >
+            —
+        </strong>
+
+    </div>
+
+
+    <div class="info-card">
+
+        <span>
+            BOARD
+        </span>
+
+        <strong
+            id="infoBoard"
+        >
+            —
+        </strong>
+
+    </div>
+
+
+    <div class="info-card">
+
+        <span>
+            TARGET
+        </span>
+
+        <strong
+            id="infoTarget"
+        >
+            —
+        </strong>
+
+    </div>
+
+</section>
+
+
+
+<!-- =====================================================
+     DESCRIPTION
+===================================================== -->
+
+<section
+    id="descriptionSection"
+    class="content-section"
+>
+
+    <p class="section-label">
+        ABOUT THIS BATCH
+    </p>
+
+
+    <h2>
+        Everything you need to know.
+    </h2>
+
+
+    <p
+        id="batchDescription"
+        class="description"
+    ></p>
+
+</section>
+
+
+
+<!-- =====================================================
+     PRICING
+===================================================== -->
+
+<section
+    id="pricingSection"
+    class="pricing-card"
+>
+
+
+    <div class="pricing-top">
+
+        <div>
+
+            <span class="price-label">
+                BATCH FEE
+            </span>
+
+
+            <div class="price-line">
+
+                <strong
+                    id="finalPrice"
+                >
+                    ₹0
+                </strong>
+
+
+                <span
+                    id="originalPrice"
+                    class="original-price hidden"
+                ></span>
+
+            </div>
+
+        </div>
+
+
+        <span
+            id="discountBadge"
+            class="discount-badge hidden"
+        ></span>
+
+    </div>
+
+
+    <div
+        id="freeLabel"
+        class="free-label hidden"
+    >
+        This program is free.
+    </div>
+
+
+    <button
+        id="primaryAction"
+        class="primary-action"
+    >
+        BUY THIS BATCH
     </button>
 
 
-</nav>
+    <p class="secure-note">
 
+        Secure access to your enrolled program
+
+    </p>
+
+</section>
+
+
+
+<!-- =====================================================
+     INCLUDED
+===================================================== -->
+
+<section
+    id="includedSection"
+    class="content-section"
+>
+
+    <p class="section-label">
+        PROGRAM
+    </p>
+
+
+    <h2>
+        What's included
+    </h2>
+
+
+    <div class="included-grid">
+
+
+        <div class="included-item">
+
+            <div class="included-icon">
+
+                <svg viewBox="0 0 24 24">
+
+                    <path d="M8 5l11 7-11 7z"></path>
+
+                </svg>
+
+            </div>
+
+            <span>
+                Classes
+            </span>
+
+        </div>
+
+
+        <div class="included-item">
+
+            <div class="included-icon">
+
+                <svg viewBox="0 0 24 24">
+
+                    <path d="M5 4h14v16H5z"></path>
+
+                    <path d="M8 8h8"></path>
+
+                    <path d="M8 12h8"></path>
+
+                    <path d="M8 16h5"></path>
+
+                </svg>
+
+            </div>
+
+            <span>
+                Study Material
+            </span>
+
+        </div>
+
+
+        <div class="included-item">
+
+            <div class="included-icon">
+
+                <svg viewBox="0 0 24 24">
+
+                    <circle
+                        cx="12"
+                        cy="12"
+                        r="8"
+                    ></circle>
+
+                    <path d="M12 8v5l3 2"></path>
+
+                </svg>
+
+            </div>
+
+            <span>
+                Tests
+            </span>
+
+        </div>
+
+
+        <div class="included-item">
+
+            <div class="included-icon">
+
+                <svg viewBox="0 0 24 24">
+
+                    <path
+                        d="M4 5h16v12H4z"
+                    ></path>
+
+                    <path
+                        d="M8 21h8"
+                    ></path>
+
+                    <path
+                        d="M12 17v4"
+                    ></path>
+
+                </svg>
+
+            </div>
+
+            <span>
+                Digital Learning
+            </span>
+
+        </div>
+
+
+    </div>
+
+</section>
+
+
+
+<!-- =====================================================
+     TARGET INFORMATION
+===================================================== -->
+
+<section
+    id="targetSection"
+    class="content-section hidden"
+>
+
+    <p class="section-label">
+        ELIGIBILITY
+    </p>
+
+
+    <h2>
+        Designed for
+    </h2>
+
+
+    <div
+        id="targetList"
+        class="target-list"
+    ></div>
+
+</section>
+
+
+
+<!-- =====================================================
+     FOOTER SPACE
+===================================================== -->
+
+<div class="bottom-space"></div>
+
+
+</main>
+
+
+<!-- =====================================================
+     STICKY ACTION
+===================================================== -->
+
+<div
+    id="stickyAction"
+    class="sticky-action"
+>
+
+    <div class="sticky-price">
+
+        <span>
+            BATCH FEE
+        </span>
+
+        <strong
+            id="stickyPrice"
+        >
+            ₹0
+        </strong>
+
+    </div>
+
+
+    <button
+        id="stickyButton"
+        class="sticky-button"
+    >
+        BUY NOW
+    </button>
+
+</div>
+
+
+</div>
+
+
+
+<!-- =====================================================
+     ERROR SCREEN
+===================================================== -->
+
+<div
+    id="errorScreen"
+    class="error-screen hidden"
+>
+
+    <div class="error-mark">
+        Z
+    </div>
+
+
+    <h2>
+        Batch unavailable
+    </h2>
+
+
+    <p>
+        This program may have been removed
+        or is currently unavailable.
+    </p>
+
+
+    <button
+        id="errorBackButton"
+        class="error-button"
+    >
+        GO BACK
+    </button>
 
 </div>
 
@@ -573,7 +635,7 @@
 
 <script
     type="module"
-    src="batches-core-K7mQ.js"
+    src="batch-core-P8xR.js"
 ></script>
 
 
