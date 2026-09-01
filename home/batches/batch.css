@@ -1,0 +1,1091 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+
+html {
+    scroll-behavior: smooth;
+}
+
+
+body {
+
+    min-height: 100vh;
+
+    background: #ffffff;
+
+    color: #111111;
+
+    font-family:
+        Inter,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+
+    -webkit-font-smoothing: antialiased;
+}
+
+
+button {
+    font: inherit;
+    cursor: pointer;
+}
+
+
+.hidden {
+    display: none !important;
+}
+
+
+
+/* ============================================================
+   LOADER
+============================================================ */
+
+.page-loader {
+
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 9999;
+
+    background: #ffffff;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+}
+
+
+.loader-ring {
+
+    width: 58px;
+
+    height: 58px;
+
+    border:
+        2px solid #e8e8e8;
+
+    border-top-color: #6338d7;
+
+    border-radius: 50%;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    animation:
+        spin 1s linear infinite;
+}
+
+
+.loader-z {
+
+    width: 32px;
+
+    height: 32px;
+
+    border-radius: 50%;
+
+    background: #111111;
+
+    color: #ffffff;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 13px;
+
+    font-weight: 900;
+
+    animation:
+        reverseSpin 1s linear infinite;
+}
+
+
+.loader-brand {
+
+    margin-top: 17px;
+
+    font-size: 15px;
+
+    font-weight: 900;
+
+    letter-spacing: 4px;
+}
+
+
+.loader-subtitle {
+
+    margin-top: 4px;
+
+    color: #888888;
+
+    font-size: 7px;
+
+    font-weight: 700;
+
+    letter-spacing: 2.5px;
+}
+
+
+@keyframes spin {
+
+    to {
+        transform: rotate(360deg);
+    }
+
+}
+
+
+@keyframes reverseSpin {
+
+    to {
+        transform: rotate(-360deg);
+    }
+
+}
+
+
+
+/* ============================================================
+   HEADER
+============================================================ */
+
+.top-header {
+
+    position: sticky;
+
+    top: 0;
+
+    z-index: 100;
+
+    height: 62px;
+
+    padding:
+        0 16px;
+
+    background:
+        rgba(
+            255,
+            255,
+            255,
+            .98
+        );
+
+    border-bottom:
+        1px solid #eeeeee;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+}
+
+
+.header-button {
+
+    width: 37px;
+
+    height: 37px;
+
+    border: 0;
+
+    border-radius: 9px;
+
+    background: transparent;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+}
+
+
+.header-button:active {
+
+    background: #f2f2f2;
+
+}
+
+
+.header-button svg {
+
+    width: 19px;
+
+    height: 19px;
+
+    fill: none;
+
+    stroke: #111111;
+
+    stroke-width: 1.7;
+
+    stroke-linecap: round;
+
+    stroke-linejoin: round;
+}
+
+
+.header-brand {
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+}
+
+
+.header-brand strong {
+
+    font-size: 10px;
+
+    font-weight: 900;
+
+    letter-spacing: 2px;
+}
+
+
+.header-brand span {
+
+    margin-top: 3px;
+
+    color: #888888;
+
+    font-size: 6px;
+
+    font-weight: 700;
+
+    letter-spacing: 1.5px;
+}
+
+
+
+/* ============================================================
+   CONTAINER
+============================================================ */
+
+.batch-container {
+
+    width: 100%;
+
+    max-width: 680px;
+
+    margin: 0 auto;
+
+    padding-bottom: 100px;
+}
+
+
+
+/* ============================================================
+   HERO
+============================================================ */
+
+.batch-hero {
+
+    position: relative;
+
+    width: 100%;
+
+    aspect-ratio: 1.65 / 1;
+
+    overflow: hidden;
+
+    background: #eeeeee;
+}
+
+
+.batch-image {
+
+    width: 100%;
+
+    height: 100%;
+
+    background:
+        linear-gradient(
+            135deg,
+            #eeeeee,
+            #dcdcdc
+        );
+
+    background-size: cover;
+
+    background-position: center;
+}
+
+
+.batch-mode {
+
+    position: absolute;
+
+    left: 14px;
+
+    bottom: 14px;
+
+    padding:
+        7px 9px;
+
+    border-radius: 6px;
+
+    background:
+        rgba(
+            17,
+            17,
+            17,
+            .92
+        );
+
+    color: #ffffff;
+
+    font-size: 7px;
+
+    font-weight: 800;
+
+    letter-spacing: .7px;
+}
+
+
+.paid-badge {
+
+    position: absolute;
+
+    top: 14px;
+
+    right: 14px;
+
+    padding:
+        7px 9px;
+
+    border-radius: 6px;
+
+    background:
+        rgba(
+            255,
+            255,
+            255,
+            .96
+        );
+
+    color: #111111;
+
+    font-size: 6px;
+
+    font-weight: 900;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 5px;
+}
+
+
+.paid-badge svg {
+
+    width: 11px;
+
+    height: 11px;
+
+    fill: none;
+
+    stroke: currentColor;
+
+    stroke-width: 1.8;
+
+    stroke-linecap: round;
+
+    stroke-linejoin: round;
+}
+
+
+
+/* ============================================================
+   HEADING
+============================================================ */
+
+.batch-heading {
+
+    padding:
+        24px 18px 4px;
+}
+
+
+.batch-class {
+
+    color: #6338d7;
+
+    font-size: 7px;
+
+    font-weight: 900;
+
+    letter-spacing: 1.8px;
+
+    text-transform: uppercase;
+}
+
+
+.batch-heading h1 {
+
+    margin-top: 8px;
+
+    font-size: 29px;
+
+    line-height: 1.08;
+
+    letter-spacing: -1px;
+
+    font-weight: 900;
+}
+
+
+.batch-heading p {
+
+    margin-top: 9px;
+
+    color: #777777;
+
+    font-size: 10px;
+
+    line-height: 1.5;
+}
+
+
+
+/* ============================================================
+   INFO
+============================================================ */
+
+.info-grid {
+
+    padding:
+        17px 18px;
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            2,
+            1fr
+        );
+
+    gap: 8px;
+}
+
+
+.info-card {
+
+    min-height: 65px;
+
+    padding: 12px;
+
+    border:
+        1px solid #e7e7e7;
+
+    border-radius: 10px;
+
+    background: #ffffff;
+}
+
+
+.info-card span {
+
+    display: block;
+
+    color: #999999;
+
+    font-size: 6px;
+
+    font-weight: 900;
+
+    letter-spacing: 1px;
+}
+
+
+.info-card strong {
+
+    display: block;
+
+    margin-top: 7px;
+
+    font-size: 9px;
+
+    line-height: 1.3;
+
+    font-weight: 800;
+}
+
+
+
+/* ============================================================
+   CONTENT
+============================================================ */
+
+.content-section {
+
+    padding:
+        20px 18px;
+
+    border-top:
+        1px solid #eeeeee;
+}
+
+
+.section-label {
+
+    color: #6338d7;
+
+    font-size: 6px;
+
+    font-weight: 900;
+
+    letter-spacing: 1.7px;
+}
+
+
+.content-section h2 {
+
+    margin-top: 6px;
+
+    font-size: 18px;
+
+    font-weight: 850;
+
+    letter-spacing: -.4px;
+}
+
+
+.description {
+
+    margin-top: 10px;
+
+    color: #666666;
+
+    font-size: 10px;
+
+    line-height: 1.65;
+
+    white-space: pre-line;
+}
+
+
+
+/* ============================================================
+   PRICING
+============================================================ */
+
+.pricing-card {
+
+    margin:
+        8px 18px 25px;
+
+    padding:
+        17px;
+
+    border:
+        1px solid #dddddd;
+
+    border-radius: 13px;
+
+    background: #ffffff;
+}
+
+
+.pricing-top {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+}
+
+
+.price-label {
+
+    color: #999999;
+
+    font-size: 6px;
+
+    font-weight: 900;
+
+    letter-spacing: 1.2px;
+}
+
+
+.price-line {
+
+    margin-top: 4px;
+
+    display: flex;
+
+    align-items: baseline;
+
+    gap: 7px;
+}
+
+
+.final-price {
+
+    font-size: 25px;
+
+    font-weight: 900;
+
+    letter-spacing: -.7px;
+}
+
+
+.original-price {
+
+    color: #999999;
+
+    font-size: 10px;
+
+    text-decoration: line-through;
+}
+
+
+.discount-badge {
+
+    padding:
+        6px 8px;
+
+    border-radius: 5px;
+
+    background: #f1edff;
+
+    color: #6338d7;
+
+    font-size: 7px;
+
+    font-weight: 900;
+}
+
+
+.free-label {
+
+    margin-top: 8px;
+
+    color: #555555;
+
+    font-size: 8px;
+}
+
+
+.primary-action {
+
+    width: 100%;
+
+    margin-top: 15px;
+
+    min-height: 47px;
+
+    border: 0;
+
+    border-radius: 9px;
+
+    background: #111111;
+
+    color: #ffffff;
+
+    font-size: 9px;
+
+    font-weight: 900;
+
+    letter-spacing: .4px;
+}
+
+
+.primary-action:active {
+
+    transform: scale(.99);
+
+}
+
+
+.secure-note {
+
+    margin-top: 8px;
+
+    text-align: center;
+
+    color: #999999;
+
+    font-size: 7px;
+}
+
+
+
+/* ============================================================
+   INCLUDED
+============================================================ */
+
+.included-grid {
+
+    margin-top: 15px;
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            2,
+            1fr
+        );
+
+    gap: 8px;
+}
+
+
+.included-item {
+
+    min-height: 75px;
+
+    padding: 11px;
+
+    border:
+        1px solid #eeeeee;
+
+    border-radius: 9px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 9px;
+}
+
+
+.included-icon {
+
+    width: 29px;
+
+    height: 29px;
+
+    flex: 0 0 auto;
+
+    border-radius: 7px;
+
+    background: #f3f3f3;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+}
+
+
+.included-icon svg {
+
+    width: 15px;
+
+    height: 15px;
+
+    fill: none;
+
+    stroke: #111111;
+
+    stroke-width: 1.5;
+
+    stroke-linecap: round;
+
+    stroke-linejoin: round;
+}
+
+
+.included-item span {
+
+    font-size: 8px;
+
+    font-weight: 800;
+}
+
+
+
+/* ============================================================
+   TARGET
+============================================================ */
+
+.target-list {
+
+    margin-top: 13px;
+
+    display: flex;
+
+    gap: 6px;
+
+    flex-wrap: wrap;
+}
+
+
+.target-pill {
+
+    padding:
+        8px 10px;
+
+    border:
+        1px solid #dddddd;
+
+    border-radius: 7px;
+
+    color: #555555;
+
+    font-size: 8px;
+
+    font-weight: 700;
+}
+
+
+
+/* ============================================================
+   STICKY ACTION
+============================================================ */
+
+.sticky-action {
+
+    position: fixed;
+
+    left: 0;
+
+    right: 0;
+
+    bottom: 0;
+
+    z-index: 200;
+
+    min-height: 72px;
+
+    padding:
+        8px 15px
+        calc(
+            8px +
+            env(
+                safe-area-inset-bottom
+            )
+        );
+
+    background:
+        rgba(
+            255,
+            255,
+            255,
+            .98
+        );
+
+    border-top:
+        1px solid #e5e5e5;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 12px;
+}
+
+
+.sticky-price {
+
+    display: flex;
+
+    flex-direction: column;
+}
+
+
+.sticky-price span {
+
+    color: #999999;
+
+    font-size: 6px;
+
+    font-weight: 900;
+
+    letter-spacing: 1px;
+}
+
+
+.sticky-price strong {
+
+    margin-top: 2px;
+
+    font-size: 16px;
+
+    font-weight: 900;
+}
+
+
+.sticky-button {
+
+    min-width: 145px;
+
+    min-height: 44px;
+
+    padding:
+        0 18px;
+
+    border: 0;
+
+    border-radius: 8px;
+
+    background: #111111;
+
+    color: #ffffff;
+
+    font-size: 8px;
+
+    font-weight: 900;
+
+    letter-spacing: .4px;
+}
+
+
+
+/* ============================================================
+   ERROR
+============================================================ */
+
+.error-screen {
+
+    position: fixed;
+
+    inset: 0;
+
+    padding: 30px;
+
+    background: #ffffff;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    text-align: center;
+}
+
+
+.error-mark {
+
+    width: 48px;
+
+    height: 48px;
+
+    border-radius: 50%;
+
+    background: #111111;
+
+    color: #ffffff;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 17px;
+
+    font-weight: 900;
+}
+
+
+.error-screen h2 {
+
+    margin-top: 15px;
+
+    font-size: 18px;
+}
+
+
+.error-screen p {
+
+    max-width: 280px;
+
+    margin-top: 7px;
+
+    color: #777777;
+
+    font-size: 9px;
+
+    line-height: 1.5;
+}
+
+
+.error-button {
+
+    margin-top: 18px;
+
+    padding:
+        10px 16px;
+
+    border: 0;
+
+    border-radius: 7px;
+
+    background: #111111;
+
+    color: #ffffff;
+
+    font-size: 8px;
+
+    font-weight: 800;
+}
+
+
+
+/* ============================================================
+   DESKTOP
+============================================================ */
+
+@media (
+    min-width: 700px
+) {
+
+    .batch-hero {
+
+        border-radius:
+            0 0 15px 15px;
+
+    }
+
+
+    .info-grid {
+
+        grid-template-columns:
+            repeat(
+                4,
+                1fr
+            );
+
+    }
+
+
+    .included-grid {
+
+        grid-template-columns:
+            repeat(
+                4,
+                1fr
+            );
+
+    }
+
+}
