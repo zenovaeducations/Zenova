@@ -2,7 +2,6 @@
 <html lang="en">
 
 <head>
-
     <meta charset="UTF-8">
 
     <meta
@@ -15,28 +14,20 @@
         content="#ffffff"
     >
 
-    <title>Home Management | Zenova Admin</title>
+    <title>Home Control | Zenova Admin</title>
 
     <link
         rel="stylesheet"
         href="home-admin.css"
     >
-
 </head>
-
 
 <body>
 
+<div class="app">
 
-<div class="admin-page">
-
-
-    <!-- =====================================================
-         SIDEBAR
-    ====================================================== -->
-
+    <!-- SIDEBAR -->
     <aside class="sidebar" id="sidebar">
-
 
         <div class="brand">
 
@@ -46,415 +37,324 @@
             >
 
             <div>
-
-                <strong>
-                    ZENOVA
-                </strong>
-
-                <span>
-                    ADMIN PANEL
-                </span>
-
+                <strong>ZENOVA</strong>
+                <span>ADMIN PANEL</span>
             </div>
 
         </div>
 
 
+        <nav class="nav">
 
-        <nav class="navigation">
-
-
-            <p class="nav-heading">
+            <div class="nav-label">
                 OVERVIEW
-            </p>
+            </div>
 
-
-            <a
-                href="../"
-                class="nav-item"
-            >
-
-                <span class="nav-icon">⌂</span>
-
+            <a href="../" class="nav-link">
+                <span class="nav-symbol">□</span>
                 Dashboard
-
             </a>
 
 
+            <div class="nav-label">
+                STUDENT EXPERIENCE
+            </div>
 
-            <p class="nav-heading">
-                MANAGEMENT
-            </p>
-
-
-            <a
-                href="./"
-                class="nav-item active"
-            >
-
-                <span class="nav-icon">⌂</span>
-
+            <a href="./" class="nav-link active">
+                <span class="nav-symbol">⌂</span>
                 Home
-
             </a>
 
 
-            <a
-                href="../batches/"
-                class="nav-item"
-            >
+            <div class="nav-label">
+                PLATFORM
+            </div>
 
-                <span class="nav-icon">▦</span>
-
+            <a href="../batches/" class="nav-link">
+                <span class="nav-symbol">▦</span>
                 Batches
-
             </a>
 
-
-            <a
-                href="../students/"
-                class="nav-item"
-            >
-
-                <span class="nav-icon">○</span>
-
+            <a href="../students/" class="nav-link">
+                <span class="nav-symbol">○</span>
                 Students
-
             </a>
 
-
-            <a
-                href="../live/"
-                class="nav-item"
-            >
-
-                <span class="nav-icon">▷</span>
-
+            <a href="../live/" class="nav-link">
+                <span class="nav-symbol">▷</span>
                 Live Classes
-
             </a>
 
-
-            <a
-                href="../tests/"
-                class="nav-item"
-            >
-
-                <span class="nav-icon">□</span>
-
+            <a href="../tests/" class="nav-link">
+                <span class="nav-symbol">□</span>
                 Tests
-
             </a>
 
 
-
-            <p class="nav-heading">
+            <div class="nav-label">
                 CONTENT
-            </p>
+            </div>
 
-
-            <a
-                href="../content/"
-                class="nav-item"
-            >
-
-                <span class="nav-icon">▤</span>
-
+            <a href="../content/" class="nav-link">
+                <span class="nav-symbol">▤</span>
                 Study Content
-
             </a>
 
-
-            <a
-                href="../library/"
-                class="nav-item"
-            >
-
-                <span class="nav-icon">▥</span>
-
+            <a href="../library/" class="nav-link">
+                <span class="nav-symbol">▥</span>
                 Library
-
             </a>
 
 
-
-            <p class="nav-heading">
+            <div class="nav-label">
                 BUSINESS
-            </p>
+            </div>
 
-
-            <a
-                href="../payments/"
-                class="nav-item"
-            >
-
-                <span class="nav-icon">₹</span>
-
+            <a href="../payments/" class="nav-link">
+                <span class="nav-symbol">₹</span>
                 Payments
-
             </a>
 
-
-            <a
-                href="../reports/"
-                class="nav-item"
-            >
-
-                <span class="nav-icon">▥</span>
-
+            <a href="../reports/" class="nav-link">
+                <span class="nav-symbol">▥</span>
                 Reports
-
             </a>
 
 
-
-            <p class="nav-heading">
+            <div class="nav-label">
                 SYSTEM
-            </p>
+            </div>
 
-
-            <a
-                href="../notifications/"
-                class="nav-item"
-            >
-
-                <span class="nav-icon">◌</span>
-
+            <a href="../notifications/" class="nav-link">
+                <span class="nav-symbol">◌</span>
                 Notifications
-
             </a>
 
-
-            <a
-                href="../settings/"
-                class="nav-item"
-            >
-
-                <span class="nav-icon">⚙</span>
-
+            <a href="../settings/" class="nav-link">
+                <span class="nav-symbol">⚙</span>
                 Settings
-
             </a>
-
 
         </nav>
 
 
-
         <div class="admin-mode">
 
-            <span class="status-dot"></span>
+            <span class="online-dot"></span>
 
             <div>
-
-                <strong>
-                    Admin Mode
-                </strong>
-
-                <span>
-                    Testing
-                </span>
-
+                <strong>Admin Mode</strong>
+                <span>Testing</span>
             </div>
 
         </div>
 
-
     </aside>
 
 
-
-    <!-- =====================================================
-         MAIN
-    ====================================================== -->
-
+    <!-- MAIN -->
     <div class="main">
 
-
         <!-- TOPBAR -->
-
         <header class="topbar">
 
+            <div class="topbar-left">
 
-            <button
-                id="mobileMenu"
-                class="mobile-menu"
-            >
-                ☰
-            </button>
-
-
-            <div>
-
-                <span class="top-kicker">
-                    HOME MANAGEMENT
-                </span>
-
-                <h1>
-                    Student Home
-                </h1>
-
-            </div>
-
-
-            <div class="top-actions">
-
-
-                <button class="icon-button">
-                    ♧
+                <button
+                    class="mobile-menu"
+                    id="mobileMenu"
+                >
+                    ☰
                 </button>
 
+                <div>
 
-                <div class="admin-user">
+                    <span class="eyebrow">
+                        STUDENT EXPERIENCE
+                    </span>
 
-                    <div class="avatar">
-                        A
-                    </div>
-
-                    <div>
-
-                        <strong>
-                            Administrator
-                        </strong>
-
-                        <span>
-                            Admin
-                        </span>
-
-                    </div>
+                    <h1>
+                        Home Control
+                    </h1>
 
                 </div>
 
-
             </div>
 
+
+            <div class="admin-user">
+
+                <div class="avatar">
+                    A
+                </div>
+
+                <div class="user-details">
+                    <strong>Administrator</strong>
+                    <span>Admin</span>
+                </div>
+
+            </div>
 
         </header>
 
 
-
-        <!-- =================================================
-             CONTENT
-        ================================================== -->
-
+        <!-- CONTENT -->
         <main class="content">
 
 
-            <!-- PAGE INTRO -->
+            <!-- INTRO -->
+            <section class="intro">
 
-            <section class="page-intro">
-
-
-                <div>
+                <div class="intro-content">
 
                     <span>
-                        STUDENT EXPERIENCE
+                        STUDENT HOME
                     </span>
 
                     <h2>
-                        Control everything
-                        students see on Home.
+                        Build the experience
+                        students see every day.
                     </h2>
 
                     <p>
-                        Manage homepage content,
-                        promotional sections and
-                        student-facing information
-                        from one place.
+                        Control the content, sections,
+                        promotions and learning shortcuts
+                        displayed on the Zenova student Home.
                     </p>
 
                 </div>
 
 
-                <div class="intro-mark">
+                <div class="intro-logo">
                     Z
                 </div>
-
 
             </section>
 
 
 
-            <!-- =================================================
-                 HOME SECTIONS
-            ================================================== -->
+            <!-- HOME STRUCTURE -->
+            <section class="section">
 
-            <section class="section-block">
-
-
-                <div class="section-header">
+                <div class="section-heading">
 
                     <div>
-
                         <span>
-                            HOMEPAGE
+                            HOMEPAGE STRUCTURE
                         </span>
 
                         <h2>
-                            Home sections
+                            Student Home
                         </h2>
+                    </div>
+
+                    <div class="live-indicator">
+
+                        <span></span>
+
+                        Student Home
 
                     </div>
 
                 </div>
 
 
+                <div class="home-sections">
 
-                <div class="home-grid">
 
-
-                    <!-- BANNERS -->
-
-                    <a
-                        href="#banners"
-                        class="home-control-card"
+                    <!-- HERO -->
+                    <div
+                        class="control-card"
+                        data-section="banners"
                     >
 
-                        <div class="control-icon">
+                        <div class="card-number">
+                            01
+                        </div>
+
+                        <div class="card-icon">
                             ▧
                         </div>
 
-
-                        <div class="control-content">
+                        <div class="card-content">
 
                             <span>
-                                HERO CAROUSEL
+                                HERO
                             </span>
 
                             <h3>
-                                Home Banners
+                                Banner Carousel
                             </h3>
 
                             <p>
-                                Upload and control the
-                                main banners shown at
-                                the top of Home.
+                                Manage the large
+                                promotional images
+                                displayed at the top.
                             </p>
 
                         </div>
 
+                        <button class="open-section">
+                            Manage →
+                        </button>
 
-                        <span class="arrow">
-                            →
-                        </span>
+                    </div>
 
-                    </a>
 
+                    <!-- QUICK ACCESS -->
+                    <div
+                        class="control-card"
+                        data-section="quick-access"
+                    >
+
+                        <div class="card-number">
+                            02
+                        </div>
+
+                        <div class="card-icon">
+                            ◈
+                        </div>
+
+                        <div class="card-content">
+
+                            <span>
+                                SHORTCUTS
+                            </span>
+
+                            <h3>
+                                Quick Access
+                            </h3>
+
+                            <p>
+                                Control the shortcuts
+                                students see below
+                                the banner.
+                            </p>
+
+                        </div>
+
+                        <button class="open-section">
+                            Configure →
+                        </button>
+
+                    </div>
 
 
                     <!-- ANNOUNCEMENTS -->
-
-                    <a
-                        href="#announcements"
-                        class="home-control-card"
+                    <div
+                        class="control-card"
+                        data-section="announcements"
                     >
 
-                        <div class="control-icon">
+                        <div class="card-number">
+                            03
+                        </div>
+
+                        <div class="card-icon">
                             !
                         </div>
 
-
-                        <div class="control-content">
+                        <div class="card-content">
 
                             <span>
                                 UPDATES
@@ -466,33 +366,34 @@
 
                             <p>
                                 Publish important
-                                information for students.
+                                information and updates
+                                to students.
                             </p>
 
                         </div>
 
+                        <button class="open-section">
+                            Manage →
+                        </button>
 
-                        <span class="arrow">
-                            →
-                        </span>
-
-                    </a>
-
+                    </div>
 
 
-                    <!-- RECOMMENDATIONS -->
-
-                    <a
-                        href="#recommendations"
-                        class="home-control-card"
+                    <!-- RECOMMENDED -->
+                    <div
+                        class="control-card"
+                        data-section="recommendations"
                     >
 
-                        <div class="control-icon">
-                            ◈
+                        <div class="card-number">
+                            04
                         </div>
 
+                        <div class="card-icon">
+                            ◆
+                        </div>
 
-                        <div class="control-content">
+                        <div class="card-content">
 
                             <span>
                                 DISCOVERY
@@ -503,151 +404,192 @@
                             </h3>
 
                             <p>
-                                Control which programs
-                                are promoted on Home.
+                                Choose which batches
+                                are promoted to
+                                students.
                             </p>
 
                         </div>
 
+                        <button class="open-section">
+                            Manage →
+                        </button>
 
-                        <span class="arrow">
-                            →
-                        </span>
-
-                    </a>
-
+                    </div>
 
 
-                    <!-- CAMPAIGNS -->
-
-                    <a
-                        href="#campaigns"
-                        class="home-control-card"
+                    <!-- PROMOTIONAL -->
+                    <div
+                        class="control-card"
+                        data-section="promotional"
                     >
 
-                        <div class="control-icon">
-                            ◆
+                        <div class="card-number">
+                            05
                         </div>
 
+                        <div class="card-icon">
+                            ◇
+                        </div>
 
-                        <div class="control-content">
+                        <div class="card-content">
 
                             <span>
-                                PROMOTION
+                                CAMPAIGN
                             </span>
 
                             <h3>
-                                Promotional Banner
+                                Launch Banner
                             </h3>
 
                             <p>
-                                Manage large promotional
-                                campaigns and launches.
+                                Manage large campaign
+                                and launch promotions.
                             </p>
 
                         </div>
 
+                        <button class="open-section">
+                            Manage →
+                        </button>
 
-                        <span class="arrow">
-                            →
-                        </span>
-
-                    </a>
-
+                    </div>
 
 
-                    <!-- LIVE CLASSES -->
-
-                    <a
-                        href="#live"
-                        class="home-control-card"
+                    <!-- START LEARNING -->
+                    <div
+                        class="control-card"
+                        data-section="start-learning"
                     >
 
-                        <div class="control-icon">
+                        <div class="card-number">
+                            06
+                        </div>
+
+                        <div class="card-icon">
+                            ▶
+                        </div>
+
+                        <div class="card-content">
+
+                            <span>
+                                LEARNING
+                            </span>
+
+                            <h3>
+                                Start Learning
+                            </h3>
+
+                            <p>
+                                Control the learning
+                                entry points shown
+                                on Home.
+                            </p>
+
+                        </div>
+
+                        <button class="open-section">
+                            Configure →
+                        </button>
+
+                    </div>
+
+
+                    <!-- LIVE -->
+                    <div
+                        class="control-card"
+                        data-section="live"
+                    >
+
+                        <div class="card-number">
+                            07
+                        </div>
+
+                        <div class="card-icon">
                             ▷
                         </div>
 
-
-                        <div class="control-content">
+                        <div class="card-content">
 
                             <span>
                                 LIVE
                             </span>
 
                             <h3>
-                                Upcoming Classes
+                                Live Classes
                             </h3>
 
                             <p>
-                                Control which live classes
-                                appear on the Home page.
+                                Control upcoming live
+                                sessions shown on Home.
                             </p>
 
                         </div>
 
+                        <button class="open-section">
+                            Configure →
+                        </button>
 
-                        <span class="arrow">
-                            →
-                        </span>
-
-                    </a>
-
+                    </div>
 
 
                     <!-- TESTS -->
-
-                    <a
-                        href="#tests"
-                        class="home-control-card"
+                    <div
+                        class="control-card"
+                        data-section="tests"
                     >
 
-                        <div class="control-icon">
+                        <div class="card-number">
+                            08
+                        </div>
+
+                        <div class="card-icon">
                             □
                         </div>
 
-
-                        <div class="control-content">
+                        <div class="card-content">
 
                             <span>
                                 ASSESSMENT
                             </span>
 
                             <h3>
-                                Upcoming Tests
+                                Tests
                             </h3>
 
                             <p>
-                                Manage tests displayed
-                                on the student Home.
+                                Control upcoming tests
+                                and assessments shown
+                                to students.
                             </p>
 
                         </div>
 
+                        <button class="open-section">
+                            Configure →
+                        </button>
 
-                        <span class="arrow">
-                            →
-                        </span>
-
-                    </a>
-
+                    </div>
 
 
                     <!-- FREE LEARNING -->
-
-                    <a
-                        href="#free-learning"
-                        class="home-control-card"
+                    <div
+                        class="control-card"
+                        data-section="free"
                     >
 
-                        <div class="control-icon">
+                        <div class="card-number">
+                            09
+                        </div>
+
+                        <div class="card-icon">
                             ◇
                         </div>
 
-
-                        <div class="control-content">
+                        <div class="card-content">
 
                             <span>
-                                FREE CONTENT
+                                FREE
                             </span>
 
                             <h3>
@@ -655,56 +597,55 @@
                             </h3>
 
                             <p>
-                                Choose free educational
-                                resources shown to students.
+                                Select free resources
+                                displayed on Home.
                             </p>
 
                         </div>
 
+                        <button class="open-section">
+                            Configure →
+                        </button>
 
-                        <span class="arrow">
-                            →
-                        </span>
-
-                    </a>
-
+                    </div>
 
 
-                    <!-- SECTION VISIBILITY -->
-
-                    <a
-                        href="#visibility"
-                        class="home-control-card"
+                    <!-- AI -->
+                    <div
+                        class="control-card"
+                        data-section="ai"
                     >
 
-                        <div class="control-icon">
-                            ◉
+                        <div class="card-number">
+                            10
                         </div>
 
+                        <div class="card-icon">
+                            AI
+                        </div>
 
-                        <div class="control-content">
+                        <div class="card-content">
 
                             <span>
-                                LAYOUT
+                                INTELLIGENCE
                             </span>
 
                             <h3>
-                                Section Visibility
+                                Learn with AI
                             </h3>
 
                             <p>
-                                Control which Home sections
-                                are visible to students.
+                                Control the AI learning
+                                entry point shown on Home.
                             </p>
 
                         </div>
 
+                        <button class="open-section">
+                            Configure →
+                        </button>
 
-                        <span class="arrow">
-                            →
-                        </span>
-
-                    </a>
+                    </div>
 
 
                 </div>
@@ -713,17 +654,13 @@
 
 
 
-            <!-- =================================================
-                 BANNER MANAGEMENT
-            ================================================== -->
-
+            <!-- BANNER MANAGEMENT -->
             <section
-                id="banners"
-                class="section-block banner-management"
+                class="section"
+                id="bannerManager"
             >
 
-
-                <div class="section-header">
+                <div class="section-heading">
 
                     <div>
 
@@ -732,39 +669,35 @@
                         </span>
 
                         <h2>
-                            Home Banners
+                            Banner Carousel
                         </h2>
 
                         <p>
-                            These banners appear in the
-                            main carousel on the student Home.
+                            Manage the real images displayed
+                            at the top of Student Home.
                         </p>
 
                     </div>
 
 
                     <button
-                        id="addBannerButton"
                         class="primary-button"
+                        id="addBanner"
                     >
-
                         + Add Banner
-
                     </button>
 
                 </div>
 
 
-
-                <!-- FIREBASE STATUS -->
-
-                <div class="firebase-bar">
+                <!-- CONNECTION -->
+                <div class="connection-bar">
 
                     <div>
 
                         <span
                             id="firebaseDot"
-                            class="status-dot"
+                            class="connection-dot"
                         ></span>
 
                         <strong>
@@ -773,116 +706,151 @@
 
                     </div>
 
-
-                    <span id="firebaseText">
-                        Connecting...
+                    <span id="firebaseStatus">
+                        Checking...
                     </span>
 
                 </div>
-
 
 
                 <!-- LOADING -->
-
                 <div
-                    id="bannerLoading"
-                    class="banner-loading"
+                    class="loading"
+                    id="loading"
                 >
 
-                    <div class="loading-ring"></div>
+                    <div class="spinner"></div>
 
                     <span>
-                        Loading banners...
+                        Loading Home banners...
                     </span>
 
                 </div>
 
 
-
-                <!-- BANNER LIST -->
-
+                <!-- REAL BANNERS -->
                 <div
-                    id="bannerList"
                     class="banner-list hidden"
+                    id="bannerList"
                 ></div>
 
 
-
                 <!-- EMPTY -->
-
                 <div
-                    id="bannerEmpty"
-                    class="empty-state hidden"
+                    class="empty hidden"
+                    id="empty"
                 >
 
-                    <div class="empty-icon">
+                    <div class="empty-symbol">
                         ▧
                     </div>
 
                     <h3>
-                        No banners yet
+                        No Home banners
                     </h3>
 
                     <p>
-                        Add the first real banner
-                        that students will see
-                        on their Home page.
+                        There are currently no banners
+                        configured for Student Home.
                     </p>
 
                     <button
-                        id="emptyAddButton"
                         class="primary-button"
+                        id="emptyAdd"
                     >
-                        + Add Banner
+                        + Add First Banner
                     </button>
 
                 </div>
 
+            </section>
+
+
+
+            <!-- FUTURE -->
+            <section class="section future-section">
+
+                <div class="section-heading">
+
+                    <div>
+
+                        <span>
+                            NEXT
+                        </span>
+
+                        <h2>
+                            More Home controls
+                        </h2>
+
+                    </div>
+
+                </div>
+
+
+                <div class="future-grid">
+
+                    <div>
+                        Announcements
+                    </div>
+
+                    <div>
+                        Recommended Batches
+                    </div>
+
+                    <div>
+                        Launch Promotions
+                    </div>
+
+                    <div>
+                        Live Classes
+                    </div>
+
+                    <div>
+                        Upcoming Tests
+                    </div>
+
+                    <div>
+                        Learn with AI
+                    </div>
+
+                </div>
 
             </section>
 
 
         </main>
 
-
     </div>
-
 
 </div>
 
 
 
-<!-- =====================================================
-     ADD / EDIT BANNER MODAL
-====================================================== -->
-
+<!-- BANNER MODAL -->
 <div
-    id="bannerModal"
     class="modal-overlay hidden"
+    id="modal"
 >
 
-
     <div class="modal">
-
 
         <div class="modal-header">
 
             <div>
 
                 <span>
-                    HOME MANAGEMENT
+                    STUDENT HOME
                 </span>
 
-                <h2 id="modalTitle">
+                <h2>
                     Add Banner
                 </h2>
 
             </div>
 
-
             <button
-                id="closeModal"
                 class="close-button"
+                id="closeModal"
             >
                 ×
             </button>
@@ -890,11 +858,8 @@
         </div>
 
 
-
         <form id="bannerForm">
 
-
-            <!-- IMAGE -->
 
             <div class="form-group">
 
@@ -902,26 +867,22 @@
                     Banner Image
                 </label>
 
-
-                <div
-                    id="imageUpload"
-                    class="image-upload"
-                >
+                <div class="upload-box">
 
                     <input
-                        id="bannerImage"
                         type="file"
+                        id="bannerImage"
                         accept="image/jpeg,image/png,image/webp"
+                        required
                     >
 
-
                     <div
-                        id="uploadPlaceholder"
-                        class="upload-placeholder"
+                        class="upload-message"
+                        id="uploadMessage"
                     >
 
                         <strong>
-                            Upload banner image
+                            Choose banner image
                         </strong>
 
                         <span>
@@ -930,10 +891,9 @@
 
                     </div>
 
-
                     <img
-                        id="imagePreview"
-                        class="image-preview hidden"
+                        id="preview"
+                        class="preview hidden"
                         alt="Banner preview"
                     >
 
@@ -942,60 +902,50 @@
             </div>
 
 
-
-            <!-- TITLE -->
-
             <div class="form-group">
 
-                <label for="bannerTitle">
+                <label>
                     Internal Title
                 </label>
 
                 <input
-                    id="bannerTitle"
                     type="text"
+                    id="bannerTitle"
                     maxlength="100"
-                    placeholder="Example: SSLC 2027 Launch"
+                    placeholder="Example: SSLC 2027"
                     required
                 >
 
             </div>
 
 
-
-            <!-- DESCRIPTION -->
-
             <div class="form-group">
 
-                <label for="bannerDescription">
+                <label>
                     Description
                 </label>
 
                 <textarea
                     id="bannerDescription"
                     maxlength="200"
-                    placeholder="Optional description"
+                    placeholder="Optional"
                 ></textarea>
 
             </div>
 
 
-
-            <!-- LINK -->
-
-            <div class="form-row">
-
+            <div class="two-column">
 
                 <div class="form-group">
 
-                    <label for="bannerLink">
+                    <label>
                         Destination
                     </label>
 
                     <input
-                        id="bannerLink"
                         type="text"
-                        placeholder="Example: ../batches/"
+                        id="bannerLink"
+                        placeholder="/batches/"
                     >
 
                 </div>
@@ -1003,13 +953,13 @@
 
                 <div class="form-group">
 
-                    <label for="bannerOrder">
+                    <label>
                         Display Order
                     </label>
 
                     <input
-                        id="bannerOrder"
                         type="number"
+                        id="bannerOrder"
                         min="1"
                         value="1"
                         required
@@ -1017,78 +967,57 @@
 
                 </div>
 
-
             </div>
 
 
+            <label class="switch-row">
 
-            <!-- STATUS -->
+                <input
+                    type="checkbox"
+                    id="bannerActive"
+                    checked
+                >
 
-            <div class="form-group">
+                <span class="switch"></span>
 
-                <label>
-                    Status
-                </label>
+                <span>
+                    Show this banner on Student Home
+                </span>
 
+            </label>
 
-                <label class="toggle-row">
-
-                    <input
-                        id="bannerActive"
-                        type="checkbox"
-                        checked
-                    >
-
-                    <span class="toggle"></span>
-
-                    <span>
-                        Active
-                    </span>
-
-                </label>
-
-            </div>
-
-
-
-            <!-- ACTIONS -->
 
             <div class="modal-actions">
 
                 <button
                     type="button"
-                    id="cancelButton"
                     class="secondary-button"
+                    id="cancelModal"
                 >
                     Cancel
                 </button>
 
-
                 <button
                     type="submit"
-                    id="saveBannerButton"
                     class="primary-button"
+                    id="saveBanner"
                 >
                     Save Banner
                 </button>
 
             </div>
 
-
         </form>
-
 
     </div>
 
 </div>
 
 
-
 <script
     type="module"
     src="home-admin.js"
 ></script>
-
 
 </body>
 
