@@ -971,7 +971,7 @@ function renderBatchCards(
 
 
                         window.location.href =
-                            `../../batch/?id=${
+                            `batch/?id=${
                                 encodeURIComponent(
                                     id
                                 )
