@@ -225,21 +225,7 @@ onAuthStateChanged(
 
         try {
 
-            const token =
-                await user.getIdTokenResult(
-                    true
-                );
-
-
-            if (
-                token.claims.admin !== true
-            ) {
-
-                showAccessDenied();
-
-                return;
-
-            }
+            
 
 
             currentUser =
