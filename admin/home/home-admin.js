@@ -3,6 +3,7 @@ import {
     storage
 } from "../../firebase/firebase-config.js";
 
+
 import {
     collection,
     addDoc,
@@ -15,65 +16,99 @@ import {
     serverTimestamp
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
+
 import {
     ref,
     uploadBytes,
-    getDownloadURL,
-    deleteObject
+    getDownloadURL
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-storage.js";
+
 
 
 /* ============================================================
    ELEMENTS
 ============================================================ */
 
+const sidebar =
+    document.getElementById("sidebar");
+
+
+const mobileMenu =
+    document.getElementById("mobileMenu");
+
+
+const loading =
+    document.getElementById("loading");
+
+
 const bannerList =
     document.getElementById("bannerList");
 
-const bannerLoading =
-    document.getElementById("bannerLoading");
 
-const bannerEmpty =
-    document.getElementById("bannerEmpty");
+const empty =
+    document.getElementById("empty");
+
 
 const modal =
-    document.getElementById("bannerModal");
+    document.getElementById("modal");
+
 
 const form =
     document.getElementById("bannerForm");
 
+
 const imageInput =
     document.getElementById("bannerImage");
 
-const imagePreview =
-    document.getElementById("imagePreview");
 
-const uploadPlaceholder =
-    document.getElementById("uploadPlaceholder");
+const preview =
+    document.getElementById("preview");
 
-const modalTitle =
-    document.getElementById("modalTitle");
+
+const uploadMessage =
+    document.getElementById("uploadMessage");
+
+
+const saveButton =
+    document.getElementById("saveBanner");
+
 
 const firebaseDot =
     document.getElementById("firebaseDot");
 
-const firebaseText =
-    document.getElementById("firebaseText");
 
+const firebaseStatus =
+    document.getElementById("firebaseStatus");
 
-let editingBannerId = null;
-let editingBannerImage = null;
 
 
 /* ============================================================
-   START
+   MOBILE MENU
+============================================================ */
+
+mobileMenu.addEventListener(
+    "click",
+    () => {
+
+        sidebar.classList.toggle(
+            "open"
+        );
+
+    }
+);
+
+
+
+/* ============================================================
+   LOAD
 ============================================================ */
 
 loadBanners();
 
 
+
 /* ============================================================
-   LOAD BANNERS
+   LOAD BANNERS FROM FIRESTORE
 ============================================================ */
 
 async function loadBanners() {
@@ -83,16 +118,12 @@ async function loadBanners() {
 
     try {
 
-        const bannersRef =
-            collection(
-                db,
-                "homeBanners"
-            );
-
-
-        const bannersQuery =
+        const bannerQuery =
             query(
-                bannersRef,
+                collection(
+                    db,
+                    "homeBanners"
+                ),
                 orderBy(
                     "order",
                     "asc"
@@ -102,20 +133,29 @@ async function loadBanners() {
 
         const snapshot =
             await getDocs(
-                bannersQuery
+                bannerQuery
             );
 
 
         const banners =
             snapshot.docs.map(
                 item => ({
+
                     id: item.id,
+
                     ...item.data()
+
                 })
             );
 
 
-        setFirebaseConnected();
+        firebaseDot.classList.add(
+            "connected"
+        );
+
+
+        firebaseStatus.textContent =
+            "CONNECTED";
 
 
         renderBanners(
@@ -126,12 +166,13 @@ async function loadBanners() {
     } catch (error) {
 
         console.error(
-            "Unable to load banners:",
+            "Firebase:",
             error
         );
 
 
-        setFirebaseError();
+        firebaseStatus.textContent =
+            "ERROR";
 
 
         hideLoading();
@@ -142,18 +183,18 @@ async function loadBanners() {
         );
 
 
-        bannerEmpty.classList.remove(
+        empty.classList.remove(
             "hidden"
         );
 
 
-        bannerEmpty.querySelector(
+        empty.querySelector(
             "h3"
         ).textContent =
             "Unable to load banners";
 
 
-        bannerEmpty.querySelector(
+        empty.querySelector(
             "p"
         ).textContent =
             "Check your Firebase configuration and Firestore permissions.";
@@ -161,6 +202,7 @@ async function loadBanners() {
     }
 
 }
+
 
 
 /* ============================================================
@@ -174,7 +216,8 @@ function renderBanners(
     hideLoading();
 
 
-    bannerList.innerHTML = "";
+    bannerList.innerHTML =
+        "";
 
 
     if (
@@ -185,7 +228,7 @@ function renderBanners(
             "hidden"
         );
 
-        bannerEmpty.classList.remove(
+        empty.classList.remove(
             "hidden"
         );
 
@@ -194,9 +237,10 @@ function renderBanners(
     }
 
 
-    bannerEmpty.classList.add(
+    empty.classList.add(
         "hidden"
     );
+
 
     bannerList.classList.remove(
         "hidden"
@@ -218,11 +262,11 @@ function renderBanners(
 
             row.innerHTML = `
 
-                <div class="banner-thumb">
+                <div class="banner-image">
 
                     <img
-                        src="${escapeAttr(
-                            banner.imageUrl || ""
+                        src="${safeAttr(
+                            banner.imageUrl
                         )}"
                         alt=""
                     >
@@ -239,8 +283,8 @@ function renderBanners(
                     </span>
 
                     <h3>
-                        ${escapeHtml(
-                            banner.title || ""
+                        ${safeHtml(
+                            banner.title
                         )}
                     </h3>
 
@@ -248,14 +292,13 @@ function renderBanners(
                         banner.description
                             ? `
                                 <p>
-                                    ${escapeHtml(
+                                    ${safeHtml(
                                         banner.description
                                     )}
                                 </p>
                             `
                             : ""
                     }
-
 
                     <div
                         class="banner-status ${
@@ -279,15 +322,7 @@ function renderBanners(
                 <div class="banner-actions">
 
                     <button
-                        class="small-button edit"
-                        data-id="${banner.id}"
-                    >
-                        Edit
-                    </button>
-
-
-                    <button
-                        class="small-button toggle-status"
+                        class="small-button toggle"
                         data-id="${banner.id}"
                     >
 
@@ -320,31 +355,32 @@ function renderBanners(
     );
 
 
-    attachBannerActions(
+    attachActions(
         banners
     );
 
 }
 
 
+
 /* ============================================================
    ACTIONS
 ============================================================ */
 
-function attachBannerActions(
+function attachActions(
     banners
 ) {
 
     document
         .querySelectorAll(
-            ".edit"
+            ".toggle"
         )
         .forEach(
             button => {
 
                 button.addEventListener(
                     "click",
-                    () => {
+                    async () => {
 
                         const banner =
                             banners.find(
@@ -354,10 +390,45 @@ function attachBannerActions(
                             );
 
 
-                        if (banner) {
+                        if (!banner) {
+                            return;
+                        }
 
-                            openEditModal(
-                                banner
+
+                        try {
+
+                            await updateDoc(
+
+                                doc(
+                                    db,
+                                    "homeBanners",
+                                    banner.id
+                                ),
+
+                                {
+
+                                    active:
+                                        !banner.active,
+
+                                    updatedAt:
+                                        serverTimestamp()
+
+                                }
+
+                            );
+
+
+                            await loadBanners();
+
+
+                        } catch (error) {
+
+                            console.error(
+                                error
+                            );
+
+                            alert(
+                                "Unable to update banner."
                             );
 
                         }
@@ -368,28 +439,6 @@ function attachBannerActions(
             }
         );
 
-
-    document
-        .querySelectorAll(
-            ".toggle-status"
-        )
-        .forEach(
-            button => {
-
-                button.addEventListener(
-                    "click",
-                    async () => {
-
-                        await toggleBanner(
-                            button.dataset.id,
-                            banners
-                        );
-
-                    }
-                );
-
-            }
-        );
 
 
     document
@@ -403,10 +452,44 @@ function attachBannerActions(
                     "click",
                     async () => {
 
-                        await removeBanner(
-                            button.dataset.id,
-                            banners
-                        );
+                        const confirmed =
+                            confirm(
+                                "Delete this banner?"
+                            );
+
+
+                        if (!confirmed) {
+                            return;
+                        }
+
+
+                        try {
+
+                            await deleteDoc(
+
+                                doc(
+                                    db,
+                                    "homeBanners",
+                                    button.dataset.id
+                                )
+
+                            );
+
+
+                            await loadBanners();
+
+
+                        } catch (error) {
+
+                            console.error(
+                                error
+                            );
+
+                            alert(
+                                "Unable to delete banner."
+                            );
+
+                        }
 
                     }
                 );
@@ -417,24 +500,28 @@ function attachBannerActions(
 }
 
 
+
 /* ============================================================
    ADD BANNER
 ============================================================ */
 
-function openAddModal() {
-
-    editingBannerId =
-        null;
-
-    editingBannerImage =
-        null;
-
-
-    modalTitle.textContent =
-        "Add Banner";
-
+function openModal() {
 
     form.reset();
+
+
+    preview.src =
+        "";
+
+
+    preview.classList.add(
+        "hidden"
+    );
+
+
+    uploadMessage.classList.remove(
+        "hidden"
+    );
 
 
     document.getElementById(
@@ -443,22 +530,6 @@ function openAddModal() {
         true;
 
 
-    document.getElementById(
-        "bannerOrder"
-    ).value =
-        "1";
-
-
-    imagePreview.classList.add(
-        "hidden"
-    );
-
-
-    uploadPlaceholder.classList.remove(
-        "hidden"
-    );
-
-
     modal.classList.remove(
         "hidden"
     );
@@ -468,98 +539,23 @@ function openAddModal() {
 
 document
     .getElementById(
-        "addBannerButton"
+        "addBanner"
     )
     .addEventListener(
         "click",
-        openAddModal
+        openModal
     );
 
 
 document
     .getElementById(
-        "emptyAddButton"
+        "emptyAdd"
     )
     .addEventListener(
         "click",
-        openAddModal
+        openModal
     );
 
-
-/* ============================================================
-   EDIT
-============================================================ */
-
-function openEditModal(
-    banner
-) {
-
-    editingBannerId =
-        banner.id;
-
-    editingBannerImage =
-        banner.imageUrl || "";
-
-
-    modalTitle.textContent =
-        "Edit Banner";
-
-
-    document.getElementById(
-        "bannerTitle"
-    ).value =
-        banner.title || "";
-
-
-    document.getElementById(
-        "bannerDescription"
-    ).value =
-        banner.description || "";
-
-
-    document.getElementById(
-        "bannerLink"
-    ).value =
-        banner.link || "";
-
-
-    document.getElementById(
-        "bannerOrder"
-    ).value =
-        Number(
-            banner.order || 1
-        );
-
-
-    document.getElementById(
-        "bannerActive"
-    ).checked =
-        banner.active === true;
-
-
-    if (
-        banner.imageUrl
-    ) {
-
-        imagePreview.src =
-            banner.imageUrl;
-
-        imagePreview.classList.remove(
-            "hidden"
-        );
-
-        uploadPlaceholder.classList.add(
-            "hidden"
-        );
-
-    }
-
-
-    modal.classList.remove(
-        "hidden"
-    );
-
-}
 
 
 /* ============================================================
@@ -575,9 +571,7 @@ imageInput.addEventListener(
 
 
         if (!file) {
-
             return;
-
         }
 
 
@@ -599,6 +593,23 @@ imageInput.addEventListener(
         }
 
 
+        if (
+            file.size >
+            10 * 1024 * 1024
+        ) {
+
+            alert(
+                "Image must be smaller than 10 MB."
+            );
+
+            imageInput.value =
+                "";
+
+            return;
+
+        }
+
+
         const reader =
             new FileReader();
 
@@ -606,16 +617,16 @@ imageInput.addEventListener(
         reader.onload =
             event => {
 
-                imagePreview.src =
+                preview.src =
                     event.target.result;
 
 
-                imagePreview.classList.remove(
+                preview.classList.remove(
                     "hidden"
                 );
 
 
-                uploadPlaceholder.classList.add(
+                uploadMessage.classList.add(
                     "hidden"
                 );
 
@@ -630,6 +641,7 @@ imageInput.addEventListener(
 );
 
 
+
 /* ============================================================
    SAVE
 ============================================================ */
@@ -639,12 +651,6 @@ form.addEventListener(
     async event => {
 
         event.preventDefault();
-
-
-        const saveButton =
-            document.getElementById(
-                "saveBannerButton"
-            );
 
 
         const file =
@@ -683,10 +689,10 @@ form.addEventListener(
             ).checked;
 
 
-        if (!title) {
+        if (!file) {
 
             alert(
-                "Please enter a banner title."
+                "Please choose a banner image."
             );
 
             return;
@@ -694,13 +700,10 @@ form.addEventListener(
         }
 
 
-        if (
-            !editingBannerId &&
-            !file
-        ) {
+        if (!title) {
 
             alert(
-                "Please upload a banner image."
+                "Please enter a title."
             );
 
             return;
@@ -711,109 +714,94 @@ form.addEventListener(
         saveButton.disabled =
             true;
 
+
         saveButton.textContent =
-            "Saving...";
+            "Uploading...";
 
 
         try {
 
-            let imageUrl =
-                editingBannerImage;
+            /*
+             * Create unique storage name.
+             */
+
+            const extension =
+                file.name
+                    .split(".")
+                    .pop()
+                    .toLowerCase();
+
+
+            const fileName =
+                `${Date.now()}-${crypto.randomUUID()}.${extension}`;
 
 
             /*
-             * Upload a new image if selected.
+             * Firebase Storage
              */
 
-            if (file) {
-
-                const fileExtension =
-                    file.name
-                        .split(".")
-                        .pop()
-                        .toLowerCase();
-
-
-                const safeName =
-                    Date.now() +
-                    "-" +
-                    crypto.randomUUID() +
-                    "." +
-                    fileExtension;
-
-
-                const imageRef =
-                    ref(
-                        storage,
-                        `homeBanners/${safeName}`
-                    );
-
-
-                await uploadBytes(
-                    imageRef,
-                    file
+            const storageReference =
+                ref(
+                    storage,
+                    `homeBanners/${fileName}`
                 );
 
 
-                imageUrl =
-                    await getDownloadURL(
-                        imageRef
-                    );
-
-            }
+            await uploadBytes(
+                storageReference,
+                file
+            );
 
 
-            const data = {
+            /*
+             * Get download URL.
+             */
 
-                title,
-
-                description,
-
-                link,
-
-                imageUrl,
-
-                order,
-
-                active,
-
-                updatedAt:
-                    serverTimestamp()
-
-            };
-
-
-            if (
-                editingBannerId
-            ) {
-
-                await updateDoc(
-                    doc(
-                        db,
-                        "homeBanners",
-                        editingBannerId
-                    ),
-                    data
+            const imageUrl =
+                await getDownloadURL(
+                    storageReference
                 );
 
-            } else {
 
-                await addDoc(
-                    collection(
-                        db,
-                        "homeBanners"
-                    ),
-                    {
+            saveButton.textContent =
+                "Saving...";
 
-                        ...data,
 
-                        createdAt:
-                            serverTimestamp()
+            /*
+             * Firestore stores the URL,
+             * NOT the image.
+             */
 
-                    }
-                );
+            await addDoc(
 
-            }
+                collection(
+                    db,
+                    "homeBanners"
+                ),
+
+                {
+
+                    title,
+
+                    description,
+
+                    imageUrl,
+
+                    link,
+
+                    order,
+
+                    active,
+
+                    createdAt:
+                        serverTimestamp(),
+
+                    updatedAt:
+                        serverTimestamp()
+
+                }
+
+            );
 
 
             closeModal();
@@ -825,19 +813,21 @@ form.addEventListener(
         } catch (error) {
 
             console.error(
-                "Save banner:",
+                "SAVE BANNER ERROR:",
                 error
             );
 
 
             alert(
-                "Banner could not be saved. Check Firebase permissions."
+                error.message ||
+                "Unable to save banner."
             );
 
         } finally {
 
             saveButton.disabled =
                 false;
+
 
             saveButton.textContent =
                 "Save Banner";
@@ -848,184 +838,9 @@ form.addEventListener(
 );
 
 
-/* ============================================================
-   ENABLE / DISABLE
-============================================================ */
-
-async function toggleBanner(
-    id,
-    banners
-) {
-
-    const banner =
-        banners.find(
-            item =>
-                item.id === id
-        );
-
-
-    if (!banner) {
-
-        return;
-
-    }
-
-
-    try {
-
-        await updateDoc(
-            doc(
-                db,
-                "homeBanners",
-                id
-            ),
-            {
-
-                active:
-                    !banner.active,
-
-                updatedAt:
-                    serverTimestamp()
-
-            }
-        );
-
-
-        await loadBanners();
-
-
-    } catch (error) {
-
-        console.error(
-            error
-        );
-
-        alert(
-            "Unable to update banner."
-        );
-
-    }
-
-}
-
 
 /* ============================================================
-   DELETE
-============================================================ */
-
-async function removeBanner(
-    id,
-    banners
-) {
-
-    const banner =
-        banners.find(
-            item =>
-                item.id === id
-        );
-
-
-    if (!banner) {
-
-        return;
-
-    }
-
-
-    const confirmed =
-        confirm(
-            "Delete this banner permanently?"
-        );
-
-
-    if (!confirmed) {
-
-        return;
-
-    }
-
-
-    try {
-
-        /*
-         * Delete Firestore document.
-         */
-
-        await deleteDoc(
-            doc(
-                db,
-                "homeBanners",
-                id
-            )
-        );
-
-
-        /*
-         * Storage cleanup is attempted
-         * only if we can derive the
-         * Storage reference from the URL.
-         */
-
-        if (
-            banner.imageUrl
-        ) {
-
-            try {
-
-                const imageRef =
-                    ref(
-                        storage,
-                        banner.imageUrl
-                    );
-
-                await deleteObject(
-                    imageRef
-                );
-
-            } catch (
-                storageError
-            ) {
-
-                /*
-                 * Firestore deletion has
-                 * already succeeded.
-                 *
-                 * Storage cleanup failure
-                 * should not block the UI.
-                 */
-
-                console.warn(
-                    "Storage cleanup:",
-                    storageError
-                );
-
-            }
-
-        }
-
-
-        await loadBanners();
-
-
-    } catch (error) {
-
-        console.error(
-            "Delete banner:",
-            error
-        );
-
-
-        alert(
-            "Unable to delete banner."
-        );
-
-    }
-
-}
-
-
-/* ============================================================
-   MODAL
+   CLOSE MODAL
 ============================================================ */
 
 function closeModal() {
@@ -1038,25 +853,18 @@ function closeModal() {
     form.reset();
 
 
-    imagePreview.src =
+    preview.src =
         "";
 
 
-    imagePreview.classList.add(
+    preview.classList.add(
         "hidden"
     );
 
 
-    uploadPlaceholder.classList.remove(
+    uploadMessage.classList.remove(
         "hidden"
     );
-
-
-    editingBannerId =
-        null;
-
-    editingBannerImage =
-        null;
 
 }
 
@@ -1073,7 +881,7 @@ document
 
 document
     .getElementById(
-        "cancelButton"
+        "cancelModal"
     )
     .addEventListener(
         "click",
@@ -1097,57 +905,6 @@ modal.addEventListener(
 );
 
 
-/* ============================================================
-   MOBILE MENU
-============================================================ */
-
-document
-    .getElementById(
-        "mobileMenu"
-    )
-    .addEventListener(
-        "click",
-        () => {
-
-            document
-                .getElementById(
-                    "sidebar"
-                )
-                .classList.toggle(
-                    "open"
-                );
-
-        }
-    );
-
-
-/* ============================================================
-   FIREBASE STATUS
-============================================================ */
-
-function setFirebaseConnected() {
-
-    firebaseDot.classList.add(
-        "connected"
-    );
-
-    firebaseText.textContent =
-        "CONNECTED";
-
-}
-
-
-function setFirebaseError() {
-
-    firebaseDot.classList.remove(
-        "connected"
-    );
-
-    firebaseText.textContent =
-        "CONNECTION ERROR";
-
-}
-
 
 /* ============================================================
    LOADING
@@ -1155,7 +912,7 @@ function setFirebaseError() {
 
 function showLoading() {
 
-    bannerLoading.classList.remove(
+    loading.classList.remove(
         "hidden"
     );
 
@@ -1163,7 +920,7 @@ function showLoading() {
         "hidden"
     );
 
-    bannerEmpty.classList.add(
+    empty.classList.add(
         "hidden"
     );
 
@@ -1172,53 +929,39 @@ function showLoading() {
 
 function hideLoading() {
 
-    bannerLoading.classList.add(
+    loading.classList.add(
         "hidden"
     );
 
 }
 
 
+
 /* ============================================================
-   SECURITY HELPERS
+   HTML SAFETY
 ============================================================ */
 
-function escapeHtml(
+function safeHtml(
     value
 ) {
 
     return String(
         value ?? ""
     )
-        .replaceAll(
-            "&",
-            "&amp;"
-        )
-        .replaceAll(
-            "<",
-            "&lt;"
-        )
-        .replaceAll(
-            ">",
-            "&gt;"
-        )
-        .replaceAll(
-            '"',
-            "&quot;"
-        )
-        .replaceAll(
-            "'",
-            "&#039;"
-        );
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
 
 }
 
 
-function escapeAttr(
+function safeAttr(
     value
 ) {
 
-    return escapeHtml(
+    return safeHtml(
         value
     );
 
