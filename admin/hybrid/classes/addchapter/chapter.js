@@ -3,9 +3,11 @@ import {
     db
 } from "../../../../firebase/firebase-config.js";
 
+
 import {
     onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+
 
 import {
     collection,
@@ -21,6 +23,7 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
 
+
 /* ============================================================
    ELEMENTS
 ============================================================ */
@@ -31,62 +34,104 @@ const loader =
 const app =
     document.getElementById("app");
 
-const subjectName =
-    document.getElementById("subjectName");
+const errorScreen =
+    document.getElementById("errorScreen");
+
+const errorMessage =
+    document.getElementById("errorMessage");
+
+const retryButton =
+    document.getElementById("retryButton");
+
+const errorBackButton =
+    document.getElementById("errorBackButton");
+
+const backButton =
+    document.getElementById("backButton");
 
 const subjectTitle =
     document.getElementById("subjectTitle");
 
 const subjectDescription =
-    document.getElementById("subjectDescription");
+    document.getElementById(
+        "subjectDescription"
+    );
 
 const chaptersList =
-    document.getElementById("chaptersList");
+    document.getElementById(
+        "chaptersList"
+    );
 
 const emptyState =
-    document.getElementById("emptyState");
+    document.getElementById(
+        "emptyState"
+    );
 
 const addChapterButton =
-    document.getElementById("addChapterButton");
+    document.getElementById(
+        "addChapterButton"
+    );
 
 const emptyAddButton =
-    document.getElementById("emptyAddButton");
-
-const backButton =
-    document.getElementById("backButton");
+    document.getElementById(
+        "emptyAddButton"
+    );
 
 const modal =
-    document.getElementById("chapterModal");
-
-const closeModal =
-    document.getElementById("closeModal");
+    document.getElementById(
+        "chapterModal"
+    );
 
 const modalTitle =
-    document.getElementById("modalTitle");
+    document.getElementById(
+        "modalTitle"
+    );
+
+const closeModal =
+    document.getElementById(
+        "closeModal"
+    );
 
 const form =
-    document.getElementById("chapterForm");
+    document.getElementById(
+        "chapterForm"
+    );
 
 const chapterNumber =
-    document.getElementById("chapterNumber");
+    document.getElementById(
+        "chapterNumber"
+    );
 
 const chapterTitle =
-    document.getElementById("chapterTitle");
+    document.getElementById(
+        "chapterTitle"
+    );
 
 const chapterDescription =
-    document.getElementById("chapterDescription");
+    document.getElementById(
+        "chapterDescription"
+    );
 
 const chapterPriority =
-    document.getElementById("chapterPriority");
+    document.getElementById(
+        "chapterPriority"
+    );
 
 const chapterActive =
-    document.getElementById("chapterActive");
+    document.getElementById(
+        "chapterActive"
+    );
 
 const formError =
-    document.getElementById("formError");
+    document.getElementById(
+        "formError"
+    );
 
 const saveButton =
-    document.getElementById("saveButton");
+    document.getElementById(
+        "saveButton"
+    );
+
 
 
 /* ============================================================
@@ -99,13 +144,18 @@ let currentSubject = null;
 
 let editingChapterId = null;
 
-const params =
+
+const urlParams =
     new URLSearchParams(
         window.location.search
     );
 
+
 const subjectId =
-    params.get("subjectId");
+    urlParams.get(
+        "subjectId"
+    );
+
 
 
 /* ============================================================
@@ -114,38 +164,50 @@ const subjectId =
 
 if (!subjectId) {
 
-    alert(
-        "No subject selected."
+    showError(
+        "No subject was selected. Open a subject from the Hybrid Classes page."
     );
 
-    window.location.href =
-        "../";
+} else {
+
+    startAuthentication();
 
 }
 
 
+
 /* ============================================================
-   AUTH
+   AUTHENTICATION
 ============================================================ */
 
-onAuthStateChanged(
-    auth,
-    async user => {
+function startAuthentication() {
 
-        if (!user) {
+    onAuthStateChanged(
+        auth,
+        async user => {
 
-            window.location.href =
-                "../../../";
+            if (!user) {
 
-            return;
+                showError(
+                    "You are not signed in. Please sign in to access the admin portal."
+                );
+
+                return;
+
+            }
+
+
+            currentUser =
+                user;
+
+
+            await initialize();
+
         }
+    );
 
-        currentUser = user;
+}
 
-        await initialize();
-
-    }
-);
 
 
 /* ============================================================
@@ -160,24 +222,26 @@ async function initialize() {
 
         await loadChapters();
 
-        showApp();
+        showApplication();
 
     } catch (error) {
 
         console.error(
-            "Chapter page error:",
+            "Hybrid Chapters Error:",
             error
         );
 
-        alert(
-            "Unable to load chapters. Check Firestore rules and try again."
-        );
 
-        showApp();
+        showError(
+            getErrorMessage(
+                error
+            )
+        );
 
     }
 
 }
+
 
 
 /* ============================================================
@@ -193,6 +257,7 @@ async function loadSubject() {
             subjectId
         );
 
+
     const snapshot =
         await getDoc(
             subjectRef
@@ -201,32 +266,26 @@ async function loadSubject() {
 
     if (!snapshot.exists()) {
 
-        alert(
-            "Subject not found."
+        throw new Error(
+            "The selected subject does not exist in Firestore."
         );
-
-        window.location.href =
-            "../";
-
-        return;
 
     }
 
 
     currentSubject = {
-        id: snapshot.id,
+
+        id:
+            snapshot.id,
+
         ...snapshot.data()
+
     };
-
-
-    subjectName.textContent =
-        currentSubject.name ||
-        "Subject";
 
 
     subjectTitle.textContent =
         currentSubject.name ||
-        "Subject";
+        "Unnamed Subject";
 
 
     subjectDescription.textContent =
@@ -236,20 +295,23 @@ async function loadSubject() {
 }
 
 
+
 /* ============================================================
    LOAD CHAPTERS
 ============================================================ */
 
 async function loadChapters() {
 
-    chaptersList.innerHTML = "";
+    chaptersList.innerHTML =
+        "";
+
 
     emptyState.classList.add(
         "hidden"
     );
 
 
-    const ref =
+    const chaptersRef =
         collection(
             db,
             "hybridChapters"
@@ -257,15 +319,17 @@ async function loadChapters() {
 
 
     /*
-     * Only query by subjectId.
+     * Only query subjectId.
      *
-     * We sort locally so Firestore
-     * does not require a composite index.
+     * Sorting happens locally.
+     *
+     * This avoids composite-index
+     * problems.
      */
 
-    const q =
+    const chaptersQuery =
         query(
-            ref,
+            chaptersRef,
             where(
                 "subjectId",
                 "==",
@@ -275,14 +339,20 @@ async function loadChapters() {
 
 
     const snapshot =
-        await getDocs(q);
+        await getDocs(
+            chaptersQuery
+        );
 
 
     let chapters =
         snapshot.docs.map(
             item => ({
-                id: item.id,
+
+                id:
+                    item.id,
+
                 ...item.data()
+
             })
         );
 
@@ -292,14 +362,15 @@ async function loadChapters() {
 
             const numberA =
                 Number(
-                    a.chapterNumber ||
-                    9999
+                    a.chapterNumber ??
+                    999999
                 );
+
 
             const numberB =
                 Number(
-                    b.chapterNumber ||
-                    9999
+                    b.chapterNumber ??
+                    999999
                 );
 
 
@@ -318,11 +389,11 @@ async function loadChapters() {
 
             return (
                 Number(
-                    b.priority ||
+                    a.priority ??
                     0
                 ) -
                 Number(
-                    a.priority ||
+                    b.priority ??
                     0
                 )
             );
@@ -331,7 +402,10 @@ async function loadChapters() {
     );
 
 
-    if (!chapters.length) {
+    if (
+        chapters.length ===
+        0
+    ) {
 
         emptyState.classList.remove(
             "hidden"
@@ -357,6 +431,7 @@ async function loadChapters() {
 }
 
 
+
 /* ============================================================
    CREATE CHAPTER CARD
 ============================================================ */
@@ -370,44 +445,71 @@ function createChapterCard(
             "article"
         );
 
+
     card.className =
         "chapter-card";
 
 
     const number =
         Number(
-            chapter.chapterNumber ||
+            chapter.chapterNumber ??
             0
         );
 
 
     const active =
-        chapter.active !== false;
+        chapter.active !==
+        false;
+
+
+    const title =
+        chapter.title ||
+        "Untitled Chapter";
+
+
+    const description =
+        chapter.description ||
+        "No description";
+
+
+    const priority =
+        Number(
+            chapter.priority ??
+            0
+        );
 
 
     card.innerHTML = `
 
-        <div class="chapter-left">
+        <div class="chapter-main">
 
             <div class="chapter-number">
-                ${String(number).padStart(2, "0")}
+
+                ${String(
+                    number
+                ).padStart(
+                    2,
+                    "0"
+                )}
+
             </div>
 
-            <div class="chapter-content">
+
+            <div class="chapter-info">
 
                 <h3>
                     ${escapeHtml(
-                        chapter.title ||
-                        "Untitled Chapter"
+                        title
                     )}
                 </h3>
 
+
                 <p>
                     ${escapeHtml(
-                        chapter.description ||
-                        "No description"
+                        description
                     )}
                 </p>
+
 
                 <div class="chapter-meta">
 
@@ -418,24 +520,21 @@ function createChapterCard(
                                 : "inactive"
                         }"
                     >
+
                         ${
                             active
                                 ? "ACTIVE"
                                 : "INACTIVE"
                         }
+
                     </span>
 
-                    <span
-                        style="
-                            font-size:9px;
-                            color:#999;
-                        "
-                    >
+
+                    <span class="priority">
+
                         Priority:
-                        ${Number(
-                            chapter.priority ||
-                            0
-                        )}
+                        ${priority}
+
                     </span>
 
                 </div>
@@ -448,12 +547,15 @@ function createChapterCard(
         <div class="chapter-actions">
 
             <button
+                type="button"
                 class="action-button edit-button"
             >
                 EDIT
             </button>
 
+
             <button
+                type="button"
                 class="action-button delete delete-button"
             >
                 DELETE
@@ -464,36 +566,40 @@ function createChapterCard(
     `;
 
 
-    card
-        .querySelector(
+    const editButton =
+        card.querySelector(
             ".edit-button"
-        )
-        .addEventListener(
-            "click",
-            () => {
-
-                openEditModal(
-                    chapter
-                );
-
-            }
         );
 
 
-    card
-        .querySelector(
+    const deleteButton =
+        card.querySelector(
             ".delete-button"
-        )
-        .addEventListener(
-            "click",
-            () => {
-
-                deleteChapter(
-                    chapter
-                );
-
-            }
         );
+
+
+    editButton.addEventListener(
+        "click",
+        () => {
+
+            openEditModal(
+                chapter
+            );
+
+        }
+    );
+
+
+    deleteButton.addEventListener(
+        "click",
+        () => {
+
+            deleteChapter(
+                chapter
+            );
+
+        }
+    );
 
 
     return card;
@@ -501,8 +607,9 @@ function createChapterCard(
 }
 
 
+
 /* ============================================================
-   OPEN ADD MODAL
+   ADD CHAPTER
 ============================================================ */
 
 function openAddModal() {
@@ -546,8 +653,9 @@ function openAddModal() {
 }
 
 
+
 /* ============================================================
-   OPEN EDIT MODAL
+   EDIT CHAPTER
 ============================================================ */
 
 function openEditModal(
@@ -563,27 +671,28 @@ function openEditModal(
 
 
     chapterNumber.value =
-        chapter.chapterNumber ||
+        chapter.chapterNumber ??
         "";
 
 
     chapterTitle.value =
-        chapter.title ||
+        chapter.title ??
         "";
 
 
     chapterDescription.value =
-        chapter.description ||
+        chapter.description ??
         "";
 
 
     chapterPriority.value =
-        chapter.priority ||
+        chapter.priority ??
         0;
 
 
     chapterActive.value =
-        chapter.active === false
+        chapter.active ===
+        false
             ? "false"
             : "true";
 
@@ -598,6 +707,7 @@ function openEditModal(
 }
 
 
+
 /* ============================================================
    CLOSE MODAL
 ============================================================ */
@@ -608,14 +718,16 @@ function closeChapterModal() {
         "hidden"
     );
 
+
     editingChapterId =
         null;
 
 }
 
 
+
 /* ============================================================
-   SAVE CHAPTER
+   SAVE
 ============================================================ */
 
 form.addEventListener(
@@ -657,7 +769,9 @@ form.addEventListener(
 
 
         if (
-            !number ||
+            !Number.isInteger(
+                number
+            ) ||
             number < 1
         ) {
 
@@ -670,7 +784,9 @@ form.addEventListener(
         }
 
 
-        if (!title) {
+        if (
+            !title
+        ) {
 
             showFormError(
                 "Enter the chapter title."
@@ -684,13 +800,14 @@ form.addEventListener(
         saveButton.disabled =
             true;
 
+
         saveButton.textContent =
             "SAVING...";
 
 
         try {
 
-            const data = {
+            const chapterData = {
 
                 subjectId:
                     subjectId,
@@ -730,9 +847,8 @@ form.addEventListener(
 
                 await updateDoc(
                     chapterRef,
-                    data
+                    chapterData
                 );
-
 
             } else {
 
@@ -742,7 +858,8 @@ form.addEventListener(
                         "hybridChapters"
                     ),
                     {
-                        ...data,
+
+                        ...chapterData,
 
                         createdAt:
                             serverTimestamp(),
@@ -758,19 +875,20 @@ form.addEventListener(
 
             closeChapterModal();
 
+
             await loadChapters();
 
 
         } catch (error) {
 
             console.error(
-                "Save chapter failed:",
+                "Save chapter error:",
                 error
             );
 
 
             showFormError(
-                getFirebaseErrorMessage(
+                getErrorMessage(
                     error
                 )
             );
@@ -779,6 +897,7 @@ form.addEventListener(
 
             saveButton.disabled =
                 false;
+
 
             saveButton.textContent =
                 "SAVE CHAPTER";
@@ -789,8 +908,9 @@ form.addEventListener(
 );
 
 
+
 /* ============================================================
-   DELETE CHAPTER
+   DELETE
 ============================================================ */
 
 async function deleteChapter(
@@ -798,12 +918,14 @@ async function deleteChapter(
 ) {
 
     const confirmed =
-        confirm(
+        window.confirm(
             `Delete "${chapter.title}"?\n\nThis will permanently delete the chapter.`
         );
 
 
-    if (!confirmed) {
+    if (
+        !confirmed
+    ) {
 
         return;
 
@@ -827,13 +949,13 @@ async function deleteChapter(
     } catch (error) {
 
         console.error(
-            "Delete chapter failed:",
+            "Delete chapter error:",
             error
         );
 
 
         alert(
-            getFirebaseErrorMessage(
+            getErrorMessage(
                 error
             )
         );
@@ -843,8 +965,46 @@ async function deleteChapter(
 }
 
 
+
 /* ============================================================
-   BUTTONS
+   NAVIGATION
+============================================================ */
+
+backButton.addEventListener(
+    "click",
+    () => {
+
+        window.location.href =
+            "../";
+
+    }
+);
+
+
+errorBackButton.addEventListener(
+    "click",
+    () => {
+
+        window.location.href =
+            "../";
+
+    }
+);
+
+
+retryButton.addEventListener(
+    "click",
+    () => {
+
+        window.location.reload();
+
+    }
+);
+
+
+
+/* ============================================================
+   MODAL EVENTS
 ============================================================ */
 
 addChapterButton.addEventListener(
@@ -865,19 +1025,6 @@ closeModal.addEventListener(
 );
 
 
-backButton.addEventListener(
-    "click",
-    () => {
-
-        window.location.href =
-            "../";
-
-    }
-);
-
-
-/* Close when clicking outside */
-
 modal.addEventListener(
     "click",
     event => {
@@ -895,21 +1042,24 @@ modal.addEventListener(
 );
 
 
-/* ESC */
-
 document.addEventListener(
     "keydown",
     event => {
 
         if (
             event.key ===
-            "Escape" &&
-            !modal.classList.contains(
-                "hidden"
-            )
+            "Escape"
         ) {
 
-            closeChapterModal();
+            if (
+                !modal.classList.contains(
+                    "hidden"
+                )
+            ) {
+
+                closeChapterModal();
+
+            }
 
         }
 
@@ -917,17 +1067,49 @@ document.addEventListener(
 );
 
 
+
 /* ============================================================
-   HELPERS
+   UI
 ============================================================ */
 
-function showApp() {
+function showApplication() {
 
     loader.classList.add(
         "hidden"
     );
 
+
+    errorScreen.classList.add(
+        "hidden"
+    );
+
+
     app.classList.remove(
+        "hidden"
+    );
+
+}
+
+
+function showError(
+    message
+) {
+
+    loader.classList.add(
+        "hidden"
+    );
+
+
+    app.classList.add(
+        "hidden"
+    );
+
+
+    errorMessage.textContent =
+        message;
+
+
+    errorScreen.classList.remove(
         "hidden"
     );
 
@@ -941,6 +1123,7 @@ function showFormError(
     formError.textContent =
         message;
 
+
     formError.classList.remove(
         "hidden"
     );
@@ -953,12 +1136,67 @@ function hideFormError() {
     formError.textContent =
         "";
 
+
     formError.classList.add(
         "hidden"
     );
 
 }
 
+
+
+/* ============================================================
+   FIREBASE ERROR HANDLING
+============================================================ */
+
+function getErrorMessage(
+    error
+) {
+
+    if (
+        error?.code ===
+        "permission-denied"
+    ) {
+
+        return (
+            "Firestore permission denied. Add access for hybridChapters in your Firestore rules."
+        );
+
+    }
+
+
+    if (
+        error?.code ===
+        "not-found"
+    ) {
+
+        return (
+            "The requested Firestore document was not found."
+        );
+
+    }
+
+
+    if (
+        error?.message
+    ) {
+
+        return error.message;
+
+    }
+
+
+    return (
+        "Something went wrong while loading the chapters."
+    );
+
+}
+
+
+
+/* ============================================================
+   HTML ESCAPE
+============================================================ */
 
 function escapeHtml(
     value
@@ -987,29 +1225,5 @@ function escapeHtml(
             "'",
             "&#039;"
         );
-
-}
-
-
-function getFirebaseErrorMessage(
-    error
-) {
-
-    if (
-        error?.code ===
-        "permission-denied"
-    ) {
-
-        return (
-            "Permission denied. Add Firestore access for hybridChapters in your rules."
-        );
-
-    }
-
-
-    return (
-        error?.message ||
-        "Something went wrong while saving."
-    );
 
 }
