@@ -1,382 +1,108 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+    <title>Classes | Zenova</title>
 
-    <title>Classes | Zenova Hybrid</title>
-
-    <link
-        rel="stylesheet"
-        href="./classes.css"
-    >
-
+    <link rel="stylesheet" href="./classes.css">
 </head>
-
 
 <body>
 
-    <!-- =====================================================
-         LOADER
-    ====================================================== -->
+<div id="loader" class="loader-screen">
+    <div class="loader-z">Z</div>
+</div>
 
-    <div
-        id="pageLoader"
-        class="page-loader"
-    >
+<div id="app" class="app hidden">
 
-        <div class="loader-z">
-            Z
+    <header class="topbar">
+
+        <button class="icon-btn" id="backBtn" aria-label="Go back">
+            <span class="back-arrow">‹</span>
+        </button>
+
+        <div class="brand">
+            <div class="brand-name">ZENOVA</div>
+            <div class="brand-sub">CLASSES</div>
         </div>
 
-        <p>
-            Loading classes
-        </p>
+        <button class="icon-btn notification-btn" id="notificationBtn">
+            <span class="bell-icon"></span>
+        </button>
 
-    </div>
-
-
-    <!-- =====================================================
-         APP
-    ====================================================== -->
-
-    <main
-        id="classesApp"
-        class="app hidden"
-    >
+    </header>
 
 
-        <!-- =================================================
-             HEADER
-        ================================================== -->
-
-        <header class="topbar">
-
-            <button
-                id="backButton"
-                class="icon-button"
-                type="button"
-                aria-label="Go back"
-            >
-                ←
-            </button>
-
-
-            <div class="brand">
-
-                <span class="brand-name">
-                    ZENOVA
-                </span>
-
-                <span class="brand-divider">
-                    /
-                </span>
-
-                <span class="brand-section">
-                    CLASSES
-                </span>
-
-            </div>
-
-
-            <button
-                id="notificationButton"
-                class="icon-button"
-                type="button"
-                aria-label="Notifications"
-            >
-                <span class="notification-dot"></span>
-                ♢
-            </button>
-
-        </header>
-
-
-
-        <!-- =================================================
-             PAGE INTRO
-        ================================================== -->
+    <main class="page">
 
         <section class="intro">
 
             <div>
+                <p class="eyebrow">RECORDED LEARNING</p>
 
-                <p class="eyebrow">
-                    ACADEMIC SCHEDULE
+                <h1>Classes</h1>
+
+                <p class="intro-text">
+                    Learn chapter by chapter at your own pace.
                 </p>
+            </div>
 
-                <h1>
-                    Your Classes
-                </h1>
-
-                <p
-                    id="studentGreeting"
-                    class="intro-description"
-                >
-                    Your live, upcoming and recorded classes.
-                </p>
-
+            <div class="medium-pill">
+                <span class="medium-dot"></span>
+                <span id="mediumLabel">Kannada Medium</span>
             </div>
 
         </section>
 
 
+        <section class="subjects-section">
 
-        <!-- =================================================
-             DATE SELECTOR
-        ================================================== -->
-
-        <section class="date-section">
-
-            <div class="date-header">
-
+            <div class="section-heading">
                 <div>
-
-                    <span class="section-label">
-                        SELECT DATE
-                    </span>
-
-                    <strong id="selectedDateLabel">
-                        Today
-                    </strong>
-
+                    <h2>Subjects</h2>
+                    <p>Select a subject to continue learning.</p>
                 </div>
+            </div>
 
+            <div id="subjectsGrid" class="subjects-grid"></div>
 
-                <button
-                    id="todayButton"
-                    class="today-button"
-                    type="button"
-                >
-                    TODAY
+            <div id="emptyState" class="empty-state hidden">
+
+                <div class="empty-mark">Z</div>
+
+                <h3>No recorded classes yet</h3>
+
+                <p>
+                    Recorded classes for your class and medium
+                    will appear here.
+                </p>
+
+            </div>
+
+            <div id="errorState" class="error-state hidden">
+
+                <h3>Couldn't load Classes</h3>
+
+                <p id="errorText">
+                    Please try again.
+                </p>
+
+                <button id="retryBtn" class="retry-btn">
+                    Try Again
                 </button>
 
             </div>
 
-
-            <div
-                id="dateStrip"
-                class="date-strip"
-            >
-                <!-- JS -->
-            </div>
-
         </section>
-
-
-
-        <!-- =================================================
-             SELECTED DAY SUMMARY
-        ================================================== -->
-
-        <section class="day-summary">
-
-            <div>
-
-                <span class="section-label">
-                    SCHEDULE
-                </span>
-
-                <h2 id="dayTitle">
-                    Today's Classes
-                </h2>
-
-            </div>
-
-
-            <span
-                id="classCount"
-                class="class-count"
-            >
-                0 classes
-            </span>
-
-        </section>
-
-
-
-        <!-- =================================================
-             LIVE NOW
-        ================================================== -->
-
-        <section
-            id="liveSection"
-            class="content-section hidden"
-        >
-
-            <div class="section-heading">
-
-                <div>
-
-                    <span class="section-label live-label">
-                        LIVE NOW
-                    </span>
-
-                    <h2>
-                        Join your class
-                    </h2>
-
-                </div>
-
-            </div>
-
-
-            <div
-                id="liveList"
-                class="live-list"
-            >
-                <!-- JS -->
-            </div>
-
-        </section>
-
-
-
-        <!-- =================================================
-             UPCOMING
-        ================================================== -->
-
-        <section
-            id="upcomingSection"
-            class="content-section hidden"
-        >
-
-            <div class="section-heading">
-
-                <div>
-
-                    <span class="section-label">
-                        UPCOMING
-                    </span>
-
-                    <h2>
-                        Next Classes
-                    </h2>
-
-                </div>
-
-            </div>
-
-
-            <div
-                id="upcomingList"
-                class="class-list"
-            >
-                <!-- JS -->
-            </div>
-
-        </section>
-
-
-
-        <!-- =================================================
-             RECORDED
-        ================================================== -->
-
-        <section
-            id="recordedSection"
-            class="content-section hidden"
-        >
-
-            <div class="section-heading">
-
-                <div>
-
-                    <span class="section-label">
-                        RECORDED
-                    </span>
-
-                    <h2>
-                        Watch again
-                    </h2>
-
-                </div>
-
-            </div>
-
-
-            <div
-                id="recordedList"
-                class="recorded-list"
-            >
-                <!-- JS -->
-            </div>
-
-        </section>
-
-
-
-        <!-- =================================================
-             EMPTY STATE
-        ================================================== -->
-
-        <section
-            id="emptyState"
-            class="empty-state hidden"
-        >
-
-            <div class="empty-icon">
-                —
-            </div>
-
-            <h2>
-                No classes scheduled
-            </h2>
-
-            <p>
-                There are no classes available for
-                the selected date.
-            </p>
-
-        </section>
-
-
-
-        <!-- =================================================
-             ERROR
-        ================================================== -->
-
-        <section
-            id="errorState"
-            class="error-state hidden"
-        >
-
-            <h2>
-                Unable to load classes
-            </h2>
-
-            <p id="errorMessage">
-                Please try again.
-            </p>
-
-            <button
-                id="retryButton"
-                type="button"
-            >
-                TRY AGAIN
-            </button>
-
-        </section>
-
 
     </main>
 
+</div>
 
-    <!-- =====================================================
-         JAVASCRIPT
-    ====================================================== -->
 
-    <script
-        type="module"
-        src="./classes-core-X7kP.js"
-    ></script>
+<script type="module" src="./classes-core-X7kP.js"></script>
 
 </body>
-
 </html>
