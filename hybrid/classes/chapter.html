@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
+<title>Recorded Classes | Zenova</title>
+
+<link
+    rel="stylesheet"
+    href="./classes.css"
+>
+
+<style>
+
+.video-list {
+    display: grid;
+    gap: 12px;
+}
+
+.video-card {
+    border: 1px solid #e8e8e8;
+    border-radius: 16px;
+    padding: 15px;
+    background: white;
+
+    display: flex;
+    align-items: center;
+    gap: 15px;
+
+    cursor: pointer;
+
+    transition: .2s ease;
+}
+
+.video-card:hover {
+    background: #fafafa;
+    transform: translateY(-2px);
+}
+
+.video-thumb {
+    width: 105px;
+    height: 68px;
+
+    border-radius: 11px;
+
+    background: #111;
+
+    color: white;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    font-size: 18px;
+}
+
+.play-icon {
+    width: 32px;
+    height: 32px;
+
+    border: 1px solid #555;
+
+    border-radius: 50%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.video-info {
+    flex: 1;
+}
+
+.video-info h3 {
+    font-size: 16px;
+}
+
+.video-info p {
+    margin-top: 6px;
+
+    font-size: 12px;
+
+    color: #888;
+}
+
+.video-arrow {
+    color: #999;
+
+    font-size: 25px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div id="loader" class="loader-screen">
+    <div class="loader-z">Z</div>
+</div>
+
+
+<div id="app" class="app hidden">
+
+<header class="topbar">
+
+<button
+    class="icon-btn"
+    id="backBtn"
+>
+    <span class="back-arrow">‹</span>
+</button>
+
+
+<div class="brand">
+
+<div class="brand-name">
+ZENOVA
+</div>
+
+<div class="brand-sub">
+CLASSES
+</div>
+
+</div>
+
+
+<button
+    class="icon-btn"
+    id="notificationBtn"
+>
+
+<span class="bell-icon"></span>
+
+</button>
+
+</header>
+
+
+<main class="page">
+
+<section class="intro">
+
+<div>
+
+<p class="eyebrow">
+RECORDED CLASSES
+</p>
+
+<h1 id="chapterTitle">
+Chapter
+</h1>
+
+<p
+    id="chapterDescription"
+    class="intro-text"
+>
+Recorded lessons
+</p>
+
+</div>
+
+</section>
+
+
+<section>
+
+<div class="section-heading">
+
+<div>
+
+<h2>
+Videos
+</h2>
+
+<p>
+Choose a recorded class to start learning.
+</p>
+
+</div>
+
+</div>
+
+
+<div
+    id="videoList"
+    class="video-list"
+></div>
+
+
+<div
+    id="emptyState"
+    class="empty-state hidden"
+>
+
+<div class="empty-mark">
+Z
+</div>
+
+<h3>
+No recorded videos
+</h3>
+
+<p>
+Recorded classes for this chapter haven't
+been added yet.
+</p>
+
+</div>
+
+
+<div
+    id="errorState"
+    class="error-state hidden"
+>
+
+<h3>
+Couldn't load videos
+</h3>
+
+<p id="errorText">
+Please try again.
+</p>
+
+<button
+    id="retryBtn"
+    class="retry-btn"
+>
+Try Again
+</button>
+
+</div>
+
+</section>
+
+</main>
+
+</div>
+
+
+<script type="module">
+
+import {
+    auth,
+    db
+} from "../../firebase/firebase-config.js";
+
+
+import {
+    onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+
+
+import {
+    doc,
+    getDoc,
+    collection,
+    query,
+    where,
+    onSnapshot
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
+
+const loader =
+    document.getElementById("loader");
+
+const app =
+    document.getElementById("app");
+
+const videoList =
+    document.getElementById("videoList");
+
+const emptyState =
+    document.getElementById("emptyState");
+
+const errorState =
+    document.getElementById("errorState");
+
+const errorText =
+    document.getElementById("errorText");
+
+const retryBtn =
+    document.getElementById("retryBtn");
+
+const chapterTitle =
+    document.getElementById("chapterTitle");
+
+const chapterDescription =
+    document.getElementById(
+        "chapterDescription"
+    );
+
+
+const params =
+    new URLSearchParams(
+        window.location.search
+    );
+
+
+const chapterId =
+    params.get("id");
+
+
+let unsubscribe = null;
+
+
+function escapeHTML(value) {
+
+    return String(value || "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+}
+
+
+function showApp() {
+
+    loader.classList.add("hidden");
+
+    app.classList.remove("hidden");
+}
+
+
+function showError(message) {
+
+    errorText.textContent = message;
+
+    errorState.classList.remove(
+        "hidden"
+    );
+}
+
+
+async function start() {
+
+    if (!chapterId) {
+
+        showApp();
+
+        showError(
+            "Chapter could not be found."
+        );
+
+        return;
+    }
+
+
+    onAuthStateChanged(
+        auth,
+        async (user) => {
+
+            if (!user) {
+
+                window.location.href =
+                    "../../login/";
+
+                return;
+            }
+
+
+            try {
+
+                await loadChapter();
+
+                showApp();
+
+                loadVideos();
+
+            } catch (error) {
+
+                console.error(error);
+
+                showApp();
+
+                showError(
+                    "Unable to load this chapter."
+                );
+
+            }
+
+        }
+    );
+}
+
+
+async function loadChapter() {
+
+    const chapterRef =
+        doc(
+            db,
+            "hybridChapters",
+            chapterId
+        );
+
+
+    const snap =
+        await getDoc(chapterRef);
+
+
+    if (!snap.exists()) {
+
+        throw new Error(
+            "Chapter does not exist."
+        );
+
+    }
+
+
+    const data =
+        snap.data();
+
+
+    chapterTitle.textContent =
+        data.title || "Chapter";
+
+
+    chapterDescription.textContent =
+        data.description ||
+        "Recorded lessons.";
+}
+
+
+function loadVideos() {
+
+    if (unsubscribe) {
+
+        unsubscribe();
+
+    }
+
+
+    const q =
+        query(
+            collection(
+                db,
+                "hybridMaterials"
+            ),
+            where(
+                "chapterId",
+                "==",
+                chapterId
+            ),
+            where(
+                "active",
+                "==",
+                true
+            ),
+            where(
+                "type",
+                "==",
+                "video"
+            )
+        );
+
+
+    unsubscribe =
+        onSnapshot(
+            q,
+
+            (snapshot) => {
+
+                const videos = [];
+
+
+                snapshot.forEach(
+                    (item) => {
+
+                        videos.push({
+
+                            id: item.id,
+
+                            ...item.data()
+
+                        });
+
+                    }
+                );
+
+
+                videos.sort(
+                    (a, b) => {
+
+                        return Number(
+                            a.priority ??
+                            9999
+                        ) -
+                        Number(
+                            b.priority ??
+                            9999
+                        );
+
+                    }
+                );
+
+
+                renderVideos(
+                    videos
+                );
+
+            },
+
+            (error) => {
+
+                console.error(error);
+
+                showError(
+                    "Unable to load recorded videos."
+                );
+
+            }
+        );
+}
+
+
+function renderVideos(videos) {
+
+    videoList.innerHTML = "";
+
+
+    if (!videos.length) {
+
+        emptyState.classList.remove(
+            "hidden"
+        );
+
+        return;
+    }
+
+
+    emptyState.classList.add(
+        "hidden"
+    );
+
+
+    videos.forEach(
+        (video, index) => {
+
+            const card =
+                document.createElement(
+                    "article"
+                );
+
+
+            card.className =
+                "video-card";
+
+
+            card.innerHTML = `
+
+                <div class="video-thumb">
+
+                    <div class="play-icon">
+                        ▶
+                    </div>
+
+                </div>
+
+
+                <div class="video-info">
+
+                    <h3>
+                        ${escapeHTML(
+                            video.title ||
+                            `Video ${index + 1}`
+                        )}
+                    </h3>
+
+                    <p>
+
+                        ${
+                            escapeHTML(
+                                video.teacherName ||
+                                "Zenova Faculty"
+                            )
+                        }
+
+                        ${
+                            video.duration
+                                ? " • " +
+                                  escapeHTML(
+                                      video.duration
+                                  )
+                                : ""
+                        }
+
+                    </p>
+
+                </div>
+
+
+                <div class="video-arrow">
+                    ›
+                </div>
+
+            `;
+
+
+            card.onclick = () => {
+
+                window.location.href =
+                    `./video.html?id=${encodeURIComponent(
+                        video.id
+                    )}`;
+
+            };
+
+
+            videoList.appendChild(card);
+
+        }
+    );
+}
+
+
+document.getElementById(
+    "backBtn"
+).onclick = () => {
+
+    window.location.href =
+        "./";
+
+};
+
+
+document.getElementById(
+    "notificationBtn"
+).onclick = () => {
+
+    window.location.href =
+        "../more/";
+
+};
+
+
+retryBtn.onclick = () => {
+
+    errorState.classList.add(
+        "hidden"
+    );
+
+    loadVideos();
+
+};
+
+
+start();
+
+</script>
+
+</body>
+</html>
