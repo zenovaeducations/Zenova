@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Hybrid Classes | Zenova Admin</title>
+
+    <link
+        rel="stylesheet"
+        href="./classes.css"
+    >
+
+</head>
+
+<body>
+
+<!-- =====================================================
+     LOADER
+===================================================== -->
+
+<div
+    id="loader"
+    class="loader"
+>
+
+    <div class="loader-ring">
+
+        <span>Z</span>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     APP
+===================================================== -->
+
+<div
+    id="app"
+    class="app hidden"
+>
+
+
+    <!-- =================================================
+         TOP BAR
+    ================================================== -->
+
+    <header class="topbar">
+
+        <div class="topbar-left">
+
+            <button
+                id="backBtn"
+                class="back-btn"
+                type="button"
+            >
+                ←
+            </button>
+
+
+            <div>
+
+                <div class="brand">
+                    ZENOVA
+                </div>
+
+                <div class="brand-sub">
+                    HYBRID ADMIN
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="page-label">
+            CLASSES
+        </div>
+
+    </header>
+
+
+
+    <!-- =================================================
+         MAIN
+    ================================================== -->
+
+    <main class="main">
+
+
+        <!-- =================================================
+             PAGE HEADER
+        ================================================== -->
+
+        <section class="page-header">
+
+            <div>
+
+                <p class="eyebrow">
+                    HYBRID LEARNING
+                </p>
+
+                <h1>
+                    Subjects
+                </h1>
+
+                <p class="description">
+                    Create and manage the subjects available
+                    in the Hybrid student portal.
+                </p>
+
+            </div>
+
+
+            <button
+                id="addSubjectBtn"
+                class="primary-btn"
+                type="button"
+            >
+
+                <span>+</span>
+
+                Add Subject
+
+            </button>
+
+        </section>
+
+
+
+        <!-- =================================================
+             SUBJECT LIST
+        ================================================== -->
+
+        <section class="subjects-section">
+
+            <div class="section-top">
+
+                <div>
+
+                    <h2>
+                        All Subjects
+                    </h2>
+
+                    <p id="subjectCount">
+                        0 subjects
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div
+                id="subjectsGrid"
+                class="subjects-grid"
+            ></div>
+
+
+            <!-- EMPTY -->
+
+            <div
+                id="emptyState"
+                class="empty-state hidden"
+            >
+
+                <div class="empty-icon">
+                    Z
+                </div>
+
+                <h3>
+                    No subjects yet
+                </h3>
+
+                <p>
+                    Create your first subject to start
+                    building the recorded learning library.
+                </p>
+
+                <button
+                    id="emptyAddBtn"
+                    class="primary-btn"
+                    type="button"
+                >
+                    + Add Subject
+                </button>
+
+            </div>
+
+
+            <!-- ERROR -->
+
+            <div
+                id="errorState"
+                class="error-state hidden"
+            >
+
+                <h3>
+                    Couldn't load subjects
+                </h3>
+
+                <p id="errorText">
+                    Please try again.
+                </p>
+
+                <button
+                    id="retryBtn"
+                    class="secondary-btn"
+                    type="button"
+                >
+                    Try Again
+                </button>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+
+
+<!-- =====================================================
+     ADD / EDIT SUBJECT MODAL
+===================================================== -->
+
+<div
+    id="subjectModal"
+    class="modal hidden"
+>
+
+    <div
+        class="modal-backdrop"
+        id="modalBackdrop"
+    ></div>
+
+
+    <div class="modal-card">
+
+
+        <div class="modal-header">
+
+            <div>
+
+                <p class="eyebrow">
+                    SUBJECT
+                </p>
+
+                <h2 id="modalTitle">
+                    Add Subject
+                </h2>
+
+            </div>
+
+
+            <button
+                id="closeModalBtn"
+                class="close-btn"
+                type="button"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+
+        <!-- FORM -->
+
+        <form id="subjectForm">
+
+
+            <!-- NAME -->
+
+            <div class="form-group">
+
+                <label for="subjectName">
+                    Subject Name
+                </label>
+
+                <input
+                    id="subjectName"
+                    type="text"
+                    placeholder="Example: Physics"
+                    maxlength="100"
+                    required
+                >
+
+            </div>
+
+
+
+            <!-- DESCRIPTION -->
+
+            <div class="form-group">
+
+                <label for="subjectDescription">
+                    Description
+                    <span>Optional</span>
+                </label>
+
+                <textarea
+                    id="subjectDescription"
+                    rows="3"
+                    maxlength="300"
+                    placeholder="Short description about this subject"
+                ></textarea>
+
+            </div>
+
+
+
+            <!-- MEDIUM -->
+
+            <div class="form-group">
+
+                <label>
+                    Medium
+                </label>
+
+
+                <div class="medium-options">
+
+
+                    <label class="radio-card">
+
+                        <input
+                            type="radio"
+                            name="medium"
+                            value="Kannada"
+                            checked
+                        >
+
+                        <span>
+                            Kannada
+                        </span>
+
+                    </label>
+
+
+                    <label class="radio-card">
+
+                        <input
+                            type="radio"
+                            name="medium"
+                            value="English"
+                        >
+
+                        <span>
+                            English
+                        </span>
+
+                    </label>
+
+
+                    <label class="radio-card">
+
+                        <input
+                            type="radio"
+                            name="medium"
+                            value="Both"
+                        >
+
+                        <span>
+                            Both
+                        </span>
+
+                    </label>
+
+
+                </div>
+
+            </div>
+
+
+
+            <!-- TARGET CLASSES -->
+
+            <div class="form-group">
+
+                <label>
+                    Target Classes
+                    <span>Optional</span>
+                </label>
+
+                <p class="field-help">
+                    Select which student classes can see
+                    this subject. Leave empty to make it
+                    available to all Hybrid students.
+                </p>
+
+
+                <div class="class-options">
+
+
+                    <label class="check-card">
+
+                        <input
+                            type="checkbox"
+                            value="Under 8th"
+                            class="class-checkbox"
+                        >
+
+                        <span>
+                            Under 8th
+                        </span>
+
+                    </label>
+
+
+                    <label class="check-card">
+
+                        <input
+                            type="checkbox"
+                            value="8th"
+                            class="class-checkbox"
+                        >
+
+                        <span>
+                            8th
+                        </span>
+
+                    </label>
+
+
+                    <label class="check-card">
+
+                        <input
+                            type="checkbox"
+                            value="9th"
+                            class="class-checkbox"
+                        >
+
+                        <span>
+                            9th
+                        </span>
+
+                    </label>
+
+
+                    <label class="check-card">
+
+                        <input
+                            type="checkbox"
+                            value="10th"
+                            class="class-checkbox"
+                        >
+
+                        <span>
+                            10th
+                        </span>
+
+                    </label>
+
+
+                    <label class="check-card">
+
+                        <input
+                            type="checkbox"
+                            value="1st PUC"
+                            class="class-checkbox"
+                        >
+
+                        <span>
+                            1st PUC
+                        </span>
+
+                    </label>
+
+
+                    <label class="check-card">
+
+                        <input
+                            type="checkbox"
+                            value="2nd PUC"
+                            class="class-checkbox"
+                        >
+
+                        <span>
+                            2nd PUC
+                        </span>
+
+                    </label>
+
+
+                </div>
+
+            </div>
+
+
+
+            <!-- PRIORITY -->
+
+            <div class="form-group">
+
+                <label for="subjectPriority">
+                    Display Priority
+                </label>
+
+                <input
+                    id="subjectPriority"
+                    type="number"
+                    min="1"
+                    step="1"
+                    value="1"
+                >
+
+                <p class="field-help">
+                    Lower numbers appear first.
+                </p>
+
+            </div>
+
+
+
+            <!-- ACTIVE -->
+
+            <div class="active-row">
+
+                <div>
+
+                    <strong>
+                        Active Subject
+                    </strong>
+
+                    <p>
+                        Students can see this subject.
+                    </p>
+
+                </div>
+
+
+                <label class="switch">
+
+                    <input
+                        id="subjectActive"
+                        type="checkbox"
+                        checked
+                    >
+
+                    <span class="slider"></span>
+
+                </label>
+
+            </div>
+
+
+
+            <!-- ACTIONS -->
+
+            <div class="form-actions">
+
+                <button
+                    id="cancelBtn"
+                    type="button"
+                    class="secondary-btn"
+                >
+                    Cancel
+                </button>
+
+
+                <button
+                    id="saveBtn"
+                    type="submit"
+                    class="primary-btn"
+                >
+                    Save Subject
+                </button>
+
+            </div>
+
+
+        </form>
+
+    </div>
+
+</div>
+
+
+
+<script
+    type="module"
+    src="./classes.js"
+></script>
+
+</body>
+
+</html>
