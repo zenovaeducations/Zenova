@@ -1,499 +1,1615 @@
+import {
+    auth,
+    db
+} from "../firebase/firebase-config.js";
+
+
+import {
+    onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+
+
+import {
+    doc,
+    getDoc,
+    collection,
+    query,
+    where,
+    orderBy,
+    limit,
+    onSnapshot,
+    setDoc,
+    serverTimestamp
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
+
+
 /* =========================================================
-   ZENOVA HYBRID DASHBOARD
-   UI DEVELOPMENT VERSION
-
-   IMPORTANT:
-   - No login logic here yet.
-   - No approval logic here yet.
-   - No Firebase writes here yet.
-   - No existing Zenova student data is modified.
-   ========================================================= */
-
-
-/* =========================================================
-   DOM
+   ELEMENTS
 ========================================================= */
 
-const appLoader = document.getElementById("appLoader");
-const app = document.getElementById("app");
+const loader =
+    document.getElementById(
+        "zenovaLoader"
+    );
 
 
-/* =========================================================
-   TEMPORARY STUDENT DISPLAY DATA
+const app =
+    document.getElementById(
+        "hybridApp"
+    );
 
-   This is ONLY for UI development.
-
-   Later this will come from the existing logged-in
-   student's Firestore document.
-
-   DO NOT use this object for production student data.
-========================================================= */
-
-const student = {
-  name: "Student",
-  className: "1st PUC",
-  stream: "Science"
-};
 
 
 /* =========================================================
-   INITIALIZE
+   STATE
 ========================================================= */
 
-document.addEventListener("DOMContentLoaded", () => {
+let currentUser = null;
 
-  initializeStudentUI();
+let student = null;
 
-  initializeBanner();
+let banners = [];
 
-  initializeMasterPlan();
-
-  initializeNavigation();
-
-  initializeResourceButtons();
-
-  initializeNotificationButton();
-
-  initializePendingButton();
-
-  /*
-   * Small development loading delay so we can see
-   * the branded loading screen.
-   *
-   * Later this will be replaced by the actual
-   * Firebase initialization/authentication state.
-   */
-
-  setTimeout(() => {
-
-    appLoader.classList.add("hidden");
-    app.classList.remove("hidden");
-
-  }, 650);
-
-});
-
-
-/* =========================================================
-   STUDENT UI
-========================================================= */
-
-function initializeStudentUI() {
-
-  const studentName = document.getElementById("studentName");
-  const studentMeta = document.getElementById("studentMeta");
-  const profileInitial = document.getElementById("profileInitial");
-
-  if (studentName) {
-    studentName.textContent = student.name;
-  }
-
-  if (studentMeta) {
-    studentMeta.textContent =
-      `${student.className} • ${student.stream}`;
-  }
-
-  if (profileInitial) {
-
-    const firstLetter =
-      student.name
-        .trim()
-        .charAt(0)
-        .toUpperCase();
-
-    profileInitial.textContent =
-      firstLetter || "S";
-  }
-
-}
-
-
-/* =========================================================
-   BANNER CAROUSEL
-========================================================= */
+let masterPlan = [];
 
 let currentBanner = 0;
-let bannerTimer = null;
 
-function initializeBanner() {
-
-  const slides =
-    Array.from(
-      document.querySelectorAll(".banner-slide")
-    );
-
-  const dots =
-    Array.from(
-      document.querySelectorAll(".banner-dot")
-    );
-
-  const current =
-    document.getElementById("bannerCurrent");
-
-  if (!slides.length) return;
+let bannerInterval = null;
 
 
-  function showBanner(index) {
 
-    currentBanner =
-      (index + slides.length) % slides.length;
+/* =========================================================
+   AUTHENTICATION
+========================================================= */
 
+onAuthStateChanged(
+    auth,
+    async user => {
 
-    slides.forEach((slide, i) => {
+        if (!user) {
 
-      slide.classList.toggle(
-        "active",
-        i === currentBanner
-      );
+            window.location.replace(
+                "../login/"
+            );
 
-    });
+            return;
 
-
-    dots.forEach((dot, i) => {
-
-      dot.classList.toggle(
-        "active",
-        i === currentBanner
-      );
-
-    });
+        }
 
 
-    if (current) {
+        currentUser = user;
 
-      current.textContent =
-        String(currentBanner + 1)
-          .padStart(2, "0");
+
+        try {
+
+            await loadStudent();
+
+            setupNavigation();
+
+            setupProfile();
+
+            setupNotifications();
+
+
+            await Promise.all([
+
+                loadBanners(),
+
+                loadMasterPlan(),
+
+                loadTodayClasses(),
+
+                loadAnnouncements()
+
+            ]);
+
+
+            showApplication();
+
+
+        } catch (error) {
+
+            console.error(
+                "Zenova Hybrid:",
+                error
+            );
+
+
+            showError();
+
+        }
+
+    }
+);
+
+
+
+/* =========================================================
+   STUDENT
+========================================================= */
+
+async function loadStudent() {
+
+    const reference =
+        doc(
+            db,
+            "students",
+            currentUser.uid
+        );
+
+
+    const snapshot =
+        await getDoc(
+            reference
+        );
+
+
+    if (!snapshot.exists()) {
+
+        throw new Error(
+            "Student profile not found."
+        );
 
     }
 
-  }
+
+    student =
+        snapshot.data();
 
 
-  dots.forEach((dot, index) => {
-
-    dot.addEventListener("click", () => {
-
-      showBanner(index);
-
-      restartBannerTimer();
-
-    });
-
-  });
-
-
-  function restartBannerTimer() {
-
-    clearInterval(bannerTimer);
-
-    bannerTimer =
-      setInterval(() => {
-
-        showBanner(currentBanner + 1);
-
-      }, 5000);
-
-  }
-
-
-  showBanner(0);
-
-  restartBannerTimer();
+    renderStudent();
 
 }
+
+
+function renderStudent() {
+
+    const name =
+        student.name ||
+        currentUser.displayName ||
+        "Student";
+
+
+    document.getElementById(
+        "studentName"
+    ).textContent =
+        name;
+
+
+    const information = [];
+
+
+    if (
+        student.className
+    ) {
+
+        information.push(
+            student.className
+        );
+
+    }
+
+
+    if (
+        student.combination
+    ) {
+
+        information.push(
+            student.combination
+        );
+
+    }
+
+
+    if (
+        student.board
+    ) {
+
+        information.push(
+            student.board
+        );
+
+    }
+
+
+    if (!information.length) {
+
+        information.push(
+            "Hybrid Program"
+        );
+
+    }
+
+
+    document.getElementById(
+        "studentMeta"
+    ).textContent =
+        information.join(
+            " • "
+        );
+
+
+    document.getElementById(
+        "profileButton"
+    ).textContent =
+        name
+            .trim()
+            .charAt(0)
+            .toUpperCase();
+
+}
+
+
+
+/* =========================================================
+   BANNERS
+========================================================= */
+
+function loadBanners() {
+
+    const bannersQuery =
+        query(
+            collection(
+                db,
+                "hybridBanners"
+            ),
+
+            where(
+                "active",
+                "==",
+                true
+            ),
+
+            orderBy(
+                "priority",
+                "desc"
+            )
+        );
+
+
+    return new Promise(
+        (resolve, reject) => {
+
+            let firstLoad = true;
+
+
+            onSnapshot(
+                bannersQuery,
+
+                snapshot => {
+
+                    banners =
+                        snapshot.docs.map(
+                            item => ({
+                                id:
+                                    item.id,
+
+                                ...item.data()
+                            })
+                        );
+
+
+                    renderBanners();
+
+
+                    if (
+                        firstLoad
+                    ) {
+
+                        firstLoad = false;
+
+                        resolve();
+
+                    }
+
+                },
+
+                error => {
+
+                    console.error(
+                        "Banners:",
+                        error
+                    );
+
+                    reject(error);
+
+                }
+            );
+
+        }
+    );
+
+}
+
+
+function renderBanners() {
+
+    const section =
+        document.getElementById(
+            "bannerSection"
+        );
+
+
+    const slider =
+        document.getElementById(
+            "bannerSlider"
+        );
+
+
+    const dots =
+        document.getElementById(
+            "bannerDots"
+        );
+
+
+    const counter =
+        document.getElementById(
+            "bannerCounter"
+        );
+
+
+    if (!banners.length) {
+
+        section.classList.add(
+            "hidden"
+        );
+
+        return;
+
+    }
+
+
+    section.classList.remove(
+        "hidden"
+    );
+
+
+    currentBanner = 0;
+
+
+    slider.innerHTML =
+        banners.map(
+            (
+                banner,
+                index
+            ) => `
+
+                <article
+                    class="banner-slide ${
+                        index === 0
+                            ? "active"
+                            : ""
+                    }"
+                >
+
+                    <img
+                        src="${escapeAttribute(
+                            banner.imageUrl ||
+                            ""
+                        )}"
+                        alt="${escapeAttribute(
+                            banner.title ||
+                            "Zenova"
+                        )}"
+                    >
+
+                    <div
+                        class="banner-overlay"
+                    ></div>
+
+
+                    <div
+                        class="banner-content"
+                    >
+
+                        ${
+                            banner.label
+                                ? `
+                                    <span
+                                        class="banner-label"
+                                    >
+                                        ${escapeHTML(
+                                            banner.label
+                                        )}
+                                    </span>
+                                `
+                                : ""
+                        }
+
+
+                        <h2>
+                            ${escapeHTML(
+                                banner.title ||
+                                ""
+                            )}
+                        </h2>
+
+
+                        ${
+                            banner.description
+                                ? `
+                                    <p>
+                                        ${escapeHTML(
+                                            banner.description
+                                        )}
+                                    </p>
+                                `
+                                : ""
+                        }
+
+                    </div>
+
+                </article>
+
+            `
+        ).join("");
+
+
+    dots.innerHTML =
+        banners.map(
+            (
+                _,
+                index
+            ) => `
+
+                <button
+                    class="banner-dot ${
+                        index === 0
+                            ? "active"
+                            : ""
+                    }"
+                    data-banner-index="${index}"
+                    type="button"
+                ></button>
+
+            `
+        ).join("");
+
+
+    updateBannerCounter();
+
+
+    dots
+        .querySelectorAll(
+            "[data-banner-index]"
+        )
+        .forEach(
+            button => {
+
+                button.addEventListener(
+                    "click",
+                    () => {
+
+                        showBanner(
+                            Number(
+                                button.dataset
+                                    .bannerIndex
+                            )
+                        );
+
+
+                        restartBanner();
+
+                    }
+                );
+
+            }
+        );
+
+
+    restartBanner();
+
+}
+
+
+function showBanner(
+    index
+) {
+
+    if (!banners.length) {
+
+        return;
+
+    }
+
+
+    currentBanner =
+        (
+            index +
+            banners.length
+        ) %
+        banners.length;
+
+
+    document
+        .querySelectorAll(
+            ".banner-slide"
+        )
+        .forEach(
+            (
+                slide,
+                index
+            ) => {
+
+                slide.classList.toggle(
+                    "active",
+                    index ===
+                        currentBanner
+                );
+
+            }
+        );
+
+
+    document
+        .querySelectorAll(
+            ".banner-dot"
+        )
+        .forEach(
+            (
+                dot,
+                index
+            ) => {
+
+                dot.classList.toggle(
+                    "active",
+                    index ===
+                        currentBanner
+                );
+
+            }
+        );
+
+
+    updateBannerCounter();
+
+}
+
+
+function updateBannerCounter() {
+
+    document.getElementById(
+        "bannerCounter"
+    ).textContent =
+
+        `${String(
+            currentBanner + 1
+        ).padStart(
+            2,
+            "0"
+        )} / ${String(
+            banners.length
+        ).padStart(
+            2,
+            "0"
+        )}`;
+
+}
+
+
+function restartBanner() {
+
+    clearInterval(
+        bannerInterval
+    );
+
+
+    if (
+        banners.length <= 1
+    ) {
+
+        return;
+
+    }
+
+
+    bannerInterval =
+        setInterval(
+            () => {
+
+                showBanner(
+                    currentBanner + 1
+                );
+
+            },
+            5000
+        );
+
+}
+
 
 
 /* =========================================================
    MASTER PLAN
 ========================================================= */
 
-function initializeMasterPlan() {
+function loadMasterPlan() {
 
-  const planList =
-    document.getElementById("masterPlanList");
-
-  if (!planList) return;
+    const dateKey =
+        getTodayKey();
 
 
-  const cards =
-    Array.from(
-      planList.querySelectorAll(".plan-card")
+    const planQuery =
+        query(
+            collection(
+                db,
+                "hybridMasterPlans"
+            ),
+
+            where(
+                "dateKey",
+                "==",
+                dateKey
+            ),
+
+            where(
+                "active",
+                "==",
+                true
+            ),
+
+            limit(1)
+        );
+
+
+    return new Promise(
+        (
+            resolve,
+            reject
+        ) => {
+
+            let firstLoad = true;
+
+
+            onSnapshot(
+                planQuery,
+
+                async snapshot => {
+
+                    if (
+                        snapshot.empty
+                    ) {
+
+                        masterPlan = [];
+
+                    } else {
+
+                        const plan =
+                            snapshot.docs[0];
+
+
+                        const data =
+                            plan.data();
+
+
+                        const tasks =
+                            Array.isArray(
+                                data.tasks
+                            )
+                                ? data.tasks
+                                : [];
+
+
+                        masterPlan =
+                            await Promise.all(
+                                tasks.map(
+                                    async task => {
+
+                                        const completed =
+                                            await getCompletion(
+                                                plan.id,
+                                                task.id
+                                            );
+
+
+                                        return {
+
+                                            ...task,
+
+                                            planId:
+                                                plan.id,
+
+                                            completed
+
+                                        };
+
+                                    }
+                                )
+                            );
+
+                    }
+
+
+                    renderMasterPlan();
+
+
+                    if (
+                        firstLoad
+                    ) {
+
+                        firstLoad = false;
+
+                        resolve();
+
+                    }
+
+                },
+
+                error => {
+
+                    reject(error);
+
+                }
+            );
+
+        }
     );
 
-
-  const completedCount =
-    document.getElementById("completedCount");
-
-  const totalCount =
-    document.getElementById("totalCount");
-
-  const progress =
-    document.getElementById("masterProgress");
-
-  const pendingTitle =
-    document.getElementById("pendingTitle");
+}
 
 
-  totalCount.textContent =
-    cards.length;
+async function getCompletion(
+    planId,
+    taskId
+) {
+
+    const reference =
+        doc(
+            db,
+            "hybridTaskCompletions",
+            `${currentUser.uid}_${planId}_${taskId}`
+        );
 
 
-  function updateProgress() {
-
-    const completed =
-      cards.filter(card =>
-        card.classList.contains("completed")
-      ).length;
+    const snapshot =
+        await getDoc(
+            reference
+        );
 
 
-    const total =
-      cards.length;
+    if (
+        !snapshot.exists()
+    ) {
 
-
-    const percentage =
-      total === 0
-        ? 0
-        : Math.round((completed / total) * 100);
-
-
-    completedCount.textContent =
-      completed;
-
-    progress.style.width =
-      `${percentage}%`;
-
-
-    const remaining =
-      total - completed;
-
-
-    if (remaining === 0) {
-
-      pendingTitle.textContent =
-        "Today's plan is complete";
-
-    } else {
-
-      pendingTitle.textContent =
-        `${remaining} ${
-          remaining === 1
-            ? "task"
-            : "tasks"
-        } remaining`;
+        return false;
 
     }
 
-  }
 
-
-  cards.forEach(card => {
-
-    const completeButton =
-      card.querySelector(".complete-button");
-
-
-    completeButton.addEventListener(
-      "click",
-      () => {
-
-        card.classList.toggle("completed");
-
-        updateProgress();
-
-        /*
-         * FUTURE FIREBASE ACTION:
-         *
-         * saveMasterPlanCompletion({
-         *   studentId,
-         *   masterPlanId,
-         *   taskId,
-         *   completed: true
-         * })
-         *
-         * This will be added after the
-         * Firestore architecture is finalized.
-         */
-
-      }
+    return (
+        snapshot.data()
+            .completed === true
     );
 
-  });
+}
 
 
-  updateProgress();
+function renderMasterPlan() {
+
+    const list =
+        document.getElementById(
+            "masterPlanList"
+        );
+
+
+    const progressText =
+        document.getElementById(
+            "masterProgressText"
+        );
+
+
+    const progress =
+        document.getElementById(
+            "masterProgress"
+        );
+
+
+    if (!masterPlan.length) {
+
+        list.innerHTML = `
+
+            <div
+                class="empty-card"
+            >
+                No master plan published for today.
+            </div>
+
+        `;
+
+
+        progressText.textContent =
+            "0 / 0";
+
+
+        progress.style.width =
+            "0%";
+
+
+        return;
+
+    }
+
+
+    list.innerHTML =
+        masterPlan.map(
+            (
+                task,
+                index
+            ) => `
+
+                <article
+                    class="plan-card ${
+                        task.completed
+                            ? "completed"
+                            : ""
+                    }"
+                >
+
+                    <div
+                        class="plan-number"
+                    >
+                        ${String(
+                            index + 1
+                        ).padStart(
+                            2,
+                            "0"
+                        )}
+                    </div>
+
+
+                    <div
+                        class="plan-icon"
+                    >
+                        ${taskIcon(
+                            task.type
+                        )}
+                    </div>
+
+
+                    <div
+                        class="plan-information"
+                    >
+
+                        <span
+                            class="plan-type"
+                        >
+                            ${escapeHTML(
+                                (
+                                    task.type ||
+                                    "STUDY"
+                                ).toUpperCase()
+                            )}
+                        </span>
+
+
+                        <h3>
+                            ${escapeHTML(
+                                task.subject ||
+                                task.title ||
+                                ""
+                            )}
+                        </h3>
+
+
+                        <p>
+                            ${escapeHTML(
+                                task.title ||
+                                task.chapter ||
+                                ""
+                            )}
+                        </p>
+
+                    </div>
+
+
+                    <button
+                        class="plan-button"
+                        data-resource-url="${
+                            escapeAttribute(
+                                task.resourceUrl ||
+                                ""
+                            )
+                        }"
+                        type="button"
+                    >
+                        ${taskAction(
+                            task.type
+                        )}
+                    </button>
+
+
+                    <button
+                        class="plan-complete"
+                        data-task-id="${
+                            escapeAttribute(
+                                task.id
+                            )
+                        }"
+                        type="button"
+                    >
+                        ✓
+                    </button>
+
+                </article>
+
+            `
+        ).join("");
+
+
+    attachPlanEvents();
+
+    updatePlanProgress();
 
 }
+
+
+function attachPlanEvents() {
+
+    document
+        .querySelectorAll(
+            "[data-task-id]"
+        )
+        .forEach(
+            button => {
+
+                button.addEventListener(
+                    "click",
+                    async event => {
+
+                        event.stopPropagation();
+
+
+                        await toggleTask(
+                            button.dataset.taskId
+                        );
+
+                    }
+                );
+
+            }
+        );
+
+
+    document
+        .querySelectorAll(
+            ".plan-button"
+        )
+        .forEach(
+            button => {
+
+                button.addEventListener(
+                    "click",
+                    event => {
+
+                        event.stopPropagation();
+
+
+                        const url =
+                            button.dataset
+                                .resourceUrl;
+
+
+                        if (!url) {
+
+                            return;
+
+                        }
+
+
+                        window.location.href =
+                            url;
+
+                    }
+                );
+
+            }
+        );
+
+}
+
+
+async function toggleTask(
+    taskId
+) {
+
+    const task =
+        masterPlan.find(
+            item =>
+                String(
+                    item.id
+                ) ===
+                String(
+                    taskId
+                )
+        );
+
+
+    if (!task) {
+
+        return;
+
+    }
+
+
+    task.completed =
+        !task.completed;
+
+
+    renderMasterPlan();
+
+
+    const reference =
+        doc(
+            db,
+            "hybridTaskCompletions",
+            `${currentUser.uid}_${task.planId}_${task.id}`
+        );
+
+
+    await setDoc(
+        reference,
+        {
+
+            studentId:
+                currentUser.uid,
+
+            planId:
+                task.planId,
+
+            taskId:
+                task.id,
+
+            completed:
+                task.completed,
+
+            completedAt:
+                task.completed
+                    ? serverTimestamp()
+                    : null,
+
+            updatedAt:
+                serverTimestamp()
+
+        },
+
+        {
+            merge: true
+        }
+    );
+
+}
+
+
+function updatePlanProgress() {
+
+    const total =
+        masterPlan.length;
+
+
+    const completed =
+        masterPlan.filter(
+            item =>
+                item.completed
+        ).length;
+
+
+    const percentage =
+        total
+            ? (
+                completed /
+                total
+            ) * 100
+            : 0;
+
+
+    document.getElementById(
+        "masterProgressText"
+    ).textContent =
+        `${completed} / ${total}`;
+
+
+    document.getElementById(
+        "masterProgress"
+    ).style.width =
+        `${percentage}%`;
+
+}
+
 
 
 /* =========================================================
-   RESOURCE BUTTONS
+   TODAY'S CLASSES
 ========================================================= */
 
-function initializeResourceButtons() {
+function loadTodayClasses() {
 
-  const buttons =
-    document.querySelectorAll(
-      ".open-resource"
-    );
+    const today =
+        getTodayKey();
 
 
-  buttons.forEach(button => {
+    const classesQuery =
+        query(
+            collection(
+                db,
+                "hybridClasses"
+            ),
 
-    button.addEventListener(
-      "click",
-      () => {
+            where(
+                "dateKey",
+                "==",
+                today
+            ),
 
-        const type =
-          button.dataset.type;
+            where(
+                "active",
+                "==",
+                true
+            ),
 
+            orderBy(
+                "startTime",
+                "asc"
+            ),
 
-        /*
-         * UI DEVELOPMENT ONLY.
-         *
-         * Later each button will open
-         * the exact Firebase resource:
-         *
-         * LIVE     → live class
-         * PDF      → exact PDF
-         * VIDEO    → exact recorded lecture
-         * REVISION → exact chapter/revision
-         */
-
-        console.log(
-          "Open master plan resource:",
-          type
+            limit(6)
         );
 
-        showTemporaryMessage(
-          `Opening ${formatResourceType(type)}...`
-        );
 
-      }
+    return new Promise(
+        (
+            resolve,
+            reject
+        ) => {
+
+            let firstLoad = true;
+
+
+            onSnapshot(
+                classesQuery,
+
+                snapshot => {
+
+                    const classes =
+                        snapshot.docs.map(
+                            item => ({
+                                id:
+                                    item.id,
+
+                                ...item.data()
+                            })
+                        );
+
+
+                    renderClasses(
+                        classes
+                    );
+
+
+                    if (
+                        firstLoad
+                    ) {
+
+                        firstLoad = false;
+
+                        resolve();
+
+                    }
+
+                },
+
+                error => {
+
+                    reject(error);
+
+                }
+            );
+
+        }
     );
-
-  });
 
 }
 
 
-function formatResourceType(type) {
+function renderClasses(
+    classes
+) {
 
-  const map = {
-    live: "live class",
-    pdf: "notes",
-    video: "recorded lecture",
-    revision: "revision material"
-  };
+    const section =
+        document.getElementById(
+            "classesSection"
+        );
 
-  return map[type] || "resource";
+
+    const list =
+        document.getElementById(
+            "classesList"
+        );
+
+
+    if (!classes.length) {
+
+        section.classList.add(
+            "hidden"
+        );
+
+        return;
+
+    }
+
+
+    section.classList.remove(
+        "hidden"
+    );
+
+
+    list.innerHTML =
+        classes.map(
+            item => `
+
+                <article
+                    class="class-card"
+                >
+
+                    <div
+                        class="class-time"
+                    >
+                        ${escapeHTML(
+                            item.startTime ||
+                            ""
+                        )}
+                    </div>
+
+
+                    <div
+                        class="class-information"
+                    >
+
+                        <strong>
+                            ${escapeHTML(
+                                item.subject ||
+                                ""
+                            )}
+                        </strong>
+
+
+                        <span>
+                            ${escapeHTML(
+                                item.topic ||
+                                ""
+                            )}
+                        </span>
+
+
+                        <div
+                            class="class-mode"
+                        >
+                            ${escapeHTML(
+                                item.mode ||
+                                ""
+                            )}
+                        </div>
+
+                    </div>
+
+
+                    ${
+                        item.meetingUrl
+                            ? `
+
+                                <a
+                                    class="join-button"
+                                    href="${escapeAttribute(
+                                        item.meetingUrl
+                                    )}"
+                                    target="_blank"
+                                    rel="noopener"
+                                >
+                                    JOIN
+                                </a>
+
+                            `
+                            : ""
+                    }
+
+                </article>
+
+            `
+        ).join("");
 
 }
+
+
+
+/* =========================================================
+   ANNOUNCEMENTS
+========================================================= */
+
+function loadAnnouncements() {
+
+    const announcementQuery =
+        query(
+            collection(
+                db,
+                "hybridAnnouncements"
+            ),
+
+            where(
+                "active",
+                "==",
+                true
+            ),
+
+            orderBy(
+                "createdAt",
+                "desc"
+            ),
+
+            limit(5)
+        );
+
+
+    return new Promise(
+        (
+            resolve,
+            reject
+        ) => {
+
+            let firstLoad = true;
+
+
+            onSnapshot(
+                announcementQuery,
+
+                snapshot => {
+
+                    const items =
+                        snapshot.docs.map(
+                            item => ({
+                                id:
+                                    item.id,
+
+                                ...item.data()
+                            })
+                        );
+
+
+                    renderAnnouncements(
+                        items
+                    );
+
+
+                    if (
+                        firstLoad
+                    ) {
+
+                        firstLoad = false;
+
+                        resolve();
+
+                    }
+
+                },
+
+                error => {
+
+                    reject(error);
+
+                }
+            );
+
+        }
+    );
+
+}
+
+
+function renderAnnouncements(
+    items
+) {
+
+    const section =
+        document.getElementById(
+            "announcementSection"
+        );
+
+
+    const list =
+        document.getElementById(
+            "announcementList"
+        );
+
+
+    if (!items.length) {
+
+        section.classList.add(
+            "hidden"
+        );
+
+        return;
+
+    }
+
+
+    section.classList.remove(
+        "hidden"
+    );
+
+
+    list.innerHTML =
+        items.map(
+            item => `
+
+                <article
+                    class="announcement-card"
+                >
+
+                    <div
+                        class="announcement-icon"
+                    >
+                        N
+                    </div>
+
+
+                    <div
+                        class="announcement-information"
+                    >
+
+                        <div
+                            class="announcement-meta"
+                        >
+
+                            <span
+                                class="announcement-category"
+                            >
+                                ${escapeHTML(
+                                    item.category ||
+                                    "NOTICE"
+                                )}
+                            </span>
+
+
+                            <span
+                                class="announcement-date"
+                            >
+                                ${formatDate(
+                                    item.createdAt
+                                )}
+                            </span>
+
+                        </div>
+
+
+                        <h3>
+                            ${escapeHTML(
+                                item.title ||
+                                ""
+                            )}
+                        </h3>
+
+
+                        ${
+                            item.description
+                                ? `
+
+                                    <p>
+                                        ${escapeHTML(
+                                            item.description
+                                        )}
+                                    </p>
+
+                                `
+                                : ""
+                        }
+
+                    </div>
+
+                </article>
+
+            `
+        ).join("");
+
+}
+
 
 
 /* =========================================================
    NAVIGATION
 ========================================================= */
 
-function initializeNavigation() {
+function setupNavigation() {
 
-  const navigationButtons =
-    document.querySelectorAll(
-      "[data-page]"
-    );
+    document
+        .querySelectorAll(
+            "[data-route]"
+        )
+        .forEach(
+            element => {
 
+                element.addEventListener(
+                    "click",
+                    () => {
 
-  navigationButtons.forEach(button => {
+                        navigate(
+                            element.dataset.route
+                        );
 
-    button.addEventListener(
-      "click",
-      () => {
+                    }
+                );
 
-        const page =
-          button.dataset.page;
-
-        navigateToPage(page);
-
-      }
-    );
-
-  });
+            }
+        );
 
 }
 
 
-function navigateToPage(page) {
+function navigate(
+    route
+) {
 
-  /*
-   * These paths are prepared for the
-   * final Hybrid Portal structure.
-   *
-   * We are not creating those pages yet.
-   */
+    const routes = {
 
-  const paths = {
+        home:
+            "./",
 
-    dashboard: "./",
+        classes:
+            "./classes/",
 
-    classes: "../hybrid/classes/",
+        study:
+            "./study/",
 
-    study: "../hybrid/study/",
+        timetable:
+            "./timetable/",
 
-    timetable: "../hybrid/timetable/",
+        attendance:
+            "./attendance/",
 
-    attendance: "../hybrid/attendance/",
+        tests:
+            "./tests/",
 
-    tests: "../hybrid/tests/",
+        more:
+            "./more/"
 
-    more: "../hybrid/more/",
-
-    ai: "../hybrid/more/ai/"
-
-  };
-
-
-  if (!paths[page]) {
-
-    console.warn(
-      "Unknown page:",
-      page
-    );
-
-    return;
-
-  }
+    };
 
 
-  /*
-   * Dashboard is currently the only
-   * existing page, so don't navigate
-   * away from it during UI development.
-   */
-
-  if (page === "dashboard") {
-
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth"
-    });
-
-    return;
-
-  }
+    const destination =
+        routes[route];
 
 
-  /*
-   * The remaining pages will be created
-   * one by one.
-   *
-   * For now show a development message
-   * rather than sending the student
-   * to a non-existent page.
-   */
+    if (
+        destination
+    ) {
 
-  showTemporaryMessage(
-    `${capitalize(page)} page will be connected next.`
-  );
+        window.location.href =
+            destination;
+
+    }
+
+}
+
+
+
+/* =========================================================
+   PROFILE
+========================================================= */
+
+function setupProfile() {
+
+    document
+        .getElementById(
+            "profileButton"
+        )
+        .addEventListener(
+            "click",
+            () => {
+
+                navigate(
+                    "more"
+                );
+
+            }
+        );
 
 }
 
@@ -502,171 +1618,377 @@ function navigateToPage(page) {
    NOTIFICATIONS
 ========================================================= */
 
-function initializeNotificationButton() {
+function setupNotifications() {
 
-  const button =
-    document.getElementById(
-      "notificationButton"
-    );
+    document
+        .getElementById(
+            "notificationButton"
+        )
+        .addEventListener(
+            "click",
+            () => {
 
+                navigate(
+                    "more"
+                );
 
-  if (!button) return;
-
-
-  button.addEventListener(
-    "click",
-    () => {
-
-      /*
-       * Later:
-       *
-       * window.location.href =
-       * "../hybrid/more/notifications/";
-       */
-
-      showTemporaryMessage(
-        "Notifications will be connected next."
-      );
-
-    }
-  );
+            }
+        );
 
 }
+
 
 
 /* =========================================================
-   PENDING
+   APPLICATION
 ========================================================= */
 
-function initializePendingButton() {
+function showApplication() {
 
-  const button =
-    document.getElementById(
-      "viewPendingButton"
+    app.classList.remove(
+        "hidden"
     );
 
 
-  if (!button) return;
+    setTimeout(
+        () => {
 
+            loader.classList.add(
+                "hidden"
+            );
 
-  button.addEventListener(
-    "click",
-    () => {
-
-      showTemporaryMessage(
-        "Pending task view will be connected next."
-      );
-
-    }
-  );
+        },
+        150
+    );
 
 }
 
 
-/* =========================================================
-   TEMPORARY MESSAGE
-========================================================= */
+function showError() {
 
-function showTemporaryMessage(message) {
+    loader.innerHTML = `
 
-  let toast =
-    document.getElementById(
-      "hybridToast"
-    );
+        <div
+            style="
+                text-align:center;
+                padding:30px;
+            "
+        >
 
-
-  if (!toast) {
-
-    toast =
-      document.createElement("div");
-
-    toast.id =
-      "hybridToast";
-
-    toast.style.position =
-      "fixed";
-
-    toast.style.left =
-      "50%";
-
-    toast.style.bottom =
-      "92px";
-
-    toast.style.transform =
-      "translateX(-50%)";
-
-    toast.style.zIndex =
-      "9999";
-
-    toast.style.padding =
-      "11px 16px";
-
-    toast.style.borderRadius =
-      "9px";
-
-    toast.style.background =
-      "#111";
-
-    toast.style.color =
-      "#fff";
-
-    toast.style.fontSize =
-      "11px";
-
-    toast.style.fontWeight =
-      "600";
-
-    toast.style.boxShadow =
-      "0 8px 30px rgba(0,0,0,0.15)";
-
-    toast.style.opacity =
-      "0";
-
-    toast.style.transition =
-      "opacity .2s ease";
-
-    document.body.appendChild(toast);
-
-  }
+            <strong
+                style="
+                    font-size:22px;
+                    letter-spacing:3px;
+                "
+            >
+                ZENOVA
+            </strong>
 
 
-  toast.textContent =
-    message;
+            <p
+                style="
+                    margin-top:10px;
+                    color:#777;
+                    font-size:11px;
+                "
+            >
+                We couldn't load your Hybrid Portal.
+            </p>
 
 
-  requestAnimationFrame(() => {
+            <button
+                onclick="location.reload()"
+                style="
+                    margin-top:18px;
+                    padding:10px 16px;
+                    border:0;
+                    border-radius:7px;
+                    background:#111;
+                    color:white;
+                    font-size:9px;
+                    font-weight:800;
+                "
+            >
+                TRY AGAIN
+            </button>
 
-    toast.style.opacity =
-      "1";
+        </div>
 
-  });
-
-
-  clearTimeout(
-    window.hybridToastTimer
-  );
-
-
-  window.hybridToastTimer =
-    setTimeout(() => {
-
-      toast.style.opacity =
-        "0";
-
-    }, 2200);
+    `;
 
 }
+
 
 
 /* =========================================================
    HELPERS
 ========================================================= */
 
-function capitalize(value) {
+function getTodayKey() {
 
-  if (!value) return "";
+    const date =
+        new Date();
 
-  return value.charAt(0).toUpperCase()
-    + value.slice(1);
+
+    const year =
+        date.getFullYear();
+
+
+    const month =
+        String(
+            date.getMonth() + 1
+        ).padStart(
+            2,
+            "0"
+        );
+
+
+    const day =
+        String(
+            date.getDate()
+        ).padStart(
+            2,
+            "0"
+        );
+
+
+    return `${year}-${month}-${day}`;
+
+}
+
+
+function taskIcon(
+    type
+) {
+
+    const value =
+        String(
+            type || ""
+        ).toLowerCase();
+
+
+    if (
+        value.includes(
+            "live"
+        )
+    ) {
+
+        return "▶";
+
+    }
+
+
+    if (
+        value.includes(
+            "video"
+        ) ||
+        value.includes(
+            "record"
+        )
+    ) {
+
+        return "▷";
+
+    }
+
+
+    if (
+        value.includes(
+            "note"
+        ) ||
+        value.includes(
+            "pdf"
+        )
+    ) {
+
+        return "▤";
+
+    }
+
+
+    if (
+        value.includes(
+            "test"
+        )
+    ) {
+
+        return "□";
+
+    }
+
+
+    if (
+        value.includes(
+            "revision"
+        )
+    ) {
+
+        return "↻";
+
+    }
+
+
+    return "•";
+
+}
+
+
+function taskAction(
+    type
+) {
+
+    const value =
+        String(
+            type || ""
+        ).toLowerCase();
+
+
+    if (
+        value.includes(
+            "live"
+        )
+    ) {
+
+        return "JOIN";
+
+    }
+
+
+    if (
+        value.includes(
+            "video"
+        ) ||
+        value.includes(
+            "record"
+        )
+    ) {
+
+        return "WATCH";
+
+    }
+
+
+    if (
+        value.includes(
+            "note"
+        ) ||
+        value.includes(
+            "pdf"
+        )
+    ) {
+
+        return "OPEN";
+
+    }
+
+
+    if (
+        value.includes(
+            "test"
+        )
+    ) {
+
+        return "START";
+
+    }
+
+
+    return "OPEN";
+
+}
+
+
+function formatDate(
+    value
+) {
+
+    if (!value) {
+
+        return "";
+
+    }
+
+
+    let date;
+
+
+    if (
+        typeof value.toDate ===
+        "function"
+    ) {
+
+        date =
+            value.toDate();
+
+    } else {
+
+        date =
+            new Date(
+                value
+            );
+
+    }
+
+
+    if (
+        Number.isNaN(
+            date.getTime()
+        )
+    ) {
+
+        return "";
+
+    }
+
+
+    return date.toLocaleDateString(
+        "en-IN",
+        {
+            day: "numeric",
+            month: "short"
+        }
+    );
+
+}
+
+
+function escapeHTML(
+    value
+) {
+
+    return String(
+        value ?? ""
+    )
+        .replaceAll(
+            "&",
+            "&amp;"
+        )
+        .replaceAll(
+            "<",
+            "&lt;"
+        )
+        .replaceAll(
+            ">",
+            "&gt;"
+        )
+        .replaceAll(
+            '"',
+            "&quot;"
+        )
+        .replaceAll(
+            "'",
+            "&#039;"
+        );
+
+}
+
+
+function escapeAttribute(
+    value
+) {
+
+    return escapeHTML(
+        value
+    );
 
 }
