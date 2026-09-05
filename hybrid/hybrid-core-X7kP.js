@@ -3,11 +3,9 @@ import {
     db
 } from "../firebase/firebase-config.js";
 
-
 import {
     onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
-
 
 import {
     doc,
@@ -15,7 +13,6 @@ import {
     collection,
     query,
     where,
-    orderBy,
     limit,
     onSnapshot,
     setDoc,
@@ -23,22 +20,15 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
 
-
 /* =========================================================
    ELEMENTS
 ========================================================= */
 
 const loader =
-    document.getElementById(
-        "zenovaLoader"
-    );
-
+    document.getElementById("zenovaLoader");
 
 const app =
-    document.getElementById(
-        "hybridApp"
-    );
-
+    document.getElementById("hybridApp");
 
 
 /* =========================================================
@@ -46,26 +36,31 @@ const app =
 ========================================================= */
 
 let currentUser = null;
-
 let student = null;
 
 let masterPlanTasks = [];
 
 let banners = [];
-
 let currentBanner = 0;
-
 let bannerTimer = null;
 
 
-
 /* =========================================================
-   AUTH
+   START
 ========================================================= */
+
+console.log("ZENOVA HYBRID: CORE STARTED");
+
 
 onAuthStateChanged(
     auth,
-    async user => {
+    async (user) => {
+
+        console.log(
+            "ZENOVA HYBRID: AUTH",
+            user ? user.uid : "NO USER"
+        );
+
 
         if (!user) {
 
@@ -77,57 +72,61 @@ onAuthStateChanged(
         }
 
 
-        currentUser =
-            user;
+        currentUser = user;
 
 
         try {
 
+            /*
+             * Student profile is the only
+             * thing required before opening
+             * the portal.
+             */
+
             await loadStudent();
 
 
-            await Promise.all([
-
-                loadBanners(),
-
-                loadMasterPlan(),
-
-                loadTodayClasses(),
-
-                loadAnnouncements(),
-
-                loadAttendance(),
-
-                loadLatestTest()
-
-            ]);
-
+            /*
+             * Show the application immediately.
+             *
+             * Individual sections load independently.
+             */
 
             setupNavigation();
-
             setupProfile();
-
             setupNotifications();
 
-
             showApplication();
+
+
+            /*
+             * Start every realtime section
+             * independently.
+             */
+
+            startBannersListener();
+            startMasterPlanListener();
+            startTodayClassesListener();
+            startAnnouncementsListener();
+            startAttendanceListener();
+            startLatestTestListener();
 
 
         } catch (error) {
 
             console.error(
-                "Zenova Hybrid:",
+                "ZENOVA HYBRID START ERROR:",
                 error
             );
 
-
-            showError();
+            showError(
+                error
+            );
 
         }
 
     }
 );
-
 
 
 /* =========================================================
@@ -136,7 +135,12 @@ onAuthStateChanged(
 
 async function loadStudent() {
 
-    const ref =
+    console.log(
+        "ZENOVA HYBRID: Loading student..."
+    );
+
+
+    const studentRef =
         doc(
             db,
             "students",
@@ -146,7 +150,7 @@ async function loadStudent() {
 
     const snapshot =
         await getDoc(
-            ref
+            studentRef
         );
 
 
@@ -163,10 +167,15 @@ async function loadStudent() {
         snapshot.data();
 
 
+    console.log(
+        "ZENOVA HYBRID: Student loaded",
+        student
+    );
+
+
     renderStudent();
 
 }
-
 
 
 function renderStudent() {
@@ -177,10 +186,30 @@ function renderStudent() {
         "Student";
 
 
-    document.getElementById(
-        "studentName"
-    ).textContent =
-        name;
+    const nameElement =
+        document.getElementById(
+            "studentName"
+        );
+
+
+    const metaElement =
+        document.getElementById(
+            "studentMeta"
+        );
+
+
+    const profileButton =
+        document.getElementById(
+            "profileButton"
+        );
+
+
+    if (nameElement) {
+
+        nameElement.textContent =
+            name;
+
+    }
 
 
     const details = [];
@@ -209,33 +238,41 @@ function renderStudent() {
     );
 
 
-    document.getElementById(
-        "studentMeta"
-    ).textContent =
-        details.join(
-            " • "
-        );
+    if (metaElement) {
+
+        metaElement.textContent =
+            details.join(
+                " • "
+            );
+
+    }
 
 
-    document.getElementById(
-        "profileButton"
-    ).textContent =
-        name
-            .trim()
-            .charAt(0)
-            .toUpperCase();
+    if (profileButton) {
+
+        profileButton.textContent =
+            name
+                .trim()
+                .charAt(0)
+                .toUpperCase();
+
+    }
 
 }
-
 
 
 /* =========================================================
    BANNERS
 ========================================================= */
 
-function loadBanners() {
+function startBannersListener() {
 
-    const q =
+    console.log(
+        "ZENOVA HYBRID: Starting banners listener..."
+    );
+
+
+    const baseQuery =
         query(
             collection(
                 db,
@@ -248,60 +285,73 @@ function loadBanners() {
                 true
             ),
 
-            orderBy(
-                "priority",
-                "desc"
-            )
+            limit(20)
         );
 
 
-    return new Promise(
-        (resolve, reject) => {
+    onSnapshot(
 
-            let first =
-                true;
+        baseQuery,
 
+        (snapshot) => {
 
-            onSnapshot(
-                q,
-
-                snapshot => {
-
-                    banners =
-                        snapshot.docs.map(
-                            item => ({
-                                id: item.id,
-                                ...item.data()
-                            })
-                        );
+            banners =
+                snapshot.docs.map(
+                    item => ({
+                        id: item.id,
+                        ...item.data()
+                    })
+                );
 
 
-                    renderBanners();
+            /*
+             * Sort locally.
+             * This avoids a Firestore
+             * composite index requirement.
+             */
 
-
-                    if (first) {
-
-                        first =
-                            false;
-
-                        resolve();
-
-                    }
-
-                },
-
-                error => {
-
-                    reject(error);
-
-                }
+            banners.sort(
+                (a, b) =>
+                    Number(
+                        b.priority || 0
+                    ) -
+                    Number(
+                        a.priority || 0
+                    )
             );
 
+
+            console.log(
+                "ZENOVA HYBRID: Banners",
+                banners.length
+            );
+
+
+            renderBanners();
+
+        },
+
+        (error) => {
+
+            console.error(
+                "HYBRID BANNERS ERROR:",
+                error
+            );
+
+            /*
+             * Banner failure must NEVER
+             * stop the whole portal.
+             */
+
+            banners = [];
+
+            renderBanners();
+
         }
+
     );
 
 }
-
 
 
 function renderBanners() {
@@ -311,12 +361,10 @@ function renderBanners() {
             "bannerSection"
         );
 
-
     const wrapper =
         document.getElementById(
             "bannerWrapper"
         );
-
 
     const dots =
         document.getElementById(
@@ -324,10 +372,23 @@ function renderBanners() {
         );
 
 
+    if (
+        !section ||
+        !wrapper ||
+        !dots
+    ) {
+        return;
+    }
+
+
     if (!banners.length) {
 
         section.classList.add(
             "hidden"
+        );
+
+        clearInterval(
+            bannerTimer
         );
 
         return;
@@ -363,11 +424,9 @@ function renderBanners() {
                         )}"
                     >
 
-
                     <div
                         class="banner-overlay"
                     ></div>
-
 
                     <div
                         class="banner-content"
@@ -387,13 +446,11 @@ function renderBanners() {
                                 : ""
                         }
 
-
                         <h2>
                             ${escapeHtml(
                                 banner.title || ""
                             )}
                         </h2>
-
 
                         ${
                             banner.description
@@ -426,6 +483,7 @@ function renderBanners() {
                     "
                     data-banner-index="${index}"
                     type="button"
+                    aria-label="Banner ${index + 1}"
                 ></button>
 
             `
@@ -450,7 +508,6 @@ function renderBanners() {
                             )
                         );
 
-
                         restartBanner();
 
                     }
@@ -461,16 +518,12 @@ function renderBanners() {
 
 
     updateBannerCounter();
-
     restartBanner();
 
 }
 
 
-
-function showBanner(
-    index
-) {
+function showBanner(index) {
 
     if (!banners.length) {
         return;
@@ -522,13 +575,20 @@ function showBanner(
 }
 
 
-
 function updateBannerCounter() {
 
-    document.getElementById(
-        "bannerCounter"
-    ).textContent =
+    const counter =
+        document.getElementById(
+            "bannerCounter"
+        );
 
+
+    if (!counter) {
+        return;
+    }
+
+
+    counter.textContent =
         `${String(
             currentBanner + 1
         ).padStart(2, "0")} / ${
@@ -538,7 +598,6 @@ function updateBannerCounter() {
         }`;
 
 }
-
 
 
 function restartBanner() {
@@ -568,12 +627,11 @@ function restartBanner() {
 }
 
 
-
 /* =========================================================
    MASTER PLAN
 ========================================================= */
 
-function loadMasterPlan() {
+function startMasterPlanListener() {
 
     const today =
         getDateKey(
@@ -581,7 +639,13 @@ function loadMasterPlan() {
         );
 
 
-    const q =
+    console.log(
+        "ZENOVA HYBRID: Master plan",
+        today
+    );
+
+
+    const baseQuery =
         query(
             collection(
                 db,
@@ -600,119 +664,144 @@ function loadMasterPlan() {
                 true
             ),
 
-            limit(1)
+            limit(10)
         );
 
 
-    return new Promise(
-        (resolve, reject) => {
+    onSnapshot(
 
-            let first =
-                true;
+        baseQuery,
 
+        async (snapshot) => {
 
-            onSnapshot(
-                q,
+            try {
 
-                async snapshot => {
+                if (snapshot.empty) {
 
-                    if (
-                        snapshot.empty
-                    ) {
+                    masterPlanTasks = [];
 
-                        masterPlanTasks =
-                            [];
+                    renderMasterPlan();
 
-                        renderMasterPlan();
+                    return;
+
+                }
 
 
-                        if (first) {
+                /*
+                 * Sort plans locally.
+                 */
 
-                            first =
-                                false;
-
-                            resolve();
-
-                        }
-
-                        return;
-
-                    }
-
-
-                    const plan =
-                        snapshot.docs[0];
+                const plans =
+                    snapshot.docs.map(
+                        item => ({
+                            id: item.id,
+                            ...item.data()
+                        })
+                    );
 
 
-                    const planData =
-                        plan.data();
-
-
-                    const tasks =
-                        Array.isArray(
-                            planData.tasks
+                plans.sort(
+                    (a, b) =>
+                        String(
+                            a.priority || ""
+                        ).localeCompare(
+                            String(
+                                b.priority || ""
+                            )
                         )
-                            ? planData.tasks
-                            : [];
+                );
 
 
-                    masterPlanTasks =
-                        await Promise.all(
+                const plan =
+                    plans[0];
 
-                            tasks.map(
-                                async task => {
 
-                                    const completion =
+                const tasks =
+                    Array.isArray(
+                        plan.tasks
+                    )
+                        ? plan.tasks
+                        : [];
+
+
+                masterPlanTasks =
+                    await Promise.all(
+
+                        tasks.map(
+                            async task => {
+
+                                let completed =
+                                    false;
+
+
+                                try {
+
+                                    completed =
                                         await getCompletion(
                                             plan.id,
                                             task.id
                                         );
 
+                                } catch (error) {
 
-                                    return {
-
-                                        ...task,
-
-                                        planId:
-                                            plan.id,
-
-                                        completed:
-                                            completion
-
-                                    };
+                                    console.error(
+                                        "TASK COMPLETION ERROR:",
+                                        error
+                                    );
 
                                 }
-                            )
-
-                        );
 
 
-                    renderMasterPlan();
+                                return {
+
+                                    ...task,
+
+                                    planId:
+                                        plan.id,
+
+                                    completed
+
+                                };
+
+                            }
+                        )
+
+                    );
 
 
-                    if (first) {
+                renderMasterPlan();
 
-                        first =
-                            false;
+            } catch (error) {
 
-                        resolve();
+                console.error(
+                    "MASTER PLAN RENDER ERROR:",
+                    error
+                );
 
-                    }
+                masterPlanTasks = [];
 
-                },
+                renderMasterPlan();
 
-                error => {
+            }
 
-                    reject(error);
+        },
 
-                }
+        (error) => {
+
+            console.error(
+                "HYBRID MASTER PLAN ERROR:",
+                error
             );
 
+            masterPlanTasks = [];
+
+            renderMasterPlan();
+
         }
+
     );
 
 }
-
 
 
 async function getCompletion(
@@ -724,7 +813,7 @@ async function getCompletion(
         `${currentUser.uid}_${planId}_${taskId}`;
 
 
-    const ref =
+    const completionRef =
         doc(
             db,
             "hybridTaskCompletions",
@@ -734,7 +823,7 @@ async function getCompletion(
 
     const snapshot =
         await getDoc(
-            ref
+            completionRef
         );
 
 
@@ -746,7 +835,6 @@ async function getCompletion(
 }
 
 
-
 function renderMasterPlan() {
 
     const list =
@@ -754,11 +842,15 @@ function renderMasterPlan() {
             "masterPlanList"
         );
 
-
     const empty =
         document.getElementById(
             "masterPlanEmpty"
         );
+
+
+    if (!list || !empty) {
+        return;
+    }
 
 
     const total =
@@ -768,20 +860,42 @@ function renderMasterPlan() {
     const completed =
         masterPlanTasks.filter(
             task =>
-                task.completed
+                task.completed === true
         ).length;
 
 
-    document.getElementById(
-        "completedCount"
-    ).textContent =
-        completed;
+    const completedElement =
+        document.getElementById(
+            "completedCount"
+        );
 
 
-    document.getElementById(
-        "totalCount"
-    ).textContent =
-        total;
+    const totalElement =
+        document.getElementById(
+            "totalCount"
+        );
+
+
+    const progress =
+        document.getElementById(
+            "masterProgress"
+        );
+
+
+    if (completedElement) {
+
+        completedElement.textContent =
+            completed;
+
+    }
+
+
+    if (totalElement) {
+
+        totalElement.textContent =
+            total;
+
+    }
 
 
     const percentage =
@@ -794,10 +908,12 @@ function renderMasterPlan() {
             : 0;
 
 
-    document.getElementById(
-        "masterProgress"
-    ).style.width =
-        `${percentage}%`;
+    if (progress) {
+
+        progress.style.width =
+            `${percentage}%`;
+
+    }
 
 
     if (!total) {
@@ -929,7 +1045,6 @@ function renderMasterPlan() {
 }
 
 
-
 function attachPlanEvents() {
 
     document
@@ -994,7 +1109,6 @@ function attachPlanEvents() {
 }
 
 
-
 async function toggleTask(
     taskId
 ) {
@@ -1012,66 +1126,91 @@ async function toggleTask(
     }
 
 
-    task.completed =
+    const newValue =
         !task.completed;
+
+
+    task.completed =
+        newValue;
 
 
     renderMasterPlan();
 
 
-    const id =
-        `${currentUser.uid}_${task.planId}_${task.id}`;
+    try {
+
+        const id =
+            `${currentUser.uid}_${task.planId}_${task.id}`;
 
 
-    const ref =
-        doc(
-            db,
-            "hybridTaskCompletions",
-            id
+        const completionRef =
+            doc(
+                db,
+                "hybridTaskCompletions",
+                id
+            );
+
+
+        await setDoc(
+
+            completionRef,
+
+            {
+
+                studentId:
+                    currentUser.uid,
+
+                planId:
+                    task.planId,
+
+                taskId:
+                    task.id,
+
+                completed:
+                    newValue,
+
+                completedAt:
+                    newValue
+                        ? serverTimestamp()
+                        : null,
+
+                updatedAt:
+                    serverTimestamp()
+
+            },
+
+            {
+                merge: true
+            }
+
         );
 
+    } catch (error) {
 
-    await setDoc(
-        ref,
+        console.error(
+            "TASK SAVE ERROR:",
+            error
+        );
 
-        {
+        /*
+         * Revert UI if save fails.
+         */
 
-            studentId:
-                currentUser.uid,
+        task.completed =
+            !newValue;
 
-            planId:
-                task.planId,
+        renderMasterPlan();
 
-            taskId:
-                task.id,
-
-            completed:
-                task.completed,
-
-            completedAt:
-                task.completed
-                    ? serverTimestamp()
-                    : null,
-
-            updatedAt:
-                serverTimestamp()
-
-        },
-
-        {
-            merge: true
-        }
-    );
+    }
 
 }
-
 
 
 /* =========================================================
    TODAY'S CLASSES
 ========================================================= */
 
-function loadTodayClasses() {
+function startTodayClassesListener() {
 
     const today =
         getDateKey(
@@ -1079,7 +1218,7 @@ function loadTodayClasses() {
         );
 
 
-    const q =
+    const baseQuery =
         query(
             collection(
                 db,
@@ -1098,60 +1237,68 @@ function loadTodayClasses() {
                 true
             ),
 
-            orderBy(
-                "startTime",
-                "asc"
-            ),
-
-            limit(5)
+            limit(20)
         );
 
 
-    return new Promise(
-        (resolve, reject) => {
+    onSnapshot(
 
-            let first =
-                true;
+        baseQuery,
 
+        (snapshot) => {
 
-            onSnapshot(
-                q,
-
-                snapshot => {
-
-                    const classes =
-                        snapshot.docs.map(
-                            item => ({
-                                id: item.id,
-                                ...item.data()
-                            })
-                        );
+            let classes =
+                snapshot.docs.map(
+                    item => ({
+                        id: item.id,
+                        ...item.data()
+                    })
+                );
 
 
-                    renderTodayClasses(
-                        classes
-                    );
+            /*
+             * Sort locally.
+             */
 
-
-                    if (first) {
-
-                        first =
-                            false;
-
-                        resolve();
-
-                    }
-
-                },
-
-                reject
+            classes.sort(
+                (a, b) =>
+                    String(
+                        a.startTime || ""
+                    ).localeCompare(
+                        String(
+                            b.startTime || ""
+                        )
+                    )
             );
 
+
+            classes =
+                classes.slice(
+                    0,
+                    5
+                );
+
+
+            renderTodayClasses(
+                classes
+            );
+
+        },
+
+        (error) => {
+
+            console.error(
+                "HYBRID CLASSES ERROR:",
+                error
+            );
+
+            renderTodayClasses([]);
+
         }
+
     );
 
 }
-
 
 
 function renderTodayClasses(
@@ -1163,11 +1310,15 @@ function renderTodayClasses(
             "todayClassesSection"
         );
 
-
     const list =
         document.getElementById(
             "todayClassesList"
         );
+
+
+    if (!section || !list) {
+        return;
+    }
 
 
     if (!classes.length) {
@@ -1175,6 +1326,8 @@ function renderTodayClasses(
         section.classList.add(
             "hidden"
         );
+
+        list.innerHTML = "";
 
         return;
 
@@ -1237,7 +1390,7 @@ function renderTodayClasses(
                                         item.meetingUrl
                                     )}"
                                     target="_blank"
-                                    rel="noopener"
+                                    rel="noopener noreferrer"
                                 >
                                     JOIN
                                 </a>
@@ -1253,14 +1406,13 @@ function renderTodayClasses(
 }
 
 
-
 /* =========================================================
    ANNOUNCEMENTS
 ========================================================= */
 
-function loadAnnouncements() {
+function startAnnouncementsListener() {
 
-    const q =
+    const baseQuery =
         query(
             collection(
                 db,
@@ -1273,60 +1425,67 @@ function loadAnnouncements() {
                 true
             ),
 
-            orderBy(
-                "createdAt",
-                "desc"
-            ),
-
-            limit(5)
+            limit(20)
         );
 
 
-    return new Promise(
-        (resolve, reject) => {
+    onSnapshot(
 
-            let first =
-                true;
+        baseQuery,
 
+        (snapshot) => {
 
-            onSnapshot(
-                q,
-
-                snapshot => {
-
-                    const items =
-                        snapshot.docs.map(
-                            item => ({
-                                id: item.id,
-                                ...item.data()
-                            })
-                        );
+            let items =
+                snapshot.docs.map(
+                    item => ({
+                        id: item.id,
+                        ...item.data()
+                    })
+                );
 
 
-                    renderAnnouncements(
-                        items
-                    );
+            /*
+             * Sort locally by createdAt.
+             */
 
-
-                    if (first) {
-
-                        first =
-                            false;
-
-                        resolve();
-
-                    }
-
-                },
-
-                reject
+            items.sort(
+                (a, b) =>
+                    getTimestampMillis(
+                        b.createdAt
+                    ) -
+                    getTimestampMillis(
+                        a.createdAt
+                    )
             );
 
+
+            items =
+                items.slice(
+                    0,
+                    5
+                );
+
+
+            renderAnnouncements(
+                items
+            );
+
+        },
+
+        (error) => {
+
+            console.error(
+                "HYBRID ANNOUNCEMENTS ERROR:",
+                error
+            );
+
+            renderAnnouncements([]);
+
         }
+
     );
 
 }
-
 
 
 function renderAnnouncements(
@@ -1338,11 +1497,15 @@ function renderAnnouncements(
             "announcementSection"
         );
 
-
     const list =
         document.getElementById(
             "announcementList"
         );
+
+
+    if (!section || !list) {
+        return;
+    }
 
 
     if (!items.length) {
@@ -1350,6 +1513,8 @@ function renderAnnouncements(
         section.classList.add(
             "hidden"
         );
+
+        list.innerHTML = "";
 
         return;
 
@@ -1434,14 +1599,13 @@ function renderAnnouncements(
 }
 
 
-
 /* =========================================================
    ATTENDANCE
 ========================================================= */
 
-function loadAttendance() {
+function startAttendanceListener() {
 
-    const q =
+    const baseQuery =
         query(
             collection(
                 db,
@@ -1454,58 +1618,61 @@ function loadAttendance() {
                 currentUser.uid
             ),
 
-            orderBy(
-                "dateKey",
-                "desc"
-            ),
-
-            limit(100)
+            limit(200)
         );
 
 
-    return new Promise(
-        (resolve, reject) => {
+    onSnapshot(
 
-            let first =
-                true;
+        baseQuery,
 
+        (snapshot) => {
 
-            onSnapshot(
-                q,
-
-                snapshot => {
-
-                    const records =
-                        snapshot.docs.map(
-                            item =>
-                                item.data()
-                        );
+            let records =
+                snapshot.docs.map(
+                    item => ({
+                        id: item.id,
+                        ...item.data()
+                    })
+                );
 
 
-                    renderAttendance(
-                        records
-                    );
+            /*
+             * Sort locally.
+             */
 
-
-                    if (first) {
-
-                        first =
-                            false;
-
-                        resolve();
-
-                    }
-
-                },
-
-                reject
+            records.sort(
+                (a, b) =>
+                    String(
+                        b.dateKey || ""
+                    ).localeCompare(
+                        String(
+                            a.dateKey || ""
+                        )
+                    )
             );
 
+
+            renderAttendance(
+                records
+            );
+
+        },
+
+        (error) => {
+
+            console.error(
+                "HYBRID ATTENDANCE ERROR:",
+                error
+            );
+
+            renderAttendance([]);
+
         }
+
     );
 
 }
-
 
 
 function renderAttendance(
@@ -1516,6 +1683,11 @@ function renderAttendance(
         document.getElementById(
             "attendanceSummary"
         );
+
+
+    if (!card) {
+        return;
+    }
 
 
     if (!records.length) {
@@ -1544,7 +1716,9 @@ function renderAttendance(
     const present =
         records.filter(
             item =>
-                item.status ===
+                String(
+                    item.status || ""
+                ).toLowerCase() ===
                 "present"
         ).length;
 
@@ -1591,14 +1765,13 @@ function renderAttendance(
 }
 
 
-
 /* =========================================================
    LATEST TEST
 ========================================================= */
 
-function loadLatestTest() {
+function startLatestTestListener() {
 
-    const q =
+    const baseQuery =
         query(
             collection(
                 db,
@@ -1611,64 +1784,62 @@ function loadLatestTest() {
                 currentUser.uid
             ),
 
-            orderBy(
-                "createdAt",
-                "desc"
-            ),
-
-            limit(1)
+            limit(50)
         );
 
 
-    return new Promise(
-        (resolve, reject) => {
+    onSnapshot(
 
-            let first =
-                true;
+        baseQuery,
 
+        (snapshot) => {
 
-            onSnapshot(
-                q,
-
-                snapshot => {
-
-                    if (
-                        snapshot.empty
-                    ) {
-
-                        renderLatestTest(
-                            null
-                        );
-
-                    } else {
-
-                        renderLatestTest(
-                            snapshot.docs[0]
-                                .data()
-                        );
-
-                    }
+            let results =
+                snapshot.docs.map(
+                    item => ({
+                        id: item.id,
+                        ...item.data()
+                    })
+                );
 
 
-                    if (first) {
+            /*
+             * Sort locally.
+             */
 
-                        first =
-                            false;
+            results.sort(
+                (a, b) =>
+                    getTimestampMillis(
+                        b.createdAt
+                    ) -
+                    getTimestampMillis(
+                        a.createdAt
+                    )
+            );
 
-                        resolve();
 
-                    }
+            renderLatestTest(
+                results[0] || null
+            );
 
-                },
+        },
 
-                reject
+        (error) => {
+
+            console.error(
+                "HYBRID TEST RESULT ERROR:",
+                error
+            );
+
+            renderLatestTest(
+                null
             );
 
         }
+
     );
 
 }
-
 
 
 function renderLatestTest(
@@ -1679,6 +1850,11 @@ function renderLatestTest(
         document.getElementById(
             "testSummary"
         );
+
+
+    if (!card) {
+        return;
+    }
 
 
     if (!result) {
@@ -1742,7 +1918,6 @@ function renderLatestTest(
 }
 
 
-
 /* =========================================================
    NAVIGATION
 ========================================================= */
@@ -1771,7 +1946,6 @@ function setupNavigation() {
         );
 
 }
-
 
 
 function navigate(
@@ -1818,30 +1992,35 @@ function navigate(
 }
 
 
-
 /* =========================================================
    PROFILE
 ========================================================= */
 
 function setupProfile() {
 
-    document
-        .getElementById(
+    const button =
+        document.getElementById(
             "profileButton"
-        )
-        .addEventListener(
-            "click",
-            () => {
-
-                navigate(
-                    "more"
-                );
-
-            }
         );
 
-}
 
+    if (!button) {
+        return;
+    }
+
+
+    button.addEventListener(
+        "click",
+        () => {
+
+            navigate(
+                "more"
+            );
+
+        }
+    );
+
+}
 
 
 /* =========================================================
@@ -1850,56 +2029,82 @@ function setupProfile() {
 
 function setupNotifications() {
 
-    document
-        .getElementById(
+    const button =
+        document.getElementById(
             "notificationButton"
-        )
-        .addEventListener(
-            "click",
-            () => {
-
-                navigate(
-                    "more"
-                );
-
-            }
         );
+
+
+    if (!button) {
+        return;
+    }
+
+
+    button.addEventListener(
+        "click",
+        () => {
+
+            navigate(
+                "more"
+            );
+
+        }
+    );
 
 }
 
 
-
 /* =========================================================
-   SHOW APP
+   SHOW APPLICATION
 ========================================================= */
 
 function showApplication() {
 
-    app.classList.remove(
-        "hidden"
-    );
+    if (app) {
+
+        app.classList.remove(
+            "hidden"
+        );
+
+    }
 
 
-    setTimeout(
-        () => {
+    if (loader) {
 
-            loader.classList.add(
-                "hidden"
-            );
+        setTimeout(
+            () => {
 
-        },
-        150
-    );
+                loader.classList.add(
+                    "hidden"
+                );
+
+            },
+            150
+        );
+
+    }
 
 }
-
 
 
 /* =========================================================
    ERROR
 ========================================================= */
 
-function showError() {
+function showError(
+    error
+) {
+
+    console.error(
+        "ZENOVA HYBRID FATAL ERROR:",
+        error
+    );
+
+
+    if (!loader) {
+        return;
+    }
+
 
     loader.innerHTML = `
 
@@ -1907,6 +2112,7 @@ function showError() {
             style="
                 text-align:center;
                 padding:30px;
+                font-family:Arial,sans-serif;
             "
         >
 
@@ -1939,9 +2145,11 @@ function showError() {
                     padding:10px 16px;
                     background:#111;
                     color:#fff;
+                    border:none;
                     border-radius:7px;
                     font-size:9px;
                     font-weight:800;
+                    cursor:pointer;
                 "
             >
                 TRY AGAIN
@@ -1952,7 +2160,6 @@ function showError() {
     `;
 
 }
-
 
 
 /* =========================================================
@@ -2010,7 +2217,6 @@ function getTaskIcon(
 }
 
 
-
 function getActionText(
     type
 ) {
@@ -2048,7 +2254,6 @@ function getActionText(
 }
 
 
-
 function getDateKey(
     date
 ) {
@@ -2076,17 +2281,23 @@ function getDateKey(
 }
 
 
-
-function formatDate(
+function getTimestampMillis(
     value
 ) {
 
     if (!value) {
-        return "";
+        return 0;
     }
 
 
-    let date;
+    if (
+        typeof value.toMillis ===
+        "function"
+    ) {
+
+        return value.toMillis();
+
+    }
 
 
     if (
@@ -2094,29 +2305,42 @@ function formatDate(
         "function"
     ) {
 
-        date =
-            value.toDate();
-
-    } else {
-
-        date =
-            new Date(value);
+        return value.toDate().getTime();
 
     }
 
 
-    if (
-        Number.isNaN(
-            date.getTime()
-        )
-    ) {
+    const date =
+        new Date(value);
 
+
+    return Number.isNaN(
+        date.getTime()
+    )
+        ? 0
+        : date.getTime();
+
+}
+
+
+function formatDate(
+    value
+) {
+
+    const millis =
+        getTimestampMillis(
+            value
+        );
+
+
+    if (!millis) {
         return "";
-
     }
 
 
-    return date.toLocaleDateString(
+    return new Date(
+        millis
+    ).toLocaleDateString(
         "en-IN",
         {
             day: "numeric",
@@ -2125,7 +2349,6 @@ function formatDate(
     );
 
 }
-
 
 
 function escapeHtml(
@@ -2162,7 +2385,6 @@ function escapeHtml(
         );
 
 }
-
 
 
 function escapeAttr(
