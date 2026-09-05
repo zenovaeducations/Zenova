@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
+<title>Watch Class | Zenova</title>
+
+<link
+    rel="stylesheet"
+    href="./classes.css"
+>
+
+<style>
+
+.video-page {
+    width: min(1050px, calc(100% - 30px));
+
+    margin: 0 auto;
+
+    padding: 35px 0 70px;
+}
+
+.video-heading {
+    margin-bottom: 25px;
+}
+
+.video-heading .eyebrow {
+    margin-bottom: 9px;
+}
+
+.video-heading h1 {
+    font-size: clamp(28px, 4vw, 45px);
+    letter-spacing: -1.4px;
+}
+
+.video-description {
+    margin-top: 10px;
+
+    color: #777;
+
+    font-size: 14px;
+
+    line-height: 1.6;
+}
+
+.player-wrapper {
+    width: 100%;
+
+    background: #000;
+
+    border-radius: 18px;
+
+    overflow: hidden;
+
+    aspect-ratio: 16 / 9;
+}
+
+.player-wrapper iframe {
+    width: 100%;
+    height: 100%;
+
+    border: none;
+}
+
+.player-wrapper video {
+    width: 100%;
+    height: 100%;
+
+    display: block;
+
+    background: #000;
+}
+
+.video-meta {
+    margin-top: 18px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    flex-wrap: wrap;
+}
+
+.meta-pill {
+    border: 1px solid #e5e5e5;
+
+    border-radius: 20px;
+
+    padding: 8px 12px;
+
+    font-size: 12px;
+
+    color: #666;
+}
+
+.watch-error {
+    padding: 60px 20px;
+
+    text-align: center;
+
+    border: 1px solid #e8e8e8;
+
+    border-radius: 18px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div id="loader" class="loader-screen">
+
+<div class="loader-z">
+Z
+</div>
+
+</div>
+
+
+<div id="app" class="app hidden">
+
+
+<header class="topbar">
+
+<button
+    class="icon-btn"
+    id="backBtn"
+>
+
+<span class="back-arrow">
+‹
+</span>
+
+</button>
+
+
+<div class="brand">
+
+<div class="brand-name">
+ZENOVA
+</div>
+
+<div class="brand-sub">
+LEARNING
+</div>
+
+</div>
+
+
+<button
+    class="icon-btn"
+    id="notificationBtn"
+>
+
+<span class="bell-icon"></span>
+
+</button>
+
+</header>
+
+
+<main class="video-page">
+
+
+<section class="video-heading">
+
+<p class="eyebrow">
+RECORDED CLASS
+</p>
+
+
+<h1 id="videoTitle">
+Loading...
+</h1>
+
+
+<p
+    id="videoDescription"
+    class="video-description"
+>
+</p>
+
+
+<div
+    id="videoMeta"
+    class="video-meta"
+></div>
+
+</section>
+
+
+<div
+    id="playerWrapper"
+    class="player-wrapper hidden"
+></div>
+
+
+<div
+    id="watchError"
+    class="watch-error hidden"
+>
+
+<h3>
+Video unavailable
+</h3>
+
+<p>
+This recorded class doesn't have a valid
+video source yet.
+</p>
+
+</div>
+
+
+</main>
+
+</div>
+
+
+<script type="module">
+
+import {
+    auth,
+    db
+} from "../../firebase/firebase-config.js";
+
+
+import {
+    onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+
+
+import {
+    doc,
+    getDoc
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
+
+const loader =
+    document.getElementById("loader");
+
+const app =
+    document.getElementById("app");
+
+const title =
+    document.getElementById("videoTitle");
+
+const description =
+    document.getElementById(
+        "videoDescription"
+    );
+
+const meta =
+    document.getElementById("videoMeta");
+
+const player =
+    document.getElementById(
+        "playerWrapper"
+    );
+
+const watchError =
+    document.getElementById(
+        "watchError"
+    );
+
+
+const params =
+    new URLSearchParams(
+        window.location.search
+    );
+
+
+const videoId =
+    params.get("id");
+
+
+function showApp() {
+
+    loader.classList.add("hidden");
+
+    app.classList.remove("hidden");
+}
+
+
+function escapeHTML(value) {
+
+    return String(value || "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+}
+
+
+function showError() {
+
+    player.classList.add(
+        "hidden"
+    );
+
+    watchError.classList.remove(
+        "hidden"
+    );
+}
+
+
+async function start() {
+
+    if (!videoId) {
+
+        showApp();
+
+        showError();
+
+        return;
+    }
+
+
+    onAuthStateChanged(
+        auth,
+        async (user) => {
+
+            if (!user) {
+
+                window.location.href =
+                    "../../login/";
+
+                return;
+            }
+
+
+            try {
+
+                await loadVideo();
+
+                showApp();
+
+            } catch (error) {
+
+                console.error(
+                    "Video error:",
+                    error
+                );
+
+                showApp();
+
+                showError();
+
+            }
+
+        }
+    );
+}
+
+
+async function loadVideo() {
+
+    const videoRef =
+        doc(
+            db,
+            "hybridMaterials",
+            videoId
+        );
+
+
+    const snap =
+        await getDoc(videoRef);
+
+
+    if (!snap.exists()) {
+
+        throw new Error(
+            "Video doesn't exist."
+        );
+
+    }
+
+
+    const data =
+        snap.data();
+
+
+    if (data.active !== true) {
+
+        throw new Error(
+            "Video is inactive."
+        );
+
+    }
+
+
+    if (
+        String(data.type || "")
+            .toLowerCase() !== "video"
+    ) {
+
+        throw new Error(
+            "Material is not a video."
+        );
+
+    }
+
+
+    title.textContent =
+        data.title ||
+        "Recorded Class";
+
+
+    description.textContent =
+        data.description ||
+        "";
+
+
+    renderMeta(data);
+
+
+    renderPlayer(data);
+}
+
+
+function renderMeta(data) {
+
+    meta.innerHTML = "";
+
+
+    if (data.teacherName) {
+
+        addMeta(
+            data.teacherName
+        );
+
+    }
+
+
+    if (data.duration) {
+
+        addMeta(
+            data.duration
+        );
+
+    }
+
+
+    if (data.medium) {
+
+        addMeta(
+            `${data.medium} Medium`
+        );
+
+    }
+
+}
+
+
+function addMeta(text) {
+
+    const pill =
+        document.createElement(
+            "span"
+        );
+
+    pill.className =
+        "meta-pill";
+
+    pill.textContent =
+        text;
+
+    meta.appendChild(pill);
+}
+
+
+function renderPlayer(data) {
+
+    const videoType =
+        String(
+            data.videoType || ""
+        )
+        .trim()
+        .toLowerCase();
+
+
+    /*
+     * YOUTUBE
+     */
+
+    if (
+        videoType === "youtube" &&
+        data.youtubeId
+    ) {
+
+        const iframe =
+            document.createElement(
+                "iframe"
+            );
+
+
+        iframe.src =
+            `https://www.youtube-nocookie.com/embed/${encodeURIComponent(
+                data.youtubeId
+            )}`;
+
+
+        iframe.title =
+            data.title ||
+            "Zenova Recorded Class";
+
+
+        iframe.allow =
+            "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
+
+
+        iframe.allowFullscreen =
+            true;
+
+
+        player.appendChild(
+            iframe
+        );
+
+
+        player.classList.remove(
+            "hidden"
+        );
+
+        return;
+    }
+
+
+    /*
+     * HOSTED VIDEO
+     */
+
+    if (
+        videoType === "hosted" &&
+        data.videoUrl
+    ) {
+
+        const video =
+            document.createElement(
+                "video"
+            );
+
+
+        video.controls = true;
+
+        video.playsInline = true;
+
+        video.preload = "metadata";
+
+        video.src =
+            data.videoUrl;
+
+
+        player.appendChild(
+            video
+        );
+
+
+        player.classList.remove(
+            "hidden"
+        );
+
+        return;
+    }
+
+
+    showError();
+}
+
+
+/* =========================
+   NAVIGATION
+========================= */
+
+document.getElementById(
+    "backBtn"
+).onclick = () => {
+
+    window.history.back();
+
+};
+
+
+document.getElementById(
+    "notificationBtn"
+).onclick = () => {
+
+    window.location.href =
+        "../more/";
+
+};
+
+
+start();
+
+</script>
+
+</body>
+
+</html>
