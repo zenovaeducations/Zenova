@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Classes | Zenova Hybrid</title>
+
+    <link
+        rel="stylesheet"
+        href="./classes.css"
+    >
+
+</head>
+
+
+<body>
+
+    <!-- =====================================================
+         LOADER
+    ====================================================== -->
+
+    <div
+        id="pageLoader"
+        class="page-loader"
+    >
+
+        <div class="loader-z">
+            Z
+        </div>
+
+        <p>
+            Loading classes
+        </p>
+
+    </div>
+
+
+    <!-- =====================================================
+         APP
+    ====================================================== -->
+
+    <main
+        id="classesApp"
+        class="app hidden"
+    >
+
+
+        <!-- =================================================
+             HEADER
+        ================================================== -->
+
+        <header class="topbar">
+
+            <button
+                id="backButton"
+                class="icon-button"
+                type="button"
+                aria-label="Go back"
+            >
+                ←
+            </button>
+
+
+            <div class="brand">
+
+                <span class="brand-name">
+                    ZENOVA
+                </span>
+
+                <span class="brand-divider">
+                    /
+                </span>
+
+                <span class="brand-section">
+                    CLASSES
+                </span>
+
+            </div>
+
+
+            <button
+                id="notificationButton"
+                class="icon-button"
+                type="button"
+                aria-label="Notifications"
+            >
+                <span class="notification-dot"></span>
+                ♢
+            </button>
+
+        </header>
+
+
+
+        <!-- =================================================
+             PAGE INTRO
+        ================================================== -->
+
+        <section class="intro">
+
+            <div>
+
+                <p class="eyebrow">
+                    ACADEMIC SCHEDULE
+                </p>
+
+                <h1>
+                    Your Classes
+                </h1>
+
+                <p
+                    id="studentGreeting"
+                    class="intro-description"
+                >
+                    Your live, upcoming and recorded classes.
+                </p>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             DATE SELECTOR
+        ================================================== -->
+
+        <section class="date-section">
+
+            <div class="date-header">
+
+                <div>
+
+                    <span class="section-label">
+                        SELECT DATE
+                    </span>
+
+                    <strong id="selectedDateLabel">
+                        Today
+                    </strong>
+
+                </div>
+
+
+                <button
+                    id="todayButton"
+                    class="today-button"
+                    type="button"
+                >
+                    TODAY
+                </button>
+
+            </div>
+
+
+            <div
+                id="dateStrip"
+                class="date-strip"
+            >
+                <!-- JS -->
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             SELECTED DAY SUMMARY
+        ================================================== -->
+
+        <section class="day-summary">
+
+            <div>
+
+                <span class="section-label">
+                    SCHEDULE
+                </span>
+
+                <h2 id="dayTitle">
+                    Today's Classes
+                </h2>
+
+            </div>
+
+
+            <span
+                id="classCount"
+                class="class-count"
+            >
+                0 classes
+            </span>
+
+        </section>
+
+
+
+        <!-- =================================================
+             LIVE NOW
+        ================================================== -->
+
+        <section
+            id="liveSection"
+            class="content-section hidden"
+        >
+
+            <div class="section-heading">
+
+                <div>
+
+                    <span class="section-label live-label">
+                        LIVE NOW
+                    </span>
+
+                    <h2>
+                        Join your class
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <div
+                id="liveList"
+                class="live-list"
+            >
+                <!-- JS -->
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             UPCOMING
+        ================================================== -->
+
+        <section
+            id="upcomingSection"
+            class="content-section hidden"
+        >
+
+            <div class="section-heading">
+
+                <div>
+
+                    <span class="section-label">
+                        UPCOMING
+                    </span>
+
+                    <h2>
+                        Next Classes
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <div
+                id="upcomingList"
+                class="class-list"
+            >
+                <!-- JS -->
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             RECORDED
+        ================================================== -->
+
+        <section
+            id="recordedSection"
+            class="content-section hidden"
+        >
+
+            <div class="section-heading">
+
+                <div>
+
+                    <span class="section-label">
+                        RECORDED
+                    </span>
+
+                    <h2>
+                        Watch again
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <div
+                id="recordedList"
+                class="recorded-list"
+            >
+                <!-- JS -->
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             EMPTY STATE
+        ================================================== -->
+
+        <section
+            id="emptyState"
+            class="empty-state hidden"
+        >
+
+            <div class="empty-icon">
+                —
+            </div>
+
+            <h2>
+                No classes scheduled
+            </h2>
+
+            <p>
+                There are no classes available for
+                the selected date.
+            </p>
+
+        </section>
+
+
+
+        <!-- =================================================
+             ERROR
+        ================================================== -->
+
+        <section
+            id="errorState"
+            class="error-state hidden"
+        >
+
+            <h2>
+                Unable to load classes
+            </h2>
+
+            <p id="errorMessage">
+                Please try again.
+            </p>
+
+            <button
+                id="retryButton"
+                type="button"
+            >
+                TRY AGAIN
+            </button>
+
+        </section>
+
+
+    </main>
+
+
+    <!-- =====================================================
+         JAVASCRIPT
+    ====================================================== -->
+
+    <script
+        type="module"
+        src="./classes-core-X7kP.js"
+    ></script>
+
+</body>
+
+</html>
