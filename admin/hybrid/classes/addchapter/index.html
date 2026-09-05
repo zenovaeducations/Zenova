@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Chapters | Zenova Hybrid</title>
+
+    <link
+        rel="stylesheet"
+        href="./chapter.css"
+    >
+</head>
+
+<body>
+
+<div id="loader" class="loader-screen">
+    <div class="loader-ring">
+        <span>Z</span>
+    </div>
+</div>
+
+
+<main id="app" class="app hidden">
+
+    <header class="topbar">
+
+        <button
+            id="backButton"
+            class="back-button"
+        >
+            ←
+        </button>
+
+        <div>
+            <p class="eyebrow">HYBRID CLASSES</p>
+
+            <h1 id="subjectName">
+                Chapters
+            </h1>
+        </div>
+
+    </header>
+
+
+    <section class="subject-info">
+
+        <div>
+            <p class="section-label">
+                SUBJECT
+            </p>
+
+            <h2 id="subjectTitle">
+                Loading...
+            </h2>
+
+            <p id="subjectDescription">
+                Manage chapters for this subject.
+            </p>
+        </div>
+
+    </section>
+
+
+    <section class="chapter-section">
+
+        <div class="section-heading">
+
+            <div>
+                <p class="section-label">
+                    CONTENT
+                </p>
+
+                <h2>
+                    Chapters
+                </h2>
+            </div>
+
+            <button
+                id="addChapterButton"
+                class="primary-button"
+            >
+                + Add Chapter
+            </button>
+
+        </div>
+
+
+        <div
+            id="chaptersList"
+            class="chapters-list"
+        >
+        </div>
+
+
+        <div
+            id="emptyState"
+            class="empty-state hidden"
+        >
+            <div class="empty-icon">
+                +
+            </div>
+
+            <h3>
+                No chapters yet
+            </h3>
+
+            <p>
+                Add the first chapter for this subject.
+            </p>
+
+            <button
+                id="emptyAddButton"
+                class="primary-button"
+            >
+                + Add Chapter
+            </button>
+        </div>
+
+    </section>
+
+</main>
+
+
+<!-- ADD / EDIT MODAL -->
+
+<div
+    id="chapterModal"
+    class="modal hidden"
+>
+
+    <div class="modal-box">
+
+        <div class="modal-header">
+
+            <div>
+                <p class="section-label">
+                    CHAPTER
+                </p>
+
+                <h2 id="modalTitle">
+                    Add Chapter
+                </h2>
+            </div>
+
+            <button
+                id="closeModal"
+                class="close-button"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <form id="chapterForm">
+
+            <div class="form-group">
+
+                <label>
+                    Chapter Number
+                </label>
+
+                <input
+                    id="chapterNumber"
+                    type="number"
+                    min="1"
+                    placeholder="1"
+                    required
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>
+                    Chapter Title
+                </label>
+
+                <input
+                    id="chapterTitle"
+                    type="text"
+                    placeholder="Example: Units and Measurements"
+                    required
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>
+                    Description
+                    <span>Optional</span>
+                </label>
+
+                <textarea
+                    id="chapterDescription"
+                    rows="4"
+                    placeholder="Short description of this chapter"
+                ></textarea>
+
+            </div>
+
+
+            <div class="form-row">
+
+                <div class="form-group">
+
+                    <label>
+                        Priority
+                    </label>
+
+                    <input
+                        id="chapterPriority"
+                        type="number"
+                        min="0"
+                        value="0"
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        Status
+                    </label>
+
+                    <select id="chapterActive">
+
+                        <option value="true">
+                            Active
+                        </option>
+
+                        <option value="false">
+                            Inactive
+                        </option>
+
+                    </select>
+
+                </div>
+
+            </div>
+
+
+            <div
+                id="formError"
+                class="form-error hidden"
+            ></div>
+
+
+            <button
+                id="saveButton"
+                type="submit"
+                class="save-button"
+            >
+                SAVE CHAPTER
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<script
+    type="module"
+    src="./chapter.js"
+></script>
+
+</body>
+</html>
