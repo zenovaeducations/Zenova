@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0"
+  >
+
+  <title>Hybrid | Zenova Educations</title>
+
+  <link rel="stylesheet" href="./hybrid.css">
+</head>
+
+<body>
+
+  <!-- ================================
+       APP LOADER
+  ================================= -->
+  <div id="appLoader" class="app-loader">
+    <div class="loader-ring">
+      <span>Z</span>
+    </div>
+  </div>
+
+
+  <!-- ================================
+       APP
+  ================================= -->
+  <main id="app" class="app hidden">
+
+    <!-- ================================
+         TOP HEADER
+    ================================= -->
+    <header class="top-header">
+
+      <div class="brand-area">
+        <div class="brand-mark">Z</div>
+
+        <div>
+          <div class="brand-name">ZENOVA</div>
+          <div class="brand-sub">EDUCATIONS</div>
+        </div>
+      </div>
+
+
+      <button
+        class="notification-button"
+        id="notificationButton"
+        aria-label="Notifications"
+      >
+
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/>
+          <path d="M10 21h4"/>
+        </svg>
+
+        <span class="notification-dot"></span>
+
+      </button>
+
+    </header>
+
+
+    <!-- ================================
+         GREETING
+    ================================= -->
+    <section class="greeting-section">
+
+      <div>
+        <p class="eyebrow">HYBRID PROGRAM</p>
+
+        <h1>
+          Good morning,
+          <span id="studentName">Student</span>
+        </h1>
+
+        <p class="student-meta" id="studentMeta">
+          1st PUC • Science
+        </p>
+      </div>
+
+      <div class="profile-circle">
+        <span id="profileInitial">S</span>
+      </div>
+
+    </section>
+
+
+    <!-- ================================
+         BANNER CAROUSEL
+    ================================= -->
+    <section class="banner-section">
+
+      <div class="banner-wrapper" id="bannerWrapper">
+
+        <div class="banner-slide active">
+          <img
+            src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=1600&q=85"
+            alt="Students learning"
+          >
+
+          <div class="banner-overlay"></div>
+
+          <div class="banner-content">
+            <span class="banner-label">ZENOVA HYBRID</span>
+
+            <h2>
+              Learn online.<br>
+              Grow offline.
+            </h2>
+
+            <p>
+              Your complete academic journey in one place.
+            </p>
+          </div>
+        </div>
+
+
+        <div class="banner-slide">
+          <img
+            src="https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=1600&q=85"
+            alt="Online learning"
+          >
+
+          <div class="banner-overlay"></div>
+
+          <div class="banner-content">
+            <span class="banner-label">LEARNING NEVER STOPS</span>
+
+            <h2>
+              Study smarter.<br>
+              Every single day.
+            </h2>
+
+            <p>
+              Classes, notes, revision and tests together.
+            </p>
+          </div>
+        </div>
+
+
+        <div class="banner-slide">
+          <img
+            src="https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=1600&q=85"
+            alt="Classroom"
+          >
+
+          <div class="banner-overlay"></div>
+
+          <div class="banner-content">
+            <span class="banner-label">YOUR JOURNEY</span>
+
+            <h2>
+              Stay consistent.<br>
+              Build your future.
+            </h2>
+
+            <p>
+              Follow your daily master plan and keep progressing.
+            </p>
+          </div>
+        </div>
+
+      </div>
+
+
+      <div class="banner-controls">
+
+        <div class="banner-dots" id="bannerDots">
+          <button class="banner-dot active"></button>
+          <button class="banner-dot"></button>
+          <button class="banner-dot"></button>
+        </div>
+
+        <div class="banner-counter">
+          <span id="bannerCurrent">01</span>
+          <span>/</span>
+          <span>03</span>
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- ================================
+         TODAY'S MASTER PLAN
+    ================================= -->
+    <section class="section master-plan-section">
+
+      <div class="section-heading">
+
+        <div>
+          <p class="section-label">YOUR DAY</p>
+          <h2>Today's Master Plan</h2>
+        </div>
+
+        <div class="plan-progress-text">
+          <strong id="completedCount">0</strong>
+          <span>/</span>
+          <span id="totalCount">4</span>
+        </div>
+
+      </div>
+
+
+      <div class="progress-bar">
+        <div
+          class="progress-fill"
+          id="masterProgress"
+          style="width: 0%"
+        ></div>
+      </div>
+
+
+      <div class="master-plan-list" id="masterPlanList">
+
+        <!-- Task 1 -->
+        <article class="plan-card">
+
+          <div class="plan-number">01</div>
+
+          <div class="plan-icon live-icon">
+            <svg viewBox="0 0 24 24">
+              <path d="M8 5v14l11-7z"/>
+            </svg>
+          </div>
+
+          <div class="plan-info">
+            <div class="plan-top">
+              <span class="plan-type live">LIVE CLASS</span>
+              <span class="plan-time">10:00 AM</span>
+            </div>
+
+            <h3>Physics</h3>
+            <p>Current Electricity</p>
+          </div>
+
+          <button
+            class="plan-action open-resource"
+            data-type="live"
+          >
+            JOIN
+          </button>
+
+          <button class="complete-button" aria-label="Mark completed">
+            <svg viewBox="0 0 24 24">
+              <path d="m5 12 4 4L19 6"/>
+            </svg>
+          </button>
+
+        </article>
+
+
+        <!-- Task 2 -->
+        <article class="plan-card">
+
+          <div class="plan-number">02</div>
+
+          <div class="plan-icon pdf-icon">
+            <svg viewBox="0 0 24 24">
+              <path d="M6 2h9l5 5v15H6z"/>
+              <path d="M14 2v6h6"/>
+            </svg>
+          </div>
+
+          <div class="plan-info">
+            <div class="plan-top">
+              <span class="plan-type study">STUDY</span>
+              <span class="plan-time">12:30 PM</span>
+            </div>
+
+            <h3>Chemistry</h3>
+            <p>Organic Chemistry Notes</p>
+          </div>
+
+          <button
+            class="plan-action open-resource"
+            data-type="pdf"
+          >
+            OPEN
+          </button>
+
+          <button class="complete-button" aria-label="Mark completed">
+            <svg viewBox="0 0 24 24">
+              <path d="m5 12 4 4L19 6"/>
+            </svg>
+          </button>
+
+        </article>
+
+
+        <!-- Task 3 -->
+        <article class="plan-card">
+
+          <div class="plan-number">03</div>
+
+          <div class="plan-icon video-icon">
+            <svg viewBox="0 0 24 24">
+              <rect x="3" y="5" width="18" height="14" rx="2"/>
+              <path d="m10 9 5 3-5 3z"/>
+            </svg>
+          </div>
+
+          <div class="plan-info">
+            <div class="plan-top">
+              <span class="plan-type recorded">RECORDED</span>
+              <span class="plan-time">04:00 PM</span>
+            </div>
+
+            <h3>Mathematics</h3>
+            <p>Integration — Lecture 3</p>
+          </div>
+
+          <button
+            class="plan-action open-resource"
+            data-type="video"
+          >
+            WATCH
+          </button>
+
+          <button class="complete-button" aria-label="Mark completed">
+            <svg viewBox="0 0 24 24">
+              <path d="m5 12 4 4L19 6"/>
+            </svg>
+          </button>
+
+        </article>
+
+
+        <!-- Task 4 -->
+        <article class="plan-card">
+
+          <div class="plan-number">04</div>
+
+          <div class="plan-icon revision-icon">
+            <svg viewBox="0 0 24 24">
+              <path d="M4 19V5"/>
+              <path d="M4 18h16"/>
+              <path d="m7 14 3-4 3 2 4-6"/>
+            </svg>
+          </div>
+
+          <div class="plan-info">
+            <div class="plan-top">
+              <span class="plan-type revision">REVISION</span>
+              <span class="plan-time">07:00 PM</span>
+            </div>
+
+            <h3>Biology</h3>
+            <p>Cell Structure — Revision</p>
+          </div>
+
+          <button
+            class="plan-action open-resource"
+            data-type="revision"
+          >
+            STUDY
+          </button>
+
+          <button class="complete-button" aria-label="Mark completed">
+            <svg viewBox="0 0 24 24">
+              <path d="m5 12 4 4L19 6"/>
+            </svg>
+          </button>
+
+        </article>
+
+      </div>
+
+
+      <!-- Pending -->
+      <div class="pending-box" id="pendingBox">
+
+        <div class="pending-left">
+
+          <div class="pending-symbol">
+            !
+          </div>
+
+          <div>
+            <strong id="pendingTitle">
+              4 tasks remaining
+            </strong>
+
+            <p>
+              Complete today's plan to stay on track.
+            </p>
+          </div>
+
+        </div>
+
+        <button id="viewPendingButton">
+          VIEW
+        </button>
+
+      </div>
+
+    </section>
+
+
+    <!-- ================================
+         QUICK ACCESS
+    ================================= -->
+    <section class="section">
+
+      <div class="section-heading">
+        <div>
+          <p class="section-label">SHORTCUTS</p>
+          <h2>Quick Access</h2>
+        </div>
+      </div>
+
+
+      <div class="quick-grid">
+
+        <button class="quick-card" data-page="classes">
+          <div class="quick-icon">
+            <svg viewBox="0 0 24 24">
+              <path d="M8 5v14l11-7z"/>
+            </svg>
+          </div>
+          <span>Classes</span>
+        </button>
+
+
+        <button class="quick-card" data-page="study">
+          <div class="quick-icon">
+            <svg viewBox="0 0 24 24">
+              <path d="M4 5h16v14H4z"/>
+              <path d="M8 9h8M8 13h6"/>
+            </svg>
+          </div>
+          <span>Study</span>
+        </button>
+
+
+        <button class="quick-card" data-page="timetable">
+          <div class="quick-icon">
+            <svg viewBox="0 0 24 24">
+              <rect x="3" y="4" width="18" height="17" rx="2"/>
+              <path d="M8 2v4M16 2v4M3 9h18"/>
+            </svg>
+          </div>
+          <span>Timetable</span>
+        </button>
+
+
+        <button class="quick-card" data-page="attendance">
+          <div class="quick-icon">
+            <svg viewBox="0 0 24 24">
+              <path d="M5 20V10"/>
+              <path d="M12 20V4"/>
+              <path d="M19 20v-7"/>
+            </svg>
+          </div>
+          <span>Attendance</span>
+        </button>
+
+
+        <button class="quick-card" data-page="tests">
+          <div class="quick-icon">
+            <svg viewBox="0 0 24 24">
+              <path d="M6 3h12v18H6z"/>
+              <path d="M9 8h6M9 12h6M9 16h4"/>
+            </svg>
+          </div>
+          <span>Tests</span>
+        </button>
+
+
+        <button class="quick-card" data-page="ai">
+          <div class="quick-icon">
+            <svg viewBox="0 0 24 24">
+              <path d="M12 3 14 9l6 2-6 2-2 6-2-6-6-2 6-2z"/>
+            </svg>
+          </div>
+          <span>Ask AI</span>
+        </button>
+
+      </div>
+
+    </section>
+
+
+    <!-- ================================
+         TODAY'S CLASS
+    ================================= -->
+    <section class="section">
+
+      <div class="section-heading">
+
+        <div>
+          <p class="section-label">UP NEXT</p>
+          <h2>Today's Class</h2>
+        </div>
+
+        <button class="text-button" data-page="classes">
+          View all
+        </button>
+
+      </div>
+
+
+      <article class="live-class-card">
+
+        <div class="live-class-top">
+
+          <span class="live-status">
+            <span></span>
+            LIVE TODAY
+          </span>
+
+          <span class="class-time">
+            10:00 AM
+          </span>
+
+        </div>
+
+
+        <div class="live-class-main">
+
+          <div class="subject-avatar">
+            P
+          </div>
+
+          <div class="live-class-info">
+            <h3>Physics</h3>
+            <p>Current Electricity</p>
+            <span>Online • 60 min</span>
+          </div>
+
+          <button class="join-button">
+            JOIN CLASS
+          </button>
+
+        </div>
+
+      </article>
+
+    </section>
+
+
+    <!-- ================================
+         CONTINUE LEARNING
+    ================================= -->
+    <section class="section">
+
+      <div class="section-heading">
+
+        <div>
+          <p class="section-label">KEEP GOING</p>
+          <h2>Continue Learning</h2>
+        </div>
+
+        <button class="text-button" data-page="study">
+          View all
+        </button>
+
+      </div>
+
+
+      <article class="continue-card">
+
+        <div class="continue-thumbnail">
+
+          <img
+            src="https://images.unsplash.com/photo-1635070041078-e363dbe005cb?auto=format&fit=crop&w=900&q=80"
+            alt="Mathematics"
+          >
+
+          <div class="play-circle">
+            <svg viewBox="0 0 24 24">
+              <path d="M8 5v14l11-7z"/>
+            </svg>
+          </div>
+
+        </div>
+
+
+        <div class="continue-info">
+
+          <span>MATHEMATICS</span>
+
+          <h3>
+            Integration — Lecture 3
+          </h3>
+
+          <p>
+            Continue from where you stopped.
+          </p>
+
+          <div class="watch-progress">
+            <div style="width: 62%"></div>
+          </div>
+
+          <div class="watch-meta">
+            <span>62% completed</span>
+            <span>32:15 / 52:00</span>
+          </div>
+
+        </div>
+
+      </article>
+
+    </section>
+
+
+    <!-- ================================
+         ATTENDANCE + TEST
+    ================================= -->
+    <section class="section split-section">
+
+      <!-- Attendance -->
+      <article class="info-card attendance-card">
+
+        <div class="info-card-header">
+          <div>
+            <p class="section-label">ATTENDANCE</p>
+            <h3>Overall</h3>
+          </div>
+
+          <button data-page="attendance">
+            →
+          </button>
+        </div>
+
+
+        <div class="attendance-number">
+          91<span>%</span>
+        </div>
+
+        <div class="attendance-bar">
+          <div style="width:91%"></div>
+        </div>
+
+        <p class="attendance-note">
+          You're maintaining a good attendance.
+        </p>
+
+      </article>
+
+
+      <!-- Test -->
+      <article class="info-card test-card">
+
+        <div class="info-card-header">
+
+          <div>
+            <p class="section-label">UPCOMING TEST</p>
+            <h3>Physics Unit Test</h3>
+          </div>
+
+          <span class="test-date">
+            08 SEP
+          </span>
+
+        </div>
+
+        <p class="test-subjects">
+          Physics • 50 Marks
+        </p>
+
+        <button class="outline-button" data-page="tests">
+          VIEW TEST
+        </button>
+
+      </article>
+
+    </section>
+
+
+    <!-- ================================
+         ANNOUNCEMENTS
+    ================================= -->
+    <section class="section">
+
+      <div class="section-heading">
+
+        <div>
+          <p class="section-label">STAY UPDATED</p>
+          <h2>Announcements</h2>
+        </div>
+
+        <button
+          class="text-button"
+          id="allAnnouncementsButton"
+        >
+          View all
+        </button>
+
+      </div>
+
+
+      <div class="announcement-list">
+
+        <article class="announcement-card important">
+
+          <div class="announcement-mark">
+            !
+          </div>
+
+          <div class="announcement-content">
+
+            <div class="announcement-meta">
+              <span>IMPORTANT</span>
+              <time>Today</time>
+            </div>
+
+            <h3>
+              Tomorrow's Chemistry practical will begin at 10:00 AM.
+            </h3>
+
+            <p>
+              Please be present 10 minutes before the scheduled time.
+            </p>
+
+          </div>
+
+          <button class="announcement-arrow">
+            →
+          </button>
+
+        </article>
+
+
+        <article class="announcement-card">
+
+          <div class="announcement-mark">
+            N
+          </div>
+
+          <div class="announcement-content">
+
+            <div class="announcement-meta">
+              <span>ACADEMIC</span>
+              <time>Yesterday</time>
+            </div>
+
+            <h3>
+              New Mathematics revision material is available.
+            </h3>
+
+            <p>
+              Check the Study section for the latest resources.
+            </p>
+
+          </div>
+
+          <button class="announcement-arrow">
+            →
+          </button>
+
+        </article>
+
+      </div>
+
+    </section>
+
+
+    <!-- ================================
+         FOOTER SPACE
+    ================================= -->
+    <div class="bottom-space"></div>
+
+
+    <!-- ================================
+         MOBILE NAVIGATION
+    ================================= -->
+    <nav class="bottom-nav">
+
+      <button class="nav-item active" data-page="dashboard">
+
+        <svg viewBox="0 0 24 24">
+          <path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/>
+          <path d="M9 21v-7h6v7"/>
+        </svg>
+
+        <span>Home</span>
+
+      </button>
+
+
+      <button class="nav-item" data-page="classes">
+
+        <svg viewBox="0 0 24 24">
+          <path d="M8 5v14l11-7z"/>
+        </svg>
+
+        <span>Classes</span>
+
+      </button>
+
+
+      <button class="nav-item" data-page="study">
+
+        <svg viewBox="0 0 24 24">
+          <path d="M4 5h16v14H4z"/>
+          <path d="M8 9h8M8 13h6"/>
+        </svg>
+
+        <span>Study</span>
+
+      </button>
+
+
+      <button class="nav-item" data-page="timetable">
+
+        <svg viewBox="0 0 24 24">
+          <rect x="3" y="4" width="18" height="17" rx="2"/>
+          <path d="M8 2v4M16 2v4M3 9h18"/>
+        </svg>
+
+        <span>Schedule</span>
+
+      </button>
+
+
+      <button class="nav-item" data-page="more">
+
+        <svg viewBox="0 0 24 24">
+          <circle cx="5" cy="12" r="1"/>
+          <circle cx="12" cy="12" r="1"/>
+          <circle cx="19" cy="12" r="1"/>
+        </svg>
+
+        <span>More</span>
+
+      </button>
+
+    </nav>
+
+  </main>
+
+
+  <script type="module" src="./hybrid-core-X7kP.js"></script>
+
+</body>
+</html>
