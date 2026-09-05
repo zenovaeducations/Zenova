@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Classes | Zenova Hybrid</title>
+
+    <link
+        rel="stylesheet"
+        href="../hybrid.css"
+    >
+
+    <style>
+
+        body{
+            background:#f8f8f8;
+        }
+
+        .classes-page{
+            max-width:1100px;
+            margin:0 auto;
+            padding:28px 24px 100px;
+        }
+
+        .page-header{
+            display:flex;
+            align-items:center;
+            gap:16px;
+            margin-bottom:32px;
+        }
+
+        .back-button{
+            width:42px;
+            height:42px;
+            border:1px solid #e5e5e5;
+            background:#fff;
+            border-radius:12px;
+            cursor:pointer;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-size:20px;
+        }
+
+        .page-title h1{
+            margin:0;
+            font-size:28px;
+            font-weight:800;
+            letter-spacing:-.5px;
+        }
+
+        .page-title p{
+            margin:5px 0 0;
+            color:#777;
+            font-size:13px;
+        }
+
+        .section{
+            margin-top:32px;
+        }
+
+        .section-heading{
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            margin-bottom:14px;
+        }
+
+        .section-heading h2{
+            margin:0;
+            font-size:17px;
+            font-weight:800;
+        }
+
+        .section-count{
+            font-size:12px;
+            color:#777;
+        }
+
+        .classes-list{
+            display:flex;
+            flex-direction:column;
+            gap:12px;
+        }
+
+        .class-card{
+            background:#fff;
+            border:1px solid #e8e8e8;
+            border-radius:18px;
+            padding:20px;
+            display:flex;
+            align-items:center;
+            gap:18px;
+        }
+
+        .class-time{
+            width:100px;
+            flex-shrink:0;
+        }
+
+        .class-time strong{
+            display:block;
+            font-size:15px;
+        }
+
+        .class-time span{
+            display:block;
+            margin-top:4px;
+            color:#888;
+            font-size:11px;
+        }
+
+        .class-details{
+            flex:1;
+            min-width:0;
+        }
+
+        .class-subject{
+            font-size:16px;
+            font-weight:800;
+            margin:0;
+        }
+
+        .class-topic{
+            color:#666;
+            font-size:13px;
+            margin-top:5px;
+        }
+
+        .class-teacher{
+            color:#999;
+            font-size:12px;
+            margin-top:8px;
+        }
+
+        .class-badge{
+            display:inline-block;
+            margin-bottom:7px;
+            padding:5px 8px;
+            border-radius:7px;
+            background:#f2ebff;
+            color:#6d28d9;
+            font-size:9px;
+            font-weight:800;
+            letter-spacing:.6px;
+            text-transform:uppercase;
+        }
+
+        .class-action{
+            flex-shrink:0;
+        }
+
+        .action-button{
+            display:inline-flex;
+            align-items:center;
+            justify-content:center;
+            min-width:92px;
+            padding:11px 15px;
+            border-radius:10px;
+            border:none;
+            background:#111;
+            color:#fff;
+            text-decoration:none;
+            font-size:11px;
+            font-weight:800;
+            cursor:pointer;
+        }
+
+        .action-button.recorded{
+            background:#f1f1f1;
+            color:#111;
+        }
+
+        .empty-state{
+            background:#fff;
+            border:1px dashed #ddd;
+            border-radius:18px;
+            padding:40px 20px;
+            text-align:center;
+            color:#888;
+        }
+
+        .empty-state strong{
+            display:block;
+            color:#222;
+            font-size:15px;
+            margin-bottom:7px;
+        }
+
+        .loading-state{
+            background:#fff;
+            border-radius:18px;
+            padding:40px;
+            text-align:center;
+            color:#777;
+        }
+
+        .error-state{
+            background:#fff;
+            border:1px solid #eee;
+            border-radius:18px;
+            padding:30px;
+            text-align:center;
+        }
+
+        .error-state strong{
+            display:block;
+            color:#222;
+            margin-bottom:8px;
+        }
+
+        .retry-button{
+            margin-top:15px;
+            border:0;
+            background:#111;
+            color:#fff;
+            padding:10px 18px;
+            border-radius:9px;
+            cursor:pointer;
+            font-weight:700;
+            font-size:11px;
+        }
+
+        @media(max-width:650px){
+
+            .classes-page{
+                padding:20px 15px 90px;
+            }
+
+            .class-card{
+                align-items:flex-start;
+                flex-wrap:wrap;
+                gap:14px;
+            }
+
+            .class-time{
+                width:75px;
+            }
+
+            .class-details{
+                width:calc(100% - 95px);
+            }
+
+            .class-action{
+                width:100%;
+            }
+
+            .action-button{
+                width:100%;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <!-- LOADER -->
+
+    <div
+        id="pageLoader"
+        style="
+            position:fixed;
+            inset:0;
+            background:#fff;
+            z-index:9999;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+        "
+    >
+
+        <div
+            style="
+                width:48px;
+                height:48px;
+                border:3px solid #eee;
+                border-top-color:#6d28d9;
+                border-radius:50%;
+                animation:spin .8s linear infinite;
+            "
+        ></div>
+
+    </div>
+
+
+    <main class="classes-page">
+
+
+        <!-- HEADER -->
+
+        <header class="page-header">
+
+            <button
+                class="back-button"
+                id="backButton"
+                type="button"
+                aria-label="Go back"
+            >
+                ←
+            </button>
+
+
+            <div class="page-title">
+
+                <h1>
+                    Classes
+                </h1>
+
+                <p id="studentMeta">
+                    Loading your classes...
+                </p>
+
+            </div>
+
+        </header>
+
+
+        <!-- TODAY -->
+
+        <section class="section">
+
+            <div class="section-heading">
+
+                <h2>
+                    Today's Classes
+                </h2>
+
+                <span
+                    class="section-count"
+                    id="todayCount"
+                >
+                    0 classes
+                </span>
+
+            </div>
+
+
+            <div
+                id="todayClasses"
+                class="classes-list"
+            >
+
+                <div class="loading-state">
+                    Loading classes...
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- UPCOMING -->
+
+        <section
+            class="section"
+            id="upcomingSection"
+        >
+
+            <div class="section-heading">
+
+                <h2>
+                    Upcoming Classes
+                </h2>
+
+                <span
+                    class="section-count"
+                    id="upcomingCount"
+                >
+                    0 classes
+                </span>
+
+            </div>
+
+
+            <div
+                id="upcomingClasses"
+                class="classes-list"
+            >
+
+                <div class="loading-state">
+                    Loading...
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- RECORDED -->
+
+        <section class="section">
+
+            <div class="section-heading">
+
+                <h2>
+                    Recorded Classes
+                </h2>
+
+                <span
+                    class="section-count"
+                    id="recordedCount"
+                >
+                    0 classes
+                </span>
+
+            </div>
+
+
+            <div
+                id="recordedClasses"
+                class="classes-list"
+            >
+
+                <div class="loading-state">
+                    Loading recordings...
+                </div>
+
+            </div>
+
+        </section>
+
+
+    </main>
+
+
+    <script
+        type="module"
+        src="./classes-core-X7kP.js"
+    ></script>
+
+
+    <style>
+
+        @keyframes spin{
+            to{
+                transform:rotate(360deg);
+            }
+        }
+
+    </style>
+
+
+</body>
+
+</html>
