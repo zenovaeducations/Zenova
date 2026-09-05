@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Zenova Hybrid</title>
+
+    <link
+        rel="stylesheet"
+        href="./hybrid.css"
+    >
+
+</head>
+
+
+<body>
+
+    <!-- =========================================
+         LOADING
+    ========================================== -->
+
+    <div
+        id="zenovaLoader"
+        class="zenova-loader"
+    >
+
+        <div class="loader-ring">
+            <span>Z</span>
+        </div>
+
+    </div>
+
+
+    <!-- =========================================
+         APPLICATION
+    ========================================== -->
+
+    <main
+        id="hybridApp"
+        class="hybrid-app hidden"
+    >
+
+
+        <!-- =====================================
+             HEADER
+        ====================================== -->
+
+        <header class="topbar">
+
+            <a
+                href="./"
+                class="brand"
+            >
+
+                <div class="brand-logo">
+                    Z
+                </div>
+
+                <div class="brand-text">
+
+                    <strong>
+                        ZENOVA
+                    </strong>
+
+                    <span>
+                        HYBRID
+                    </span>
+
+                </div>
+
+            </a>
+
+
+            <button
+                id="notificationButton"
+                class="icon-button"
+                type="button"
+                aria-label="Notifications"
+            >
+
+                <svg
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                >
+
+                    <path
+                        d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"
+                    />
+
+                    <path
+                        d="M10 21h4"
+                    />
+
+                </svg>
+
+                <span
+                    id="notificationDot"
+                    class="notification-dot hidden"
+                ></span>
+
+            </button>
+
+        </header>
+
+
+
+        <!-- =====================================
+             HERO / GREETING
+        ====================================== -->
+
+        <section class="greeting">
+
+            <div>
+
+                <p class="eyebrow">
+                    YOUR LEARNING SPACE
+                </p>
+
+                <h1>
+                    Good morning,
+                    <span id="studentName">
+                        Student
+                    </span>
+                </h1>
+
+                <p
+                    id="studentMeta"
+                    class="student-meta"
+                >
+                    Hybrid Program
+                </p>
+
+            </div>
+
+
+            <button
+                id="profileButton"
+                class="profile-button"
+                type="button"
+            >
+                S
+            </button>
+
+        </section>
+
+
+
+        <!-- =====================================
+             HERO BANNER
+        ====================================== -->
+
+        <section
+            id="bannerSection"
+            class="banner-section hidden"
+        >
+
+            <div
+                id="bannerWrapper"
+                class="banner-wrapper"
+            ></div>
+
+
+            <div class="banner-bottom">
+
+                <div
+                    id="bannerDots"
+                    class="banner-dots"
+                ></div>
+
+
+                <span
+                    id="bannerCounter"
+                    class="banner-counter"
+                >
+                    01 / 01
+                </span>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =====================================
+             MASTER PLAN
+        ====================================== -->
+
+        <section
+            id="masterPlanSection"
+            class="section"
+        >
+
+            <div class="section-heading">
+
+                <div>
+
+                    <p class="section-label">
+                        TODAY
+                    </p>
+
+                    <h2>
+                        Today's Master Plan
+                    </h2>
+
+                </div>
+
+
+                <div class="plan-count">
+
+                    <strong
+                        id="completedCount"
+                    >
+                        0
+                    </strong>
+
+                    <span>
+                        /
+                    </span>
+
+                    <span
+                        id="totalCount"
+                    >
+                        0
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="progress-track">
+
+                <div
+                    id="masterProgress"
+                    class="progress-fill"
+                ></div>
+
+            </div>
+
+
+            <div
+                id="masterPlanList"
+                class="master-plan-list"
+            ></div>
+
+
+            <div
+                id="masterPlanEmpty"
+                class="empty-card hidden"
+            >
+
+                <strong>
+                    Nothing planned for today
+                </strong>
+
+                <p>
+                    Your master plan will appear here when it is published.
+                </p>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =====================================
+             QUICK ACCESS
+        ====================================== -->
+
+        <section class="section">
+
+            <div class="section-heading">
+
+                <div>
+
+                    <p class="section-label">
+                        SHORTCUTS
+                    </p>
+
+                    <h2>
+                        Quick Access
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <div class="quick-grid">
+
+
+                <button
+                    class="quick-card"
+                    data-route="classes"
+                    type="button"
+                >
+
+                    <span class="quick-icon">
+                        ▶
+                    </span>
+
+                    <strong>
+                        Classes
+                    </strong>
+
+                </button>
+
+
+                <button
+                    class="quick-card"
+                    data-route="study"
+                    type="button"
+                >
+
+                    <span class="quick-icon">
+                        ◫
+                    </span>
+
+                    <strong>
+                        Study
+                    </strong>
+
+                </button>
+
+
+                <button
+                    class="quick-card"
+                    data-route="timetable"
+                    type="button"
+                >
+
+                    <span class="quick-icon">
+                        □
+                    </span>
+
+                    <strong>
+                        Timetable
+                    </strong>
+
+                </button>
+
+
+                <button
+                    class="quick-card"
+                    data-route="attendance"
+                    type="button"
+                >
+
+                    <span class="quick-icon">
+                        %
+                    </span>
+
+                    <strong>
+                        Attendance
+                    </strong>
+
+                </button>
+
+
+                <button
+                    class="quick-card"
+                    data-route="tests"
+                    type="button"
+                >
+
+                    <span class="quick-icon">
+                        ✓
+                    </span>
+
+                    <strong>
+                        Tests
+                    </strong>
+
+                </button>
+
+
+                <button
+                    class="quick-card"
+                    data-route="more"
+                    type="button"
+                >
+
+                    <span class="quick-icon">
+                        +
+                    </span>
+
+                    <strong>
+                        More
+                    </strong>
+
+                </button>
+
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =====================================
+             TODAY'S CLASSES
+        ====================================== -->
+
+        <section
+            id="todayClassesSection"
+            class="section hidden"
+        >
+
+            <div class="section-heading">
+
+                <div>
+
+                    <p class="section-label">
+                        UP NEXT
+                    </p>
+
+                    <h2>
+                        Today's Classes
+                    </h2>
+
+                </div>
+
+
+                <button
+                    class="text-button"
+                    data-route="classes"
+                    type="button"
+                >
+                    VIEW ALL
+                </button>
+
+            </div>
+
+
+            <div
+                id="todayClassesList"
+                class="class-list"
+            ></div>
+
+        </section>
+
+
+
+        <!-- =====================================
+             ATTENDANCE + TESTS
+        ====================================== -->
+
+        <section class="section split-grid">
+
+
+            <article
+                id="attendanceSummary"
+                class="summary-card"
+            >
+
+                <p class="section-label">
+                    ATTENDANCE
+                </p>
+
+                <h3>
+                    Attendance
+                </h3>
+
+                <div class="summary-loading">
+                    Loading...
+                </div>
+
+            </article>
+
+
+            <article
+                id="testSummary"
+                class="summary-card"
+            >
+
+                <p class="section-label">
+                    PERFORMANCE
+                </p>
+
+                <h3>
+                    Latest Test
+                </h3>
+
+                <div class="summary-loading">
+                    Loading...
+                </div>
+
+            </article>
+
+
+        </section>
+
+
+
+        <!-- =====================================
+             ANNOUNCEMENTS
+        ====================================== -->
+
+        <section
+            id="announcementSection"
+            class="section hidden"
+        >
+
+            <div class="section-heading">
+
+                <div>
+
+                    <p class="section-label">
+                        ZENOVA
+                    </p>
+
+                    <h2>
+                        Announcements
+                    </h2>
+
+                </div>
+
+
+                <button
+                    class="text-button"
+                    data-route="more"
+                    type="button"
+                >
+                    VIEW ALL
+                </button>
+
+            </div>
+
+
+            <div
+                id="announcementList"
+                class="announcement-list"
+            ></div>
+
+        </section>
+
+
+
+        <!-- =====================================
+             BOTTOM NAVIGATION
+        ====================================== -->
+
+        <div class="bottom-space"></div>
+
+
+        <nav class="bottom-nav">
+
+
+            <button
+                class="nav-item active"
+                data-route="home"
+                type="button"
+            >
+
+                <span>
+                    ⌂
+                </span>
+
+                <small>
+                    Home
+                </small>
+
+            </button>
+
+
+            <button
+                class="nav-item"
+                data-route="classes"
+                type="button"
+            >
+
+                <span>
+                    ▶
+                </span>
+
+                <small>
+                    Classes
+                </small>
+
+            </button>
+
+
+            <button
+                class="nav-item"
+                data-route="study"
+                type="button"
+            >
+
+                <span>
+                    ◫
+                </span>
+
+                <small>
+                    Study
+                </small>
+
+            </button>
+
+
+            <button
+                class="nav-item"
+                data-route="timetable"
+                type="button"
+            >
+
+                <span>
+                    □
+                </span>
+
+                <small>
+                    Schedule
+                </small>
+
+            </button>
+
+
+            <button
+                class="nav-item"
+                data-route="more"
+                type="button"
+            >
+
+                <span>
+                    •••
+                </span>
+
+                <small>
+                    More
+                </small>
+
+            </button>
+
+
+        </nav>
+
+
+    </main>
+
+
+    <script
+        type="module"
+        src="./hybrid-core-X7kP.js"
+    ></script>
+
+</body>
+
+</html>
