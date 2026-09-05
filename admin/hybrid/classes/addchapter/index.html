@@ -1,7 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
+
     <meta
         name="viewport"
         content="width=device-width, initial-scale=1.0"
@@ -13,81 +16,163 @@
         rel="stylesheet"
         href="./chapter.css"
     >
+
 </head>
+
 
 <body>
 
-<div id="loader" class="loader-screen">
+
+<!-- LOADER -->
+
+<div
+    id="loader"
+    class="loader"
+>
+
     <div class="loader-ring">
+
         <span>Z</span>
+
     </div>
+
+    <p>Loading...</p>
+
 </div>
 
 
-<main id="app" class="app hidden">
+
+<!-- ERROR SCREEN -->
+
+<div
+    id="errorScreen"
+    class="error-screen hidden"
+>
+
+    <div class="error-box">
+
+        <div class="error-mark">
+            !
+        </div>
+
+        <h2>
+            Unable to load
+        </h2>
+
+        <p id="errorMessage">
+            Something went wrong.
+        </p>
+
+        <button
+            id="retryButton"
+            class="black-button"
+        >
+            TRY AGAIN
+        </button>
+
+        <button
+            id="errorBackButton"
+            class="secondary-button"
+        >
+            BACK TO SUBJECTS
+        </button>
+
+    </div>
+
+</div>
+
+
+
+<!-- APPLICATION -->
+
+<main
+    id="app"
+    class="hidden"
+>
+
+
+    <!-- HEADER -->
 
     <header class="topbar">
 
         <button
             id="backButton"
             class="back-button"
+            type="button"
         >
             ←
         </button>
 
-        <div>
-            <p class="eyebrow">HYBRID CLASSES</p>
 
-            <h1 id="subjectName">
+        <div class="header-text">
+
+            <div class="small-label">
+                HYBRID CLASSES
+            </div>
+
+            <h1>
                 Chapters
             </h1>
+
         </div>
 
     </header>
 
 
-    <section class="subject-info">
 
-        <div>
-            <p class="section-label">
-                SUBJECT
-            </p>
+    <!-- SUBJECT -->
 
-            <h2 id="subjectTitle">
-                Loading...
-            </h2>
+    <section class="subject-card">
 
-            <p id="subjectDescription">
-                Manage chapters for this subject.
-            </p>
+        <div class="subject-label">
+            SUBJECT
         </div>
+
+        <h2 id="subjectTitle">
+            —
+        </h2>
+
+        <p id="subjectDescription">
+            —
+        </p>
 
     </section>
 
 
-    <section class="chapter-section">
 
-        <div class="section-heading">
+    <!-- CHAPTER SECTION -->
+
+    <section class="content-section">
+
+
+        <div class="section-header">
 
             <div>
-                <p class="section-label">
+
+                <div class="small-label">
                     CONTENT
-                </p>
+                </div>
 
                 <h2>
                     Chapters
                 </h2>
+
             </div>
+
 
             <button
                 id="addChapterButton"
-                class="primary-button"
+                class="black-button"
+                type="button"
             >
-                + Add Chapter
+                + ADD CHAPTER
             </button>
 
         </div>
 
+
+
+        <!-- CHAPTER LIST -->
 
         <div
             id="chaptersList"
@@ -96,11 +181,15 @@
         </div>
 
 
+
+        <!-- EMPTY -->
+
         <div
             id="emptyState"
             class="empty-state hidden"
         >
-            <div class="empty-icon">
+
+            <div class="empty-plus">
                 +
             </div>
 
@@ -109,20 +198,25 @@
             </h3>
 
             <p>
-                Add the first chapter for this subject.
+                Create the first chapter for this subject.
             </p>
 
             <button
                 id="emptyAddButton"
-                class="primary-button"
+                class="black-button"
+                type="button"
             >
-                + Add Chapter
+                + ADD CHAPTER
             </button>
+
         </div>
+
 
     </section>
 
+
 </main>
+
 
 
 <!-- ADD / EDIT MODAL -->
@@ -134,21 +228,26 @@
 
     <div class="modal-box">
 
-        <div class="modal-header">
+
+        <div class="modal-top">
 
             <div>
-                <p class="section-label">
+
+                <div class="small-label">
                     CHAPTER
-                </p>
+                </div>
 
                 <h2 id="modalTitle">
                     Add Chapter
                 </h2>
+
             </div>
+
 
             <button
                 id="closeModal"
                 class="close-button"
+                type="button"
             >
                 ×
             </button>
@@ -156,11 +255,15 @@
         </div>
 
 
+
         <form id="chapterForm">
+
+
+            <!-- CHAPTER NUMBER -->
 
             <div class="form-group">
 
-                <label>
+                <label for="chapterNumber">
                     Chapter Number
                 </label>
 
@@ -168,6 +271,7 @@
                     id="chapterNumber"
                     type="number"
                     min="1"
+                    step="1"
                     placeholder="1"
                     required
                 >
@@ -175,9 +279,12 @@
             </div>
 
 
+
+            <!-- TITLE -->
+
             <div class="form-group">
 
-                <label>
+                <label for="chapterTitle">
                     Chapter Title
                 </label>
 
@@ -191,27 +298,36 @@
             </div>
 
 
+
+            <!-- DESCRIPTION -->
+
             <div class="form-group">
 
-                <label>
+                <label for="chapterDescription">
                     Description
-                    <span>Optional</span>
+                    <span class="optional">
+                        Optional
+                    </span>
                 </label>
 
                 <textarea
                     id="chapterDescription"
                     rows="4"
-                    placeholder="Short description of this chapter"
+                    placeholder="Short description of the chapter"
                 ></textarea>
 
             </div>
 
 
-            <div class="form-row">
+
+            <!-- PRIORITY + STATUS -->
+
+            <div class="two-columns">
+
 
                 <div class="form-group">
 
-                    <label>
+                    <label for="chapterPriority">
                         Priority
                     </label>
 
@@ -219,6 +335,7 @@
                         id="chapterPriority"
                         type="number"
                         min="0"
+                        step="1"
                         value="0"
                     >
 
@@ -227,7 +344,7 @@
 
                 <div class="form-group">
 
-                    <label>
+                    <label for="chapterActive">
                         Status
                     </label>
 
@@ -245,8 +362,12 @@
 
                 </div>
 
+
             </div>
 
+
+
+            <!-- ERROR -->
 
             <div
                 id="formError"
@@ -254,19 +375,25 @@
             ></div>
 
 
+
+            <!-- SAVE -->
+
             <button
                 id="saveButton"
-                type="submit"
                 class="save-button"
+                type="submit"
             >
                 SAVE CHAPTER
             </button>
 
+
         </form>
+
 
     </div>
 
 </div>
+
 
 
 <script
@@ -274,5 +401,7 @@
     src="./chapter.js"
 ></script>
 
+
 </body>
+
 </html>
