@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Subject | Zenova</title>
+
+    <link
+        rel="stylesheet"
+        href="./subject.css"
+    >
+</head>
+
+<body>
+
+    <!-- =========================================
+         LOADER
+    ========================================== -->
+
+    <div id="pageLoader" class="page-loader">
+
+        <div class="loader-ring">
+            <span>Z</span>
+        </div>
+
+        <p>Loading...</p>
+
+    </div>
+
+
+    <!-- =========================================
+         APP
+    ========================================== -->
+
+    <div id="app" class="app hidden">
+
+        <!-- HEADER -->
+
+        <header class="topbar">
+
+            <button
+                id="backButton"
+                class="back-button"
+                type="button"
+            >
+                <span class="back-icon">←</span>
+                <span>Classes</span>
+            </button>
+
+
+            <div class="brand">
+
+                <div class="brand-main">
+                    ZENOVA
+                </div>
+
+                <div class="brand-sub">
+                    HYBRID
+                </div>
+
+            </div>
+
+
+            <div class="topbar-spacer"></div>
+
+        </header>
+
+
+        <!-- =====================================
+             MAIN
+        ====================================== -->
+
+        <main class="main">
+
+            <!-- SUBJECT INTRO -->
+
+            <section class="subject-intro">
+
+                <div class="subject-label">
+                    SUBJECT
+                </div>
+
+                <h1 id="subjectName">
+                    Subject
+                </h1>
+
+                <p id="subjectDescription">
+                    Chapters and learning materials
+                </p>
+
+            </section>
+
+
+            <!-- CHAPTER SECTION -->
+
+            <section class="chapters-section">
+
+                <div class="section-heading">
+
+                    <div>
+
+                        <h2>
+                            Chapters
+                        </h2>
+
+                        <p>
+                            Learn chapter by chapter.
+                        </p>
+
+                    </div>
+
+                    <div
+                        id="chapterCount"
+                        class="chapter-count"
+                    >
+                        0
+                    </div>
+
+                </div>
+
+
+                <!-- CHAPTERS -->
+
+                <div
+                    id="chaptersList"
+                    class="chapters-list"
+                ></div>
+
+
+                <!-- EMPTY -->
+
+                <div
+                    id="emptyState"
+                    class="empty-state hidden"
+                >
+
+                    <div class="empty-icon">
+                        Z
+                    </div>
+
+                    <h3>
+                        Chapters coming soon
+                    </h3>
+
+                    <p>
+                        Learning content for this subject
+                        has not been added yet.
+                    </p>
+
+                </div>
+
+            </section>
+
+        </main>
+
+    </div>
+
+
+    <!-- TOAST -->
+
+    <div
+        id="toast"
+        class="toast"
+    ></div>
+
+
+    <script
+        type="module"
+        src="./subject-core-X7kP.js"
+    ></script>
+
+</body>
+</html>
