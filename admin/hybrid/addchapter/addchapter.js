@@ -1,7 +1,4 @@
-import {
-    auth,
-    db
-} from "../../../firebase/firebase-config.js";
+import { auth, db, storage } from "../../../firebase/firebase-config.js";
 
 import {
     onAuthStateChanged
@@ -19,744 +16,925 @@ import {
     serverTimestamp
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
+import {
+    ref,
+    uploadBytesResumable,
+    getDownloadURL
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-storage.js";
 
-/* =========================================================
-   ELEMENTS
-========================================================= */
 
-const loader =
-    document.getElementById("loader");
+// ======================================================
+// ELEMENTS
+// ======================================================
 
-const app =
-    document.getElementById("app");
+const pageLoader = document.getElementById("pageLoader");
+const app = document.getElementById("app");
 
-const subjectName =
-    document.getElementById("subjectName");
+const backBtn = document.getElementById("backBtn");
 
-const subjectTitle =
-    document.getElementById("subjectTitle");
+const subjectName = document.getElementById("subjectName");
+const subjectDescription = document.getElementById("subjectDescription");
 
-const subjectDescription =
-    document.getElementById("subjectDescription");
+const chapterList = document.getElementById("chapterList");
+const emptyState = document.getElementById("emptyState");
+const chapterCount = document.getElementById("chapterCount");
 
-const chapterCount =
-    document.getElementById("chapterCount");
+const addChapterBtn = document.getElementById("addChapterBtn");
+const emptyAddBtn = document.getElementById("emptyAddBtn");
 
-const chaptersList =
-    document.getElementById("chaptersList");
+const chapterModal = document.getElementById("chapterModal");
+const closeModalBtn = document.getElementById("closeModalBtn");
+const cancelBtn = document.getElementById("cancelBtn");
 
-const emptyState =
-    document.getElementById("emptyState");
+const chapterForm = document.getElementById("chapterForm");
 
-const errorBox =
-    document.getElementById("errorBox");
+const modalTitle = document.getElementById("modalTitle");
+const modalEyebrow = document.getElementById("modalEyebrow");
 
-const modal =
-    document.getElementById("chapterModal");
+const chapterNameInput =
+    document.getElementById("chapterName");
 
-const modalTitle =
-    document.getElementById("modalTitle");
-
-const form =
-    document.getElementById("chapterForm");
-
-const chapterNumber =
+const chapterNumberInput =
     document.getElementById("chapterNumber");
 
-const chapterTitle =
-    document.getElementById("chapterTitle");
+const orderPreview =
+    document.getElementById("orderPreview");
 
-const chapterDescription =
-    document.getElementById("chapterDescription");
+const videoUrlInput =
+    document.getElementById("videoUrl");
 
-const chapterPriority =
-    document.getElementById("chapterPriority");
+const pdfFileInput =
+    document.getElementById("pdfFile");
 
-const chapterActive =
-    document.getElementById("chapterActive");
+const currentPdf =
+    document.getElementById("currentPdf");
 
-const formError =
-    document.getElementById("formError");
+const lockToggle =
+    document.getElementById("lockToggle");
 
-const saveButton =
-    document.getElementById("saveButton");
+const lockIcon =
+    document.getElementById("lockIcon");
 
+const lockText =
+    document.getElementById("lockText");
 
-/* =========================================================
-   URL
-========================================================= */
+const saveBtn =
+    document.getElementById("saveBtn");
 
-const params =
-    new URLSearchParams(
-        window.location.search
-    );
+const uploadProgress =
+    document.getElementById("uploadProgress");
 
-const subjectId =
-    params.get("subjectId");
+const progressBar =
+    document.getElementById("progressBar");
 
+const progressText =
+    document.getElementById("progressText");
 
-/*
- * THIS PAGE REQUIRES A SUBJECT.
- *
- * It should only be opened by clicking a subject
- * from /admin/hybrid/addsubject/
- */
-
-if (!subjectId) {
-
-    showFatalError(
-        "No subject was selected. Please open Add Chapter from the Subjects page."
-    );
-
-} else {
-
-    start();
-
-}
+const toast =
+    document.getElementById("toast");
 
 
-/* =========================================================
-   STATE
-========================================================= */
+// ======================================================
+// STATE
+// ======================================================
 
 let currentUser = null;
 
-let currentSubject = null;
+let subjectId = null;
+
+let subjectData = null;
 
 let chapters = [];
 
 let editingChapterId = null;
 
+let editingChapterData = null;
 
-/* =========================================================
-   START
-========================================================= */
-
-function start() {
-
-    onAuthStateChanged(
-        auth,
-        async user => {
-
-            if (!user) {
-
-                window.location.replace(
-                    "../../../index.html"
-                );
-
-                return;
-            }
+let isLocked = false;
 
 
-            currentUser = user;
+// ======================================================
+// GET SUBJECT ID
+// ======================================================
+
+const params = new URLSearchParams(
+    window.location.search
+);
+
+subjectId = params.get("subjectId");
 
 
-            try {
+// ======================================================
+// INITIALIZATION
+// ======================================================
 
-                await loadSubject();
+if (!subjectId) {
 
-                await loadChapters();
+    hideLoader();
 
-                showApp();
+    showToast(
+        "Subject ID is missing.",
+        true
+    );
 
-            } catch (error) {
+    setTimeout(() => {
+        window.location.href = "../addsubject/";
+    }, 1200);
 
-                console.error(
-                    "ADD CHAPTER ERROR:",
-                    error
-                );
+} else {
 
-                showError(
-                    "Unable to load this page. " +
-                    error.message
-                );
+    onAuthStateChanged(auth, async (user) => {
 
-                showApp();
-            }
+        if (!user) {
+
+            window.location.href = "../../../index.html";
+
+            return;
+        }
+
+        currentUser = user;
+
+        try {
+
+            await loadSubject();
+
+            await loadChapters();
+
+            showApp();
+
+        } catch (error) {
+
+            console.error(
+                "Add Chapter initialization error:",
+                error
+            );
+
+            hideLoader();
+
+            showToast(
+                "Unable to load chapter data.",
+                true
+            );
 
         }
-    );
+
+    });
 
 }
 
 
-/* =========================================================
-   LOAD SUBJECT
-========================================================= */
+// ======================================================
+// LOAD SUBJECT
+// ======================================================
 
 async function loadSubject() {
 
-    const subjectRef =
-        doc(
-            db,
-            "hybridSubjects",
-            subjectId
-        );
+    const subjectRef = doc(
+        db,
+        "hybridSubjects",
+        subjectId
+    );
 
+    const subjectSnap = await getDoc(subjectRef);
 
-    const snapshot =
-        await getDoc(
-            subjectRef
-        );
-
-
-    if (!snapshot.exists()) {
+    if (!subjectSnap.exists()) {
 
         throw new Error(
-            "The selected subject no longer exists."
+            "Subject does not exist."
         );
     }
 
-
-    currentSubject = {
-        id: snapshot.id,
-        ...snapshot.data()
+    subjectData = {
+        id: subjectSnap.id,
+        ...subjectSnap.data()
     };
 
-
-    const name =
-        currentSubject.name ||
-        "Subject";
-
-
     subjectName.textContent =
-        name;
-
-    subjectTitle.textContent =
-        name;
+        subjectData.name || "Untitled Subject";
 
     subjectDescription.textContent =
-        currentSubject.description ||
-        "Manage chapters for this subject.";
+        subjectData.description ||
+        "Manage textbook chapters and learning content.";
 }
 
 
-/* =========================================================
-   LOAD CHAPTERS
-========================================================= */
+// ======================================================
+// LOAD CHAPTERS
+// ======================================================
 
 async function loadChapters() {
 
-    chaptersList.innerHTML = "";
+    const chaptersRef =
+        collection(db, "hybridChapters");
 
-    emptyState.classList.add(
-        "hidden"
+    const q = query(
+        chaptersRef,
+        where("subjectId", "==", subjectId)
     );
 
+    const snapshot = await getDocs(q);
 
-    /*
-     * IMPORTANT:
-     *
-     * Only query by subjectId.
-     *
-     * Sorting is done locally.
-     *
-     * This avoids requiring a composite
-     * Firestore index.
-     */
+    chapters = [];
 
-    const chapterQuery =
-        query(
-            collection(
-                db,
-                "hybridChapters"
-            ),
-            where(
-                "subjectId",
-                "==",
-                subjectId
-            )
-        );
+    snapshot.forEach((chapterDoc) => {
 
+        chapters.push({
+            id: chapterDoc.id,
+            ...chapterDoc.data()
+        });
 
-    const snapshot =
-        await getDocs(
-            chapterQuery
-        );
+    });
 
+    // Textbook order
+    chapters.sort((a, b) => {
 
-    chapters =
-        snapshot.docs.map(
-            item => ({
-                id: item.id,
-                ...item.data()
-            })
-        );
+        const numberA =
+            Number(a.chapterNumber || 0);
 
+        const numberB =
+            Number(b.chapterNumber || 0);
 
-    chapters.sort(
-        (a, b) => {
+        return numberA - numberB;
 
-            const numberA =
-                Number(
-                    a.chapterNumber ?? 9999
-                );
-
-            const numberB =
-                Number(
-                    b.chapterNumber ?? 9999
-                );
-
-
-            if (
-                numberA !==
-                numberB
-            ) {
-
-                return (
-                    numberA -
-                    numberB
-                );
-            }
-
-
-            return (
-                Number(
-                    a.priority ?? 0
-                ) -
-                Number(
-                    b.priority ?? 0
-                )
-            );
-        }
-    );
-
-
-    chapterCount.textContent =
-        chapters.length;
-
+    });
 
     renderChapters();
 }
 
 
-/* =========================================================
-   RENDER CHAPTERS
-========================================================= */
+// ======================================================
+// RENDER CHAPTERS
+// ======================================================
 
 function renderChapters() {
 
-    chaptersList.innerHTML = "";
+    chapterList.innerHTML = "";
+
+    const count = chapters.length;
+
+    chapterCount.textContent =
+        `${count} ${count === 1 ? "Chapter" : "Chapters"}`;
 
 
-    if (!chapters.length) {
+    if (count === 0) {
 
-        emptyState.classList.remove(
-            "hidden"
-        );
+        emptyState.classList.remove("hidden");
 
         return;
     }
 
-
-    emptyState.classList.add(
-        "hidden"
-    );
+    emptyState.classList.add("hidden");
 
 
-    chapters.forEach(
-        chapter => {
+    chapters.forEach((chapter) => {
 
-            chaptersList.appendChild(
-                createChapterCard(
-                    chapter
-                )
+        const card =
+            createChapterCard(chapter);
+
+        chapterList.appendChild(card);
+
+    });
+}
+
+
+// ======================================================
+// CREATE CHAPTER CARD
+// ======================================================
+
+function createChapterCard(chapter) {
+
+    const card =
+        document.createElement("div");
+
+    card.className = "chapter-card";
+
+
+    // Number
+    const number =
+        document.createElement("div");
+
+    number.className = "chapter-number";
+
+    number.textContent =
+        chapter.chapterNumber || "-";
+
+
+    // Info
+    const info =
+        document.createElement("div");
+
+    info.className = "chapter-info";
+
+
+    const title =
+        document.createElement("h3");
+
+    title.textContent =
+        chapter.chapterName ||
+        chapter.title ||
+        "Untitled Chapter";
+
+
+    const meta =
+        document.createElement("div");
+
+    meta.className = "chapter-meta";
+
+
+    // Video
+    if (chapter.videoUrl) {
+
+        const videoPill =
+            document.createElement("span");
+
+        videoPill.className =
+            "content-pill video";
+
+        videoPill.textContent =
+            "VIDEO";
+
+        meta.appendChild(videoPill);
+    }
+
+
+    // PDF
+    if (chapter.pdfUrl) {
+
+        const pdfPill =
+            document.createElement("span");
+
+        pdfPill.className =
+            "content-pill pdf";
+
+        pdfPill.textContent =
+            "PDF";
+
+        meta.appendChild(pdfPill);
+    }
+
+
+    // No content
+    if (
+        !chapter.videoUrl &&
+        !chapter.pdfUrl
+    ) {
+
+        const emptyPill =
+            document.createElement("span");
+
+        emptyPill.className =
+            "content-pill";
+
+        emptyPill.textContent =
+            "NO CONTENT";
+
+        meta.appendChild(emptyPill);
+    }
+
+
+    // Lock status
+    const lockPill =
+        document.createElement("span");
+
+    lockPill.className =
+        `lock-pill ${
+            chapter.locked
+                ? "locked"
+                : "unlocked"
+        }`;
+
+    lockPill.textContent =
+        chapter.locked
+            ? "🔒 LOCKED"
+            : "🔓 UNLOCKED";
+
+    meta.appendChild(lockPill);
+
+
+    info.appendChild(title);
+    info.appendChild(meta);
+
+
+    // Actions
+    const actions =
+        document.createElement("div");
+
+    actions.className =
+        "chapter-actions";
+
+
+    // Lock button
+    const lockButton =
+        document.createElement("button");
+
+    lockButton.type = "button";
+
+    lockButton.className =
+        `action-btn lock ${
+            chapter.locked
+                ? "locked"
+                : "unlocked"
+        }`;
+
+    lockButton.textContent =
+        chapter.locked
+            ? "Unlock"
+            : "Lock";
+
+
+    lockButton.addEventListener(
+        "click",
+        async () => {
+
+            await toggleChapterLock(
+                chapter
             );
 
         }
     );
-}
 
 
-/* =========================================================
-   CHAPTER CARD
-========================================================= */
+    // Edit button
+    const editButton =
+        document.createElement("button");
 
-function createChapterCard(
-    chapter
-) {
+    editButton.type = "button";
 
-    const card =
-        document.createElement(
-            "article"
-        );
+    editButton.className =
+        "action-btn";
 
-
-    card.className =
-        "chapter-card";
+    editButton.textContent =
+        "Edit";
 
 
-    const number =
-        Number(
-            chapter.chapterNumber || 0
-        );
+    editButton.addEventListener(
+        "click",
+        () => {
 
-
-    const isActive =
-        chapter.active !== false;
-
-
-    card.innerHTML = `
-
-        <div class="chapter-number">
-            ${number || "—"}
-        </div>
-
-
-        <div class="chapter-main">
-
-            <h3>
-                ${escapeHTML(
-                    chapter.title ||
-                    "Untitled Chapter"
-                )}
-            </h3>
-
-            <p>
-                ${escapeHTML(
-                    chapter.description ||
-                    "No description added."
-                )}
-            </p>
-
-
-            <div class="chapter-meta">
-
-                <span>
-                    Priority ${
-                        Number(
-                            chapter.priority ?? 0
-                        )
-                    }
-                </span>
-
-                <span class="chapter-status ${
-                    isActive
-                        ? "active"
-                        : "inactive"
-                }">
-
-                    ${
-                        isActive
-                            ? "ACTIVE"
-                            : "INACTIVE"
-                    }
-
-                </span>
-
-            </div>
-
-        </div>
-
-
-        <div class="chapter-actions">
-
-            <button
-                type="button"
-                class="chapter-btn"
-                data-action="edit"
-            >
-                Edit
-            </button>
-
-            <button
-                type="button"
-                class="chapter-btn"
-                data-action="toggle"
-            >
-                ${
-                    isActive
-                        ? "Deactivate"
-                        : "Activate"
-                }
-            </button>
-
-        </div>
-    `;
-
-
-    card
-        .querySelectorAll(
-            ".chapter-btn"
-        )
-        .forEach(button => {
-
-            button.addEventListener(
-                "click",
-                async () => {
-
-                    const action =
-                        button.dataset.action;
-
-
-                    if (
-                        action === "edit"
-                    ) {
-
-                        openEdit(
-                            chapter
-                        );
-
-                    }
-
-
-                    if (
-                        action === "toggle"
-                    ) {
-
-                        await toggleChapter(
-                            chapter
-                        );
-
-                    }
-
-                }
+            openEditModal(
+                chapter
             );
 
-        });
+        }
+    );
 
+
+    actions.appendChild(lockButton);
+    actions.appendChild(editButton);
+
+
+    card.appendChild(number);
+    card.appendChild(info);
+    card.appendChild(actions);
 
     return card;
 }
 
 
-/* =========================================================
-   OPEN ADD
-========================================================= */
+// ======================================================
+// OPEN ADD MODAL
+// ======================================================
 
-function openAdd() {
+function openAddModal() {
 
     editingChapterId = null;
+
+    editingChapterData = null;
+
+    chapterForm.reset();
+
+    modalEyebrow.textContent =
+        "NEW CHAPTER";
 
     modalTitle.textContent =
         "Add Chapter";
 
-    saveButton.textContent =
+    saveBtn.textContent =
         "Save Chapter";
 
+    currentPdf.classList.add("hidden");
 
-    form.reset();
+    currentPdf.innerHTML = "";
 
-
-    chapterNumber.value =
-        String(
-            getNextChapterNumber()
-        );
-
-
-    chapterPriority.value =
-        "0";
-
-
-    chapterActive.checked =
-        true;
-
-
-    clearFormError();
-
-
-    modal.classList.remove(
+    uploadProgress.classList.add(
         "hidden"
     );
 
+    progressBar.style.width = "0%";
 
-    chapterTitle.focus();
-}
-
-
-/* =========================================================
-   NEXT CHAPTER NUMBER
-========================================================= */
-
-function getNextChapterNumber() {
-
-    if (!chapters.length) {
-        return 1;
-    }
+    progressText.textContent =
+        "Uploading 0%";
 
 
-    const numbers =
-        chapters
-            .map(
-                chapter =>
-                    Number(
-                        chapter.chapterNumber
-                    )
-            )
-            .filter(
-                number =>
-                    Number.isFinite(
-                        number
-                    ) &&
-                    number > 0
-            );
+    // Default next chapter number
+    const nextNumber =
+        getNextChapterNumber();
 
+    chapterNumberInput.value =
+        nextNumber;
 
-    if (!numbers.length) {
-        return 1;
-    }
+    updateOrderPreview();
 
+    setLocked(false);
 
-    return (
-        Math.max(...numbers) +
-        1
+    chapterModal.classList.remove(
+        "hidden"
     );
+
+    setTimeout(() => {
+        chapterNameInput.focus();
+    }, 100);
 }
 
 
-/* =========================================================
-   OPEN EDIT
-========================================================= */
+// ======================================================
+// OPEN EDIT MODAL
+// ======================================================
 
-function openEdit(
-    chapter
-) {
+function openEditModal(chapter) {
 
     editingChapterId =
         chapter.id;
 
+    editingChapterData =
+        chapter;
+
+    modalEyebrow.textContent =
+        "EDIT CHAPTER";
 
     modalTitle.textContent =
         "Edit Chapter";
 
-    saveButton.textContent =
+    saveBtn.textContent =
         "Update Chapter";
 
 
-    chapterNumber.value =
-        Number(
-            chapter.chapterNumber || 1
+    chapterNameInput.value =
+        chapter.chapterName ||
+        chapter.title ||
+        "";
+
+    chapterNumberInput.value =
+        chapter.chapterNumber || "";
+
+    videoUrlInput.value =
+        chapter.videoUrl || "";
+
+
+    // Existing PDF
+    if (chapter.pdfUrl) {
+
+        currentPdf.classList.remove(
+            "hidden"
         );
 
+        currentPdf.innerHTML = `
+            Current PDF:
+            <strong>${escapeHtml(
+                chapter.pdfName ||
+                "Uploaded PDF"
+            )}</strong>
+        `;
 
-    chapterTitle.value =
-        chapter.title || "";
+    } else {
 
-
-    chapterDescription.value =
-        chapter.description || "";
-
-
-    chapterPriority.value =
-        Number(
-            chapter.priority ?? 0
+        currentPdf.classList.add(
+            "hidden"
         );
 
-
-    chapterActive.checked =
-        chapter.active !== false;
-
-
-    clearFormError();
+        currentPdf.innerHTML = "";
+    }
 
 
-    modal.classList.remove(
+    pdfFileInput.value = "";
+
+    uploadProgress.classList.add(
         "hidden"
     );
 
+    setLocked(
+        chapter.locked === true
+    );
 
-    chapterTitle.focus();
+    updateOrderPreview();
+
+    chapterModal.classList.remove(
+        "hidden"
+    );
+
+    setTimeout(() => {
+        chapterNameInput.focus();
+    }, 100);
 }
 
 
-/* =========================================================
-   SAVE
-========================================================= */
+// ======================================================
+// CLOSE MODAL
+// ======================================================
 
-form.addEventListener(
+function closeModal() {
+
+    chapterModal.classList.add(
+        "hidden"
+    );
+
+    chapterForm.reset();
+
+    editingChapterId = null;
+
+    editingChapterData = null;
+
+    setLocked(false);
+}
+
+
+// ======================================================
+// NEXT CHAPTER NUMBER
+// ======================================================
+
+function getNextChapterNumber() {
+
+    if (chapters.length === 0) {
+        return 1;
+    }
+
+    const numbers =
+        chapters
+            .map(c =>
+                Number(c.chapterNumber || 0)
+            )
+            .filter(n => n > 0);
+
+    if (numbers.length === 0) {
+        return 1;
+    }
+
+    return Math.max(...numbers) + 1;
+}
+
+
+// ======================================================
+// ORDER PREVIEW
+// ======================================================
+
+function updateOrderPreview() {
+
+    const number =
+        Number(
+            chapterNumberInput.value
+        );
+
+    orderPreview.textContent =
+        number > 0
+            ? `Chapter ${number}`
+            : "Chapter —";
+}
+
+
+// ======================================================
+// LOCK TOGGLE
+// ======================================================
+
+function setLocked(value) {
+
+    isLocked = value;
+
+    if (isLocked) {
+
+        lockToggle.className =
+            "status-toggle locked";
+
+        lockIcon.textContent =
+            "🔒";
+
+        lockText.textContent =
+            "Locked";
+
+    } else {
+
+        lockToggle.className =
+            "status-toggle unlocked";
+
+        lockIcon.textContent =
+            "🔓";
+
+        lockText.textContent =
+            "Unlocked";
+    }
+}
+
+
+// ======================================================
+// SAVE / UPDATE CHAPTER
+// ======================================================
+
+chapterForm.addEventListener(
     "submit",
-    async event => {
+    async (event) => {
 
         event.preventDefault();
 
-        clearFormError();
-
+        const name =
+            chapterNameInput.value.trim();
 
         const number =
             Number(
-                chapterNumber.value
+                chapterNumberInput.value
             );
 
-        const title =
-            chapterTitle.value.trim();
+        const videoUrl =
+            videoUrlInput.value.trim();
 
-        const description =
-            chapterDescription.value.trim();
 
-        const priority =
-            Number(
-                chapterPriority.value || 0
+        // Validation
+        if (!name) {
+
+            showToast(
+                "Enter the chapter name.",
+                true
             );
 
-        const active =
-            chapterActive.checked;
+            chapterNameInput.focus();
 
+            return;
+        }
 
         if (
-            !number ||
+            !Number.isInteger(number) ||
             number < 1
         ) {
 
-            showFormError(
-                "Enter a valid chapter number."
+            showToast(
+                "Enter a valid chapter number.",
+                true
             );
+
+            chapterNumberInput.focus();
 
             return;
         }
 
 
-        if (!title) {
-
-            showFormError(
-                "Chapter title is required."
-            );
-
-            return;
-        }
-
-
-        /*
-         * Prevent duplicate chapter numbers
-         * within the same subject.
-         */
-
+        // Duplicate chapter number
         const duplicate =
-            chapters.find(
-                chapter =>
-                    chapter.id !==
-                        editingChapterId &&
-                    Number(
-                        chapter.chapterNumber
-                    ) === number
-            );
+            chapters.find((chapter) => {
+
+                if (
+                    editingChapterId &&
+                    chapter.id === editingChapterId
+                ) {
+                    return false;
+                }
+
+                return Number(
+                    chapter.chapterNumber
+                ) === number;
+
+            });
 
 
         if (duplicate) {
 
-            showFormError(
-                `Chapter ${number} already exists for this subject.`
+            showToast(
+                `Chapter ${number} already exists.`,
+                true
             );
 
             return;
         }
 
 
-        saveButton.disabled =
-            true;
+        // Video URL validation
+        if (videoUrl) {
 
-        saveButton.textContent =
-            editingChapterId
-                ? "Updating..."
-                : "Saving...";
+            try {
+
+                new URL(videoUrl);
+
+            } catch {
+
+                showToast(
+                    "Enter a valid video URL.",
+                    true
+                );
+
+                return;
+            }
+        }
 
 
         try {
 
-            if (editingChapterId) {
+            saveBtn.disabled = true;
 
-                /*
-                 * UPDATE EXISTING CHAPTER
-                 */
+            saveBtn.textContent =
+                editingChapterId
+                    ? "Updating..."
+                    : "Saving...";
+
+
+            // PDF
+            let pdfUrl =
+                editingChapterData?.pdfUrl ||
+                "";
+
+            let pdfName =
+                editingChapterData?.pdfName ||
+                "";
+
+
+            const selectedFile =
+                pdfFileInput.files[0];
+
+
+            if (selectedFile) {
+
+                if (
+                    selectedFile.type !==
+                    "application/pdf"
+                ) {
+
+                    throw new Error(
+                        "Only PDF files are allowed."
+                    );
+                }
+
+
+                if (
+                    selectedFile.size >
+                    20 * 1024 * 1024
+                ) {
+
+                    throw new Error(
+                        "PDF must be smaller than 20 MB."
+                    );
+                }
+
+
+                const result =
+                    await uploadPDF(
+                        selectedFile
+                    );
+
+                pdfUrl =
+                    result.url;
+
+                pdfName =
+                    selectedFile.name;
+            }
+
+
+            const chapterData = {
+
+                subjectId: subjectId,
+
+                chapterName: name,
+
+                chapterNumber: number,
+
+                videoUrl: videoUrl,
+
+                pdfUrl: pdfUrl,
+
+                pdfName: pdfName,
+
+                locked: isLocked,
+
+                active: true,
+
+                updatedAt:
+                    serverTimestamp()
+
+            };
+
+
+            // ADD
+            if (!editingChapterId) {
+
+                chapterData.createdAt =
+                    serverTimestamp();
+
+                chapterData.createdBy =
+                    currentUser.uid;
+
+
+                await addDoc(
+                    collection(
+                        db,
+                        "hybridChapters"
+                    ),
+                    chapterData
+                );
+
+
+                showToast(
+                    "Chapter added successfully."
+                );
+
+            }
+
+            // UPDATE
+            else {
 
                 await updateDoc(
                     doc(
@@ -764,54 +942,13 @@ form.addEventListener(
                         "hybridChapters",
                         editingChapterId
                     ),
-                    {
-                        title,
-                        description,
-                        chapterNumber:
-                            number,
-                        priority,
-                        active,
-                        updatedAt:
-                            serverTimestamp()
-                    }
+                    chapterData
                 );
 
-            } else {
 
-                /*
-                 * CREATE NEW CHAPTER
-                 */
-
-                await addDoc(
-                    collection(
-                        db,
-                        "hybridChapters"
-                    ),
-                    {
-                        subjectId,
-
-                        title,
-
-                        description,
-
-                        chapterNumber:
-                            number,
-
-                        priority,
-
-                        active,
-
-                        createdBy:
-                            currentUser.uid,
-
-                        createdAt:
-                            serverTimestamp(),
-
-                        updatedAt:
-                            serverTimestamp()
-                    }
+                showToast(
+                    "Chapter updated successfully."
                 );
-
             }
 
 
@@ -819,24 +956,24 @@ form.addEventListener(
 
             await loadChapters();
 
-
         } catch (error) {
 
             console.error(
-                "SAVE CHAPTER ERROR:",
+                "Save chapter error:",
                 error
             );
 
-            showFormError(
-                error.message
+            showToast(
+                error.message ||
+                "Unable to save chapter.",
+                true
             );
 
         } finally {
 
-            saveButton.disabled =
-                false;
+            saveBtn.disabled = false;
 
-            saveButton.textContent =
+            saveBtn.textContent =
                 editingChapterId
                     ? "Update Chapter"
                     : "Save Chapter";
@@ -846,13 +983,135 @@ form.addEventListener(
 );
 
 
-/* =========================================================
-   TOGGLE
-========================================================= */
+// ======================================================
+// UPLOAD PDF
+// ======================================================
 
-async function toggleChapter(
+function uploadPDF(file) {
+
+    return new Promise(
+        (resolve, reject) => {
+
+            uploadProgress.classList.remove(
+                "hidden"
+            );
+
+            progressBar.style.width =
+                "0%";
+
+            progressText.textContent =
+                "Uploading 0%";
+
+
+            const safeName =
+                file.name
+                    .replace(
+                        /[^a-zA-Z0-9._-]/g,
+                        "_"
+                    );
+
+
+            const filePath =
+                `hybrid-chapters/${subjectId}/${Date.now()}_${safeName}`;
+
+
+            const storageRef =
+                ref(
+                    storage,
+                    filePath
+                );
+
+
+            const uploadTask =
+                uploadBytesResumable(
+                    storageRef,
+                    file
+                );
+
+
+            uploadTask.on(
+
+                "state_changed",
+
+                (snapshot) => {
+
+                    const percent =
+                        Math.round(
+                            (
+                                snapshot.bytesTransferred /
+                                snapshot.totalBytes
+                            ) * 100
+                        );
+
+                    progressBar.style.width =
+                        `${percent}%`;
+
+                    progressText.textContent =
+                        `Uploading ${percent}%`;
+
+                },
+
+                (error) => {
+
+                    console.error(
+                        "PDF upload error:",
+                        error
+                    );
+
+                    reject(
+                        new Error(
+                            "PDF upload failed."
+                        )
+                    );
+
+                },
+
+                async () => {
+
+                    try {
+
+                        const url =
+                            await getDownloadURL(
+                                uploadTask.snapshot
+                                    .ref
+                            );
+
+                        progressText.textContent =
+                            "Upload complete";
+
+                        resolve({
+                            url,
+                            path: filePath
+                        });
+
+                    } catch (error) {
+
+                        reject(
+                            new Error(
+                                "Could not get PDF URL."
+                            )
+                        );
+                    }
+
+                }
+            );
+
+        }
+    );
+}
+
+
+// ======================================================
+// LOCK / UNLOCK EXISTING CHAPTER
+// ======================================================
+
+async function toggleChapterLock(
     chapter
 ) {
+
+    const newLocked =
+        chapter.locked !== true;
+
 
     try {
 
@@ -863,125 +1122,159 @@ async function toggleChapter(
                 chapter.id
             ),
             {
-                active:
-                    chapter.active === false,
-
+                locked: newLocked,
                 updatedAt:
                     serverTimestamp()
             }
         );
 
 
-        await loadChapters();
+        showToast(
+            newLocked
+                ? "Chapter locked."
+                : "Chapter unlocked."
+        );
 
+
+        await loadChapters();
 
     } catch (error) {
 
         console.error(
-            "TOGGLE CHAPTER ERROR:",
+            "Lock update error:",
             error
         );
 
-        showError(
-            error.message
+        showToast(
+            "Could not change chapter status.",
+            true
         );
     }
 }
 
 
-/* =========================================================
-   CLOSE MODAL
-========================================================= */
+// ======================================================
+// EVENTS
+// ======================================================
 
-function closeModal() {
+addChapterBtn.addEventListener(
+    "click",
+    openAddModal
+);
 
-    modal.classList.add(
-        "hidden"
-    );
+emptyAddBtn.addEventListener(
+    "click",
+    openAddModal
+);
 
-    editingChapterId =
-        null;
+closeModalBtn.addEventListener(
+    "click",
+    closeModal
+);
 
-    clearFormError();
-}
+cancelBtn.addEventListener(
+    "click",
+    closeModal
+);
 
+lockToggle.addEventListener(
+    "click",
+    () => {
 
-/* =========================================================
-   BUTTONS
-========================================================= */
+        setLocked(
+            !isLocked
+        );
 
-document
-    .getElementById(
-        "addChapterButton"
-    )
-    .addEventListener(
-        "click",
-        openAdd
-    );
+    }
+);
 
+chapterNumberInput.addEventListener(
+    "input",
+    updateOrderPreview
+);
 
-document
-    .getElementById(
-        "emptyAddButton"
-    )
-    .addEventListener(
-        "click",
-        openAdd
-    );
+pdfFileInput.addEventListener(
+    "change",
+    () => {
 
+        const file =
+            pdfFileInput.files[0];
 
-document
-    .getElementById(
-        "closeModal"
-    )
-    .addEventListener(
-        "click",
-        closeModal
-    );
-
-
-document
-    .getElementById(
-        "cancelButton"
-    )
-    .addEventListener(
-        "click",
-        closeModal
-    );
-
-
-document
-    .getElementById(
-        "modalOverlay"
-    )
-    .addEventListener(
-        "click",
-        closeModal
-    );
-
-
-document
-    .getElementById(
-        "backButton"
-    )
-    .addEventListener(
-        "click",
-        () => {
-
-            window.location.href =
-                "../addsubject/";
-
+        if (!file) {
+            return;
         }
-    );
+
+        currentPdf.classList.remove(
+            "hidden"
+        );
+
+        currentPdf.innerHTML = `
+            Selected PDF:
+            <strong>${escapeHtml(
+                file.name
+            )}</strong>
+        `;
+
+    }
+);
 
 
-/* =========================================================
-   UI
-========================================================= */
+// Close when clicking backdrop
+chapterModal.addEventListener(
+    "click",
+    (event) => {
+
+        if (
+            event.target.classList.contains(
+                "modal-backdrop"
+            )
+        ) {
+
+            closeModal();
+        }
+
+    }
+);
+
+
+// Escape key
+document.addEventListener(
+    "keydown",
+    (event) => {
+
+        if (
+            event.key === "Escape" &&
+            !chapterModal.classList.contains(
+                "hidden"
+            )
+        ) {
+
+            closeModal();
+        }
+
+    }
+);
+
+
+// Back
+backBtn.addEventListener(
+    "click",
+    () => {
+
+        window.location.href =
+            "../addsubject/";
+
+    }
+);
+
+
+// ======================================================
+// UI
+// ======================================================
 
 function showApp() {
 
-    loader.classList.add(
+    pageLoader.classList.add(
         "hidden"
     );
 
@@ -990,138 +1283,78 @@ function showApp() {
     );
 }
 
+function hideLoader() {
 
-function showError(
-    message
+    pageLoader.classList.add(
+        "hidden"
+    );
+}
+
+
+// ======================================================
+// TOAST
+// ======================================================
+
+let toastTimer;
+
+function showToast(
+    message,
+    error = false
 ) {
 
-    errorBox.textContent =
+    clearTimeout(
+        toastTimer
+    );
+
+    toast.textContent =
         message;
 
-    errorBox.classList.remove(
-        "hidden"
+    toast.classList.toggle(
+        "error",
+        error
     );
-}
 
-
-function showFatalError(
-    message
-) {
-
-    loader.innerHTML = `
-
-        <div style="
-            max-width:420px;
-            padding:25px;
-            text-align:center;
-        ">
-
-            <strong style="
-                display:block;
-                font-size:17px;
-                margin-bottom:8px;
-            ">
-                ${escapeHTML(message)}
-            </strong>
-
-            <button
-                id="fatalBackButton"
-                style="
-                    margin-top:15px;
-                    padding:10px 16px;
-                    border:0;
-                    border-radius:8px;
-                    background:#111;
-                    color:#fff;
-                    font-weight:700;
-                    cursor:pointer;
-                "
-            >
-                Back to Subjects
-            </button>
-
-        </div>
-    `;
-
-
-    document
-        .getElementById(
-            "fatalBackButton"
-        )
-        .addEventListener(
-            "click",
-            () => {
-
-                window.location.href =
-                    "../addsubject/";
-
-            }
-        );
-}
-
-
-function clearError() {
-
-    errorBox.textContent =
-        "";
-
-    errorBox.classList.add(
-        "hidden"
+    toast.classList.add(
+        "show"
     );
+
+
+    toastTimer =
+        setTimeout(() => {
+
+            toast.classList.remove(
+                "show"
+            );
+
+        }, 3000);
 }
 
 
-function showFormError(
-    message
-) {
+// ======================================================
+// HTML ESCAPE
+// ======================================================
 
-    formError.textContent =
-        message;
-
-    formError.classList.remove(
-        "hidden"
-    );
-}
-
-
-function clearFormError() {
-
-    formError.textContent =
-        "";
-
-    formError.classList.add(
-        "hidden"
-    );
-}
-
-
-/* =========================================================
-   HTML ESCAPE
-========================================================= */
-
-function escapeHTML(
-    value
-) {
+function escapeHtml(value) {
 
     return String(value)
-        .replaceAll(
-            "&",
+        .replace(
+            /&/g,
             "&amp;"
         )
-        .replaceAll(
-            "<",
+        .replace(
+            /</g,
             "&lt;"
         )
-        .replaceAll(
-            ">",
+        .replace(
+            />/g,
             "&gt;"
         )
-        .replaceAll(
-            '"',
+        .replace(
+            /"/g,
             "&quot;"
         )
-        .replaceAll(
-            "'",
+        .replace(
+            /'/g,
             "&#039;"
         );
-              }
+    }
