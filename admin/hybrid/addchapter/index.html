@@ -1,213 +1,167 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    />
 
-    <title>Chapters | Zenova Hybrid Admin</title>
+    <title>Add Chapter | Zenova Admin</title>
 
-    <link rel="stylesheet" href="./addchapter.css">
+    <link rel="stylesheet" href="./addchapter.css" />
 </head>
 
 <body>
 
     <!-- LOADER -->
-    <div id="loader" class="loader">
-
+    <div id="pageLoader" class="page-loader">
         <div class="loader-ring">
             <span>Z</span>
         </div>
-
-        <p>Loading chapters...</p>
-
+        <p>Loading...</p>
     </div>
 
 
     <!-- APP -->
-    <main id="app" class="app hidden">
+    <div id="app" class="app hidden">
 
         <!-- HEADER -->
-        <header class="header">
+        <header class="topbar">
 
-            <div class="header-left">
+            <button id="backBtn" class="back-btn">
+                <span>←</span>
+                <span>Back</span>
+            </button>
 
-                <button
-                    id="backButton"
-                    class="back-button"
-                    type="button"
-                >
-                    ←
-                </button>
-
-                <div>
-
-                    <div class="eyebrow">
-                        HYBRID ADMIN
-                    </div>
-
-                    <h1 id="subjectName">
-                        Subject
-                    </h1>
-
+            <div class="brand">
+                <div class="brand-name">
+                    ZENOVA
                 </div>
 
+                <div class="brand-section">
+                    HYBRID ADMIN
+                </div>
             </div>
 
-
-            <button
-                id="addChapterButton"
-                class="primary-button"
-                type="button"
-            >
-                + Add Chapter
-            </button>
+            <div class="header-right">
+                <div class="admin-dot"></div>
+                <span>Admin</span>
+            </div>
 
         </header>
 
 
-        <!-- ERROR -->
-        <div
-            id="errorBox"
-            class="error-box hidden"
-        ></div>
+        <!-- MAIN -->
+        <main class="main">
 
-
-        <!-- SUBJECT INFO -->
-        <section class="subject-info">
-
-            <div class="subject-info-left">
-
-                <div class="subject-icon">
-                    S
-                </div>
+            <!-- SUBJECT HEADER -->
+            <section class="subject-header">
 
                 <div>
-
-                    <div class="small-label">
+                    <div class="eyebrow">
                         SUBJECT
                     </div>
 
-                    <h2 id="subjectTitle">
-                        Subject
-                    </h2>
+                    <h1 id="subjectName">
+                        Loading subject...
+                    </h1>
 
                     <p id="subjectDescription">
-                        Manage chapters for this subject.
+                        Manage textbook chapters and learning content.
                     </p>
-
                 </div>
 
-            </div>
-
-
-            <div class="chapter-count-box">
-
-                <strong id="chapterCount">
-                    0
-                </strong>
-
-                <span>
-                    Chapters
-                </span>
-
-            </div>
-
-        </section>
-
-
-        <!-- CHAPTER SECTION -->
-        <section class="content">
-
-            <div class="content-header">
-
-                <div>
-
-                    <h2>
-                        Chapters
-                    </h2>
-
-                    <p>
-                        Manage the chapters belonging to this subject.
-                    </p>
-
-                </div>
-
-            </div>
-
-
-            <div
-                id="chaptersList"
-                class="chapters-list"
-            ></div>
-
-
-            <!-- EMPTY -->
-            <div
-                id="emptyState"
-                class="empty-state hidden"
-            >
-
-                <div class="empty-icon">
-                    +
-                </div>
-
-                <h3>
-                    No chapters yet
-                </h3>
-
-                <p>
-                    Add the first chapter for this subject.
-                </p>
-
-                <button
-                    id="emptyAddButton"
-                    class="primary-button"
-                    type="button"
-                >
-                    + Add Chapter
+                <button id="addChapterBtn" class="primary-btn">
+                    <span class="plus">+</span>
+                    Add Chapter
                 </button>
 
-            </div>
-
-        </section>
-
-    </main>
+            </section>
 
 
-    <!-- CHAPTER MODAL -->
+            <!-- CHAPTER AREA -->
+            <section class="chapter-section">
 
-    <div
-        id="chapterModal"
-        class="modal hidden"
-    >
+                <div class="section-head">
 
-        <div
-            id="modalOverlay"
-            class="modal-overlay"
-        ></div>
+                    <div>
+                        <h2>Chapters</h2>
+                        <p>
+                            Arrange chapters according to textbook order.
+                        </p>
+                    </div>
 
+                    <div id="chapterCount" class="chapter-count">
+                        0 Chapters
+                    </div>
+
+                </div>
+
+
+                <!-- CHAPTER LIST -->
+                <div id="chapterList" class="chapter-list">
+                </div>
+
+
+                <!-- EMPTY -->
+                <div id="emptyState" class="empty-state hidden">
+
+                    <div class="empty-icon">
+                        +
+                    </div>
+
+                    <h3>No chapters yet</h3>
+
+                    <p>
+                        Add the first chapter for this subject.
+                    </p>
+
+                    <button
+                        id="emptyAddBtn"
+                        class="primary-btn"
+                    >
+                        Add Chapter
+                    </button>
+
+                </div>
+
+            </section>
+
+        </main>
+
+    </div>
+
+
+    <!-- ADD / EDIT MODAL -->
+    <div id="chapterModal" class="modal hidden">
+
+        <div class="modal-backdrop"></div>
 
         <div class="modal-card">
 
             <div class="modal-header">
 
                 <div>
-
-                    <div class="eyebrow">
-                        CHAPTER
+                    <div
+                        id="modalEyebrow"
+                        class="eyebrow"
+                    >
+                        NEW CHAPTER
                     </div>
 
                     <h2 id="modalTitle">
                         Add Chapter
                     </h2>
 
+                    <p>
+                        Add chapter details and optional learning content.
+                    </p>
                 </div>
 
-
                 <button
-                    id="closeModal"
-                    class="close-button"
-                    type="button"
+                    id="closeModalBtn"
+                    class="close-btn"
                 >
                     ×
                 </button>
@@ -217,132 +171,188 @@
 
             <form id="chapterForm">
 
-                <!-- CHAPTER NUMBER -->
+                <!-- CHAPTER NAME -->
+                <div class="form-group">
 
-                <div class="field">
-
-                    <label for="chapterNumber">
-                        Chapter Number
+                    <label for="chapterName">
+                        Chapter Name
+                        <span>*</span>
                     </label>
 
                     <input
-                        id="chapterNumber"
-                        type="number"
-                        min="1"
-                        placeholder="1"
-                        required
-                    >
-
-                </div>
-
-
-                <!-- TITLE -->
-
-                <div class="field">
-
-                    <label for="chapterTitle">
-                        Chapter Title
-                    </label>
-
-                    <input
-                        id="chapterTitle"
                         type="text"
-                        placeholder="e.g. Physical World"
+                        id="chapterName"
+                        placeholder="Eg. Motion"
                         required
-                    >
+                    />
 
                 </div>
 
 
-                <!-- DESCRIPTION -->
+                <!-- CHAPTER NUMBER -->
+                <div class="form-row">
 
-                <div class="field">
+                    <div class="form-group">
 
-                    <label for="chapterDescription">
-                        Description
-                        <span>Optional</span>
-                    </label>
+                        <label for="chapterNumber">
+                            Chapter Number
+                            <span>*</span>
+                        </label>
 
-                    <textarea
-                        id="chapterDescription"
-                        rows="4"
-                        placeholder="Short description of this chapter..."
-                    ></textarea>
+                        <input
+                            type="number"
+                            id="chapterNumber"
+                            min="1"
+                            step="1"
+                            placeholder="Eg. 2"
+                            required
+                        />
+
+                        <small>
+                            Used to arrange chapters textbook-wise.
+                        </small>
+
+                    </div>
+
+                    <div class="order-preview">
+
+                        <span>DISPLAY ORDER</span>
+
+                        <strong id="orderPreview">
+                            Chapter 1
+                        </strong>
+
+                    </div>
 
                 </div>
 
 
-                <!-- PRIORITY -->
+                <!-- VIDEO -->
+                <div class="form-group">
 
-                <div class="field">
-
-                    <label for="chapterPriority">
-                        Priority
+                    <label for="videoUrl">
+                        Embedded Video Link
+                        <span class="optional">
+                            Optional
+                        </span>
                     </label>
 
                     <input
-                        id="chapterPriority"
-                        type="number"
-                        min="0"
-                        value="0"
-                    >
+                        type="url"
+                        id="videoUrl"
+                        placeholder="https://www.youtube.com/embed/..."
+                    />
 
-                    <small class="field-help">
-                        Lower chapter number is shown first.
+                    <small>
+                        Paste the YouTube embed URL.
                     </small>
 
                 </div>
 
 
-                <!-- ACTIVE -->
+                <!-- PDF -->
+                <div class="form-group">
 
-                <label class="active-row">
+                    <label>
+                        PDF / Notes
+                        <span class="optional">
+                            Optional
+                        </span>
+                    </label>
 
-                    <div>
+                    <div
+                        id="pdfUploadBox"
+                        class="upload-box"
+                    >
+
+                        <input
+                            type="file"
+                            id="pdfFile"
+                            accept="application/pdf"
+                        />
+
+                        <div class="upload-icon">
+                            ↑
+                        </div>
 
                         <strong>
-                            Active Chapter
+                            Upload PDF
                         </strong>
 
-                        <small>
-                            Active chapters are visible to students.
-                        </small>
+                        <span>
+                            PDF only
+                        </span>
 
                     </div>
 
-                    <input
-                        id="chapterActive"
-                        type="checkbox"
-                        checked
+                    <div
+                        id="currentPdf"
+                        class="current-file hidden"
+                    ></div>
+
+                    <div
+                        id="uploadProgress"
+                        class="upload-progress hidden"
                     >
+                        <div class="progress-track">
+                            <div
+                                id="progressBar"
+                                class="progress-bar"
+                            ></div>
+                        </div>
 
-                </label>
+                        <span id="progressText">
+                            Uploading 0%
+                        </span>
+                    </div>
+
+                </div>
 
 
-                <!-- FORM ERROR -->
+                <!-- STATUS -->
+                <div class="status-box">
 
-                <div
-                    id="formError"
-                    class="form-error hidden"
-                ></div>
+                    <div>
+                        <label>
+                            Chapter Status
+                        </label>
+
+                        <p>
+                            Locked chapters are visible to students
+                            but their content cannot be opened.
+                        </p>
+                    </div>
+
+                    <button
+                        type="button"
+                        id="lockToggle"
+                        class="status-toggle unlocked"
+                    >
+                        <span id="lockIcon">🔓</span>
+
+                        <span id="lockText">
+                            Unlocked
+                        </span>
+                    </button>
+
+                </div>
 
 
                 <!-- ACTIONS -->
-
                 <div class="form-actions">
 
                     <button
-                        id="cancelButton"
                         type="button"
-                        class="secondary-button"
+                        id="cancelBtn"
+                        class="secondary-btn"
                     >
                         Cancel
                     </button>
 
                     <button
-                        id="saveButton"
                         type="submit"
-                        class="primary-button"
+                        id="saveBtn"
+                        class="primary-btn"
                     >
                         Save Chapter
                     </button>
@@ -354,6 +364,10 @@
         </div>
 
     </div>
+
+
+    <!-- TOAST -->
+    <div id="toast" class="toast"></div>
 
 
     <script
