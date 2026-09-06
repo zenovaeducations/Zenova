@@ -11,65 +11,85 @@ import {
     collection,
     doc,
     getDocs,
-    setDoc,
+    addDoc,
     updateDoc,
-    serverTimestamp,
-    query,
-    where
+    serverTimestamp
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
 
-/* =========================================================
+/* =========================
    ELEMENTS
-========================================================= */
+========================= */
 
-const loader = document.getElementById("pageLoader");
+const loader = document.getElementById("loader");
 const app = document.getElementById("app");
 
-const errorBox = document.getElementById("errorBox");
+const subjectsElement =
+    document.getElementById("subjects");
 
-const subjectsGrid = document.getElementById("subjectsGrid");
-const emptyState = document.getElementById("emptyState");
+const empty =
+    document.getElementById("empty");
 
-const totalSubjects = document.getElementById("totalSubjects");
-const activeSubjects = document.getElementById("activeSubjects");
-const inactiveSubjects = document.getElementById("inactiveSubjects");
+const errorBox =
+    document.getElementById("errorBox");
 
-const searchInput = document.getElementById("searchInput");
+const search =
+    document.getElementById("search");
 
-const modal = document.getElementById("subjectModal");
-const modalTitle = document.getElementById("modalTitle");
+const modal =
+    document.getElementById("modal");
 
-const subjectForm = document.getElementById("subjectForm");
+const modalTitle =
+    document.getElementById("modalTitle");
 
-const subjectIdInput = document.getElementById("subjectId");
-const subjectName = document.getElementById("subjectName");
-const subjectDescription = document.getElementById("subjectDescription");
-const subjectMedium = document.getElementById("subjectMedium");
-const subjectPriority = document.getElementById("subjectPriority");
-const subjectActive = document.getElementById("subjectActive");
+const form =
+    document.getElementById("subjectForm");
 
-const saveBtn = document.getElementById("saveBtn");
+const nameInput =
+    document.getElementById("name");
+
+const descriptionInput =
+    document.getElementById("description");
+
+const mediumInput =
+    document.getElementById("medium");
+
+const priorityInput =
+    document.getElementById("priority");
+
+const activeInput =
+    document.getElementById("active");
+
+const saveBtn =
+    document.getElementById("saveBtn");
+
+const formError =
+    document.getElementById("formError");
 
 
-/* =========================================================
+/* =========================
    STATE
-========================================================= */
+========================= */
 
 let currentUser = null;
+
 let subjects = [];
 
-let editingSubjectId = null;
+let editingId = null;
 
 
-/* =========================================================
+/* =========================
    AUTH
-========================================================= */
+========================= */
 
 onAuthStateChanged(auth, async (user) => {
 
     if (!user) {
-        window.location.href = "../../../index.html";
+
+        window.location.replace(
+            "../../../index.html"
+        );
+
         return;
     }
 
@@ -79,242 +99,257 @@ onAuthStateChanged(auth, async (user) => {
 
         await loadSubjects();
 
-        showApplication();
+        showApp();
 
     } catch (error) {
 
-        console.error("Hybrid Subjects Error:", error);
-
-        showError(
-            "We couldn't load the subjects. " +
-            (error?.message || "Please try again.")
+        console.error(
+            "SUBJECT PAGE ERROR:",
+            error
         );
 
-        showApplication();
+        showError(
+            "Unable to load subjects: " +
+            error.message
+        );
+
+        showApp();
     }
 
 });
 
 
-/* =========================================================
-   LOAD SUBJECTS
-========================================================= */
+/* =========================
+   LOAD FIRESTORE
+========================= */
 
 async function loadSubjects() {
 
     clearError();
 
-    subjectsGrid.innerHTML = "";
-
-    /*
-        IMPORTANT:
-
-        We intentionally query only:
-
-            active == true
-
-        first, because older versions of the admin page
-        used this field and we want to avoid composite indexes.
-
-        However, inactive subjects must also be visible for
-        management.
-
-        Therefore we fetch the collection and sort/filter
-        locally.
-    */
-
     const snapshot = await getDocs(
-        collection(db, "hybridSubjects")
+        collection(
+            db,
+            "hybridSubjects"
+        )
     );
 
-    subjects = [];
+    subjects = snapshot.docs.map(
+        item => ({
+            id: item.id,
+            ...item.data()
+        })
+    );
 
-    snapshot.forEach((documentSnapshot) => {
-
-        subjects.push({
-            id: documentSnapshot.id,
-            ...documentSnapshot.data()
-        });
-
-    });
-
-    /*
-        Sort using the existing priority field.
-    */
 
     subjects.sort((a, b) => {
 
-        const priorityA = Number(a.priority ?? 0);
-        const priorityB = Number(b.priority ?? 0);
+        const priorityA =
+            Number(a.priority ?? 0);
+
+        const priorityB =
+            Number(b.priority ?? 0);
 
         if (priorityA !== priorityB) {
+
             return priorityA - priorityB;
         }
 
         return String(a.name || "")
             .localeCompare(
-                String(b.name || ""),
-                undefined,
-                {
-                    sensitivity: "base"
-                }
+                String(b.name || "")
             );
     });
 
-    renderStats();
+
+    updateStats();
+
     renderSubjects();
 }
 
 
-/* =========================================================
-   RENDER STATS
-========================================================= */
+/* =========================
+   STATS
+========================= */
 
-function renderStats() {
+function updateStats() {
 
-    const total = subjects.length;
+    const total =
+        subjects.length;
 
-    const active = subjects.filter(
-        subject => subject.active !== false
-    ).length;
+    const active =
+        subjects.filter(
+            subject =>
+                subject.active !== false
+        ).length;
 
-    const inactive = total - active;
+    document.getElementById(
+        "totalCount"
+    ).textContent = total;
 
-    totalSubjects.textContent = total;
-    activeSubjects.textContent = active;
-    inactiveSubjects.textContent = inactive;
+    document.getElementById(
+        "activeCount"
+    ).textContent = active;
+
+    document.getElementById(
+        "inactiveCount"
+    ).textContent =
+        total - active;
 }
 
 
-/* =========================================================
-   RENDER SUBJECTS
-========================================================= */
+/* =========================
+   RENDER
+========================= */
 
 function renderSubjects() {
 
-    const search = searchInput.value
-        .trim()
-        .toLowerCase();
+    const term =
+        search.value
+            .trim()
+            .toLowerCase();
 
-    const filtered = subjects.filter(subject => {
 
-        const name = String(
-            subject.name || ""
-        ).toLowerCase();
+    const filtered =
+        subjects.filter(subject => {
 
-        const description = String(
-            subject.description || ""
-        ).toLowerCase();
+            const name =
+                String(
+                    subject.name || ""
+                ).toLowerCase();
 
-        return (
-            name.includes(search) ||
-            description.includes(search)
+            const description =
+                String(
+                    subject.description || ""
+                ).toLowerCase();
+
+            return (
+                name.includes(term) ||
+                description.includes(term)
+            );
+        });
+
+
+    subjectsElement.innerHTML = "";
+
+
+    if (!filtered.length) {
+
+        subjectsElement.classList.add(
+            "hidden"
         );
-    });
 
-
-    subjectsGrid.innerHTML = "";
-
-
-    if (filtered.length === 0) {
-
-        subjectsGrid.classList.add("hidden");
-        emptyState.classList.remove("hidden");
+        empty.classList.remove(
+            "hidden"
+        );
 
         return;
     }
 
 
-    subjectsGrid.classList.remove("hidden");
-    emptyState.classList.add("hidden");
+    subjectsElement.classList.remove(
+        "hidden"
+    );
+
+    empty.classList.add(
+        "hidden"
+    );
 
 
     filtered.forEach(subject => {
 
-        const card = createSubjectCard(subject);
-
-        subjectsGrid.appendChild(card);
+        subjectsElement.appendChild(
+            createSubjectCard(subject)
+        );
 
     });
 }
 
 
-/* =========================================================
-   SUBJECT CARD
-========================================================= */
+/* =========================
+   CARD
+========================= */
 
 function createSubjectCard(subject) {
 
-    const card = document.createElement("article");
+    const card =
+        document.createElement("article");
 
-    card.className = "subject-card";
+    card.className =
+        "subject-card";
 
 
-    const isActive = subject.active !== false;
+    const isActive =
+        subject.active !== false;
+
 
     const targetClasses =
-        Array.isArray(subject.targetClasses)
+        Array.isArray(
+            subject.targetClasses
+        )
             ? subject.targetClasses
             : [];
 
 
-    const classesHTML =
+    const classHTML =
         targetClasses.length
             ? targetClasses
-                .slice(0, 4)
                 .map(
-                    className =>
-                        `<span class="meta-pill">
-                            ${escapeHTML(className)}
-                        </span>`
+                    item =>
+                        `<span>${escapeHTML(item)}</span>`
                 )
                 .join("")
-            : `<span class="meta-pill">
-                    All Classes
-               </span>`;
-
-
-    const moreClasses =
-        targetClasses.length > 4
-            ? `<span class="meta-pill">
-                    +${targetClasses.length - 4}
-               </span>`
-            : "";
+            : "<span>All Classes</span>";
 
 
     card.innerHTML = `
 
-        <div class="subject-top">
+        <div class="subject-title-row">
 
-            <h3 class="subject-name">
-                ${escapeHTML(subject.name || "Untitled Subject")}
-            </h3>
+            <div class="subject-title">
+                ${escapeHTML(
+                    subject.name ||
+                    "Untitled Subject"
+                )}
+            </div>
 
-            <span class="badge ${isActive ? "active" : "inactive"}">
-                ${isActive ? "ACTIVE" : "INACTIVE"}
-            </span>
+            <div class="status ${
+                isActive
+                    ? "active"
+                    : "inactive"
+            }">
+
+                ${
+                    isActive
+                        ? "ACTIVE"
+                        : "INACTIVE"
+                }
+
+            </div>
 
         </div>
 
 
-        <p class="subject-description">
-            ${
-                escapeHTML(
-                    subject.description ||
-                    "No description added."
-                )
-            }
-        </p>
+        <div class="subject-description">
+
+            ${escapeHTML(
+                subject.description ||
+                "No description added."
+            )}
+
+        </div>
 
 
-        <div class="subject-meta">
+        <div class="meta">
 
-            <span class="meta-pill">
-                ${escapeHTML(subject.medium || "Kannada")}
+            <span>
+                ${escapeHTML(
+                    subject.medium ||
+                    "Kannada"
+                )}
             </span>
 
-            ${classesHTML}
-            ${moreClasses}
+            ${classHTML}
 
         </div>
 
@@ -322,15 +357,19 @@ function createSubjectCard(subject) {
         <div class="subject-footer">
 
             <span class="priority">
-                Priority ${Number(subject.priority ?? 0)}
+                Priority ${
+                    Number(
+                        subject.priority ?? 0
+                    )
+                }
             </span>
+
 
             <div class="card-actions">
 
                 <button
                     class="card-btn chapter-btn"
                     data-action="chapters"
-                    data-id="${subject.id}"
                 >
                     Chapters
                 </button>
@@ -338,7 +377,6 @@ function createSubjectCard(subject) {
                 <button
                     class="card-btn"
                     data-action="edit"
-                    data-id="${subject.id}"
                 >
                     Edit
                 </button>
@@ -346,9 +384,12 @@ function createSubjectCard(subject) {
                 <button
                     class="card-btn"
                     data-action="toggle"
-                    data-id="${subject.id}"
                 >
-                    ${isActive ? "Deactivate" : "Activate"}
+                    ${
+                        isActive
+                            ? "Deactivate"
+                            : "Activate"
+                    }
                 </button>
 
             </div>
@@ -363,7 +404,50 @@ function createSubjectCard(subject) {
 
             button.addEventListener(
                 "click",
-                handleCardAction
+                () => {
+
+                    const action =
+                        button.dataset.action;
+
+
+                    if (
+                        action === "chapters"
+                    ) {
+
+                        /*
+                         * IMPORTANT:
+                         * Pass the real Firestore
+                         * document ID.
+                         */
+
+                        window.location.href =
+                            `../addchapter/?subjectId=${encodeURIComponent(
+                                subject.id
+                            )}`;
+
+                        return;
+                    }
+
+
+                    if (
+                        action === "edit"
+                    ) {
+
+                        openEdit(subject);
+
+                        return;
+                    }
+
+
+                    if (
+                        action === "toggle"
+                    ) {
+
+                        toggleSubject(subject);
+
+                    }
+
+                }
             );
 
         });
@@ -373,134 +457,100 @@ function createSubjectCard(subject) {
 }
 
 
-/* =========================================================
-   CARD ACTIONS
-========================================================= */
+/* =========================
+   ADD
+========================= */
 
-function handleCardAction(event) {
+function openAdd() {
 
-    const button = event.currentTarget;
+    editingId = null;
 
-    const action = button.dataset.action;
-    const id = button.dataset.id;
+    modalTitle.textContent =
+        "Add Subject";
 
+    saveBtn.textContent =
+        "Save Subject";
 
-    const subject = subjects.find(
-        item => item.id === id
-    );
+    form.reset();
 
-    if (!subject) {
-        return;
-    }
+    mediumInput.value =
+        "Kannada";
 
+    priorityInput.value =
+        "0";
 
-    if (action === "edit") {
+    activeInput.checked =
+        true;
 
-        openEditModal(subject);
-        return;
-    }
-
-
-    if (action === "toggle") {
-
-        toggleSubject(subject);
-        return;
-    }
-
-
-    if (action === "chapters") {
-
-        /*
-            THIS IS THE IMPORTANT CONNECTION.
-
-            The actual Firestore document ID is passed
-            automatically to the chapter page.
-        */
-
-        window.location.href =
-            `../addchapter/?subjectId=${encodeURIComponent(id)}`;
-
-    }
-
-}
-
-
-/* =========================================================
-   OPEN ADD MODAL
-========================================================= */
-
-function openAddModal() {
-
-    editingSubjectId = null;
-
-    modalTitle.textContent = "Add Subject";
-
-    saveBtn.textContent = "Save Subject";
-
-    subjectForm.reset();
-
-    subjectIdInput.value = "";
-
-    subjectMedium.value = "Kannada";
-
-    subjectPriority.value = "0";
-
-    subjectActive.checked = true;
 
     document
-        .querySelectorAll(".class-checkbox")
-        .forEach(checkbox => {
-            checkbox.checked = false;
-        });
+        .querySelectorAll(
+            ".classes input"
+        )
+        .forEach(
+            checkbox =>
+                checkbox.checked = false
+        );
 
 
-    modal.classList.remove("hidden");
+    clearFormError();
 
-    setTimeout(() => {
-        subjectName.focus();
-    }, 50);
+    modal.classList.remove(
+        "hidden"
+    );
+
+    nameInput.focus();
 }
 
 
-/* =========================================================
-   OPEN EDIT MODAL
-========================================================= */
+/* =========================
+   EDIT
+========================= */
 
-function openEditModal(subject) {
+function openEdit(subject) {
 
-    editingSubjectId = subject.id;
+    editingId =
+        subject.id;
 
-    modalTitle.textContent = "Edit Subject";
+    modalTitle.textContent =
+        "Edit Subject";
 
-    saveBtn.textContent = "Update Subject";
+    saveBtn.textContent =
+        "Update Subject";
 
 
-    subjectIdInput.value = subject.id;
-
-    subjectName.value =
+    nameInput.value =
         subject.name || "";
 
-    subjectDescription.value =
+    descriptionInput.value =
         subject.description || "";
 
-    subjectMedium.value =
-        normalizeMedium(subject.medium);
+    mediumInput.value =
+        normalizeMedium(
+            subject.medium
+        );
 
-    subjectPriority.value =
-        Number(subject.priority ?? 0);
+    priorityInput.value =
+        Number(
+            subject.priority ?? 0
+        );
 
-    subjectActive.checked =
+    activeInput.checked =
         subject.active !== false;
 
 
     const targetClasses =
-        Array.isArray(subject.targetClasses)
+        Array.isArray(
+            subject.targetClasses
+        )
             ? subject.targetClasses
             : [];
 
 
     document
-        .querySelectorAll(".class-checkbox")
+        .querySelectorAll(
+            ".classes input"
+        )
         .forEach(checkbox => {
 
             checkbox.checked =
@@ -511,147 +561,113 @@ function openEditModal(subject) {
         });
 
 
-    modal.classList.remove("hidden");
+    clearFormError();
 
-    setTimeout(() => {
-        subjectName.focus();
-    }, 50);
+    modal.classList.remove(
+        "hidden"
+    );
+
+    nameInput.focus();
 }
 
 
-/* =========================================================
-   CLOSE MODAL
-========================================================= */
+/* =========================
+   SAVE
+========================= */
 
-function closeModal() {
-
-    modal.classList.add("hidden");
-
-    editingSubjectId = null;
-
-    subjectForm.reset();
-}
-
-
-/* =========================================================
-   SAVE SUBJECT
-========================================================= */
-
-subjectForm.addEventListener(
+form.addEventListener(
     "submit",
-    async (event) => {
+    async event => {
 
         event.preventDefault();
 
-        clearError();
+        clearFormError();
 
 
         const name =
-            subjectName.value.trim();
-
-        const description =
-            subjectDescription.value.trim();
-
-        const medium =
-            normalizeMedium(subjectMedium.value);
-
-        const priority =
-            Number(subjectPriority.value || 0);
-
-        const active =
-            subjectActive.checked;
-
-
-        const targetClasses =
-            Array.from(
-                document.querySelectorAll(
-                    ".class-checkbox:checked"
-                )
-            ).map(
-                checkbox => checkbox.value
-            );
-
+            nameInput.value.trim();
 
         if (!name) {
 
-            showError(
-                "Please enter a subject name."
+            showFormError(
+                "Subject name is required."
             );
-
-            subjectName.focus();
 
             return;
         }
 
 
+        const targetClasses =
+            Array.from(
+                document.querySelectorAll(
+                    ".classes input:checked"
+                )
+            ).map(
+                checkbox =>
+                    checkbox.value
+            );
+
+
+        const data = {
+
+            name,
+
+            description:
+                descriptionInput.value.trim(),
+
+            medium:
+                mediumInput.value,
+
+            targetClasses,
+
+            priority:
+                Number(
+                    priorityInput.value || 0
+                ),
+
+            active:
+                activeInput.checked,
+
+            updatedAt:
+                serverTimestamp()
+        };
+
+
         saveBtn.disabled = true;
 
         saveBtn.textContent =
-            editingSubjectId
+            editingId
                 ? "Updating..."
                 : "Saving...";
 
 
         try {
 
-            if (editingSubjectId) {
-
-                /*
-                    UPDATE EXISTING SUBJECT
-                */
-
-                const subjectRef = doc(
-                    db,
-                    "hybridSubjects",
-                    editingSubjectId
-                );
-
+            if (editingId) {
 
                 await updateDoc(
-                    subjectRef,
-                    {
-                        name,
-                        description,
-                        medium,
-                        targetClasses,
-                        priority,
-                        active,
-                        updatedAt:
-                            serverTimestamp()
-                    }
+                    doc(
+                        db,
+                        "hybridSubjects",
+                        editingId
+                    ),
+                    data
                 );
 
             } else {
 
-                /*
-                    CREATE NEW SUBJECT
-                */
-
-                const subjectRef = doc(
+                await addDoc(
                     collection(
                         db,
                         "hybridSubjects"
-                    )
-                );
-
-
-                await setDoc(
-                    subjectRef,
+                    ),
                     {
-                        name,
-                        description,
-                        medium,
-                        targetClasses,
-                        priority,
-                        active,
+                        ...data,
 
                         createdBy:
                             currentUser.uid,
 
                         createdAt:
-                            serverTimestamp(),
-
-                        updatedAt:
                             serverTimestamp()
                     }
                 );
@@ -667,13 +683,12 @@ subjectForm.addEventListener(
         } catch (error) {
 
             console.error(
-                "Save subject error:",
+                "SAVE SUBJECT ERROR:",
                 error
             );
 
-            showError(
-                "Unable to save subject. " +
-                (error?.message || "")
+            showFormError(
+                error.message
             );
 
         } finally {
@@ -681,7 +696,7 @@ subjectForm.addEventListener(
             saveBtn.disabled = false;
 
             saveBtn.textContent =
-                editingSubjectId
+                editingId
                     ? "Update Subject"
                     : "Save Subject";
         }
@@ -690,15 +705,13 @@ subjectForm.addEventListener(
 );
 
 
-/* =========================================================
-   TOGGLE ACTIVE
-========================================================= */
+/* =========================
+   TOGGLE
+========================= */
 
-async function toggleSubject(subject) {
-
-    const newStatus =
-        subject.active === false;
-
+async function toggleSubject(
+    subject
+) {
 
     try {
 
@@ -709,7 +722,9 @@ async function toggleSubject(subject) {
                 subject.id
             ),
             {
-                active: newStatus,
+                active:
+                    subject.active === false,
+
                 updatedAt:
                     serverTimestamp()
             }
@@ -718,77 +733,43 @@ async function toggleSubject(subject) {
 
         await loadSubjects();
 
-
     } catch (error) {
 
         console.error(
-            "Toggle subject error:",
+            "TOGGLE ERROR:",
             error
         );
 
         showError(
-            "Unable to update subject status. " +
-            (error?.message || "")
+            error.message
         );
     }
 }
 
 
-/* =========================================================
-   MEDIUM
-========================================================= */
+/* =========================
+   CLOSE
+========================= */
 
-function normalizeMedium(value) {
+function closeModal() {
 
-    if (!value) {
-        return "Kannada";
-    }
+    modal.classList.add(
+        "hidden"
+    );
 
-    const medium =
-        String(value)
-            .trim()
-            .toLowerCase();
-
-
-    if (
-        medium === "both" ||
-        medium === "all"
-    ) {
-        return "Both";
-    }
-
-
-    if (
-        medium === "english" ||
-        medium === "english medium"
-    ) {
-        return "English";
-    }
-
-
-    return "Kannada";
+    editingId = null;
 }
 
 
-/* =========================================================
-   SEARCH
-========================================================= */
-
-searchInput.addEventListener(
-    "input",
-    renderSubjects
-);
-
-
-/* =========================================================
+/* =========================
    BUTTONS
-========================================================= */
+========================= */
 
 document
-    .getElementById("addSubjectBtn")
+    .getElementById("addBtn")
     .addEventListener(
         "click",
-        openAddModal
+        openAdd
     );
 
 
@@ -796,12 +777,12 @@ document
     .getElementById("emptyAddBtn")
     .addEventListener(
         "click",
-        openAddModal
+        openAdd
     );
 
 
 document
-    .getElementById("closeModalBtn")
+    .getElementById("closeBtn")
     .addEventListener(
         "click",
         closeModal
@@ -817,7 +798,7 @@ document
 
 
 document
-    .querySelector(".modal-backdrop")
+    .getElementById("modalOverlay")
     .addEventListener(
         "click",
         closeModal
@@ -829,32 +810,44 @@ document
     .addEventListener(
         "click",
         () => {
-            window.location.href = "../";
+
+            window.location.href =
+                "../";
+
         }
     );
 
 
-/* =========================================================
-   SHOW APP
-========================================================= */
+search.addEventListener(
+    "input",
+    renderSubjects
+);
 
-function showApplication() {
 
-    loader.classList.add("hidden");
+/* =========================
+   UI
+========================= */
 
-    app.classList.remove("hidden");
+function showApp() {
+
+    loader.classList.add(
+        "hidden"
+    );
+
+    app.classList.remove(
+        "hidden"
+    );
 }
 
 
-/* =========================================================
-   ERROR
-========================================================= */
-
 function showError(message) {
 
-    errorBox.textContent = message;
+    errorBox.textContent =
+        message;
 
-    errorBox.classList.remove("hidden");
+    errorBox.classList.remove(
+        "hidden"
+    );
 }
 
 
@@ -862,13 +855,72 @@ function clearError() {
 
     errorBox.textContent = "";
 
-    errorBox.classList.add("hidden");
+    errorBox.classList.add(
+        "hidden"
+    );
 }
 
 
-/* =========================================================
-   ESCAPE HTML
-========================================================= */
+function showFormError(message) {
+
+    formError.textContent =
+        message;
+
+    formError.classList.remove(
+        "hidden"
+    );
+}
+
+
+function clearFormError() {
+
+    formError.textContent = "";
+
+    formError.classList.add(
+        "hidden"
+    );
+}
+
+
+/* =========================
+   MEDIUM
+========================= */
+
+function normalizeMedium(value) {
+
+    if (!value) {
+        return "Kannada";
+    }
+
+    const v =
+        String(value)
+            .trim()
+            .toLowerCase();
+
+
+    if (
+        v === "english" ||
+        v === "english medium"
+    ) {
+        return "English";
+    }
+
+
+    if (
+        v === "both" ||
+        v === "all"
+    ) {
+        return "Both";
+    }
+
+
+    return "Kannada";
+}
+
+
+/* =========================
+   HTML SAFETY
+========================= */
 
 function escapeHTML(value) {
 
@@ -878,4 +930,4 @@ function escapeHTML(value) {
         .replaceAll(">", "&gt;")
         .replaceAll('"', "&quot;")
         .replaceAll("'", "&#039;");
-      }
+        }
