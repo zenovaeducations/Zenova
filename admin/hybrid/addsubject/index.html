@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Add Subjects — Zenova Hybrid Admin</title>
+
+    <link rel="stylesheet" href="./addsubject.css">
+</head>
+
+<body>
+
+    <!-- LOADER -->
+    <div id="pageLoader" class="page-loader">
+        <div class="loader-ring">
+            <span>Z</span>
+        </div>
+        <p>Loading subjects...</p>
+    </div>
+
+
+    <!-- APP -->
+    <main id="app" class="app hidden">
+
+        <!-- HEADER -->
+        <header class="topbar">
+
+            <div class="topbar-left">
+
+                <button id="backBtn" class="back-btn" type="button">
+                    ←
+                </button>
+
+                <div>
+                    <div class="eyebrow">
+                        HYBRID ADMIN
+                    </div>
+
+                    <h1>Subjects</h1>
+                </div>
+
+            </div>
+
+            <button id="addSubjectBtn" class="primary-btn">
+                <span>+</span>
+                Add Subject
+            </button>
+
+        </header>
+
+
+        <!-- ERROR -->
+        <div id="errorBox" class="error-box hidden"></div>
+
+
+        <!-- STATS -->
+        <section class="stats">
+
+            <div class="stat-card">
+                <span class="stat-label">Total Subjects</span>
+                <strong id="totalSubjects">0</strong>
+            </div>
+
+            <div class="stat-card">
+                <span class="stat-label">Active</span>
+                <strong id="activeSubjects">0</strong>
+            </div>
+
+            <div class="stat-card">
+                <span class="stat-label">Inactive</span>
+                <strong id="inactiveSubjects">0</strong>
+            </div>
+
+        </section>
+
+
+        <!-- SUBJECTS -->
+        <section class="content-section">
+
+            <div class="section-heading">
+                <div>
+                    <h2>All Subjects</h2>
+                    <p>Manage subjects used throughout the Hybrid portal.</p>
+                </div>
+
+                <div class="search-wrap">
+                    <input
+                        type="search"
+                        id="searchInput"
+                        placeholder="Search subjects..."
+                    >
+                </div>
+            </div>
+
+
+            <div id="subjectsGrid" class="subjects-grid">
+                <!-- Firebase subjects appear here -->
+            </div>
+
+
+            <!-- EMPTY -->
+            <div id="emptyState" class="empty-state hidden">
+
+                <div class="empty-icon">+</div>
+
+                <h3>No subjects yet</h3>
+
+                <p>
+                    Create your first subject to start building
+                    the Hybrid academic library.
+                </p>
+
+                <button id="emptyAddBtn" class="primary-btn">
+                    Add Subject
+                </button>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- MODAL -->
+    <div id="subjectModal" class="modal hidden">
+
+        <div class="modal-backdrop"></div>
+
+        <div class="modal-card">
+
+            <div class="modal-header">
+
+                <div>
+                    <div class="eyebrow">HYBRID CONTENT</div>
+                    <h2 id="modalTitle">Add Subject</h2>
+                </div>
+
+                <button id="closeModalBtn" class="close-btn">
+                    ×
+                </button>
+
+            </div>
+
+
+            <form id="subjectForm">
+
+                <input
+                    type="hidden"
+                    id="subjectId"
+                >
+
+
+                <div class="form-group">
+
+                    <label for="subjectName">
+                        Subject Name
+                    </label>
+
+                    <input
+                        type="text"
+                        id="subjectName"
+                        placeholder="e.g. Physics"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="subjectDescription">
+                        Description
+                        <span>Optional</span>
+                    </label>
+
+                    <textarea
+                        id="subjectDescription"
+                        rows="4"
+                        placeholder="Short description of the subject..."
+                    ></textarea>
+
+                </div>
+
+
+                <div class="form-row">
+
+                    <div class="form-group">
+
+                        <label for="subjectMedium">
+                            Medium
+                        </label>
+
+                        <select id="subjectMedium">
+
+                            <option value="Kannada">
+                                Kannada
+                            </option>
+
+                            <option value="English">
+                                English
+                            </option>
+
+                            <option value="Both">
+                                Both
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="subjectPriority">
+                            Priority
+                        </label>
+
+                        <input
+                            type="number"
+                            id="subjectPriority"
+                            value="0"
+                            min="0"
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        Target Classes
+                    </label>
+
+                    <div class="class-options">
+
+                        <label class="check-option">
+                            <input
+                                type="checkbox"
+                                value="Under 8th"
+                                class="class-checkbox"
+                            >
+                            <span>Under 8th</span>
+                        </label>
+
+                        <label class="check-option">
+                            <input
+                                type="checkbox"
+                                value="8th"
+                                class="class-checkbox"
+                            >
+                            <span>8th</span>
+                        </label>
+
+                        <label class="check-option">
+                            <input
+                                type="checkbox"
+                                value="9th"
+                                class="class-checkbox"
+                            >
+                            <span>9th</span>
+                        </label>
+
+                        <label class="check-option">
+                            <input
+                                type="checkbox"
+                                value="10th"
+                                class="class-checkbox"
+                            >
+                            <span>10th</span>
+                        </label>
+
+                        <label class="check-option">
+                            <input
+                                type="checkbox"
+                                value="1st PUC"
+                                class="class-checkbox"
+                            >
+                            <span>1st PUC</span>
+                        </label>
+
+                        <label class="check-option">
+                            <input
+                                type="checkbox"
+                                value="2nd PUC"
+                                class="class-checkbox"
+                            >
+                            <span>2nd PUC</span>
+                        </label>
+
+                    </div>
+
+                </div>
+
+
+                <div class="form-group status-group">
+
+                    <label class="switch-row">
+
+                        <div>
+                            <strong>Active Subject</strong>
+                            <small>
+                                Students can see this subject when active.
+                            </small>
+                        </div>
+
+                        <input
+                            type="checkbox"
+                            id="subjectActive"
+                            checked
+                        >
+
+                        <span class="switch"></span>
+
+                    </label>
+
+                </div>
+
+
+                <div class="form-actions">
+
+                    <button
+                        type="button"
+                        id="cancelBtn"
+                        class="secondary-btn"
+                    >
+                        Cancel
+                    </button>
+
+                    <button
+                        type="submit"
+                        id="saveBtn"
+                        class="primary-btn"
+                    >
+                        Save Subject
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <script
+        type="module"
+        src="./addsubject.js"
+    ></script>
+
+</body>
+                      </html>
