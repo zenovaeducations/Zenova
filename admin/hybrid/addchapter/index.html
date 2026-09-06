@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Chapters | Zenova Hybrid Admin</title>
+
+    <link rel="stylesheet" href="./addchapter.css">
+</head>
+
+<body>
+
+    <!-- LOADER -->
+    <div id="loader" class="loader">
+
+        <div class="loader-ring">
+            <span>Z</span>
+        </div>
+
+        <p>Loading chapters...</p>
+
+    </div>
+
+
+    <!-- APP -->
+    <main id="app" class="app hidden">
+
+        <!-- HEADER -->
+        <header class="header">
+
+            <div class="header-left">
+
+                <button
+                    id="backButton"
+                    class="back-button"
+                    type="button"
+                >
+                    ←
+                </button>
+
+                <div>
+
+                    <div class="eyebrow">
+                        HYBRID ADMIN
+                    </div>
+
+                    <h1 id="subjectName">
+                        Subject
+                    </h1>
+
+                </div>
+
+            </div>
+
+
+            <button
+                id="addChapterButton"
+                class="primary-button"
+                type="button"
+            >
+                + Add Chapter
+            </button>
+
+        </header>
+
+
+        <!-- ERROR -->
+        <div
+            id="errorBox"
+            class="error-box hidden"
+        ></div>
+
+
+        <!-- SUBJECT INFO -->
+        <section class="subject-info">
+
+            <div class="subject-info-left">
+
+                <div class="subject-icon">
+                    S
+                </div>
+
+                <div>
+
+                    <div class="small-label">
+                        SUBJECT
+                    </div>
+
+                    <h2 id="subjectTitle">
+                        Subject
+                    </h2>
+
+                    <p id="subjectDescription">
+                        Manage chapters for this subject.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="chapter-count-box">
+
+                <strong id="chapterCount">
+                    0
+                </strong>
+
+                <span>
+                    Chapters
+                </span>
+
+            </div>
+
+        </section>
+
+
+        <!-- CHAPTER SECTION -->
+        <section class="content">
+
+            <div class="content-header">
+
+                <div>
+
+                    <h2>
+                        Chapters
+                    </h2>
+
+                    <p>
+                        Manage the chapters belonging to this subject.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div
+                id="chaptersList"
+                class="chapters-list"
+            ></div>
+
+
+            <!-- EMPTY -->
+            <div
+                id="emptyState"
+                class="empty-state hidden"
+            >
+
+                <div class="empty-icon">
+                    +
+                </div>
+
+                <h3>
+                    No chapters yet
+                </h3>
+
+                <p>
+                    Add the first chapter for this subject.
+                </p>
+
+                <button
+                    id="emptyAddButton"
+                    class="primary-button"
+                    type="button"
+                >
+                    + Add Chapter
+                </button>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- CHAPTER MODAL -->
+
+    <div
+        id="chapterModal"
+        class="modal hidden"
+    >
+
+        <div
+            id="modalOverlay"
+            class="modal-overlay"
+        ></div>
+
+
+        <div class="modal-card">
+
+            <div class="modal-header">
+
+                <div>
+
+                    <div class="eyebrow">
+                        CHAPTER
+                    </div>
+
+                    <h2 id="modalTitle">
+                        Add Chapter
+                    </h2>
+
+                </div>
+
+
+                <button
+                    id="closeModal"
+                    class="close-button"
+                    type="button"
+                >
+                    ×
+                </button>
+
+            </div>
+
+
+            <form id="chapterForm">
+
+                <!-- CHAPTER NUMBER -->
+
+                <div class="field">
+
+                    <label for="chapterNumber">
+                        Chapter Number
+                    </label>
+
+                    <input
+                        id="chapterNumber"
+                        type="number"
+                        min="1"
+                        placeholder="1"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- TITLE -->
+
+                <div class="field">
+
+                    <label for="chapterTitle">
+                        Chapter Title
+                    </label>
+
+                    <input
+                        id="chapterTitle"
+                        type="text"
+                        placeholder="e.g. Physical World"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- DESCRIPTION -->
+
+                <div class="field">
+
+                    <label for="chapterDescription">
+                        Description
+                        <span>Optional</span>
+                    </label>
+
+                    <textarea
+                        id="chapterDescription"
+                        rows="4"
+                        placeholder="Short description of this chapter..."
+                    ></textarea>
+
+                </div>
+
+
+                <!-- PRIORITY -->
+
+                <div class="field">
+
+                    <label for="chapterPriority">
+                        Priority
+                    </label>
+
+                    <input
+                        id="chapterPriority"
+                        type="number"
+                        min="0"
+                        value="0"
+                    >
+
+                    <small class="field-help">
+                        Lower chapter number is shown first.
+                    </small>
+
+                </div>
+
+
+                <!-- ACTIVE -->
+
+                <label class="active-row">
+
+                    <div>
+
+                        <strong>
+                            Active Chapter
+                        </strong>
+
+                        <small>
+                            Active chapters are visible to students.
+                        </small>
+
+                    </div>
+
+                    <input
+                        id="chapterActive"
+                        type="checkbox"
+                        checked
+                    >
+
+                </label>
+
+
+                <!-- FORM ERROR -->
+
+                <div
+                    id="formError"
+                    class="form-error hidden"
+                ></div>
+
+
+                <!-- ACTIONS -->
+
+                <div class="form-actions">
+
+                    <button
+                        id="cancelButton"
+                        type="button"
+                        class="secondary-button"
+                    >
+                        Cancel
+                    </button>
+
+                    <button
+                        id="saveButton"
+                        type="submit"
+                        class="primary-button"
+                    >
+                        Save Chapter
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <script
+        type="module"
+        src="./addchapter.js"
+    ></script>
+
+</body>
+</html>
