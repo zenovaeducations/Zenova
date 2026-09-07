@@ -875,7 +875,7 @@ function openChapter(
 
     const url =
         new URL(
-            "./chapter.html",
+            "./viewrecorededclasses.html",
             window.location.href
         );
 
