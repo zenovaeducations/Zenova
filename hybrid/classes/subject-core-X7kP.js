@@ -191,21 +191,6 @@ function showError(message) {
 }
 
 
-/* =========================================================
-   SUBJECT ID CHECK
-========================================================= */
-
-if (!subjectId) {
-
-    showError(
-        "No subject was selected. Please go back and select a subject."
-    );
-
-} else {
-
-    start();
-}
-
 
 /* =========================================================
    START
