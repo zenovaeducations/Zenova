@@ -1,474 +1,104 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
 
-<title>Subject | Zenova Educations</title>
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-<style>
-*{
-    box-sizing:border-box;
-    margin:0;
-    padding:0;
-}
+    <title>Subject | Zenova Educations</title>
 
-body{
-    font-family:Inter,Arial,sans-serif;
-    background:#f7f7f8;
-    color:#111;
-}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-button{
-    font-family:inherit;
-}
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
 
-.hidden{
-    display:none !important;
-}
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css"
+    >
 
-/* =========================
-   LOADER
-========================= */
-
-#loader{
-    position:fixed;
-    inset:0;
-    background:#fff;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    z-index:9999;
-}
-
-.loader-ring{
-    width:64px;
-    height:64px;
-    border:3px solid #eee;
-    border-top-color:#6d28d9;
-    border-radius:50%;
-    animation:spin 1s linear infinite;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-}
-
-.loader-z{
-    position:absolute;
-    font-size:22px;
-    font-weight:900;
-    color:#6d28d9;
-}
-
-@keyframes spin{
-    to{
-        transform:rotate(360deg);
-    }
-}
-
-/* =========================
-   HEADER
-========================= */
-
-.header{
-    height:72px;
-    background:#fff;
-    border-bottom:1px solid #e8e8e8;
-    display:flex;
-    align-items:center;
-    padding:0 28px;
-    position:sticky;
-    top:0;
-    z-index:100;
-}
-
-.back-btn{
-    width:42px;
-    height:42px;
-    border:1px solid #ddd;
-    background:#fff;
-    border-radius:12px;
-    cursor:pointer;
-    font-size:20px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-}
-
-.brand{
-    margin-left:16px;
-    font-size:17px;
-    font-weight:800;
-}
-
-.brand span{
-    color:#6d28d9;
-}
-
-/* =========================
-   MAIN
-========================= */
-
-.container{
-    width:min(1100px,92%);
-    margin:0 auto;
-    padding:42px 0 80px;
-}
-
-.subject-top{
-    background:#fff;
-    border:1px solid #e7e7e7;
-    border-radius:20px;
-    padding:30px;
-    margin-bottom:28px;
-}
-
-.subject-label{
-    font-size:12px;
-    font-weight:800;
-    letter-spacing:1.5px;
-    color:#777;
-    text-transform:uppercase;
-    margin-bottom:10px;
-}
-
-#subjectTitle{
-    font-size:34px;
-    line-height:1.15;
-    font-weight:900;
-}
-
-#subjectDescription{
-    margin-top:10px;
-    color:#666;
-    font-size:15px;
-    line-height:1.6;
-}
-
-.subject-count{
-    margin-top:20px;
-    display:inline-flex;
-    padding:8px 12px;
-    border-radius:9px;
-    background:#f2edff;
-    color:#5b21b6;
-    font-size:13px;
-    font-weight:800;
-}
-
-/* =========================
-   CHAPTER LIST
-========================= */
-
-.section-head{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-bottom:15px;
-}
-
-.section-head h2{
-    font-size:20px;
-    font-weight:900;
-}
-
-#chaptersList{
-    display:flex;
-    flex-direction:column;
-    gap:14px;
-}
-
-/* =========================
-   CHAPTER CARD
-========================= */
-
-.chapter-card{
-    background:#fff;
-    border:1px solid #e5e5e5;
-    border-radius:18px;
-    padding:14px;
-    display:flex;
-    align-items:center;
-    gap:18px;
-    transition:.2s ease;
-}
-
-.chapter-card:hover{
-    border-color:#cfcfcf;
-    transform:translateY(-1px);
-}
-
-.thumbnail{
-    width:220px;
-    height:124px;
-    flex:none;
-    border-radius:12px;
-    overflow:hidden;
-    background:#eee;
-    position:relative;
-}
-
-.thumbnail img{
-    width:100%;
-    height:100%;
-    object-fit:cover;
-}
-
-.play-icon{
-    position:absolute;
-    left:50%;
-    top:50%;
-    transform:translate(-50%,-50%);
-    width:42px;
-    height:42px;
-    border-radius:50%;
-    background:#fff;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:16px;
-}
-
-.chapter-info{
-    flex:1;
-    min-width:0;
-}
-
-.chapter-number{
-    font-size:11px;
-    color:#777;
-    font-weight:800;
-    letter-spacing:1px;
-    text-transform:uppercase;
-}
-
-.chapter-title{
-    margin-top:6px;
-    font-size:19px;
-    font-weight:850;
-}
-
-.chapter-description{
-    margin-top:6px;
-    color:#777;
-    font-size:13px;
-    line-height:1.5;
-}
-
-.actions{
-    display:flex;
-    gap:9px;
-    margin-top:16px;
-    flex-wrap:wrap;
-}
-
-.action-btn{
-    border:0;
-    border-radius:9px;
-    padding:10px 14px;
-    font-size:12px;
-    font-weight:800;
-    cursor:pointer;
-}
-
-.watch{
-    background:#111;
-    color:#fff;
-}
-
-.pdf{
-    background:#f1f1f1;
-    color:#111;
-}
-
-.action-btn:disabled{
-    opacity:.4;
-    cursor:not-allowed;
-}
-
-/* =========================
-   LOCKED
-========================= */
-
-.locked-card{
-    position:relative;
-}
-
-.lock-overlay{
-    position:absolute;
-    inset:0;
-    border-radius:18px;
-    background:rgba(255,255,255,.88);
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    flex-direction:column;
-    z-index:2;
-}
-
-.lock-icon{
-    font-size:24px;
-    margin-bottom:6px;
-}
-
-.lock-text{
-    font-size:14px;
-    font-weight:900;
-}
-
-.lock-sub{
-    color:#777;
-    font-size:12px;
-    margin-top:4px;
-}
-
-/* =========================
-   EMPTY
-========================= */
-
-.empty{
-    background:#fff;
-    border:1px dashed #d8d8d8;
-    border-radius:18px;
-    padding:55px 20px;
-    text-align:center;
-}
-
-.empty h3{
-    font-size:18px;
-    font-weight:850;
-}
-
-.empty p{
-    color:#777;
-    margin-top:7px;
-    font-size:14px;
-}
-
-/* =========================
-   ERROR
-========================= */
-
-#errorBox{
-    background:#fff;
-    border:1px solid #e5e5e5;
-    border-radius:18px;
-    padding:40px;
-    text-align:center;
-}
-
-#errorBox h3{
-    font-size:20px;
-    margin-bottom:8px;
-}
-
-#errorBox p{
-    color:#777;
-    font-size:14px;
-}
-
-/* =========================
-   MOBILE
-========================= */
-
-@media(max-width:700px){
-
-    .header{
-        padding:0 16px;
-    }
-
-    .container{
-        width:94%;
-        padding-top:25px;
-    }
-
-    .subject-top{
-        padding:22px;
-    }
-
-    #subjectTitle{
-        font-size:27px;
-    }
-
-    .chapter-card{
-        align-items:flex-start;
-        flex-direction:column;
-        padding:12px;
-    }
-
-    .thumbnail{
-        width:100%;
-        height:auto;
-        aspect-ratio:16/9;
-    }
-
-    .chapter-info{
-        width:100%;
-    }
-
-    .actions{
-        width:100%;
-    }
-
-    .action-btn{
-        flex:1;
-    }
-}
-</style>
+    <link rel="stylesheet" href="./subject.css">
 </head>
 
 <body>
 
-<!-- LOADER -->
+<!-- =========================================================
+     LOADER
+========================================================= -->
 
-<div id="loader">
-    <div class="loader-ring"></div>
+<div id="loader" class="loader-screen">
+
     <div class="loader-z">Z</div>
+
+    <div class="loader-ring"></div>
+
 </div>
 
 
-<!-- APP -->
+<!-- =========================================================
+     APP
+========================================================= -->
 
-<div id="app" class="hidden">
+<div id="app" class="app hidden">
 
-    <header class="header">
+    <!-- HEADER -->
+
+    <header class="topbar">
 
         <button
-            class="back-btn"
-            id="backBtn"
-            aria-label="Back">
-            ←
+            id="backButton"
+            class="back-button"
+            type="button"
+            aria-label="Go back"
+        >
+            <i class="ri-arrow-left-line"></i>
         </button>
 
         <div class="brand">
-            ZENOVA <span>EDUCATIONS</span>
+            <span class="brand-name">ZENOVA</span>
+            <span class="brand-sub">EDUCATIONS</span>
         </div>
+
+        <div class="header-spacer"></div>
 
     </header>
 
 
-    <main class="container">
+    <!-- SUBJECT HERO -->
 
-        <!-- SUBJECT -->
+    <main class="page">
 
-        <section class="subject-top">
+        <section class="subject-header">
 
             <div class="subject-label">
-                Subject
+                RECORDED CLASSES
             </div>
 
-            <h1 id="subjectTitle">
-                Loading...
+            <h1 id="subjectName">
+                Subject
             </h1>
 
             <p id="subjectDescription">
-                Loading subject information...
+                Recorded chapters and study material.
             </p>
 
-            <div
-                class="subject-count"
-                id="subjectCount">
-                0 Chapters
+            <div class="subject-meta">
+
+                <span>
+                    <i class="ri-book-open-line"></i>
+                    <span id="chapterCount">0</span> Chapters
+                </span>
+
+                <span id="mediumBadge" class="medium-badge">
+                    —
+                </span>
+
             </div>
 
         </section>
@@ -476,831 +106,85 @@ button{
 
         <!-- CHAPTERS -->
 
-        <div class="section-head">
+        <section class="chapters-section">
 
-            <h2>
-                Chapters
-            </h2>
+            <div class="section-heading">
 
-        </div>
+                <div>
+                    <span>COURSE CONTENT</span>
+                    <h2>Chapters</h2>
+                </div>
 
-
-        <div id="chaptersList"></div>
-
-
-        <!-- EMPTY -->
-
-        <div
-            id="emptyState"
-            class="empty hidden">
-
-            <h3>
-                No chapters available
-            </h3>
-
-            <p>
-                Chapters for this subject will appear here once they are added.
-            </p>
-
-        </div>
+            </div>
 
 
-        <!-- ERROR -->
+            <div
+                id="chaptersList"
+                class="chapters-list"
+            ></div>
 
-        <div
-            id="errorBox"
-            class="hidden">
 
-            <h3>
-                Unable to load chapters
-            </h3>
+            <!-- EMPTY -->
 
-            <p id="errorMessage">
-                Please try again.
-            </p>
+            <div
+                id="emptyState"
+                class="empty-state hidden"
+            >
 
-        </div>
+                <div class="empty-icon">
+                    <i class="ri-book-open-line"></i>
+                </div>
+
+                <h3>No chapters available</h3>
+
+                <p>
+                    Chapters for this subject have not been uploaded yet.
+                </p>
+
+            </div>
+
+
+            <!-- ERROR -->
+
+            <div
+                id="errorState"
+                class="error-state hidden"
+            >
+
+                <div class="error-icon">
+                    <i class="ri-error-warning-line"></i>
+                </div>
+
+                <h3>Unable to load chapters</h3>
+
+                <p id="errorMessage">
+                    Please try again.
+                </p>
+
+                <button
+                    id="retryButton"
+                    type="button"
+                >
+                    Try Again
+                </button>
+
+            </div>
+
+        </section>
 
     </main>
 
 </div>
 
 
-<script type="module">
-
-/* ============================================================
-   FIREBASE
-============================================================ */
-
-import { auth, db } from "../../firebase/firebase-config.js";
-
-import {
-    onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
-
-import {
-    doc,
-    getDoc,
-    collection,
-    query,
-    where,
-    getDocs
-} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
-
-
-/* ============================================================
-   ELEMENTS
-============================================================ */
-
-const loader =
-    document.getElementById("loader");
-
-const app =
-    document.getElementById("app");
-
-const subjectTitle =
-    document.getElementById("subjectTitle");
-
-const subjectDescription =
-    document.getElementById("subjectDescription");
-
-const subjectCount =
-    document.getElementById("subjectCount");
-
-const chaptersList =
-    document.getElementById("chaptersList");
-
-const emptyState =
-    document.getElementById("emptyState");
-
-const errorBox =
-    document.getElementById("errorBox");
-
-const errorMessage =
-    document.getElementById("errorMessage");
-
-const backBtn =
-    document.getElementById("backBtn");
-
-
-/* ============================================================
-   URL
-============================================================ */
-
-const params =
-    new URLSearchParams(
-        window.location.search
-    );
-
-const subjectId =
-    params.get("subjectId");
-
-
-/* ============================================================
-   BACK
-============================================================ */
-
-backBtn.addEventListener(
-    "click",
-    () => {
-
-        window.location.href = "./";
-
-    }
-);
-
-
-/* ============================================================
-   START
-============================================================ */
-
-if (!subjectId) {
-
-    showError(
-        "No subject was selected."
-    );
-
-} else {
-
-    onAuthStateChanged(
-        auth,
-        async user => {
-
-            if (!user) {
-
-                window.location.href =
-                    "../../";
-
-                return;
-
-            }
-
-            await initialize();
-
-        }
-    );
-
-}
-
-
-/* ============================================================
-   INITIALIZE
-============================================================ */
-
-async function initialize(){
-
-    try{
-
-        /*
-         * First load the selected subject.
-         */
-
-        const subjectRef =
-            doc(
-                db,
-                "hybridSubjects",
-                subjectId
-            );
-
-        const subjectSnap =
-            await getDoc(
-                subjectRef
-            );
-
-
-        if(
-            !subjectSnap.exists()
-        ){
-
-            throw new Error(
-                "Subject not found in Firebase."
-            );
-
-        }
-
-
-        const subject =
-            subjectSnap.data();
-
-
-        subjectTitle.textContent =
-            subject.name ||
-            "Subject";
-
-
-        subjectDescription.textContent =
-            subject.description ||
-            "Explore all chapters and learning materials.";
-
-
-        /*
-         * Now load chapters.
-         */
-
-        await loadChapters();
-
-
-        /*
-         * Finally show application.
-         */
-
-        loader.classList.add(
-            "hidden"
-        );
-
-        app.classList.remove(
-            "hidden"
-        );
-
-    }catch(error){
-
-        console.error(
-            "Subject page error:",
-            error
-        );
-
-        loader.classList.add(
-            "hidden"
-        );
-
-        app.classList.remove(
-            "hidden"
-        );
-
-        showError(
-            error.message ||
-            "Something went wrong while loading chapters."
-        );
-
-    }
-
-}
-
-
-/* ============================================================
-   LOAD CHAPTERS
-============================================================ */
-
-async function loadChapters(){
-
-    chaptersList.innerHTML = "";
-
-    const chaptersRef =
-        collection(
-            db,
-            "hybridChapters"
-        );
-
-
-    /*
-     * IMPORTANT:
-     *
-     * We only filter using subjectId.
-     * No orderBy.
-     * Therefore Firebase does not need
-     * a composite index.
-     */
-
-    const chapterQuery =
-        query(
-            chaptersRef,
-            where(
-                "subjectId",
-                "==",
-                subjectId
-            )
-        );
-
-
-    const snapshot =
-        await getDocs(
-            chapterQuery
-        );
-
-
-    let chapters =
-        snapshot.docs.map(
-            item => ({
-
-                id:item.id,
-
-                ...item.data()
-
-            })
-        );
-
-
-    /*
-     * Only active chapters are
-     * displayed to students.
-     */
-
-    chapters =
-        chapters.filter(
-            chapter =>
-                chapter.active !== false
-        );
-
-
-    /*
-     * Textbook order.
-     */
-
-    chapters.sort(
-        (a,b) => {
-
-            const A =
-                Number(
-                    a.chapterNumber || 9999
-                );
-
-            const B =
-                Number(
-                    b.chapterNumber || 9999
-                );
-
-            return A - B;
-
-        }
-    );
-
-
-    subjectCount.textContent =
-        `${chapters.length} ${
-            chapters.length === 1
-                ? "Chapter"
-                : "Chapters"
-        }`;
-
-
-    if(!chapters.length){
-
-        emptyState.classList.remove(
-            "hidden"
-        );
-
-        return;
-
-    }
-
-
-    chapters.forEach(
-        chapter => {
-
-            chaptersList.appendChild(
-                createChapterCard(
-                    chapter
-                )
-            );
-
-        }
-    );
-
-}
-
-
-/* ============================================================
-   CREATE CHAPTER
-============================================================ */
-
-function createChapterCard(
-    chapter
-){
-
-    const card =
-        document.createElement(
-            "article"
-        );
-
-
-    card.className =
-        "chapter-card";
-
-
-    const locked =
-        chapter.locked === true;
-
-
-    const videoUrl =
-        chapter.videoUrl ||
-        "";
-
-
-    const pdfUrl =
-        chapter.pdfUrl ||
-        "";
-
-
-    const youtubeId =
-        extractYouTubeId(
-            videoUrl
-        );
-
-
-    let thumbnail =
-        "";
-
-
-    if(youtubeId){
-
-        thumbnail =
-            `https://img.youtube.com/vi/${youtubeId}/hqdefault.jpg`;
-
-    }
-
-
-    /*
-     * If there is no YouTube thumbnail,
-     * use a clean Zenova placeholder.
-     */
-
-    const thumbnailHTML =
-        thumbnail
-
-            ?
-
-        `<img
-            src="${thumbnail}"
-            alt="Chapter thumbnail"
-            loading="lazy"
-        >`
-
-            :
-
-        `<div style="
-            width:100%;
-            height:100%;
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            background:#111;
-            color:#fff;
-            font-size:28px;
-            font-weight:900;
-        ">
-            Z
-        </div>`;
-
-
-    card.innerHTML = `
-
-        <div class="thumbnail">
-
-            ${thumbnailHTML}
-
-            ${
-                videoUrl
-                ?
-                `<div class="play-icon">▶</div>`
-                :
-                ""
-            }
-
-        </div>
-
-
-        <div class="chapter-info">
-
-            <div class="chapter-number">
-                CHAPTER ${
-                    String(
-                        chapter.chapterNumber || ""
-                    )
-                }
-            </div>
-
-            <div class="chapter-title">
-                ${escapeHTML(
-                    chapter.title ||
-                    chapter.chapterName ||
-                    "Untitled Chapter"
-                )}
-            </div>
-
-            <div class="chapter-description">
-
-                ${escapeHTML(
-                    chapter.description ||
-                    "Recorded class and study material."
-                )}
-
-            </div>
-
-
-            <div class="actions">
-
-                <button
-                    class="action-btn watch"
-                    ${!videoUrl || locked ? "disabled" : ""}
-                >
-                    ${
-                        locked
-                        ? "Chapter Locked"
-                        : videoUrl
-                        ? "Watch Class"
-                        : "No Video"
-                    }
-                </button>
-
-
-                <button
-                    class="action-btn pdf"
-                    ${!pdfUrl || locked ? "disabled" : ""}
-                >
-                    ${
-                        locked
-                        ? "Locked"
-                        : pdfUrl
-                        ? "Download PDF"
-                        : "No PDF"
-                    }
-                </button>
-
-            </div>
-
-        </div>
-
-    `;
-
-
-    /*
-     * Watch Class
-     */
-
-    const watchButton =
-        card.querySelector(
-            ".watch"
-        );
-
-
-    if(
-        watchButton &&
-        videoUrl &&
-        !locked
-    ){
-
-        watchButton.addEventListener(
-            "click",
-            () => {
-
-                window.location.href =
-                    `./chapter.html?chapterId=${
-                        encodeURIComponent(
-                            chapter.id
-                        )
-                    }&subjectId=${
-                        encodeURIComponent(
-                            subjectId
-                        )
-                    }`;
-
-            }
-        );
-
-    }
-
-
-    /*
-     * Download PDF
-     */
-
-    const pdfButton =
-        card.querySelector(
-            ".pdf"
-        );
-
-
-    if(
-        pdfButton &&
-        pdfUrl &&
-        !locked
-    ){
-
-        pdfButton.addEventListener(
-            "click",
-            () => {
-
-                const link =
-                    document.createElement(
-                        "a"
-                    );
-
-                link.href =
-                    pdfUrl;
-
-                link.target =
-                    "_blank";
-
-                link.rel =
-                    "noopener";
-
-                document.body.appendChild(
-                    link
-                );
-
-                link.click();
-
-                link.remove();
-
-            }
-        );
-
-    }
-
-
-    /*
-     * Locked appearance.
-     */
-
-    if(locked){
-
-        card.classList.add(
-            "locked-card"
-        );
-
-
-        const overlay =
-            document.createElement(
-                "div"
-            );
-
-
-        overlay.className =
-            "lock-overlay";
-
-
-        overlay.innerHTML = `
-
-            <div class="lock-icon">
-                🔒
-            </div>
-
-            <div class="lock-text">
-                Chapter Locked
-            </div>
-
-            <div class="lock-sub">
-                This chapter is not available yet.
-            </div>
-
-        `;
-
-
-        card.appendChild(
-            overlay
-        );
-
-    }
-
-
-    return card;
-
-}
-
-
-/* ============================================================
-   YOUTUBE ID
-============================================================ */
-
-function extractYouTubeId(
-    url
-){
-
-    if(!url)
-        return null;
-
-
-    try{
-
-        const parsed =
-            new URL(
-                url
-            );
-
-
-        if(
-            parsed.hostname.includes(
-                "youtu.be"
-            )
-        ){
-
-            return parsed.pathname
-                .replace(
-                    "/",
-                    ""
-                );
-
-        }
-
-
-        if(
-            parsed.hostname.includes(
-                "youtube.com"
-            )
-        ){
-
-            if(
-                parsed.searchParams.has(
-                    "v"
-                )
-            ){
-
-                return parsed.searchParams.get(
-                    "v"
-                );
-
-            }
-
-
-            const parts =
-                parsed.pathname.split(
-                    "/"
-                );
-
-
-            const embedIndex =
-                parts.indexOf(
-                    "embed"
-                );
-
-
-            if(
-                embedIndex !== -1
-            ){
-
-                return parts[
-                    embedIndex + 1
-                ];
-
-            }
-
-        }
-
-    }catch(error){
-
-        return null;
-
-    }
-
-
-    return null;
-
-}
-
-
-/* ============================================================
-   HTML SAFETY
-============================================================ */
-
-function escapeHTML(
-    value
-){
-
-    return String(
-        value ?? ""
-    )
-    .replaceAll(
-        "&",
-        "&amp;"
-    )
-    .replaceAll(
-        "<",
-        "&lt;"
-    )
-    .replaceAll(
-        ">",
-        "&gt;"
-    )
-    .replaceAll(
-        '"',
-        "&quot;"
-    )
-    .replaceAll(
-        "'",
-        "&#039;"
-    );
-
-}
-
-
-/* ============================================================
-   ERROR
-============================================================ */
-
-function showError(
-    message
-){
-
-    errorBox.classList.remove(
-        "hidden"
-    );
-
-    errorMessage.textContent =
-        message;
-
-}
-
-</script>
+<!-- =========================================================
+     SCRIPT
+========================================================= -->
+
+<script
+    type="module"
+    src="./subject-core-X7kP.js"
+></script>
 
 </body>
 </html>
