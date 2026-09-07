@@ -133,23 +133,17 @@ function initialize() {
    REALTIME PLAN LISTENER
 ========================================================= */
 
-function startPlanListener() {
+function startMasterPlanListener() {
 
-    if (
-        typeof unsubscribePlan ===
-        "function"
-    ) {
+    const today =
+        getDateKey(new Date());
 
-        unsubscribePlan();
+    console.log(
+        "ZENOVA HYBRID: Loading Master Plan:",
+        today
+    );
 
-    }
-
-
-    const dateKey =
-        planDate.value;
-
-
-    const planQuery =
+    const baseQuery =
         query(
             collection(
                 db,
@@ -159,41 +153,38 @@ function startPlanListener() {
             where(
                 "dateKey",
                 "==",
-                dateKey
+                today
             ),
 
             limit(10)
         );
 
 
-    unsubscribePlan =
-        onSnapshot(
+    onSnapshot(
 
-            planQuery,
+        baseQuery,
 
-            snapshot => {
+        async (snapshot) => {
+
+            try {
+
+                console.log(
+                    "MASTER PLAN DOCUMENTS:",
+                    snapshot.size
+                );
+
 
                 if (snapshot.empty) {
 
-                    currentPlanId =
-                        null;
+                    masterPlanTasks = [];
 
-                    tasks = [];
-
-                    priority.value = 1;
-
-                    active.checked =
-                        false;
-
-                    renderTasks();
-
-                    updateStatus();
+                    renderMasterPlan();
 
                     return;
                 }
 
 
-                const plans =
+                let plans =
                     snapshot.docs.map(
                         item => ({
                             id: item.id,
@@ -202,65 +193,140 @@ function startPlanListener() {
                     );
 
 
+                /*
+                 * Only published plans.
+                 */
+                plans =
+                    plans.filter(
+                        plan =>
+                            plan.active === true
+                    );
+
+
+                if (!plans.length) {
+
+                    console.log(
+                        "No ACTIVE Master Plan for",
+                        today
+                    );
+
+                    masterPlanTasks = [];
+
+                    renderMasterPlan();
+
+                    return;
+                }
+
+
+                /*
+                 * Highest priority plan wins.
+                 */
                 plans.sort(
                     (a, b) =>
                         Number(
-                            b.priority || 0
+                            a.priority || 0
                         ) -
                         Number(
-                            a.priority || 0
+                            b.priority || 0
                         )
                 );
 
 
                 const plan =
-                    plans[0];
+                    plans[plans.length - 1];
 
 
-                currentPlanId =
-                    plan.id;
+                console.log(
+                    "ACTIVE MASTER PLAN:",
+                    plan
+                );
 
 
-                tasks =
+                const planTasks =
                     Array.isArray(
                         plan.tasks
                     )
                         ? plan.tasks
-                            .map(
-                                task => ({
-                                    ...task
-                                })
-                            )
                         : [];
 
 
-                priority.value =
-                    plan.priority || 1;
+                masterPlanTasks =
+                    await Promise.all(
+
+                        planTasks.map(
+                            async task => {
+
+                                let completed =
+                                    false;
+
+                                try {
+
+                                    completed =
+                                        await getCompletion(
+                                            plan.id,
+                                            task.id
+                                        );
+
+                                } catch (error) {
+
+                                    console.error(
+                                        "TASK COMPLETION ERROR:",
+                                        error
+                                    );
+
+                                }
 
 
-                active.checked =
-                    plan.active === true;
+                                return {
+
+                                    ...task,
+
+                                    planId:
+                                        plan.id,
+
+                                    completed
+
+                                };
+
+                            }
+                        )
+
+                    );
 
 
-                renderTasks();
+                renderMasterPlan();
 
-                updateStatus();
 
-            },
-
-            error => {
+            } catch (error) {
 
                 console.error(
-                    "MASTER PLAN LISTENER ERROR:",
+                    "MASTER PLAN ERROR:",
                     error
                 );
 
+                masterPlanTasks = [];
+
+                renderMasterPlan();
+
             }
 
-        );
+        },
 
+        error => {
+
+            console.error(
+                "MASTER PLAN FIREBASE ERROR:",
+                error
+            );
+
+            masterPlanTasks = [];
+
+            renderMasterPlan();
+
+        }
+
+    );
 }
-
 
 /* =========================================================
    EVENTS
@@ -744,106 +810,69 @@ function attachTaskActions() {
 /* =========================================================
    SAVE
 ========================================================= */
-
 async function savePlan() {
 
-    const dateKey =
-        planDate.value;
-
+    const dateKey = planDate.value;
 
     if (!dateKey) {
-
-        alert(
-            "Please select a date."
-        );
-
+        alert("Please select a date.");
         return;
     }
-
 
     if (!tasks.length) {
-
-        alert(
-            "Add at least one task."
-        );
-
+        alert("Add at least one task.");
         return;
     }
 
-
-    saveButton.disabled =
-        true;
-
-    saveButton.textContent =
-        "SAVING...";
-
-
-    saveMessage.textContent =
-        "";
-
+    saveButton.disabled = true;
+    saveButton.textContent = "SAVING...";
+    saveMessage.textContent = "";
 
     try {
 
-        const planId =
-            currentPlanId ||
-            `${dateKey}_master`;
+        /*
+         * One fixed document per date.
+         * This prevents duplicate Master Plans
+         * for the same day.
+         */
+        const planId = `${dateKey}_master`;
 
-
-        const planRef =
-            doc(
-                db,
-                "hybridMasterPlans",
-                planId
-            );
-
+        const planRef = doc(
+            db,
+            "hybridMasterPlans",
+            planId
+        );
 
         await setDoc(
-
             planRef,
-
             {
+                dateKey: dateKey,
 
-                dateKey,
+                active: active.checked,
 
-                active:
-                    active.checked,
+                priority: Number(
+                    priority.value || 1
+                ),
 
-                priority:
-                    Number(
-                        priority.value ||
-                        1
-                    ),
+                tasks: tasks,
 
-                tasks,
+                updatedAt: serverTimestamp(),
 
-                updatedAt:
-                    serverTimestamp(),
+                updatedBy: currentUser.uid,
 
-                updatedBy:
-                    currentUser.uid,
-
-                createdAt:
-                    serverTimestamp(),
-
-                createdBy:
-                    currentUser.uid
-
+                createdBy: currentUser.uid
             },
-
             {
                 merge: true
             }
-
         );
 
-
-        currentPlanId =
-            planId;
-
+        currentPlanId = planId;
 
         saveMessage.textContent =
-            "Master Plan saved successfully.";
-
+            active.checked
+                ? "Master Plan published successfully."
+                : "Master Plan saved as draft.";
 
     } catch (error) {
 
@@ -852,22 +881,18 @@ async function savePlan() {
             error
         );
 
-
         saveMessage.textContent =
-            "Could not save the Master Plan.";
+            error.message ||
+            "Could not save Master Plan.";
 
     } finally {
 
-        saveButton.disabled =
-            false;
+        saveButton.disabled = false;
 
         saveButton.textContent =
             "SAVE MASTER PLAN";
-
     }
-
 }
-
 
 /* =========================================================
    STATUS
