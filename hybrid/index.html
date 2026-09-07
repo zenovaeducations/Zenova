@@ -2,13 +2,14 @@
 <html lang="en">
 
 <head>
-
     <meta charset="UTF-8">
 
     <meta
         name="viewport"
-        content="width=device-width, initial-scale=1.0"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
     >
+
+    <meta name="theme-color" content="#ffffff">
 
     <title>Zenova Hybrid</title>
 
@@ -16,134 +17,116 @@
         rel="stylesheet"
         href="./hybrid.css"
     >
-
 </head>
-
 
 <body>
 
-    <!-- =========================================
-         LOADING
-    ========================================== -->
+    <!-- =====================================================
+         LOADER
+    ====================================================== -->
 
     <div
         id="zenovaLoader"
         class="zenova-loader"
     >
-
         <div class="loader-ring">
             <span>Z</span>
         </div>
-
     </div>
 
 
-    <!-- =========================================
+    <!-- =====================================================
          APPLICATION
-    ========================================== -->
+    ====================================================== -->
 
     <main
         id="hybridApp"
         class="hybrid-app hidden"
     >
 
-
-        <!-- =====================================
+        <!-- =================================================
              HEADER
-        ====================================== -->
+        ================================================== -->
 
         <header class="topbar">
+
+            <button
+                id="menuButton"
+                class="header-icon"
+                type="button"
+                aria-label="Menu"
+            >
+                <svg viewBox="0 0 24 24">
+                    <path d="M4 7h16"></path>
+                    <path d="M4 12h16"></path>
+                    <path d="M4 17h16"></path>
+                </svg>
+            </button>
+
 
             <a
                 href="./"
                 class="brand"
             >
-
-                <div class="brand-logo">
-                    Z
-                </div>
-
-                <div class="brand-text">
-
-                    <strong>
-                        ZENOVA
-                    </strong>
-
-                    <span>
-                        HYBRID
-                    </span>
-
-                </div>
-
+                <strong>ZENOVA</strong>
+                <span>EDUCATIONS</span>
             </a>
 
 
             <button
                 id="notificationButton"
-                class="icon-button"
+                class="header-icon notification-button"
                 type="button"
                 aria-label="Notifications"
             >
-
-                <svg
-                    viewBox="0 0 24 24"
-                    aria-hidden="true"
-                >
-
-                    <path
-                        d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"
-                    />
-
-                    <path
-                        d="M10 21h4"
-                    />
-
+                <svg viewBox="0 0 24 24">
+                    <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"></path>
+                    <path d="M10 21h4"></path>
                 </svg>
 
                 <span
                     id="notificationDot"
                     class="notification-dot hidden"
                 ></span>
-
             </button>
 
         </header>
 
 
+        <!-- =================================================
+             GREETING
+        ================================================== -->
 
-        <!-- =====================================
-             HERO / GREETING
-        ====================================== -->
+        <section class="welcome">
 
-        <section class="greeting">
+            <div class="welcome-copy">
 
-            <div>
-
-                <p class="eyebrow">
-                    YOUR LEARNING SPACE
+                <p id="greetingLabel">
+                    GOOD MORNING
                 </p>
 
                 <h1>
-                    Good morning,
                     <span id="studentName">
                         Student
                     </span>
+                    <span class="welcome-wave">👋</span>
                 </h1>
 
-                <p
+                <div
                     id="studentMeta"
                     class="student-meta"
                 >
                     Hybrid Program
-                </p>
+                </div>
 
             </div>
 
 
             <button
                 id="profileButton"
-                class="profile-button"
+                class="avatar"
                 type="button"
+                aria-label="Profile"
             >
                 S
             </button>
@@ -151,10 +134,9 @@
         </section>
 
 
-
-        <!-- =====================================
-             HERO BANNER
-        ====================================== -->
+        <!-- =================================================
+             BANNER
+        ================================================== -->
 
         <section
             id="bannerSection"
@@ -167,13 +149,12 @@
             ></div>
 
 
-            <div class="banner-bottom">
+            <div class="banner-controls">
 
                 <div
                     id="bannerDots"
                     class="banner-dots"
                 ></div>
-
 
                 <span
                     id="bannerCounter"
@@ -187,20 +168,18 @@
         </section>
 
 
-
-        <!-- =====================================
-             MASTER PLAN
-        ====================================== -->
+        <!-- =================================================
+             TODAY'S MASTER PLAN
+        ================================================== -->
 
         <section
             id="masterPlanSection"
-            class="section"
+            class="section master-section"
         >
 
             <div class="section-heading">
 
                 <div>
-
                     <p class="section-label">
                         TODAY
                     </p>
@@ -208,39 +187,30 @@
                     <h2>
                         Today's Master Plan
                     </h2>
-
                 </div>
 
 
                 <div class="plan-count">
-
-                    <strong
-                        id="completedCount"
-                    >
-                        0
-                    </strong>
-
-                    <span>
-                        /
-                    </span>
-
-                    <span
-                        id="totalCount"
-                    >
-                        0
-                    </span>
-
+                    <strong id="completedCount">0</strong>
+                    <span>/</span>
+                    <span id="totalCount">0</span>
                 </div>
 
             </div>
 
 
-            <div class="progress-track">
+            <div class="progress-area">
 
-                <div
-                    id="masterProgress"
-                    class="progress-fill"
-                ></div>
+                <div class="progress-track">
+                    <div
+                        id="masterProgress"
+                        class="progress-fill"
+                    ></div>
+                </div>
+
+                <span id="progressText">
+                    0% complete
+                </span>
 
             </div>
 
@@ -255,6 +225,9 @@
                 id="masterPlanEmpty"
                 class="empty-card hidden"
             >
+                <div class="empty-symbol">
+                    ✓
+                </div>
 
                 <strong>
                     Nothing planned for today
@@ -263,150 +236,14 @@
                 <p>
                     Your master plan will appear here when it is published.
                 </p>
-
             </div>
 
         </section>
 
 
-
-        <!-- =====================================
-             QUICK ACCESS
-        ====================================== -->
-
-        <section class="section">
-
-            <div class="section-heading">
-
-                <div>
-
-                    <p class="section-label">
-                        SHORTCUTS
-                    </p>
-
-                    <h2>
-                        Quick Access
-                    </h2>
-
-                </div>
-
-            </div>
-
-
-            <div class="quick-grid">
-
-
-                <button
-                    class="quick-card"
-                    data-route="classes"
-                    type="button"
-                >
-
-                    <span class="quick-icon">
-                        ▶
-                    </span>
-
-                    <strong>
-                        Classes
-                    </strong>
-
-                </button>
-
-
-                <button
-                    class="quick-card"
-                    data-route="study"
-                    type="button"
-                >
-
-                    <span class="quick-icon">
-                        ◫
-                    </span>
-
-                    <strong>
-                        Study
-                    </strong>
-
-                </button>
-
-
-                <button
-                    class="quick-card"
-                    data-route="timetable"
-                    type="button"
-                >
-
-                    <span class="quick-icon">
-                        □
-                    </span>
-
-                    <strong>
-                        Timetable
-                    </strong>
-
-                </button>
-
-
-                <button
-                    class="quick-card"
-                    data-route="attendance"
-                    type="button"
-                >
-
-                    <span class="quick-icon">
-                        %
-                    </span>
-
-                    <strong>
-                        Attendance
-                    </strong>
-
-                </button>
-
-
-                <button
-                    class="quick-card"
-                    data-route="tests"
-                    type="button"
-                >
-
-                    <span class="quick-icon">
-                        ✓
-                    </span>
-
-                    <strong>
-                        Tests
-                    </strong>
-
-                </button>
-
-
-                <button
-                    class="quick-card"
-                    data-route="more"
-                    type="button"
-                >
-
-                    <span class="quick-icon">
-                        +
-                    </span>
-
-                    <strong>
-                        More
-                    </strong>
-
-                </button>
-
-
-            </div>
-
-        </section>
-
-
-
-        <!-- =====================================
+        <!-- =================================================
              TODAY'S CLASSES
-        ====================================== -->
+        ================================================== -->
 
         <section
             id="todayClassesSection"
@@ -416,7 +253,6 @@
             <div class="section-heading">
 
                 <div>
-
                     <p class="section-label">
                         UP NEXT
                     </p>
@@ -424,12 +260,11 @@
                     <h2>
                         Today's Classes
                     </h2>
-
                 </div>
 
 
                 <button
-                    class="text-button"
+                    class="view-button"
                     data-route="classes"
                     type="button"
                 >
@@ -447,61 +282,178 @@
         </section>
 
 
+        <!-- =================================================
+             QUICK ACCESS
+        ================================================== -->
 
-        <!-- =====================================
-             ATTENDANCE + TESTS
-        ====================================== -->
+        <section class="section">
 
-        <section class="section split-grid">
+            <div class="section-heading">
 
+                <div>
+                    <p class="section-label">
+                        SHORTCUTS
+                    </p>
 
-            <article
-                id="attendanceSummary"
-                class="summary-card"
-            >
-
-                <p class="section-label">
-                    ATTENDANCE
-                </p>
-
-                <h3>
-                    Attendance
-                </h3>
-
-                <div class="summary-loading">
-                    Loading...
+                    <h2>
+                        Quick Access
+                    </h2>
                 </div>
 
-            </article>
+            </div>
 
 
-            <article
-                id="testSummary"
-                class="summary-card"
-            >
+            <div class="quick-grid">
 
-                <p class="section-label">
-                    PERFORMANCE
-                </p>
+                <button
+                    class="quick-card"
+                    data-route="classes"
+                    type="button"
+                >
+                    <span class="quick-icon">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7z"></path>
+                        </svg>
+                    </span>
 
-                <h3>
-                    Latest Test
-                </h3>
+                    <span>Classes</span>
+                </button>
 
-                <div class="summary-loading">
-                    Loading...
-                </div>
 
-            </article>
+                <button
+                    class="quick-card"
+                    data-route="study"
+                    type="button"
+                >
+                    <span class="quick-icon">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M5 4h14v16H5z"></path>
+                            <path d="M8 8h8"></path>
+                            <path d="M8 12h8"></path>
+                            <path d="M8 16h5"></path>
+                        </svg>
+                    </span>
 
+                    <span>Study</span>
+                </button>
+
+
+                <button
+                    class="quick-card"
+                    data-route="timetable"
+                    type="button"
+                >
+                    <span class="quick-icon">
+                        <svg viewBox="0 0 24 24">
+                            <rect
+                                x="4"
+                                y="5"
+                                width="16"
+                                height="15"
+                                rx="2"
+                            ></rect>
+                            <path d="M8 3v4"></path>
+                            <path d="M16 3v4"></path>
+                            <path d="M4 9h16"></path>
+                        </svg>
+                    </span>
+
+                    <span>Schedule</span>
+                </button>
+
+
+                <button
+                    class="quick-card"
+                    data-route="tests"
+                    type="button"
+                >
+                    <span class="quick-icon">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M6 3h12v18H6z"></path>
+                            <path d="M9 7h6"></path>
+                            <path d="M9 11h6"></path>
+                            <path d="M9 15h3"></path>
+                        </svg>
+                    </span>
+
+                    <span>Tests</span>
+                </button>
+
+            </div>
 
         </section>
 
 
+        <!-- =================================================
+             PERFORMANCE
+        ================================================== -->
 
-        <!-- =====================================
+        <section class="section">
+
+            <div class="section-heading">
+
+                <div>
+                    <p class="section-label">
+                        PERFORMANCE
+                    </p>
+
+                    <h2>
+                        Your Progress
+                    </h2>
+                </div>
+
+            </div>
+
+
+            <div class="performance-grid">
+
+                <article
+                    id="attendanceSummary"
+                    class="performance-card"
+                >
+                    <div class="performance-top">
+                        <span class="performance-icon">
+                            %
+                        </span>
+
+                        <span class="performance-label">
+                            ATTENDANCE
+                        </span>
+                    </div>
+
+                    <div class="performance-loading">
+                        Loading...
+                    </div>
+                </article>
+
+
+                <article
+                    id="testSummary"
+                    class="performance-card"
+                >
+                    <div class="performance-top">
+                        <span class="performance-icon">
+                            ✓
+                        </span>
+
+                        <span class="performance-label">
+                            LATEST TEST
+                        </span>
+                    </div>
+
+                    <div class="performance-loading">
+                        Loading...
+                    </div>
+                </article>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
              ANNOUNCEMENTS
-        ====================================== -->
+        ================================================== -->
 
         <section
             id="announcementSection"
@@ -511,20 +463,18 @@
             <div class="section-heading">
 
                 <div>
-
                     <p class="section-label">
                         ZENOVA
                     </p>
 
                     <h2>
-                        Announcements
+                        Latest Updates
                     </h2>
-
                 </div>
 
 
                 <button
-                    class="text-button"
+                    class="view-button"
                     data-route="more"
                     type="button"
                 >
@@ -542,31 +492,30 @@
         </section>
 
 
-
-        <!-- =====================================
-             BOTTOM NAVIGATION
-        ====================================== -->
+        <!-- =================================================
+             BOTTOM NAV
+        ================================================== -->
 
         <div class="bottom-space"></div>
 
 
         <nav class="bottom-nav">
 
-
             <button
                 class="nav-item active"
                 data-route="home"
                 type="button"
             >
-
                 <span>
-                    ⌂
+                    <svg viewBox="0 0 24 24">
+                        <path d="M4 11.5 12 5l8 6.5"></path>
+                        <path d="M6.5 10.5V20h11v-9.5"></path>
+                    </svg>
                 </span>
 
                 <small>
                     Home
                 </small>
-
             </button>
 
 
@@ -575,15 +524,15 @@
                 data-route="classes"
                 type="button"
             >
-
                 <span>
-                    ▶
+                    <svg viewBox="0 0 24 24">
+                        <path d="M8 5v14l11-7z"></path>
+                    </svg>
                 </span>
 
                 <small>
                     Classes
                 </small>
-
             </button>
 
 
@@ -592,15 +541,18 @@
                 data-route="study"
                 type="button"
             >
-
                 <span>
-                    ◫
+                    <svg viewBox="0 0 24 24">
+                        <path d="M5 4h14v16H5z"></path>
+                        <path d="M8 8h8"></path>
+                        <path d="M8 12h8"></path>
+                        <path d="M8 16h5"></path>
+                    </svg>
                 </span>
 
                 <small>
                     Study
                 </small>
-
             </button>
 
 
@@ -609,15 +561,24 @@
                 data-route="timetable"
                 type="button"
             >
-
                 <span>
-                    □
+                    <svg viewBox="0 0 24 24">
+                        <rect
+                            x="4"
+                            y="5"
+                            width="16"
+                            height="15"
+                            rx="2"
+                        ></rect>
+                        <path d="M8 3v4"></path>
+                        <path d="M16 3v4"></path>
+                        <path d="M4 9h16"></path>
+                    </svg>
                 </span>
 
                 <small>
                     Schedule
                 </small>
-
             </button>
 
 
@@ -626,20 +587,20 @@
                 data-route="more"
                 type="button"
             >
-
                 <span>
-                    •••
+                    <svg viewBox="0 0 24 24">
+                        <path d="M5 7h14"></path>
+                        <path d="M5 12h14"></path>
+                        <path d="M5 17h14"></path>
+                    </svg>
                 </span>
 
                 <small>
                     More
                 </small>
-
             </button>
 
-
         </nav>
-
 
     </main>
 
@@ -650,5 +611,4 @@
     ></script>
 
 </body>
-
 </html>
