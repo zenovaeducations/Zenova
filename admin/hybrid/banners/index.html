@@ -1,331 +1,43 @@
-<!DOCTYPE html>
-<html lang="en">
+<div class="form-group">
 
-<head>
-    <meta charset="UTF-8">
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
+    <label>
+        BANNER IMAGE
+    </label>
+
+    <input
+        id="imageFile"
+        type="file"
+        accept="image/png,image/jpeg,image/webp"
+        required
     >
 
-    <title>Hybrid Banners — Zenova Admin</title>
+    <small>
+        Upload a 16:9 banner image. JPG, PNG or WEBP.
+    </small>
 
-    <link
-        rel="stylesheet"
-        href="./banners.css"
-    >
-</head>
-
-<body>
-
-<div id="loader" class="loader">
-    <div class="loader-z">Z</div>
 </div>
 
 
-<div id="app" class="app hidden">
+<div class="preview-wrap">
 
-    <header class="topbar">
+    <div class="preview-label">
+        16:9 LIVE PREVIEW
+    </div>
 
-        <button
-            id="backButton"
-            class="back-button"
-            type="button"
+    <div class="image-preview">
+
+        <img
+            id="imagePreview"
+            alt="Banner preview"
         >
-            ←
-        </button>
-
-        <div>
-            <div class="eyebrow">
-                ZENOVA ADMIN
-            </div>
-
-            <h1>
-                Hybrid Banners
-            </h1>
-        </div>
-
-        <button
-            id="addBannerButton"
-            class="add-button"
-            type="button"
-        >
-            + ADD BANNER
-        </button>
-
-    </header>
-
-
-    <main class="container">
-
-        <div class="page-intro">
-
-            <div>
-                <span class="label">
-                    STUDENT PORTAL
-                </span>
-
-                <h2>
-                    Manage Banners
-                </h2>
-
-                <p>
-                    These banners appear live on the Hybrid student portal.
-                </p>
-            </div>
-
-            <div class="banner-size">
-                16 : 9
-            </div>
-
-        </div>
-
-
-        <section id="bannerList" class="banner-list">
-        </section>
 
         <div
-            id="emptyState"
-            class="empty-state hidden"
+            id="previewPlaceholder"
+            class="preview-placeholder"
         >
-            <strong>
-                No banners yet
-            </strong>
-
-            <p>
-                Add your first student portal banner.
-            </p>
-
-            <button
-                id="emptyAddButton"
-                type="button"
-            >
-                ADD BANNER
-            </button>
+            Select an image
         </div>
-
-    </main>
-
-</div>
-
-
-<!-- =====================================================
-     MODAL
-===================================================== -->
-
-<div
-    id="modal"
-    class="modal hidden"
->
-
-    <div class="modal-card">
-
-        <div class="modal-header">
-
-            <div>
-                <span class="label">
-                    BANNER
-                </span>
-
-                <h2 id="modalTitle">
-                    Add Banner
-                </h2>
-            </div>
-
-            <button
-                id="closeModal"
-                class="close-button"
-                type="button"
-            >
-                ×
-            </button>
-
-        </div>
-
-
-        <form id="bannerForm">
-
-            <div class="form-group">
-
-                <label>
-                    Banner Image URL
-                </label>
-
-                <input
-                    id="imageUrl"
-                    type="url"
-                    placeholder="https://example.com/banner.jpg"
-                    required
-                >
-
-                <small>
-                    Use a 16:9 image.
-                </small>
-
-            </div>
-
-
-            <div class="preview-wrap">
-
-                <div class="preview-label">
-                    LIVE PREVIEW
-                </div>
-
-                <div class="image-preview">
-
-                    <img
-                        id="imagePreview"
-                        alt="Banner preview"
-                    >
-
-                    <div
-                        id="previewPlaceholder"
-                        class="preview-placeholder"
-                    >
-                        Image preview
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            <div class="form-group">
-
-                <label>
-                    Click / Redirect Link
-                </label>
-
-                <input
-                    id="link"
-                    type="text"
-                    placeholder="https://zenovaeducations.com/"
-                >
-
-                <small>
-                    Student is taken to this link when the banner is clicked.
-                </small>
-
-            </div>
-
-
-            <div class="two-column">
-
-                <div class="form-group">
-
-                    <label>
-                        Label
-                    </label>
-
-                    <input
-                        id="label"
-                        type="text"
-                        placeholder="NEW"
-                    >
-
-                </div>
-
-
-                <div class="form-group">
-
-                    <label>
-                        Priority
-                    </label>
-
-                    <input
-                        id="priority"
-                        type="number"
-                        min="1"
-                        value="1"
-                    >
-
-                </div>
-
-            </div>
-
-
-            <div class="form-group">
-
-                <label>
-                    Title
-                </label>
-
-                <input
-                    id="title"
-                    type="text"
-                    placeholder="Banner title"
-                >
-
-            </div>
-
-
-            <div class="form-group">
-
-                <label>
-                    Description
-                </label>
-
-                <textarea
-                    id="description"
-                    rows="3"
-                    placeholder="Optional description"
-                ></textarea>
-
-            </div>
-
-
-            <label class="active-row">
-
-                <input
-                    id="active"
-                    type="checkbox"
-                    checked
-                >
-
-                <span>
-                    Publish this banner
-                </span>
-
-            </label>
-
-
-            <div
-                id="formError"
-                class="form-error hidden"
-            ></div>
-
-
-            <div class="form-actions">
-
-                <button
-                    id="cancelButton"
-                    type="button"
-                    class="cancel-button"
-                >
-                    CANCEL
-                </button>
-
-                <button
-                    id="saveButton"
-                    type="submit"
-                    class="save-button"
-                >
-                    SAVE BANNER
-                </button>
-
-            </div>
-
-        </form>
 
     </div>
 
 </div>
-
-
-<script
-    type="module"
-    src="./banners-core.js"
-></script>
-
-</body>
-</html>
