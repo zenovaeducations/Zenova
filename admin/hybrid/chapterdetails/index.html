@@ -226,76 +226,72 @@
       </div>
 
 
-      <!-- VIDEO FORM -->
+    <div id="videoForm" class="material-form hidden">
 
-      <div id="videoForm" class="material-form hidden">
+  <div class="field">
 
-        <div class="field">
+    <label>Video Title</label>
 
-          <label>Video Title</label>
+    <input
+      id="videoTitle"
+      type="text"
+      placeholder="Enter video title">
 
-          <input
-            id="videoTitle"
-            type="text"
-            placeholder="Enter video title">
-
-        </div>
+  </div>
 
 
-        <div class="field">
+  <div class="field">
 
-          <label>Description</label>
+    <label>Embedded Video Link</label>
 
-          <textarea
-            id="videoDescription"
-            placeholder="Enter video description"></textarea>
+    <input
+      id="videoUrl"
+      type="url"
+      placeholder="https://www.youtube.com/embed/XXXXXXXX">
 
-        </div>
+    <small>
+      Paste the embedded video URL.
+    </small>
 
-
-        <div class="field">
-
-          <label>Teacher Name</label>
-
-          <input
-            id="videoTeacher"
-            type="text"
-            placeholder="Enter teacher name">
-
-        </div>
+  </div>
 
 
-        <div class="field">
+  <div class="field">
 
-          <label>Video File</label>
+    <label>Description</label>
 
-          <input
-            id="videoFile"
-            type="file"
-            accept="video/*">
+    <textarea
+      id="videoDescription"
+      placeholder="Enter video description"></textarea>
 
-          <small>
-            Upload the recorded/revision class video.
-          </small>
-
-        </div>
+  </div>
 
 
-        <div class="field">
+  <div class="field">
 
-          <label>Priority</label>
+    <label>Teacher Name</label>
 
-          <input
-            id="videoPriority"
-            type="number"
-            min="1"
-            value="1">
+    <input
+      id="videoTeacher"
+      type="text"
+      placeholder="Enter teacher name">
 
-        </div>
-
-      </div>
+  </div>
 
 
+  <div class="field">
+
+    <label>Priority</label>
+
+    <input
+      id="videoPriority"
+      type="number"
+      min="1"
+      value="1">
+
+  </div>
+
+</div>
 
       <!-- PDF FORM -->
 
