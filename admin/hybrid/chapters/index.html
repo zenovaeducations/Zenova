@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chapters — Zenova Admin</title>
+  <link rel="stylesheet" href="./chapters.css">
+</head>
+
+<body>
+
+  <!-- LOADING -->
+  <div id="loadingScreen">
+    <div class="loader-ring">
+      <span>Z</span>
+    </div>
+  </div>
+
+  <!-- APP -->
+  <div id="app" class="hidden">
+
+    <header class="topbar">
+      <div>
+        <div class="brand">ZENOVA</div>
+        <div class="page-title">Chapters</div>
+      </div>
+    </header>
+
+    <main>
+
+      <section class="intro">
+        <h1>Chapters</h1>
+        <p>Create and manage chapters under each subject.</p>
+      </section>
+
+      <!-- SUBJECTS -->
+      <section class="subjects-section">
+
+        <div class="section-head">
+          <div>
+            <h2>Subjects</h2>
+            <p>Select a subject to view its chapters.</p>
+          </div>
+        </div>
+
+        <div id="subjectsGrid" class="subjects-grid"></div>
+
+      </section>
+
+      <!-- CHAPTERS -->
+      <section id="chaptersSection" class="chapters-section hidden">
+
+        <div class="chapter-header">
+
+          <div>
+            <button id="backBtn" class="back-btn">← Subjects</button>
+
+            <h2 id="selectedSubjectName">Subject</h2>
+            <p>Chapters under this subject</p>
+          </div>
+
+          <button id="addChapterBtn" class="primary-btn">
+            + Add Chapter
+          </button>
+
+        </div>
+
+        <div id="chaptersList" class="chapters-list"></div>
+
+      </section>
+
+    </main>
+
+  </div>
+
+
+  <!-- ADD CHAPTER MODAL -->
+  <div id="modalOverlay" class="modal-overlay hidden">
+
+    <div class="modal">
+
+      <div class="modal-head">
+        <div>
+          <h2>Add Chapter</h2>
+          <p id="modalSubjectName">Subject</p>
+        </div>
+
+        <button id="closeModal" class="close-btn">×</button>
+      </div>
+
+      <div class="form">
+
+        <!-- CHAPTER NUMBER -->
+        <div class="field">
+          <label>Chapter Number</label>
+          <input
+            id="chapterNumber"
+            type="number"
+            min="1"
+            placeholder="Example: 1"
+          >
+        </div>
+
+        <!-- CHAPTER NAME -->
+        <div class="field">
+          <label>Chapter Name</label>
+          <input
+            id="chapterName"
+            type="text"
+            placeholder="Enter chapter name"
+          >
+        </div>
+
+        <!-- SUBJECT -->
+        <div class="field">
+          <label>Subject</label>
+          <input
+            id="chapterSubject"
+            type="text"
+            disabled
+          >
+        </div>
+
+        <div id="formError" class="form-error"></div>
+
+        <div class="modal-actions">
+          <button id="cancelBtn" class="secondary-btn">
+            Cancel
+          </button>
+
+          <button id="createBtn" class="primary-btn">
+            Create Chapter
+          </button>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <script type="module" src="./chapters-core.js"></script>
+
+</body>
+</html>
