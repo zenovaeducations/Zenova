@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Classes | Zenova Educations</title>
+
+    <link
+        rel="stylesheet"
+        href="./classes.css"
+    >
+</head>
+
+<body>
+
+    <!-- =====================================================
+         LOADING SCREEN
+    ====================================================== -->
+
+    <div id="loadingScreen" class="loading-screen">
+
+        <div class="loading-logo">
+            Z
+        </div>
+
+        <div class="loading-ring"></div>
+
+    </div>
+
+
+    <!-- =====================================================
+         MAIN APP
+    ====================================================== -->
+
+    <main
+        id="app"
+        class="app hidden"
+    >
+
+        <!-- =================================================
+             HEADER
+        ================================================== -->
+
+        <header class="top-header">
+
+            <button
+                id="backBtn"
+                class="back-btn"
+                aria-label="Back"
+            >
+                ←
+            </button>
+
+
+            <div class="brand">
+
+                <div class="brand-main">
+                    ZENOVA
+                </div>
+
+                <div class="brand-sub">
+                    EDUCATIONS
+                </div>
+
+            </div>
+
+
+            <div class="header-space"></div>
+
+        </header>
+
+
+
+        <!-- =================================================
+             PAGE
+        ================================================== -->
+
+        <div class="page-container">
+
+
+            <!-- =================================================
+                 INTRO
+            ================================================== -->
+
+            <section class="page-intro">
+
+                <div class="eyebrow">
+                    LEARNING
+                </div>
+
+                <h1>
+                    Classes
+                </h1>
+
+                <p>
+                    Attend live classes and revise your subjects
+                    through recorded classes.
+                </p>
+
+            </section>
+
+
+
+            <!-- =================================================
+                 LIVE CLASSES
+            ================================================== -->
+
+            <section class="section">
+
+                <div class="section-header">
+
+                    <div>
+
+                        <div class="section-label">
+                            LIVE NOW
+                        </div>
+
+                        <h2>
+                            Live Classes
+                        </h2>
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    id="liveClassesContainer"
+                    class="live-container"
+                >
+
+                    <!-- Firebase live classes -->
+
+                </div>
+
+
+                <!-- NO LIVE CLASS -->
+
+                <div
+                    id="noLiveClasses"
+                    class="no-live hidden"
+                >
+
+                    <div class="no-live-icon">
+                        —
+                    </div>
+
+                    <h3>
+                        No live classes scheduled right now
+                    </h3>
+
+                    <p>
+                        Check back when your next live class begins.
+                    </p>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- =================================================
+                 REVISION CLASSES
+            ================================================== -->
+
+            <section class="section revision-section">
+
+                <div class="section-header">
+
+                    <div>
+
+                        <div class="section-label">
+                            REVISION
+                        </div>
+
+                        <h2>
+                            Revision Classes
+                        </h2>
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    id="subjectsContainer"
+                    class="subjects-grid"
+                >
+
+                    <!-- Firebase subjects -->
+
+                </div>
+
+
+                <!-- NO SUBJECTS -->
+
+                <div
+                    id="noSubjects"
+                    class="no-subjects hidden"
+                >
+
+                    <h3>
+                        No subjects available
+                    </h3>
+
+                    <p>
+                        Revision classes will appear here.
+                    </p>
+
+                </div>
+
+            </section>
+
+
+        </div>
+
+    </main>
+
+
+    <!-- =====================================================
+         JAVASCRIPT
+    ====================================================== -->
+
+    <script
+        type="module"
+        src="./classes-core-X7kP.js"
+    ></script>
+
+</body>
+</html>
