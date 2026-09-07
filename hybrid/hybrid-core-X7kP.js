@@ -621,145 +621,218 @@ function restartBanner() {
 /* =========================================================
    MASTER PLAN
 ========================================================= */
+/* =========================================================
+   MASTER PLAN — REALTIME
+========================================================= */
 
 function startMasterPlanListener() {
 
     const today =
-        getDateKey(
-            new Date()
-        );
+        getDateKey(new Date());
 
+    console.log(
+        "ZENOVA HYBRID: Listening for master plan:",
+        today
+    );
 
+    /*
+     * IMPORTANT:
+     * Query ONLY by date.
+     *
+     * We intentionally do NOT use:
+     * where("active", "==", true)
+     *
+     * This avoids composite-index problems and also
+     * allows older plans where active may be missing.
+     */
     const baseQuery =
         query(
             collection(
                 db,
                 "hybridMasterPlans"
             ),
-
             where(
                 "dateKey",
                 "==",
                 today
             ),
-
-            where(
-                "active",
-                "==",
-                true
-            ),
-
             limit(10)
         );
 
 
     onSnapshot(
-
         baseQuery,
 
-        (snapshot) => {
+        async (snapshot) => {
 
-            try {
-
-                if (snapshot.empty) {
-
-                    masterPlan = null;
-
-                    masterPlanTasks = [];
-
-                    stopCompletionListener();
-
-                    renderMasterPlan();
-
-                    return;
-                }
+            console.log(
+                "ZENOVA HYBRID: Master plan documents found:",
+                snapshot.size
+            );
 
 
-                const plans =
-                    snapshot.docs.map(
-                        item => ({
-                            id: item.id,
-                            ...item.data()
-                        })
-                    );
-
-
-                plans.sort(
-                    (a, b) =>
-                        String(
-                            a.priority || ""
-                        ).localeCompare(
-                            String(
-                                b.priority || ""
-                            )
-                        )
+            /*
+             * Convert Firestore documents.
+             */
+            let plans =
+                snapshot.docs.map(
+                    document => ({
+                        id: document.id,
+                        ...document.data()
+                    })
                 );
 
 
-                masterPlan =
-                    plans[0];
+            console.log(
+                "ZENOVA HYBRID: Master plans:",
+                plans
+            );
 
 
-                const tasks =
-                    Array.isArray(
-                        masterPlan.tasks
-                    )
-                        ? masterPlan.tasks
-                        : [];
-
-
-                masterPlanTasks =
-                    tasks.map(
-                        task => ({
-                            ...task,
-                            planId:
-                                masterPlan.id,
-                            completed: false
-                        })
-                    );
-
-
-                /*
-                 * Start realtime completion listener.
-                 */
-
-                startCompletionListener(
-                    masterPlan.id
+            /*
+             * Treat missing active as ACTIVE.
+             *
+             * Only an explicit active:false hides the plan.
+             */
+            plans =
+                plans.filter(
+                    plan =>
+                        plan.active !== false
                 );
 
 
-                renderMasterPlan();
+            /*
+             * Sort by priority.
+             */
+            plans.sort(
+                (a, b) =>
+                    Number(a.priority || 9999) -
+                    Number(b.priority || 9999)
+            );
 
-            } catch (error) {
 
-                console.error(
-                    "MASTER PLAN ERROR:",
-                    error
+            /*
+             * No plan for today.
+             */
+            if (!plans.length) {
+
+                console.log(
+                    "ZENOVA HYBRID: No active master plan for today."
                 );
 
                 masterPlanTasks = [];
 
                 renderMasterPlan();
+
+                return;
             }
+
+
+            /*
+             * Take highest-priority plan.
+             */
+            const plan =
+                plans[0];
+
+
+            console.log(
+                "ZENOVA HYBRID: Selected master plan:",
+                plan.id,
+                plan
+            );
+
+
+            /*
+             * Read tasks.
+             */
+            const tasks =
+                Array.isArray(plan.tasks)
+                    ? plan.tasks
+                    : [];
+
+
+            console.log(
+                "ZENOVA HYBRID: Tasks:",
+                tasks
+            );
+
+
+            /*
+             * Load student completion state.
+             */
+            masterPlanTasks =
+                await Promise.all(
+
+                    tasks.map(
+                        async task => {
+
+                            let completed =
+                                false;
+
+
+                            try {
+
+                                completed =
+                                    await getCompletion(
+                                        plan.id,
+                                        task.id
+                                    );
+
+                            } catch (error) {
+
+                                console.error(
+                                    "TASK COMPLETION ERROR:",
+                                    error
+                                );
+
+                            }
+
+
+                            return {
+                                ...task,
+
+                                planId:
+                                    plan.id,
+
+                                completed
+                            };
+
+                        }
+                    )
+
+                );
+
+
+            console.log(
+                "ZENOVA HYBRID: Final master plan tasks:",
+                masterPlanTasks
+            );
+
+
+            /*
+             * Render immediately.
+             */
+            renderMasterPlan();
 
         },
 
-        (error) => {
+
+        error => {
 
             console.error(
-                "HYBRID MASTER PLAN ERROR:",
+                "HYBRID MASTER PLAN REALTIME ERROR:",
                 error
             );
 
             masterPlanTasks = [];
 
             renderMasterPlan();
+
         }
 
     );
 
 }
-
 
 /* =========================================================
    REALTIME TASK COMPLETIONS
