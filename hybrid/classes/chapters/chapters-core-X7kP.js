@@ -19,51 +19,33 @@ import {
 // =========================================================
 
 const loadingScreen =
-    document.getElementById(
-        "loadingScreen"
-    );
+    document.getElementById("loadingScreen");
 
 const app =
-    document.getElementById(
-        "app"
-    );
+    document.getElementById("app");
 
 const backBtn =
-    document.getElementById(
-        "backBtn"
-    );
+    document.getElementById("backBtn");
 
 const subjectName =
-    document.getElementById(
-        "subjectName"
-    );
+    document.getElementById("subjectName");
 
 const subjectDescription =
-    document.getElementById(
-        "subjectDescription"
-    );
+    document.getElementById("subjectDescription");
 
 const chaptersContainer =
-    document.getElementById(
-        "chaptersContainer"
-    );
+    document.getElementById("chaptersContainer");
 
 const chapterCount =
-    document.getElementById(
-        "chapterCount"
-    );
+    document.getElementById("chapterCount");
 
 const emptyState =
-    document.getElementById(
-        "emptyState"
-    );
+    document.getElementById("emptyState");
 
 
 // =========================================================
 // URL
 // =========================================================
-//
-// Expected:
 //
 // chapters/?id=SUBJECT_ID
 //
@@ -74,24 +56,21 @@ const params =
         window.location.search
     );
 
-
 const subjectId =
-    params.get("id") ||
-    params.get("subjectId");
+    params.get("id");
 
 
 // =========================================================
-// AUTHENTICATION
+// AUTH CHECK
 // =========================================================
 
 onAuthStateChanged(
     auth,
     async (user) => {
 
-
-        // -------------------------------------------------
+        // -----------------------------------------------
         // NOT LOGGED IN
-        // -------------------------------------------------
+        // -----------------------------------------------
 
         if (!user) {
 
@@ -102,12 +81,11 @@ onAuthStateChanged(
         }
 
 
-        // -------------------------------------------------
+        // -----------------------------------------------
         // LOGGED IN
-        // -------------------------------------------------
+        // -----------------------------------------------
 
         try {
-
 
             if (!subjectId) {
 
@@ -119,13 +97,12 @@ onAuthStateChanged(
                 );
 
                 return;
-
             }
 
 
-            // -------------------------------------------------
+            // -------------------------------------------
             // LOAD STUDENT
-            // -------------------------------------------------
+            // -------------------------------------------
 
             const studentSnap =
                 await getDoc(
@@ -143,39 +120,36 @@ onAuthStateChanged(
                     : {};
 
 
-            // -------------------------------------------------
+            // -------------------------------------------
             // LOAD SUBJECT
-            // -------------------------------------------------
+            // -------------------------------------------
 
             await loadSubject();
 
 
-            // -------------------------------------------------
+            // -------------------------------------------
             // LOAD CHAPTERS
-            // -------------------------------------------------
+            // -------------------------------------------
 
             await loadChapters(
                 student
             );
 
 
-            // -------------------------------------------------
-            // SHOW APP
-            // -------------------------------------------------
+            // -------------------------------------------
+            // SHOW PAGE
+            // -------------------------------------------
 
             showApp();
-
 
         } catch (error) {
 
             console.error(
-                "Chapters page error:",
+                "Chapters error:",
                 error
             );
 
-
             showApp();
-
 
             showError(
                 "Unable to load chapters",
@@ -189,23 +163,18 @@ onAuthStateChanged(
 
 
 // =========================================================
-// LOAD SUBJECT
+// SUBJECT
 // =========================================================
 
 async function loadSubject() {
 
-
-    const subjectRef =
-        doc(
-            db,
-            "hybridSubjects",
-            subjectId
-        );
-
-
     const subjectSnap =
         await getDoc(
-            subjectRef
+            doc(
+                db,
+                "hybridSubjects",
+                subjectId
+            )
         );
 
 
@@ -217,7 +186,6 @@ async function loadSubject() {
         );
 
         return;
-
     }
 
 
@@ -232,19 +200,18 @@ async function loadSubject() {
 
     subjectDescription.textContent =
         subject.description ||
-        "Explore the recorded revision classes for this subject.";
+        "Explore all chapters available for this subject.";
 
 }
 
 
 // =========================================================
-// LOAD CHAPTERS
+// CHAPTERS
 // =========================================================
 
 async function loadChapters(
     student
 ) {
-
 
     chaptersContainer.innerHTML = "";
 
@@ -253,18 +220,18 @@ async function loadChapters(
     );
 
 
-    // -------------------------------------------------------
+    // -----------------------------------------------------
     // STUDENT MEDIUM
-    // -------------------------------------------------------
+    // -----------------------------------------------------
 
     const studentMedium =
         student.medium ||
         "Kannada";
 
 
-    // -------------------------------------------------------
-    // QUERY EXISTING COLLECTION
-    // -------------------------------------------------------
+    // -----------------------------------------------------
+    // GET CHAPTERS
+    // -----------------------------------------------------
 
     const chaptersQuery =
         query(
@@ -299,9 +266,9 @@ async function loadChapters(
         );
 
 
-    // -------------------------------------------------------
-    // ACTIVE CHAPTERS ONLY
-    // -------------------------------------------------------
+    // -----------------------------------------------------
+    // ACTIVE ONLY
+    // -----------------------------------------------------
 
     chapters =
         chapters.filter(
@@ -310,19 +277,13 @@ async function loadChapters(
         );
 
 
-    // -------------------------------------------------------
-    // MEDIUM FILTER
-    //
-    // Existing content without a medium is treated
-    // as Kannada.
-    //
-    // Both is available to both mediums.
-    // -------------------------------------------------------
+    // -----------------------------------------------------
+    // MEDIUM
+    // -----------------------------------------------------
 
     chapters =
         chapters.filter(
-            (chapter) => {
-
+            chapter => {
 
                 const contentMedium =
                     chapter.medium ||
@@ -347,34 +308,29 @@ async function loadChapters(
         );
 
 
-    // -------------------------------------------------------
-    // TEXTBOOK ORDER
-    // -------------------------------------------------------
+    // -----------------------------------------------------
+    // CHAPTER NUMBER ORDER
+    // -----------------------------------------------------
 
     chapters.sort(
         (a, b) => {
 
-            const numberA =
+            return (
                 Number(
                     a.chapterNumber
-                ) || 0;
-
-
-            const numberB =
+                ) -
                 Number(
                     b.chapterNumber
-                ) || 0;
-
-
-            return numberA - numberB;
+                )
+            );
 
         }
     );
 
 
-    // -------------------------------------------------------
+    // -----------------------------------------------------
     // COUNT
-    // -------------------------------------------------------
+    // -----------------------------------------------------
 
     chapterCount.textContent =
         `${chapters.length} ${
@@ -384,9 +340,9 @@ async function loadChapters(
         }`;
 
 
-    // -------------------------------------------------------
+    // -----------------------------------------------------
     // EMPTY
-    // -------------------------------------------------------
+    // -----------------------------------------------------
 
     if (
         chapters.length === 0
@@ -397,25 +353,20 @@ async function loadChapters(
         );
 
         return;
-
     }
 
 
-    // -------------------------------------------------------
+    // -----------------------------------------------------
     // RENDER
-    // -------------------------------------------------------
+    // -----------------------------------------------------
 
     chapters.forEach(
         chapter => {
 
-            const card =
+            chaptersContainer.appendChild(
                 createChapterCard(
                     chapter
-                );
-
-
-            chaptersContainer.appendChild(
-                card
+                )
             );
 
         }
@@ -425,13 +376,12 @@ async function loadChapters(
 
 
 // =========================================================
-// CREATE CHAPTER CARD
+// CHAPTER CARD
 // =========================================================
 
 function createChapterCard(
     chapter
 ) {
-
 
     const card =
         document.createElement(
@@ -443,24 +393,7 @@ function createChapterCard(
         chapter.locked === true;
 
 
-    const hasVideo =
-        Boolean(
-            chapter.videoUrl
-        );
-
-
-    const hasPdf =
-        Boolean(
-            chapter.pdfUrl
-        );
-
-
-    const chapterNumber =
-        chapter.chapterNumber ??
-        "—";
-
-
-    const chapterTitle =
+    const title =
         chapter.chapterName ||
         chapter.title ||
         "Untitled Chapter";
@@ -468,7 +401,12 @@ function createChapterCard(
 
     const description =
         chapter.description ||
-        "Recorded revision class for this chapter.";
+        "Continue to explore this chapter.";
+
+
+    const number =
+        chapter.chapterNumber ??
+        "—";
 
 
     card.className =
@@ -481,242 +419,72 @@ function createChapterCard(
 
     card.innerHTML = `
 
-
-        <!-- =============================================
-             CHAPTER NUMBER
-        ============================================== -->
-
-        <div class="chapter-number-box">
+        <div class="chapter-number">
 
             <div class="chapter-number-label">
                 CHAPTER
             </div>
 
-            <div class="chapter-number">
-                ${escapeHtml(
-                    chapterNumber
-                )}
+            <div class="chapter-number-value">
+                ${escapeHtml(number)}
             </div>
 
         </div>
 
-
-
-        <!-- =============================================
-             CONTENT
-        ============================================== -->
 
         <div class="chapter-content">
 
             <div class="chapter-title">
-
-                ${escapeHtml(
-                    chapterTitle
-                )}
-
+                ${escapeHtml(title)}
             </div>
-
 
             <div class="chapter-description">
-
-                ${escapeHtml(
-                    description
-                )}
-
+                ${escapeHtml(description)}
             </div>
-
-
-
-            <!-- STATUS -->
-
-            <div class="chapter-status">
-
-
-                ${
-                    locked
-
-                        ? `
-
-                            <span
-                                class="status-pill"
-                            >
-                                🔒 LOCKED
-                            </span>
-
-                          `
-
-                        : hasVideo
-
-                            ? `
-
-                                <span
-                                    class="status-pill available"
-                                >
-                                    VIDEO AVAILABLE
-                                </span>
-
-                              `
-
-                            : `
-
-                                <span
-                                    class="status-pill"
-                                >
-                                    VIDEO NOT AVAILABLE
-                                </span>
-
-                              `
-                }
-
-
-                ${
-                    hasPdf && !locked
-
-                        ? `
-
-                            <span
-                                class="status-pill"
-                            >
-                                PDF AVAILABLE
-                            </span>
-
-                          `
-
-                        : ""
-                }
-
-
-            </div>
-
-        </div>
-
-
-
-        <!-- =============================================
-             ACTIONS
-        ============================================== -->
-
-        <div class="chapter-actions">
-
-
-            <button
-                class="watch-btn"
-                ${(
-                    locked ||
-                    !hasVideo
-                )
-                    ? "disabled"
-                    : ""
-                }
-            >
-
-                ${
-                    locked
-                        ? "Locked"
-                        : hasVideo
-                            ? "Watch Class"
-                            : "No Video"
-                }
-
-            </button>
 
 
             ${
-                hasPdf
-
+                locked
                     ? `
-
-                        <button
-                            class="pdf-btn"
-                            ${locked
-                                ? "disabled"
-                                : ""
-                            }
-                        >
-                            PDF
-                        </button>
-
+                        <span class="locked-label">
+                            🔒 LOCKED
+                        </span>
                       `
-
                     : ""
             }
 
-
         </div>
 
+
+        <div class="chapter-continue">
+
+            ${
+                locked
+                    ? "LOCKED"
+                    : "CLICK TO CONTINUE"
+            }
+
+        </div>
 
     `;
 
 
     // =====================================================
-    // WATCH CLASS
+    // CHAPTER → CHAPTER DETAILS
     // =====================================================
 
-    const watchButton =
-        card.querySelector(
-            ".watch-btn"
-        );
+    if (!locked) {
 
-
-    if (
-        watchButton &&
-        !locked &&
-        hasVideo
-    ) {
-
-        watchButton.addEventListener(
+        card.addEventListener(
             "click",
             () => {
 
-
-                /*
-                    CHAPTER
-                       ↓
-                    RECORDED CLASS
-
-                    The chapter document ID is passed
-                    to the recorded-class page.
-                */
-
-
                 window.location.href =
-                    `../viewrecordedclasses/?id=${
+                    `../chapterdetails/?id=${
                         encodeURIComponent(
                             chapter.id
                         )
                     }`;
-
-            }
-        );
-
-    }
-
-
-    // =====================================================
-    // PDF
-    // =====================================================
-
-    const pdfButton =
-        card.querySelector(
-            ".pdf-btn"
-        );
-
-
-    if (
-        pdfButton &&
-        !locked &&
-        hasPdf
-    ) {
-
-        pdfButton.addEventListener(
-            "click",
-            () => {
-
-                window.open(
-                    chapter.pdfUrl,
-                    "_blank",
-                    "noopener,noreferrer"
-                );
 
             }
         );
@@ -730,7 +498,7 @@ function createChapterCard(
 
 
 // =========================================================
-// SHOW ERROR
+// ERROR
 // =========================================================
 
 function showError(
@@ -738,25 +506,15 @@ function showError(
     message
 ) {
 
-
     subjectName.textContent =
         title;
-
 
     subjectDescription.textContent =
         message;
 
-
     chaptersContainer.innerHTML = "";
 
-
-    chapterCount.textContent =
-        "";
-
-
-    emptyState.classList.add(
-        "hidden"
-    );
+    chapterCount.textContent = "";
 
 }
 
@@ -793,7 +551,7 @@ backBtn.addEventListener(
 
 
 // =========================================================
-// ESCAPE HTML
+// ESCAPE
 // =========================================================
 
 function escapeHtml(
