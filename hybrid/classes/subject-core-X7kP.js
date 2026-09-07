@@ -72,10 +72,30 @@ const params =
         window.location.search
     );
 
+
 const subjectId =
-    params.get("subjectId");
+    params.get("subjectId") ||
+    params.get("id");
 
+console.log(
+    "SUBJECT PAGE URL:",
+    window.location.href
+);
 
+console.log(
+    "SUBJECT ID:",
+    subjectId
+);
+if (!subjectId) {
+
+    showError(
+        "No subject was selected. The Classes page did not send a subject ID."
+    );
+
+} else {
+
+    start();
+}
 /* =========================================================
    STATE
 ========================================================= */
