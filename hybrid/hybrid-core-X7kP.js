@@ -36,20 +36,29 @@ const app =
 ========================================================= */
 
 let currentUser = null;
+
 let student = null;
+
+let masterPlan = null;
 
 let masterPlanTasks = [];
 
 let banners = [];
+
 let currentBanner = 0;
+
 let bannerTimer = null;
+
+let completionUnsubscribe = null;
 
 
 /* =========================================================
    START
 ========================================================= */
 
-console.log("ZENOVA HYBRID: CORE STARTED");
+console.log(
+    "ZENOVA HYBRID: CORE STARTED"
+);
 
 
 onAuthStateChanged(
@@ -78,39 +87,40 @@ onAuthStateChanged(
         try {
 
             /*
-             * Student profile is the only
-             * thing required before opening
-             * the portal.
+             * Student profile is required.
              */
 
             await loadStudent();
 
 
             /*
-             * Show the application immediately.
-             *
-             * Individual sections load independently.
+             * Show UI immediately.
              */
 
             setupNavigation();
+
             setupProfile();
+
             setupNotifications();
 
             showApplication();
 
 
             /*
-             * Start every realtime section
-             * independently.
+             * Start realtime listeners independently.
              */
 
             startBannersListener();
-            startMasterPlanListener();
-            startTodayClassesListener();
-            startAnnouncementsListener();
-            startAttendanceListener();
-            startLatestTestListener();
 
+            startMasterPlanListener();
+
+            startTodayClassesListener();
+
+            startAnnouncementsListener();
+
+            startAttendanceListener();
+
+            startLatestTestListener();
 
         } catch (error) {
 
@@ -119,10 +129,7 @@ onAuthStateChanged(
                 error
             );
 
-            showError(
-                error
-            );
-
+            showError(error);
         }
 
     }
@@ -134,11 +141,6 @@ onAuthStateChanged(
 ========================================================= */
 
 async function loadStudent() {
-
-    console.log(
-        "ZENOVA HYBRID: Loading student..."
-    );
-
 
     const studentRef =
         doc(
@@ -159,7 +161,6 @@ async function loadStudent() {
         throw new Error(
             "Student profile not found."
         );
-
     }
 
 
@@ -167,14 +168,7 @@ async function loadStudent() {
         snapshot.data();
 
 
-    console.log(
-        "ZENOVA HYBRID: Student loaded",
-        student
-    );
-
-
     renderStudent();
-
 }
 
 
@@ -204,11 +198,16 @@ function renderStudent() {
         );
 
 
+    const greetingLabel =
+        document.getElementById(
+            "greetingLabel"
+        );
+
+
     if (nameElement) {
 
         nameElement.textContent =
             name;
-
     }
 
 
@@ -220,7 +219,6 @@ function renderStudent() {
         details.push(
             student.className
         );
-
     }
 
 
@@ -229,7 +227,6 @@ function renderStudent() {
         details.push(
             student.combination
         );
-
     }
 
 
@@ -241,10 +238,7 @@ function renderStudent() {
     if (metaElement) {
 
         metaElement.textContent =
-            details.join(
-                " • "
-            );
-
+            details.join(" • ");
     }
 
 
@@ -255,7 +249,30 @@ function renderStudent() {
                 .trim()
                 .charAt(0)
                 .toUpperCase();
+    }
 
+
+    if (greetingLabel) {
+
+        const hour =
+            new Date().getHours();
+
+
+        if (hour < 12) {
+
+            greetingLabel.textContent =
+                "GOOD MORNING";
+
+        } else if (hour < 17) {
+
+            greetingLabel.textContent =
+                "GOOD AFTERNOON";
+
+        } else {
+
+            greetingLabel.textContent =
+                "GOOD EVENING";
+        }
     }
 
 }
@@ -266,11 +283,6 @@ function renderStudent() {
 ========================================================= */
 
 function startBannersListener() {
-
-    console.log(
-        "ZENOVA HYBRID: Starting banners listener..."
-    );
-
 
     const baseQuery =
         query(
@@ -304,12 +316,6 @@ function startBannersListener() {
                 );
 
 
-            /*
-             * Sort locally.
-             * This avoids a Firestore
-             * composite index requirement.
-             */
-
             banners.sort(
                 (a, b) =>
                     Number(
@@ -318,12 +324,6 @@ function startBannersListener() {
                     Number(
                         a.priority || 0
                     )
-            );
-
-
-            console.log(
-                "ZENOVA HYBRID: Banners",
-                banners.length
             );
 
 
@@ -338,15 +338,9 @@ function startBannersListener() {
                 error
             );
 
-            /*
-             * Banner failure must NEVER
-             * stop the whole portal.
-             */
-
             banners = [];
 
             renderBanners();
-
         }
 
     );
@@ -392,7 +386,6 @@ function renderBanners() {
         );
 
         return;
-
     }
 
 
@@ -428,6 +421,7 @@ function renderBanners() {
                         class="banner-overlay"
                     ></div>
 
+
                     <div
                         class="banner-content"
                     >
@@ -435,22 +429,22 @@ function renderBanners() {
                         ${
                             banner.label
                                 ? `
-                                    <span
-                                        class="banner-label"
-                                    >
+                                    <div class="banner-label">
                                         ${escapeHtml(
                                             banner.label
                                         )}
-                                    </span>
+                                    </div>
                                 `
                                 : ""
                         }
+
 
                         <h2>
                             ${escapeHtml(
                                 banner.title || ""
                             )}
                         </h2>
+
 
                         ${
                             banner.description
@@ -518,8 +512,8 @@ function renderBanners() {
 
 
     updateBannerCounter();
-    restartBanner();
 
+    restartBanner();
 }
 
 
@@ -571,7 +565,6 @@ function showBanner(index) {
 
 
     updateBannerCounter();
-
 }
 
 
@@ -596,7 +589,6 @@ function updateBannerCounter() {
                 banners.length
             ).padStart(2, "0")
         }`;
-
 }
 
 
@@ -623,7 +615,6 @@ function restartBanner() {
             },
             5000
         );
-
 }
 
 
@@ -637,12 +628,6 @@ function startMasterPlanListener() {
         getDateKey(
             new Date()
         );
-
-
-    console.log(
-        "ZENOVA HYBRID: Master plan",
-        today
-    );
 
 
     const baseQuery =
@@ -672,24 +657,23 @@ function startMasterPlanListener() {
 
         baseQuery,
 
-        async (snapshot) => {
+        (snapshot) => {
 
             try {
 
                 if (snapshot.empty) {
 
+                    masterPlan = null;
+
                     masterPlanTasks = [];
+
+                    stopCompletionListener();
 
                     renderMasterPlan();
 
                     return;
-
                 }
 
-
-                /*
-                 * Sort plans locally.
-                 */
 
                 const plans =
                     snapshot.docs.map(
@@ -712,61 +696,36 @@ function startMasterPlanListener() {
                 );
 
 
-                const plan =
+                masterPlan =
                     plans[0];
 
 
                 const tasks =
                     Array.isArray(
-                        plan.tasks
+                        masterPlan.tasks
                     )
-                        ? plan.tasks
+                        ? masterPlan.tasks
                         : [];
 
 
                 masterPlanTasks =
-                    await Promise.all(
-
-                        tasks.map(
-                            async task => {
-
-                                let completed =
-                                    false;
-
-
-                                try {
-
-                                    completed =
-                                        await getCompletion(
-                                            plan.id,
-                                            task.id
-                                        );
-
-                                } catch (error) {
-
-                                    console.error(
-                                        "TASK COMPLETION ERROR:",
-                                        error
-                                    );
-
-                                }
-
-
-                                return {
-
-                                    ...task,
-
-                                    planId:
-                                        plan.id,
-
-                                    completed
-
-                                };
-
-                            }
-                        )
-
+                    tasks.map(
+                        task => ({
+                            ...task,
+                            planId:
+                                masterPlan.id,
+                            completed: false
+                        })
                     );
+
+
+                /*
+                 * Start realtime completion listener.
+                 */
+
+                startCompletionListener(
+                    masterPlan.id
+                );
 
 
                 renderMasterPlan();
@@ -774,14 +733,13 @@ function startMasterPlanListener() {
             } catch (error) {
 
                 console.error(
-                    "MASTER PLAN RENDER ERROR:",
+                    "MASTER PLAN ERROR:",
                     error
                 );
 
                 masterPlanTasks = [];
 
                 renderMasterPlan();
-
             }
 
         },
@@ -796,7 +754,6 @@ function startMasterPlanListener() {
             masterPlanTasks = [];
 
             renderMasterPlan();
-
         }
 
     );
@@ -804,36 +761,118 @@ function startMasterPlanListener() {
 }
 
 
-async function getCompletion(
-    planId,
-    taskId
+/* =========================================================
+   REALTIME TASK COMPLETIONS
+========================================================= */
+
+function startCompletionListener(
+    planId
 ) {
 
-    const completionId =
-        `${currentUser.uid}_${planId}_${taskId}`;
+    stopCompletionListener();
 
 
-    const completionRef =
-        doc(
-            db,
-            "hybridTaskCompletions",
-            completionId
+    const completionQuery =
+        query(
+            collection(
+                db,
+                "hybridTaskCompletions"
+            ),
+
+            where(
+                "studentId",
+                "==",
+                currentUser.uid
+            ),
+
+            where(
+                "planId",
+                "==",
+                planId
+            ),
+
+            limit(100)
         );
 
 
-    const snapshot =
-        await getDoc(
-            completionRef
+    completionUnsubscribe =
+        onSnapshot(
+
+            completionQuery,
+
+            (snapshot) => {
+
+                const completedMap =
+                    new Map();
+
+
+                snapshot.docs.forEach(
+                    item => {
+
+                        const data =
+                            item.data();
+
+
+                        completedMap.set(
+                            String(
+                                data.taskId
+                            ),
+                            data.completed === true
+                        );
+
+                    }
+                );
+
+
+                masterPlanTasks =
+                    masterPlanTasks.map(
+                        task => ({
+                            ...task,
+
+                            completed:
+                                completedMap.get(
+                                    String(task.id)
+                                ) === true
+
+                        })
+                    );
+
+
+                renderMasterPlan();
+
+            },
+
+            (error) => {
+
+                console.error(
+                    "COMPLETION LISTENER ERROR:",
+                    error
+                );
+
+            }
+
         );
+}
 
 
-    return (
-        snapshot.exists() &&
-        snapshot.data().completed === true
-    );
+function stopCompletionListener() {
+
+    if (
+        typeof completionUnsubscribe ===
+        "function"
+    ) {
+
+        completionUnsubscribe();
+
+        completionUnsubscribe = null;
+    }
 
 }
 
+
+/* =========================================================
+   RENDER MASTER PLAN
+========================================================= */
 
 function renderMasterPlan() {
 
@@ -882,20 +921,10 @@ function renderMasterPlan() {
         );
 
 
-    if (completedElement) {
-
-        completedElement.textContent =
-            completed;
-
-    }
-
-
-    if (totalElement) {
-
-        totalElement.textContent =
-            total;
-
-    }
+    const progressText =
+        document.getElementById(
+            "progressText"
+        );
 
 
     const percentage =
@@ -908,11 +937,31 @@ function renderMasterPlan() {
             : 0;
 
 
+    if (completedElement) {
+
+        completedElement.textContent =
+            completed;
+    }
+
+
+    if (totalElement) {
+
+        totalElement.textContent =
+            total;
+    }
+
+
     if (progress) {
 
         progress.style.width =
             `${percentage}%`;
+    }
 
+
+    if (progressText) {
+
+        progressText.textContent =
+            `${percentage}% complete`;
     }
 
 
@@ -925,7 +974,6 @@ function renderMasterPlan() {
         );
 
         return;
-
     }
 
 
@@ -945,26 +993,16 @@ function renderMasterPlan() {
                     "
                 >
 
-                    <div
-                        class="plan-icon"
-                    >
-                        ${getTaskIcon(
-                            task.type
-                        )}
+                    <div class="plan-icon">
+                        ${getTaskIcon(task.type)}
                     </div>
 
 
-                    <div
-                        class="plan-info"
-                    >
+                    <div class="plan-info">
 
-                        <div
-                            class="plan-top"
-                        >
+                        <div class="plan-top">
 
-                            <span
-                                class="plan-type"
-                            >
+                            <span class="plan-type">
                                 ${escapeHtml(
                                     String(
                                         task.type ||
@@ -977,9 +1015,7 @@ function renderMasterPlan() {
                             ${
                                 task.time
                                     ? `
-                                        <span
-                                            class="plan-time"
-                                        >
+                                        <span class="plan-time">
                                             ${escapeHtml(
                                                 task.time
                                             )}
@@ -1030,6 +1066,7 @@ function renderMasterPlan() {
                             String(task.id)
                         )}"
                         type="button"
+                        aria-label="Complete task"
                     >
                         ✓
                     </button>
@@ -1041,9 +1078,12 @@ function renderMasterPlan() {
 
 
     attachPlanEvents();
-
 }
 
+
+/* =========================================================
+   MASTER PLAN EVENTS
+========================================================= */
 
 function attachPlanEvents() {
 
@@ -1059,7 +1099,6 @@ function attachPlanEvents() {
                     async event => {
 
                         event.stopPropagation();
-
 
                         await toggleTask(
                             button.dataset
@@ -1130,6 +1169,10 @@ async function toggleTask(
         !task.completed;
 
 
+    /*
+     * Optimistic UI.
+     */
+
     task.completed =
         newValue;
 
@@ -1156,7 +1199,6 @@ async function toggleTask(
             completionRef,
 
             {
-
                 studentId:
                     currentUser.uid,
 
@@ -1176,7 +1218,6 @@ async function toggleTask(
 
                 updatedAt:
                     serverTimestamp()
-
             },
 
             {
@@ -1192,15 +1233,10 @@ async function toggleTask(
             error
         );
 
-        /*
-         * Revert UI if save fails.
-         */
-
         task.completed =
             !newValue;
 
         renderMasterPlan();
-
     }
 
 }
@@ -1256,10 +1292,6 @@ function startTodayClassesListener() {
                 );
 
 
-            /*
-             * Sort locally.
-             */
-
             classes.sort(
                 (a, b) =>
                     String(
@@ -1293,7 +1325,6 @@ function startTodayClassesListener() {
             );
 
             renderTodayClasses([]);
-
         }
 
     );
@@ -1330,7 +1361,6 @@ function renderTodayClasses(
         list.innerHTML = "";
 
         return;
-
     }
 
 
@@ -1347,18 +1377,14 @@ function renderTodayClasses(
                     class="class-row"
                 >
 
-                    <div
-                        class="class-time"
-                    >
+                    <div class="class-time">
                         ${escapeHtml(
                             item.startTime || ""
                         )}
                     </div>
 
 
-                    <div
-                        class="class-info"
-                    >
+                    <div class="class-info">
 
                         <strong>
                             ${escapeHtml(
@@ -1402,7 +1428,358 @@ function renderTodayClasses(
 
             `
         ).join("");
+}
 
+
+/* =========================================================
+   ATTENDANCE
+========================================================= */
+
+function startAttendanceListener() {
+
+    const baseQuery =
+        query(
+            collection(
+                db,
+                "hybridAttendance"
+            ),
+
+            where(
+                "studentId",
+                "==",
+                currentUser.uid
+            ),
+
+            limit(200)
+        );
+
+
+    onSnapshot(
+
+        baseQuery,
+
+        (snapshot) => {
+
+            let records =
+                snapshot.docs.map(
+                    item => ({
+                        id: item.id,
+                        ...item.data()
+                    })
+                );
+
+
+            records.sort(
+                (a, b) =>
+                    String(
+                        b.dateKey || ""
+                    ).localeCompare(
+                        String(
+                            a.dateKey || ""
+                        )
+                    )
+            );
+
+
+            renderAttendance(
+                records
+            );
+
+        },
+
+        (error) => {
+
+            console.error(
+                "HYBRID ATTENDANCE ERROR:",
+                error
+            );
+
+            renderAttendance([]);
+        }
+
+    );
+
+}
+
+
+function renderAttendance(
+    records
+) {
+
+    const card =
+        document.getElementById(
+            "attendanceSummary"
+        );
+
+
+    if (!card) {
+        return;
+    }
+
+
+    if (!records.length) {
+
+        card.innerHTML = `
+
+            <div class="performance-top">
+
+                <span class="performance-icon">
+                    %
+                </span>
+
+                <span class="performance-label">
+                    ATTENDANCE
+                </span>
+
+            </div>
+
+            <div class="performance-loading">
+                No attendance recorded yet.
+            </div>
+
+        `;
+
+        return;
+    }
+
+
+    const present =
+        records.filter(
+            item =>
+                String(
+                    item.status || ""
+                ).toLowerCase() ===
+                "present"
+        ).length;
+
+
+    const percentage =
+        Math.round(
+            present /
+            records.length *
+            100
+        );
+
+
+    card.innerHTML = `
+
+        <div class="performance-top">
+
+            <span class="performance-icon">
+                %
+            </span>
+
+            <span class="performance-label">
+                ATTENDANCE
+            </span>
+
+        </div>
+
+
+        <div class="performance-number">
+            ${percentage}
+            <span>%</span>
+        </div>
+
+
+        <div class="performance-sub">
+            ${present} of ${records.length} classes present
+        </div>
+
+
+        <div class="performance-bar">
+
+            <div
+                style="width:${percentage}%"
+            ></div>
+
+        </div>
+
+    `;
+}
+
+
+/* =========================================================
+   LATEST TEST
+========================================================= */
+
+function startLatestTestListener() {
+
+    const baseQuery =
+        query(
+            collection(
+                db,
+                "hybridTestResults"
+            ),
+
+            where(
+                "studentId",
+                "==",
+                currentUser.uid
+            ),
+
+            limit(20)
+        );
+
+
+    onSnapshot(
+
+        baseQuery,
+
+        (snapshot) => {
+
+            let results =
+                snapshot.docs.map(
+                    item => ({
+                        id: item.id,
+                        ...item.data()
+                    })
+                );
+
+
+            results.sort(
+                (a, b) =>
+                    getTimestampMillis(
+                        b.createdAt ||
+                        b.date ||
+                        b.updatedAt
+                    ) -
+                    getTimestampMillis(
+                        a.createdAt ||
+                        a.date ||
+                        a.updatedAt
+                    )
+            );
+
+
+            renderLatestTest(
+                results[0]
+            );
+
+        },
+
+        (error) => {
+
+            console.error(
+                "HYBRID TEST ERROR:",
+                error
+            );
+
+            renderLatestTest(null);
+        }
+
+    );
+
+}
+
+
+function renderLatestTest(
+    result
+) {
+
+    const card =
+        document.getElementById(
+            "testSummary"
+        );
+
+
+    if (!card) {
+        return;
+    }
+
+
+    if (!result) {
+
+        card.innerHTML = `
+
+            <div class="performance-top">
+
+                <span class="performance-icon">
+                    ✓
+                </span>
+
+                <span class="performance-label">
+                    LATEST TEST
+                </span>
+
+            </div>
+
+            <div class="performance-loading">
+                No test result yet.
+            </div>
+
+        `;
+
+        return;
+    }
+
+
+    const score =
+        result.score ??
+        result.marks ??
+        result.obtainedMarks ??
+        0;
+
+
+    const total =
+        result.totalMarks ??
+        result.maxMarks ??
+        100;
+
+
+    const percentage =
+        total
+            ? Math.round(
+                Number(score) /
+                Number(total) *
+                100
+            )
+            : 0;
+
+
+    card.innerHTML = `
+
+        <div class="performance-top">
+
+            <span class="performance-icon">
+                ✓
+            </span>
+
+            <span class="performance-label">
+                LATEST TEST
+            </span>
+
+        </div>
+
+
+        <div class="performance-number">
+            ${escapeHtml(
+                String(score)
+            )}
+            <span>/${escapeHtml(
+                String(total)
+            )}</span>
+        </div>
+
+
+        <div class="performance-sub">
+            ${escapeHtml(
+                result.testTitle ||
+                result.title ||
+                "Latest test"
+            )}
+        </div>
+
+
+        <div class="performance-bar">
+
+            <div
+                style="width:${percentage}%"
+            ></div>
+
+        </div>
+
+    `;
 }
 
 
@@ -1444,10 +1821,6 @@ function startAnnouncementsListener() {
                 );
 
 
-            /*
-             * Sort locally by createdAt.
-             */
-
             items.sort(
                 (a, b) =>
                     getTimestampMillis(
@@ -1462,7 +1835,7 @@ function startAnnouncementsListener() {
             items =
                 items.slice(
                     0,
-                    5
+                    3
                 );
 
 
@@ -1480,7 +1853,6 @@ function startAnnouncementsListener() {
             );
 
             renderAnnouncements([]);
-
         }
 
     );
@@ -1517,7 +1889,6 @@ function renderAnnouncements(
         list.innerHTML = "";
 
         return;
-
     }
 
 
@@ -1534,25 +1905,21 @@ function renderAnnouncements(
                     class="announcement-card"
                 >
 
-                    <div
-                        class="announcement-mark"
-                    >
+                    <div class="announcement-mark">
+
                         ${
                             item.priority ===
                             "important"
                                 ? "!"
                                 : "N"
                         }
+
                     </div>
 
 
-                    <div
-                        class="announcement-info"
-                    >
+                    <div class="announcement-info">
 
-                        <div
-                            class="announcement-meta"
-                        >
+                        <div class="announcement-meta">
 
                             <strong>
                                 ${escapeHtml(
@@ -1595,326 +1962,6 @@ function renderAnnouncements(
 
             `
         ).join("");
-
-}
-
-
-/* =========================================================
-   ATTENDANCE
-========================================================= */
-
-function startAttendanceListener() {
-
-    const baseQuery =
-        query(
-            collection(
-                db,
-                "hybridAttendance"
-            ),
-
-            where(
-                "studentId",
-                "==",
-                currentUser.uid
-            ),
-
-            limit(200)
-        );
-
-
-    onSnapshot(
-
-        baseQuery,
-
-        (snapshot) => {
-
-            let records =
-                snapshot.docs.map(
-                    item => ({
-                        id: item.id,
-                        ...item.data()
-                    })
-                );
-
-
-            /*
-             * Sort locally.
-             */
-
-            records.sort(
-                (a, b) =>
-                    String(
-                        b.dateKey || ""
-                    ).localeCompare(
-                        String(
-                            a.dateKey || ""
-                        )
-                    )
-            );
-
-
-            renderAttendance(
-                records
-            );
-
-        },
-
-        (error) => {
-
-            console.error(
-                "HYBRID ATTENDANCE ERROR:",
-                error
-            );
-
-            renderAttendance([]);
-
-        }
-
-    );
-
-}
-
-
-function renderAttendance(
-    records
-) {
-
-    const card =
-        document.getElementById(
-            "attendanceSummary"
-        );
-
-
-    if (!card) {
-        return;
-    }
-
-
-    if (!records.length) {
-
-        card.innerHTML = `
-
-            <p class="section-label">
-                ATTENDANCE
-            </p>
-
-            <h3>
-                Attendance
-            </h3>
-
-            <div class="summary-loading">
-                No attendance recorded yet.
-            </div>
-
-        `;
-
-        return;
-
-    }
-
-
-    const present =
-        records.filter(
-            item =>
-                String(
-                    item.status || ""
-                ).toLowerCase() ===
-                "present"
-        ).length;
-
-
-    const percentage =
-        Math.round(
-            present /
-            records.length *
-            100
-        );
-
-
-    card.innerHTML = `
-
-        <p class="section-label">
-            ATTENDANCE
-        </p>
-
-        <h3>
-            Overall Attendance
-        </h3>
-
-
-        <div
-            class="summary-number"
-        >
-            ${percentage}
-            <span>%</span>
-        </div>
-
-
-        <div
-            class="summary-bar"
-        >
-
-            <div
-                style="width:${percentage}%"
-            ></div>
-
-        </div>
-
-    `;
-
-}
-
-
-/* =========================================================
-   LATEST TEST
-========================================================= */
-
-function startLatestTestListener() {
-
-    const baseQuery =
-        query(
-            collection(
-                db,
-                "hybridTestResults"
-            ),
-
-            where(
-                "studentId",
-                "==",
-                currentUser.uid
-            ),
-
-            limit(50)
-        );
-
-
-    onSnapshot(
-
-        baseQuery,
-
-        (snapshot) => {
-
-            let results =
-                snapshot.docs.map(
-                    item => ({
-                        id: item.id,
-                        ...item.data()
-                    })
-                );
-
-
-            /*
-             * Sort locally.
-             */
-
-            results.sort(
-                (a, b) =>
-                    getTimestampMillis(
-                        b.createdAt
-                    ) -
-                    getTimestampMillis(
-                        a.createdAt
-                    )
-            );
-
-
-            renderLatestTest(
-                results[0] || null
-            );
-
-        },
-
-        (error) => {
-
-            console.error(
-                "HYBRID TEST RESULT ERROR:",
-                error
-            );
-
-            renderLatestTest(
-                null
-            );
-
-        }
-
-    );
-
-}
-
-
-function renderLatestTest(
-    result
-) {
-
-    const card =
-        document.getElementById(
-            "testSummary"
-        );
-
-
-    if (!card) {
-        return;
-    }
-
-
-    if (!result) {
-
-        card.innerHTML = `
-
-            <p class="section-label">
-                PERFORMANCE
-            </p>
-
-            <h3>
-                Latest Test
-            </h3>
-
-            <div class="summary-loading">
-                No test result yet.
-            </div>
-
-        `;
-
-        return;
-
-    }
-
-
-    card.innerHTML = `
-
-        <p class="section-label">
-            LATEST RESULT
-        </p>
-
-        <h3>
-            ${escapeHtml(
-                result.testName ||
-                "Test"
-            )}
-        </h3>
-
-
-        <div
-            class="summary-number"
-        >
-
-            ${Number(
-                result.obtainedMarks ||
-                0
-            )}
-
-            <span>
-                /
-                ${Number(
-                    result.maximumMarks ||
-                    0
-                )}
-            </span>
-
-        </div>
-
-    `;
-
 }
 
 
@@ -1944,6 +1991,76 @@ function setupNavigation() {
 
             }
         );
+
+
+    const menuButton =
+        document.getElementById(
+            "menuButton"
+        );
+
+
+    if (menuButton) {
+
+        menuButton.addEventListener(
+            "click",
+            () => {
+
+                navigate("more");
+
+            }
+        );
+
+    }
+
+}
+
+
+function setupProfile() {
+
+    const button =
+        document.getElementById(
+            "profileButton"
+        );
+
+
+    if (!button) {
+        return;
+    }
+
+
+    button.addEventListener(
+        "click",
+        () => {
+
+            navigate("more");
+
+        }
+    );
+
+}
+
+
+function setupNotifications() {
+
+    const button =
+        document.getElementById(
+            "notificationButton"
+        );
+
+
+    if (!button) {
+        return;
+    }
+
+
+    button.addEventListener(
+        "click",
+        () => {
+
+            navigate("more");
+
+        }
+    );
 
 }
 
@@ -1978,14 +2095,12 @@ function navigate(
     };
 
 
-    const destination =
-        routes[route];
-
-
-    if (destination) {
+    if (
+        routes[route]
+    ) {
 
         window.location.href =
-            destination;
+            routes[route];
 
     }
 
@@ -1993,69 +2108,7 @@ function navigate(
 
 
 /* =========================================================
-   PROFILE
-========================================================= */
-
-function setupProfile() {
-
-    const button =
-        document.getElementById(
-            "profileButton"
-        );
-
-
-    if (!button) {
-        return;
-    }
-
-
-    button.addEventListener(
-        "click",
-        () => {
-
-            navigate(
-                "more"
-            );
-
-        }
-    );
-
-}
-
-
-/* =========================================================
-   NOTIFICATIONS
-========================================================= */
-
-function setupNotifications() {
-
-    const button =
-        document.getElementById(
-            "notificationButton"
-        );
-
-
-    if (!button) {
-        return;
-    }
-
-
-    button.addEventListener(
-        "click",
-        () => {
-
-            navigate(
-                "more"
-            );
-
-        }
-    );
-
-}
-
-
-/* =========================================================
-   SHOW APPLICATION
+   APPLICATION
 ========================================================= */
 
 function showApplication() {
@@ -2065,7 +2118,6 @@ function showApplication() {
         app.classList.remove(
             "hidden"
         );
-
     }
 
 
@@ -2081,7 +2133,6 @@ function showApplication() {
             },
             150
         );
-
     }
 
 }
@@ -2158,7 +2209,6 @@ function showError(
         </div>
 
     `;
-
 }
 
 
@@ -2213,7 +2263,6 @@ function getTaskIcon(
 
 
     return "•";
-
 }
 
 
@@ -2250,7 +2299,6 @@ function getActionText(
 
 
     return "STUDY";
-
 }
 
 
@@ -2259,7 +2307,6 @@ function getDateKey(
 ) {
 
     return [
-
         date.getFullYear(),
 
         String(
@@ -2277,7 +2324,6 @@ function getDateKey(
         )
 
     ].join("-");
-
 }
 
 
@@ -2296,30 +2342,26 @@ function getTimestampMillis(
     ) {
 
         return value.toMillis();
-
     }
 
 
     if (
-        typeof value.toDate ===
-        "function"
+        value instanceof Date
     ) {
 
-        return value.toDate().getTime();
-
+        return value.getTime();
     }
 
 
-    const date =
+    const parsed =
         new Date(value);
 
 
-    return Number.isNaN(
-        date.getTime()
+    return isNaN(
+        parsed.getTime()
     )
         ? 0
-        : date.getTime();
-
+        : parsed.getTime();
 }
 
 
@@ -2338,16 +2380,15 @@ function formatDate(
     }
 
 
-    return new Date(
-        millis
-    ).toLocaleDateString(
+    return new Intl.DateTimeFormat(
         "en-IN",
         {
             day: "numeric",
             month: "short"
         }
+    ).format(
+        new Date(millis)
     );
-
 }
 
 
@@ -2358,32 +2399,26 @@ function escapeHtml(
     return String(
         value ?? ""
     )
-
         .replaceAll(
             "&",
             "&amp;"
         )
-
         .replaceAll(
             "<",
             "&lt;"
         )
-
         .replaceAll(
             ">",
             "&gt;"
         )
-
         .replaceAll(
             '"',
             "&quot;"
         )
-
         .replaceAll(
             "'",
             "&#039;"
         );
-
 }
 
 
@@ -2394,5 +2429,4 @@ function escapeAttr(
     return escapeHtml(
         value
     );
-
 }
