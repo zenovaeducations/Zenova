@@ -1,16 +1,17 @@
-import { auth, db } from "../../firebase/firebase-config.js";
+import {
+    auth,
+    db
+} from "../../firebase/firebase-config.js";
 
 import {
     onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
 
 import {
-    doc,
-    getDoc,
     collection,
+    getDocs,
     query,
-    where,
-    onSnapshot
+    where
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
 
@@ -24,29 +25,11 @@ const loader =
 const app =
     document.getElementById("app");
 
-const subjectsGrid =
-    document.getElementById("subjectsGrid");
+const subjectsList =
+    document.getElementById("subjectsList");
 
 const emptyState =
     document.getElementById("emptyState");
-
-const errorState =
-    document.getElementById("errorState");
-
-const errorText =
-    document.getElementById("errorText");
-
-const retryBtn =
-    document.getElementById("retryBtn");
-
-const mediumLabel =
-    document.getElementById("mediumLabel");
-
-const backBtn =
-    document.getElementById("backBtn");
-
-const notificationBtn =
-    document.getElementById("notificationBtn");
 
 
 /* =========================================================
@@ -54,14 +37,7 @@ const notificationBtn =
 ========================================================= */
 
 let currentUser = null;
-
-let student = {};
-
-let studentMedium = "Kannada";
-
-let studentClass = "";
-
-let unsubscribeSubjects = null;
+let currentStudent = null;
 
 
 /* =========================================================
@@ -70,112 +46,96 @@ let unsubscribeSubjects = null;
 
 onAuthStateChanged(
     auth,
-    async (user) => {
+    async user => {
 
         if (!user) {
 
-            window.location.replace(
-                "../../login/"
-            );
+            window.location.href =
+                "../../";
 
             return;
         }
 
-
         currentUser = user;
-
 
         try {
 
             await loadStudent();
 
-            showApp();
+            await loadSubjects();
 
-            loadSubjects();
+            showApp();
 
         } catch (error) {
 
             console.error(
-                "ZENOVA CLASSES:",
+                "CLASSES ERROR:",
                 error
             );
 
             showApp();
 
             showError(
-                "We couldn't load your Classes."
+                error
             );
-
         }
-
     }
 );
 
 
 /* =========================================================
-   STUDENT
+   LOAD STUDENT
 ========================================================= */
 
 async function loadStudent() {
 
-    const studentRef =
-        doc(
-            db,
-            "students",
-            currentUser.uid
+    /*
+     * Student profile is optional for displaying
+     * subjects. Missing medium defaults to Kannada.
+     */
+
+    try {
+
+        const { doc, getDoc } =
+            await import(
+                "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js"
+            );
+
+        const studentRef =
+            doc(
+                db,
+                "students",
+                currentUser.uid
+            );
+
+        const snapshot =
+            await getDoc(
+                studentRef
+            );
+
+        if (snapshot.exists()) {
+
+            currentStudent =
+                snapshot.data();
+
+        } else {
+
+            currentStudent = {
+                medium: "Kannada"
+            };
+        }
+
+    } catch (error) {
+
+        console.warn(
+            "Student profile could not be loaded:",
+            error
         );
 
-
-    const snapshot =
-        await getDoc(studentRef);
-
-
-    if (!snapshot.exists()) {
-
-        /*
-         * Old / incomplete profile.
-         *
-         * Kannada is the default.
-         */
-
-        student = {};
-
-    } else {
-
-        student =
-            snapshot.data();
-
+        currentStudent = {
+            medium: "Kannada"
+        };
     }
-
-
-    /*
-     * IMPORTANT
-     *
-     * Your existing student profile
-     * uses className.
-     */
-
-    studentClass =
-        String(
-            student.className || ""
-        ).trim();
-
-
-    /*
-     * MEDIUM
-     *
-     * If medium is missing:
-     * Kannada
-     */
-
-    studentMedium =
-        normalizeMedium(
-            student.medium
-        );
-
-
-    mediumLabel.textContent =
-        `${studentMedium} Medium`;
 }
 
 
@@ -183,47 +143,58 @@ async function loadStudent() {
    MEDIUM
 ========================================================= */
 
-function normalizeMedium(value) {
+function normalizeMedium(
+    value
+) {
 
     if (!value) {
 
         return "Kannada";
-
     }
 
-
-    const valueNormalized =
+    const medium =
         String(value)
             .trim()
             .toLowerCase();
 
+    if (
+        medium === "both" ||
+        medium === "all"
+    ) {
+
+        return "Both";
+    }
 
     if (
-        valueNormalized === "english" ||
-        valueNormalized === "english medium"
+        medium === "english" ||
+        medium === "english medium"
     ) {
 
         return "English";
-
     }
-
-
-    if (
-        valueNormalized === "kannada" ||
-        valueNormalized === "kannada medium"
-    ) {
-
-        return "Kannada";
-
-    }
-
-
-    /*
-     * Unknown value
-     * = Kannada fallback
-     */
 
     return "Kannada";
+}
+
+
+function canStudentSeeSubject(
+    subject
+) {
+
+    const studentMedium =
+        normalizeMedium(
+            currentStudent?.medium
+        );
+
+    const subjectMedium =
+        normalizeMedium(
+            subject.medium
+        );
+
+    return (
+        subjectMedium === "Both" ||
+        subjectMedium === studentMedium
+    );
 }
 
 
@@ -231,36 +202,25 @@ function normalizeMedium(value) {
    LOAD SUBJECTS
 ========================================================= */
 
-function loadSubjects() {
+async function loadSubjects() {
 
-    hideError();
+    subjectsList.innerHTML = "";
 
-
-    if (unsubscribeSubjects) {
-
-        unsubscribeSubjects();
-
-    }
+    emptyState.classList.add(
+        "hidden"
+    );
 
 
-    /*
-     * ONLY QUERY ACTIVE.
-     *
-     * We intentionally DO NOT query medium here.
-     *
-     * This means:
-     *
-     * - no composite index problem
-     * - old documents without medium still work
-     * - medium filtering happens locally
-     */
+    const subjectsRef =
+        collection(
+            db,
+            "hybridSubjects"
+        );
+
 
     const subjectsQuery =
         query(
-            collection(
-                db,
-                "hybridSubjects"
-            ),
+            subjectsRef,
             where(
                 "active",
                 "==",
@@ -269,258 +229,61 @@ function loadSubjects() {
         );
 
 
-    unsubscribeSubjects =
-        onSnapshot(
-
-            subjectsQuery,
-
-            (snapshot) => {
-
-                const subjects = [];
-
-
-                snapshot.forEach(
-                    (docSnapshot) => {
-
-                        const data =
-                            docSnapshot.data();
-
-
-                        /*
-                         * MEDIUM FILTER
-                         */
-
-                        if (
-                            !isCorrectMedium(
-                                data
-                            )
-                        ) {
-
-                            return;
-
-                        }
-
-
-                        /*
-                         * CLASS FILTER
-                         */
-
-                        if (
-                            !isCorrectClass(
-                                data
-                            )
-                        ) {
-
-                            return;
-
-                        }
-
-
-                        subjects.push({
-
-                            id:
-                                docSnapshot.id,
-
-                            ...data
-
-                        });
-
-                    }
-                );
-
-
-                subjects.sort(
-                    sortSubjects
-                );
-
-
-                renderSubjects(
-                    subjects
-                );
-
-            },
-
-            (error) => {
-
-                console.error(
-                    "Firebase subjects error:",
-                    error
-                );
-
-
-                showError(
-                    firebaseErrorMessage(
-                        error
-                    )
-                );
-
-            }
-        );
-}
-
-
-/* =========================================================
-   MEDIUM FILTER
-========================================================= */
-
-function isCorrectMedium(subject) {
-
-    /*
-     * VERY IMPORTANT:
-     *
-     * If an old Firebase subject doesn't
-     * have medium, we consider it Kannada.
-     *
-     * So:
-     *
-     * missing medium + Kannada student
-     * = SHOW
-     *
-     * missing medium + English student
-     * = HIDE
-     */
-
-    const contentMedium =
-        normalizeMedium(
-            subject.medium
+    const snapshot =
+        await getDocs(
+            subjectsQuery
         );
 
 
-    return (
-        contentMedium ===
-        studentMedium
-    );
-}
+    let subjects =
+        snapshot.docs.map(
+            documentSnapshot => ({
 
+                /*
+                 * VERY IMPORTANT
+                 *
+                 * Always use the actual
+                 * Firestore document ID.
+                 */
 
-/* =========================================================
-   CLASS FILTER
-========================================================= */
+                id:
+                    documentSnapshot.id,
 
-function isCorrectClass(subject) {
+                ...documentSnapshot.data()
 
-    /*
-     * If admin hasn't assigned classes,
-     * show it to everyone in this medium.
-     */
-
-    if (
-        !Array.isArray(
-            subject.targetClasses
-        ) ||
-        subject.targetClasses.length === 0
-    ) {
-
-        return true;
-
-    }
+            })
+        );
 
 
     /*
-     * If student class isn't available,
-     * don't hide the content.
+     * Medium filter.
      */
 
-    if (!studentClass) {
-
-        return true;
-
-    }
-
-
-    const studentClassNormalized =
-        normalizeClass(
-            studentClass
+    subjects =
+        subjects.filter(
+            subject =>
+                canStudentSeeSubject(
+                    subject
+                )
         );
 
 
-    return subject.targetClasses.some(
-        (targetClass) => {
+    /*
+     * Sort by priority.
+     */
 
-            return (
-                normalizeClass(
-                    targetClass
-                ) ===
-                studentClassNormalized
-            );
-
-        }
-    );
-}
-
-
-/* =========================================================
-   CLASS NORMALIZATION
-========================================================= */
-
-function normalizeClass(value) {
-
-    return String(value || "")
-        .trim()
-        .toLowerCase()
-        .replace(/\s+/g, " ");
-}
-
-
-/* =========================================================
-   SORT
-========================================================= */
-
-function sortSubjects(a, b) {
-
-    const priorityA =
-        Number(
-            a.priority ?? 9999
-        );
-
-
-    const priorityB =
-        Number(
-            b.priority ?? 9999
-        );
-
-
-    if (
-        priorityA !==
-        priorityB
-    ) {
-
-        return (
-            priorityA -
-            priorityB
-        );
-
-    }
-
-
-    return String(
-        a.name || ""
-    ).localeCompare(
-        String(
-            b.name || ""
-        )
-    );
-}
-
-
-/* =========================================================
-   RENDER SUBJECTS
-========================================================= */
-
-function renderSubjects(
-    subjects
-) {
-
-    subjectsGrid.innerHTML = "";
-
-    errorState.classList.add(
-        "hidden"
+    subjects.sort(
+        (a, b) =>
+            Number(
+                a.priority || 0
+            ) -
+            Number(
+                b.priority || 0
+            )
     );
 
 
-    if (
-        subjects.length === 0
-    ) {
+    if (!subjects.length) {
 
         emptyState.classList.remove(
             "hidden"
@@ -530,106 +293,156 @@ function renderSubjects(
     }
 
 
-    emptyState.classList.add(
-        "hidden"
-    );
-
-
     subjects.forEach(
-        (subject, index) => {
+        subject => {
 
-            const card =
-                document.createElement(
-                    "article"
-                );
-
-
-            card.className =
-                "subject-card";
-
-
-            const number =
-                String(
-                    index + 1
-                ).padStart(
-                    2,
-                    "0"
-                );
-
-
-            const name =
-                escapeHTML(
-                    subject.name ||
-                    "Subject"
-                );
-
-
-            const description =
-                escapeHTML(
-                    subject.description ||
-                    "Recorded classes and chapter lessons."
-                );
-
-
-            card.innerHTML = `
-
-                <div>
-
-                    <div class="subject-top">
-
-                        <div class="subject-number">
-                            ${number}
-                        </div>
-
-                        <div class="subject-arrow">
-                            ›
-                        </div>
-
-                    </div>
-
-
-                    <h3>
-                        ${name}
-                    </h3>
-
-
-                    <p>
-                        ${description}
-                    </p>
-
-                </div>
-
-
-                <div class="subject-footer">
-
-                    <span class="open-text">
-                        OPEN SUBJECT
-                    </span>
-
-                </div>
-
-            `;
-
-
-            card.addEventListener(
-                "click",
-                () => {
-
-                    window.location.href =
-                        `./subject.html?id=${encodeURIComponent(
-                            subject.id
-                        )}`;
-
-                }
+            subjectsList.appendChild(
+                createSubjectCard(
+                    subject
+                )
             );
-
-
-            subjectsGrid.appendChild(
-                card
-            );
-
         }
     );
+}
+
+
+/* =========================================================
+   CREATE SUBJECT CARD
+========================================================= */
+
+function createSubjectCard(
+    subject
+) {
+
+    const card =
+        document.createElement(
+            "article"
+        );
+
+
+    card.className =
+        "subject-card";
+
+
+    const name =
+        subject.name ||
+        subject.title ||
+        "Subject";
+
+
+    const description =
+        subject.description ||
+        "Recorded classes and study material";
+
+
+    card.innerHTML = `
+
+        <div class="subject-icon">
+
+            <i class="ri-book-open-line"></i>
+
+        </div>
+
+
+        <div class="subject-info">
+
+            <h3>
+                ${escapeHTML(name)}
+            </h3>
+
+            <p>
+                ${escapeHTML(description)}
+            </p>
+
+        </div>
+
+
+        <div class="subject-arrow">
+
+            <i class="ri-arrow-right-line"></i>
+
+        </div>
+
+    `;
+
+
+    /*
+     * =====================================================
+     * THIS IS THE IMPORTANT PART
+     * =====================================================
+     *
+     * We pass the REAL Firestore document ID.
+     */
+
+    card.addEventListener(
+        "click",
+        () => {
+
+            if (!subject.id) {
+
+                console.error(
+                    "Subject has no Firestore ID:",
+                    subject
+                );
+
+                alert(
+                    "This subject has an invalid ID. Please contact the administrator."
+                );
+
+                return;
+            }
+
+
+            const url =
+                new URL(
+                    "./subject.html",
+                    window.location.href
+                );
+
+
+            url.searchParams.set(
+                "subjectId",
+                subject.id
+            );
+
+
+            console.log(
+                "Opening subject:",
+                subject.name,
+                "ID:",
+                subject.id
+            );
+
+
+            window.location.href =
+                url.toString();
+        }
+    );
+
+
+    return card;
+}
+
+
+/* =========================================================
+   SHOW APP
+========================================================= */
+
+function showApp() {
+
+    if (loader) {
+
+        loader.classList.add(
+            "hidden"
+        );
+    }
+
+    if (app) {
+
+        app.classList.remove(
+            "hidden"
+        );
+    }
 }
 
 
@@ -638,145 +451,76 @@ function renderSubjects(
 ========================================================= */
 
 function showError(
-    message
-) {
-
-    subjectsGrid.innerHTML = "";
-
-    emptyState.classList.add(
-        "hidden"
-    );
-
-    errorText.textContent =
-        message ||
-        "Something went wrong.";
-
-    errorState.classList.remove(
-        "hidden"
-    );
-}
-
-
-function hideError() {
-
-    errorState.classList.add(
-        "hidden"
-    );
-}
-
-
-function firebaseErrorMessage(
     error
 ) {
 
-    if (
-        error?.code ===
-        "permission-denied"
-    ) {
-
-        return (
-            "Firebase permission denied. " +
-            "Check your Firestore rules."
-        );
-
-    }
-
-
-    if (
-        error?.code ===
-        "failed-precondition"
-    ) {
-
-        return (
-            "Firebase requires an index for this query."
-        );
-
-    }
-
-
-    return (
-        "Recorded classes could not be loaded."
+    console.error(
+        error
     );
+
+    if (!subjectsList) {
+        return;
+    }
+
+    subjectsList.innerHTML = `
+
+        <div style="
+            padding:40px;
+            text-align:center;
+            border:1px solid #eeeeee;
+            border-radius:14px;
+        ">
+
+            <strong>
+                Unable to load subjects
+            </strong>
+
+            <p style="
+                margin-top:8px;
+                color:#777;
+                font-size:13px;
+            ">
+                ${
+                    escapeHTML(
+                        error?.message ||
+                        "Please try again."
+                    )
+                }
+            </p>
+
+        </div>
+
+    `;
 }
 
 
 /* =========================================================
-   HTML SAFETY
+   ESCAPE
 ========================================================= */
 
-function escapeHTML(value) {
+function escapeHTML(
+    value
+) {
 
     return String(value)
-        .replaceAll(
-            "&",
+        .replace(
+            /&/g,
             "&amp;"
         )
-        .replaceAll(
-            "<",
+        .replace(
+            /</g,
             "&lt;"
         )
-        .replaceAll(
-            ">",
+        .replace(
+            />/g,
             "&gt;"
         )
-        .replaceAll(
-            '"',
+        .replace(
+            /"/g,
             "&quot;"
         )
-        .replaceAll(
-            "'",
+        .replace(
+            /'/g,
             "&#039;"
         );
-}
-
-
-/* =========================================================
-   NAVIGATION
-========================================================= */
-
-backBtn.addEventListener(
-    "click",
-    () => {
-
-        window.location.href =
-            "../";
-
-    }
-);
-
-
-notificationBtn.addEventListener(
-    "click",
-    () => {
-
-        window.location.href =
-            "../more/";
-
-    }
-);
-
-
-retryBtn.addEventListener(
-    "click",
-    () => {
-
-        loadSubjects();
-
-    }
-);
-
-
-/* =========================================================
-   APP
-========================================================= */
-
-function showApp() {
-
-    loader.classList.add(
-        "hidden"
-    );
-
-    app.classList.remove(
-        "hidden"
-    );
 }
