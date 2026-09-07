@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chapter Details — Zenova Admin</title>
+
+  <link rel="stylesheet" href="./chapterdetails.css">
+</head>
+
+<body>
+
+  <!-- LOADING -->
+  <div id="loadingScreen">
+    <div class="loader-ring">
+      <span>Z</span>
+    </div>
+  </div>
+
+
+  <!-- APP -->
+  <div id="app" class="hidden">
+
+    <header class="topbar">
+
+      <div>
+        <div class="brand">ZENOVA</div>
+        <div class="page-title">Chapter Details</div>
+      </div>
+
+    </header>
+
+
+    <main>
+
+      <!-- =====================================================
+           SCREEN 1 : SUBJECTS
+      ====================================================== -->
+
+      <section id="subjectsScreen">
+
+        <div class="page-head">
+
+          <button id="adminBackBtn" class="back-btn">
+            ← Back to Admin
+          </button>
+
+          <h1>Chapter Details</h1>
+
+          <p>
+            Select a subject to manage its chapter content.
+          </p>
+
+        </div>
+
+
+        <div class="content-box">
+
+          <div class="section-title">
+            <h2>Select Subject</h2>
+          </div>
+
+          <div id="subjectsGrid" class="subjects-grid"></div>
+
+        </div>
+
+      </section>
+
+
+
+      <!-- =====================================================
+           SCREEN 2 : CHAPTERS
+      ====================================================== -->
+
+      <section id="chaptersScreen" class="hidden">
+
+        <div class="page-head">
+
+          <button id="backToSubjectsBtn" class="back-btn">
+            ← Back to Subjects
+          </button>
+
+          <h1 id="chaptersSubjectName">
+            Subject
+          </h1>
+
+          <p>
+            Select a chapter to manage its content.
+          </p>
+
+        </div>
+
+
+        <div class="content-box">
+
+          <div class="section-title">
+
+            <div>
+              <h2>Chapters</h2>
+              <p id="chapterCount"></p>
+            </div>
+
+          </div>
+
+
+          <div id="chaptersList" class="chapters-list"></div>
+
+        </div>
+
+      </section>
+
+
+
+      <!-- =====================================================
+           SCREEN 3 : CHAPTER DETAILS
+      ====================================================== -->
+
+      <section id="detailsScreen" class="hidden">
+
+        <div class="page-head">
+
+          <button id="backToChaptersBtn" class="back-btn">
+            ← Back to Chapters
+          </button>
+
+          <div class="chapter-heading">
+
+            <span id="detailChapterNumber" class="chapter-number">
+              Chapter 01
+            </span>
+
+            <h1 id="detailChapterName">
+              Chapter
+            </h1>
+
+            <p id="detailSubjectName">
+              Subject
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <div class="content-box">
+
+          <!-- ACTIONS -->
+
+          <div class="content-actions">
+
+            <button
+              id="addVideoBtn"
+              class="primary-btn">
+              + Add Video
+            </button>
+
+            <button
+              id="addPdfBtn"
+              class="secondary-btn">
+              + Add PDF
+            </button>
+
+            <button
+              id="addNotesBtn"
+              class="secondary-btn">
+              + Add Notes
+            </button>
+
+          </div>
+
+
+          <!-- MATERIALS -->
+
+          <div class="materials-header">
+
+            <div>
+              <h2>Chapter Content</h2>
+              <p>
+                Videos, PDFs and notes added to this chapter.
+              </p>
+            </div>
+
+          </div>
+
+
+          <div id="materialsList" class="materials-list"></div>
+
+        </div>
+
+      </section>
+
+    </main>
+
+  </div>
+
+
+
+  <!-- =====================================================
+       MATERIAL MODAL
+  ====================================================== -->
+
+  <div id="modalOverlay" class="modal-overlay hidden">
+
+    <div class="modal">
+
+      <div class="modal-head">
+
+        <div>
+
+          <h2 id="modalTitle">
+            Add Material
+          </h2>
+
+          <p id="modalSubtitle">
+            Chapter
+          </p>
+
+        </div>
+
+        <button
+          id="closeModal"
+          class="close-btn">
+          ×
+        </button>
+
+      </div>
+
+
+      <!-- VIDEO FORM -->
+
+      <div id="videoForm" class="material-form hidden">
+
+        <div class="field">
+
+          <label>Video Title</label>
+
+          <input
+            id="videoTitle"
+            type="text"
+            placeholder="Enter video title">
+
+        </div>
+
+
+        <div class="field">
+
+          <label>Description</label>
+
+          <textarea
+            id="videoDescription"
+            placeholder="Enter video description"></textarea>
+
+        </div>
+
+
+        <div class="field">
+
+          <label>Teacher Name</label>
+
+          <input
+            id="videoTeacher"
+            type="text"
+            placeholder="Enter teacher name">
+
+        </div>
+
+
+        <div class="field">
+
+          <label>Video File</label>
+
+          <input
+            id="videoFile"
+            type="file"
+            accept="video/*">
+
+          <small>
+            Upload the recorded/revision class video.
+          </small>
+
+        </div>
+
+
+        <div class="field">
+
+          <label>Priority</label>
+
+          <input
+            id="videoPriority"
+            type="number"
+            min="1"
+            value="1">
+
+        </div>
+
+      </div>
+
+
+
+      <!-- PDF FORM -->
+
+      <div id="pdfForm" class="material-form hidden">
+
+        <div class="field">
+
+          <label>PDF Title</label>
+
+          <input
+            id="pdfTitle"
+            type="text"
+            placeholder="Enter PDF title">
+
+        </div>
+
+
+        <div class="field">
+
+          <label>Description</label>
+
+          <textarea
+            id="pdfDescription"
+            placeholder="Enter PDF description"></textarea>
+
+        </div>
+
+
+        <div class="field">
+
+          <label>PDF File</label>
+
+          <input
+            id="pdfFile"
+            type="file"
+            accept="application/pdf">
+
+        </div>
+
+
+        <div class="field">
+
+          <label>Priority</label>
+
+          <input
+            id="pdfPriority"
+            type="number"
+            min="1"
+            value="1">
+
+        </div>
+
+      </div>
+
+
+
+      <!-- NOTES FORM -->
+
+      <div id="notesForm" class="material-form hidden">
+
+        <div class="field">
+
+          <label>Notes Title</label>
+
+          <input
+            id="notesTitle"
+            type="text"
+            placeholder="Enter notes title">
+
+        </div>
+
+
+        <div class="field">
+
+          <label>Notes</label>
+
+          <textarea
+            id="notesContent"
+            class="large-textarea"
+            placeholder="Write the notes here..."></textarea>
+
+        </div>
+
+
+        <div class="field">
+
+          <label>Priority</label>
+
+          <input
+            id="notesPriority"
+            type="number"
+            min="1"
+            value="1">
+
+        </div>
+
+      </div>
+
+
+      <div id="modalError" class="modal-error"></div>
+
+
+      <div class="modal-actions">
+
+        <button
+          id="cancelModal"
+          class="secondary-btn">
+          Cancel
+        </button>
+
+        <button
+          id="saveMaterialBtn"
+          class="primary-btn">
+          Add Material
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <script
+    type="module"
+    src="./chapterdetails-core.js">
+  </script>
+
+</body>
+</html>
