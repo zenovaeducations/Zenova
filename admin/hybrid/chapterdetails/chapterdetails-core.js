@@ -65,7 +65,8 @@ const detailSubjectName =
 
 const materialsList =
   document.getElementById("materialsList");
-
+const videoUrl =
+  document.getElementById("videoUrl");
 
 /* Buttons */
 
@@ -135,8 +136,6 @@ const videoDescription =
 const videoTeacher =
   document.getElementById("videoTeacher");
 
-const videoFile =
-  document.getElementById("videoFile");
 
 const videoPriority =
   document.getElementById("videoPriority");
@@ -920,138 +919,98 @@ saveMaterialBtn.addEventListener(
 
 
     try {
+/* ===============================================
+   VIDEO
+=============================================== */
 
-      /* ===============================================
-         VIDEO
-      =============================================== */
+if (currentMaterialType === "VIDEO") {
 
-      if (
-        currentMaterialType === "VIDEO"
-      ) {
+  const title =
+    videoTitle.value.trim();
 
-        const title =
-          videoTitle.value.trim();
+  const url =
+    videoUrl.value.trim();
 
-        const description =
-          videoDescription.value.trim();
+  const description =
+    videoDescription.value.trim();
 
-        const teacher =
-          videoTeacher.value.trim();
+  const teacher =
+    videoTeacher.value.trim();
 
-        const file =
-          videoFile.files[0];
-
-        const priority =
-          Number(
-            videoPriority.value || 1
-          );
+  const priority =
+    Number(videoPriority.value || 1);
 
 
-        if (!title) {
+  if (!title) {
 
-          throw new Error(
-            "Enter the video title."
-          );
+    throw new Error(
+      "Please enter the video title."
+    );
 
-        }
-
-
-        if (!file) {
-
-          throw new Error(
-            "Select a video file."
-          );
-
-        }
+  }
 
 
-        /*
-          Storage path:
+  if (!url) {
 
-          hybrid-materials/
-             subjectId/
-                chapterId/
-                   videos/
-                      video-file
-        */
+    throw new Error(
+      "Please enter the embedded video link."
+    );
 
-        const storagePath =
-          `hybrid-materials/${
-            selectedSubject.id
-          }/${
-            selectedChapter.id
-          }/videos/${
-            Date.now()
-          }-${file.name}`;
+  }
 
 
-        const storageRef =
-          ref(
-            storage,
-            storagePath
-          );
+  if (!isValidVideoUrl(url)) {
+
+    throw new Error(
+      "Please enter a valid embedded video URL."
+    );
+
+  }
 
 
-        await uploadBytes(
-          storageRef,
-          file
-        );
+  await addDoc(
+    collection(db, "hybridMaterials"),
+    {
 
+      subjectId:
+        selectedSubject.id,
 
-        const videoUrl =
-          await getDownloadURL(
-            storageRef
-          );
+      chapterId:
+        selectedChapter.id,
 
+      title,
 
-        await addDoc(
-          collection(
-            db,
-            "hybridMaterials"
-          ),
-          {
+      description,
 
-            subjectId:
-              selectedSubject.id,
+      type: "VIDEO",
 
-            chapterId:
-              selectedChapter.id,
+      videoType:
+        "embed",
 
-            title,
+      videoUrl:
+        url,
 
-            description,
+      teacherName:
+        teacher,
 
-            type: "VIDEO",
+      priority,
 
-            videoType:
-              "firebase",
+      active: true,
 
-            videoUrl,
+      medium:
+        selectedSubject.medium ||
+        "Kannada",
 
-            teacherName:
-              teacher,
+      createdAt:
+        serverTimestamp(),
 
-            priority,
+      createdBy:
+        currentUser.uid
 
-            active: true,
+    }
+  );
 
-            medium:
-              selectedSubject.medium ||
-              "Kannada",
-
-            createdAt:
-              serverTimestamp(),
-
-            createdBy:
-              currentUser.uid
-
-          }
-        );
-
-      }
-
-
-
+}
       /* ===============================================
          PDF
       =============================================== */
@@ -1244,7 +1203,31 @@ saveMaterialBtn.addEventListener(
 
       }
 
+function isValidVideoUrl(url) {
 
+  try {
+
+    const parsed =
+      new URL(url);
+
+    const host =
+      parsed.hostname.toLowerCase();
+
+
+    return (
+      host.includes("youtube.com") ||
+      host.includes("youtu.be") ||
+      host.includes("vimeo.com") ||
+      host.includes("player.vimeo.com")
+    );
+
+  } catch {
+
+    return false;
+
+  }
+
+}
 
       /* ===============================================
          COMPLETE
@@ -1284,13 +1267,12 @@ saveMaterialBtn.addEventListener(
 /* =====================================================
    CLEAR FORMS
 ===================================================== */
-
 function clearForms() {
 
   videoTitle.value = "";
+  videoUrl.value = "";
   videoDescription.value = "";
   videoTeacher.value = "";
-  videoFile.value = "";
   videoPriority.value = "1";
 
 
@@ -1342,3 +1324,286 @@ function escapeHtml(value) {
     );
 
 }
+saveMaterialBtn.addEventListener(
+  "click",
+  async () => {
+
+    modalError.textContent = "";
+
+    saveMaterialBtn.disabled = true;
+    saveMaterialBtn.textContent = "Saving...";
+
+    try {
+
+      if (!selectedSubject) {
+        throw new Error("Subject is not selected.");
+      }
+
+      if (!selectedChapter) {
+        throw new Error("Chapter is not selected.");
+      }
+
+      if (!currentMaterialType) {
+        throw new Error("Material type is not selected.");
+      }
+
+
+      /* VIDEO */
+
+      if (currentMaterialType === "VIDEO") {
+
+        const title =
+          videoTitle.value.trim();
+
+        const url =
+          videoUrl.value.trim();
+
+        if (!title) {
+          throw new Error(
+            "Please enter the video title."
+          );
+        }
+
+        if (!url) {
+          throw new Error(
+            "Please enter the embedded video link."
+          );
+        }
+
+        if (!isValidVideoUrl(url)) {
+          throw new Error(
+            "Please enter a valid embedded video URL."
+          );
+        }
+
+
+        await addDoc(
+          collection(db, "hybridMaterials"),
+          {
+            subjectId: selectedSubject.id,
+            chapterId: selectedChapter.id,
+
+            title: title,
+
+            description:
+              videoDescription.value.trim(),
+
+            type: "VIDEO",
+
+            videoType: "embed",
+
+            videoUrl: url,
+
+            teacherName:
+              videoTeacher.value.trim(),
+
+            priority:
+              Number(videoPriority.value || 1),
+
+            active: true,
+
+            medium:
+              selectedSubject.medium ||
+              "Kannada",
+
+            createdAt:
+              serverTimestamp(),
+
+            createdBy:
+              currentUser.uid
+          }
+        );
+      }
+
+
+      /* PDF */
+
+      else if (currentMaterialType === "PDF") {
+
+        const title =
+          pdfTitle.value.trim();
+
+        const file =
+          pdfFile.files[0];
+
+
+        if (!title) {
+          throw new Error(
+            "Please enter the PDF title."
+          );
+        }
+
+        if (!file) {
+          throw new Error(
+            "Please select a PDF."
+          );
+        }
+
+
+        const storagePath =
+          `hybrid-materials/${
+            selectedSubject.id
+          }/${
+            selectedChapter.id
+          }/pdfs/${
+            Date.now()
+          }-${file.name}`;
+
+
+        const storageRef =
+          ref(storage, storagePath);
+
+
+        await uploadBytes(
+          storageRef,
+          file
+        );
+
+
+        const pdfUrl =
+          await getDownloadURL(
+            storageRef
+          );
+
+
+        await addDoc(
+          collection(db, "hybridMaterials"),
+          {
+
+            subjectId:
+              selectedSubject.id,
+
+            chapterId:
+              selectedChapter.id,
+
+            title,
+
+            description:
+              pdfDescription.value.trim(),
+
+            type: "PDF",
+
+            pdfUrl,
+
+            pdfName:
+              file.name,
+
+            priority:
+              Number(
+                pdfPriority.value || 1
+              ),
+
+            active: true,
+
+            medium:
+              selectedSubject.medium ||
+              "Kannada",
+
+            createdAt:
+              serverTimestamp(),
+
+            createdBy:
+              currentUser.uid
+
+          }
+        );
+
+      }
+
+
+      /* NOTES */
+
+      else if (currentMaterialType === "NOTES") {
+
+        const title =
+          notesTitle.value.trim();
+
+        const notes =
+          notesContent.value.trim();
+
+
+        if (!title) {
+          throw new Error(
+            "Please enter the notes title."
+          );
+        }
+
+        if (!notes) {
+          throw new Error(
+            "Please enter the notes."
+          );
+        }
+
+
+        await addDoc(
+          collection(db, "hybridMaterials"),
+          {
+
+            subjectId:
+              selectedSubject.id,
+
+            chapterId:
+              selectedChapter.id,
+
+            title,
+
+            type: "NOTES",
+
+            notes,
+
+            priority:
+              Number(
+                notesPriority.value || 1
+              ),
+
+            active: true,
+
+            medium:
+              selectedSubject.medium ||
+              "Kannada",
+
+            createdAt:
+              serverTimestamp(),
+
+            createdBy:
+              currentUser.uid
+
+          }
+        );
+
+      }
+
+
+      /* SUCCESS */
+
+      closeMaterialModal();
+
+      clearForms();
+
+      await loadMaterials(
+        selectedChapter.id
+      );
+
+
+    } catch (error) {
+
+      console.error(
+        "SAVE MATERIAL ERROR:",
+        error
+      );
+
+      modalError.textContent =
+        error.message ||
+        "Unable to save material.";
+
+    } finally {
+
+      saveMaterialBtn.disabled = false;
+
+      saveMaterialBtn.textContent =
+        "Add Material";
+
+    }
+
+  }
+);
