@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Chapters — Zenova</title>
+
+  <link rel="stylesheet" href="./viewchapters.css">
+</head>
+
+<body>
+
+  <!-- LOADING -->
+  <div id="loadingScreen">
+    <div class="loader-ring">
+      <span>Z</span>
+    </div>
+  </div>
+
+
+  <!-- APP -->
+  <div id="app" class="hidden">
+
+    <header class="topbar">
+
+      <div class="brand">
+        ZENOVA
+      </div>
+
+      <div class="topbar-title">
+        Revision Classes
+      </div>
+
+    </header>
+
+
+    <main>
+
+      <!-- BACK -->
+
+      <button
+        id="backBtn"
+        class="back-btn">
+        ← Back to Subjects
+      </button>
+
+
+      <!-- SUBJECT HEADER -->
+
+      <section class="subject-header">
+
+        <div class="subject-label">
+          REVISION CLASSES
+        </div>
+
+        <h1 id="subjectName">
+          Subject
+        </h1>
+
+        <p id="subjectDescription">
+          Select a chapter to continue learning.
+        </p>
+
+      </section>
+
+
+      <!-- CHAPTERS -->
+
+      <section class="chapters-section">
+
+        <div class="section-heading">
+
+          <div>
+            <h2>Chapters</h2>
+
+            <p id="chapterCount">
+              Loading...
+            </p>
+          </div>
+
+        </div>
+
+
+        <div
+          id="chaptersList"
+          class="chapters-list">
+        </div>
+
+      </section>
+
+    </main>
+
+  </div>
+
+
+  <script
+    type="module"
+    src="./viewchapters-core.js">
+  </script>
+
+</body>
+</html>
