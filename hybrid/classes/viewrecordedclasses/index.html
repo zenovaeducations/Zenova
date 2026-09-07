@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>Super Class | Zenova Educations</title>
+
+  <link
+    rel="stylesheet"
+    href="./viewrecordedclasses.css"
+  >
+</head>
+
+<body>
+
+  <!-- =====================================================
+       LOADING SCREEN
+  ====================================================== -->
+
+  <div id="loadingScreen" class="loading-screen">
+
+    <div class="loading-logo">
+      Z
+    </div>
+
+    <div class="loading-ring"></div>
+
+  </div>
+
+
+  <!-- =====================================================
+       MAIN APP
+  ====================================================== -->
+
+  <main id="app" class="app hidden">
+
+
+    <!-- ===================================================
+         TOP BAR
+    ==================================================== -->
+
+    <header class="topbar">
+
+      <button
+        id="backBtn"
+        class="back-btn"
+        aria-label="Go back"
+      >
+        ←
+      </button>
+
+
+      <div class="brand">
+
+        <div class="brand-main">
+          ZENOVA
+        </div>
+
+        <div class="brand-sub">
+          EDUCATIONS
+        </div>
+
+      </div>
+
+    </header>
+
+
+
+    <!-- ===================================================
+         SUPER CLASS
+    ==================================================== -->
+
+    <section class="class-section">
+
+
+      <!-- =================================================
+           VIDEO PLAYER
+      ================================================== -->
+
+      <div class="video-wrapper">
+
+        <div
+          id="videoContainer"
+          class="video-container"
+        >
+
+          <!-- Firebase video will be inserted here -->
+
+        </div>
+
+      </div>
+
+
+
+      <!-- =================================================
+           CLASS INFORMATION
+      ================================================== -->
+
+      <div class="class-info">
+
+
+        <div
+          id="chapterNumber"
+          class="chapter-number"
+        >
+          CHAPTER
+        </div>
+
+
+        <h1 id="classTitle">
+          Loading class...
+        </h1>
+
+
+        <p
+          id="classDescription"
+          class="class-description"
+        >
+          Loading...
+        </p>
+
+
+
+        <!-- ===============================================
+             ACTION BUTTONS
+        ================================================ -->
+
+        <div class="action-row">
+
+
+          <!-- ASK DOUBT -->
+
+          <button
+            id="askDoubtBtn"
+            class="action-btn primary-action"
+          >
+
+            <span class="action-icon">
+              ?
+            </span>
+
+            <span>
+              Ask Doubt
+            </span>
+
+          </button>
+
+
+
+          <!-- SHARE -->
+
+          <button
+            id="shareBtn"
+            class="action-btn"
+          >
+
+            <span class="action-icon">
+              ↗
+            </span>
+
+            <span>
+              Share
+            </span>
+
+          </button>
+
+
+        </div>
+
+
+      </div>
+
+
+
+      <!-- =================================================
+           ABOUT THIS CLASS
+      ================================================== -->
+
+      <section class="content-section">
+
+        <div class="section-label">
+          ABOUT THIS CLASS
+        </div>
+
+        <h2>
+          Super Class
+        </h2>
+
+        <p
+          id="aboutText"
+          class="about-text"
+        >
+          No description available.
+        </p>
+
+      </section>
+
+
+
+      <!-- =================================================
+           STUDY MATERIAL
+      ================================================== -->
+
+      <section
+        id="studyMaterialSection"
+        class="content-section hidden"
+      >
+
+        <div class="section-label">
+          STUDY MATERIAL
+        </div>
+
+        <h2>
+          Notes & PDF
+        </h2>
+
+
+        <div class="pdf-card">
+
+
+          <div class="pdf-left">
+
+            <div class="pdf-icon">
+              PDF
+            </div>
+
+
+            <div class="pdf-details">
+
+              <div
+                id="pdfName"
+                class="pdf-name"
+              >
+                Chapter Notes
+              </div>
+
+              <div class="pdf-label">
+                Study Material
+              </div>
+
+            </div>
+
+          </div>
+
+
+
+          <button
+            id="viewPdfBtn"
+            class="pdf-btn"
+          >
+            View PDF
+          </button>
+
+
+        </div>
+
+      </section>
+
+
+    </section>
+
+
+  </main>
+
+
+  <!-- =====================================================
+       JAVASCRIPT
+  ====================================================== -->
+
+  <script
+    type="module"
+    src="./viewrecordedclasses-core-X7kP.js"
+  ></script>
+
+</body>
+</html>
