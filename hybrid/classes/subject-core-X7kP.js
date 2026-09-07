@@ -1,3 +1,8 @@
+/* =========================================================
+   ZENOVA HYBRID
+   STUDENT SUBJECT PAGE
+========================================================= */
+
 import {
     auth,
     db
@@ -17,72 +22,50 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
 
-// ======================================================
-// ELEMENTS
-// ======================================================
+/* =========================================================
+   ELEMENTS
+========================================================= */
 
-const pageLoader =
-    document.getElementById(
-        "pageLoader"
-    );
+const loader =
+    document.getElementById("loader");
 
 const app =
-    document.getElementById(
-        "app"
-    );
-
-const backButton =
-    document.getElementById(
-        "backButton"
-    );
+    document.getElementById("app");
 
 const subjectName =
-    document.getElementById(
-        "subjectName"
-    );
+    document.getElementById("subjectName");
 
 const subjectDescription =
-    document.getElementById(
-        "subjectDescription"
-    );
-
-const chaptersList =
-    document.getElementById(
-        "chaptersList"
-    );
+    document.getElementById("subjectDescription");
 
 const chapterCount =
-    document.getElementById(
-        "chapterCount"
-    );
+    document.getElementById("chapterCount");
+
+const mediumBadge =
+    document.getElementById("mediumBadge");
+
+const chaptersList =
+    document.getElementById("chaptersList");
 
 const emptyState =
-    document.getElementById(
-        "emptyState"
-    );
+    document.getElementById("emptyState");
 
-const toast =
-    document.getElementById(
-        "toast"
-    );
+const errorState =
+    document.getElementById("errorState");
 
+const errorMessage =
+    document.getElementById("errorMessage");
 
-// ======================================================
-// STATE
-// ======================================================
+const retryButton =
+    document.getElementById("retryButton");
 
-let currentUser = null;
-
-let currentStudent = null;
-
-let currentSubject = null;
-
-let chapters = [];
+const backButton =
+    document.getElementById("backButton");
 
 
-// ======================================================
-// URL
-// ======================================================
+/* =========================================================
+   URL PARAMETERS
+========================================================= */
 
 const params =
     new URLSearchParams(
@@ -90,91 +73,188 @@ const params =
     );
 
 const subjectId =
-    params.get(
-        "subjectId"
-    );
+    params.get("subjectId");
 
 
-// ======================================================
-// START
-// ======================================================
+/* =========================================================
+   STATE
+========================================================= */
+
+let currentUser = null;
+
+let currentStudent = null;
+
+let currentSubject = null;
+
+
+/* =========================================================
+   MEDIUM
+========================================================= */
+
+function normalizeMedium(value) {
+
+    if (!value) {
+        return "Kannada";
+    }
+
+    const v =
+        String(value)
+            .trim()
+            .toLowerCase();
+
+    if (
+        v === "both" ||
+        v === "all"
+    ) {
+        return "Both";
+    }
+
+    if (
+        v === "english" ||
+        v === "english medium"
+    ) {
+        return "English";
+    }
+
+    return "Kannada";
+}
+
+
+function studentCanSeeContent(
+    contentMedium
+) {
+
+    const studentMedium =
+        normalizeMedium(
+            currentStudent?.medium
+        );
+
+    const medium =
+        normalizeMedium(
+            contentMedium
+        );
+
+    if (medium === "Both") {
+        return true;
+    }
+
+    return medium === studentMedium;
+}
+
+
+/* =========================================================
+   SHOW / HIDE APP
+========================================================= */
+
+function showApp() {
+
+    loader.classList.add("hidden");
+
+    app.classList.remove("hidden");
+}
+
+
+function showError(message) {
+
+    loader.classList.add("hidden");
+
+    app.classList.remove("hidden");
+
+    chaptersList.innerHTML = "";
+
+    emptyState.classList.add("hidden");
+
+    errorMessage.textContent =
+        message || "Something went wrong.";
+
+    errorState.classList.remove("hidden");
+}
+
+
+/* =========================================================
+   SUBJECT ID CHECK
+========================================================= */
 
 if (!subjectId) {
 
-    hideLoader();
-
-    showToast(
-        "No subject selected."
+    showError(
+        "No subject was selected. Please go back and select a subject."
     );
-
-    setTimeout(() => {
-
-        window.location.href =
-            "./";
-
-    }, 1000);
 
 } else {
 
-    startAuth();
-
+    start();
 }
 
 
-// ======================================================
-// AUTH
-// ======================================================
+/* =========================================================
+   START
+========================================================= */
 
-function startAuth() {
+async function start() {
 
-    onAuthStateChanged(
-        auth,
-        async user => {
+    try {
 
-            if (!user) {
+        /*
+         * Wait for Firebase Auth.
+         */
 
-                window.location.href =
-                    "../../index.html";
+        onAuthStateChanged(
+            auth,
+            async user => {
 
-                return;
+                try {
+
+                    if (!user) {
+
+                        window.location.href =
+                            "../../";
+
+                        return;
+                    }
+
+                    currentUser = user;
+
+                    await loadStudent();
+
+                    await loadSubject();
+
+                    await loadChapters();
+
+                    showApp();
+
+                } catch (error) {
+
+                    console.error(
+                        "Zenova Subject Error:",
+                        error
+                    );
+
+                    showError(
+                        getReadableError(error)
+                    );
+                }
+
             }
+        );
 
-            currentUser =
-                user;
+    } catch (error) {
 
-            try {
+        console.error(
+            "Authentication startup error:",
+            error
+        );
 
-                await loadStudent();
-
-                await loadSubject();
-
-                await loadChapters();
-
-                showApp();
-
-            } catch (error) {
-
-                console.error(
-                    "Subject page error:",
-                    error
-                );
-
-                showApp();
-
-                showToast(
-                    "Unable to load this subject."
-                );
-            }
-
-        }
-    );
-
+        showError(
+            getReadableError(error)
+        );
+    }
 }
 
 
-// ======================================================
-// LOAD STUDENT
-// ======================================================
+/* =========================================================
+   LOAD STUDENT
+========================================================= */
 
 async function loadStudent() {
 
@@ -186,30 +266,30 @@ async function loadStudent() {
         );
 
     const snapshot =
-        await getDoc(
-            studentRef
-        );
+        await getDoc(studentRef);
 
-    if (
-        !snapshot.exists()
-    ) {
+    if (snapshot.exists()) {
 
-        throw new Error(
-            "Student profile not found."
-        );
+        currentStudent =
+            snapshot.data();
+
+    } else {
+
+        /*
+         * If the student document does not exist,
+         * default to Kannada for old accounts.
+         */
+
+        currentStudent = {
+            medium: "Kannada"
+        };
     }
-
-    currentStudent = {
-        id: snapshot.id,
-        ...snapshot.data()
-    };
-
 }
 
 
-// ======================================================
-// LOAD SUBJECT
-// ======================================================
+/* =========================================================
+   LOAD SUBJECT
+========================================================= */
 
 async function loadSubject() {
 
@@ -221,20 +301,14 @@ async function loadSubject() {
         );
 
     const snapshot =
-        await getDoc(
-            subjectRef
-        );
+        await getDoc(subjectRef);
 
-
-    if (
-        !snapshot.exists()
-    ) {
+    if (!snapshot.exists()) {
 
         throw new Error(
-            "Subject not found."
+            "This subject does not exist in Firebase."
         );
     }
-
 
     currentSubject = {
         id: snapshot.id,
@@ -242,22 +316,60 @@ async function loadSubject() {
     };
 
 
+    /*
+     * SUBJECT INFORMATION
+     */
+
     subjectName.textContent =
         currentSubject.name ||
         "Subject";
 
-
     subjectDescription.textContent =
         currentSubject.description ||
-        "Chapters and learning materials";
+        "Recorded classes and study material for this subject.";
+
+
+    /*
+     * Medium badge.
+     */
+
+    const subjectMedium =
+        normalizeMedium(
+            currentSubject.medium
+        );
+
+    mediumBadge.textContent =
+        subjectMedium + " Medium";
 }
 
 
-// ======================================================
-// LOAD CHAPTERS
-// ======================================================
+/* =========================================================
+   LOAD CHAPTERS
+========================================================= */
 
 async function loadChapters() {
+
+    chaptersList.innerHTML = "";
+
+    emptyState.classList.add(
+        "hidden"
+    );
+
+    errorState.classList.add(
+        "hidden"
+    );
+
+
+    /*
+     * IMPORTANT:
+     *
+     * We query ONLY subjectId.
+     *
+     * No orderBy().
+     *
+     * Therefore this does not require a composite
+     * Firestore index.
+     */
 
     const chaptersRef =
         collection(
@@ -265,17 +377,7 @@ async function loadChapters() {
             "hybridChapters"
         );
 
-
-    /*
-     * Query ONLY by subjectId.
-     *
-     * We deliberately do NOT use
-     * orderBy here because we want
-     * to avoid composite-index
-     * requirements.
-     */
-
-    const q =
+    const chaptersQuery =
         query(
             chaptersRef,
             where(
@@ -285,29 +387,63 @@ async function loadChapters() {
             )
         );
 
-
     const snapshot =
-        await getDocs(q);
+        await getDocs(
+            chaptersQuery
+        );
 
 
-    chapters =
-        snapshot.docs
-            .map(
-                chapterDoc => ({
-                    id:
-                        chapterDoc.id,
-
-                    ...chapterDoc.data()
-                })
-            )
-            .filter(
-                chapter =>
-                    chapter.active !== false
-            );
+    let chapters =
+        snapshot.docs.map(
+            item => ({
+                id: item.id,
+                ...item.data()
+            })
+        );
 
 
     /*
-     * Textbook order.
+     * Only active chapters.
+     *
+     * If active is missing, treat it as active.
+     */
+
+    chapters =
+        chapters.filter(
+            chapter =>
+                chapter.active !== false
+        );
+
+
+    /*
+     * MEDIUM FILTER
+     *
+     * Chapter medium:
+     *
+     * Kannada
+     * English
+     * Both
+     *
+     * Missing medium = Kannada
+     */
+
+    chapters =
+        chapters.filter(
+            chapter =>
+                studentCanSeeContent(
+                    chapter.medium
+                )
+        );
+
+
+    /*
+     * TEXTBOOK ORDER
+     *
+     * chapterNumber:
+     * 1
+     * 2
+     * 3
+     * ...
      */
 
     chapters.sort(
@@ -315,50 +451,60 @@ async function loadChapters() {
 
             const numberA =
                 Number(
-                    a.chapterNumber ||
-                    999999
+                    a.chapterNumber
                 );
 
             const numberB =
                 Number(
-                    b.chapterNumber ||
-                    999999
+                    b.chapterNumber
                 );
 
 
-            return (
-                numberA -
-                numberB
-            );
+            const safeA =
+                Number.isFinite(numberA)
+                    ? numberA
+                    : 999999;
 
+            const safeB =
+                Number.isFinite(numberB)
+                    ? numberB
+                    : 999999;
+
+
+            if (safeA !== safeB) {
+
+                return safeA - safeB;
+            }
+
+
+            /*
+             * Secondary ordering.
+             */
+
+            const priorityA =
+                Number(
+                    a.priority || 0
+                );
+
+            const priorityB =
+                Number(
+                    b.priority || 0
+                );
+
+            return priorityB - priorityA;
         }
     );
 
 
-    renderChapters();
-
-}
-
-
-// ======================================================
-// RENDER
-// ======================================================
-
-function renderChapters() {
-
-    chaptersList.innerHTML =
-        "";
-
-
     chapterCount.textContent =
-        String(
-            chapters.length
-        );
+        chapters.length;
 
 
-    if (
-        !chapters.length
-    ) {
+    /*
+     * NOTHING AVAILABLE
+     */
+
+    if (!chapters.length) {
 
         emptyState.classList.remove(
             "hidden"
@@ -368,29 +514,29 @@ function renderChapters() {
     }
 
 
-    emptyState.classList.add(
-        "hidden"
-    );
-
+    /*
+     * CREATE CARDS
+     */
 
     chapters.forEach(
         chapter => {
 
-            chaptersList.appendChild(
+            const card =
                 createChapterCard(
                     chapter
-                )
-            );
+                );
 
+            chaptersList.appendChild(
+                card
+            );
         }
     );
-
 }
 
 
-// ======================================================
-// CREATE CHAPTER CARD
-// ======================================================
+/* =========================================================
+   CREATE CHAPTER CARD
+========================================================= */
 
 function createChapterCard(
     chapter
@@ -405,455 +551,350 @@ function createChapterCard(
         "chapter-card";
 
 
-    const locked =
-        chapter.locked === true;
+    /* -----------------------------------------------------
+       CHAPTER DATA
+    ----------------------------------------------------- */
 
-
-    // ================================================
-    // THUMBNAIL
-    // ================================================
-
-    const thumbnail =
-        document.createElement(
-            "div"
-        );
-
-    thumbnail.className =
-        "chapter-thumbnail";
-
-
-    const thumbnailData =
-        getThumbnailData(
-            chapter
-        );
-
-
-    if (
-        thumbnailData
-    ) {
-
-        const image =
-            document.createElement(
-                "img"
-            );
-
-        image.src =
-            thumbnailData;
-
-        image.alt =
-            chapter.chapterName ||
-            "Chapter";
-
-        image.loading =
-            "lazy";
-
-        thumbnail.appendChild(
-            image
-        );
-
-    } else {
-
-        const fallback =
-            document.createElement(
-                "div"
-            );
-
-        fallback.className =
-            "thumbnail-fallback";
-
-
-        const letter =
-            document.createElement(
-                "div"
-            );
-
-        letter.className =
-            "thumbnail-fallback-letter";
-
-        letter.textContent =
-            "Z";
-
-
-        fallback.appendChild(
-            letter
-        );
-
-        thumbnail.appendChild(
-            fallback
-        );
-    }
-
-
-    /*
-     * If video exists,
-     * show play button.
-     */
-
-    if (
-        chapter.videoUrl &&
-        !locked
-    ) {
-
-        const play =
-            document.createElement(
-                "div"
-            );
-
-        play.className =
-            "thumbnail-play";
-
-        play.textContent =
-            "▶";
-
-        thumbnail.appendChild(
-            play
-        );
-
-    }
-
-
-    /*
-     * Locked overlay.
-     */
-
-    if (locked) {
-
-        const lock =
-            document.createElement(
-                "div"
-            );
-
-        lock.className =
-            "thumbnail-lock";
-
-        lock.textContent =
-            "🔒";
-
-        thumbnail.appendChild(
-            lock
-        );
-    }
-
-
-    // ================================================
-    // CONTENT
-    // ================================================
-
-    const content =
-        document.createElement(
-            "div"
-        );
-
-    content.className =
-        "chapter-content";
-
-
-    const number =
-        document.createElement(
-            "div"
-        );
-
-    number.className =
-        "chapter-number";
-
-    number.textContent =
-        `CHAPTER ${formatNumber(
-            chapter.chapterNumber
-        )}`;
-
+    const chapterNumber =
+        chapter.chapterNumber ??
+        "";
 
     const title =
-        document.createElement(
-            "h3"
-        );
-
-    title.className =
-        "chapter-title";
-
-    title.textContent =
         chapter.chapterName ||
         chapter.title ||
         "Untitled Chapter";
 
+    const description =
+        chapter.description ||
+        chapter.chapterDescription ||
+        "";
 
-    const status =
-        document.createElement(
-            "span"
+    const videoUrl =
+        chapter.videoUrl ||
+        chapter.youtubeUrl ||
+        chapter.video ||
+        "";
+
+    const pdfUrl =
+        chapter.pdfUrl ||
+        "";
+
+    const pdfName =
+        chapter.pdfName ||
+        "Chapter PDF";
+
+    const locked =
+        chapter.locked === true;
+
+
+    /* -----------------------------------------------------
+       THUMBNAIL
+    ----------------------------------------------------- */
+
+    const youtubeId =
+        extractYouTubeId(
+            videoUrl
         );
 
-    status.className =
-        `chapter-status ${
-            locked
-                ? "locked"
-                : "available"
-        }`;
 
-    status.textContent =
+    let thumbnailHTML = "";
+
+
+    if (youtubeId) {
+
+        thumbnailHTML = `
+            <img
+                src="https://img.youtube.com/vi/${escapeAttribute(youtubeId)}/hqdefault.jpg"
+                alt="${escapeAttribute(title)}"
+                loading="lazy"
+            >
+        `;
+
+    } else {
+
+        thumbnailHTML = `
+            <div class="thumbnail-placeholder">
+                <i class="ri-play-circle-line"></i>
+            </div>
+        `;
+    }
+
+
+    /* -----------------------------------------------------
+       LOCK
+    ----------------------------------------------------- */
+
+    const lockHTML =
         locked
-            ? "🔒 Chapter Locked"
-            : "🔓 Available";
+            ? `
+                <div class="lock-overlay">
+                    <i class="ri-lock-line"></i>
+                    Chapter Locked
+                </div>
+              `
+            : "";
 
 
-    content.appendChild(
-        number
-    );
+    /* -----------------------------------------------------
+       VIDEO BUTTON
+    ----------------------------------------------------- */
 
-    content.appendChild(
-        title
-    );
-
-    content.appendChild(
-        status
-    );
-
-
-    // ================================================
-    // ACTIONS
-    // ================================================
-
-    const actions =
-        document.createElement(
-            "div"
-        );
-
-    actions.className =
-        "chapter-actions";
+    let watchButtonHTML;
 
 
     if (locked) {
 
-        const lockedMessage =
-            document.createElement(
-                "div"
-            );
+        watchButtonHTML = `
+            <button
+                class="chapter-button watch-button disabled"
+                type="button"
+                disabled
+            >
+                <i class="ri-lock-line"></i>
+                Locked
+            </button>
+        `;
 
-        lockedMessage.className =
-            "locked-message";
+    } else if (videoUrl) {
 
-        lockedMessage.innerHTML =
-            `
-                <span>🔒</span>
-                <span>
-                    This chapter is currently locked.
-                </span>
-            `;
-
-
-        actions.appendChild(
-            lockedMessage
-        );
+        watchButtonHTML = `
+            <button
+                class="chapter-button watch-button"
+                type="button"
+                data-action="watch"
+            >
+                <i class="ri-play-fill"></i>
+                Watch Class
+            </button>
+        `;
 
     } else {
 
-        // -------------------------------
-        // WATCH VIDEO
-        // -------------------------------
-
-        const watchButton =
-            document.createElement(
-                "button"
-            );
-
-        watchButton.type =
-            "button";
-
-        watchButton.className =
-            "chapter-action watch";
-
-
-        if (
-            chapter.videoUrl
-        ) {
-
-            watchButton.innerHTML =
-                `
-                    <span class="action-icon">
-                        ▶
-                    </span>
-
-                    <span>
-                        Watch Class
-                    </span>
-                `;
-
-
-            watchButton.addEventListener(
-                "click",
-                () => {
-
-                    openChapter(
-                        chapter
-                    );
-
-                }
-            );
-
-        } else {
-
-            watchButton.className =
-                "chapter-action disabled";
-
-            watchButton.disabled =
-                true;
-
-            watchButton.innerHTML =
-                `
-                    <span class="action-icon">
-                        ▶
-                    </span>
-
-                    <span>
-                        No Video
-                    </span>
-                `;
-        }
-
-
-        actions.appendChild(
-            watchButton
-        );
-
-
-        // -------------------------------
-        // PDF
-        // -------------------------------
-
-        const pdfButton =
-            document.createElement(
-                "button"
-            );
-
-        pdfButton.type =
-            "button";
-
-        pdfButton.className =
-            "chapter-action";
-
-
-        if (
-            chapter.pdfUrl
-        ) {
-
-            pdfButton.innerHTML =
-                `
-                    <span class="action-icon">
-                        ↓
-                    </span>
-
-                    <span>
-                        Download PDF
-                    </span>
-                `;
-
-
-            pdfButton.addEventListener(
-                "click",
-                () => {
-
-                    downloadPDF(
-                        chapter
-                    );
-
-                }
-            );
-
-        } else {
-
-            pdfButton.className =
-                "chapter-action disabled";
-
-            pdfButton.disabled =
-                true;
-
-            pdfButton.innerHTML =
-                `
-                    <span class="action-icon">
-                        ↓
-                    </span>
-
-                    <span>
-                        No PDF
-                    </span>
-                `;
-        }
-
-
-        actions.appendChild(
-            pdfButton
-        );
-
+        watchButtonHTML = `
+            <button
+                class="chapter-button watch-button disabled"
+                type="button"
+                disabled
+            >
+                <i class="ri-video-off-line"></i>
+                No Video
+            </button>
+        `;
     }
 
 
-    // ================================================
-    // APPEND
-    // ================================================
+    /* -----------------------------------------------------
+       PDF BUTTON
+    ----------------------------------------------------- */
 
-    card.appendChild(
-        thumbnail
-    );
+    let pdfButtonHTML;
 
-    card.appendChild(
-        content
-    );
 
-    card.appendChild(
-        actions
-    );
+    if (locked) {
+
+        pdfButtonHTML = `
+            <button
+                class="chapter-button pdf-button disabled"
+                type="button"
+                disabled
+            >
+                <i class="ri-lock-line"></i>
+                Locked
+            </button>
+        `;
+
+    } else if (pdfUrl) {
+
+        pdfButtonHTML = `
+            <a
+                class="chapter-button pdf-button"
+                href="${escapeAttribute(pdfUrl)}"
+                download="${escapeAttribute(pdfName)}"
+                target="_blank"
+                rel="noopener"
+            >
+                <i class="ri-file-pdf-2-line"></i>
+                Download PDF
+            </a>
+        `;
+
+    } else {
+
+        pdfButtonHTML = `
+            <button
+                class="chapter-button pdf-button disabled"
+                type="button"
+                disabled
+            >
+                <i class="ri-file-forbid-line"></i>
+                No PDF
+            </button>
+        `;
+    }
+
+
+    /* -----------------------------------------------------
+       CARD HTML
+    ----------------------------------------------------- */
+
+    card.innerHTML = `
+
+        <div class="chapter-thumbnail">
+
+            ${thumbnailHTML}
+
+            ${lockHTML}
+
+        </div>
+
+
+        <div class="chapter-content">
+
+            <div class="chapter-number">
+                ${
+                    chapterNumber !== ""
+                        ? `CHAPTER ${escapeHTML(String(chapterNumber))}`
+                        : "CHAPTER"
+                }
+            </div>
+
+
+            <h3 class="chapter-title">
+                ${escapeHTML(title)}
+            </h3>
+
+
+            ${
+                description
+                    ? `
+                        <p class="chapter-description">
+                            ${escapeHTML(description)}
+                        </p>
+                      `
+                    : ""
+            }
+
+
+            <div class="chapter-info">
+
+                ${
+                    videoUrl && !locked
+                        ? `
+                            <span>
+                                <i class="ri-video-line"></i>
+                                Video Available
+                            </span>
+                          `
+                        : `
+                            <span>
+                                <i class="ri-video-line"></i>
+                                ${locked ? "Locked" : "Video Not Added"}
+                            </span>
+                          `
+                }
+
+
+                ${
+                    pdfUrl && !locked
+                        ? `
+                            <span>
+                                <i class="ri-file-pdf-line"></i>
+                                PDF Available
+                            </span>
+                          `
+                        : `
+                            <span>
+                                <i class="ri-file-pdf-line"></i>
+                                ${locked ? "Locked" : "PDF Not Added"}
+                            </span>
+                          `
+                }
+
+            </div>
+
+
+            <div class="chapter-actions">
+
+                ${watchButtonHTML}
+
+                ${pdfButtonHTML}
+
+            </div>
+
+        </div>
+    `;
+
+
+    /* -----------------------------------------------------
+       WATCH
+    ----------------------------------------------------- */
+
+    const watchButton =
+        card.querySelector(
+            '[data-action="watch"]'
+        );
+
+
+    if (watchButton) {
+
+        watchButton.addEventListener(
+            "click",
+            () => {
+
+                openChapter(
+                    chapter
+                );
+            }
+        );
+    }
 
 
     return card;
 }
 
 
-// ======================================================
-// THUMBNAIL
-// ======================================================
+/* =========================================================
+   OPEN CHAPTER
+========================================================= */
 
-function getThumbnailData(
+function openChapter(
     chapter
 ) {
 
-    /*
-     * If admin later adds a
-     * thumbnailUrl field, it
-     * will automatically work.
-     */
-
     if (
-        chapter.thumbnailUrl
+        chapter.locked === true
     ) {
-
-        return chapter.thumbnailUrl;
+        return;
     }
 
 
-    /*
-     * YouTube thumbnail.
-     */
-
-    const youtubeId =
-        extractYouTubeId(
-            chapter.videoUrl
+    const url =
+        new URL(
+            "./chapter.html",
+            window.location.href
         );
 
 
-    if (
-        youtubeId
-    ) {
-
-        return `https://img.youtube.com/vi/${youtubeId}/hqdefault.jpg`;
-
-    }
+    url.searchParams.set(
+        "chapterId",
+        chapter.id
+    );
 
 
-    return null;
+    url.searchParams.set(
+        "subjectId",
+        subjectId
+    );
+
+
+    window.location.href =
+        url.toString();
 }
 
 
-// ======================================================
-// YOUTUBE ID
-// ======================================================
+/* =========================================================
+   YOUTUBE ID
+========================================================= */
 
 function extractYouTubeId(
     url
@@ -864,14 +905,32 @@ function extractYouTubeId(
     }
 
 
+    const value =
+        String(url).trim();
+
+
+    /*
+     * Already a YouTube ID.
+     */
+
+    if (
+        /^[a-zA-Z0-9_-]{11}$/.test(
+            value
+        )
+    ) {
+
+        return value;
+    }
+
+
     try {
 
         const parsed =
-            new URL(url);
+            new URL(value);
 
 
         /*
-         * youtube.com/embed/VIDEO_ID
+         * youtube.com/watch?v=
          */
 
         if (
@@ -880,67 +939,73 @@ function extractYouTubeId(
             )
         ) {
 
-            const parts =
-                parsed.pathname
-                    .split("/")
-                    .filter(Boolean);
-
-
-            const embedIndex =
-                parts.indexOf(
-                    "embed"
-                );
-
-
-            if (
-                embedIndex !== -1 &&
-                parts[embedIndex + 1]
-            ) {
-
-                return parts[
-                    embedIndex + 1
-                ];
-            }
-
-
-            /*
-             * youtube.com/watch?v=
-             */
-
-            const watchId =
+            const id =
                 parsed.searchParams.get(
                     "v"
                 );
 
-            if (
-                watchId
-            ) {
+            if (id) {
+                return id;
+            }
 
-                return watchId;
+
+            /*
+             * youtube.com/embed/ID
+             */
+
+            const embedMatch =
+                parsed.pathname.match(
+                    /\/embed\/([^/]+)/
+                );
+
+            if (embedMatch) {
+                return embedMatch[1];
+            }
+
+
+            /*
+             * youtube.com/shorts/ID
+             */
+
+            const shortsMatch =
+                parsed.pathname.match(
+                    /\/shorts\/([^/]+)/
+                );
+
+            if (shortsMatch) {
+                return shortsMatch[1];
             }
         }
 
 
         /*
-         * youtu.be/VIDEO_ID
+         * youtu.be/ID
          */
 
         if (
-            parsed.hostname ===
-            "youtu.be"
+            parsed.hostname.includes(
+                "youtu.be"
+            )
         ) {
 
-            return parsed.pathname
-                .replace(
-                    "/",
-                    ""
-                );
+            const id =
+                parsed.pathname
+                    .replace(
+                        /^\/+/,
+                        ""
+                    )
+                    .split("/")[0];
 
+            if (id) {
+                return id;
+            }
         }
 
-    } catch {
+    } catch (error) {
 
-        return null;
+        /*
+         * Not a valid URL.
+         */
     }
 
 
@@ -948,219 +1013,9 @@ function extractYouTubeId(
 }
 
 
-// ======================================================
-// OPEN CHAPTER
-// ======================================================
-
-function openChapter(
-    chapter
-) {
-
-    if (
-        chapter.locked === true
-    ) {
-
-        showToast(
-            "This chapter is locked."
-        );
-
-        return;
-    }
-
-
-    if (
-        !chapter.videoUrl
-    ) {
-
-        showToast(
-            "Video is not available yet."
-        );
-
-        return;
-    }
-
-
-    window.location.href =
-        `./chapter.html?chapterId=${encodeURIComponent(
-            chapter.id
-        )}&subjectId=${encodeURIComponent(
-            subjectId
-        )}`;
-
-}
-
-
-// ======================================================
-// DOWNLOAD PDF
-// ======================================================
-
-function downloadPDF(
-    chapter
-) {
-
-    if (
-        chapter.locked === true
-    ) {
-
-        showToast(
-            "This chapter is locked."
-        );
-
-        return;
-    }
-
-
-    if (
-        !chapter.pdfUrl
-    ) {
-
-        showToast(
-            "PDF is not available."
-        );
-
-        return;
-    }
-
-
-    /*
-     * Open Firebase Storage
-     * download URL.
-     *
-     * Using an anchor allows
-     * the browser to handle the
-     * Storage URL correctly.
-     */
-
-    const link =
-        document.createElement(
-            "a"
-        );
-
-    link.href =
-        chapter.pdfUrl;
-
-    link.target =
-        "_blank";
-
-    link.rel =
-        "noopener";
-
-    link.download =
-        chapter.pdfName ||
-        `${chapter.chapterName || "chapter"}.pdf`;
-
-
-    document.body.appendChild(
-        link
-    );
-
-    link.click();
-
-    link.remove();
-
-}
-
-
-// ======================================================
-// NUMBER FORMAT
-// ======================================================
-
-function formatNumber(
-    number
-) {
-
-    const value =
-        Number(number);
-
-
-    if (
-        !Number.isFinite(value)
-    ) {
-
-        return "—";
-    }
-
-
-    return String(
-        value
-    ).padStart(
-        2,
-        "0"
-    );
-}
-
-
-// ======================================================
-// SHOW APP
-// ======================================================
-
-function showApp() {
-
-    pageLoader.classList.add(
-        "hidden"
-    );
-
-    app.classList.remove(
-        "hidden"
-    );
-
-}
-
-
-// ======================================================
-// HIDE LOADER
-// ======================================================
-
-function hideLoader() {
-
-    pageLoader.classList.add(
-        "hidden"
-    );
-
-}
-
-
-// ======================================================
-// TOAST
-// ======================================================
-
-let toastTimer = null;
-
-function showToast(
-    message
-) {
-
-    clearTimeout(
-        toastTimer
-    );
-
-
-    toast.textContent =
-        message;
-
-
-    toast.classList.add(
-        "show"
-    );
-
-
-    toastTimer =
-        setTimeout(
-            () => {
-
-                toast.classList.remove(
-                    "show"
-                );
-
-            },
-            2800
-        );
-}
-
-
-// ======================================================
-// BACK
-// ======================================================
+/* =========================================================
+   BACK BUTTON
+========================================================= */
 
 backButton.addEventListener(
     "click",
@@ -1168,6 +1023,140 @@ backButton.addEventListener(
 
         window.location.href =
             "./";
-
     }
 );
+
+
+/* =========================================================
+   RETRY
+========================================================= */
+
+retryButton.addEventListener(
+    "click",
+    () => {
+
+        /*
+         * Reset UI.
+         */
+
+        errorState.classList.add(
+            "hidden"
+        );
+
+        emptyState.classList.add(
+            "hidden"
+        );
+
+        chaptersList.innerHTML = "";
+
+        loader.classList.remove(
+            "hidden"
+        );
+
+
+        start();
+    }
+);
+
+
+/* =========================================================
+   ESCAPE HTML
+========================================================= */
+
+function escapeHTML(
+    value
+) {
+
+    return String(value)
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+        .replace(
+            /</g,
+            "&lt;"
+        )
+        .replace(
+            />/g,
+            "&gt;"
+        )
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+        .replace(
+            /'/g,
+            "&#039;"
+        );
+}
+
+
+/* =========================================================
+   ESCAPE ATTRIBUTE
+========================================================= */
+
+function escapeAttribute(
+    value
+) {
+
+    return escapeHTML(
+        value
+    );
+}
+
+
+/* =========================================================
+   FIREBASE ERROR
+========================================================= */
+
+function getReadableError(
+    error
+) {
+
+    if (!error) {
+        return "Unknown error.";
+    }
+
+
+    console.error(
+        error
+    );
+
+
+    if (
+        error.code ===
+        "permission-denied"
+    ) {
+
+        return "Firebase denied access to the chapters. Check your Firestore rules.";
+    }
+
+
+    if (
+        error.code ===
+        "failed-precondition"
+    ) {
+
+        return "Firestore requires an index for this query.";
+    }
+
+
+    if (
+        error.code ===
+        "unavailable"
+    ) {
+
+        return "Firebase is temporarily unavailable. Please try again.";
+    }
+
+
+    if (
+        error.message
+    ) {
+
+        return error.message;
+    }
+
+
+    return "Unable to load this subject.";
+}
