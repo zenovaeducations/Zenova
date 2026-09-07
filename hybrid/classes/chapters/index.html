@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Chapters | Zenova Educations</title>
+
+    <link
+        rel="stylesheet"
+        href="./chapters.css"
+    >
+
+</head>
+
+
+<body>
+
+
+    <!-- =====================================================
+         LOADING SCREEN
+    ====================================================== -->
+
+    <div
+        id="loadingScreen"
+        class="loading-screen"
+    >
+
+        <div class="loading-logo">
+            Z
+        </div>
+
+        <div class="loading-ring"></div>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         MAIN APP
+    ====================================================== -->
+
+    <main
+        id="app"
+        class="app hidden"
+    >
+
+
+        <!-- =================================================
+             HEADER
+        ================================================== -->
+
+        <header class="top-header">
+
+
+            <button
+                id="backBtn"
+                class="back-btn"
+                aria-label="Back"
+            >
+                ←
+            </button>
+
+
+            <div class="brand">
+
+                <div class="brand-main">
+                    ZENOVA
+                </div>
+
+                <div class="brand-sub">
+                    EDUCATIONS
+                </div>
+
+            </div>
+
+
+            <div class="header-space"></div>
+
+
+        </header>
+
+
+
+        <!-- =================================================
+             PAGE
+        ================================================== -->
+
+        <div class="page-container">
+
+
+            <!-- =================================================
+                 SUBJECT HEADER
+            ================================================== -->
+
+            <section class="subject-header">
+
+
+                <div class="section-label">
+                    REVISION CLASSES
+                </div>
+
+
+                <h1 id="subjectName">
+                    Loading...
+                </h1>
+
+
+                <p id="subjectDescription">
+                    Loading chapters...
+                </p>
+
+
+            </section>
+
+
+
+            <!-- =================================================
+                 CHAPTER HEADER
+            ================================================== -->
+
+            <section class="chapters-section">
+
+
+                <div class="section-heading">
+
+                    <div>
+
+                        <div class="section-label">
+                            RECORDED CLASSES
+                        </div>
+
+                        <h2>
+                            Chapters
+                        </h2>
+
+                    </div>
+
+
+                    <div
+                        id="chapterCount"
+                        class="chapter-count"
+                    >
+                    </div>
+
+                </div>
+
+
+
+                <!-- =============================================
+                     CHAPTERS
+                ============================================== -->
+
+                <div
+                    id="chaptersContainer"
+                    class="chapters-container"
+                >
+                </div>
+
+
+
+                <!-- =============================================
+                     EMPTY
+                ============================================== -->
+
+                <div
+                    id="emptyState"
+                    class="empty-state hidden"
+                >
+
+                    <div class="empty-mark">
+                        —
+                    </div>
+
+                    <h3>
+                        No chapters available
+                    </h3>
+
+                    <p>
+                        Recorded classes for this subject
+                        haven't been added yet.
+                    </p>
+
+                </div>
+
+
+            </section>
+
+
+        </div>
+
+
+    </main>
+
+
+
+    <!-- =====================================================
+         JAVASCRIPT
+    ====================================================== -->
+
+    <script
+        type="module"
+        src="./chapters-core-X7kP.js"
+    ></script>
+
+
+</body>
+
+</html>
