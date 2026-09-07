@@ -1,0 +1,797 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+
+:root {
+
+    --black: #0b0b0b;
+
+    --text: #111111;
+
+    --muted: #747474;
+
+    --border: #e7e7e7;
+
+    --light: #f7f7f7;
+
+    --purple: #6d28d9;
+
+    --white: #ffffff;
+
+}
+
+
+body {
+
+    min-height: 100vh;
+
+    background: #ffffff;
+
+    color: var(--text);
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+}
+
+
+.hidden {
+    display: none !important;
+}
+
+
+
+/* =========================================================
+   LOADING
+========================================================= */
+
+.loading-screen {
+
+    position: fixed;
+
+    inset: 0;
+
+    background: #ffffff;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    z-index: 9999;
+
+}
+
+
+.loading-logo {
+
+    position: absolute;
+
+    color: var(--purple);
+
+    font-size: 30px;
+
+    font-weight: 900;
+
+}
+
+
+.loading-ring {
+
+    width: 58px;
+
+    height: 58px;
+
+    border: 3px solid #eeeeee;
+
+    border-top-color: var(--purple);
+
+    border-radius: 50%;
+
+    animation:
+        loadingSpin
+        0.9s
+        linear
+        infinite;
+
+}
+
+
+@keyframes loadingSpin {
+
+    to {
+
+        transform: rotate(360deg);
+
+    }
+
+}
+
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.top-header {
+
+    height: 72px;
+
+    padding: 0 5%;
+
+    display: flex;
+
+    align-items: center;
+
+    background: #ffffff;
+
+    border-bottom: 1px solid var(--border);
+
+    position: sticky;
+
+    top: 0;
+
+    z-index: 100;
+
+}
+
+
+.back-btn {
+
+    width: 42px;
+
+    height: 42px;
+
+    border: 1px solid var(--border);
+
+    border-radius: 10px;
+
+    background: #ffffff;
+
+    color: #111111;
+
+    font-size: 20px;
+
+    cursor: pointer;
+
+    transition: 0.2s;
+
+}
+
+
+.back-btn:hover {
+
+    background: #f5f5f5;
+
+}
+
+
+.brand {
+
+    margin-left: 15px;
+
+    display: flex;
+
+    align-items: baseline;
+
+    gap: 7px;
+
+}
+
+
+.brand-main {
+
+    font-size: 18px;
+
+    font-weight: 900;
+
+    letter-spacing: -0.5px;
+
+}
+
+
+.brand-sub {
+
+    color: var(--muted);
+
+    font-size: 10px;
+
+    letter-spacing: 1.5px;
+
+}
+
+
+.header-space {
+
+    flex: 1;
+
+}
+
+
+
+/* =========================================================
+   PAGE
+========================================================= */
+
+.page-container {
+
+    max-width: 1200px;
+
+    margin: 0 auto;
+
+    padding: 0 5% 100px;
+
+}
+
+
+
+/* =========================================================
+   SUBJECT HEADER
+========================================================= */
+
+.subject-header {
+
+    padding: 55px 0 38px;
+
+}
+
+
+.section-label {
+
+    color: var(--purple);
+
+    font-size: 10px;
+
+    font-weight: 800;
+
+    letter-spacing: 1.8px;
+
+}
+
+
+.subject-header h1 {
+
+    margin-top: 9px;
+
+    font-size:
+        clamp(36px, 6vw, 54px);
+
+    line-height: 1;
+
+    letter-spacing: -2.5px;
+
+}
+
+
+.subject-header p {
+
+    max-width: 700px;
+
+    margin-top: 15px;
+
+    color: var(--muted);
+
+    font-size: 14px;
+
+    line-height: 1.7;
+
+}
+
+
+
+/* =========================================================
+   CHAPTERS SECTION
+========================================================= */
+
+.chapters-section {
+
+    margin-top: 5px;
+
+}
+
+
+.section-heading {
+
+    display: flex;
+
+    align-items: flex-end;
+
+    justify-content: space-between;
+
+    margin-bottom: 20px;
+
+}
+
+
+.section-heading h2 {
+
+    margin-top: 7px;
+
+    font-size: 27px;
+
+    letter-spacing: -0.8px;
+
+}
+
+
+.chapter-count {
+
+    color: var(--muted);
+
+    font-size: 12px;
+
+}
+
+
+
+/* =========================================================
+   CHAPTER CONTAINER
+========================================================= */
+
+.chapters-container {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 13px;
+
+}
+
+
+
+/* =========================================================
+   CHAPTER CARD
+========================================================= */
+
+.chapter-card {
+
+    min-height: 145px;
+
+    display: flex;
+
+    align-items: stretch;
+
+    background: #ffffff;
+
+    border: 1px solid var(--border);
+
+    border-radius: 15px;
+
+    overflow: hidden;
+
+    transition:
+        transform 0.2s,
+        border-color 0.2s;
+
+}
+
+
+.chapter-card:hover {
+
+    transform: translateY(-2px);
+
+    border-color: #d1d1d1;
+
+}
+
+
+
+/* =========================================================
+   CHAPTER NUMBER
+========================================================= */
+
+.chapter-number-box {
+
+    width: 105px;
+
+    flex-shrink: 0;
+
+    background: #111111;
+
+    color: #ffffff;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+}
+
+
+.chapter-number-label {
+
+    font-size: 9px;
+
+    font-weight: 800;
+
+    letter-spacing: 1.3px;
+
+    opacity: 0.55;
+
+}
+
+
+.chapter-number {
+
+    margin-top: 6px;
+
+    font-size: 29px;
+
+    font-weight: 900;
+
+    letter-spacing: -1px;
+
+}
+
+
+
+/* =========================================================
+   CHAPTER CONTENT
+========================================================= */
+
+.chapter-content {
+
+    flex: 1;
+
+    min-width: 0;
+
+    padding: 22px 24px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: center;
+
+}
+
+
+.chapter-title {
+
+    font-size: 20px;
+
+    font-weight: 800;
+
+    letter-spacing: -0.4px;
+
+}
+
+
+.chapter-description {
+
+    max-width: 650px;
+
+    margin-top: 8px;
+
+    color: var(--muted);
+
+    font-size: 13px;
+
+    line-height: 1.6;
+
+}
+
+
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+.chapter-status {
+
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 7px;
+
+    margin-top: 13px;
+
+}
+
+
+.status-pill {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    height: 25px;
+
+    padding: 0 9px;
+
+    border-radius: 6px;
+
+    background: #f3f3f3;
+
+    color: #666666;
+
+    font-size: 9px;
+
+    font-weight: 800;
+
+    letter-spacing: 0.5px;
+
+}
+
+
+.status-pill.available {
+
+    background: #f1f1f1;
+
+    color: #222222;
+
+}
+
+
+
+/* =========================================================
+   ACTIONS
+========================================================= */
+
+.chapter-actions {
+
+    flex-shrink: 0;
+
+    padding: 20px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+}
+
+
+.watch-btn,
+.pdf-btn {
+
+    height: 42px;
+
+    padding: 0 16px;
+
+    border-radius: 8px;
+
+    font-size: 11px;
+
+    font-weight: 800;
+
+    cursor: pointer;
+
+    white-space: nowrap;
+
+}
+
+
+.watch-btn {
+
+    border: none;
+
+    background: #111111;
+
+    color: #ffffff;
+
+}
+
+
+.watch-btn:hover {
+
+    background: #292929;
+
+}
+
+
+.pdf-btn {
+
+    border: 1px solid var(--border);
+
+    background: #ffffff;
+
+    color: #111111;
+
+}
+
+
+.pdf-btn:hover {
+
+    background: #f5f5f5;
+
+}
+
+
+.watch-btn:disabled,
+.pdf-btn:disabled {
+
+    opacity: 0.4;
+
+    cursor: not-allowed;
+
+}
+
+
+
+/* =========================================================
+   LOCKED
+========================================================= */
+
+.chapter-card.locked {
+
+    background: #fafafa;
+
+}
+
+
+.chapter-card.locked
+.chapter-number-box {
+
+    background: #303030;
+
+}
+
+
+.locked-label {
+
+    color: #666666;
+
+    font-size: 10px;
+
+    font-weight: 800;
+
+}
+
+
+
+/* =========================================================
+   EMPTY
+========================================================= */
+
+.empty-state {
+
+    padding: 60px 20px;
+
+    border: 1px dashed #d8d8d8;
+
+    border-radius: 15px;
+
+    text-align: center;
+
+}
+
+
+.empty-mark {
+
+    color: #999999;
+
+    font-size: 28px;
+
+}
+
+
+.empty-state h3 {
+
+    margin-top: 10px;
+
+    font-size: 17px;
+
+}
+
+
+.empty-state p {
+
+    margin-top: 7px;
+
+    color: var(--muted);
+
+    font-size: 12px;
+
+}
+
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 700px) {
+
+
+    .top-header {
+
+        padding: 0 18px;
+
+    }
+
+
+    .page-container {
+
+        padding:
+            0 18px 70px;
+
+    }
+
+
+    .subject-header {
+
+        padding:
+            40px 0 30px;
+
+    }
+
+
+    .section-heading {
+
+        align-items: flex-start;
+
+        flex-direction: column;
+
+        gap: 7px;
+
+    }
+
+
+    .chapter-card {
+
+        flex-direction: column;
+
+    }
+
+
+    .chapter-number-box {
+
+        width: 100%;
+
+        height: 72px;
+
+        flex-direction: row;
+
+        gap: 8px;
+
+        justify-content: flex-start;
+
+        padding: 0 18px;
+
+    }
+
+
+    .chapter-number {
+
+        margin-top: 0;
+
+    }
+
+
+    .chapter-content {
+
+        padding:
+            18px;
+
+    }
+
+
+    .chapter-actions {
+
+        padding:
+            0 18px 18px;
+
+    }
+
+
+    .watch-btn,
+    .pdf-btn {
+
+        flex: 1;
+
+    }
+
+}
