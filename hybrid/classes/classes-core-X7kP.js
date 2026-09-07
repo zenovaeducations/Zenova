@@ -649,7 +649,7 @@ function renderSubject(
             */
 
             window.location.href =
-                `./chapters/?id=${
+                `./viewchapters/?id=${
                     encodeURIComponent(
                         subject.id
                     )
