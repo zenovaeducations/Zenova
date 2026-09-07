@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>Chapter Details — Zenova</title>
+
+  <link
+    rel="stylesheet"
+    href="./viewchapterdetails.css"
+  >
+</head>
+
+<body>
+
+  <!-- LOADING -->
+
+  <div id="loadingScreen">
+
+    <div class="loader-ring">
+      <span>Z</span>
+    </div>
+
+  </div>
+
+
+  <!-- APP -->
+
+  <div id="app" class="hidden">
+
+    <header class="topbar">
+
+      <div class="brand">
+        ZENOVA
+      </div>
+
+      <div class="topbar-title">
+        Revision Classes
+      </div>
+
+    </header>
+
+
+    <main>
+
+      <!-- BACK -->
+
+      <button
+        id="backBtn"
+        class="back-btn"
+      >
+        ← Back to Chapters
+      </button>
+
+
+      <!-- CHAPTER HEADER -->
+
+      <section class="chapter-header">
+
+        <div class="eyebrow">
+          <span id="subjectName">
+            Subject
+          </span>
+
+          <span class="dot">•</span>
+
+          <span id="chapterNumber">
+            Chapter 01
+          </span>
+        </div>
+
+        <h1 id="chapterName">
+          Chapter
+        </h1>
+
+        <p id="chapterDescription">
+        </p>
+
+      </section>
+
+
+      <!-- FEATURED VIDEO -->
+
+      <section
+        id="featuredSection"
+        class="featured-section hidden"
+      >
+
+        <div class="section-label">
+          FEATURED CLASS
+        </div>
+
+
+        <div class="featured-card">
+
+          <div
+            id="featuredThumbnail"
+            class="featured-thumbnail"
+          >
+
+            <div class="play-circle">
+              ▶
+            </div>
+
+          </div>
+
+
+          <div class="featured-content">
+
+            <div class="video-label">
+              VIDEO
+            </div>
+
+            <h2 id="featuredTitle">
+              Video Title
+            </h2>
+
+            <p id="featuredDescription">
+            </p>
+
+
+            <div
+              id="featuredTeacher"
+              class="teacher"
+            >
+            </div>
+
+
+            <button
+              id="featuredWatchBtn"
+              class="watch-btn"
+            >
+              WATCH NOW
+            </button>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- OTHER VIDEOS -->
+
+      <section
+        id="videosSection"
+        class="content-section hidden"
+      >
+
+        <div class="section-heading">
+
+          <div>
+
+            <div class="section-label">
+              MORE FROM THIS CHAPTER
+            </div>
+
+            <h2>
+              Revision Classes
+            </h2>
+
+          </div>
+
+        </div>
+
+
+        <div
+          id="videosList"
+          class="videos-list"
+        >
+        </div>
+
+      </section>
+
+
+      <!-- PDFs -->
+
+      <section
+        id="pdfSection"
+        class="content-section hidden"
+      >
+
+        <div class="section-label">
+          STUDY MATERIAL
+        </div>
+
+        <h2>
+          PDFs
+        </h2>
+
+
+        <div
+          id="pdfList"
+          class="material-list"
+        >
+        </div>
+
+      </section>
+
+
+      <!-- NOTES -->
+
+      <section
+        id="notesSection"
+        class="content-section hidden"
+      >
+
+        <div class="section-label">
+          STUDY MATERIAL
+        </div>
+
+        <h2>
+          Notes
+        </h2>
+
+
+        <div
+          id="notesList"
+          class="material-list"
+        >
+        </div>
+
+      </section>
+
+
+      <!-- EMPTY -->
+
+      <div
+        id="emptyState"
+        class="empty hidden"
+      >
+        No learning content is available
+        for this chapter yet.
+      </div>
+
+
+      <!-- ERROR -->
+
+      <div
+        id="errorState"
+        class="error hidden"
+      >
+      </div>
+
+    </main>
+
+  </div>
+
+
+  <script
+    type="module"
+    src="./viewchapterdetails-core.js"
+  ></script>
+
+</body>
+</html>
