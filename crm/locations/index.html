@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Locations | Zenova CRM</title>
+
+  <link rel="icon" href="../../../logo.png" />
+  <link rel="stylesheet" href="./locations.css" />
+</head>
+
+<body>
+
+  <!-- =========================
+       APP LOADER
+  ========================== -->
+  <div id="appLoader" class="app-loader">
+    <div class="loader-logo">
+      <img src="../../../logo.png" alt="Zenova" />
+    </div>
+    <div class="loader-spinner"></div>
+    <p>Loading Zenova CRM</p>
+  </div>
+
+
+  <!-- =========================
+       APP
+  ========================== -->
+  <div id="crmApp" class="crm-app hidden">
+
+    <!-- SIDEBAR OVERLAY MOBILE -->
+    <div id="sidebarOverlay" class="sidebar-overlay"></div>
+
+
+    <!-- =========================
+         SIDEBAR
+    ========================== -->
+    <aside class="sidebar" id="sidebar">
+
+      <div class="sidebar-top">
+
+        <div class="brand">
+          <img src="../../../logo.png" alt="Zenova" class="brand-logo" />
+
+          <div class="brand-text">
+            <strong>ZENOVA</strong>
+            <span>CRM</span>
+          </div>
+        </div>
+
+        <button id="sidebarClose" class="mobile-close">
+          ×
+        </button>
+
+      </div>
+
+
+      <div class="sidebar-section">
+        <span class="sidebar-label">WORKSPACE</span>
+
+        <nav class="sidebar-nav">
+
+          <a href="../dashboard/" class="nav-item">
+            <span class="nav-icon">⌂</span>
+            <span>Dashboard</span>
+          </a>
+
+          <a href="../students/" class="nav-item">
+            <span class="nav-icon">♙</span>
+            <span>Students</span>
+          </a>
+
+          <a href="../leads/" class="nav-item">
+            <span class="nav-icon">◎</span>
+            <span>Leads</span>
+          </a>
+
+          <a href="../schools/" class="nav-item">
+            <span class="nav-icon">▣</span>
+            <span>Schools</span>
+          </a>
+
+          <a href="./" class="nav-item active">
+            <span class="nav-icon">⌖</span>
+            <span>Locations</span>
+          </a>
+
+          <a href="../admissions/" class="nav-item">
+            <span class="nav-icon">□</span>
+            <span>Admissions</span>
+          </a>
+
+          <a href="../followups/" class="nav-item">
+            <span class="nav-icon">◷</span>
+            <span>Follow-ups</span>
+          </a>
+
+          <a href="../interactions/" class="nav-item">
+            <span class="nav-icon">↗</span>
+            <span>Interactions</span>
+          </a>
+
+          <a href="../payments/" class="nav-item">
+            <span class="nav-icon">₹</span>
+            <span>Payments</span>
+          </a>
+
+        </nav>
+      </div>
+
+
+      <div class="sidebar-section">
+        <span class="sidebar-label">INSIGHTS</span>
+
+        <nav class="sidebar-nav">
+
+          <a href="../reports/" class="nav-item">
+            <span class="nav-icon">▥</span>
+            <span>Reports</span>
+          </a>
+
+        </nav>
+      </div>
+
+
+      <div class="sidebar-bottom">
+
+        <a href="../settings/" class="nav-item">
+          <span class="nav-icon">⚙</span>
+          <span>CRM Settings</span>
+        </a>
+
+        <div class="sidebar-user">
+
+          <div class="user-avatar" id="sidebarAvatar">
+            Z
+          </div>
+
+          <div class="sidebar-user-info">
+            <strong id="sidebarUserName">Admin</strong>
+            <span id="sidebarUserEmail">Loading...</span>
+          </div>
+
+        </div>
+
+      </div>
+
+    </aside>
+
+
+    <!-- =========================
+         MAIN
+    ========================== -->
+    <main class="main-content">
+
+
+      <!-- =========================
+           TOPBAR
+      ========================== -->
+      <header class="topbar">
+
+        <button id="sidebarOpen" class="menu-button">
+          ☰
+        </button>
+
+        <div class="topbar-search">
+
+          <span class="search-icon">⌕</span>
+
+          <input
+            type="text"
+            id="globalSearch"
+            placeholder="Search locations..."
+            autocomplete="off"
+          />
+
+          <span class="search-shortcut">⌘ K</span>
+
+        </div>
+
+
+        <div class="topbar-actions">
+
+          <button class="topbar-button" title="Notifications">
+            ♢
+            <span class="notification-dot"></span>
+          </button>
+
+          <div class="topbar-divider"></div>
+
+          <div class="topbar-profile">
+
+            <div class="topbar-avatar" id="topbarAvatar">
+              Z
+            </div>
+
+            <div class="topbar-profile-text">
+              <strong id="topbarName">Admin</strong>
+              <span>CRM Administrator</span>
+            </div>
+
+            <span class="profile-arrow">⌄</span>
+
+          </div>
+
+        </div>
+
+      </header>
+
+
+      <!-- =========================
+           PAGE
+      ========================== -->
+      <section class="page-content">
+
+
+        <!-- PAGE HEADER -->
+        <div class="page-header">
+
+          <div>
+
+            <div class="breadcrumb">
+              CRM
+              <span>/</span>
+              Master Data
+              <span>/</span>
+              <strong>Locations</strong>
+            </div>
+
+            <h1>Location Management</h1>
+
+            <p>
+              Manage your geographical master data once and reuse it across
+              students, leads, schools and admissions.
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <!-- =========================
+             STAT CARDS
+        ========================== -->
+        <div class="stats-grid">
+
+          <div class="stat-card">
+
+            <div class="stat-card-top">
+              <div class="stat-icon purple">⌖</div>
+              <span class="stat-live">LIVE</span>
+            </div>
+
+            <div class="stat-number" id="districtCount">
+              0
+            </div>
+
+            <div class="stat-title">
+              Districts
+            </div>
+
+          </div>
+
+
+          <div class="stat-card">
+
+            <div class="stat-card-top">
+              <div class="stat-icon blue">⌑</div>
+              <span class="stat-live">LIVE</span>
+            </div>
+
+            <div class="stat-number" id="talukCount">
+              0
+            </div>
+
+            <div class="stat-title">
+              Taluks
+            </div>
+
+          </div>
+
+
+          <div class="stat-card">
+
+            <div class="stat-card-top">
+              <div class="stat-icon green">⌂</div>
+              <span class="stat-live">LIVE</span>
+            </div>
+
+            <div class="stat-number" id="gpCount">
+              0
+            </div>
+
+            <div class="stat-title">
+              Gram Panchayats
+            </div>
+
+          </div>
+
+
+          <div class="stat-card">
+
+            <div class="stat-card-top">
+              <div class="stat-icon orange">⌖</div>
+              <span class="stat-live">LIVE</span>
+            </div>
+
+            <div class="stat-number" id="villageCount">
+              0
+            </div>
+
+            <div class="stat-title">
+              Villages
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- =========================
+             LOCATION MANAGER
+        ========================== -->
+        <div class="location-card">
+
+          <div class="location-card-header">
+
+            <div>
+
+              <h2>Master Locations</h2>
+
+              <p>
+                Maintain the geographical hierarchy used throughout Zenova CRM.
+              </p>
+
+            </div>
+
+            <button id="addButton" class="primary-button">
+              <span>＋</span>
+              <span id="addButtonText">Add District</span>
+            </button>
+
+          </div>
+
+
+          <!-- TABS -->
+          <div class="location-tabs">
+
+            <button
+              class="location-tab active"
+              data-tab="districts"
+            >
+              Districts
+              <span id="districtTabCount">0</span>
+            </button>
+
+            <button
+              class="location-tab"
+              data-tab="taluks"
+            >
+              Taluks
+              <span id="talukTabCount">0</span>
+            </button>
+
+            <button
+              class="location-tab"
+              data-tab="gps"
+            >
+              Gram Panchayats
+              <span id="gpTabCount">0</span>
+            </button>
+
+            <button
+              class="location-tab"
+              data-tab="villages"
+            >
+              Villages
+              <span id="villageTabCount">0</span>
+            </button>
+
+          </div>
+
+
+          <!-- TOOLBAR -->
+          <div class="table-toolbar">
+
+            <div class="table-search">
+
+              <span>⌕</span>
+
+              <input
+                id="tableSearch"
+                type="text"
+                placeholder="Search..."
+              />
+
+            </div>
+
+            <div class="table-info" id="tableInfo">
+              0 records
+            </div>
+
+          </div>
+
+
+          <!-- TABLE -->
+          <div class="table-wrapper">
+
+            <table>
+
+              <thead id="tableHead">
+                <!-- JS -->
+              </thead>
+
+              <tbody id="tableBody">
+                <!-- JS -->
+              </tbody>
+
+            </table>
+
+            <div id="emptyState" class="empty-state hidden">
+
+              <div class="empty-icon">
+                ⌖
+              </div>
+
+              <h3>No locations found</h3>
+
+              <p>
+                Add your first location to start building your CRM master data.
+              </p>
+
+              <button id="emptyAddButton" class="secondary-button">
+                Add Location
+              </button>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </section>
+
+    </main>
+
+  </div>
+
+
+  <!-- =========================
+       LOCATION MODAL
+  ========================== -->
+  <div id="locationModal" class="modal-backdrop hidden">
+
+    <div class="modal">
+
+      <div class="modal-header">
+
+        <div>
+
+          <span class="modal-eyebrow">MASTER DATA</span>
+
+          <h2 id="modalTitle">
+            Add District
+          </h2>
+
+        </div>
+
+        <button id="modalClose" class="modal-close">
+          ×
+        </button>
+
+      </div>
+
+
+      <form id="locationForm">
+
+        <div id="parentFields"></div>
+
+
+        <div class="form-group">
+
+          <label id="nameLabel">
+            District Name
+          </label>
+
+          <input
+            type="text"
+            id="locationName"
+            placeholder="Enter district name"
+            required
+            autocomplete="off"
+          />
+
+        </div>
+
+
+        <div id="formError" class="form-error hidden"></div>
+
+
+        <div class="modal-footer">
+
+          <button
+            type="button"
+            id="modalCancel"
+            class="cancel-button"
+          >
+            Cancel
+          </button>
+
+          <button
+            type="submit"
+            id="saveButton"
+            class="primary-button"
+          >
+            Save District
+          </button>
+
+        </div>
+
+      </form>
+
+    </div>
+
+  </div>
+
+
+  <!-- =========================
+       DELETE MODAL
+  ========================== -->
+  <div id="deleteModal" class="modal-backdrop hidden">
+
+    <div class="modal small-modal">
+
+      <div class="delete-icon">
+        !
+      </div>
+
+      <h2>Delete location?</h2>
+
+      <p id="deleteMessage">
+        This action cannot be undone.
+      </p>
+
+      <div class="modal-footer">
+
+        <button
+          type="button"
+          id="deleteCancel"
+          class="cancel-button"
+        >
+          Cancel
+        </button>
+
+        <button
+          type="button"
+          id="deleteConfirm"
+          class="danger-button"
+        >
+          Delete
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- =========================
+       TOAST
+  ========================== -->
+  <div id="toast" class="toast">
+
+    <div class="toast-icon" id="toastIcon">
+      ✓
+    </div>
+
+    <div>
+      <strong id="toastTitle">Success</strong>
+      <p id="toastMessage">Saved successfully.</p>
+    </div>
+
+  </div>
+
+
+  <script type="module" src="./locations-core.js"></script>
+
+</body>
+</html>
