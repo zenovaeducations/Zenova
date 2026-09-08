@@ -3,7 +3,7 @@
    Firebase Firestore Realtime CRUD
 ========================================================= */
 
-import { auth, db } from "../../../firebase/firebase-config.js";
+import { auth, db } from "../../firebase/firebase-config.js";
 
 import {
   onAuthStateChanged
