@@ -1,0 +1,1072 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Student Master | Zenova CRM</title>
+
+  <link rel="icon" type="image/png" href="../../logo.png">
+  <link rel="stylesheet" href="./students.css">
+</head>
+
+<body>
+
+  <!-- LOADER -->
+  <div id="pageLoader" class="page-loader">
+    <div class="loader-ring">
+      <span>Z</span>
+    </div>
+    <p>Loading Student Master...</p>
+  </div>
+
+
+  <!-- APP -->
+  <div class="app-shell">
+
+    <!-- HEADER -->
+    <header class="topbar">
+
+      <div class="header-left">
+
+        <button
+          id="backToCRM"
+          class="back-btn"
+          title="Back to CRM"
+        >
+          ←
+        </button>
+
+        <div>
+          <h1>Student Master</h1>
+          <p>Manage CRM student records</p>
+        </div>
+
+      </div>
+
+      <div class="connection">
+        <span class="connection-dot"></span>
+        Connected
+      </div>
+
+    </header>
+
+
+    <!-- MAIN -->
+    <main class="main-content">
+
+      <!-- STATS -->
+      <section class="stats-grid">
+
+        <div class="stat-card">
+          <span>Total Students</span>
+          <strong id="totalStudents">0</strong>
+        </div>
+
+        <div class="stat-card">
+          <span>Active Students</span>
+          <strong id="activeStudents">0</strong>
+        </div>
+
+        <div class="stat-card">
+          <span>Hot Leads</span>
+          <strong id="hotStudents">0</strong>
+        </div>
+
+        <div class="stat-card">
+          <span>Enrolled</span>
+          <strong id="enrolledStudents">0</strong>
+        </div>
+
+      </section>
+
+
+      <!-- TOOLBAR -->
+      <section class="toolbar">
+
+        <div class="search-box">
+          <span>⌕</span>
+
+          <input
+            type="text"
+            id="searchInput"
+            placeholder="Search student, code, phone, school..."
+          >
+        </div>
+
+        <div class="toolbar-actions">
+
+          <select id="classFilter">
+            <option value="">All Classes</option>
+            <option value="Under 8th">Under 8th</option>
+            <option value="8th">8th</option>
+            <option value="9th">9th</option>
+            <option value="10th">10th</option>
+            <option value="1st PUC">1st PUC</option>
+            <option value="2nd PUC">2nd PUC</option>
+          </select>
+
+          <select id="statusFilter">
+            <option value="">All Status</option>
+            <option value="NEW">New</option>
+            <option value="CONTACT ATTEMPTED">Contact Attempted</option>
+            <option value="CONNECTED">Connected</option>
+            <option value="QUALIFIED">Qualified</option>
+            <option value="INTERESTED">Interested</option>
+            <option value="DEMO/COUNSELLING">Demo / Counselling</option>
+            <option value="PAYMENT PENDING">Payment Pending</option>
+            <option value="ENROLLED">Enrolled</option>
+          </select>
+
+          <button
+            id="addStudentBtn"
+            class="primary-btn"
+          >
+            ＋ Add Student
+          </button>
+
+        </div>
+
+      </section>
+
+
+      <!-- TABLE -->
+      <section class="table-card">
+
+        <div class="table-heading">
+
+          <div>
+            <h2>Students</h2>
+            <p>CRM student master records</p>
+          </div>
+
+          <span id="studentCountLabel">
+            0 students
+          </span>
+
+        </div>
+
+
+        <div class="table-wrapper">
+
+          <table>
+
+            <thead>
+              <tr>
+                <th>Student</th>
+                <th>Phone</th>
+                <th>Class</th>
+                <th>School</th>
+                <th>Location</th>
+                <th>Course</th>
+                <th>Lead</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+
+            <tbody id="studentTableBody">
+
+              <tr>
+                <td colspan="9" class="empty-state">
+                  Loading students...
+                </td>
+              </tr>
+
+            </tbody>
+
+          </table>
+
+        </div>
+
+      </section>
+
+    </main>
+
+  </div>
+
+
+  <!-- =====================================================
+       STUDENT MODAL
+  ====================================================== -->
+
+  <div
+    id="studentModal"
+    class="modal-overlay"
+  >
+
+    <div class="modal">
+
+      <div class="modal-header">
+
+        <div>
+          <h2 id="modalTitle">Add Student</h2>
+          <p>
+            Enter the student's complete CRM information.
+          </p>
+        </div>
+
+        <button
+          id="closeStudentModal"
+          class="close-btn"
+        >
+          ×
+        </button>
+
+      </div>
+
+
+      <form id="studentForm">
+
+        <!-- =============================================
+             STUDENT DETAILS
+        ============================================== -->
+
+        <div class="form-section">
+
+          <div class="section-title">
+            <span>01</span>
+            <div>
+              <h3>Student Details</h3>
+              <p>Basic student information</p>
+            </div>
+          </div>
+
+
+          <div class="form-grid">
+
+            <div class="form-group full">
+              <label>
+                Student Name <span>*</span>
+              </label>
+
+              <input
+                type="text"
+                id="studentName"
+                placeholder="Enter full name"
+                required
+              >
+            </div>
+
+
+            <div class="form-group">
+
+              <label>
+                Student Phone <span>*</span>
+              </label>
+
+              <input
+                type="tel"
+                id="studentPhone"
+                placeholder="10-digit mobile number"
+                maxlength="10"
+                required
+              >
+
+            </div>
+
+
+            <div class="form-group">
+
+              <label>Student Email</label>
+
+              <input
+                type="email"
+                id="studentEmail"
+                placeholder="student@example.com"
+              >
+
+            </div>
+
+
+            <div class="form-group">
+
+              <label>Instagram ID / Link</label>
+
+              <input
+                type="text"
+                id="instagramUrl"
+                placeholder="@username or Instagram link"
+              >
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- =============================================
+             PARENT DETAILS
+        ============================================== -->
+
+        <div class="form-section">
+
+          <div class="section-title">
+            <span>02</span>
+
+            <div>
+              <h3>Parent / Guardian</h3>
+              <p>Parent and primary contact information</p>
+            </div>
+
+          </div>
+
+
+          <div class="form-grid">
+
+            <div class="form-group">
+
+              <label>Father Name</label>
+
+              <input
+                type="text"
+                id="fatherName"
+                placeholder="Father name"
+              >
+
+            </div>
+
+
+            <div class="form-group">
+
+              <label>Father Phone</label>
+
+              <input
+                type="tel"
+                id="fatherPhone"
+                placeholder="Father phone"
+                maxlength="10"
+              >
+
+            </div>
+
+
+            <div class="form-group">
+
+              <label>Mother Name</label>
+
+              <input
+                type="text"
+                id="motherName"
+                placeholder="Mother name"
+              >
+
+            </div>
+
+
+            <div class="form-group">
+
+              <label>Mother Phone</label>
+
+              <input
+                type="tel"
+                id="motherPhone"
+                placeholder="Mother phone"
+                maxlength="10"
+              >
+
+            </div>
+
+
+            <div class="form-group">
+
+              <label>Guardian Name</label>
+
+              <input
+                type="text"
+                id="guardianName"
+                placeholder="If applicable"
+              >
+
+            </div>
+
+
+            <div class="form-group">
+
+              <label>Primary Contact</label>
+
+              <select id="primaryContact">
+
+                <option value="">Select</option>
+                <option value="Student">Student</option>
+                <option value="Father">Father</option>
+                <option value="Mother">Mother</option>
+                <option value="Guardian">Guardian</option>
+
+              </select>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- =============================================
+             ACADEMIC DETAILS
+        ============================================== -->
+
+        <div class="form-section">
+
+          <div class="section-title">
+
+            <span>03</span>
+
+            <div>
+              <h3>Academic Details</h3>
+              <p>Current academic information</p>
+            </div>
+
+          </div>
+
+
+          <div class="form-grid">
+
+            <div class="form-group">
+
+              <label>
+                Class / Study Level <span>*</span>
+              </label>
+
+              <select
+                id="studentClass"
+                required
+              >
+
+                <option value="">
+                  Select class
+                </option>
+
+                <option value="Under 8th">
+                  Under 8th
+                </option>
+
+                <option value="8th">
+                  8th
+                </option>
+
+                <option value="9th">
+                  9th
+                </option>
+
+                <option value="10th">
+                  10th
+                </option>
+
+                <option value="1st PUC">
+                  1st PUC
+                </option>
+
+                <option value="2nd PUC">
+                  2nd PUC
+                </option>
+
+              </select>
+
+            </div>
+
+
+            <div class="form-group">
+
+              <label>Board</label>
+
+              <select id="studentBoard">
+
+                <option value="">
+                  Select board
+                </option>
+
+                <option value="Karnataka State Board">
+                  Karnataka State Board
+                </option>
+
+                <option value="CBSE">
+                  CBSE
+                </option>
+
+                <option value="ICSE">
+                  ICSE
+                </option>
+
+                <option value="Other">
+                  Other
+                </option>
+
+              </select>
+
+            </div>
+
+
+            <div class="form-group">
+
+              <label>Medium</label>
+
+              <select id="studentMedium">
+
+                <option value="">
+                  Select medium
+                </option>
+
+                <option value="Kannada">
+                  Kannada
+                </option>
+
+                <option value="English">
+                  English
+                </option>
+
+                <option value="Both">
+                  Both
+                </option>
+
+              </select>
+
+            </div>
+
+
+            <div class="form-group">
+
+              <label>Current Percentage</label>
+
+              <input
+                type="number"
+                id="currentPercentage"
+                min="0"
+                max="100"
+                step="0.01"
+                placeholder="Example: 72"
+              >
+
+            </div>
+
+
+            <div class="form-group">
+
+              <label>Target Percentage</label>
+
+              <input
+                type="number"
+                id="targetPercentage"
+                min="0"
+                max="100"
+                step="0.01"
+                placeholder="Example: 95"
+              >
+
+            </div>
+
+
+            <div class="form-group">
+
+              <label>Subjects to Improve</label>
+
+              <input
+                type="text"
+                id="subjectsToImprove"
+                placeholder="Maths, Science..."
+              >
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- =============================================
+             LOCATION
+        ============================================== -->
+
+        <div class="form-section">
+
+          <div class="section-title">
+
+            <span>04</span>
+
+            <div>
+              <h3>Location & School</h3>
+              <p>Select the student's location and school</p>
+            </div>
+
+          </div>
+
+
+          <div class="form-grid">
+
+            <div class="form-group">
+
+              <label>
+                District <span>*</span>
+              </label>
+
+              <select
+                id="districtSelect"
+                required
+              >
+
+                <option value="">
+                  Select district
+                </option>
+
+              </select>
+
+            </div>
+
+
+            <div class="form-group">
+
+              <label>
+                Taluk <span>*</span>
+              </label>
+
+              <select
+                id="talukSelect"
+                required
+                disabled
+              >
+
+                <option value="">
+                  Select district first
+                </option>
+
+              </select>
+
+            </div>
+
+
+            <div class="form-group">
+
+              <label>
+                Village <span>*</span>
+              </label>
+
+              <select
+                id="villageSelect"
+                required
+                disabled
+              >
+
+                <option value="">
+                  Select taluk first
+                </option>
+
+              </select>
+
+            </div>
+
+
+            <div class="form-group">
+
+              <label>
+                School <span>*</span>
+              </label>
+
+              <select
+                id="schoolSelect"
+                required
+                disabled
+              >
+
+                <option value="">
+                  Select taluk first
+                </option>
+
+              </select>
+
+              <small>
+                Schools are filtered by Taluk.
+              </small>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- =============================================
+             COURSE
+        ============================================== -->
+
+        <div class="form-section">
+
+          <div class="section-title">
+
+            <span>05</span>
+
+            <div>
+              <h3>Course & Enrollment</h3>
+              <p>Course and automatic pricing</p>
+            </div>
+
+          </div>
+
+
+          <div class="form-grid">
+
+            <div class="form-group full">
+
+              <label>
+                Course / Batch
+              </label>
+
+              <select
+                id="courseSelect"
+              >
+
+                <option value="">
+                  Select class first
+                </option>
+
+              </select>
+
+              <small>
+                Courses are automatically filtered according to
+                the selected class.
+              </small>
+
+            </div>
+
+
+            <div class="fee-card">
+
+              <div>
+                <span>Course Price</span>
+                <strong id="coursePriceDisplay">
+                  ₹0
+                </strong>
+              </div>
+
+              <div>
+                <span>Discount</span>
+                <strong id="courseDiscountDisplay">
+                  ₹0
+                </strong>
+              </div>
+
+              <div class="fee-final">
+                <span>Final Fee</span>
+                <strong id="courseFinalPriceDisplay">
+                  ₹0
+                </strong>
+              </div>
+
+            </div>
+
+
+            <div class="form-group">
+
+              <label>Enrollment Status</label>
+
+              <select id="enrollmentStatus">
+
+                <option value="NOT ENROLLED">
+                  Not Enrolled
+                </option>
+
+                <option value="INTERESTED">
+                  Interested
+                </option>
+
+                <option value="PAYMENT PENDING">
+                  Payment Pending
+                </option>
+
+                <option value="ENROLLED">
+                  Enrolled
+                </option>
+
+              </select>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- =============================================
+             CRM DETAILS
+        ============================================== -->
+
+        <div class="form-section">
+
+          <div class="section-title">
+
+            <span>06</span>
+
+            <div>
+              <h3>CRM Information</h3>
+              <p>Lead tracking and counselling information</p>
+            </div>
+
+          </div>
+
+
+          <div class="form-grid">
+
+            <div class="form-group">
+
+              <label>Lead Status</label>
+
+              <select id="leadStatus">
+
+                <option value="NEW">
+                  New
+                </option>
+
+                <option value="CONTACT ATTEMPTED">
+                  Contact Attempted
+                </option>
+
+                <option value="CONNECTED">
+                  Connected
+                </option>
+
+                <option value="QUALIFIED">
+                  Qualified
+                </option>
+
+                <option value="INTERESTED">
+                  Interested
+                </option>
+
+                <option value="DEMO/COUNSELLING">
+                  Demo / Counselling
+                </option>
+
+                <option value="PAYMENT PENDING">
+                  Payment Pending
+                </option>
+
+                <option value="ENROLLED">
+                  Enrolled
+                </option>
+
+              </select>
+
+            </div>
+
+
+            <div class="form-group">
+
+              <label>Lead Temperature</label>
+
+              <select id="leadTemperature">
+
+                <option value="COLD">
+                  Cold
+                </option>
+
+                <option value="WARM">
+                  Warm
+                </option>
+
+                <option value="HOT">
+                  Hot
+                </option>
+
+              </select>
+
+            </div>
+
+
+            <div class="form-group">
+
+              <label>Lead Source</label>
+
+              <select id="leadSource">
+
+                <option value="">
+                  Select source
+                </option>
+
+                <option value="Instagram">
+                  Instagram
+                </option>
+
+                <option value="Facebook">
+                  Facebook
+                </option>
+
+                <option value="YouTube">
+                  YouTube
+                </option>
+
+                <option value="WhatsApp">
+                  WhatsApp
+                </option>
+
+                <option value="Referral">
+                  Referral
+                </option>
+
+                <option value="School">
+                  School
+                </option>
+
+                <option value="Walk-in">
+                  Walk-in
+                </option>
+
+                <option value="Phone">
+                  Phone
+                </option>
+
+                <option value="Other">
+                  Other
+                </option>
+
+              </select>
+
+            </div>
+
+
+            <div class="form-group">
+
+              <label>Campaign</label>
+
+              <input
+                type="text"
+                id="campaignId"
+                placeholder="Campaign name / ID"
+              >
+
+            </div>
+
+
+            <div class="form-group full">
+
+              <label>Assigned Counsellor</label>
+
+              <input
+                type="text"
+                id="assignedTo"
+                placeholder="Counsellor name or ID"
+              >
+
+            </div>
+
+
+            <div class="form-group full">
+
+              <label>Counsellor Notes</label>
+
+              <textarea
+                id="counsellorNotes"
+                rows="4"
+                placeholder="Important notes about the student..."
+              ></textarea>
+
+            </div>
+
+
+            <div class="form-group full">
+
+              <label class="checkbox-label">
+
+                <input
+                  type="checkbox"
+                  id="studentActive"
+                  checked
+                >
+
+                <span>
+                  Student record is active
+                </span>
+
+              </label>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- FOOTER -->
+
+        <div class="modal-footer">
+
+          <button
+            type="button"
+            id="cancelStudentBtn"
+            class="secondary-btn"
+          >
+            Cancel
+          </button>
+
+          <button
+            type="submit"
+            id="saveStudentBtn"
+            class="primary-btn"
+          >
+            Save Student
+          </button>
+
+        </div>
+
+      </form>
+
+    </div>
+
+  </div>
+
+
+  <!-- DELETE MODAL -->
+
+  <div
+    id="deleteModal"
+    class="modal-overlay"
+  >
+
+    <div class="delete-modal">
+
+      <div class="delete-icon">!</div>
+
+      <h2>Delete Student?</h2>
+
+      <p>
+        This removes the student from the CRM Student Master.
+        Related interaction, follow-up or payment records
+        are not automatically deleted.
+      </p>
+
+      <div class="delete-actions">
+
+        <button
+          id="cancelDeleteBtn"
+          class="secondary-btn"
+        >
+          Cancel
+        </button>
+
+        <button
+          id="confirmDeleteBtn"
+          class="danger-btn"
+        >
+          Delete
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- TOAST -->
+
+  <div id="toast" class="toast">
+    <span id="toastMessage"></span>
+  </div>
+
+
+  <script
+    type="module"
+    src="./students-core.js"
+  ></script>
+
+</body>
+  </html>
