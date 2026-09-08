@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Course Master | Zenova CRM</title>
+
+  <link rel="icon" type="image/png" href="../../logo.png" />
+  <link rel="stylesheet" href="./courses.css" />
+</head>
+
+<body>
+
+  <!-- LOADER -->
+  <div id="pageLoader" class="page-loader">
+    <div class="loader-ring">
+      <span>Z</span>
+    </div>
+    <p>Loading Course Master...</p>
+  </div>
+
+  <div class="app-shell">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+      <div class="brand">
+        <img src="../../logo.png" alt="Zenova">
+        <div>
+          <strong>Zenova</strong>
+          <span>CRM</span>
+        </div>
+      </div>
+
+      <div class="sidebar-section">
+        <small>MASTER DATA</small>
+
+        <a href="../" class="side-link">
+          <span>←</span>
+          <span>CRM Home</span>
+        </a>
+
+        <a href="../locations/" class="side-link">
+          <span>⌖</span>
+          <span>Locations</span>
+        </a>
+
+        <a href="../schools/" class="side-link">
+          <span>▣</span>
+          <span>Schools</span>
+        </a>
+
+        <a href="./" class="side-link active">
+          <span>▤</span>
+          <span>Courses</span>
+        </a>
+      </div>
+
+      <div class="sidebar-bottom">
+        <span>Zenova Educations</span>
+        <small>CRM System</small>
+      </div>
+
+    </aside>
+
+
+    <!-- MAIN -->
+    <main class="main-content">
+
+      <!-- TOPBAR -->
+      <header class="topbar">
+
+        <button id="backToCRM" class="back-btn" title="Back to CRM">
+          ←
+        </button>
+
+        <div>
+          <h1>Course Master</h1>
+          <p>Manage courses, batches and pricing</p>
+        </div>
+
+        <div class="topbar-right">
+          <div class="admin-status">
+            <span class="status-dot"></span>
+            <span>Connected</span>
+          </div>
+        </div>
+
+      </header>
+
+
+      <!-- CONTENT -->
+      <section class="content">
+
+        <!-- STATS -->
+        <div class="stats-grid">
+
+          <div class="stat-card">
+            <span class="stat-label">Total Courses</span>
+            <strong id="totalCourses">0</strong>
+          </div>
+
+          <div class="stat-card">
+            <span class="stat-label">Active Courses</span>
+            <strong id="activeCourses">0</strong>
+          </div>
+
+          <div class="stat-card">
+            <span class="stat-label">Inactive Courses</span>
+            <strong id="inactiveCourses">0</strong>
+          </div>
+
+          <div class="stat-card">
+            <span class="stat-label">Average Price</span>
+            <strong id="averagePrice">₹0</strong>
+          </div>
+
+        </div>
+
+
+        <!-- TOOLBAR -->
+        <div class="toolbar">
+
+          <div class="search-box">
+            <span>⌕</span>
+            <input
+              type="text"
+              id="searchInput"
+              placeholder="Search course, code, class, board..."
+            />
+          </div>
+
+          <button id="addCourseBtn" class="primary-btn">
+            <span>＋</span>
+            Add Course
+          </button>
+
+        </div>
+
+
+        <!-- TABLE -->
+        <div class="table-card">
+
+          <div class="table-header">
+            <div>
+              <h2>All Courses</h2>
+              <p>Courses available for CRM student enrollment</p>
+            </div>
+
+            <span id="courseCountLabel" class="count-badge">
+              0 courses
+            </span>
+          </div>
+
+          <div class="table-wrapper">
+
+            <table>
+
+              <thead>
+                <tr>
+                  <th>Course</th>
+                  <th>Code</th>
+                  <th>Class</th>
+                  <th>Board</th>
+                  <th>Medium</th>
+                  <th>Price</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+
+              <tbody id="courseTableBody">
+                <tr>
+                  <td colspan="8" class="empty-state">
+                    Loading courses...
+                  </td>
+                </tr>
+              </tbody>
+
+            </table>
+
+          </div>
+
+        </div>
+
+      </section>
+
+    </main>
+
+  </div>
+
+
+  <!-- COURSE MODAL -->
+  <div id="courseModal" class="modal-overlay">
+
+    <div class="modal">
+
+      <div class="modal-header">
+
+        <div>
+          <h2 id="modalTitle">Add Course</h2>
+          <p>Create a course that can later be assigned to students.</p>
+        </div>
+
+        <button id="closeCourseModal" class="close-btn">
+          ×
+        </button>
+
+      </div>
+
+
+      <form id="courseForm">
+
+        <div class="form-grid">
+
+          <!-- COURSE NAME -->
+          <div class="form-group full">
+            <label>
+              Course / Batch Name <span>*</span>
+            </label>
+
+            <input
+              type="text"
+              id="courseName"
+              placeholder="Example: SSLC Batch 1"
+              required
+            />
+          </div>
+
+
+          <!-- CODE -->
+          <div class="form-group">
+
+            <label>Course Code</label>
+
+            <input
+              type="text"
+              id="courseCode"
+              placeholder="Example: SSLC-B1"
+            />
+
+            <small>
+              If empty, a code will be generated automatically.
+            </small>
+
+          </div>
+
+
+          <!-- CLASS -->
+          <div class="form-group">
+
+            <label>
+              Class / Level <span>*</span>
+            </label>
+
+            <select id="courseClass" required>
+
+              <option value="">Select class</option>
+
+              <option value="Under 8th">Under 8th</option>
+              <option value="8th">8th</option>
+              <option value="9th">9th</option>
+              <option value="10th">10th</option>
+              <option value="1st PUC">1st PUC</option>
+              <option value="2nd PUC">2nd PUC</option>
+
+            </select>
+
+          </div>
+
+
+          <!-- BOARD -->
+          <div class="form-group">
+
+            <label>Board</label>
+
+            <select id="courseBoard">
+
+              <option value="">Select board</option>
+              <option value="Karnataka State Board">
+                Karnataka State Board
+              </option>
+              <option value="CBSE">CBSE</option>
+              <option value="ICSE">ICSE</option>
+              <option value="Other">Other</option>
+
+            </select>
+
+          </div>
+
+
+          <!-- MEDIUM -->
+          <div class="form-group">
+
+            <label>Medium</label>
+
+            <select id="courseMedium">
+
+              <option value="">Select medium</option>
+              <option value="Kannada">Kannada</option>
+              <option value="English">English</option>
+              <option value="Both">Both</option>
+
+            </select>
+
+          </div>
+
+
+          <!-- PRICE -->
+          <div class="form-group">
+
+            <label>
+              Course Price <span>*</span>
+            </label>
+
+            <div class="price-input">
+              <span>₹</span>
+
+              <input
+                type="number"
+                id="coursePrice"
+                min="0"
+                step="1"
+                placeholder="10000"
+                required
+              />
+            </div>
+
+          </div>
+
+
+          <!-- DISCOUNT -->
+          <div class="form-group">
+
+            <label>Discount</label>
+
+            <div class="price-input">
+              <span>₹</span>
+
+              <input
+                type="number"
+                id="courseDiscount"
+                min="0"
+                step="1"
+                value="0"
+                placeholder="0"
+              />
+            </div>
+
+          </div>
+
+
+          <!-- FINAL PRICE -->
+          <div class="form-group">
+
+            <label>Final Price</label>
+
+            <div class="final-price-box">
+              <span>₹</span>
+              <strong id="finalPricePreview">0</strong>
+            </div>
+
+          </div>
+
+
+          <!-- DESCRIPTION -->
+          <div class="form-group full">
+
+            <label>Description</label>
+
+            <textarea
+              id="courseDescription"
+              rows="4"
+              placeholder="Short description of this course..."
+            ></textarea>
+
+          </div>
+
+
+          <!-- ACTIVE -->
+          <div class="form-group full">
+
+            <label class="checkbox-label">
+
+              <input
+                type="checkbox"
+                id="courseActive"
+                checked
+              />
+
+              <span>
+                Course is active and available for enrollment
+              </span>
+
+            </label>
+
+          </div>
+
+        </div>
+
+
+        <div class="modal-footer">
+
+          <button
+            type="button"
+            id="cancelCourseBtn"
+            class="secondary-btn"
+          >
+            Cancel
+          </button>
+
+          <button
+            type="submit"
+            id="saveCourseBtn"
+            class="primary-btn"
+          >
+            Save Course
+          </button>
+
+        </div>
+
+      </form>
+
+    </div>
+
+  </div>
+
+
+  <!-- DELETE MODAL -->
+  <div id="deleteModal" class="modal-overlay">
+
+    <div class="delete-modal">
+
+      <div class="delete-icon">
+        !
+      </div>
+
+      <h2>Delete Course?</h2>
+
+      <p>
+        This will remove the course from the Course Master.
+        Existing enrollment records will not be automatically deleted.
+      </p>
+
+      <div class="delete-actions">
+
+        <button
+          id="cancelDeleteBtn"
+          class="secondary-btn"
+        >
+          Cancel
+        </button>
+
+        <button
+          id="confirmDeleteBtn"
+          class="danger-btn"
+        >
+          Delete
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- TOAST -->
+  <div id="toast" class="toast">
+    <span id="toastMessage"></span>
+  </div>
+
+
+  <script type="module" src="./courses-core.js"></script>
+
+</body>
+  </html>
