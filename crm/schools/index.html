@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Schools | Zenova CRM</title>
+
+  <link rel="icon" href="../../logo.png" />
+  <link rel="stylesheet" href="./schools.css" />
+</head>
+
+<body>
+
+  <!-- LOADER -->
+  <div id="appLoader" class="app-loader">
+    <div class="loader-logo">
+      <img src="../../logo.png" alt="Zenova" />
+    </div>
+    <div class="loader-spinner"></div>
+    <p>Loading Zenova CRM</p>
+  </div>
+
+
+  <!-- APP -->
+  <div id="crmApp" class="crm-app hidden">
+
+    <div id="sidebarOverlay" class="sidebar-overlay"></div>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+
+      <div class="sidebar-top">
+
+        <div class="brand">
+          <img src="../../logo.png" alt="Zenova" class="brand-logo" />
+
+          <div class="brand-text">
+            <strong>ZENOVA</strong>
+            <span>CRM</span>
+          </div>
+        </div>
+
+        <button id="sidebarClose" class="mobile-close">×</button>
+
+      </div>
+
+
+      <div class="sidebar-section">
+
+        <span class="sidebar-label">WORKSPACE</span>
+
+        <nav class="sidebar-nav">
+
+          <a href="../" class="nav-item">
+            <span class="nav-icon">⌂</span>
+            <span>CRM Home</span>
+          </a>
+
+          <a href="../students/" class="nav-item">
+            <span class="nav-icon">♙</span>
+            <span>Students</span>
+          </a>
+
+          <a href="../leads/" class="nav-item">
+            <span class="nav-icon">◎</span>
+            <span>Leads</span>
+          </a>
+
+          <a href="./" class="nav-item active">
+            <span class="nav-icon">▣</span>
+            <span>Schools</span>
+          </a>
+
+          <a href="../locations/" class="nav-item">
+            <span class="nav-icon">⌖</span>
+            <span>Locations</span>
+          </a>
+
+          <a href="../admissions/" class="nav-item">
+            <span class="nav-icon">□</span>
+            <span>Admissions</span>
+          </a>
+
+          <a href="../followups/" class="nav-item">
+            <span class="nav-icon">◷</span>
+            <span>Follow-ups</span>
+          </a>
+
+          <a href="../interactions/" class="nav-item">
+            <span class="nav-icon">↗</span>
+            <span>Interactions</span>
+          </a>
+
+          <a href="../payments/" class="nav-item">
+            <span class="nav-icon">₹</span>
+            <span>Payments</span>
+          </a>
+
+        </nav>
+
+      </div>
+
+
+      <div class="sidebar-section">
+
+        <span class="sidebar-label">INSIGHTS</span>
+
+        <nav class="sidebar-nav">
+
+          <a href="../reports/" class="nav-item">
+            <span class="nav-icon">▥</span>
+            <span>Reports</span>
+          </a>
+
+        </nav>
+
+      </div>
+
+
+      <div class="sidebar-bottom">
+
+        <a href="../settings/" class="nav-item">
+          <span class="nav-icon">⚙</span>
+          <span>CRM Settings</span>
+        </a>
+
+        <div class="sidebar-user">
+
+          <div class="user-avatar" id="sidebarAvatar">Z</div>
+
+          <div class="sidebar-user-info">
+            <strong id="sidebarUserName">Admin</strong>
+            <span id="sidebarUserEmail">Loading...</span>
+          </div>
+
+        </div>
+
+      </div>
+
+    </aside>
+
+
+    <!-- MAIN -->
+    <main class="main-content">
+
+      <!-- TOPBAR -->
+      <header class="topbar">
+
+        <div class="topbar-left">
+
+          <button id="sidebarOpen" class="menu-button">
+            ☰
+          </button>
+
+          <button
+            class="back-button"
+            id="backToCRM"
+            title="Back to CRM"
+            aria-label="Back to CRM"
+          >
+            ←
+          </button>
+
+          <div class="topbar-search">
+
+            <span class="search-icon">⌕</span>
+
+            <input
+              type="text"
+              id="globalSearch"
+              placeholder="Search schools..."
+              autocomplete="off"
+            />
+
+            <span class="search-shortcut">⌘ K</span>
+
+          </div>
+
+        </div>
+
+
+        <div class="topbar-actions">
+
+          <button class="topbar-button" title="Notifications">
+            ♢
+            <span class="notification-dot"></span>
+          </button>
+
+          <div class="topbar-divider"></div>
+
+          <div class="topbar-profile">
+
+            <div class="topbar-avatar" id="topbarAvatar">
+              Z
+            </div>
+
+            <div class="topbar-profile-text">
+              <strong id="topbarName">Admin</strong>
+              <span>CRM Administrator</span>
+            </div>
+
+            <span class="profile-arrow">⌄</span>
+
+          </div>
+
+        </div>
+
+      </header>
+
+
+      <!-- PAGE -->
+      <section class="page-content">
+
+        <div class="page-header">
+
+          <div>
+
+            <div class="breadcrumb">
+              CRM
+              <span>/</span>
+              Master Data
+              <span>/</span>
+              <strong>Schools</strong>
+            </div>
+
+            <h1>School Management</h1>
+
+            <p>
+              Maintain your school master data and reuse it across students,
+              leads and admissions.
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <!-- STATS -->
+        <div class="stats-grid">
+
+          <div class="stat-card">
+
+            <div class="stat-card-top">
+              <div class="stat-icon purple">▣</div>
+              <span class="stat-live">LIVE</span>
+            </div>
+
+            <div class="stat-number" id="schoolCount">
+              0
+            </div>
+
+            <div class="stat-title">
+              Total Schools
+            </div>
+
+          </div>
+
+
+          <div class="stat-card">
+
+            <div class="stat-card-top">
+              <div class="stat-icon blue">⌖</div>
+              <span class="stat-live">LIVE</span>
+            </div>
+
+            <div class="stat-number" id="districtCount">
+              0
+            </div>
+
+            <div class="stat-title">
+              Districts Covered
+            </div>
+
+          </div>
+
+
+          <div class="stat-card">
+
+            <div class="stat-card-top">
+              <div class="stat-icon green">⌑</div>
+              <span class="stat-live">LIVE</span>
+            </div>
+
+            <div class="stat-number" id="talukCount">
+              0
+            </div>
+
+            <div class="stat-title">
+              Taluks Covered
+            </div>
+
+          </div>
+
+
+          <div class="stat-card">
+
+            <div class="stat-card-top">
+              <div class="stat-icon orange">✓</div>
+              <span class="stat-live">LIVE</span>
+            </div>
+
+            <div class="stat-number" id="activeSchoolCount">
+              0
+            </div>
+
+            <div class="stat-title">
+              Active Schools
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- SCHOOL MANAGER -->
+        <div class="school-card">
+
+          <div class="school-card-header">
+
+            <div>
+
+              <h2>School Master</h2>
+
+              <p>
+                Create and maintain the central school directory used by CRM.
+              </p>
+
+            </div>
+
+            <button id="addButton" class="primary-button">
+              <span>＋</span>
+              <span>Add School</span>
+            </button>
+
+          </div>
+
+
+          <!-- TOOLBAR -->
+          <div class="table-toolbar">
+
+            <div class="table-search">
+
+              <span>⌕</span>
+
+              <input
+                id="tableSearch"
+                type="text"
+                placeholder="Search school, district or taluk..."
+                autocomplete="off"
+              />
+
+            </div>
+
+            <div class="table-info" id="tableInfo">
+              0 records
+            </div>
+
+          </div>
+
+
+          <!-- TABLE -->
+          <div class="table-wrapper">
+
+            <table>
+
+              <thead>
+
+                <tr>
+                  <th>School</th>
+                  <th>Code</th>
+                  <th>Taluk</th>
+                  <th>District</th>
+                  <th>Status</th>
+                  <th></th>
+                </tr>
+
+              </thead>
+
+              <tbody id="tableBody"></tbody>
+
+            </table>
+
+
+            <div id="emptyState" class="empty-state hidden">
+
+              <div class="empty-icon">
+                ▣
+              </div>
+
+              <h3>No schools found</h3>
+
+              <p>
+                Add your first school to start building the CRM school master.
+              </p>
+
+              <button id="emptyAddButton" class="secondary-button">
+                Add School
+              </button>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </section>
+
+    </main>
+
+  </div>
+
+
+  <!-- SCHOOL MODAL -->
+  <div id="schoolModal" class="modal-backdrop hidden">
+
+    <div class="modal">
+
+      <div class="modal-header">
+
+        <div>
+
+          <span class="modal-eyebrow">
+            SCHOOL MASTER
+          </span>
+
+          <h2 id="modalTitle">
+            Add School
+          </h2>
+
+        </div>
+
+        <button id="modalClose" class="modal-close">
+          ×
+        </button>
+
+      </div>
+
+
+      <form id="schoolForm">
+
+        <div class="form-group">
+
+          <label for="districtSelect">
+            District
+          </label>
+
+          <select id="districtSelect" required>
+            <option value="">Select district</option>
+          </select>
+
+        </div>
+
+
+        <div class="form-group">
+
+          <label for="talukSelect">
+            Taluk
+          </label>
+
+          <select id="talukSelect" required disabled>
+            <option value="">Select taluk</option>
+          </select>
+
+        </div>
+
+
+        <div class="form-group">
+
+          <label for="schoolName">
+            School Name
+          </label>
+
+          <input
+            type="text"
+            id="schoolName"
+            placeholder="Enter school name"
+            required
+            autocomplete="off"
+          />
+
+        </div>
+
+
+        <div class="form-group">
+
+          <label for="schoolCode">
+            School Code
+            <span class="optional">Optional</span>
+          </label>
+
+          <input
+            type="text"
+            id="schoolCode"
+            placeholder="Enter official school code if available"
+            autocomplete="off"
+          />
+
+        </div>
+
+
+        <div class="form-group">
+
+          <label class="checkbox-label">
+
+            <input
+              type="checkbox"
+              id="schoolActive"
+              checked
+            />
+
+            <span>
+              School is active
+            </span>
+
+          </label>
+
+        </div>
+
+
+        <div id="formError" class="form-error hidden"></div>
+
+
+        <div class="modal-footer">
+
+          <button
+            type="button"
+            id="modalCancel"
+            class="cancel-button"
+          >
+            Cancel
+          </button>
+
+          <button
+            type="submit"
+            id="saveButton"
+            class="primary-button"
+          >
+            Save School
+          </button>
+
+        </div>
+
+      </form>
+
+    </div>
+
+  </div>
+
+
+  <!-- DELETE MODAL -->
+  <div id="deleteModal" class="modal-backdrop hidden">
+
+    <div class="modal small-modal">
+
+      <div class="delete-icon">
+        !
+      </div>
+
+      <h2>Delete school?</h2>
+
+      <p id="deleteMessage">
+        This action cannot be undone.
+      </p>
+
+      <div class="modal-footer">
+
+        <button
+          type="button"
+          id="deleteCancel"
+          class="cancel-button"
+        >
+          Cancel
+        </button>
+
+        <button
+          type="button"
+          id="deleteConfirm"
+          class="danger-button"
+        >
+          Delete
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- TOAST -->
+  <div id="toast" class="toast">
+
+    <div class="toast-icon" id="toastIcon">
+      ✓
+    </div>
+
+    <div>
+      <strong id="toastTitle">Success</strong>
+      <p id="toastMessage">Saved successfully.</p>
+    </div>
+
+  </div>
+
+
+  <script type="module" src="./schools-core.js"></script>
+
+</body>
+              </html>
