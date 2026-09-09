@@ -81,7 +81,7 @@ onAuthStateChanged(
             ) {
 
                 window.location.replace(
-                    "../onboarding/"
+                    "../accounts/onboarding/"
                 );
 
                 return;
