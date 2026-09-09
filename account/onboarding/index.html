@@ -1,779 +1,447 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
+    <meta charset="UTF-8">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    >
 
-  <meta charset="UTF-8">
+    <title>Zenova — Onboarding</title>
 
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  >
+    <link rel="stylesheet" href="./onboarding.css">
 
-  <title>Complete Profile | Zenova</title>
-
-  <link
-    rel="stylesheet"
-    href="./onboarding.css"
-  >
-
+    <script type="module" src="./onboarding.js"></script>
 </head>
-
 
 <body>
 
-
-  <main class="page">
-
-    <div class="container">
-
-
-      <!-- HEADER -->
-
-      <div class="header">
-
-        <img
-          src="../../logo.png"
-          class="logo"
-          alt="Zenova"
-        >
-
-        <h1>
-          Complete your profile
-        </h1>
-
-        <p>
-          A few details and you're ready to start learning.
-        </p>
-
-      </div>
-
-
-
-      <!-- PROGRESS -->
-
-      <div class="progress">
-
-        <div class="progress-track">
-
-          <div
-            id="progressFill"
-            class="progress-fill"
-          ></div>
-
+    <!-- Loading -->
+    <div id="zenovaLoader" class="loader-screen">
+        <div class="loader-ring">
+            <span>Z</span>
         </div>
-
-        <div
-          id="progressText"
-          class="progress-text"
-        >
-          Step 1 of 4
-        </div>
-
-      </div>
+    </div>
 
 
+    <!-- Onboarding -->
+    <main id="onboardingApp" class="onboarding-app hidden">
 
-      <form id="onboardingForm">
+        <div class="onboarding-container">
 
+            <header class="top-header">
 
-        <!-- =====================================
-             STEP 1
-        ====================================== -->
+                <div class="brand">
+                    <div class="brand-mark">Z</div>
+                    <span>ZENOVA</span>
+                </div>
 
-        <section
-          id="step1"
-          class="step"
-        >
+                <div class="step-indicator">
+                    <span id="stepText">1 of 3</span>
+                </div>
 
-          <div class="step-heading">
-
-            <div class="step-number">
-              01
-            </div>
-
-            <div>
-
-              <h2>
-                Personal details
-              </h2>
-
-              <p>
-                Basic information about you.
-              </p>
-
-            </div>
-
-          </div>
+            </header>
 
 
-          <!-- NAME -->
-
-          <div class="field">
-
-            <label for="name">
-              Full name <span>*</span>
-            </label>
-
-            <input
-              id="name"
-              type="text"
-              placeholder="Enter your full name"
-              autocomplete="name"
-              required
-            >
-
-          </div>
-
-
-          <!-- EMAIL -->
-
-          <div class="field">
-
-            <label for="email">
-              Email address
-            </label>
-
-            <input
-              id="email"
-              type="email"
-              disabled
-            >
-
-            <small>
-              Connected through your Google account.
-            </small>
-
-          </div>
-
-
-          <div class="two-column">
-
-
-            <!-- DOB -->
-
-            <div class="field">
-
-              <label for="dob">
-                Date of birth <span>*</span>
-              </label>
-
-              <input
-                id="dob"
-                type="date"
-                required
-              >
-
+            <!-- Progress -->
+            <div class="progress-area">
+                <div class="progress-track">
+                    <div id="progressBar" class="progress-bar"></div>
+                </div>
             </div>
 
 
-            <!-- GENDER -->
+            <!-- STEP 1 -->
+            <section id="step1" class="step active">
 
-            <div class="field">
+                <div class="step-heading">
+                    <span class="eyebrow">WELCOME</span>
 
-              <label for="gender">
-                Gender <span>*</span>
-              </label>
+                    <h1>Let's get to know you.</h1>
 
-              <select
-                id="gender"
-                required
-              >
+                    <p>
+                        Tell us a little about yourself to set up
+                        your Zenova student account.
+                    </p>
+                </div>
 
-                <option value="">
-                  Select
-                </option>
 
-                <option value="MALE">
-                  Male
-                </option>
+                <div class="form-grid">
 
-                <option value="FEMALE">
-                  Female
-                </option>
+                    <div class="field full">
+                        <label for="fullName">Full Name</label>
 
-                <option value="OTHER">
-                  Other
-                </option>
+                        <input
+                            type="text"
+                            id="fullName"
+                            placeholder="Enter your full name"
+                            autocomplete="name"
+                        >
+                    </div>
 
-                <option value="PREFER_NOT_TO_SAY">
-                  Prefer not to say
-                </option>
 
-              </select>
+                    <div class="field">
+                        <label for="dob">Date of Birth</label>
 
-            </div>
+                        <input
+                            type="date"
+                            id="dob"
+                        >
+                    </div>
 
-          </div>
 
+                    <div class="field">
+                        <label for="gender">Gender</label>
 
-          <button
-            type="button"
-            id="step1Next"
-            class="primary-btn"
-          >
-            Continue
-          </button>
+                        <select id="gender">
+                            <option value="">Select gender</option>
+                            <option value="MALE">Male</option>
+                            <option value="FEMALE">Female</option>
+                            <option value="OTHER">Other</option>
+                            <option value="PREFER_NOT_TO_SAY">
+                                Prefer not to say
+                            </option>
+                        </select>
+                    </div>
 
+                </div>
 
-          <div
-            id="step1Error"
-            class="error"
-          ></div>
-
-        </section>
-
-
-
-        <!-- =====================================
-             STEP 2
-        ====================================== -->
-
-        <section
-          id="step2"
-          class="step hidden"
-        >
-
-          <div class="step-heading">
-
-            <div class="step-number">
-              02
-            </div>
-
-            <div>
-
-              <h2>
-                Academic details
-              </h2>
-
-              <p>
-                Tell us what you're currently studying.
-              </p>
-
-            </div>
-
-          </div>
-
-
-          <!-- CLASS -->
-
-          <div class="field">
-
-            <label for="class">
-              Current class <span>*</span>
-            </label>
-
-            <select
-              id="class"
-              required
-            >
-
-              <option value="">
-                Select class
-              </option>
-
-              <option value="UNDER_8TH">
-                Under 8th
-              </option>
-
-              <option value="8TH">
-                8th
-              </option>
-
-              <option value="9TH">
-                9th
-              </option>
-
-              <option value="10TH">
-                10th
-              </option>
-
-              <option value="1ST_PUC">
-                1st PUC
-              </option>
-
-              <option value="2ND_PUC">
-                2nd PUC
-              </option>
-
-            </select>
-
-          </div>
-
-
-          <!-- BOARD -->
-
-          <div
-            id="boardWrapper"
-            class="field hidden"
-          >
-
-            <label for="board">
-              Board <span>*</span>
-            </label>
-
-            <select id="board">
-
-              <option value="">
-                Select board
-              </option>
-
-              <option value="KSEAB">
-                Karnataka State Board
-              </option>
-
-              <option value="CBSE">
-                CBSE
-              </option>
-
-              <option value="ICSE">
-                ICSE
-              </option>
-
-              <option value="OTHER">
-                Other
-              </option>
-
-            </select>
-
-          </div>
-
-
-          <!-- PUC -->
-
-          <div
-            id="pucWrapper"
-            class="hidden"
-          >
-
-            <div class="two-column">
-
-              <div class="field">
-
-                <label for="stream">
-                  Stream <span>*</span>
-                </label>
-
-                <select id="stream">
-
-                  <option value="">
-                    Select stream
-                  </option>
-
-                  <option value="SCIENCE">
-                    Science
-                  </option>
-
-                  <option value="COMMERCE">
-                    Commerce
-                  </option>
-
-                  <option value="ARTS">
-                    Arts
-                  </option>
-
-                </select>
-
-              </div>
-
-
-              <div class="field">
-
-                <label for="combination">
-                  Combination
-                </label>
-
-                <input
-                  id="combination"
-                  type="text"
-                  placeholder="e.g. PCMB"
+                <button
+                    type="button"
+                    class="continue-btn"
+                    id="step1Next"
                 >
+                    Continue
+                    <span>→</span>
+                </button>
 
-              </div>
+            </section>
 
-            </div>
 
+            <!-- STEP 2 -->
+            <section id="step2" class="step">
 
-            <div class="field">
+                <div class="step-heading">
+                    <span class="eyebrow">ACADEMIC</span>
 
-              <label for="college">
-                College name <span>*</span>
-              </label>
+                    <h1>Tell us about your studies.</h1>
 
-              <input
-                id="college"
-                type="text"
-                placeholder="Enter college name"
-              >
+                    <p>
+                        We'll use this information to personalize
+                        your learning experience.
+                    </p>
+                </div>
 
-            </div>
 
-          </div>
+                <div class="form-grid">
 
+                    <div class="field full">
+                        <label for="className">
+                            Current Class
+                        </label>
 
-          <!-- MEDIUM -->
+                        <select id="className">
+                            <option value="">Select your class</option>
+                            <option value="Under 8th">Under 8th</option>
+                            <option value="8th">8th</option>
+                            <option value="9th">9th</option>
+                            <option value="10th">10th</option>
+                            <option value="1st PUC">1st PUC</option>
+                            <option value="2nd PUC">2nd PUC</option>
+                        </select>
+                    </div>
 
-          <div class="field">
 
-            <label for="medium">
-              Medium <span>*</span>
-            </label>
+                    <!-- 10th only -->
+                    <div
+                        class="conditional-fields"
+                        id="tenthFields"
+                    >
 
-            <select
-              id="medium"
-              required
-            >
+                        <div class="field">
+                            <label for="board">Board</label>
 
-              <option value="">
-                Select medium
-              </option>
+                            <select id="board">
+                                <option value="">
+                                    Select board
+                                </option>
 
-              <option value="Kannada">
-                Kannada
-              </option>
+                                <option value="KSEAB">
+                                    Karnataka State Board
+                                </option>
 
-              <option value="English">
-                English
-              </option>
+                                <option value="CBSE">
+                                    CBSE
+                                </option>
 
-            </select>
+                                <option value="ICSE">
+                                    ICSE
+                                </option>
 
-          </div>
+                                <option value="OTHER">
+                                    Other
+                                </option>
+                            </select>
+                        </div>
 
+                    </div>
 
-          <div
-            id="step2Error"
-            class="error"
-          ></div>
 
+                    <div class="field full">
+                        <label for="medium">Medium</label>
 
-          <div class="button-row">
+                        <select id="medium">
+                            <option value="">
+                                Select medium
+                            </option>
 
-            <button
-              type="button"
-              id="step2Back"
-              class="secondary-btn"
-            >
-              ← Back
-            </button>
+                            <option value="KANNADA">
+                                Kannada
+                            </option>
 
-            <button
-              type="button"
-              id="step2Next"
-              class="primary-btn"
-            >
-              Continue
-            </button>
+                            <option value="ENGLISH">
+                                English
+                            </option>
+                        </select>
+                    </div>
 
-          </div>
 
-        </section>
+                    <!-- PUC only -->
+                    <div
+                        class="conditional-fields"
+                        id="pucFields"
+                    >
 
+                        <div class="field">
+                            <label for="combination">
+                                Combination
+                            </label>
 
+                            <select id="combination">
 
-        <!-- =====================================
-             STEP 3
-        ====================================== -->
+                                <option value="">
+                                    Select combination
+                                </option>
 
-        <section
-          id="step3"
-          class="step hidden"
-        >
+                                <option value="PCMB">
+                                    PCMB
+                                </option>
 
-          <div class="step-heading">
+                                <option value="PCMC">
+                                    PCMC
+                                </option>
 
-            <div class="step-number">
-              03
-            </div>
+                                <option value="PCMS">
+                                    PCMS
+                                </option>
 
-            <div>
+                                <option value="CEBA">
+                                    CEBA
+                                </option>
 
-              <h2>
-                Location & school
-              </h2>
+                                <option value="SEBA">
+                                    SEBA
+                                </option>
 
-              <p>
-                Select your details from Zenova's master data.
-              </p>
+                                <option value="HEBA">
+                                    HEBA
+                                </option>
 
-            </div>
+                                <option value="OTHER">
+                                    Other
+                                </option>
 
-          </div>
+                            </select>
+                        </div>
 
 
-          <!-- DISTRICT -->
+                        <div class="field">
+                            <label for="target">
+                                Target
+                            </label>
 
-          <div class="field">
+                            <select id="target">
 
-            <label for="district">
-              District <span>*</span>
-            </label>
+                                <option value="">
+                                    Select target
+                                </option>
 
-            <select
-              id="district"
-              required
-            >
+                                <option value="NEET">
+                                    NEET
+                                </option>
 
-              <option value="">
-                Loading districts...
-              </option>
+                                <option value="JEE">
+                                    JEE
+                                </option>
 
-            </select>
+                                <option value="CET">
+                                    KCET
+                                </option>
 
-          </div>
+                                <option value="CA">
+                                    CA
+                                </option>
 
+                                <option value="OTHER">
+                                    Other
+                                </option>
 
-          <!-- TALUK -->
+                            </select>
+                        </div>
 
-          <div class="field">
+                    </div>
 
-            <label for="taluk">
-              Taluk <span>*</span>
-            </label>
+                </div>
 
-            <select
-              id="taluk"
-              required
-              disabled
-            >
 
-              <option value="">
-                Select district first
-              </option>
+                <div class="button-row">
 
-            </select>
+                    <button
+                        type="button"
+                        class="back-btn"
+                        id="step2Back"
+                    >
+                        ← Back
+                    </button>
 
-          </div>
+                    <button
+                        type="button"
+                        class="continue-btn"
+                        id="step2Next"
+                    >
+                        Continue
+                        <span>→</span>
+                    </button>
 
+                </div>
 
-          <!-- GP -->
+            </section>
 
-          <div class="field">
 
-            <label for="gp">
-              Gram Panchayat <span>*</span>
-            </label>
+            <!-- STEP 3 -->
+            <section id="step3" class="step">
 
-            <select
-              id="gp"
-              required
-              disabled
-            >
+                <div class="step-heading">
+                    <span class="eyebrow">YOUR SCHOOL</span>
 
-              <option value="">
-                Select taluk first
-              </option>
+                    <h1>Where do you study?</h1>
 
-            </select>
+                    <p>
+                        Select your location and school.
+                    </p>
+                </div>
 
-          </div>
 
+                <div class="form-grid">
 
-          <!-- VILLAGE -->
+                    <div class="field">
+                        <label for="district">
+                            District
+                        </label>
 
-          <div class="field">
+                        <select id="district">
+                            <option value="">
+                                Select district
+                            </option>
+                        </select>
+                    </div>
 
-            <label for="village">
-              Village <span>*</span>
-            </label>
 
-            <select
-              id="village"
-              required
-              disabled
-            >
+                    <div class="field">
+                        <label for="taluk">
+                            Taluk
+                        </label>
 
-              <option value="">
-                Select Gram Panchayat first
-              </option>
+                        <select id="taluk" disabled>
+                            <option value="">
+                                Select taluk
+                            </option>
+                        </select>
+                    </div>
 
-            </select>
 
-          </div>
+                    <div class="field">
+                        <label for="gramPanchayat">
+                            Gram Panchayat
+                        </label>
 
+                        <select
+                            id="gramPanchayat"
+                            disabled
+                        >
+                            <option value="">
+                                Select Gram Panchayat
+                            </option>
+                        </select>
+                    </div>
 
-          <!-- SCHOOL -->
 
-          <div class="field">
+                    <div class="field">
+                        <label for="village">
+                            Village
+                        </label>
 
-            <label for="school">
-              School / Institution <span>*</span>
-            </label>
+                        <select
+                            id="village"
+                            disabled
+                        >
+                            <option value="">
+                                Select village
+                            </option>
+                        </select>
+                    </div>
 
-            <select
-              id="school"
-              required
-              disabled
-            >
 
-              <option value="">
-                Select taluk first
-              </option>
+                    <div class="field full">
+                        <label for="school">
+                            School
+                        </label>
 
-            </select>
+                        <select
+                            id="school"
+                            disabled
+                        >
+                            <option value="">
+                                Select your school
+                            </option>
+                        </select>
+                    </div>
 
-            <small>
-              Schools are filtered by Taluk.
-            </small>
+                </div>
 
-          </div>
 
+                <div
+                    id="formError"
+                    class="form-error"
+                ></div>
 
-          <div
-            id="step3Error"
-            class="error"
-          ></div>
 
+                <div class="button-row">
 
-          <div class="button-row">
+                    <button
+                        type="button"
+                        class="back-btn"
+                        id="step3Back"
+                    >
+                        ← Back
+                    </button>
 
-            <button
-              type="button"
-              id="step3Back"
-              class="secondary-btn"
-            >
-              ← Back
-            </button>
+                    <button
+                        type="button"
+                        class="continue-btn"
+                        id="finishBtn"
+                    >
+                        Finish
+                        <span>→</span>
+                    </button>
 
-            <button
-              type="button"
-              id="step3Next"
-              class="primary-btn"
-            >
-              Continue
-            </button>
+                </div>
 
-          </div>
+            </section>
 
-        </section>
+        </div>
 
-
-
-        <!-- =====================================
-             STEP 4
-        ====================================== -->
-
-        <section
-          id="step4"
-          class="step hidden"
-        >
-
-          <div class="step-heading">
-
-            <div class="step-number">
-              04
-            </div>
-
-            <div>
-
-              <h2>
-                About your learning
-              </h2>
-
-              <p>
-                Tell us which subjects you find difficult.
-              </p>
-
-            </div>
-
-          </div>
-
-
-          <!-- TOUGHEST SUBJECTS -->
-
-          <div class="field">
-
-            <label>
-              Toughest subjects
-            </label>
-
-            <p class="field-help">
-              Select all subjects you find difficult.
-            </p>
-
-            <div
-              id="subjectsContainer"
-              class="subjects-container"
-            >
-
-              <div class="loading-text">
-                Loading subjects...
-              </div>
-
-            </div>
-
-          </div>
-
-
-          <div
-            id="step4Error"
-            class="error"
-          ></div>
-
-
-          <div class="button-row">
-
-            <button
-              type="button"
-              id="step4Back"
-              class="secondary-btn"
-            >
-              ← Back
-            </button>
-
-            <button
-              type="submit"
-              id="submitBtn"
-              class="primary-btn"
-            >
-              Complete registration
-            </button>
-
-          </div>
-
-
-          <p class="final-note">
-            Your information will be added to Zenova CRM and your account
-            will be prepared for access.
-          </p>
-
-        </section>
-
-
-      </form>
-
-    </div>
-
-  </main>
-
-
-
-  <!-- LOADER -->
-
-  <div
-    id="loader"
-    class="loader-screen"
-  >
-
-    <div class="loader">
-
-      <div class="ring"></div>
-
-      <div class="loader-z">
-        Z
-      </div>
-
-    </div>
-
-  </div>
-
-
-  <script
-    type="module"
-    src="./onboarding.js"
-  ></script>
-
+    </main>
 
 </body>
-
 </html>
