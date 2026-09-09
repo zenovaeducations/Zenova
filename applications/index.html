@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Zenova - Apply Now</title>
+
+    <link rel="stylesheet" href="application.css">
+</head>
+
+<body>
+
+    <main class="page">
+
+        <div class="application-card">
+
+            <!-- LOGO -->
+
+            <div class="brand">
+                <div class="brand-mark">Z</div>
+
+                <div class="brand-name">
+                    ZENOVA
+                </div>
+            </div>
+
+
+            <!-- HEADING -->
+
+            <div class="heading">
+
+                <div class="eyebrow">
+                    ZENOVA EDUCATIONS
+                </div>
+
+                <h1>
+                    Apply Now
+                </h1>
+
+                <p>
+                    Enter your details and our team
+                    will get in touch with you.
+                </p>
+
+            </div>
+
+
+            <!-- FORM -->
+
+            <form id="applicationForm">
+
+                <!-- NAME -->
+
+                <div class="form-group">
+
+                    <label for="studentName">
+                        Student Name
+                    </label>
+
+                    <input
+                        type="text"
+                        id="studentName"
+                        placeholder="Enter your full name"
+                        autocomplete="name"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- PHONE -->
+
+                <div class="form-group">
+
+                    <label for="phone">
+                        Phone Number
+                    </label>
+
+                    <input
+                        type="tel"
+                        id="phone"
+                        inputmode="numeric"
+                        maxlength="10"
+                        placeholder="Enter 10-digit mobile number"
+                        autocomplete="tel"
+                        required
+                    >
+
+                    <div class="input-note">
+                        Enter your active mobile number.
+                    </div>
+
+                </div>
+
+
+                <!-- SCHOOL -->
+
+                <div class="form-group">
+
+                    <label for="schoolSelect">
+                        School
+                    </label>
+
+                    <select
+                        id="schoolSelect"
+                        required
+                    >
+
+                        <option value="">
+                            Select your school
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- SUBMIT -->
+
+                <button
+                    type="submit"
+                    class="submit-btn"
+                    id="submitBtn"
+                >
+                    Submit Application
+                </button>
+
+            </form>
+
+
+            <!-- SUCCESS -->
+
+            <div
+                class="success-screen"
+                id="successScreen"
+            >
+
+                <div class="success-icon">
+                    ✓
+                </div>
+
+                <h2>
+                    Application Submitted
+                </h2>
+
+                <p>
+                    Your application has been
+                    successfully submitted.
+                </p>
+
+                <p class="success-small">
+                    Our team will contact you soon.
+                </p>
+
+            </div>
+
+
+            <!-- ERROR -->
+
+            <div
+                class="error-message"
+                id="errorMessage"
+            ></div>
+
+
+            <div class="footer-text">
+                © Zenova Educations
+            </div>
+
+        </div>
+
+    </main>
+
+
+    <script
+        type="module"
+        src="application.js"
+    ></script>
+
+</body>
+</html>
