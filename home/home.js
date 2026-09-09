@@ -1,3 +1,7 @@
+/* ============================================================
+   ZENOVA UNIVERSAL STUDENT HOME
+============================================================ */
+
 import {
     auth,
     db
@@ -10,33 +14,34 @@ import {
 
 
 import {
-    signOut
-} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
-
-
-import {
+    collection,
     doc,
     getDoc,
-    collection,
+    getDocs,
     query,
     where,
-    getDocs,
     limit
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
 
-/* =========================================================
+/* ============================================================
    STATE
-========================================================= */
+============================================================ */
 
 let currentUser = null;
 let student = null;
-let enrollments = [];
+
+let banners = [];
+let courses = [];
+let freeLearning = [];
+let announcements = [];
+
+let bannerTimer = null;
 
 
-/* =========================================================
+/* ============================================================
    ELEMENTS
-========================================================= */
+============================================================ */
 
 const loader =
     document.getElementById(
@@ -49,14 +54,17 @@ const app =
     );
 
 
-/* =========================================================
+/* ============================================================
    AUTH
-========================================================= */
+============================================================ */
 
 onAuthStateChanged(
     auth,
     async (user) => {
 
+        /*
+         * Not logged in
+         */
         if (!user) {
 
             window.location.replace(
@@ -72,6 +80,9 @@ onAuthStateChanged(
 
         try {
 
+            /*
+             * Get student profile.
+             */
             const studentRef =
                 doc(
                     db,
@@ -80,16 +91,18 @@ onAuthStateChanged(
                 );
 
 
-            const snapshot =
+            const studentSnapshot =
                 await getDoc(
                     studentRef
                 );
 
 
             /*
-             * No student profile.
+             * Student profile doesn't exist.
              */
-            if (!snapshot.exists()) {
+            if (
+                !studentSnapshot.exists()
+            ) {
 
                 window.location.replace(
                     "../account/onboarding/"
@@ -100,11 +113,14 @@ onAuthStateChanged(
 
 
             student =
-                snapshot.data();
+                studentSnapshot.data();
 
 
             /*
-             * Onboarding protection.
+             * IMPORTANT:
+             *
+             * If onboarding isn't complete,
+             * Home cannot be opened.
              */
             if (
                 student.onboardingComplete !== true
@@ -125,9 +141,19 @@ onAuthStateChanged(
 
 
             /*
-             * Load Home data.
+             * Load all universal content.
              */
-            await loadHome();
+            await Promise.all([
+
+                loadBanners(),
+
+                loadRecommendedCourses(),
+
+                loadFreeLearning(),
+
+                loadAnnouncements()
+
+            ]);
 
 
             /*
@@ -135,14 +161,15 @@ onAuthStateChanged(
              */
             showApp();
 
+
         } catch (error) {
 
             console.error(
-                "ZENOVA HOME ERROR:",
+                "HOME INITIALIZATION ERROR:",
                 error
             );
 
-            showError();
+            showHomeError();
 
         }
 
@@ -150,55 +177,43 @@ onAuthStateChanged(
 );
 
 
-/* =========================================================
-   STUDENT
-========================================================= */
+/* ============================================================
+   STUDENT HEADER
+============================================================ */
 
 function renderStudent() {
 
     const name =
         student.name ||
+        student.fullName ||
         currentUser.displayName ||
         "Student";
 
 
-    const nameElement =
-        document.getElementById(
-            "studentName"
-        );
-
-
-    const initialElement =
-        document.getElementById(
-            "profileInitial"
-        );
-
-
-    const academicElement =
-        document.getElementById(
-            "studentAcademic"
-        );
-
-
-    nameElement.textContent =
+    document.getElementById(
+        "studentName"
+    ).textContent =
         name;
 
 
-    initialElement.textContent =
+    document.getElementById(
+        "profileInitial"
+    ).textContent =
         name
+            .trim()
             .charAt(0)
             .toUpperCase();
 
 
     /*
-     * Academic line.
+     * Academic information.
      */
-    const academicParts = [];
+    const academic = [];
 
 
     if (student.className) {
 
-        academicParts.push(
+        academic.push(
             student.className
         );
 
@@ -207,8 +222,17 @@ function renderStudent() {
 
     if (student.board) {
 
-        academicParts.push(
+        academic.push(
             student.board
+        );
+
+    }
+
+
+    if (student.medium) {
+
+        academic.push(
+            student.medium
         );
 
     }
@@ -216,17 +240,19 @@ function renderStudent() {
 
     if (student.combination) {
 
-        academicParts.push(
+        academic.push(
             student.combination
         );
 
     }
 
 
-    academicElement.textContent =
-        academicParts.length
-            ? academicParts.join(" • ")
-            : "Zenova Student";
+    document.getElementById(
+        "academicInfo"
+    ).textContent =
+        academic.length
+            ? academic.join(" • ")
+            : "Let's make today productive.";
 
 
     /*
@@ -240,7 +266,10 @@ function renderStudent() {
         "Good morning";
 
 
-    if (hour >= 12 && hour < 17) {
+    if (
+        hour >= 12 &&
+        hour < 17
+    ) {
 
         greeting =
             "Good afternoon";
@@ -248,7 +277,9 @@ function renderStudent() {
     }
 
 
-    if (hour >= 17) {
+    if (
+        hour >= 17
+    ) {
 
         greeting =
             "Good evening";
@@ -257,389 +288,135 @@ function renderStudent() {
 
 
     document.getElementById(
-        "greeting"
+        "greetingText"
     ).textContent =
         greeting;
 
-}
+
+    /*
+     * Motivation.
+     */
+    const motivations = [
+
+        "Small steps, big results.",
+
+        "Learn something new today.",
+
+        "Your consistency creates results.",
+
+        "One lesson closer to your goal.",
+
+        "Keep learning. Keep growing."
+
+    ];
 
 
-/* =========================================================
-   HOME DATA
-========================================================= */
-
-async function loadHome() {
-
-    const results =
-        await Promise.all([
-
-            safeLoad(
-                loadBanners
-            ),
-
-            safeLoad(
-                loadAnnouncements
-            ),
-
-            safeLoad(
-                loadLiveClasses
-            ),
-
-            safeLoad(
-                loadTests
-            ),
-
-            safeLoad(
-                loadFreeLearning
-            ),
-
-            safeLoad(
-                loadEnrollments
-            )
-
-        ]);
+    const random =
+        Math.floor(
+            Math.random() *
+            motivations.length
+        );
 
 
-    const [
-        banners,
-        announcements,
-        liveClasses,
-        tests,
-        freeLearning,
-        studentEnrollments
-    ] = results;
-
-
-    enrollments =
-        studentEnrollments || [];
-
-
-    renderBanners(
-        banners || []
-    );
-
-
-    renderAnnouncements(
-        announcements || []
-    );
-
-
-    renderLiveClasses(
-        liveClasses || []
-    );
-
-
-    renderTests(
-        tests || []
-    );
-
-
-    renderFreeLearning(
-        freeLearning || []
-    );
-
-
-    renderLearning();
-
-
-    renderMyLearning();
-
-
-    renderProgress();
+    document.getElementById(
+        "motivationText"
+    ).textContent =
+        motivations[random];
 
 }
 
 
-/* =========================================================
-   SAFE LOADER
-========================================================= */
+/* ============================================================
+   BANNERS
+============================================================ */
 
-async function safeLoad(
-    functionToRun
-) {
+async function loadBanners() {
 
     try {
 
-        return await functionToRun();
+        const q =
+            query(
+                collection(
+                    db,
+                    "homeBanners"
+                ),
+
+                where(
+                    "active",
+                    "==",
+                    true
+                ),
+
+                limit(20)
+            );
+
+
+        const snapshot =
+            await getDocs(q);
+
+
+        banners =
+            snapshot.docs.map(
+                item => ({
+                    id: item.id,
+                    ...item.data()
+                })
+            );
+
+
+        banners.sort(
+            (a, b) => {
+
+                return Number(
+                    a.order || 999
+                )
+                -
+                Number(
+                    b.order || 999
+                );
+
+            }
+        );
+
+
+        renderBanners();
+
 
     } catch (error) {
 
         console.warn(
-            "Home section unavailable:",
+            "Banners unavailable:",
             error
         );
 
-        return [];
+        hideSection(
+            "bannerSection"
+        );
 
     }
 
 }
 
 
-/* =========================================================
-   BANNERS
-========================================================= */
-
-async function loadBanners() {
-
-    const q =
-        query(
-            collection(
-                db,
-                "homeBanners"
-            ),
-
-            where(
-                "active",
-                "==",
-                true
-            ),
-
-            limit(10)
-        );
-
-
-    const snapshot =
-        await getDocs(q);
-
-
-    const banners =
-        snapshot.docs.map(
-            item => ({
-                id: item.id,
-                ...item.data()
-            })
-        );
-
-
-    banners.sort(
-        (a, b) =>
-            Number(
-                a.order || 999
-            ) -
-            Number(
-                b.order || 999
-            )
-    );
-
-
-    return banners;
-
-}
-
-
-/* =========================================================
-   ANNOUNCEMENTS
-========================================================= */
-
-async function loadAnnouncements() {
-
-    const q =
-        query(
-            collection(
-                db,
-                "announcements"
-            ),
-
-            where(
-                "active",
-                "==",
-                true
-            ),
-
-            limit(10)
-        );
-
-
-    const snapshot =
-        await getDocs(q);
-
-
-    return snapshot.docs.map(
-        item => ({
-            id: item.id,
-            ...item.data()
-        })
-    );
-
-}
-
-
-/* =========================================================
-   LIVE CLASSES
-========================================================= */
-
-async function loadLiveClasses() {
-
-    const q =
-        query(
-            collection(
-                db,
-                "liveClasses"
-            ),
-
-            where(
-                "active",
-                "==",
-                true
-            ),
-
-            limit(10)
-        );
-
-
-    const snapshot =
-        await getDocs(q);
-
-
-    return snapshot.docs.map(
-        item => ({
-            id: item.id,
-            ...item.data()
-        })
-    );
-
-}
-
-
-/* =========================================================
-   TESTS
-========================================================= */
-
-async function loadTests() {
-
-    const q =
-        query(
-            collection(
-                db,
-                "tests"
-            ),
-
-            where(
-                "active",
-                "==",
-                true
-            ),
-
-            limit(10)
-        );
-
-
-    const snapshot =
-        await getDocs(q);
-
-
-    return snapshot.docs.map(
-        item => ({
-            id: item.id,
-            ...item.data()
-        })
-    );
-
-}
-
-
-/* =========================================================
-   FREE LEARNING
-========================================================= */
-
-async function loadFreeLearning() {
-
-    const q =
-        query(
-            collection(
-                db,
-                "freeLearning"
-            ),
-
-            where(
-                "active",
-                "==",
-                true
-            ),
-
-            limit(10)
-        );
-
-
-    const snapshot =
-        await getDocs(q);
-
-
-    return snapshot.docs.map(
-        item => ({
-            id: item.id,
-            ...item.data()
-        })
-    );
-
-}
-
-
-/* =========================================================
-   ENROLLMENTS
-========================================================= */
-
-async function loadEnrollments() {
-
-    const q =
-        query(
-            collection(
-                db,
-                "enrollments"
-            ),
-
-            where(
-                "studentId",
-                "==",
-                currentUser.uid
-            ),
-
-            where(
-                "status",
-                "==",
-                "active"
-            ),
-
-            limit(20)
-        );
-
-
-    const snapshot =
-        await getDocs(q);
-
-
-    return snapshot.docs.map(
-        item => ({
-            id: item.id,
-            ...item.data()
-        })
-    );
-
-}
-
-
-/* =========================================================
-   BANNERS RENDER
-========================================================= */
-
-function renderBanners(
-    banners
-) {
+/* ============================================================
+   RENDER BANNERS
+============================================================ */
+
+function renderBanners() {
 
     const section =
         document.getElementById(
-            "heroSection"
+            "bannerSection"
         );
 
     const slider =
         document.getElementById(
-            "heroSlider"
+            "bannerSlider"
         );
 
     const dots =
         document.getElementById(
-            "heroDots"
+            "bannerDots"
         );
 
 
@@ -659,85 +436,95 @@ function renderBanners(
 
 
     slider.innerHTML =
-        banners.map(
-            (banner, index) => `
+        banners
+            .map(
+                (banner, index) => `
 
-                <div
-                    class="hero-slide ${
-                        index === 0
-                            ? "active"
-                            : ""
-                    }"
-                    data-link="${escapeAttr(
-                        banner.link || ""
-                    )}"
-                >
-
-                    <img
-                        src="${escapeAttr(
-                            banner.imageUrl || ""
+                    <div
+                        class="banner-slide ${
+                            index === 0
+                                ? "active"
+                                : ""
+                        }"
+                        data-link="${escapeAttr(
+                            banner.link ||
+                            banner.buttonLink ||
+                            ""
                         )}"
-                        alt=""
                     >
 
-                </div>
+                        <img
+                            src="${escapeAttr(
+                                banner.imageUrl ||
+                                banner.image ||
+                                ""
+                            )}"
+                            alt=""
+                        >
 
-            `
-        ).join("");
+                    </div>
+
+                `
+            )
+            .join("");
 
 
     dots.innerHTML =
-        banners.map(
-            (_, index) => `
+        banners
+            .map(
+                (_, index) => `
 
-                <button
-                    type="button"
-                    class="hero-dot ${
-                        index === 0
-                            ? "active"
-                            : ""
-                    }"
-                    data-index="${index}"
-                ></button>
+                    <button
+                        class="banner-dot ${
+                            index === 0
+                                ? "active"
+                                : ""
+                        }"
+                        data-index="${index}"
+                        type="button"
+                        aria-label="Banner ${
+                            index + 1
+                        }"
+                    ></button>
 
-            `
-        ).join("");
+                `
+            )
+            .join("");
 
 
-    setupSlider(
-        banners.length
-    );
+    setupBannerSlider();
 
 }
 
 
-/* =========================================================
-   SLIDER
-========================================================= */
+/* ============================================================
+   BANNER SLIDER
+============================================================ */
 
-function setupSlider(
-    count
-) {
-
-    if (count <= 1) {
-
-        return;
-    }
-
+function setupBannerSlider() {
 
     const slides =
         document.querySelectorAll(
-            ".hero-slide"
+            ".banner-slide"
         );
-
 
     const dots =
         document.querySelectorAll(
-            ".hero-dot"
+            ".banner-dot"
         );
 
 
-    let current = 0;
+    if (
+        slides.length <= 1
+    ) {
+
+        return;
+
+    }
+
+
+    let current =
+        0;
 
 
     function showSlide(
@@ -745,8 +532,9 @@ function setupSlider(
     ) {
 
         current =
-            (index + count) %
-            count;
+            (index + slides.length)
+            %
+            slides.length;
 
 
         slides.forEach(
@@ -795,52 +583,710 @@ function setupSlider(
     );
 
 
-    slides.forEach(
-        slide => {
-
-            slide.addEventListener(
-                "click",
-                () => {
-
-                    const link =
-                        slide.dataset.link;
-
-
-                    if (link) {
-
-                        window.location.href =
-                            link;
-
-                    }
-
-                }
-            );
-
-        }
+    clearInterval(
+        bannerTimer
     );
 
 
-    setInterval(
-        () => {
+    bannerTimer =
+        setInterval(
+            () => {
 
-            showSlide(
-                current + 1
-            );
+                showSlide(
+                    current + 1
+                );
 
-        },
-        5000
-    );
+            },
+            5000
+        );
 
 }
 
 
-/* =========================================================
-   ANNOUNCEMENTS
-========================================================= */
+/* ============================================================
+   RECOMMENDED COURSES / BATCHES
+============================================================ */
 
-function renderAnnouncements(
-    items
+async function loadRecommendedCourses() {
+
+    try {
+
+        /*
+         * CRM course master.
+         */
+        const snapshot =
+            await getDocs(
+                collection(
+                    db,
+                    "crmCourses"
+                )
+            );
+
+
+        const allCourses =
+            snapshot.docs.map(
+                item => ({
+                    id: item.id,
+                    ...item.data()
+                })
+            );
+
+
+        /*
+         * Only active courses.
+         */
+        const activeCourses =
+            allCourses.filter(
+                course =>
+                    course.crmActive !== false
+            );
+
+
+        /*
+         * Match according to onboarding.
+         */
+        courses =
+            activeCourses
+                .filter(
+                    matchesStudent
+                )
+                .slice(0, 10);
+
+
+        /*
+         * If there aren't enough exact
+         * matches, show active courses
+         * rather than an empty Home.
+         */
+        if (
+            courses.length < 3
+        ) {
+
+            const remaining =
+                activeCourses.filter(
+                    course =>
+                        !courses.some(
+                            selected =>
+                                selected.id ===
+                                course.id
+                        )
+                );
+
+
+            courses =
+                [
+                    ...courses,
+                    ...remaining
+                ]
+                .slice(0, 10);
+
+        }
+
+
+        renderRecommendedCourses();
+
+
+    } catch (error) {
+
+        console.warn(
+            "Recommended courses unavailable:",
+            error
+        );
+
+        renderRecommendedCourses();
+
+    }
+
+}
+
+
+/* ============================================================
+   MATCH COURSE TO STUDENT
+============================================================ */
+
+function matchesStudent(
+    course
 ) {
+
+    let score = 0;
+
+
+    /*
+     * Class.
+     */
+    if (
+        student.className &&
+        (
+            course.crmClass ===
+            student.className
+            ||
+            course.className ===
+            student.className
+        )
+    ) {
+
+        score += 4;
+
+    }
+
+
+    /*
+     * Board.
+     */
+    if (
+        student.board &&
+        (
+            course.crmBoard ===
+            student.board
+            ||
+            course.board ===
+            student.board
+        )
+    ) {
+
+        score += 3;
+
+    }
+
+
+    /*
+     * Medium.
+     */
+    if (
+        student.medium &&
+        (
+            course.crmMedium ===
+            student.medium
+            ||
+            course.medium ===
+            student.medium
+        )
+    ) {
+
+        score += 2;
+
+    }
+
+
+    /*
+     * Combination.
+     */
+    if (
+        student.combination &&
+        (
+            course.crmCombination ===
+            student.combination
+            ||
+            course.combination ===
+            student.combination
+        )
+    ) {
+
+        score += 2;
+
+    }
+
+
+    /*
+     * A course is considered relevant
+     * if it matches at least the class.
+     */
+    return score > 0;
+
+}
+
+
+/* ============================================================
+   RENDER RECOMMENDED
+============================================================ */
+
+function renderRecommendedCourses() {
+
+    const list =
+        document.getElementById(
+            "recommendedList"
+        );
+
+
+    if (!courses.length) {
+
+        list.innerHTML = `
+
+            <div class="empty-state">
+
+                New batches will appear here
+                as they become available.
+
+            </div>
+
+        `;
+
+        return;
+    }
+
+
+    list.innerHTML =
+        courses
+            .map(
+                course => {
+
+                    const image =
+                        course.crmImageUrl ||
+                        course.imageUrl ||
+                        course.image ||
+                        "";
+
+
+                    const name =
+                        course.crmCourseName ||
+                        course.courseName ||
+                        "Zenova Batch";
+
+
+                    const description =
+                        course.crmDescription ||
+                        course.description ||
+                        "";
+
+
+                    const finalPrice =
+                        course.crmFinalPrice ??
+                        course.finalPrice ??
+                        course.crmPrice ??
+                        course.price;
+
+
+                    const originalPrice =
+                        course.crmPrice ??
+                        course.price;
+
+
+                    return `
+
+                        <article
+                            class="batch-card"
+                            data-id="${escapeAttr(
+                                course.id
+                            )}"
+                        >
+
+                            ${
+                                image
+                                    ? `
+                                        <img
+                                            class="batch-image"
+                                            src="${escapeAttr(
+                                                image
+                                            )}"
+                                            alt=""
+                                            loading="lazy"
+                                        >
+                                    `
+                                    : `
+                                        <div
+                                            class="batch-image"
+                                        ></div>
+                                    `
+                            }
+
+
+                            <div
+                                class="batch-content"
+                            >
+
+                                <span
+                                    class="batch-tag"
+                                >
+                                    RECOMMENDED
+                                </span>
+
+
+                                <h3>
+                                    ${escapeHtml(
+                                        name
+                                    )}
+                                </h3>
+
+
+                                <p
+                                    class="batch-description"
+                                >
+                                    ${escapeHtml(
+                                        description
+                                    )}
+                                </p>
+
+
+                                <div
+                                    class="batch-bottom"
+                                >
+
+                                    <div
+                                        class="batch-price"
+                                    >
+
+                                        ${
+                                            finalPrice !==
+                                            undefined &&
+                                            finalPrice !==
+                                            null
+                                                ? `
+                                                    ₹${escapeHtml(
+                                                        formatPrice(
+                                                            finalPrice
+                                                        )
+                                                    )}
+                                                `
+                                                : ""
+                                        }
+
+
+                                        ${
+                                            originalPrice &&
+                                            String(
+                                                originalPrice
+                                            ) !==
+                                            String(
+                                                finalPrice
+                                            )
+                                                ? `
+                                                    <del>
+                                                        ₹${escapeHtml(
+                                                            formatPrice(
+                                                                originalPrice
+                                                            )
+                                                        )}
+                                                    </del>
+                                                `
+                                                : ""
+                                        }
+
+                                    </div>
+
+
+                                    <button
+                                        type="button"
+                                        class="batch-action"
+                                    >
+
+                                        <i
+                                            class="ri-arrow-right-line"
+                                        ></i>
+
+                                    </button>
+
+                                </div>
+
+                            </div>
+
+                        </article>
+
+                    `;
+
+                }
+            )
+            .join("");
+
+
+    list
+        .querySelectorAll(
+            ".batch-card"
+        )
+        .forEach(
+            card => {
+
+                card.addEventListener(
+                    "click",
+                    () => {
+
+                        const id =
+                            card.dataset.id;
+
+
+                        /*
+                         * Batch/course details page.
+                         *
+                         * We keep the ID in the URL
+                         * for the next page.
+                         */
+                        window.location.href =
+                            `../batches/?course=${encodeURIComponent(
+                                id
+                            )}`;
+
+                    }
+                );
+
+            }
+        );
+
+}
+
+
+/* ============================================================
+   FREE LEARNING
+============================================================ */
+
+async function loadFreeLearning() {
+
+    try {
+
+        const q =
+            query(
+                collection(
+                    db,
+                    "freeLearning"
+                ),
+
+                where(
+                    "active",
+                    "==",
+                    true
+                ),
+
+                limit(10)
+            );
+
+
+        const snapshot =
+            await getDocs(q);
+
+
+        freeLearning =
+            snapshot.docs.map(
+                item => ({
+                    id: item.id,
+                    ...item.data()
+                })
+            );
+
+
+        renderFreeLearning();
+
+
+    } catch (error) {
+
+        console.warn(
+            "Free learning unavailable:",
+            error
+        );
+
+        renderFreeLearning();
+
+    }
+
+}
+
+
+/* ============================================================
+   RENDER FREE LEARNING
+============================================================ */
+
+function renderFreeLearning() {
+
+    const list =
+        document.getElementById(
+            "freeLearningList"
+        );
+
+
+    if (!freeLearning.length) {
+
+        list.innerHTML = `
+
+            <div class="empty-state">
+
+                Free learning content
+                will appear here.
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    list.innerHTML =
+        freeLearning
+            .slice(0, 8)
+            .map(
+                item => {
+
+                    const image =
+                        item.imageUrl ||
+                        item.thumbnailUrl ||
+                        item.image ||
+                        "";
+
+
+                    return `
+
+                        <article
+                            class="free-card"
+                            data-link="${escapeAttr(
+                                item.link ||
+                                item.videoUrl ||
+                                ""
+                            )}"
+                        >
+
+                            <div
+                                class="free-image-wrapper"
+                            >
+
+                                ${
+                                    image
+                                        ? `
+                                            <img
+                                                class="free-image"
+                                                src="${escapeAttr(
+                                                    image
+                                                )}"
+                                                alt=""
+                                                loading="lazy"
+                                            >
+                                        `
+                                        : ""
+                                }
+
+
+                                <div
+                                    class="free-play"
+                                >
+
+                                    <i
+                                        class="ri-play-fill"
+                                    ></i>
+
+                                </div>
+
+                            </div>
+
+
+                            <div
+                                class="free-content"
+                            >
+
+                                <strong>
+                                    ${escapeHtml(
+                                        item.title ||
+                                        "Free Learning"
+                                    )}
+                                </strong>
+
+
+                                <p>
+                                    ${escapeHtml(
+                                        item.description ||
+                                        item.subject ||
+                                        "Learn with Zenova."
+                                    )}
+                                </p>
+
+                            </div>
+
+                        </article>
+
+                    `;
+
+                }
+            )
+            .join("");
+
+
+    list
+        .querySelectorAll(
+            ".free-card"
+        )
+        .forEach(
+            card => {
+
+                card.addEventListener(
+                    "click",
+                    () => {
+
+                        const link =
+                            card.dataset.link;
+
+
+                        if (link) {
+
+                            window.location.href =
+                                link;
+
+                        }
+
+                    }
+                );
+
+            }
+        );
+
+}
+
+
+/* ============================================================
+   ANNOUNCEMENTS
+============================================================ */
+
+async function loadAnnouncements() {
+
+    try {
+
+        const q =
+            query(
+                collection(
+                    db,
+                    "announcements"
+                ),
+
+                where(
+                    "active",
+                    "==",
+                    true
+                ),
+
+                limit(10)
+            );
+
+
+        const snapshot =
+            await getDocs(q);
+
+
+        announcements =
+            snapshot.docs.map(
+                item => ({
+                    id: item.id,
+                    ...item.data()
+                })
+            );
+
+
+        renderAnnouncements();
+
+
+    } catch (error) {
+
+        console.warn(
+            "Announcements unavailable:",
+            error
+        );
+
+        renderAnnouncements();
+
+    }
+
+}
+
+
+/* ============================================================
+   RENDER ANNOUNCEMENTS
+============================================================ */
+
+function renderAnnouncements() {
 
     const section =
         document.getElementById(
@@ -853,13 +1299,14 @@ function renderAnnouncements(
         );
 
 
-    if (!items.length) {
+    if (!announcements.length) {
 
         section.classList.add(
             "hidden"
         );
 
         return;
+
     }
 
 
@@ -869,13 +1316,13 @@ function renderAnnouncements(
 
 
     list.innerHTML =
-        items
-            .slice(0, 3)
+        announcements
+            .slice(0, 4)
             .map(
                 item => {
 
                     const date =
-                        getDate(
+                        getDateInfo(
                             item.date ||
                             item.createdAt
                         );
@@ -884,7 +1331,7 @@ function renderAnnouncements(
                     return `
 
                         <article
-                            class="announcement-card"
+                            class="announcement"
                             data-link="${escapeAttr(
                                 item.link || ""
                             )}"
@@ -906,14 +1353,16 @@ function renderAnnouncements(
 
 
                             <div
-                                class="announcement-info"
+                                class="announcement-body"
                             >
 
                                 <strong>
                                     ${escapeHtml(
-                                        item.title || ""
+                                        item.title ||
+                                        "Announcement"
                                     )}
                                 </strong>
+
 
                                 <p>
                                     ${escapeHtml(
@@ -926,11 +1375,9 @@ function renderAnnouncements(
                             </div>
 
 
-                            <div
-                                class="announcement-arrow"
-                            >
-                                →
-                            </div>
+                            <i
+                                class="ri-arrow-right-line announcement-arrow"
+                            ></i>
 
                         </article>
 
@@ -943,21 +1390,21 @@ function renderAnnouncements(
 
     list
         .querySelectorAll(
-            ".announcement-card"
+            ".announcement"
         )
         .forEach(
-            card => {
+            item => {
 
-                card.addEventListener(
+                item.addEventListener(
                     "click",
                     () => {
 
                         if (
-                            card.dataset.link
+                            item.dataset.link
                         ) {
 
                             window.location.href =
-                                card.dataset.link;
+                                item.dataset.link;
 
                         }
 
@@ -970,667 +1417,9 @@ function renderAnnouncements(
 }
 
 
-/* =========================================================
-   LIVE CLASSES
-========================================================= */
-
-function renderLiveClasses(
-    items
-) {
-
-    const section =
-        document.getElementById(
-            "liveSection"
-        );
-
-    const list =
-        document.getElementById(
-            "liveList"
-        );
-
-
-    if (!items.length) {
-
-        section.classList.add(
-            "hidden"
-        );
-
-        return;
-    }
-
-
-    section.classList.remove(
-        "hidden"
-    );
-
-
-    list.innerHTML =
-        items
-            .slice(0, 4)
-            .map(
-                item => `
-
-                    <article
-                        class="schedule-card"
-                        data-route="live"
-                    >
-
-                        <div class="schedule-left">
-
-                            <div
-                                class="schedule-time"
-                            >
-
-                                <strong>
-                                    ${escapeHtml(
-                                        item.time || ""
-                                    )}
-                                </strong>
-
-                                <span>
-                                    ${escapeHtml(
-                                        item.period || ""
-                                    )}
-                                </span>
-
-                            </div>
-
-
-                            <div
-                                class="schedule-info"
-                            >
-
-                                <h3>
-                                    ${escapeHtml(
-                                        item.title || ""
-                                    )}
-                                </h3>
-
-                                <p>
-                                    ${escapeHtml(
-                                        item.subtitle ||
-                                        item.teacher ||
-                                        ""
-                                    )}
-                                </p>
-
-                            </div>
-
-                        </div>
-
-
-                        <div
-                            class="schedule-arrow"
-                        >
-                            →
-                        </div>
-
-                    </article>
-
-                `
-            )
-            .join("");
-
-}
-
-
-/* =========================================================
-   TESTS
-========================================================= */
-
-function renderTests(
-    items
-) {
-
-    const section =
-        document.getElementById(
-            "testsSection"
-        );
-
-    const list =
-        document.getElementById(
-            "testsList"
-        );
-
-
-    if (!items.length) {
-
-        section.classList.add(
-            "hidden"
-        );
-
-        return;
-    }
-
-
-    section.classList.remove(
-        "hidden"
-    );
-
-
-    list.innerHTML =
-        items
-            .slice(0, 4)
-            .map(
-                item => {
-
-                    const date =
-                        getDate(
-                            item.date ||
-                            item.testDate
-                        );
-
-
-                    return `
-
-                        <article
-                            class="schedule-card"
-                            data-route="tests"
-                        >
-
-                            <div
-                                class="schedule-left"
-                            >
-
-                                <div
-                                    class="schedule-time"
-                                >
-
-                                    <strong>
-                                        ${date.day}
-                                    </strong>
-
-                                    <span>
-                                        ${date.month}
-                                    </span>
-
-                                </div>
-
-
-                                <div
-                                    class="schedule-info"
-                                >
-
-                                    <h3>
-                                        ${escapeHtml(
-                                            item.title || ""
-                                        )}
-                                    </h3>
-
-                                    <p>
-                                        ${escapeHtml(
-                                            item.description ||
-                                            item.subject ||
-                                            ""
-                                        )}
-                                    </p>
-
-                                </div>
-
-                            </div>
-
-
-                            <div
-                                class="schedule-arrow"
-                            >
-                                →
-                            </div>
-
-                        </article>
-
-                    `;
-
-                }
-            )
-            .join("");
-
-}
-
-
-/* =========================================================
-   LEARNING
-========================================================= */
-
-function renderLearning() {
-
-    const section =
-        document.getElementById(
-            "learningSection"
-        );
-
-    const card =
-        document.getElementById(
-            "learningCard"
-        );
-
-
-    if (!enrollments.length) {
-
-        section.classList.add(
-            "hidden"
-        );
-
-        return;
-    }
-
-
-    section.classList.remove(
-        "hidden"
-    );
-
-
-    const enrollment =
-        enrollments[0];
-
-
-    const progress =
-        clamp(
-            Number(
-                enrollment.progress || 0
-            )
-        );
-
-
-    card.innerHTML = `
-
-        <div
-            class="learning-thumbnail"
-        >
-
-            ${
-                enrollment.batchImageUrl
-                    ? `
-                        <img
-                            src="${escapeAttr(
-                                enrollment.batchImageUrl
-                            )}"
-                            alt=""
-                        >
-                    `
-                    : ""
-            }
-
-        </div>
-
-
-        <div
-            class="learning-details"
-        >
-
-            <p
-                class="learning-label"
-            >
-                CONTINUE LEARNING
-            </p>
-
-
-            <h3>
-                ${escapeHtml(
-                    enrollment.lastContentTitle ||
-                    enrollment.batchName ||
-                    "Your course"
-                )}
-            </h3>
-
-
-            <p>
-                ${escapeHtml(
-                    enrollment.lastContentSubtitle ||
-                    "Continue where you stopped."
-                )}
-            </p>
-
-
-            <div class="progress-line">
-
-                <div
-                    class="progress-track"
-                >
-
-                    <div
-                        class="progress-fill"
-                        style="width:${progress}%"
-                    ></div>
-
-                </div>
-
-
-                <span
-                    class="progress-value"
-                >
-                    ${progress}%
-                </span>
-
-            </div>
-
-        </div>
-
-
-        <button
-            type="button"
-            class="continue-button"
-            data-route="learn"
-        >
-            CONTINUE
-        </button>
-
-    `;
-
-}
-
-
-/* =========================================================
-   MY LEARNING
-========================================================= */
-
-function renderMyLearning() {
-
-    const section =
-        document.getElementById(
-            "myLearningSection"
-        );
-
-    const list =
-        document.getElementById(
-            "myLearningList"
-        );
-
-
-    if (!enrollments.length) {
-
-        section.classList.add(
-            "hidden"
-        );
-
-        return;
-    }
-
-
-    section.classList.remove(
-        "hidden"
-    );
-
-
-    list.innerHTML =
-        enrollments
-            .slice(0, 4)
-            .map(
-                enrollment => {
-
-                    const progress =
-                        clamp(
-                            Number(
-                                enrollment.progress ||
-                                0
-                            )
-                        );
-
-
-                    return `
-
-                        <article
-                            class="course-card"
-                            data-route="learn"
-                        >
-
-                            <h3>
-                                ${escapeHtml(
-                                    enrollment.batchName ||
-                                    enrollment.courseName ||
-                                    "Zenova Course"
-                                )}
-                            </h3>
-
-
-                            <p>
-                                ${escapeHtml(
-                                    enrollment.batchMode ||
-                                    "Active learning"
-                                )}
-                            </p>
-
-
-                            <div
-                                class="course-progress"
-                            >
-
-                                <span
-                                    style="width:${progress}%"
-                                ></span>
-
-                            </div>
-
-                        </article>
-
-                    `;
-
-                }
-            )
-            .join("");
-
-}
-
-
-/* =========================================================
-   PROGRESS
-========================================================= */
-
-function renderProgress() {
-
-    const section =
-        document.getElementById(
-            "progressSection"
-        );
-
-    const card =
-        document.getElementById(
-            "progressCard"
-        );
-
-
-    if (!enrollments.length) {
-
-        section.classList.add(
-            "hidden"
-        );
-
-        return;
-    }
-
-
-    const progress =
-        clamp(
-            Number(
-                student.overallProgress ||
-                enrollments[0].progress ||
-                0
-            )
-        );
-
-
-    section.classList.remove(
-        "hidden"
-    );
-
-
-    card.innerHTML = `
-
-        <div
-            class="progress-heading"
-        >
-
-            <strong>
-                Overall learning progress
-            </strong>
-
-            <span>
-                ${progress}%
-            </span>
-
-        </div>
-
-
-        <div
-            class="large-progress"
-        >
-
-            <div
-                style="width:${progress}%"
-            ></div>
-
-        </div>
-
-    `;
-
-}
-
-
-/* =========================================================
-   FREE LEARNING
-========================================================= */
-
-function renderFreeLearning(
-    items
-) {
-
-    const section =
-        document.getElementById(
-            "freeSection"
-        );
-
-    const list =
-        document.getElementById(
-            "freeList"
-        );
-
-
-    if (!items.length) {
-
-        section.classList.add(
-            "hidden"
-        );
-
-        return;
-    }
-
-
-    section.classList.remove(
-        "hidden"
-    );
-
-
-    list.innerHTML =
-        items
-            .slice(0, 6)
-            .map(
-                item => `
-
-                    <article
-                        class="free-card"
-                        data-link="${escapeAttr(
-                            item.link || ""
-                        )}"
-                    >
-
-                        <img
-                            src="${escapeAttr(
-                                item.imageUrl || ""
-                            )}"
-                            alt=""
-                            loading="lazy"
-                        >
-
-
-                        <div
-                            class="free-card-content"
-                        >
-
-                            <strong>
-                                ${escapeHtml(
-                                    item.title || ""
-                                )}
-                            </strong>
-
-
-                            <p>
-                                ${escapeHtml(
-                                    item.description || ""
-                                )}
-                            </p>
-
-                        </div>
-
-                    </article>
-
-                `
-            )
-            .join("");
-
-
-    list
-        .querySelectorAll(
-            ".free-card"
-        )
-        .forEach(
-            card => {
-
-                card.addEventListener(
-                    "click",
-                    () => {
-
-                        if (
-                            card.dataset.link
-                        ) {
-
-                            window.location.href =
-                                card.dataset.link;
-
-                        }
-
-                    }
-                );
-
-            }
-        );
-
-}
-
-
-/* =========================================================
+/* ============================================================
    NAVIGATION
-========================================================= */
-
-const routes = {
-
-    learn:
-        "../courses/",
-
-    live:
-        "../live/",
-
-    tests:
-        "../tests/",
-
-    chat:
-        "../chat/",
-
-    profile:
-        "../profile/",
-
-    performance:
-        "../performance/",
-
-    announcements:
-        "../announcements/",
-
-    free:
-        "../library/",
-
-    ai:
-        "../ai/"
-
-};
-
+============================================================ */
 
 document
     .querySelectorAll(
@@ -1647,12 +1436,10 @@ document
                         element.dataset.route;
 
 
-                    if (
-                        routes[route]
-                    ) {
+                    if (route) {
 
                         window.location.href =
-                            routes[route];
+                            route;
 
                     }
 
@@ -1663,13 +1450,13 @@ document
     );
 
 
-/* =========================================================
-   HEADER ACTIONS
-========================================================= */
+/* ============================================================
+   HEADER BUTTONS
+============================================================ */
 
 document
     .getElementById(
-        "notificationButton"
+        "notificationBtn"
     )
     ?.addEventListener(
         "click",
@@ -1684,7 +1471,7 @@ document
 
 document
     .getElementById(
-        "profileShortcut"
+        "profileBtn"
     )
     ?.addEventListener(
         "click",
@@ -1699,7 +1486,7 @@ document
 
 document
     .getElementById(
-        "aiButton"
+        "aiBtn"
     )
     ?.addEventListener(
         "click",
@@ -1712,9 +1499,9 @@ document
     );
 
 
-/* =========================================================
+/* ============================================================
    SHOW APP
-========================================================= */
+============================================================ */
 
 function showApp() {
 
@@ -1727,7 +1514,7 @@ function showApp() {
         () => {
 
             loader.classList.add(
-                "fade-out"
+                "hide"
             );
 
         },
@@ -1737,11 +1524,11 @@ function showApp() {
 }
 
 
-/* =========================================================
+/* ============================================================
    ERROR
-========================================================= */
+============================================================ */
 
-function showError() {
+function showHomeError() {
 
     loader.innerHTML = `
 
@@ -1754,13 +1541,25 @@ function showError() {
 
             <div
                 style="
-                    font-size:21px;
+                    width:55px;
+                    height:55px;
+                    margin:0 auto 18px;
+                    border-radius:50%;
+                    background:#111;
+                    color:#fff;
+                    display:flex;
+                    align-items:center;
+                    justify-content:center;
                     font-weight:800;
-                    letter-spacing:2px;
                 "
             >
-                ZENOVA
+                Z
             </div>
+
+
+            <strong>
+                Something went wrong
+            </strong>
 
 
             <p
@@ -1769,22 +1568,19 @@ function showError() {
                     font-size:12px;
                 "
             >
-                We couldn't load your
-                learning space.
+                Please try again.
             </p>
 
 
             <button
                 onclick="location.reload()"
                 style="
-                    margin-top:12px;
                     padding:11px 18px;
                     border:0;
                     border-radius:9px;
                     background:#111;
                     color:#fff;
                     font-weight:700;
-                    cursor:pointer;
                 "
             >
                 TRY AGAIN
@@ -1797,11 +1593,48 @@ function showError() {
 }
 
 
-/* =========================================================
-   DATE
-========================================================= */
+/* ============================================================
+   HELPERS
+============================================================ */
 
-function getDate(
+function hideSection(
+    id
+) {
+
+    document
+        .getElementById(id)
+        ?.classList.add(
+            "hidden"
+        );
+
+}
+
+
+function formatPrice(
+    value
+) {
+
+    const number =
+        Number(value);
+
+
+    if (
+        Number.isNaN(number)
+    ) {
+
+        return value;
+
+    }
+
+
+    return number.toLocaleString(
+        "en-IN"
+    );
+
+}
+
+
+function getDateInfo(
     value
 ) {
 
@@ -1880,25 +1713,6 @@ function getDate(
                 .toUpperCase()
 
     };
-
-}
-
-
-/* =========================================================
-   HELPERS
-========================================================= */
-
-function clamp(
-    value
-) {
-
-    return Math.max(
-        0,
-        Math.min(
-            100,
-            value
-        )
-    );
 
 }
 
