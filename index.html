@@ -1,111 +1,258 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Zenova Educations</title>
+  <meta charset="UTF-8">
 
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
 
-        html,
-        body {
-            width: 100%;
-            height: 100%;
-        }
+  <title>Zenova Educations</title>
 
-        body {
-            background: #ffffff;
-            overflow: hidden;
-            font-family: Arial, Helvetica, sans-serif;
-        }
+  <style>
 
-        .splash {
-            width: 100%;
-            height: 100vh;
-            height: 100dvh;
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-            display: flex;
-            align-items: center;
-            justify-content: center;
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      background: #ffffff;
+    }
 
-            background: #ffffff;
-        }
+    body {
+      overflow: hidden;
+      font-family: Arial, Helvetica, sans-serif;
+    }
 
-        .logo-wrapper {
-            position: relative;
 
-            width: 86px;
-            height: 86px;
+    /* =========================
+       SPLASH
+    ========================= */
 
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+    #splash {
 
-        .loading-ring {
-            position: absolute;
+      position: fixed;
 
-            width: 86px;
-            height: 86px;
+      inset: 0;
 
-            border-radius: 50%;
+      width: 100%;
+      height: 100%;
 
-            border: 2px solid #eeeeee;
-            border-top-color: #7c3aed;
+      background: #ffffff;
 
-            animation: spin 1s linear infinite;
-        }
+      display: flex;
 
-        .logo {
-            width: 48px;
-            height: 48px;
+      align-items: center;
+      justify-content: center;
 
-            object-fit: contain;
+      z-index: 999999;
 
-            display: block;
-        }
+    }
 
-        @keyframes spin {
-            from {
-                transform: rotate(0deg);
-            }
 
-            to {
-                transform: rotate(360deg);
-            }
-        }
+    /* =========================
+       LOADER
+    ========================= */
 
-        @media (prefers-reduced-motion: reduce) {
-            .loading-ring {
-                animation-duration: 2.5s;
-            }
-        }
-    </style>
+    .loader {
+
+      position: relative;
+
+      width: 82px;
+      height: 82px;
+
+      display: flex;
+
+      align-items: center;
+      justify-content: center;
+
+    }
+
+
+    /* ROTATING RING */
+
+    .ring {
+
+      position: absolute;
+
+      width: 82px;
+      height: 82px;
+
+      border-radius: 50%;
+
+      border: 2px solid #eeeeee;
+
+      border-top-color: #7c3aed;
+
+      animation:
+        rotate
+        0.9s
+        linear
+        infinite;
+
+    }
+
+
+    /* Z */
+
+    .logo-z {
+
+      position: relative;
+
+      color: #7c3aed;
+
+      font-size: 28px;
+
+      font-weight: 700;
+
+      line-height: 1;
+
+    }
+
+
+    @keyframes rotate {
+
+      from {
+        transform: rotate(0deg);
+      }
+
+      to {
+        transform: rotate(360deg);
+      }
+
+    }
+
+
+  </style>
+
 </head>
+
 
 <body>
 
-    <main class="splash" aria-label="Loading Zenova Educations">
 
-        <div class="logo-wrapper">
+  <!-- =========================
+       SPLASH SCREEN
+  ========================= -->
 
-            <div class="loading-ring"></div>
+  <div id="splash">
 
-            <img
-                src="./logo.png"
-                alt="Zenova Educations"
-                class="logo"
-            >
+    <div class="loader">
 
-        </div>
+      <div class="ring"></div>
 
-    </main>
+      <div class="logo-z">
+        Z
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- =========================
+       FIREBASE ROUTING
+  ========================= -->
+
+  <script type="module">
+
+    import {
+      auth
+    } from "./firebase/firebase-config.js";
+
+
+    import {
+      onAuthStateChanged
+    } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+
+
+    const splash =
+      document.getElementById("splash");
+
+
+    /*
+      Prevent Firebase from causing the splash
+      to remain forever.
+    */
+
+    let routed = false;
+
+
+    function goTo(path) {
+
+      if (routed) return;
+
+      routed = true;
+
+      window.location.replace(path);
+
+    }
+
+
+    /*
+      Firebase tells us whether a user is
+      already authenticated.
+    */
+
+    onAuthStateChanged(
+      auth,
+      (user) => {
+
+        if (user) {
+
+          /*
+            USER ALREADY LOGGED IN
+
+            Do NOT show login again.
+          */
+
+          goTo("./home/index.html");
+
+        } else {
+
+          /*
+            USER IS NOT LOGGED IN
+
+            Show Google login.
+          */
+
+          goTo("./login/index.html");
+
+        }
+
+      }
+    );
+
+
+    /*
+      Emergency fallback.
+
+      If Firebase takes too long to initialize,
+      the user will still reach login.
+    */
+
+    setTimeout(() => {
+
+      if (!routed) {
+
+        goTo("./login/index.html");
+
+      }
+
+    }, 6000);
+
+
+  </script>
+
 
 </body>
+
 </html>
