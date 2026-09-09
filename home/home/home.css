@@ -1,0 +1,1138 @@
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+    min-height: 100%;
+}
+
+body {
+    font-family:
+        Inter,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+
+    background: #ffffff;
+    color: #111111;
+}
+
+
+/* =========================================================
+   GLOBAL
+========================================================= */
+
+button,
+a {
+    -webkit-tap-highlight-color: transparent;
+}
+
+button {
+    font-family: inherit;
+}
+
+.hidden {
+    display: none !important;
+}
+
+
+/* =========================================================
+   LOADER
+========================================================= */
+
+.loader-screen {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #ffffff;
+
+    transition:
+        opacity 0.3s ease,
+        visibility 0.3s ease;
+}
+
+.loader-screen.fade-out {
+    opacity: 0;
+    visibility: hidden;
+}
+
+.loader-ring {
+    width: 54px;
+    height: 54px;
+
+    border: 2px solid #eeeeee;
+    border-top-color: #6c3cff;
+
+    border-radius: 50%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    animation: spin 0.9s linear infinite;
+}
+
+.loader-ring span {
+    color: #6c3cff;
+    font-size: 17px;
+    font-weight: 800;
+
+    animation: counterSpin 0.9s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes counterSpin {
+    to {
+        transform: rotate(-360deg);
+    }
+}
+
+
+/* =========================================================
+   APP
+========================================================= */
+
+.app {
+    min-height: 100vh;
+    padding-bottom: 90px;
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.top-header {
+    width: min(1120px, calc(100% - 40px));
+
+    margin: 0 auto;
+
+    padding:
+        24px
+        0
+        18px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.brand-mark {
+    width: 36px;
+    height: 36px;
+
+    border-radius: 10px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #111111;
+    color: #ffffff;
+
+    font-weight: 800;
+    font-size: 16px;
+}
+
+.brand-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.brand-text strong {
+    font-size: 14px;
+    letter-spacing: 1.4px;
+}
+
+.brand-text span {
+    margin-top: 2px;
+
+    color: #999999;
+
+    font-size: 7px;
+    font-weight: 700;
+    letter-spacing: 1.7px;
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.icon-button,
+.profile-button {
+    position: relative;
+
+    border: 1px solid #e7e7e7;
+    background: #ffffff;
+
+    cursor: pointer;
+}
+
+.icon-button {
+    width: 42px;
+    height: 42px;
+
+    border-radius: 12px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 19px;
+}
+
+.profile-button {
+    width: 42px;
+    height: 42px;
+
+    border-radius: 50%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #111111;
+    color: #ffffff;
+
+    font-size: 14px;
+    font-weight: 800;
+}
+
+.notification-dot {
+    position: absolute;
+
+    width: 7px;
+    height: 7px;
+
+    top: 8px;
+    right: 8px;
+
+    border-radius: 50%;
+
+    background: #6c3cff;
+}
+
+
+/* =========================================================
+   MAIN
+========================================================= */
+
+.main-content {
+    width: min(1120px, calc(100% - 40px));
+
+    margin: 0 auto;
+}
+
+
+/* =========================================================
+   WELCOME
+========================================================= */
+
+.welcome-section {
+    padding:
+        30px
+        0
+        28px;
+}
+
+.welcome-small {
+    margin: 0 0 8px;
+
+    color: #6c3cff;
+
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+}
+
+.welcome-section h1 {
+    margin: 0;
+
+    font-size: clamp(28px, 4vw, 42px);
+    line-height: 1.1;
+
+    letter-spacing: -1.7px;
+}
+
+.wave {
+    font-size: 27px;
+}
+
+.academic-line {
+    margin: 11px 0 0;
+
+    color: #777777;
+
+    font-size: 13px;
+}
+
+
+/* =========================================================
+   HERO
+========================================================= */
+
+.hero-section {
+    position: relative;
+
+    margin-bottom: 42px;
+
+    overflow: hidden;
+
+    border-radius: 20px;
+}
+
+.hero-slider {
+    position: relative;
+
+    width: 100%;
+
+    aspect-ratio: 3 / 1;
+
+    min-height: 190px;
+
+    background: #f5f5f5;
+}
+
+.hero-slide {
+    position: absolute;
+    inset: 0;
+
+    opacity: 0;
+
+    transition: opacity 0.45s ease;
+
+    cursor: pointer;
+}
+
+.hero-slide.active {
+    opacity: 1;
+}
+
+.hero-slide img {
+    width: 100%;
+    height: 100%;
+
+    display: block;
+
+    object-fit: cover;
+}
+
+.hero-dots {
+    position: absolute;
+
+    left: 0;
+    right: 0;
+    bottom: 13px;
+
+    display: flex;
+    justify-content: center;
+
+    gap: 6px;
+}
+
+.hero-dot {
+    width: 6px;
+    height: 6px;
+
+    padding: 0;
+
+    border: 0;
+    border-radius: 50%;
+
+    background: rgba(255, 255, 255, 0.65);
+
+    cursor: pointer;
+}
+
+.hero-dot.active {
+    width: 18px;
+
+    border-radius: 20px;
+
+    background: #ffffff;
+}
+
+
+/* =========================================================
+   SECTIONS
+========================================================= */
+
+.section {
+    margin-bottom: 46px;
+}
+
+.section-heading {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+
+    margin-bottom: 18px;
+}
+
+.section-heading > div > span {
+    display: block;
+
+    margin-bottom: 6px;
+
+    color: #6c3cff;
+
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 1.7px;
+}
+
+.section-heading h2 {
+    margin: 0;
+
+    font-size: 22px;
+    letter-spacing: -0.7px;
+}
+
+.section-link {
+    border: 0;
+
+    padding: 5px 0;
+
+    background: transparent;
+
+    color: #111111;
+
+    font-size: 12px;
+    font-weight: 700;
+
+    cursor: pointer;
+}
+
+
+/* =========================================================
+   QUICK ACTIONS
+========================================================= */
+
+.quick-section {
+    margin-bottom: 48px;
+}
+
+.quick-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, 1fr);
+
+    gap: 12px;
+}
+
+.quick-card {
+    min-height: 118px;
+
+    padding: 17px;
+
+    text-align: left;
+
+    border: 1px solid #e9e9e9;
+    border-radius: 16px;
+
+    background: #ffffff;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.15s ease,
+        border-color 0.15s ease;
+}
+
+.quick-card:hover {
+    transform: translateY(-2px);
+    border-color: #d7d7d7;
+}
+
+.quick-icon {
+    width: 35px;
+    height: 35px;
+
+    margin-bottom: 15px;
+
+    border-radius: 10px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #f4f1ff;
+    color: #6c3cff;
+
+    font-size: 17px;
+}
+
+.quick-card strong {
+    display: block;
+
+    font-size: 14px;
+}
+
+.quick-card span {
+    display: block;
+
+    margin-top: 5px;
+
+    color: #888888;
+
+    font-size: 11px;
+}
+
+
+/* =========================================================
+   LEARNING CARD
+========================================================= */
+
+.learning-card {
+    display: flex;
+    align-items: stretch;
+
+    min-height: 150px;
+
+    overflow: hidden;
+
+    border: 1px solid #e8e8e8;
+    border-radius: 17px;
+
+    background: #ffffff;
+}
+
+.learning-thumbnail {
+    width: 190px;
+
+    flex-shrink: 0;
+
+    background: #f4f4f4;
+}
+
+.learning-thumbnail img {
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+}
+
+.learning-details {
+    flex: 1;
+
+    padding: 22px;
+}
+
+.learning-label {
+    margin: 0 0 7px;
+
+    color: #6c3cff;
+
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 1.4px;
+}
+
+.learning-details h3 {
+    margin: 0;
+
+    font-size: 18px;
+}
+
+.learning-details p {
+    margin: 7px 0 20px;
+
+    color: #777777;
+
+    font-size: 12px;
+}
+
+.progress-line {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.progress-track {
+    flex: 1;
+
+    height: 5px;
+
+    overflow: hidden;
+
+    border-radius: 20px;
+
+    background: #eeeeee;
+}
+
+.progress-fill {
+    height: 100%;
+
+    border-radius: 20px;
+
+    background: #6c3cff;
+}
+
+.progress-value {
+    color: #555555;
+
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.continue-button {
+    align-self: center;
+
+    margin-right: 20px;
+
+    padding: 11px 15px;
+
+    border: 0;
+    border-radius: 10px;
+
+    background: #111111;
+    color: #ffffff;
+
+    font-size: 10px;
+    font-weight: 800;
+
+    cursor: pointer;
+}
+
+
+/* =========================================================
+   SCHEDULE
+========================================================= */
+
+.schedule-list {
+    display: flex;
+    flex-direction: column;
+
+    gap: 10px;
+}
+
+.schedule-card {
+    width: 100%;
+
+    padding: 17px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    border: 1px solid #e9e9e9;
+    border-radius: 14px;
+
+    background: #ffffff;
+
+    cursor: pointer;
+}
+
+.schedule-left {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+}
+
+.schedule-time {
+    width: 58px;
+
+    text-align: center;
+}
+
+.schedule-time strong {
+    display: block;
+
+    font-size: 14px;
+}
+
+.schedule-time span {
+    color: #888888;
+
+    font-size: 9px;
+}
+
+.schedule-info h3 {
+    margin: 0;
+
+    font-size: 14px;
+}
+
+.schedule-info p {
+    margin: 5px 0 0;
+
+    color: #888888;
+
+    font-size: 11px;
+}
+
+.schedule-arrow {
+    color: #777777;
+
+    font-size: 18px;
+}
+
+
+/* =========================================================
+   ANNOUNCEMENTS
+========================================================= */
+
+.announcement-list {
+    display: flex;
+    flex-direction: column;
+
+    gap: 10px;
+}
+
+.announcement-card {
+    display: flex;
+    align-items: center;
+
+    gap: 15px;
+
+    padding: 15px;
+
+    border: 1px solid #e9e9e9;
+    border-radius: 14px;
+
+    cursor: pointer;
+}
+
+.announcement-date {
+    width: 45px;
+
+    flex-shrink: 0;
+
+    text-align: center;
+}
+
+.announcement-date strong {
+    display: block;
+
+    font-size: 16px;
+}
+
+.announcement-date span {
+    color: #6c3cff;
+
+    font-size: 8px;
+    font-weight: 800;
+}
+
+.announcement-info {
+    flex: 1;
+}
+
+.announcement-info strong {
+    font-size: 13px;
+}
+
+.announcement-info p {
+    margin: 5px 0 0;
+
+    color: #888888;
+
+    font-size: 11px;
+}
+
+.announcement-arrow {
+    color: #888888;
+}
+
+
+/* =========================================================
+   MY LEARNING
+========================================================= */
+
+.my-learning-list {
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, 1fr);
+
+    gap: 12px;
+}
+
+.course-card {
+    padding: 19px;
+
+    border: 1px solid #e8e8e8;
+    border-radius: 15px;
+}
+
+.course-card h3 {
+    margin: 0;
+
+    font-size: 15px;
+}
+
+.course-card p {
+    margin: 7px 0 15px;
+
+    color: #888888;
+
+    font-size: 11px;
+}
+
+.course-progress {
+    height: 5px;
+
+    overflow: hidden;
+
+    border-radius: 20px;
+
+    background: #eeeeee;
+}
+
+.course-progress span {
+    display: block;
+
+    height: 100%;
+
+    background: #6c3cff;
+}
+
+
+/* =========================================================
+   PROGRESS
+========================================================= */
+
+.progress-card {
+    padding: 23px;
+
+    border: 1px solid #e8e8e8;
+    border-radius: 16px;
+}
+
+.progress-heading {
+    display: flex;
+    justify-content: space-between;
+
+    margin-bottom: 13px;
+}
+
+.progress-heading strong {
+    font-size: 13px;
+}
+
+.progress-heading span {
+    color: #6c3cff;
+
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.large-progress {
+    height: 9px;
+
+    overflow: hidden;
+
+    border-radius: 20px;
+
+    background: #eeeeee;
+}
+
+.large-progress div {
+    height: 100%;
+
+    border-radius: 20px;
+
+    background: #6c3cff;
+}
+
+
+/* =========================================================
+   FREE LEARNING
+========================================================= */
+
+.free-list {
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    gap: 12px;
+}
+
+.free-card {
+    overflow: hidden;
+
+    border: 1px solid #e8e8e8;
+    border-radius: 15px;
+
+    cursor: pointer;
+}
+
+.free-card img {
+    width: 100%;
+    height: 135px;
+
+    display: block;
+
+    object-fit: cover;
+
+    background: #f5f5f5;
+}
+
+.free-card-content {
+    padding: 15px;
+}
+
+.free-card-content strong {
+    font-size: 13px;
+}
+
+.free-card-content p {
+    margin: 6px 0 0;
+
+    color: #888888;
+
+    font-size: 10px;
+    line-height: 1.5;
+}
+
+
+/* =========================================================
+   AI
+========================================================= */
+
+.ai-section {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 20px;
+
+    margin-bottom: 20px;
+    padding: 25px;
+
+    border: 1px solid #e7e7e7;
+    border-radius: 18px;
+
+    background: #fafafa;
+}
+
+.ai-label {
+    color: #6c3cff;
+
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 1.6px;
+}
+
+.ai-content h2 {
+    margin: 6px 0 5px;
+
+    font-size: 20px;
+}
+
+.ai-content p {
+    margin: 0;
+
+    color: #777777;
+
+    font-size: 12px;
+}
+
+.ai-button {
+    flex-shrink: 0;
+
+    padding: 12px 17px;
+
+    border: 0;
+    border-radius: 10px;
+
+    background: #111111;
+    color: #ffffff;
+
+    font-size: 11px;
+    font-weight: 800;
+
+    cursor: pointer;
+}
+
+.ai-button i {
+    margin-left: 5px;
+}
+
+
+/* =========================================================
+   BOTTOM NAV
+========================================================= */
+
+.bottom-nav {
+    position: fixed;
+
+    left: 50%;
+    bottom: 0;
+
+    z-index: 1000;
+
+    width: min(600px, 100%);
+
+    transform: translateX(-50%);
+
+    padding:
+        10px
+        18px
+        calc(10px + env(safe-area-inset-bottom));
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(5, 1fr);
+
+    border-top: 1px solid #eeeeee;
+
+    background: rgba(255, 255, 255, 0.97);
+}
+
+.nav-item {
+    min-height: 52px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    gap: 4px;
+
+    color: #999999;
+
+    text-decoration: none;
+
+    font-size: 9px;
+    font-weight: 600;
+}
+
+.nav-item i {
+    font-size: 20px;
+}
+
+.nav-item.active {
+    color: #111111;
+}
+
+.nav-item.active i {
+    color: #6c3cff;
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 700px) {
+
+    .top-header,
+    .main-content {
+        width: calc(100% - 28px);
+    }
+
+    .top-header {
+        padding-top: 18px;
+    }
+
+    .welcome-section {
+        padding-top: 25px;
+    }
+
+    .hero-slider {
+        aspect-ratio: 1.65 / 1;
+        min-height: 175px;
+    }
+
+    .quick-grid {
+        grid-template-columns:
+            repeat(2, 1fr);
+    }
+
+    .learning-card {
+        display: block;
+    }
+
+    .learning-thumbnail {
+        width: 100%;
+        height: 150px;
+    }
+
+    .learning-details {
+        padding: 18px;
+    }
+
+    .continue-button {
+        margin:
+            0
+            18px
+            18px;
+
+        width: calc(100% - 36px);
+    }
+
+    .my-learning-list {
+        grid-template-columns: 1fr;
+    }
+
+    .free-list {
+        grid-template-columns:
+            repeat(2, 1fr);
+    }
+
+    .free-card img {
+        height: 115px;
+    }
+
+    .ai-section {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .ai-button {
+        width: 100%;
+    }
+
+}
+
+
+@media (max-width: 430px) {
+
+    .brand-text span {
+        display: none;
+    }
+
+    .welcome-section h1 {
+        font-size: 30px;
+    }
+
+    .free-list {
+        grid-template-columns: 1fr;
+    }
+
+    .schedule-left {
+        gap: 11px;
+    }
+
+    .schedule-time {
+        width: 45px;
+    }
+
+}
