@@ -1,18 +1,13 @@
 /* =========================================================
-   ZENOVA SCHOOL LEADS CRM
-   Completely independent lead system
+   ZENOVA - SCHOOL LEAD TRACKER
+   Completely separate from crmStudents / crmLeads
 ========================================================= */
 
-import {
-    auth,
-    db
-} from "../../../firebase/firebase-config.js";
-
+import { auth, db } from "../../../firebase/firebase-config.js";
 
 import {
     onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
-
 
 import {
     collection,
@@ -21,9 +16,7 @@ import {
     deleteDoc,
     doc,
     onSnapshot,
-    serverTimestamp,
-    query,
-    orderBy
+    serverTimestamp
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
 
@@ -31,11 +24,8 @@ import {
    COLLECTIONS
 ========================================================= */
 
-const LEADS_COLLECTION =
-    "schoolLeadRecords";
-
-const SCHOOLS_COLLECTION =
-    "crmSchools";
+const LEADS_COLLECTION = "schoolLeadRecords";
+const SCHOOLS_COLLECTION = "crmSchools";
 
 
 /* =========================================================
@@ -43,104 +33,44 @@ const SCHOOLS_COLLECTION =
 ========================================================= */
 
 let currentUser = null;
-
 let leads = [];
-
 let schools = [];
-
 let editingId = null;
-
-let activeSchoolId = "";
 
 
 /* =========================================================
    STATUS
 ========================================================= */
 
-const STATUS_OPTIONS = [
-    {
-        value: "NEW",
-        label: "New"
-    },
-    {
-        value: "VISITING",
-        label: "Visiting"
-    },
-    {
-        value: "NOT_VISITING",
-        label: "Not Visiting"
-    },
-    {
-        value: "REJECTED",
-        label: "Rejected"
-    },
-    {
-        value: "PAYMENT_PENDING",
-        label: "Payment Pending"
-    },
-    {
-        value: "PAYMENT_COMPLETED",
-        label: "Payment Completed"
-    }
+const STATUSES = [
+    "NEW",
+    "VISITING",
+    "NOT_VISITING",
+    "REJECTED",
+    "PAYMENT_PENDING",
+    "PAYMENT_COMPLETED"
 ];
 
 
-const STATUS_LABELS = Object.fromEntries(
-    STATUS_OPTIONS.map(item => [
-        item.value,
-        item.label
-    ])
-);
+function statusLabel(status) {
+
+    const labels = {
+        NEW: "New",
+        VISITING: "Visiting",
+        NOT_VISITING: "Not Visiting",
+        REJECTED: "Rejected",
+        PAYMENT_PENDING: "Payment Pending",
+        PAYMENT_COMPLETED: "Payment Completed"
+    };
+
+    return labels[status] || status;
+
+}
 
 
 /* =========================================================
    DOM
 ========================================================= */
-
-const totalCount =
-    document.getElementById("totalCount");
-
-const newCount =
-    document.getElementById("newCount");
-
-const visitingCount =
-    document.getElementById("visitingCount");
-
-const notVisitingCount =
-    document.getElementById("notVisitingCount");
-
-const rejectedCount =
-    document.getElementById("rejectedCount");
-
-const paymentPendingCount =
-    document.getElementById("paymentPendingCount");
-
-const paymentCompletedCount =
-    document.getElementById("paymentCompletedCount");
-
-
-const schoolGrid =
-    document.getElementById("schoolGrid");
-
-const searchInput =
-    document.getElementById("searchInput");
-
-const schoolFilter =
-    document.getElementById("schoolFilter");
-
-const statusFilter =
-    document.getElementById("statusFilter");
-
-
-const leadTableBody =
-    document.getElementById("leadTableBody");
-
-const recordInfo =
-    document.getElementById("recordInfo");
-
-const emptyState =
-    document.getElementById("emptyState");
-
 
 const addLeadBtn =
     document.getElementById("addLeadBtn");
@@ -148,19 +78,8 @@ const addLeadBtn =
 const emptyAddBtn =
     document.getElementById("emptyAddBtn");
 
-const backBtn =
-    document.getElementById("backBtn");
-
-
-/* =========================================================
-   MODAL DOM
-========================================================= */
-
 const modalBackdrop =
     document.getElementById("modalBackdrop");
-
-const modalTitle =
-    document.getElementById("modalTitle");
 
 const closeModalBtn =
     document.getElementById("closeModalBtn");
@@ -170,6 +89,12 @@ const cancelBtn =
 
 const leadForm =
     document.getElementById("leadForm");
+
+const modalTitle =
+    document.getElementById("modalTitle");
+
+const saveBtn =
+    document.getElementById("saveBtn");
 
 const studentNameInput =
     document.getElementById("studentName");
@@ -186,8 +111,161 @@ const statusSelect =
 const detailsInput =
     document.getElementById("details");
 
-const saveBtn =
-    document.getElementById("saveBtn");
+const searchInput =
+    document.getElementById("searchInput");
+
+const schoolFilter =
+    document.getElementById("schoolFilter");
+
+const statusFilter =
+    document.getElementById("statusFilter");
+
+const leadTableBody =
+    document.getElementById("leadTableBody");
+
+const recordInfo =
+    document.getElementById("recordInfo");
+
+const emptyState =
+    document.getElementById("emptyState");
+
+const schoolGrid =
+    document.getElementById("schoolGrid");
+
+const backBtn =
+    document.getElementById("backBtn");
+
+
+/* =========================================================
+   VERY IMPORTANT
+   BUTTON EVENTS ARE REGISTERED IMMEDIATELY
+========================================================= */
+
+if (addLeadBtn) {
+    addLeadBtn.onclick = function () {
+        openAddModal();
+    };
+}
+
+if (emptyAddBtn) {
+    emptyAddBtn.onclick = function () {
+        openAddModal();
+    };
+}
+
+if (closeModalBtn) {
+    closeModalBtn.onclick = function () {
+        closeModal();
+    };
+}
+
+if (cancelBtn) {
+    cancelBtn.onclick = function () {
+        closeModal();
+    };
+}
+
+if (backBtn) {
+    backBtn.onclick = function () {
+
+        if (window.history.length > 1) {
+            window.history.back();
+        } else {
+            window.location.href = "../";
+        }
+
+    };
+}
+
+
+/* =========================================================
+   OPEN ADD MODAL
+========================================================= */
+
+function openAddModal() {
+
+    editingId = null;
+
+    if (modalTitle) {
+        modalTitle.textContent = "Add Student";
+    }
+
+    if (saveBtn) {
+        saveBtn.textContent = "Save Student";
+        saveBtn.disabled = false;
+    }
+
+    if (leadForm) {
+        leadForm.reset();
+    }
+
+    if (statusSelect) {
+        statusSelect.value = "NEW";
+    }
+
+    if (modalBackdrop) {
+        modalBackdrop.classList.remove("hidden");
+        modalBackdrop.style.display = "flex";
+    }
+
+    setTimeout(() => {
+
+        if (studentNameInput) {
+            studentNameInput.focus();
+        }
+
+    }, 100);
+
+}
+
+
+/* =========================================================
+   CLOSE MODAL
+========================================================= */
+
+function closeModal() {
+
+    editingId = null;
+
+    if (modalBackdrop) {
+        modalBackdrop.classList.add("hidden");
+        modalBackdrop.style.display = "none";
+    }
+
+}
+
+
+/* =========================================================
+   CLICK OUTSIDE MODAL
+========================================================= */
+
+if (modalBackdrop) {
+
+    modalBackdrop.onclick = function (event) {
+
+        if (event.target === modalBackdrop) {
+            closeModal();
+        }
+
+    };
+
+}
+
+
+/* =========================================================
+   ESC KEY
+========================================================= */
+
+document.addEventListener(
+    "keydown",
+    function (event) {
+
+        if (event.key === "Escape") {
+            closeModal();
+        }
+
+    }
+);
 
 
 /* =========================================================
@@ -196,22 +274,21 @@ const saveBtn =
 
 onAuthStateChanged(
     auth,
-    async (user) => {
+    function (user) {
 
         if (!user) {
 
-            window.location.href =
-                "../";
+            console.log(
+                "No authenticated user."
+            );
 
             return;
         }
 
         currentUser = user;
 
-        await Promise.all([
-            loadSchools(),
-            loadLeads()
-        ]);
+        loadSchools();
+        loadLeads();
 
     }
 );
@@ -223,53 +300,174 @@ onAuthStateChanged(
 
 function loadSchools() {
 
-    const schoolsRef =
+    const ref =
         collection(
             db,
             SCHOOLS_COLLECTION
         );
 
-    const schoolsQuery =
-        query(
-            schoolsRef,
-            orderBy(
-                "crmSchoolName"
-            )
-        );
 
     onSnapshot(
-        schoolsQuery,
-        (snapshot) => {
+        ref,
 
-            schools =
-                snapshot.docs
-                    .map(item => ({
+        function (snapshot) {
+
+            schools = [];
+
+            snapshot.forEach(
+                function (item) {
+
+                    const data =
+                        item.data();
+
+                    if (
+                        data.crmActive === false
+                    ) {
+                        return;
+                    }
+
+                    schools.push({
+
                         id: item.id,
-                        ...item.data()
-                    }))
-                    .filter(
-                        item =>
-                            item.crmActive !== false
+
+                        ...data
+
+                    });
+
+                }
+            );
+
+
+            schools.sort(
+                function (a, b) {
+
+                    const nameA =
+                        getSchoolName(a)
+                            .toLowerCase();
+
+                    const nameB =
+                        getSchoolName(b)
+                            .toLowerCase();
+
+                    return nameA.localeCompare(
+                        nameB
                     );
 
-            populateSchoolSelects();
+                }
+            );
 
-            renderSchoolWise();
+
+            populateSchools();
 
         },
-        (error) => {
+
+        function (error) {
 
             console.error(
-                "School loading error:",
+                "School loading failed:",
                 error
             );
 
-            alert(
-                "Unable to load schools."
+            /*
+             * IMPORTANT:
+             * Do NOT stop the application.
+             * The Add Student button still works.
+             */
+
+            schoolSelect.innerHTML = `
+                <option value="">
+                    Unable to load schools
+                </option>
+            `;
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   SCHOOL NAME
+========================================================= */
+
+function getSchoolName(school) {
+
+    return (
+        school.crmSchoolName ||
+        school.schoolName ||
+        school.name ||
+        "Unnamed School"
+    );
+
+}
+
+
+/* =========================================================
+   POPULATE SCHOOL DROPDOWNS
+========================================================= */
+
+function populateSchools() {
+
+    if (!schoolSelect) {
+        return;
+    }
+
+
+    schoolSelect.innerHTML = `
+        <option value="">
+            Select School
+        </option>
+    `;
+
+
+    schoolFilter.innerHTML = `
+        <option value="">
+            All Schools
+        </option>
+    `;
+
+
+    schools.forEach(
+        function (school) {
+
+            const name =
+                getSchoolName(school);
+
+
+            const option1 =
+                document.createElement(
+                    "option"
+                );
+
+            option1.value =
+                school.id;
+
+            option1.textContent =
+                name;
+
+            schoolSelect.appendChild(
+                option1
+            );
+
+
+            const option2 =
+                document.createElement(
+                    "option"
+                );
+
+            option2.value =
+                school.id;
+
+            option2.textContent =
+                name;
+
+            schoolFilter.appendChild(
+                option2
             );
 
         }
     );
+
 }
 
 
@@ -279,144 +477,371 @@ function loadSchools() {
 
 function loadLeads() {
 
-    const leadsRef =
+    const ref =
         collection(
             db,
             LEADS_COLLECTION
         );
 
-    const leadsQuery =
-        query(
-            leadsRef,
-            orderBy(
-                "createdAt",
-                "desc"
-            )
-        );
 
     onSnapshot(
-        leadsQuery,
-        (snapshot) => {
 
-            leads =
-                snapshot.docs.map(
-                    item => ({
+        ref,
+
+        function (snapshot) {
+
+            leads = [];
+
+            snapshot.forEach(
+                function (item) {
+
+                    leads.push({
+
                         id: item.id,
-                        ...item.data()
-                    })
-                );
 
-            renderAll();
+                        ...item.data()
+
+                    });
+
+                }
+            );
+
+
+            leads.sort(
+                function (a, b) {
+
+                    const timeA =
+                        getTime(a.createdAt);
+
+                    const timeB =
+                        getTime(b.createdAt);
+
+                    return timeB - timeA;
+
+                }
+            );
+
+
+            render();
 
         },
-        (error) => {
+
+        function (error) {
 
             console.error(
-                "Lead loading error:",
+                "Lead loading failed:",
+                error
+            );
+
+            leads = [];
+
+            render();
+
+        }
+
+    );
+
+}
+
+
+/* =========================================================
+   TIMESTAMP
+========================================================= */
+
+function getTime(timestamp) {
+
+    if (!timestamp) {
+        return 0;
+    }
+
+    if (
+        typeof timestamp.toMillis ===
+        "function"
+    ) {
+        return timestamp.toMillis();
+    }
+
+    if (timestamp.seconds) {
+        return timestamp.seconds * 1000;
+    }
+
+    return 0;
+
+}
+
+
+/* =========================================================
+   SAVE FORM
+========================================================= */
+
+if (leadForm) {
+
+    leadForm.onsubmit = async function (event) {
+
+        event.preventDefault();
+
+
+        const studentName =
+            studentNameInput.value
+                .trim();
+
+
+        const phone =
+            phoneInput.value
+                .replace(/\D/g, "");
+
+
+        const schoolId =
+            schoolSelect.value;
+
+
+        const status =
+            statusSelect.value;
+
+
+        const details =
+            detailsInput.value
+                .trim();
+
+
+        /* -------------------------
+           VALIDATION
+        ------------------------- */
+
+        if (
+            studentName.length < 2
+        ) {
+
+            alert(
+                "Please enter student name."
+            );
+
+            return;
+
+        }
+
+
+        if (
+            !/^[6-9][0-9]{9}$/.test(
+                phone
+            )
+        ) {
+
+            alert(
+                "Enter a valid 10-digit mobile number."
+            );
+
+            return;
+
+        }
+
+
+        if (!schoolId) {
+
+            alert(
+                "Please select a school."
+            );
+
+            return;
+
+        }
+
+
+        const school =
+            schools.find(
+                function (item) {
+                    return item.id === schoolId;
+                }
+            );
+
+
+        if (!school) {
+
+            alert(
+                "School not found."
+            );
+
+            return;
+
+        }
+
+
+        /* -------------------------
+           DISABLE BUTTON
+        ------------------------- */
+
+        saveBtn.disabled = true;
+
+        saveBtn.textContent =
+            editingId
+                ? "Updating..."
+                : "Saving...";
+
+
+        try {
+
+            const schoolName =
+                getSchoolName(school);
+
+
+            /* =================================================
+               EDIT EXISTING
+            ================================================= */
+
+            if (editingId) {
+
+                await updateDoc(
+
+                    doc(
+                        db,
+                        LEADS_COLLECTION,
+                        editingId
+                    ),
+
+                    {
+
+                        studentName:
+                            studentName,
+
+                        phone:
+                            phone,
+
+                        schoolId:
+                            schoolId,
+
+                        schoolName:
+                            schoolName,
+
+                        status:
+                            status,
+
+                        details:
+                            details,
+
+                        updatedAt:
+                            serverTimestamp(),
+
+                        updatedBy:
+                            currentUser
+                                ? currentUser.uid
+                                : ""
+
+                    }
+
+                );
+
+            }
+
+
+            /* =================================================
+               CREATE NEW
+            ================================================= */
+
+            else {
+
+                await addDoc(
+
+                    collection(
+                        db,
+                        LEADS_COLLECTION
+                    ),
+
+                    {
+
+                        /*
+                         * THIS IS A COMPLETELY
+                         * INDEPENDENT RECORD.
+                         *
+                         * NO crmStudentId
+                         * NO crmLeadId
+                         * NO enrollment
+                         * NO course
+                         */
+
+                        studentName:
+                            studentName,
+
+                        phone:
+                            phone,
+
+                        schoolId:
+                            schoolId,
+
+                        schoolName:
+                            schoolName,
+
+                        status:
+                            status,
+
+                        details:
+                            details,
+
+                        createdAt:
+                            serverTimestamp(),
+
+                        updatedAt:
+                            serverTimestamp(),
+
+                        createdBy:
+                            currentUser
+                                ? currentUser.uid
+                                : "",
+
+                        createdByEmail:
+                            currentUser
+                                ? (
+                                    currentUser.email ||
+                                    ""
+                                )
+                                : ""
+
+                    }
+
+                );
+
+            }
+
+
+            closeModal();
+
+        }
+
+        catch (error) {
+
+            console.error(
+                "SAVE ERROR:",
                 error
             );
 
             alert(
-                "Unable to load school leads."
+                "Could not save student.\n\n" +
+                error.message
             );
 
         }
-    );
-}
 
+        finally {
 
-/* =========================================================
-   POPULATE SCHOOL SELECTS
-========================================================= */
+            saveBtn.disabled =
+                false;
 
-function populateSchoolSelects() {
+            saveBtn.textContent =
+                editingId
+                    ? "Update Student"
+                    : "Save Student";
 
-    const currentFormValue =
-        schoolSelect.value;
+        }
 
-    const currentFilterValue =
-        schoolFilter.value;
-
-
-    const options = schools
-        .sort(
-            (a, b) =>
-                String(
-                    a.crmSchoolName || ""
-                ).localeCompare(
-                    String(
-                        b.crmSchoolName || ""
-                    )
-                )
-        )
-        .map(
-            school => `
-                <option value="${escapeHtml(
-                    school.id
-                )}">
-                    ${escapeHtml(
-                        school.crmSchoolName ||
-                        "Unnamed School"
-                    )}
-                </option>
-            `
-        )
-        .join("");
-
-
-    schoolSelect.innerHTML = `
-        <option value="">
-            Select School
-        </option>
-
-        ${options}
-    `;
-
-
-    schoolFilter.innerHTML = `
-        <option value="">
-            All Schools
-        </option>
-
-        ${options}
-    `;
-
-
-    if (
-        schools.some(
-            school =>
-                school.id ===
-                currentFormValue
-        )
-    ) {
-
-        schoolSelect.value =
-            currentFormValue;
-
-    }
-
-
-    if (
-        schools.some(
-            school =>
-                school.id ===
-                currentFilterValue
-        )
-    ) {
-
-        schoolFilter.value =
-            currentFilterValue;
-
-    }
+    };
 
 }
 
 
 /* =========================================================
-   RENDER ALL
+   RENDER
 ========================================================= */
 
-function renderAll() {
+function render() {
 
     updateSummary();
 
@@ -433,109 +858,139 @@ function renderAll() {
 
 function updateSummary() {
 
-    const count = status =>
+    const count =
+        function (status) {
 
-        leads.filter(
-            lead =>
-                lead.status === status
-        ).length;
+            return leads.filter(
+                function (lead) {
+                    return lead.status === status;
+                }
+            ).length;
+
+        };
 
 
-    totalCount.textContent =
-        leads.length;
+    setText(
+        "totalCount",
+        leads.length
+    );
 
-    newCount.textContent =
-        count("NEW");
+    setText(
+        "newCount",
+        count("NEW")
+    );
 
-    visitingCount.textContent =
-        count("VISITING");
+    setText(
+        "visitingCount",
+        count("VISITING")
+    );
 
-    notVisitingCount.textContent =
-        count("NOT_VISITING");
+    setText(
+        "notVisitingCount",
+        count("NOT_VISITING")
+    );
 
-    rejectedCount.textContent =
-        count("REJECTED");
+    setText(
+        "rejectedCount",
+        count("REJECTED")
+    );
 
-    paymentPendingCount.textContent =
-        count("PAYMENT_PENDING");
+    setText(
+        "paymentPendingCount",
+        count("PAYMENT_PENDING")
+    );
 
-    paymentCompletedCount.textContent =
-        count("PAYMENT_COMPLETED");
+    setText(
+        "paymentCompletedCount",
+        count("PAYMENT_COMPLETED")
+    );
 
 }
 
 
 /* =========================================================
-   SCHOOL WISE
+   SCHOOL-WISE
 ========================================================= */
 
 function renderSchoolWise() {
+
+    if (!schoolGrid) {
+        return;
+    }
+
 
     const grouped = {};
 
 
     leads.forEach(
-        lead => {
+        function (lead) {
 
-            const schoolId =
+            const id =
                 lead.schoolId ||
                 "unknown";
 
-            if (!grouped[schoolId]) {
 
-                grouped[schoolId] = {
+            if (!grouped[id]) {
+
+                grouped[id] = {
+
                     name:
                         lead.schoolName ||
                         "Unknown School",
 
                     count: 0
+
                 };
 
             }
 
-            grouped[schoolId].count++;
+
+            grouped[id].count++;
 
         }
     );
 
 
-    const schoolData =
+    const items =
         Object.entries(grouped)
             .sort(
-                (a, b) =>
-                    b[1].count -
-                    a[1].count
+                function (a, b) {
+
+                    return (
+                        b[1].count -
+                        a[1].count
+                    );
+
+                }
             );
 
 
-    if (!schoolData.length) {
+    if (!items.length) {
 
         schoolGrid.innerHTML = `
-            <div class="school-empty">
-                No school data yet.
+            <div style="
+                padding:20px;
+                color:#737373;
+                font-size:13px;
+            ">
+                No school leads yet.
             </div>
         `;
 
         return;
+
     }
 
 
     schoolGrid.innerHTML =
-        schoolData.map(
-            ([schoolId, data]) => {
-
-                const active =
-                    activeSchoolId ===
-                    schoolId;
+        items.map(
+            function ([schoolId, data]) {
 
                 return `
+
                     <div
-                        class="school-card ${
-                            active
-                                ? "active"
-                                : ""
-                        }"
-                        data-school-id="${escapeHtml(
+                        class="school-card"
+                        data-school="${escapeHtml(
                             schoolId
                         )}"
                     >
@@ -547,6 +1002,7 @@ function renderSchoolWise() {
                         </div>
 
                         <div>
+
                             <span class="school-number">
                                 ${data.count}
                             </span>
@@ -554,9 +1010,11 @@ function renderSchoolWise() {
                             <span class="school-label">
                                 students
                             </span>
+
                         </div>
 
                     </div>
+
                 `;
 
             }
@@ -568,43 +1026,17 @@ function renderSchoolWise() {
             ".school-card"
         )
         .forEach(
-            card => {
+            function (card) {
 
-                card.addEventListener(
-                    "click",
-                    () => {
+                card.onclick =
+                    function () {
 
-                        const schoolId =
-                            card.dataset.schoolId;
-
-                        if (
-                            activeSchoolId ===
-                            schoolId
-                        ) {
-
-                            activeSchoolId =
-                                "";
-
-                            schoolFilter.value =
-                                "";
-
-                        }
-                        else {
-
-                            activeSchoolId =
-                                schoolId;
-
-                            schoolFilter.value =
-                                schoolId;
-
-                        }
-
-                        renderSchoolWise();
+                        schoolFilter.value =
+                            card.dataset.school;
 
                         renderTable();
 
-                    }
-                );
+                    };
 
             }
         );
@@ -613,7 +1045,7 @@ function renderSchoolWise() {
 
 
 /* =========================================================
-   FILTER DATA
+   FILTER
 ========================================================= */
 
 function getFilteredLeads() {
@@ -633,19 +1065,24 @@ function getFilteredLeads() {
 
 
     return leads.filter(
-        lead => {
+        function (lead) {
+
+            const name =
+                String(
+                    lead.studentName || ""
+                ).toLowerCase();
+
+
+            const phone =
+                String(
+                    lead.phone || ""
+                );
+
 
             const matchesSearch =
                 !search ||
-                String(
-                    lead.studentName || ""
-                )
-                    .toLowerCase()
-                    .includes(search) ||
-                String(
-                    lead.phone || ""
-                )
-                    .includes(search);
+                name.includes(search) ||
+                phone.includes(search);
 
 
             const matchesSchool =
@@ -682,12 +1119,21 @@ function renderTable() {
         getFilteredLeads();
 
 
-    recordInfo.textContent =
-        `${data.length} ${
-            data.length === 1
-                ? "record"
-                : "records"
-        }`;
+    if (recordInfo) {
+
+        recordInfo.textContent =
+            `${data.length} ${
+                data.length === 1
+                    ? "record"
+                    : "records"
+            }`;
+
+    }
+
+
+    if (!leadTableBody) {
+        return;
+    }
 
 
     leadTableBody.innerHTML = "";
@@ -710,7 +1156,7 @@ function renderTable() {
 
 
     data.forEach(
-        lead => {
+        function (lead) {
 
             const row =
                 document.createElement(
@@ -721,12 +1167,14 @@ function renderTable() {
             row.innerHTML = `
 
                 <td>
+
                     <div class="student-name">
                         ${escapeHtml(
                             lead.studentName ||
                             "—"
                         )}
                     </div>
+
                 </td>
 
 
@@ -736,16 +1184,16 @@ function renderTable() {
                         lead.phone
                             ? `
                                 <a
-                                    class="phone-link"
                                     href="tel:${escapeHtml(
                                         lead.phone
                                     )}"
+                                    class="phone-link"
                                 >
                                     ${escapeHtml(
                                         lead.phone
                                     )}
                                 </a>
-                              `
+                            `
                             : "—"
                     }
 
@@ -773,20 +1221,28 @@ function renderTable() {
                         )}"
                     >
 
-                        ${STATUS_OPTIONS.map(
-                            option => `
-                                <option
-                                    value="${option.value}"
-                                    ${
-                                        lead.status ===
-                                        option.value
-                                            ? "selected"
-                                            : ""
-                                    }
-                                >
-                                    ${option.label}
-                                </option>
-                            `
+                        ${STATUSES.map(
+                            function (status) {
+
+                                return `
+
+                                    <option
+                                        value="${status}"
+                                        ${
+                                            lead.status ===
+                                            status
+                                                ? "selected"
+                                                : ""
+                                        }
+                                    >
+                                        ${statusLabel(
+                                            status
+                                        )}
+                                    </option>
+
+                                `;
+
+                            }
                         ).join("")}
 
                     </select>
@@ -797,10 +1253,12 @@ function renderTable() {
                 <td>
 
                     <div class="details-cell">
+
                         ${escapeHtml(
                             lead.details ||
                             "—"
                         )}
+
                     </div>
 
                 </td>
@@ -818,21 +1276,22 @@ function renderTable() {
                     <div class="action-buttons">
 
                         <button
-                            class="icon-btn edit"
+                            class="icon-btn edit-btn"
                             data-id="${escapeHtml(
                                 lead.id
                             )}"
-                            title="Edit"
+                            type="button"
                         >
                             ✎
                         </button>
 
+
                         <button
-                            class="icon-btn delete"
+                            class="icon-btn delete delete-btn"
                             data-id="${escapeHtml(
                                 lead.id
                             )}"
-                            title="Delete"
+                            type="button"
                         >
                             ×
                         </button>
@@ -863,71 +1322,63 @@ function renderTable() {
 
 function attachTableEvents() {
 
-    document
+
+    leadTableBody
         .querySelectorAll(
             ".status-select"
         )
         .forEach(
-            select => {
+            function (select) {
 
-                select.addEventListener(
-                    "change",
-                    async () => {
+                select.onchange =
+                    function () {
 
-                        const id =
-                            select.dataset.id;
-
-                        await changeStatus(
-                            id,
+                        updateStatus(
+                            select.dataset.id,
                             select.value
                         );
 
-                    }
-                );
+                    };
 
             }
         );
 
 
-    document
+    leadTableBody
         .querySelectorAll(
-            ".edit"
+            ".edit-btn"
         )
         .forEach(
-            button => {
+            function (button) {
 
-                button.addEventListener(
-                    "click",
-                    () => {
+                button.onclick =
+                    function () {
 
                         editLead(
                             button.dataset.id
                         );
 
-                    }
-                );
+                    };
 
             }
         );
 
 
-    document
+    leadTableBody
         .querySelectorAll(
-            ".delete"
+            ".delete-btn"
         )
         .forEach(
-            button => {
+            function (button) {
 
-                button.addEventListener(
-                    "click",
-                    () => {
+                button.onclick =
+                    function () {
 
-                        deleteLead(
+                        removeLead(
                             button.dataset.id
                         );
 
-                    }
-                );
+                    };
 
             }
         );
@@ -936,10 +1387,10 @@ function attachTableEvents() {
 
 
 /* =========================================================
-   CHANGE STATUS
+   UPDATE STATUS
 ========================================================= */
 
-async function changeStatus(
+async function updateStatus(
     id,
     status
 ) {
@@ -947,31 +1398,40 @@ async function changeStatus(
     try {
 
         await updateDoc(
+
             doc(
                 db,
                 LEADS_COLLECTION,
                 id
             ),
+
             {
-                status,
+
+                status:
+                    status,
+
                 updatedAt:
                     serverTimestamp(),
 
                 updatedBy:
-                    currentUser.uid
+                    currentUser
+                        ? currentUser.uid
+                        : ""
+
             }
+
         );
 
     }
+
     catch (error) {
 
         console.error(
-            "Status update error:",
             error
         );
 
         alert(
-            "Unable to update status."
+            "Could not update status."
         );
 
     }
@@ -980,57 +1440,30 @@ async function changeStatus(
 
 
 /* =========================================================
-   OPEN ADD MODAL
-========================================================= */
-
-function openAddModal() {
-
-    editingId = null;
-
-    modalTitle.textContent =
-        "Add Student";
-
-    saveBtn.textContent =
-        "Save Student";
-
-    leadForm.reset();
-
-    statusSelect.value =
-        "NEW";
-
-    modalBackdrop.classList.remove(
-        "hidden"
-    );
-
-    setTimeout(
-        () =>
-            studentNameInput.focus(),
-        50
-    );
-
-}
-
-
-/* =========================================================
-   EDIT
+   EDIT LEAD
 ========================================================= */
 
 function editLead(id) {
 
     const lead =
         leads.find(
-            item =>
-                item.id === id
+            function (item) {
+                return item.id === id;
+            }
         );
 
 
-    if (!lead) return;
+    if (!lead) {
+        return;
+    }
 
 
     editingId = id;
 
+
     modalTitle.textContent =
         "Edit Student";
+
 
     saveBtn.textContent =
         "Update Student";
@@ -1060,505 +1493,179 @@ function editLead(id) {
         "hidden"
     );
 
+    modalBackdrop.style.display =
+        "flex";
+
 }
-
-
-/* =========================================================
-   SAVE
-========================================================= */
-
-leadForm.addEventListener(
-    "submit",
-    async event => {
-
-        event.preventDefault();
-
-
-        const studentName =
-            studentNameInput.value
-                .trim();
-
-
-        const phone =
-            phoneInput.value
-                .replace(/\D/g, "");
-
-
-        const schoolId =
-            schoolSelect.value;
-
-
-        const status =
-            statusSelect.value;
-
-
-        const details =
-            detailsInput.value
-                .trim();
-
-
-        if (
-            studentName.length < 2
-        ) {
-
-            alert(
-                "Please enter the student name."
-            );
-
-            return;
-
-        }
-
-
-        if (
-            !/^[6-9]\d{9}$/.test(
-                phone
-            )
-        ) {
-
-            alert(
-                "Please enter a valid 10-digit Indian mobile number."
-            );
-
-            return;
-
-        }
-
-
-        if (!schoolId) {
-
-            alert(
-                "Please select a school."
-            );
-
-            return;
-
-        }
-
-
-        const school =
-            schools.find(
-                item =>
-                    item.id ===
-                    schoolId
-            );
-
-
-        if (!school) {
-
-            alert(
-                "Selected school was not found."
-            );
-
-            return;
-
-        }
-
-
-        saveBtn.disabled =
-            true;
-
-        saveBtn.textContent =
-            "Saving...";
-
-
-        try {
-
-            if (editingId) {
-
-                await updateDoc(
-                    doc(
-                        db,
-                        LEADS_COLLECTION,
-                        editingId
-                    ),
-                    {
-
-                        studentName,
-
-                        phone,
-
-                        schoolId,
-
-                        schoolName:
-                            school.crmSchoolName ||
-                            "",
-
-                        status,
-
-                        details,
-
-                        updatedAt:
-                            serverTimestamp(),
-
-                        updatedBy:
-                            currentUser.uid
-
-                    }
-                );
-
-            }
-            else {
-
-                await addDoc(
-                    collection(
-                        db,
-                        LEADS_COLLECTION
-                    ),
-                    {
-
-                        /*
-                         * IMPORTANT:
-                         * This record intentionally
-                         * has NO crmStudentId,
-                         * crmLeadId, courseId,
-                         * enrollmentId, etc.
-                         */
-
-                        studentName,
-
-                        phone,
-
-                        schoolId,
-
-                        schoolName:
-                            school.crmSchoolName ||
-                            "",
-
-                        status,
-
-                        details,
-
-                        createdAt:
-                            serverTimestamp(),
-
-                        updatedAt:
-                            serverTimestamp(),
-
-                        createdBy:
-                            currentUser.uid,
-
-                        createdByEmail:
-                            currentUser.email ||
-                            ""
-
-                    }
-                );
-
-            }
-
-
-            closeModal();
-
-        }
-        catch (error) {
-
-            console.error(
-                "Save lead error:",
-                error
-            );
-
-            alert(
-                "Unable to save student."
-            );
-
-        }
-        finally {
-
-            saveBtn.disabled =
-                false;
-
-            saveBtn.textContent =
-                editingId
-                    ? "Update Student"
-                    : "Save Student";
-
-        }
-
-    }
-);
 
 
 /* =========================================================
    DELETE
 ========================================================= */
 
-async function deleteLead(id) {
+async function removeLead(id) {
 
     const lead =
         leads.find(
-            item =>
-                item.id === id
+            function (item) {
+                return item.id === id;
+            }
         );
 
 
-    if (!lead) return;
+    if (!lead) {
+        return;
+    }
 
 
-    const confirmed =
+    const yes =
         confirm(
-            `Delete ${lead.studentName || "this student"} from School Leads?`
+            `Delete "${lead.studentName}"?`
         );
 
 
-    if (!confirmed) return;
+    if (!yes) {
+        return;
+    }
 
 
     try {
 
         await deleteDoc(
+
             doc(
                 db,
                 LEADS_COLLECTION,
                 id
             )
+
         );
 
     }
+
     catch (error) {
 
         console.error(
-            "Delete error:",
             error
         );
 
         alert(
-            "Unable to delete student."
+            "Could not delete student."
         );
 
     }
 
 }
-
-
-/* =========================================================
-   MODAL
-========================================================= */
-
-function closeModal() {
-
-    modalBackdrop.classList.add(
-        "hidden"
-    );
-
-    editingId = null;
-
-    leadForm.reset();
-
-    statusSelect.value =
-        "NEW";
-
-}
-
-
-addLeadBtn.addEventListener(
-    "click",
-    openAddModal
-);
-
-
-emptyAddBtn.addEventListener(
-    "click",
-    openAddModal
-);
-
-
-closeModalBtn.addEventListener(
-    "click",
-    closeModal
-);
-
-
-cancelBtn.addEventListener(
-    "click",
-    closeModal
-);
-
-
-modalBackdrop.addEventListener(
-    "click",
-    event => {
-
-        if (
-            event.target ===
-            modalBackdrop
-        ) {
-
-            closeModal();
-
-        }
-
-    }
-);
 
 
 /* =========================================================
    FILTER EVENTS
 ========================================================= */
 
-searchInput.addEventListener(
-    "input",
-    renderTable
-);
+if (searchInput) {
+
+    searchInput.oninput =
+        function () {
+
+            renderTable();
+
+        };
+
+}
 
 
-statusFilter.addEventListener(
-    "change",
-    renderTable
-);
+if (schoolFilter) {
+
+    schoolFilter.onchange =
+        function () {
+
+            renderTable();
+
+        };
+
+}
 
 
-schoolFilter.addEventListener(
-    "change",
-    () => {
+if (statusFilter) {
 
-        activeSchoolId =
-            schoolFilter.value;
+    statusFilter.onchange =
+        function () {
 
-        renderSchoolWise();
+            renderTable();
 
-        renderTable();
-
-    }
-);
-
-
-/* =========================================================
-   PHONE INPUT
-========================================================= */
-
-phoneInput.addEventListener(
-    "input",
-    () => {
-
-        phoneInput.value =
-            phoneInput.value
-                .replace(/\D/g, "")
-                .slice(0, 10);
-
-    }
-);
-
-
-/* =========================================================
-   BACK
-========================================================= */
-
-backBtn.addEventListener(
-    "click",
-    () => {
-
-        if (
-            window.history.length >
-            1
-        ) {
-
-            window.history.back();
-
-        }
-        else {
-
-            window.location.href =
-                "../";
-
-        }
-
-    }
-);
-
-
-/* =========================================================
-   ESCAPE KEY
-========================================================= */
-
-document.addEventListener(
-    "keydown",
-    event => {
-
-        if (
-            event.key === "Escape" &&
-            !modalBackdrop.classList.contains(
-                "hidden"
-            )
-        ) {
-
-            closeModal();
-
-        }
-
-    }
-);
-
-
-/* =========================================================
-   FORMAT DATE
-========================================================= */
-
-function formatDate(
-    timestamp
-) {
-
-    if (!timestamp) {
-        return "—";
-    }
-
-
-    let date;
-
-
-    if (
-        typeof timestamp.toDate ===
-        "function"
-    ) {
-
-        date =
-            timestamp.toDate();
-
-    }
-    else if (
-        timestamp.seconds
-    ) {
-
-        date =
-            new Date(
-                timestamp.seconds *
-                    1000
-            );
-
-    }
-    else {
-
-        date =
-            new Date(timestamp);
-
-    }
-
-
-    if (
-        Number.isNaN(
-            date.getTime()
-        )
-    ) {
-
-        return "—";
-
-    }
-
-
-    return date.toLocaleDateString(
-        "en-IN",
-        {
-            day: "2-digit",
-            month: "short",
-            year: "numeric"
-        }
-    );
+        };
 
 }
 
 
 /* =========================================================
-   ESCAPE HTML
+   PHONE
+========================================================= */
+
+if (phoneInput) {
+
+    phoneInput.oninput =
+        function () {
+
+            phoneInput.value =
+                phoneInput.value
+                    .replace(/\D/g, "")
+                    .slice(0, 10);
+
+        };
+
+}
+
+
+/* =========================================================
+   DATE
+========================================================= */
+
+function formatDate(timestamp) {
+
+    const time =
+        getTime(timestamp);
+
+
+    if (!time) {
+        return "—";
+    }
+
+
+    return new Date(time)
+        .toLocaleDateString(
+            "en-IN",
+            {
+                day: "2-digit",
+                month: "short",
+                year: "numeric"
+            }
+        );
+
+}
+
+
+/* =========================================================
+   SET TEXT
+========================================================= */
+
+function setText(
+    id,
+    value
+) {
+
+    const element =
+        document.getElementById(id);
+
+    if (element) {
+        element.textContent = value;
+    }
+
+}
+
+
+/* =========================================================
+   HTML ESCAPE
 ========================================================= */
 
 function escapeHtml(value) {
@@ -1588,3 +1695,12 @@ function escapeHtml(value) {
         );
 
 }
+
+
+/* =========================================================
+   START
+========================================================= */
+
+console.log(
+    "Zenova School Lead Tracker loaded."
+);
