@@ -1,7 +1,9 @@
-import {
-  auth,
-  db
-} from "../../firebase/firebase-config.js";
+/* =========================================================
+   ZENOVA CRM — COURSE MASTER
+   Course + Course Subjects
+========================================================= */
+
+import { auth, db } from "../../firebase/firebase-config.js";
 
 import {
   onAuthStateChanged
@@ -9,10 +11,10 @@ import {
 
 import {
   collection,
+  doc,
   addDoc,
   updateDoc,
   deleteDoc,
-  doc,
   onSnapshot,
   serverTimestamp,
   query,
@@ -28,580 +30,583 @@ let currentUser = null;
 
 let courses = [];
 
-let editingId = null;
+let currentCourse = null;
 
-let deleteId = null;
+let editingCourseId = null;
+
+let editingSubjectId = null;
+
+let unsubscribeCourses = null;
+
+let unsubscribeSubjects = null;
 
 
 /* =========================================================
-   ELEMENTS
+   DOM
 ========================================================= */
 
-const loader =
-  document.getElementById("pageLoader");
+const appLoader =
+  document.getElementById("appLoader");
 
-const tableBody =
-  document.getElementById("courseTableBody");
+const crmApp =
+  document.getElementById("crmApp");
 
-const searchInput =
-  document.getElementById("searchInput");
 
 const courseModal =
   document.getElementById("courseModal");
 
-const deleteModal =
-  document.getElementById("deleteModal");
+const subjectModal =
+  document.getElementById("subjectModal");
+
+const subjectFormModal =
+  document.getElementById("subjectFormModal");
+
 
 const courseForm =
   document.getElementById("courseForm");
 
-const modalTitle =
-  document.getElementById("modalTitle");
+const subjectForm =
+  document.getElementById("subjectForm");
 
-const saveCourseBtn =
-  document.getElementById("saveCourseBtn");
 
-const finalPricePreview =
-  document.getElementById("finalPricePreview");
+const courseTableBody =
+  document.getElementById("courseTableBody");
+
+const emptyCourses =
+  document.getElementById("emptyCourses");
+
+const emptySubjects =
+  document.getElementById("emptySubjects");
+
+const subjectList =
+  document.getElementById("subjectList");
 
 
 /* =========================================================
    AUTH
 ========================================================= */
 
-onAuthStateChanged(auth, (user) => {
+onAuthStateChanged(
+  auth,
+  async (user) => {
 
-  if (!user) {
+    if (!user) {
 
-    window.location.href = "../../index.html";
+      window.location.href =
+        "../../index.html";
 
-    return;
+      return;
+    }
+
+
+    currentUser = user;
+
+
+    setupUserUI();
+
+    startCourseListener();
+
+
+    crmApp.classList.remove("hidden");
+
+    appLoader.classList.add("hidden");
+
   }
-
-  currentUser = user;
-
-  startCourseListener();
-
-});
+);
 
 
 /* =========================================================
-   FIRESTORE REALTIME LISTENER
+   USER UI
+========================================================= */
+
+function setupUserUI() {
+
+  const email =
+    currentUser.email ||
+    "Administrator";
+
+
+  const displayName =
+    currentUser.displayName ||
+    email.split("@")[0] ||
+    "Admin";
+
+
+  const initial =
+    displayName
+      .trim()
+      .charAt(0)
+      .toUpperCase() || "Z";
+
+
+  document.getElementById(
+    "sidebarUserName"
+  ).textContent = displayName;
+
+
+  document.getElementById(
+    "sidebarUserEmail"
+  ).textContent = email;
+
+
+  document.getElementById(
+    "userAvatar"
+  ).textContent = initial;
+
+}
+
+
+/* =========================================================
+   COURSE REALTIME LISTENER
 ========================================================= */
 
 function startCourseListener() {
 
-  const coursesRef =
-    collection(db, "crmCourses");
+  if (unsubscribeCourses) {
+    unsubscribeCourses();
+  }
+
 
   const coursesQuery =
     query(
-      coursesRef,
-      orderBy("crmCourseName")
+      collection(
+        db,
+        "crmCourses"
+      ),
+      orderBy(
+        "crmCourseName",
+        "asc"
+      )
     );
 
-  onSnapshot(
-    coursesQuery,
 
-    (snapshot) => {
+  unsubscribeCourses =
+    onSnapshot(
+      coursesQuery,
+      snapshot => {
 
-      courses = [];
+        courses =
+          snapshot.docs.map(
+            item => ({
+              id: item.id,
+              ...item.data()
+            })
+          );
 
-      snapshot.forEach((docSnap) => {
 
-        courses.push({
-          id: docSnap.id,
-          ...docSnap.data()
-        });
+        renderCourses();
 
-      });
+      },
+      error => {
 
-      renderCourses();
+        console.error(
+          "Course listener failed:",
+          error
+        );
 
-      updateStats();
+      }
+    );
 
-      hideLoader();
+}
 
-    },
 
-    (error) => {
+/* =========================================================
+   RENDER COURSES
+========================================================= */
 
-      console.error(
-        "Course listener error:",
-        error
+function renderCourses() {
+
+  const search =
+    document.getElementById(
+      "courseSearch"
+    ).value
+      .trim()
+      .toLowerCase();
+
+
+  const filtered =
+    courses.filter(course => {
+
+      const name =
+        String(
+          course.crmCourseName || ""
+        ).toLowerCase();
+
+
+      const code =
+        String(
+          course.crmCourseCode || ""
+        ).toLowerCase();
+
+
+      return (
+        !search ||
+        name.includes(search) ||
+        code.includes(search)
       );
 
-      /*
-       * Fallback without orderBy.
-       * This avoids the page breaking if the
-       * ordered query encounters an index issue.
-       */
+    });
 
-      onSnapshot(
-        coursesRef,
 
-        (fallbackSnapshot) => {
+  courseTableBody.innerHTML = "";
 
-          courses = [];
 
-          fallbackSnapshot.forEach((docSnap) => {
+  emptyCourses.classList.toggle(
+    "hidden",
+    filtered.length !== 0
+  );
 
-            courses.push({
-              id: docSnap.id,
-              ...docSnap.data()
-            });
 
-          });
+  filtered.forEach(course => {
 
-          courses.sort((a, b) => {
+    const row =
+      document.createElement("tr");
 
-            return String(
-              a.crmCourseName || ""
-            ).localeCompare(
-              String(
-                b.crmCourseName || ""
-              )
-            );
 
-          });
+    const price =
+      Number(
+        course.crmPrice || 0
+      );
 
-          renderCourses();
 
-          updateStats();
+    row.innerHTML = `
 
-          hideLoader();
+      <td>
 
-        },
+        <div class="course-name">
+          ${escapeHtml(
+            course.crmCourseName || "-"
+          )}
+        </div>
 
-        (fallbackError) => {
-
-          console.error(
-            "Fallback listener error:",
-            fallbackError
-          );
-
-          showToast(
-            "Unable to load courses."
-          );
-
-          hideLoader();
-
+        ${
+          course.crmDescription
+            ? `
+              <div class="course-description">
+                ${escapeHtml(
+                  course.crmDescription
+                )}
+              </div>
+            `
+            : ""
         }
-      );
 
-    }
+      </td>
+
+
+      <td>
+        <span class="code">
+          ${escapeHtml(
+            course.crmCourseCode || "-"
+          )}
+        </span>
+      </td>
+
+
+      <td>
+        ${formatClass(
+          course.crmClass
+        )}
+      </td>
+
+
+      <td>
+        ${escapeHtml(
+          course.crmBoard || "-"
+        )}
+      </td>
+
+
+      <td>
+        ${escapeHtml(
+          course.crmMedium || "-"
+        )}
+      </td>
+
+
+      <td>
+        ₹${price.toLocaleString("en-IN")}
+      </td>
+
+
+      <td>
+
+        <span class="
+          status
+          ${
+            course.crmActive === false
+              ? "inactive"
+              : "active"
+          }
+        ">
+
+          ${
+            course.crmActive === false
+              ? "INACTIVE"
+              : "ACTIVE"
+          }
+
+        </span>
+
+      </td>
+
+
+      <td>
+
+        <div class="actions">
+
+          <button
+            class="action-button subjects"
+            data-action="subjects"
+            data-id="${course.id}">
+            Subjects
+          </button>
+
+          <button
+            class="action-button"
+            data-action="edit"
+            data-id="${course.id}">
+            Edit
+          </button>
+
+          <button
+            class="action-button"
+            data-action="delete"
+            data-id="${course.id}">
+            Delete
+          </button>
+
+        </div>
+
+      </td>
+
+    `;
+
+
+    courseTableBody.appendChild(row);
+
+  });
+
+}
+
+
+/* =========================================================
+   CLASS FORMAT
+========================================================= */
+
+function formatClass(value) {
+
+  const map = {
+
+    UNDER_8TH: "Below 8th",
+
+    "8TH": "8th",
+
+    "9TH": "9th",
+
+    "10TH": "10th",
+
+    "1ST_PUC": "1st PUC",
+
+    "2ND_PUC": "2nd PUC",
+
+    KCET: "KCET",
+
+    NEET: "NEET",
+
+    JEE: "JEE"
+
+  };
+
+
+  return escapeHtml(
+    map[value] || value || "-"
   );
 
 }
 
 
 /* =========================================================
-   RENDER
+   COURSE EVENTS
 ========================================================= */
 
-function renderCourses() {
+document
+  .getElementById("addCourseButton")
+  .addEventListener(
+    "click",
+    () => openCourseModal()
+  );
 
-  const search =
-    searchInput.value
-      .trim()
-      .toLowerCase();
 
-  const filtered =
-    courses.filter((course) => {
+document
+  .getElementById("emptyAddCourse")
+  .addEventListener(
+    "click",
+    () => openCourseModal()
+  );
 
-      if (!search) return true;
 
-      const values = [
+document
+  .getElementById("courseSearch")
+  .addEventListener(
+    "input",
+    renderCourses
+  );
 
-        course.crmCourseName,
 
-        course.crmCourseCode,
+courseTableBody.addEventListener(
+  "click",
+  event => {
 
-        course.crmClass,
-
-        course.crmBoard,
-
-        course.crmMedium
-
-      ];
-
-      return values.some((value) =>
-
-        String(value || "")
-          .toLowerCase()
-          .includes(search)
-
+    const button =
+      event.target.closest(
+        "button[data-action]"
       );
 
-    });
+
+    if (!button) {
+      return;
+    }
 
 
-  document.getElementById(
-    "courseCountLabel"
-  ).textContent =
-    `${filtered.length} ${
-      filtered.length === 1
-        ? "course"
-        : "courses"
-    }`;
+    const id =
+      button.dataset.id;
 
 
-  if (!filtered.length) {
+    const action =
+      button.dataset.action;
 
-    tableBody.innerHTML = `
-      <tr>
-        <td colspan="8" class="empty-state">
-          ${
-            search
-              ? "No courses match your search."
-              : "No courses created yet."
-          }
-        </td>
-      </tr>
-    `;
 
-    return;
+    const course =
+      courses.find(
+        item => item.id === id
+      );
+
+
+    if (!course) {
+      return;
+    }
+
+
+    if (action === "edit") {
+
+      openCourseModal(course);
+
+    }
+
+
+    if (action === "subjects") {
+
+      openSubjectsModal(course);
+
+    }
+
+
+    if (action === "delete") {
+
+      deleteCourse(course);
+
+    }
+
   }
-
-
-  tableBody.innerHTML =
-    filtered.map((course) => {
-
-      const name =
-        escapeHTML(
-          course.crmCourseName || "Untitled Course"
-        );
-
-      const code =
-        escapeHTML(
-          course.crmCourseCode || "—"
-        );
-
-      const className =
-        escapeHTML(
-          course.crmClass || "—"
-        );
-
-      const board =
-        escapeHTML(
-          course.crmBoard || "—"
-        );
-
-      const medium =
-        escapeHTML(
-          course.crmMedium || "—"
-        );
-
-      const price =
-        Number(
-          course.crmFinalPrice ??
-          course.crmPrice ??
-          0
-        );
-
-      const active =
-        course.crmActive !== false;
-
-
-      return `
-        <tr>
-
-          <td>
-            <div class="course-name">
-              ${name}
-            </div>
-
-            ${
-              course.crmDescription
-                ? `
-                  <div class="course-description">
-                    ${escapeHTML(
-                      course.crmDescription
-                    )}
-                  </div>
-                `
-                : ""
-            }
-          </td>
-
-          <td>
-            <span class="code">
-              ${code}
-            </span>
-          </td>
-
-          <td>
-            ${className}
-          </td>
-
-          <td>
-            ${board}
-          </td>
-
-          <td>
-            ${medium}
-          </td>
-
-          <td>
-            <span class="price">
-              ${formatCurrency(price)}
-            </span>
-          </td>
-
-          <td>
-
-            <span class="status ${
-              active
-                ? "active"
-                : "inactive"
-            }">
-
-              ${
-                active
-                  ? "Active"
-                  : "Inactive"
-              }
-
-            </span>
-
-          </td>
-
-          <td>
-
-            <div class="actions">
-
-              <button
-                class="action-btn"
-                data-action="edit"
-                data-id="${course.id}"
-              >
-                Edit
-              </button>
-
-              <button
-                class="action-btn delete"
-                data-action="delete"
-                data-id="${course.id}"
-              >
-                Delete
-              </button>
-
-            </div>
-
-          </td>
-
-        </tr>
-      `;
-
-    }).join("");
-
-}
+);
 
 
 /* =========================================================
-   STATS
+   COURSE MODAL
 ========================================================= */
 
-function updateStats() {
+function openCourseModal(course = null) {
 
-  const total =
-    courses.length;
-
-  const active =
-    courses.filter(
-      course =>
-        course.crmActive !== false
-    ).length;
-
-  const inactive =
-    total - active;
-
-
-  const activePrices =
-    courses
-      .filter(
-        course =>
-          course.crmActive !== false
-      )
-      .map(
-        course =>
-          Number(
-            course.crmFinalPrice ??
-            course.crmPrice ??
-            0
-          )
-      )
-      .filter(
-        price => !isNaN(price)
-      );
-
-
-  const average =
-    activePrices.length
-      ? activePrices.reduce(
-          (sum, price) =>
-            sum + price,
-          0
-        ) / activePrices.length
-      : 0;
+  editingCourseId =
+    course ? course.id : null;
 
 
   document.getElementById(
-    "totalCourses"
-  ).textContent = total;
-
-
-  document.getElementById(
-    "activeCourses"
-  ).textContent = active;
-
-
-  document.getElementById(
-    "inactiveCourses"
-  ).textContent = inactive;
-
-
-  document.getElementById(
-    "averagePrice"
+    "courseModalTitle"
   ).textContent =
-    formatCurrency(
-      Math.round(average)
-    );
-
-}
-
-
-/* =========================================================
-   OPEN ADD MODAL
-========================================================= */
-
-function openAddModal() {
-
-  editingId = null;
-
-  modalTitle.textContent =
-    "Add Course";
-
-  saveCourseBtn.textContent =
-    "Save Course";
-
-  courseForm.reset();
-
-  document.getElementById(
-    "courseDiscount"
-  ).value = "0";
-
-  document.getElementById(
-    "courseActive"
-  ).checked = true;
-
-  updateFinalPrice();
-
-  courseModal.classList.add("show");
-
-  setTimeout(() => {
-
-    document.getElementById(
-      "courseName"
-    ).focus();
-
-  }, 100);
-
-}
-
-
-/* =========================================================
-   OPEN EDIT MODAL
-========================================================= */
-
-function openEditModal(id) {
-
-  const course =
-    courses.find(
-      item => item.id === id
-    );
-
-  if (!course) return;
-
-  editingId = id;
-
-  modalTitle.textContent =
-    "Edit Course";
-
-  saveCourseBtn.textContent =
-    "Update Course";
+    course
+      ? "Edit Course"
+      : "Add Course";
 
 
   document.getElementById(
-    "courseName"
+    "crmCourseName"
   ).value =
-    course.crmCourseName || "";
+    course?.crmCourseName || "";
 
 
   document.getElementById(
-    "courseCode"
+    "crmCourseCode"
   ).value =
-    course.crmCourseCode || "";
+    course?.crmCourseCode || "";
 
 
   document.getElementById(
-    "courseClass"
+    "crmClass"
   ).value =
-    course.crmClass || "";
+    course?.crmClass || "";
 
 
   document.getElementById(
-    "courseBoard"
+    "crmBoard"
   ).value =
-    course.crmBoard || "";
+    course?.crmBoard || "";
 
 
   document.getElementById(
-    "courseMedium"
+    "crmMedium"
   ).value =
-    course.crmMedium || "";
+    course?.crmMedium || "";
 
 
   document.getElementById(
-    "coursePrice"
+    "crmPrice"
   ).value =
-    course.crmPrice ?? "";
+    course?.crmPrice ?? "";
 
 
   document.getElementById(
-    "courseDiscount"
+    "crmDiscount"
   ).value =
-    course.crmDiscount ?? 0;
+    course?.crmDiscount ?? "";
 
 
   document.getElementById(
-    "courseDescription"
+    "crmDescription"
   ).value =
-    course.crmDescription || "";
+    course?.crmDescription || "";
 
 
   document.getElementById(
-    "courseActive"
+    "crmActive"
   ).checked =
-    course.crmActive !== false;
+    course?.crmActive !== false;
 
 
-  updateFinalPrice();
+  hideCourseError();
 
-  courseModal.classList.add("show");
+
+  courseModal.classList.remove(
+    "hidden"
+  );
 
 }
 
 
 /* =========================================================
-   CLOSE MODAL
+   CLOSE COURSE MODAL
 ========================================================= */
 
 function closeCourseModal() {
 
-  courseModal.classList.remove("show");
+  courseModal.classList.add(
+    "hidden"
+  );
 
-  editingId = null;
+  editingCourseId = null;
+
+  courseForm.reset();
 
 }
 
@@ -612,135 +617,120 @@ function closeCourseModal() {
 
 courseForm.addEventListener(
   "submit",
-  async (event) => {
+  async event => {
 
     event.preventDefault();
 
 
-    if (!currentUser) {
-
-      showToast(
-        "Authentication required."
-      );
-
-      return;
-
-    }
+    hideCourseError();
 
 
-    const courseName =
+    const name =
       document.getElementById(
-        "courseName"
+        "crmCourseName"
       ).value.trim();
 
 
-    const courseCodeInput =
+    const code =
       document.getElementById(
-        "courseCode"
-      ).value.trim();
+        "crmCourseCode"
+      ).value.trim()
+        .toUpperCase();
 
 
-    const courseClass =
+    const crmClass =
       document.getElementById(
-        "courseClass"
+        "crmClass"
       ).value;
 
 
     const board =
       document.getElementById(
-        "courseBoard"
+        "crmBoard"
       ).value;
 
 
     const medium =
       document.getElementById(
-        "courseMedium"
+        "crmMedium"
       ).value;
 
 
     const price =
       Number(
         document.getElementById(
-          "coursePrice"
-        ).value
+          "crmPrice"
+        ).value || 0
       );
 
 
     const discount =
       Number(
         document.getElementById(
-          "courseDiscount"
-        ).value
-      ) || 0;
+          "crmDiscount"
+        ).value || 0
+      );
 
 
     const description =
       document.getElementById(
-        "courseDescription"
+        "crmDescription"
       ).value.trim();
 
 
     const active =
       document.getElementById(
-        "courseActive"
+        "crmActive"
       ).checked;
 
 
-    if (!courseName) {
+    if (!name) {
 
-      showToast(
+      showCourseError(
         "Enter the course name."
       );
 
       return;
-
     }
 
 
-    if (!courseClass) {
+    if (!code) {
 
-      showToast(
+      showCourseError(
+        "Enter the course code."
+      );
+
+      return;
+    }
+
+
+    if (!crmClass) {
+
+      showCourseError(
         "Select the class."
       );
 
       return;
-
     }
 
 
-    if (
-      isNaN(price) ||
-      price < 0
-    ) {
+    if (price < 0 || discount < 0) {
 
-      showToast(
-        "Enter a valid course price."
+      showCourseError(
+        "Price and discount cannot be negative."
       );
 
       return;
-
-    }
-
-
-    if (discount < 0) {
-
-      showToast(
-        "Discount cannot be negative."
-      );
-
-      return;
-
     }
 
 
     if (discount > price) {
 
-      showToast(
+      showCourseError(
         "Discount cannot be greater than the course price."
       );
 
       return;
-
     }
 
 
@@ -748,100 +738,32 @@ courseForm.addEventListener(
       price - discount;
 
 
-    /*
-     * Automatically generate course code
-     * when admin leaves it empty.
-     */
-
-    const courseCode =
-      courseCodeInput ||
-      generateCourseCode(
-        courseName
+    const saveButton =
+      document.getElementById(
+        "saveCourseButton"
       );
 
 
-    /*
-     * Duplicate course check.
-     */
+    saveButton.disabled = true;
 
-    const duplicate =
-      courses.find(course => {
-
-        if (
-          editingId &&
-          course.id === editingId
-        ) {
-          return false;
-        }
-
-        const existingName =
-          String(
-            course.crmCourseName || ""
-          )
-          .trim()
-          .toLowerCase();
-
-
-        const existingCode =
-          String(
-            course.crmCourseCode || ""
-          )
-          .trim()
-          .toLowerCase();
-
-
-        return (
-          (
-            existingName ===
-            courseName.toLowerCase()
-          )
-          &&
-          (
-            course.crmClass ===
-            courseClass
-          )
-        )
-        ||
-        (
-          existingCode &&
-          existingCode ===
-          courseCode.toLowerCase()
-        );
-
-      });
-
-
-    if (duplicate) {
-
-      showToast(
-        "A similar course or course code already exists."
-      );
-
-      return;
-
-    }
-
-
-    saveCourseBtn.disabled = true;
-
-    saveCourseBtn.textContent =
-      editingId
-        ? "Updating..."
-        : "Saving...";
+    saveButton.textContent =
+      editingCourseId
+        ? "UPDATING..."
+        : "SAVING...";
 
 
     try {
 
-      const courseData = {
+      const data = {
 
         crmCourseName:
-          courseName,
+          name,
 
         crmCourseCode:
-          courseCode,
+          code,
 
         crmClass:
-          courseClass,
+          crmClass,
 
         crmBoard:
           board,
@@ -862,34 +784,26 @@ courseForm.addEventListener(
           finalPrice,
 
         crmActive:
-          active
+          active,
+
+        crmUpdatedAt:
+          serverTimestamp(),
+
+        crmUpdatedBy:
+          currentUser.uid
 
       };
 
 
-      if (editingId) {
+      if (editingCourseId) {
 
         await updateDoc(
           doc(
             db,
             "crmCourses",
-            editingId
+            editingCourseId
           ),
-
-          {
-            ...courseData,
-
-            crmUpdatedAt:
-              serverTimestamp(),
-
-            crmUpdatedBy:
-              currentUser.uid
-          }
-        );
-
-
-        showToast(
-          "Course updated successfully."
+          data
         );
 
       } else {
@@ -899,27 +813,17 @@ courseForm.addEventListener(
             db,
             "crmCourses"
           ),
-
           {
-            ...courseData,
+
+            ...data,
 
             crmCreatedAt:
               serverTimestamp(),
 
             crmCreatedBy:
-              currentUser.uid,
-
-            crmUpdatedAt:
-              serverTimestamp(),
-
-            crmUpdatedBy:
               currentUser.uid
+
           }
-        );
-
-
-        showToast(
-          "Course created successfully."
         );
 
       }
@@ -927,23 +831,26 @@ courseForm.addEventListener(
 
       closeCourseModal();
 
+
     } catch (error) {
 
       console.error(
-        "Save course error:",
+        "Save course failed:",
         error
       );
 
-      showToast(
-        "Could not save the course."
+
+      showCourseError(
+        getFirebaseErrorMessage(
+          error
+        )
       );
 
     } finally {
 
-      saveCourseBtn.disabled =
-        false;
+      saveButton.disabled = false;
 
-      saveCourseBtn.textContent =
+      saveButton.textContent =
         "Save Course";
 
     }
@@ -953,91 +860,20 @@ courseForm.addEventListener(
 
 
 /* =========================================================
-   PRICE CALCULATION
+   DELETE COURSE
 ========================================================= */
 
-function updateFinalPrice() {
+async function deleteCourse(course) {
 
-  const price =
-    Number(
-      document.getElementById(
-        "coursePrice"
-      ).value
-    ) || 0;
-
-
-  const discount =
-    Number(
-      document.getElementById(
-        "courseDiscount"
-      ).value
-    ) || 0;
-
-
-  const finalPrice =
-    Math.max(
-      0,
-      price - discount
+  const confirmed =
+    confirm(
+      `Delete "${course.crmCourseName}"?\n\nThe course will be permanently deleted.`
     );
 
 
-  finalPricePreview.textContent =
-    formatNumber(finalPrice);
-
-}
-
-
-/* =========================================================
-   DELETE
-========================================================= */
-
-function openDeleteModal(id) {
-
-  deleteId = id;
-
-  deleteModal.classList.add("show");
-
-}
-
-
-function closeDeleteModal() {
-
-  deleteModal.classList.remove("show");
-
-  deleteId = null;
-
-}
-
-
-async function confirmDelete() {
-
-  if (!deleteId) return;
-
-  if (!currentUser) {
-
-    showToast(
-      "Authentication required."
-    );
-
+  if (!confirmed) {
     return;
-
   }
-
-
-  const id =
-    deleteId;
-
-
-  const confirmButton =
-    document.getElementById(
-      "confirmDeleteBtn"
-    );
-
-
-  confirmButton.disabled = true;
-
-  confirmButton.textContent =
-    "Deleting...";
 
 
   try {
@@ -1046,36 +882,24 @@ async function confirmDelete() {
       doc(
         db,
         "crmCourses",
-        id
+        course.id
       )
     );
 
 
-    showToast(
-      "Course deleted."
-    );
-
-
-    closeDeleteModal();
-
   } catch (error) {
 
     console.error(
-      "Delete error:",
+      "Delete course failed:",
       error
     );
 
-    showToast(
-      "Could not delete the course."
+
+    alert(
+      getFirebaseErrorMessage(
+        error
+      )
     );
-
-  } finally {
-
-    confirmButton.disabled =
-      false;
-
-    confirmButton.textContent =
-      "Delete";
 
   }
 
@@ -1083,16 +907,729 @@ async function confirmDelete() {
 
 
 /* =========================================================
-   EVENT LISTENERS
+   SUBJECTS MODAL
+========================================================= */
+
+function openSubjectsModal(course) {
+
+  currentCourse =
+    course;
+
+
+  document.getElementById(
+    "subjectModalTitle"
+  ).textContent =
+    "Subjects";
+
+
+  document.getElementById(
+    "subjectCourseName"
+  ).textContent =
+    course.crmCourseName || "";
+
+
+  subjectModal.classList.remove(
+    "hidden"
+  );
+
+
+  startSubjectListener();
+
+}
+
+
+/* =========================================================
+   SUBJECT REALTIME LISTENER
+========================================================= */
+
+function startSubjectListener() {
+
+  if (unsubscribeSubjects) {
+
+    unsubscribeSubjects();
+
+    unsubscribeSubjects = null;
+
+  }
+
+
+  if (!currentCourse) {
+    return;
+  }
+
+
+  const subjectQuery =
+    query(
+      collection(
+        db,
+        "crmCourseSubjects"
+      ),
+      orderBy(
+        "priority",
+        "asc"
+      )
+    );
+
+
+  unsubscribeSubjects =
+    onSnapshot(
+      subjectQuery,
+      snapshot => {
+
+        const subjects =
+          snapshot.docs
+
+            .map(
+              item => ({
+                id: item.id,
+                ...item.data()
+              })
+            )
+
+            .filter(
+              item =>
+                item.crmCourseId ===
+                currentCourse.id
+            );
+
+
+        renderSubjects(
+          subjects
+        );
+
+      },
+      error => {
+
+        console.error(
+          "Subject listener failed:",
+          error
+        );
+
+      }
+    );
+
+}
+
+
+/* =========================================================
+   RENDER SUBJECTS
+========================================================= */
+
+function renderSubjects(subjects) {
+
+  subjectList.innerHTML = "";
+
+
+  document.getElementById(
+    "subjectCount"
+  ).textContent =
+    subjects.length;
+
+
+  emptySubjects.classList.toggle(
+    "hidden",
+    subjects.length !== 0
+  );
+
+
+  subjects.forEach(
+    (subject, index) => {
+
+      const item =
+        document.createElement(
+          "div"
+        );
+
+
+      item.className =
+        "subject-item";
+
+
+      item.innerHTML = `
+
+        <div class="subject-number">
+          ${index + 1}
+        </div>
+
+
+        <div class="subject-info">
+
+          <strong>
+            ${escapeHtml(
+              subject.name || "-"
+            )}
+          </strong>
+
+
+          <div class="subject-meta">
+
+            ${
+              subject.code
+                ? `
+                  <span class="subject-code">
+                    ${escapeHtml(
+                      subject.code
+                    )}
+                  </span>
+                `
+                : ""
+            }
+
+
+            <span>
+              Priority:
+              ${Number(
+                subject.priority || 1
+              )}
+            </span>
+
+
+            <span class="
+              subject-status
+              ${
+                subject.active === false
+                  ? "inactive"
+                  : "active"
+              }
+            ">
+
+              ${
+                subject.active === false
+                  ? "INACTIVE"
+                  : "ACTIVE"
+              }
+
+            </span>
+
+          </div>
+
+        </div>
+
+
+        <div class="subject-actions">
+
+          <button
+            class="action-button"
+            data-subject-action="edit"
+            data-id="${subject.id}">
+            Edit
+          </button>
+
+
+          <button
+            class="action-button"
+            data-subject-action="delete"
+            data-id="${subject.id}">
+            Delete
+          </button>
+
+        </div>
+
+      `;
+
+
+      subjectList.appendChild(
+        item
+      );
+
+    }
+  );
+
+}
+
+
+/* =========================================================
+   SUBJECT EVENTS
 ========================================================= */
 
 document
-  .getElementById("addCourseBtn")
+  .getElementById("addSubjectButton")
   .addEventListener(
     "click",
-    openAddModal
+    () => openSubjectForm()
   );
 
+
+document
+  .getElementById("emptyAddSubject")
+  .addEventListener(
+    "click",
+    () => openSubjectForm()
+  );
+
+
+subjectList.addEventListener(
+  "click",
+  event => {
+
+    const button =
+      event.target.closest(
+        "button[data-subject-action]"
+      );
+
+
+    if (!button) {
+      return;
+    }
+
+
+    const id =
+      button.dataset.id;
+
+
+    const action =
+      button.dataset.subjectAction;
+
+
+    if (action === "edit") {
+
+      editSubject(id);
+
+    }
+
+
+    if (action === "delete") {
+
+      deleteSubject(id);
+
+    }
+
+  }
+);
+
+
+/* =========================================================
+   OPEN SUBJECT FORM
+========================================================= */
+
+function openSubjectForm(
+  subject = null
+) {
+
+  editingSubjectId =
+    subject
+      ? subject.id
+      : null;
+
+
+  document.getElementById(
+    "subjectFormTitle"
+  ).textContent =
+    subject
+      ? "Edit Subject"
+      : "Add Subject";
+
+
+  document.getElementById(
+    "subjectName"
+  ).value =
+    subject?.name || "";
+
+
+  document.getElementById(
+    "subjectCode"
+  ).value =
+    subject?.code || "";
+
+
+  document.getElementById(
+    "subjectPriority"
+  ).value =
+    subject?.priority ?? 1;
+
+
+  document.getElementById(
+    "subjectDescription"
+  ).value =
+    subject?.description || "";
+
+
+  document.getElementById(
+    "subjectActive"
+  ).checked =
+    subject?.active !== false;
+
+
+  hideSubjectError();
+
+
+  subjectFormModal.classList.remove(
+    "hidden"
+  );
+
+}
+
+
+/* =========================================================
+   EDIT SUBJECT
+========================================================= */
+
+async function editSubject(id) {
+
+  if (!currentCourse) {
+    return;
+  }
+
+
+  try {
+
+    /*
+     * We use the realtime list currently
+     * displayed in the modal.
+     */
+
+    const snapshot =
+      await new Promise(
+        resolve => {
+
+          const unsubscribe =
+            onSnapshot(
+              collection(
+                db,
+                "crmCourseSubjects"
+              ),
+              snap => {
+
+                unsubscribe();
+
+                resolve(snap);
+
+              }
+            );
+
+        }
+      );
+
+
+    const subjectDoc =
+      snapshot.docs.find(
+        item =>
+          item.id === id &&
+          item.data().crmCourseId ===
+            currentCourse.id
+      );
+
+
+    if (!subjectDoc) {
+
+      alert(
+        "Subject could not be found."
+      );
+
+      return;
+    }
+
+
+    openSubjectForm({
+      id: subjectDoc.id,
+      ...subjectDoc.data()
+    });
+
+
+  } catch (error) {
+
+    console.error(
+      "Load subject failed:",
+      error
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   SAVE SUBJECT
+========================================================= */
+
+subjectForm.addEventListener(
+  "submit",
+  async event => {
+
+    event.preventDefault();
+
+
+    hideSubjectError();
+
+
+    if (!currentCourse) {
+
+      showSubjectError(
+        "Course not selected."
+      );
+
+      return;
+    }
+
+
+    const name =
+      document.getElementById(
+        "subjectName"
+      ).value.trim();
+
+
+    const code =
+      document.getElementById(
+        "subjectCode"
+      ).value.trim()
+        .toUpperCase();
+
+
+    const priority =
+      Number(
+        document.getElementById(
+          "subjectPriority"
+        ).value || 1
+      );
+
+
+    const description =
+      document.getElementById(
+        "subjectDescription"
+      ).value.trim();
+
+
+    const active =
+      document.getElementById(
+        "subjectActive"
+      ).checked;
+
+
+    if (!name) {
+
+      showSubjectError(
+        "Enter the subject name."
+      );
+
+      return;
+    }
+
+
+    if (
+      !Number.isFinite(priority) ||
+      priority < 1
+    ) {
+
+      showSubjectError(
+        "Priority must be 1 or greater."
+      );
+
+      return;
+    }
+
+
+    const saveButton =
+      document.getElementById(
+        "saveSubjectButton"
+      );
+
+
+    saveButton.disabled = true;
+
+    saveButton.textContent =
+      editingSubjectId
+        ? "UPDATING..."
+        : "SAVING...";
+
+
+    try {
+
+      const data = {
+
+        crmCourseId:
+          currentCourse.id,
+
+        crmCourseName:
+          currentCourse.crmCourseName || "",
+
+        name:
+          name,
+
+        code:
+          code,
+
+        description:
+          description,
+
+        priority:
+          priority,
+
+        active:
+          active,
+
+        updatedAt:
+          serverTimestamp(),
+
+        updatedBy:
+          currentUser.uid
+
+      };
+
+
+      if (editingSubjectId) {
+
+        await updateDoc(
+          doc(
+            db,
+            "crmCourseSubjects",
+            editingSubjectId
+          ),
+          data
+        );
+
+      } else {
+
+        await addDoc(
+          collection(
+            db,
+            "crmCourseSubjects"
+          ),
+          {
+
+            ...data,
+
+            createdAt:
+              serverTimestamp(),
+
+            createdBy:
+              currentUser.uid
+
+          }
+        );
+
+      }
+
+
+      closeSubjectForm();
+
+
+    } catch (error) {
+
+      console.error(
+        "Save subject failed:",
+        error
+      );
+
+
+      showSubjectError(
+        getFirebaseErrorMessage(
+          error
+        )
+      );
+
+    } finally {
+
+      saveButton.disabled = false;
+
+      saveButton.textContent =
+        "Save Subject";
+
+    }
+
+  }
+);
+
+
+/* =========================================================
+   DELETE SUBJECT
+========================================================= */
+
+async function deleteSubject(id) {
+
+  const confirmed =
+    confirm(
+      "Delete this subject?\n\nThis cannot be undone."
+    );
+
+
+  if (!confirmed) {
+    return;
+  }
+
+
+  try {
+
+    await deleteDoc(
+      doc(
+        db,
+        "crmCourseSubjects",
+        id
+      )
+    );
+
+
+  } catch (error) {
+
+    console.error(
+      "Delete subject failed:",
+      error
+    );
+
+
+    alert(
+      getFirebaseErrorMessage(
+        error
+      )
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   CLOSE SUBJECT FORM
+========================================================= */
+
+function closeSubjectForm() {
+
+  subjectFormModal.classList.add(
+    "hidden"
+  );
+
+  editingSubjectId = null;
+
+  subjectForm.reset();
+
+  document.getElementById(
+    "subjectPriority"
+  ).value = 1;
+
+  document.getElementById(
+    "subjectActive"
+  ).checked = true;
+
+}
+
+
+/* =========================================================
+   CLOSE SUBJECTS MODAL
+========================================================= */
+
+function closeSubjectsModal() {
+
+  if (unsubscribeSubjects) {
+
+    unsubscribeSubjects();
+
+    unsubscribeSubjects = null;
+
+  }
+
+
+  subjectModal.classList.add(
+    "hidden"
+  );
+
+
+  currentCourse = null;
+
+}
+
+
+/* =========================================================
+   BUTTONS
+========================================================= */
 
 document
   .getElementById("closeCourseModal")
@@ -1103,7 +1640,7 @@ document
 
 
 document
-  .getElementById("cancelCourseBtn")
+  .getElementById("cancelCourseButton")
   .addEventListener(
     "click",
     closeCourseModal
@@ -1111,104 +1648,39 @@ document
 
 
 document
-  .getElementById("cancelDeleteBtn")
+  .getElementById("closeSubjectModal")
   .addEventListener(
     "click",
-    closeDeleteModal
+    closeSubjectsModal
   );
 
 
 document
-  .getElementById("confirmDeleteBtn")
+  .getElementById("closeSubjectForm")
   .addEventListener(
     "click",
-    confirmDelete
+    closeSubjectForm
   );
 
 
 document
-  .getElementById("coursePrice")
-  .addEventListener(
-    "input",
-    updateFinalPrice
-  );
-
-
-document
-  .getElementById("courseDiscount")
-  .addEventListener(
-    "input",
-    updateFinalPrice
-  );
-
-
-searchInput.addEventListener(
-  "input",
-  renderCourses
-);
-
-
-/* TABLE ACTIONS */
-
-tableBody.addEventListener(
-  "click",
-  (event) => {
-
-    const button =
-      event.target.closest(
-        "[data-action]"
-      );
-
-    if (!button) return;
-
-
-    const id =
-      button.dataset.id;
-
-    const action =
-      button.dataset.action;
-
-
-    if (action === "edit") {
-
-      openEditModal(id);
-
-    }
-
-
-    if (action === "delete") {
-
-      openDeleteModal(id);
-
-    }
-
-  }
-);
-
-
-/* BACK TO CRM */
-
-document
-  .getElementById("backToCRM")
+  .getElementById("cancelSubjectForm")
   .addEventListener(
     "click",
-    () => {
-
-      window.location.href = "../";
-
-    }
+    closeSubjectForm
   );
 
 
-/* CLOSE WHEN CLICKING OUTSIDE */
+/* =========================================================
+   OUTSIDE CLICK
+========================================================= */
 
 courseModal.addEventListener(
   "click",
-  (event) => {
+  event => {
 
     if (
-      event.target ===
-      courseModal
+      event.target === courseModal
     ) {
 
       closeCourseModal();
@@ -1219,16 +1691,15 @@ courseModal.addEventListener(
 );
 
 
-deleteModal.addEventListener(
+subjectModal.addEventListener(
   "click",
-  (event) => {
+  event => {
 
     if (
-      event.target ===
-      deleteModal
+      event.target === subjectModal
     ) {
 
-      closeDeleteModal();
+      closeSubjectsModal();
 
     }
 
@@ -1236,19 +1707,70 @@ deleteModal.addEventListener(
 );
 
 
-/* ESC KEY */
+subjectFormModal.addEventListener(
+  "click",
+  event => {
+
+    if (
+      event.target === subjectFormModal
+    ) {
+
+      closeSubjectForm();
+
+    }
+
+  }
+);
+
+
+/* =========================================================
+   ESC
+========================================================= */
 
 document.addEventListener(
   "keydown",
-  (event) => {
+  event => {
 
     if (
-      event.key === "Escape"
+      event.key !== "Escape"
+    ) {
+      return;
+    }
+
+
+    if (
+      !subjectFormModal.classList.contains(
+        "hidden"
+      )
+    ) {
+
+      closeSubjectForm();
+
+      return;
+
+    }
+
+
+    if (
+      !subjectModal.classList.contains(
+        "hidden"
+      )
+    ) {
+
+      closeSubjectsModal();
+
+      return;
+
+    }
+
+
+    if (
+      !courseModal.classList.contains(
+        "hidden"
+      )
     ) {
 
       closeCourseModal();
-
-      closeDeleteModal();
 
     }
 
@@ -1257,146 +1779,124 @@ document.addEventListener(
 
 
 /* =========================================================
-   HELPERS
+   ERRORS
 ========================================================= */
 
-function generateCourseCode(name) {
+function showCourseError(
+  message
+) {
 
-  const cleaned =
-    name
-      .toUpperCase()
-      .replace(
-        /[^A-Z0-9]+/g,
-        "-"
-      )
-      .replace(
-        /^-+|-+$/g,
-        ""
-      );
-
-
-  const base =
-    cleaned.substring(
-      0,
-      12
-    );
-
-
-  return (
-    base ||
-    "COURSE"
-  );
-
-}
-
-
-function formatNumber(number) {
-
-  return Number(
-    number || 0
-  ).toLocaleString(
-    "en-IN"
-  );
-
-}
-
-
-function formatCurrency(number) {
-
-  return (
-    "₹" +
-    formatNumber(number)
-  );
-
-}
-
-
-function escapeHTML(value) {
-
-  return String(value ?? "")
-    .replace(
-      /&/g,
-      "&amp;"
-    )
-    .replace(
-      /</g,
-      "&lt;"
-    )
-    .replace(
-      />/g,
-      "&gt;"
-    )
-    .replace(
-      /"/g,
-      "&quot;"
-    )
-    .replace(
-      /'/g,
-      "&#039;"
-    );
-
-}
-
-
-/* =========================================================
-   LOADER
-========================================================= */
-
-function hideLoader() {
-
-  loader.style.opacity = "0";
-
-  setTimeout(() => {
-
-    loader.style.display =
-      "none";
-
-  }, 250);
-
-}
-
-
-/* =========================================================
-   TOAST
-========================================================= */
-
-let toastTimer = null;
-
-
-function showToast(message) {
-
-  const toast =
+  const element =
     document.getElementById(
-      "toast"
-    );
-
-  const toastMessage =
-    document.getElementById(
-      "toastMessage"
+      "courseFormError"
     );
 
 
-  toastMessage.textContent =
+  element.textContent =
     message;
 
 
-  toast.classList.add(
-    "show"
+  element.classList.remove(
+    "hidden"
   );
 
+}
 
-  clearTimeout(
-    toastTimer
+
+function hideCourseError() {
+
+  const element =
+    document.getElementById(
+      "courseFormError"
+    );
+
+
+  element.textContent = "";
+
+  element.classList.add(
+    "hidden"
   );
 
+}
 
-  toastTimer =
-    setTimeout(() => {
 
-      toast.classList.remove(
-        "show"
-      );
+function showSubjectError(
+  message
+) {
 
-    }, 3000);
+  const element =
+    document.getElementById(
+      "subjectFormError"
+    );
 
-          }
+
+  element.textContent =
+    message;
+
+
+  element.classList.remove(
+    "hidden"
+  );
+
+}
+
+
+function hideSubjectError() {
+
+  const element =
+    document.getElementById(
+      "subjectFormError"
+    );
+
+
+  element.textContent = "";
+
+  element.classList.add(
+    "hidden"
+  );
+
+}
+
+
+/* =========================================================
+   FIREBASE ERROR
+========================================================= */
+
+function getFirebaseErrorMessage(
+  error
+) {
+
+  if (
+    error?.code ===
+    "permission-denied"
+  ) {
+
+    return "You do not have permission to perform this action.";
+
+  }
+
+
+  return (
+    error?.message ||
+    "Something went wrong."
+  );
+
+}
+
+
+/* =========================================================
+   HTML ESCAPE
+========================================================= */
+
+function escapeHtml(
+  value
+) {
+
+  return String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+
+}
