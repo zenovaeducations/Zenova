@@ -2,7 +2,6 @@
 <html lang="en">
 
 <head>
-
     <meta charset="UTF-8">
 
     <meta
@@ -10,7 +9,7 @@
         content="width=device-width, initial-scale=1.0, viewport-fit=cover"
     >
 
-    <title>Zenova — Home</title>
+    <title>Zenova Educations</title>
 
     <link
         rel="preconnect"
@@ -31,7 +30,6 @@
         rel="stylesheet"
         href="./home.css"
     >
-
 </head>
 
 
@@ -39,7 +37,7 @@
 
 
 <!-- =========================================================
-     LOADING
+     LOADING SCREEN
 ========================================================= -->
 
 <div
@@ -48,16 +46,15 @@
 >
 
     <div class="loader-ring">
-
         <span>Z</span>
-
     </div>
 
 </div>
 
 
+
 <!-- =========================================================
-     APP
+     MAIN APP
 ========================================================= -->
 
 <div
@@ -67,33 +64,41 @@
 
 
     <!-- =====================================================
-         HEADER
+         FIXED TOP HEADER
     ====================================================== -->
 
     <header class="top-header">
 
         <div class="brand">
 
-            <div class="brand-mark">
+            <div class="brand-logo">
                 Z
             </div>
 
-            <div class="brand-text">
-                <strong>ZENOVA</strong>
-                <span>EDUCATIONS</span>
+            <div class="brand-name">
+
+                <strong>
+                    ZENOVA
+                </strong>
+
+                <span>
+                    EDUCATIONS
+                </span>
+
             </div>
 
         </div>
 
 
-        <div class="header-actions">
+        <div class="header-right">
 
             <button
+                id="notificationBtn"
+                class="header-icon"
                 type="button"
-                id="notificationButton"
-                class="icon-button"
                 aria-label="Notifications"
             >
+
                 <i class="ri-notification-3-line"></i>
 
                 <span
@@ -105,13 +110,16 @@
 
 
             <button
+                id="profileBtn"
+                class="profile-avatar"
                 type="button"
-                id="profileShortcut"
-                class="profile-button"
+                aria-label="Profile"
             >
+
                 <span id="profileInitial">
                     S
                 </span>
+
             </button>
 
         </div>
@@ -120,25 +128,30 @@
 
 
 
-    <main class="main-content">
+    <!-- =====================================================
+         CONTENT
+    ====================================================== -->
+
+    <main class="home-content">
 
 
         <!-- =================================================
-             GREETING
+             WELCOME
         ================================================== -->
 
         <section class="welcome-section">
 
-            <div>
+            <div class="welcome-text">
 
-                <p class="welcome-small">
-                    <span id="greeting">
-                        Good morning
-                    </span>
+                <p
+                    id="greetingText"
+                    class="greeting"
+                >
+                    Good morning
                 </p>
 
                 <h1>
-                    Hello,
+                    Welcome,
                     <span id="studentName">
                         Student
                     </span>
@@ -148,36 +161,60 @@
                 </h1>
 
                 <p
-                    id="studentAcademic"
-                    class="academic-line"
+                    id="academicInfo"
+                    class="academic-info"
                 >
-                    Loading...
+                    Let's make today productive.
                 </p>
 
             </div>
 
+
+            <div class="motivation-card">
+
+                <div class="motivation-icon">
+                    <i class="ri-focus-3-line"></i>
+                </div>
+
+                <div>
+
+                    <span>
+                        TODAY'S FOCUS
+                    </span>
+
+                    <strong id="motivationText">
+                        Small steps,
+                        big results.
+                    </strong>
+
+                </div>
+
+                <i class="ri-arrow-right-line"></i>
+
+            </div>
+
         </section>
 
 
 
         <!-- =================================================
-             HERO
+             TOP MOVING BANNER
         ================================================== -->
 
         <section
-            id="heroSection"
-            class="hero-section hidden"
+            id="bannerSection"
+            class="banner-section hidden"
         >
 
             <div
-                id="heroSlider"
-                class="hero-slider"
+                id="bannerSlider"
+                class="banner-slider"
             ></div>
 
 
             <div
-                id="heroDots"
-                class="hero-dots"
+                id="bannerDots"
+                class="banner-dots"
             ></div>
 
         </section>
@@ -185,110 +222,121 @@
 
 
         <!-- =================================================
-             QUICK ACTIONS
+             FOUR MAIN CARDS
         ================================================== -->
 
         <section class="quick-section">
 
-            <div class="section-heading">
-
-                <div>
-
-                    <span>
-                        QUICK ACCESS
-                    </span>
-
-                    <h2>
-                        What do you want to do?
-                    </h2>
-
-                </div>
-
-            </div>
-
-
             <div class="quick-grid">
 
+
                 <button
-                    type="button"
                     class="quick-card"
-                    data-route="learn"
+                    data-route="../courses/"
+                    type="button"
                 >
 
-                    <div class="quick-icon">
+                    <div class="quick-card-icon">
                         <i class="ri-book-open-line"></i>
                     </div>
 
-                    <strong>
-                        Learn
-                    </strong>
+                    <div class="quick-card-text">
 
-                    <span>
-                        Courses & lessons
-                    </span>
+                        <strong>
+                            Study Now
+                        </strong>
 
-                </button>
+                        <span>
+                            Learn & explore
+                        </span>
 
-
-                <button
-                    type="button"
-                    class="quick-card"
-                    data-route="live"
-                >
-
-                    <div class="quick-icon">
-                        <i class="ri-live-line"></i>
                     </div>
 
-                    <strong>
-                        Live
-                    </strong>
-
-                    <span>
-                        Live classes
-                    </span>
+                    <i class="ri-arrow-right-line quick-arrow"></i>
 
                 </button>
 
 
+
                 <button
-                    type="button"
                     class="quick-card"
-                    data-route="tests"
+                    data-route="../batches/"
+                    type="button"
                 >
 
-                    <div class="quick-icon">
+                    <div class="quick-card-icon">
+                        <i class="ri-graduation-cap-line"></i>
+                    </div>
+
+                    <div class="quick-card-text">
+
+                        <strong>
+                            Batches
+                        </strong>
+
+                        <span>
+                            Find your batch
+                        </span>
+
+                    </div>
+
+                    <i class="ri-arrow-right-line quick-arrow"></i>
+
+                </button>
+
+
+
+                <button
+                    class="quick-card"
+                    data-route="../tests/"
+                    type="button"
+                >
+
+                    <div class="quick-card-icon">
                         <i class="ri-file-list-3-line"></i>
                     </div>
 
-                    <strong>
-                        Tests
-                    </strong>
+                    <div class="quick-card-text">
 
-                    <span>
-                        Practice & exams
-                    </span>
+                        <strong>
+                            Tests
+                        </strong>
 
-                </button>
+                        <span>
+                            Practice & improve
+                        </span>
 
-
-                <button
-                    type="button"
-                    class="quick-card"
-                    data-route="chat"
-                >
-
-                    <div class="quick-icon">
-                        <i class="ri-chat-3-line"></i>
                     </div>
 
-                    <strong>
-                        Chat
-                    </strong>
+                    <i class="ri-arrow-right-line quick-arrow"></i>
 
-                    <span>
-                        Your batch
-                    </span>
+                </button>
+
+
+
+                <button
+                    class="quick-card"
+                    data-route="../live/"
+                    type="button"
+                >
+
+                    <div class="quick-card-icon">
+                        <i class="ri-live-line"></i>
+                    </div>
+
+                    <div class="quick-card-text">
+
+                        <strong>
+                            Live Classes
+                        </strong>
+
+                        <span>
+                            Learn live
+                        </span>
+
+                    </div>
+
+                    <i class="ri-arrow-right-line quick-arrow"></i>
 
                 </button>
 
@@ -299,32 +347,81 @@
 
 
         <!-- =================================================
-             CONTINUE LEARNING
+             STUDY WITH ZENOVA AI
         ================================================== -->
 
-        <section
-            id="learningSection"
-            class="section hidden"
-        >
+        <section class="ai-section">
 
-            <div class="section-heading">
+            <div class="ai-left">
+
+                <div class="ai-symbol">
+                    ✦
+                </div>
 
                 <div>
 
-                    <span>
-                        YOUR LEARNING
+                    <span class="section-label">
+                        ZENOVA AI
                     </span>
 
                     <h2>
-                        Continue Learning
+                        Study with Zenova AI
+                    </h2>
+
+                    <p>
+                        Ask doubts, understand concepts
+                        and learn smarter.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <button
+                id="aiBtn"
+                class="ai-button"
+                type="button"
+            >
+
+                Ask AI
+
+                <i class="ri-arrow-right-line"></i>
+
+            </button>
+
+        </section>
+
+
+
+        <!-- =================================================
+             RECOMMENDED BATCHES
+        ================================================== -->
+
+        <section
+            id="recommendedSection"
+            class="content-section"
+        >
+
+            <div class="section-header">
+
+                <div>
+
+                    <span class="section-label">
+                        MADE FOR YOU
+                    </span>
+
+                    <h2>
+                        Recommended Batches
                     </h2>
 
                 </div>
 
+
                 <button
                     type="button"
-                    data-route="learn"
-                    class="section-link"
+                    class="view-all"
+                    data-route="../batches/"
                 >
                     View all
                 </button>
@@ -333,8 +430,8 @@
 
 
             <div
-                id="learningCard"
-                class="learning-card"
+                id="recommendedList"
+                class="horizontal-scroll"
             ></div>
 
         </section>
@@ -342,32 +439,33 @@
 
 
         <!-- =================================================
-             LIVE CLASSES
+             FREE LEARNING
         ================================================== -->
 
         <section
-            id="liveSection"
-            class="section hidden"
+            id="freeLearningSection"
+            class="content-section"
         >
 
-            <div class="section-heading">
+            <div class="section-header">
 
                 <div>
 
-                    <span>
-                        LIVE
+                    <span class="section-label">
+                        START LEARNING
                     </span>
 
                     <h2>
-                        Upcoming Classes
+                        Free Learning
                     </h2>
 
                 </div>
 
+
                 <button
                     type="button"
-                    data-route="live"
-                    class="section-link"
+                    class="view-all"
+                    data-route="../library/"
                 >
                     View all
                 </button>
@@ -376,51 +474,8 @@
 
 
             <div
-                id="liveList"
-                class="schedule-list"
-            ></div>
-
-        </section>
-
-
-
-        <!-- =================================================
-             TESTS
-        ================================================== -->
-
-        <section
-            id="testsSection"
-            class="section hidden"
-        >
-
-            <div class="section-heading">
-
-                <div>
-
-                    <span>
-                        ASSESSMENTS
-                    </span>
-
-                    <h2>
-                        Upcoming Tests
-                    </h2>
-
-                </div>
-
-                <button
-                    type="button"
-                    data-route="tests"
-                    class="section-link"
-                >
-                    View all
-                </button>
-
-            </div>
-
-
-            <div
-                id="testsList"
-                class="schedule-list"
+                id="freeLearningList"
+                class="horizontal-scroll"
             ></div>
 
         </section>
@@ -433,14 +488,14 @@
 
         <section
             id="announcementSection"
-            class="section hidden"
+            class="content-section"
         >
 
-            <div class="section-heading">
+            <div class="section-header">
 
                 <div>
 
-                    <span>
+                    <span class="section-label">
                         ZENOVA
                     </span>
 
@@ -450,10 +505,11 @@
 
                 </div>
 
+
                 <button
                     type="button"
-                    data-route="announcements"
-                    class="section-link"
+                    class="view-all"
+                    data-route="../announcements/"
                 >
                     View all
                 </button>
@@ -471,158 +527,99 @@
 
 
         <!-- =================================================
-             MY LEARNING
+             WHY ZENOVA
         ================================================== -->
 
-        <section
-            id="myLearningSection"
-            class="section hidden"
-        >
+        <section class="why-section">
 
-            <div class="section-heading">
+            <div class="why-heading">
 
-                <div>
-
-                    <span>
-                        ENROLLED
-                    </span>
-
-                    <h2>
-                        My Learning
-                    </h2>
-
-                </div>
-
-            </div>
-
-
-            <div
-                id="myLearningList"
-                class="my-learning-list"
-            ></div>
-
-        </section>
-
-
-
-        <!-- =================================================
-             PROGRESS
-        ================================================== -->
-
-        <section
-            id="progressSection"
-            class="section hidden"
-        >
-
-            <div class="section-heading">
-
-                <div>
-
-                    <span>
-                        YOUR JOURNEY
-                    </span>
-
-                    <h2>
-                        Learning Progress
-                    </h2>
-
-                </div>
-
-                <button
-                    type="button"
-                    data-route="performance"
-                    class="section-link"
-                >
-                    Details
-                </button>
-
-            </div>
-
-
-            <div
-                id="progressCard"
-                class="progress-card"
-            ></div>
-
-        </section>
-
-
-
-        <!-- =================================================
-             FREE LEARNING
-        ================================================== -->
-
-        <section
-            id="freeSection"
-            class="section hidden"
-        >
-
-            <div class="section-heading">
-
-                <div>
-
-                    <span>
-                        FREE
-                    </span>
-
-                    <h2>
-                        Free Learning
-                    </h2>
-
-                </div>
-
-                <button
-                    type="button"
-                    data-route="free"
-                    class="section-link"
-                >
-                    View all
-                </button>
-
-            </div>
-
-
-            <div
-                id="freeList"
-                class="free-list"
-            ></div>
-
-        </section>
-
-
-
-        <!-- =================================================
-             AI
-        ================================================== -->
-
-        <section class="ai-section">
-
-            <div class="ai-content">
-
-                <span class="ai-label">
-                    ZENOVA AI
+                <span class="section-label">
+                    WHY ZENOVA
                 </span>
 
                 <h2>
-                    Stuck on something?
+                    Everything you need
+                    to learn better.
                 </h2>
-
-                <p>
-                    Ask Zenova AI and get help
-                    with your learning.
-                </p>
 
             </div>
 
 
-            <button
-                type="button"
-                id="aiButton"
-                class="ai-button"
-            >
-                Ask AI
-                <i class="ri-arrow-right-line"></i>
-            </button>
+            <div class="why-grid">
+
+                <div class="why-item">
+
+                    <div class="why-icon">
+                        <i class="ri-user-star-line"></i>
+                    </div>
+
+                    <strong>
+                        Expert Teaching
+                    </strong>
+
+                    <span>
+                        Learn with clear,
+                        structured guidance.
+                    </span>
+
+                </div>
+
+
+                <div class="why-item">
+
+                    <div class="why-icon">
+                        <i class="ri-route-line"></i>
+                    </div>
+
+                    <strong>
+                        Structured Learning
+                    </strong>
+
+                    <span>
+                        Follow a clear path
+                        from basics to mastery.
+                    </span>
+
+                </div>
+
+
+                <div class="why-item">
+
+                    <div class="why-icon">
+                        <i class="ri-bar-chart-box-line"></i>
+                    </div>
+
+                    <strong>
+                        Practice & Tests
+                    </strong>
+
+                    <span>
+                        Practice regularly
+                        and track improvement.
+                    </span>
+
+                </div>
+
+
+                <div class="why-item">
+
+                    <div class="why-icon">
+                        <i class="ri-sparkling-2-line"></i>
+                    </div>
+
+                    <strong>
+                        AI Support
+                    </strong>
+
+                    <span>
+                        Get help whenever
+                        you need it.
+                    </span>
+
+                </div>
+
+            </div>
 
         </section>
 
@@ -632,59 +629,87 @@
 
 
     <!-- =====================================================
-         BOTTOM NAV
+         BOTTOM NAVIGATION
     ====================================================== -->
 
     <nav class="bottom-nav">
 
+
         <a
             href="./"
-            class="nav-item active"
+            class="bottom-item active"
         >
+
             <i class="ri-home-5-fill"></i>
-            <span>Home</span>
+
+            <span>
+                Home
+            </span>
+
         </a>
 
 
         <a
             href="../courses/"
-            class="nav-item"
+            class="bottom-item"
         >
+
             <i class="ri-book-open-line"></i>
-            <span>Learn</span>
+
+            <span>
+                Learn
+            </span>
+
         </a>
 
 
         <a
             href="../live/"
-            class="nav-item"
+            class="bottom-item"
         >
+
             <i class="ri-live-line"></i>
-            <span>Live</span>
+
+            <span>
+                Live
+            </span>
+
         </a>
 
 
         <a
             href="../chat/"
-            class="nav-item"
+            class="bottom-item"
         >
+
             <i class="ri-chat-3-line"></i>
-            <span>Chat</span>
+
+            <span>
+                Chat
+            </span>
+
         </a>
 
 
         <a
             href="../profile/"
-            class="nav-item"
+            class="bottom-item"
         >
+
             <i class="ri-user-3-line"></i>
-            <span>Profile</span>
+
+            <span>
+                Profile
+            </span>
+
         </a>
+
 
     </nav>
 
 
 </div>
+
 
 
 <script
