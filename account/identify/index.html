@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0"
+    >
+
+    <title>Verify Account • Zenova Educations</title>
+
+    <link rel="stylesheet" href="./identify.css">
+</head>
+
+<body>
+
+<main class="page">
+
+    <section class="container">
+
+        <div class="brand">
+            <img
+                src="../../logo.png"
+                alt="Zenova Educations"
+            >
+        </div>
+
+        <!-- LOADING -->
+        <section
+            id="loadingState"
+            class="state loading-state"
+        >
+
+            <div class="loader"></div>
+
+            <h1>Checking your account</h1>
+
+            <p>
+                Please wait while we securely check your Zenova record.
+            </p>
+
+        </section>
+
+
+        <!-- EXISTING CRM RECORD -->
+        <section
+            id="existingState"
+            class="state"
+        >
+
+            <div class="check-icon">
+                ✓
+            </div>
+
+            <h1>We found your record</h1>
+
+            <p class="subtitle">
+                Is this your Zenova account?
+            </p>
+
+            <div class="student-card">
+
+                <div class="avatar">
+                    <span id="avatarLetter">Z</span>
+                </div>
+
+                <div class="student-info">
+
+                    <div
+                        id="studentName"
+                        class="student-name"
+                    >
+                        Student
+                    </div>
+
+                    <div
+                        id="studentPhone"
+                        class="student-phone"
+                    >
+                        +91 XXXXX XXXXX
+                    </div>
+
+                </div>
+
+            </div>
+
+            <button
+                id="yesBtn"
+                class="primary-button"
+                type="button"
+            >
+                Yes, this is me
+            </button>
+
+            <button
+                id="noBtn"
+                class="secondary-button"
+                type="button"
+            >
+                No, create a new account
+            </button>
+
+            <p
+                id="existingMessage"
+                class="message"
+            ></p>
+
+        </section>
+
+
+        <!-- NEW ACCOUNT -->
+        <section
+            id="newState"
+            class="state"
+        >
+
+            <div class="new-icon">
+                +
+            </div>
+
+            <h1>Let's create your account</h1>
+
+            <p class="subtitle">
+                We couldn't find an existing Zenova record
+                with this mobile number.
+            </p>
+
+            <div class="phone-confirmation">
+
+                <span>Mobile number</span>
+
+                <strong id="newPhone">
+                    +91 XXXXX XXXXX
+                </strong>
+
+            </div>
+
+            <button
+                id="newAccountBtn"
+                class="primary-button"
+                type="button"
+            >
+                Continue
+            </button>
+
+            <button
+                id="backBtn"
+                class="text-button"
+                type="button"
+            >
+                ← Change mobile number
+            </button>
+
+            <p
+                id="newMessage"
+                class="message"
+            ></p>
+
+        </section>
+
+
+        <!-- ERROR -->
+        <section
+            id="errorState"
+            class="state"
+        >
+
+            <div class="error-icon">
+                !
+            </div>
+
+            <h1>Something went wrong</h1>
+
+            <p
+                id="errorMessage"
+                class="subtitle"
+            >
+                We couldn't check your Zenova record.
+            </p>
+
+            <button
+                id="retryBtn"
+                class="primary-button"
+                type="button"
+            >
+                Try again
+            </button>
+
+        </section>
+
+
+        <footer>
+            © Zenova Educations
+        </footer>
+
+    </section>
+
+</main>
+
+
+<script
+    type="module"
+    src="./identify.js"
+></script>
+
+</body>
+</html>
