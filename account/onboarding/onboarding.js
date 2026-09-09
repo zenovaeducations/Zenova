@@ -521,7 +521,7 @@ async function loadDistricts() {
 }
 
 
-/* ============================================================
+/*/* ============================================================
    TALUKS
 ============================================================ */
 
@@ -531,7 +531,6 @@ districtSelect.addEventListener(
 
         const districtId =
             districtSelect.value;
-
 
         resetSelect(
             talukSelect,
@@ -553,51 +552,40 @@ districtSelect.addEventListener(
             "Select your school"
         );
 
-
         if (!districtId) return;
-
 
         try {
 
-            const q =
-                query(
-                    collection(
-                        db,
-                        "crmTaluks"
-                    ),
-                    where(
-                        "districtId",
-                        "==",
-                        districtId
-                    )
-                );
+            const q = query(
+                collection(
+                    db,
+                    "crmTaluks"
+                ),
 
+                // YOUR FIRESTORE FIELD
+                where(
+                    "crmDistrictId",
+                    "==",
+                    districtId
+                )
+            );
 
             const snapshot =
                 await getDocs(q);
-
 
             snapshot.forEach(item => {
 
                 const data =
                     item.data();
 
-
                 const option =
-                    document.createElement(
-                        "option"
-                    );
-
+                    document.createElement("option");
 
                 option.value =
                     item.id;
 
                 option.textContent =
-                    data.crmTalukName ||
-                    data.talukName ||
-                    data.name ||
-                    "Taluk";
-
+                    data.crmTalukName || "Taluk";
 
                 talukSelect.appendChild(
                     option
@@ -605,10 +593,7 @@ districtSelect.addEventListener(
 
             });
 
-
-            talukSelect.disabled =
-                false;
-
+            talukSelect.disabled = false;
 
         } catch (error) {
 
@@ -621,8 +606,6 @@ districtSelect.addEventListener(
 
     }
 );
-
-
 /* ============================================================
    GRAM PANCHAYAT
 ============================================================ */
