@@ -23,7 +23,7 @@ body {
 
   min-height: 100vh;
 
-  padding: 55px 20px 70px;
+  padding: 45px 20px 70px;
 
 }
 
@@ -47,7 +47,7 @@ body {
 
   text-align: center;
 
-  margin-bottom: 38px;
+  margin-bottom: 35px;
 
 }
 
@@ -59,7 +59,7 @@ body {
 
   object-fit: contain;
 
-  margin-bottom: 28px;
+  margin-bottom: 26px;
 
 }
 
@@ -70,14 +70,14 @@ body {
 
   letter-spacing: -0.7px;
 
-  margin-bottom: 10px;
+  margin-bottom: 9px;
 
 }
 
 
 .header p {
 
-  color: #707070;
+  color: #777777;
 
   font-size: 14px;
 
@@ -97,7 +97,7 @@ body {
 }
 
 
-.progress-bar {
+.progress-track {
 
   width: 100%;
 
@@ -105,7 +105,7 @@ body {
 
   background: #eeeeee;
 
-  border-radius: 10px;
+  border-radius: 5px;
 
   overflow: hidden;
 
@@ -114,7 +114,7 @@ body {
 
 .progress-fill {
 
-  width: 33.33%;
+  width: 25%;
 
   height: 100%;
 
@@ -127,9 +127,9 @@ body {
 
 .progress-text {
 
-  margin-top: 8px;
-
   text-align: right;
+
+  margin-top: 7px;
 
   color: #999999;
 
@@ -144,12 +144,12 @@ body {
 
 .step {
 
-  animation: appear 0.2s ease;
+  animation: showStep 0.2s ease;
 
 }
 
 
-@keyframes appear {
+@keyframes showStep {
 
   from {
 
@@ -174,14 +174,14 @@ body {
 
   display: flex;
 
-  gap: 15px;
+  gap: 14px;
 
   margin-bottom: 28px;
 
 }
 
 
-.step-heading > span {
+.step-number {
 
   color: #7c3aed;
 
@@ -189,7 +189,7 @@ body {
 
   font-weight: 700;
 
-  padding-top: 4px;
+  padding-top: 3px;
 
 }
 
@@ -236,7 +236,7 @@ body {
 }
 
 
-.field label b {
+.field label span {
 
   color: #7c3aed;
 
@@ -264,8 +264,6 @@ body {
 
   outline: none;
 
-  transition: border-color 0.2s ease;
-
 }
 
 
@@ -282,6 +280,15 @@ body {
   background: #f7f7f7;
 
   color: #777777;
+
+}
+
+
+.field select:disabled {
+
+  background: #f7f7f7;
+
+  color: #999999;
 
   cursor: not-allowed;
 
@@ -301,8 +308,19 @@ body {
 }
 
 
+.field-help {
+
+  color: #888888;
+
+  font-size: 12px;
+
+  margin-bottom: 12px;
+
+}
+
+
 /* =========================
-   TWO COLUMN
+   COLUMNS
 ========================= */
 
 .two-column {
@@ -312,6 +330,97 @@ body {
   grid-template-columns: 1fr 1fr;
 
   gap: 16px;
+
+}
+
+
+/* =========================
+   SUBJECTS
+========================= */
+
+.subjects-container {
+
+  display: grid;
+
+  grid-template-columns: 1fr 1fr;
+
+  gap: 10px;
+
+}
+
+
+.subject-option {
+
+  position: relative;
+
+}
+
+
+.subject-option input {
+
+  position: absolute;
+
+  opacity: 0;
+
+  pointer-events: none;
+
+}
+
+
+.subject-option label {
+
+  height: 50px;
+
+  display: flex;
+
+  align-items: center;
+
+  padding: 0 14px;
+
+  border: 1px solid #dddddd;
+
+  border-radius: 10px;
+
+  background: #ffffff;
+
+  cursor: pointer;
+
+  font-size: 13px;
+
+  font-weight: 500;
+
+  transition: 0.15s ease;
+
+}
+
+
+.subject-option input:checked + label {
+
+  border-color: #7c3aed;
+
+  background: #faf8ff;
+
+  color: #6d28d9;
+
+}
+
+
+.subject-option label:hover {
+
+  border-color: #bbbbbb;
+
+}
+
+
+.loading-text {
+
+  grid-column: 1 / -1;
+
+  color: #999999;
+
+  font-size: 13px;
+
+  padding: 15px 0;
 
 }
 
@@ -406,6 +515,8 @@ body {
 
   display: none;
 
+  margin-top: 18px;
+
   padding: 12px 14px;
 
   border-radius: 9px;
@@ -417,8 +528,6 @@ body {
   font-size: 13px;
 
   line-height: 1.45;
-
-  margin-top: 20px;
 
 }
 
@@ -434,7 +543,7 @@ body {
    NOTE
 ========================= */
 
-.secure-note {
+.final-note {
 
   text-align: center;
 
@@ -442,7 +551,9 @@ body {
 
   font-size: 11px;
 
-  margin-top: 17px;
+  line-height: 1.5;
+
+  margin-top: 16px;
 
 }
 
@@ -532,12 +643,10 @@ body {
 
 @keyframes rotate {
 
-  from {
-    transform: rotate(0deg);
-  }
-
   to {
+
     transform: rotate(360deg);
+
   }
 
 }
@@ -551,7 +660,7 @@ body {
 
   .page {
 
-    padding: 35px 18px 55px;
+    padding: 35px 17px 55px;
 
   }
 
@@ -568,6 +677,13 @@ body {
     grid-template-columns: 1fr;
 
     gap: 0;
+
+  }
+
+
+  .subjects-container {
+
+    grid-template-columns: 1fr;
 
   }
 
