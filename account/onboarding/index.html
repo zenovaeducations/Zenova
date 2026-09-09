@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Zenova | Complete Profile</title>
+
+  <link rel="stylesheet" href="onboarding.css">
+</head>
+
+<body>
+
+  <!-- UNIVERSAL LOADER -->
+  <div id="loader" class="loader-screen">
+    <div class="loader-ring"></div>
+    <div class="loader-logo">Z</div>
+  </div>
+
+
+  <main class="page">
+
+    <div class="container">
+
+      <img
+        src="../../logo.png"
+        class="logo"
+        alt="Zenova"
+      >
+
+      <div class="heading">
+        <h1>Complete your profile</h1>
+
+        <p>
+          Just a few details before we set up your Zenova account.
+        </p>
+      </div>
+
+
+      <form id="onboardingForm">
+
+
+        <!-- PERSONAL DETAILS -->
+
+        <section class="section">
+
+          <h2>Personal details</h2>
+
+          <div class="grid">
+
+            <div class="field full">
+              <label for="name">
+                Full name <span>*</span>
+              </label>
+
+              <input
+                type="text"
+                id="name"
+                placeholder="Enter your full name"
+                autocomplete="name"
+                required
+              >
+            </div>
+
+
+            <div class="field">
+
+              <label for="dob">
+                Date of birth <span>*</span>
+              </label>
+
+              <input
+                type="date"
+                id="dob"
+                required
+              >
+
+            </div>
+
+
+            <div class="field">
+
+              <label for="gender">
+                Gender <span>*</span>
+              </label>
+
+              <select id="gender" required>
+
+                <option value="">
+                  Select gender
+                </option>
+
+                <option value="MALE">
+                  Male
+                </option>
+
+                <option value="FEMALE">
+                  Female
+                </option>
+
+                <option value="OTHER">
+                  Other
+                </option>
+
+                <option value="PREFER_NOT_TO_SAY">
+                  Prefer not to say
+                </option>
+
+              </select>
+
+            </div>
+
+          </div>
+
+        </section>
+
+
+
+        <!-- ACADEMIC DETAILS -->
+
+        <section class="section">
+
+          <h2>Academic details</h2>
+
+          <div class="grid">
+
+            <div class="field full">
+
+              <label for="class">
+                Class <span>*</span>
+              </label>
+
+              <select id="class" required>
+
+                <option value="">
+                  Select your class
+                </option>
+
+                <option value="UNDER_8TH">
+                  Under 8th
+                </option>
+
+                <option value="8TH">
+                  8th
+                </option>
+
+                <option value="9TH">
+                  9th
+                </option>
+
+                <option value="10TH">
+                  10th
+                </option>
+
+                <option value="1ST_PUC">
+                  1st PUC
+                </option>
+
+                <option value="2ND_PUC">
+                  2nd PUC
+                </option>
+
+              </select>
+
+            </div>
+
+
+            <!-- BOARD: ONLY 10TH -->
+
+            <div
+              class="field full conditional hidden"
+              id="boardField"
+            >
+
+              <label for="board">
+                Board <span>*</span>
+              </label>
+
+              <select id="board">
+
+                <option value="">
+                  Select board
+                </option>
+
+                <option value="KSEAB">
+                  Karnataka State Board
+                </option>
+
+                <option value="CBSE">
+                  CBSE
+                </option>
+
+                <option value="ICSE">
+                  ICSE
+                </option>
+
+                <option value="OTHER">
+                  Other
+                </option>
+
+              </select>
+
+            </div>
+
+
+            <!-- PUC DETAILS -->
+
+            <div
+              id="pucFields"
+              class="conditional hidden"
+            >
+
+              <div class="field">
+
+                <label for="pucStream">
+                  Stream <span>*</span>
+                </label>
+
+                <select id="pucStream">
+
+                  <option value="">
+                    Select stream
+                  </option>
+
+                  <option value="SCIENCE">
+                    Science
+                  </option>
+
+                  <option value="COMMERCE">
+                    Commerce
+                  </option>
+
+                  <option value="ARTS">
+                    Arts
+                  </option>
+
+                </select>
+
+              </div>
+
+
+              <div class="field">
+
+                <label for="combination">
+                  Combination
+                </label>
+
+                <input
+                  type="text"
+                  id="combination"
+                  placeholder="e.g. PCMB"
+                >
+
+              </div>
+
+
+              <div class="field full">
+
+                <label for="college">
+                  College name <span>*</span>
+                </label>
+
+                <input
+                  type="text"
+                  id="college"
+                  placeholder="Enter college name"
+                >
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </section>
+
+
+
+        <!-- LOCATION -->
+
+        <section class="section">
+
+          <h2>Location</h2>
+
+          <div class="grid">
+
+            <div class="field">
+
+              <label for="district">
+                District <span>*</span>
+              </label>
+
+              <input
+                type="text"
+                id="district"
+                placeholder="District"
+                required
+              >
+
+            </div>
+
+
+            <div class="field">
+
+              <label for="taluk">
+                Taluk <span>*</span>
+              </label>
+
+              <input
+                type="text"
+                id="taluk"
+                placeholder="Taluk"
+                required
+              >
+
+            </div>
+
+
+            <div class="field full">
+
+              <label for="village">
+                Village / Town
+              </label>
+
+              <input
+                type="text"
+                id="village"
+                placeholder="Village or town"
+              >
+
+            </div>
+
+          </div>
+
+        </section>
+
+
+
+        <!-- SCHOOL -->
+
+        <section class="section">
+
+          <h2>School details</h2>
+
+          <div class="grid">
+
+            <div class="field full">
+
+              <label for="school">
+                School / Institution
+              </label>
+
+              <input
+                type="text"
+                id="school"
+                placeholder="Enter your school name"
+              >
+
+            </div>
+
+          </div>
+
+        </section>
+
+
+
+        <!-- ERROR -->
+
+        <div
+          id="formError"
+          class="form-error"
+        ></div>
+
+
+        <!-- SUBMIT -->
+
+        <button
+          type="submit"
+          id="submitBtn"
+          class="submit-btn"
+        >
+          Complete registration
+        </button>
+
+
+        <p class="approval-note">
+          Your account will be reviewed by Zenova before access is granted.
+        </p>
+
+      </form>
+
+    </div>
+
+  </main>
+
+
+  <script type="module" src="onboarding.js"></script>
+
+</body>
+</html>
