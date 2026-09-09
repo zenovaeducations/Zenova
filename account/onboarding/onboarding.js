@@ -776,29 +776,33 @@ async function loadMasterData() {
 
 function populateDistricts() {
 
-    clearSelect(
-        districtSelect,
-        "Select district"
-    );
+    if (!districtSelect) return;
 
+    districtSelect.innerHTML = "";
+
+    const placeholder =
+        document.createElement("option");
+
+    placeholder.value = "";
+    placeholder.textContent =
+        "Select district";
+
+    districtSelect.appendChild(
+        placeholder
+    );
 
     districts.forEach(
         district => {
 
             const option =
-                document.createElement(
-                    "option"
-                );
-
+                document.createElement("option");
 
             option.value =
                 district.id;
 
-
             option.textContent =
                 district.crmDistrictName ||
                 "District";
-
 
             districtSelect.appendChild(
                 option
@@ -807,9 +811,33 @@ function populateDistricts() {
         }
     );
 
+    /*
+     * IMPORTANT
+     * District is the first selectable field.
+     */
+    districtSelect.disabled = false;
+
+    /*
+     * Everything below District
+     * remains disabled until a selection
+     * is made.
+     */
+    if (talukSelect) {
+        talukSelect.disabled = true;
+    }
+
+    if (gpSelect) {
+        gpSelect.disabled = true;
+    }
+
+    if (villageSelect) {
+        villageSelect.disabled = true;
+    }
+
+    if (schoolSelect) {
+        schoolSelect.disabled = true;
+    }
 }
-
-
 /* ============================================================
    DISTRICT CHANGE
 ============================================================ */
