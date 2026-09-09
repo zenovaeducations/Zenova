@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>School Leads | Zenova CRM</title>
+
+    <link rel="stylesheet" href="school-leads.css">
+</head>
+
+<body>
+
+<div class="app">
+
+    <!-- =====================================================
+         HEADER
+    ====================================================== -->
+
+    <header class="topbar">
+
+        <div class="topbar-left">
+
+            <button
+                class="back-btn"
+                id="backBtn"
+                title="Back"
+            >
+                ←
+            </button>
+
+            <div>
+                <div class="eyebrow">
+                    ZENOVA CRM
+                </div>
+
+                <h1>
+                    School Leads
+                </h1>
+            </div>
+
+        </div>
+
+        <button
+            class="primary-btn"
+            id="addLeadBtn"
+        >
+            + Add Student
+        </button>
+
+    </header>
+
+
+    <!-- =====================================================
+         SUMMARY
+    ====================================================== -->
+
+    <section class="summary-grid">
+
+        <div class="summary-card">
+            <span>Total</span>
+            <strong id="totalCount">0</strong>
+        </div>
+
+        <div class="summary-card">
+            <span>New</span>
+            <strong id="newCount">0</strong>
+        </div>
+
+        <div class="summary-card">
+            <span>Visiting</span>
+            <strong id="visitingCount">0</strong>
+        </div>
+
+        <div class="summary-card">
+            <span>Not Visiting</span>
+            <strong id="notVisitingCount">0</strong>
+        </div>
+
+        <div class="summary-card">
+            <span>Payment Pending</span>
+            <strong id="paymentPendingCount">0</strong>
+        </div>
+
+        <div class="summary-card">
+            <span>Payment Completed</span>
+            <strong id="paymentCompletedCount">0</strong>
+        </div>
+
+        <div class="summary-card">
+            <span>Rejected</span>
+            <strong id="rejectedCount">0</strong>
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         SCHOOL WISE
+    ====================================================== -->
+
+    <section class="section-card">
+
+        <div class="section-heading">
+
+            <div>
+                <h2>School-wise Data</h2>
+
+                <p>
+                    View student leads grouped by school.
+                </p>
+            </div>
+
+        </div>
+
+        <div
+            class="school-grid"
+            id="schoolGrid"
+        ></div>
+
+    </section>
+
+
+    <!-- =====================================================
+         FILTERS
+    ====================================================== -->
+
+    <section class="section-card">
+
+        <div class="filter-row">
+
+            <div class="search-box">
+
+                <input
+                    type="search"
+                    id="searchInput"
+                    placeholder="Search student or phone..."
+                    autocomplete="off"
+                >
+
+            </div>
+
+
+            <select id="schoolFilter">
+
+                <option value="">
+                    All Schools
+                </option>
+
+            </select>
+
+
+            <select id="statusFilter">
+
+                <option value="">
+                    All Status
+                </option>
+
+                <option value="NEW">
+                    New
+                </option>
+
+                <option value="VISITING">
+                    Visiting
+                </option>
+
+                <option value="NOT_VISITING">
+                    Not Visiting
+                </option>
+
+                <option value="REJECTED">
+                    Rejected
+                </option>
+
+                <option value="PAYMENT_PENDING">
+                    Payment Pending
+                </option>
+
+                <option value="PAYMENT_COMPLETED">
+                    Payment Completed
+                </option>
+
+            </select>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         TABLE
+    ====================================================== -->
+
+    <section class="section-card table-card">
+
+        <div class="table-header">
+
+            <div>
+                <h2>Student Leads</h2>
+
+                <span id="recordInfo">
+                    0 records
+                </span>
+            </div>
+
+        </div>
+
+
+        <div class="table-wrapper">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>Student</th>
+
+                        <th>Phone</th>
+
+                        <th>School</th>
+
+                        <th>Status</th>
+
+                        <th>Details</th>
+
+                        <th>Created</th>
+
+                        <th></th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody id="leadTableBody">
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+        <div
+            class="empty-state"
+            id="emptyState"
+        >
+
+            <div class="empty-icon">
+                +
+            </div>
+
+            <h3>
+                No student leads
+            </h3>
+
+            <p>
+                Add your first school lead to get started.
+            </p>
+
+            <button
+                class="primary-btn"
+                id="emptyAddBtn"
+            >
+                Add Student
+            </button>
+
+        </div>
+
+    </section>
+
+</div>
+
+
+<!-- =====================================================
+     ADD / EDIT MODAL
+====================================================== -->
+
+<div
+    class="modal-backdrop hidden"
+    id="modalBackdrop"
+>
+
+    <div class="modal">
+
+        <div class="modal-header">
+
+            <div>
+
+                <div class="eyebrow">
+                    SCHOOL LEAD
+                </div>
+
+                <h2 id="modalTitle">
+                    Add Student
+                </h2>
+
+            </div>
+
+            <button
+                class="close-btn"
+                id="closeModalBtn"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <form id="leadForm">
+
+            <!-- Student -->
+
+            <div class="form-group">
+
+                <label for="studentName">
+                    Student Name
+                </label>
+
+                <input
+                    id="studentName"
+                    type="text"
+                    placeholder="Enter student name"
+                    required
+                >
+
+            </div>
+
+
+            <!-- Phone -->
+
+            <div class="form-group">
+
+                <label for="phone">
+                    Phone Number
+                </label>
+
+                <input
+                    id="phone"
+                    type="tel"
+                    inputmode="numeric"
+                    maxlength="10"
+                    placeholder="10-digit mobile number"
+                    required
+                >
+
+            </div>
+
+
+            <!-- School -->
+
+            <div class="form-group">
+
+                <label for="schoolSelect">
+                    School
+                </label>
+
+                <select
+                    id="schoolSelect"
+                    required
+                >
+
+                    <option value="">
+                        Select School
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <!-- Status -->
+
+            <div class="form-group">
+
+                <label for="status">
+                    Status
+                </label>
+
+                <select
+                    id="status"
+                    required
+                >
+
+                    <option value="NEW">
+                        New
+                    </option>
+
+                    <option value="VISITING">
+                        Visiting
+                    </option>
+
+                    <option value="NOT_VISITING">
+                        Not Visiting
+                    </option>
+
+                    <option value="REJECTED">
+                        Rejected
+                    </option>
+
+                    <option value="PAYMENT_PENDING">
+                        Payment Pending
+                    </option>
+
+                    <option value="PAYMENT_COMPLETED">
+                        Payment Completed
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <!-- Details -->
+
+            <div class="form-group">
+
+                <label for="details">
+                    Details
+                </label>
+
+                <textarea
+                    id="details"
+                    rows="4"
+                    placeholder="Enter any additional information..."
+                ></textarea>
+
+            </div>
+
+
+            <div class="modal-actions">
+
+                <button
+                    type="button"
+                    class="secondary-btn"
+                    id="cancelBtn"
+                >
+                    Cancel
+                </button>
+
+                <button
+                    type="submit"
+                    class="primary-btn"
+                    id="saveBtn"
+                >
+                    Save Student
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     FIREBASE
+====================================================== -->
+
+<script type="module" src="school-leads.js"></script>
+
+</body>
+</html>
