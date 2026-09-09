@@ -14,7 +14,7 @@
 
   <link
     rel="stylesheet"
-    href="login.css"
+    href="./login.css"
   >
 
 </head>
@@ -22,25 +22,6 @@
 
 <body>
 
-
-  <!-- LOADER -->
-
-  <div
-    id="loader"
-    class="loader-screen"
-  >
-
-    <div class="loader-ring"></div>
-
-    <div class="loader-logo">
-      Z
-    </div>
-
-  </div>
-
-
-
-  <!-- LOGIN -->
 
   <main class="page">
 
@@ -56,159 +37,53 @@
       >
 
 
+      <!-- HEADING -->
+
       <h1>
         Welcome to Zenova
       </h1>
 
 
       <p class="subtitle">
-        Enter your mobile number to continue to your student portal.
+        Sign in to continue to your Zenova student portal.
       </p>
 
 
+      <!-- GOOGLE BUTTON -->
 
-      <!-- PHONE STEP -->
-
-      <section id="phoneStep">
-
-
-        <label
-          for="phone"
-          class="label"
-        >
-          Mobile number
-        </label>
-
-
-        <div class="phone-box">
-
-          <div class="country-code">
-            +91
-          </div>
-
-          <input
-            type="tel"
-            id="phone"
-            maxlength="10"
-            inputmode="numeric"
-            placeholder="Enter mobile number"
-            autocomplete="tel"
-          >
-
-        </div>
-
-
-        <button
-          id="searchBtn"
-          class="primary-btn"
-        >
-          Continue
-        </button>
-
-
-        <div
-          id="errorBox"
-          class="error-box"
-        ></div>
-
-
-      </section>
-
-
-
-      <!-- CRM RESULT -->
-
-      <section
-        id="resultStep"
-        class="hidden"
+      <button
+        id="googleBtn"
+        class="google-btn"
       >
 
+        <span class="google-icon">
+          G
+        </span>
 
-        <div
-          id="resultIcon"
-          class="result-icon"
-        >
-          ✓
-        </div>
+        <span>
+          Continue with Google
+        </span>
 
-
-        <h2 id="resultTitle">
-          We found your account
-        </h2>
+      </button>
 
 
-        <p
-          id="resultMessage"
-          class="result-message"
-        ></p>
+      <!-- ERROR -->
+
+      <div
+        id="errorBox"
+        class="error-box"
+      ></div>
 
 
-        <div
-          id="crmInfo"
-          class="crm-info"
-        >
+      <!-- PRIVACY TEXT -->
 
-          <div class="crm-label">
-            Name
-          </div>
-
-          <div
-            id="crmName"
-            class="crm-name"
-          ></div>
-
-        </div>
-
-
-
-        <!-- EXISTING CRM -->
-
-        <div
-          id="existingActions"
-          class="actions hidden"
-        >
-
-          <button
-            id="yesBtn"
-            class="primary-btn"
-          >
-            Yes, this is me
-          </button>
-
-
-          <button
-            id="noBtn"
-            class="secondary-btn"
-          >
-            No, create a new account
-          </button>
-
-        </div>
-
-
-
-        <!-- NEW ACCOUNT -->
-
-        <div
-          id="newActions"
-          class="actions hidden"
-        >
-
-          <button
-            id="createBtn"
-            class="primary-btn"
-          >
-            Create new account
-          </button>
-
-        </div>
-
-
-      </section>
+      <p class="terms">
+        By continuing, you agree to use your Google account
+        to access Zenova Educations.
+      </p>
 
 
     </div>
-
 
 
     <footer>
@@ -219,10 +94,9 @@
   </main>
 
 
-
   <script
     type="module"
-    src="login.js"
+    src="./login.js"
   ></script>
 
 
