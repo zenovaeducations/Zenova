@@ -23,10 +23,6 @@
 <body>
 
 
-  <!-- ==============================
-       PAGE
-  =============================== -->
-
   <main class="page">
 
     <div class="container">
@@ -47,7 +43,7 @@
         </h1>
 
         <p>
-          Tell us a little about yourself to get started with Zenova.
+          A few details and you're ready to start learning.
         </p>
 
       </div>
@@ -58,7 +54,7 @@
 
       <div class="progress">
 
-        <div class="progress-bar">
+        <div class="progress-track">
 
           <div
             id="progressFill"
@@ -71,23 +67,19 @@
           id="progressText"
           class="progress-text"
         >
-          Step 1 of 3
+          Step 1 of 4
         </div>
 
       </div>
 
 
 
-      <!-- ==============================
-           FORM
-      =============================== -->
-
       <form id="onboardingForm">
 
 
-        <!-- =================================
-             STEP 1 — PERSONAL
-        ================================== -->
+        <!-- =====================================
+             STEP 1
+        ====================================== -->
 
         <section
           id="step1"
@@ -96,9 +88,9 @@
 
           <div class="step-heading">
 
-            <span>
+            <div class="step-number">
               01
-            </span>
+            </div>
 
             <div>
 
@@ -115,13 +107,12 @@
           </div>
 
 
-
           <!-- NAME -->
 
           <div class="field">
 
             <label for="name">
-              Full name <b>*</b>
+              Full name <span>*</span>
             </label>
 
             <input
@@ -133,7 +124,6 @@
             >
 
           </div>
-
 
 
           <!-- EMAIL -->
@@ -157,15 +147,15 @@
           </div>
 
 
-
-          <!-- DOB + GENDER -->
-
           <div class="two-column">
+
+
+            <!-- DOB -->
 
             <div class="field">
 
               <label for="dob">
-                Date of birth <b>*</b>
+                Date of birth <span>*</span>
               </label>
 
               <input
@@ -177,10 +167,12 @@
             </div>
 
 
+            <!-- GENDER -->
+
             <div class="field">
 
               <label for="gender">
-                Gender <b>*</b>
+                Gender <span>*</span>
               </label>
 
               <select
@@ -223,13 +215,19 @@
             Continue
           </button>
 
+
+          <div
+            id="step1Error"
+            class="error"
+          ></div>
+
         </section>
 
 
 
-        <!-- =================================
-             STEP 2 — ACADEMIC
-        ================================== -->
+        <!-- =====================================
+             STEP 2
+        ====================================== -->
 
         <section
           id="step2"
@@ -238,9 +236,9 @@
 
           <div class="step-heading">
 
-            <span>
+            <div class="step-number">
               02
-            </span>
+            </div>
 
             <div>
 
@@ -257,13 +255,12 @@
           </div>
 
 
-
           <!-- CLASS -->
 
           <div class="field">
 
             <label for="class">
-              Current class <b>*</b>
+              Current class <span>*</span>
             </label>
 
             <select
@@ -272,7 +269,7 @@
             >
 
               <option value="">
-                Select your class
+                Select class
               </option>
 
               <option value="UNDER_8TH">
@@ -304,22 +301,21 @@
           </div>
 
 
-
-          <!-- 10TH BOARD -->
+          <!-- BOARD -->
 
           <div
-            id="boardContainer"
+            id="boardWrapper"
             class="field hidden"
           >
 
             <label for="board">
-              Board <b>*</b>
+              Board <span>*</span>
             </label>
 
             <select id="board">
 
               <option value="">
-                Select your board
+                Select board
               </option>
 
               <option value="KSEAB">
@@ -343,11 +339,10 @@
           </div>
 
 
-
           <!-- PUC -->
 
           <div
-            id="pucContainer"
+            id="pucWrapper"
             class="hidden"
           >
 
@@ -356,7 +351,7 @@
               <div class="field">
 
                 <label for="stream">
-                  Stream <b>*</b>
+                  Stream <span>*</span>
                 </label>
 
                 <select id="stream">
@@ -402,19 +397,54 @@
             <div class="field">
 
               <label for="college">
-                College name <b>*</b>
+                College name <span>*</span>
               </label>
 
               <input
                 id="college"
                 type="text"
-                placeholder="Enter your college name"
+                placeholder="Enter college name"
               >
 
             </div>
 
           </div>
 
+
+          <!-- MEDIUM -->
+
+          <div class="field">
+
+            <label for="medium">
+              Medium <span>*</span>
+            </label>
+
+            <select
+              id="medium"
+              required
+            >
+
+              <option value="">
+                Select medium
+              </option>
+
+              <option value="Kannada">
+                Kannada
+              </option>
+
+              <option value="English">
+                English
+              </option>
+
+            </select>
+
+          </div>
+
+
+          <div
+            id="step2Error"
+            class="error"
+          ></div>
 
 
           <div class="button-row">
@@ -441,9 +471,9 @@
 
 
 
-        <!-- =================================
-             STEP 3 — LOCATION
-        ================================== -->
+        <!-- =====================================
+             STEP 3
+        ====================================== -->
 
         <section
           id="step3"
@@ -452,18 +482,18 @@
 
           <div class="step-heading">
 
-            <span>
+            <div class="step-number">
               03
-            </span>
+            </div>
 
             <div>
 
               <h2>
-                School & location
+                Location & school
               </h2>
 
               <p>
-                Help us understand where you study.
+                Select your details from Zenova's master data.
               </p>
 
             </div>
@@ -471,65 +501,72 @@
           </div>
 
 
-
-          <!-- SCHOOL -->
+          <!-- DISTRICT -->
 
           <div class="field">
 
-            <label for="school">
-              School / Institution <b>*</b>
+            <label for="district">
+              District <span>*</span>
             </label>
 
-            <input
-              id="school"
-              type="text"
-              placeholder="Enter your school name"
+            <select
+              id="district"
               required
             >
 
-          </div>
+              <option value="">
+                Loading districts...
+              </option>
 
-
-
-          <div class="two-column">
-
-            <!-- DISTRICT -->
-
-            <div class="field">
-
-              <label for="district">
-                District <b>*</b>
-              </label>
-
-              <input
-                id="district"
-                type="text"
-                placeholder="District"
-                required
-              >
-
-            </div>
-
-
-            <!-- TALUK -->
-
-            <div class="field">
-
-              <label for="taluk">
-                Taluk <b>*</b>
-              </label>
-
-              <input
-                id="taluk"
-                type="text"
-                placeholder="Taluk"
-                required
-              >
-
-            </div>
+            </select>
 
           </div>
 
+
+          <!-- TALUK -->
+
+          <div class="field">
+
+            <label for="taluk">
+              Taluk <span>*</span>
+            </label>
+
+            <select
+              id="taluk"
+              required
+              disabled
+            >
+
+              <option value="">
+                Select district first
+              </option>
+
+            </select>
+
+          </div>
+
+
+          <!-- GP -->
+
+          <div class="field">
+
+            <label for="gp">
+              Gram Panchayat <span>*</span>
+            </label>
+
+            <select
+              id="gp"
+              required
+              disabled
+            >
+
+              <option value="">
+                Select taluk first
+              </option>
+
+            </select>
+
+          </div>
 
 
           <!-- VILLAGE -->
@@ -537,26 +574,55 @@
           <div class="field">
 
             <label for="village">
-              Village / Town
+              Village <span>*</span>
             </label>
 
-            <input
+            <select
               id="village"
-              type="text"
-              placeholder="Village or town"
+              required
+              disabled
             >
+
+              <option value="">
+                Select Gram Panchayat first
+              </option>
+
+            </select>
 
           </div>
 
 
+          <!-- SCHOOL -->
 
-          <!-- ERROR -->
+          <div class="field">
+
+            <label for="school">
+              School / Institution <span>*</span>
+            </label>
+
+            <select
+              id="school"
+              required
+              disabled
+            >
+
+              <option value="">
+                Select taluk first
+              </option>
+
+            </select>
+
+            <small>
+              Schools are filtered by Taluk.
+            </small>
+
+          </div>
+
 
           <div
-            id="formError"
+            id="step3Error"
             class="error"
           ></div>
-
 
 
           <div class="button-row">
@@ -570,18 +636,105 @@
             </button>
 
             <button
+              type="button"
+              id="step3Next"
+              class="primary-btn"
+            >
+              Continue
+            </button>
+
+          </div>
+
+        </section>
+
+
+
+        <!-- =====================================
+             STEP 4
+        ====================================== -->
+
+        <section
+          id="step4"
+          class="step hidden"
+        >
+
+          <div class="step-heading">
+
+            <div class="step-number">
+              04
+            </div>
+
+            <div>
+
+              <h2>
+                About your learning
+              </h2>
+
+              <p>
+                Tell us which subjects you find difficult.
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <!-- TOUGHEST SUBJECTS -->
+
+          <div class="field">
+
+            <label>
+              Toughest subjects
+            </label>
+
+            <p class="field-help">
+              Select all subjects you find difficult.
+            </p>
+
+            <div
+              id="subjectsContainer"
+              class="subjects-container"
+            >
+
+              <div class="loading-text">
+                Loading subjects...
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <div
+            id="step4Error"
+            class="error"
+          ></div>
+
+
+          <div class="button-row">
+
+            <button
+              type="button"
+              id="step4Back"
+              class="secondary-btn"
+            >
+              ← Back
+            </button>
+
+            <button
               type="submit"
               id="submitBtn"
               class="primary-btn"
             >
-              Submit
+              Complete registration
             </button>
 
           </div>
 
 
-          <p class="secure-note">
-            Your information is securely connected to your Zenova account.
+          <p class="final-note">
+            Your information will be added to Zenova CRM and your account
+            will be prepared for access.
           </p>
 
         </section>
@@ -615,11 +768,11 @@
   </div>
 
 
-
   <script
     type="module"
     src="./onboarding.js"
   ></script>
+
 
 </body>
 
