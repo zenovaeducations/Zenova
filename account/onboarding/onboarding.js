@@ -1,17 +1,31 @@
-import { auth, db } from "../../firebase/firebase-config.js";
+/* ============================================================
+   ZENOVA STUDENT — ONBOARDING
+   Login → Onboarding → Home
+
+   IMPORTANT:
+   - No portalAccess
+   - No approval
+   - No pending status
+   - Already onboarded users go directly to Home
+============================================================ */
+
+import {
+    auth,
+    db
+} from "../../firebase/firebase-config.js";
+
 
 import {
     onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
 
+
 import {
+    collection,
+    getDocs,
     doc,
     getDoc,
     setDoc,
-    collection,
-    query,
-    where,
-    getDocs,
     serverTimestamp
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
@@ -36,405 +50,30 @@ const formError =
     document.getElementById("formError");
 
 
-let currentUser = null;
-let currentStep = 1;
+const fullNameInput =
+    document.getElementById("fullName");
 
+const dobInput =
+    document.getElementById("dob");
 
-/* ============================================================
-   AUTH GUARD
-============================================================ */
+const genderSelect =
+    document.getElementById("gender");
 
-onAuthStateChanged(auth, async (user) => {
+const classSelect =
+    document.getElementById("className");
 
-    /*
-     * NOT LOGGED IN
-     *
-     * Onboarding cannot be opened directly.
-     */
-    if (!user) {
+const boardSelect =
+    document.getElementById("board");
 
-        window.location.replace("../login/");
-        return;
-    }
+const mediumSelect =
+    document.getElementById("medium");
 
+const combinationSelect =
+    document.getElementById("combination");
 
-    currentUser = user;
+const targetSelect =
+    document.getElementById("target");
 
-
-    try {
-
-        /*
-         * Check existing student account.
-         */
-        const studentRef =
-            doc(
-                db,
-                "students",
-                user.uid
-            );
-
-        const studentSnap =
-            await getDoc(studentRef);
-
-
-        /*
-         * If onboarding is already completed,
-         * NEVER show this page.
-         */
-        if (
-            studentSnap.exists() &&
-            studentSnap.data().onboardingComplete === true
-        ) {
-
-            window.location.replace("../../home/");
-            return;
-        }
-
-
-        /*
-         * Fill Google information if available.
-         */
-        prefillUser();
-
-
-        /*
-         * User is authenticated but onboarding
-         * is not completed.
-         */
-        hideLoader();
-        showApp();
-
-        loadDistricts();
-
-    } catch (error) {
-
-        console.error(
-            "Onboarding authentication error:",
-            error
-        );
-
-        hideLoader();
-        showApp();
-
-    }
-
-});
-
-
-/* ============================================================
-   GOOGLE USER DATA
-============================================================ */
-
-function prefillUser() {
-
-    const nameInput =
-        document.getElementById("fullName");
-
-    if (
-        currentUser.displayName &&
-        !nameInput.value
-    ) {
-        nameInput.value =
-            currentUser.displayName;
-    }
-
-}
-
-
-/* ============================================================
-   UI
-============================================================ */
-
-function hideLoader() {
-
-    loader.classList.add("hidden");
-
-}
-
-function showApp() {
-
-    app.classList.remove("hidden");
-
-}
-
-
-/* ============================================================
-   STEP NAVIGATION
-============================================================ */
-
-function showStep(step) {
-
-    currentStep = step;
-
-
-    document
-        .querySelectorAll(".step")
-        .forEach(section => {
-
-            section.classList.remove("active");
-
-        });
-
-
-    const target =
-        document.getElementById(
-            `step${step}`
-        );
-
-    target.classList.add("active");
-
-
-    stepText.textContent =
-        `${step} of 3`;
-
-
-    progressBar.style.width =
-        `${(step / 3) * 100}%`;
-
-
-    window.scrollTo({
-        top: 0,
-        behavior: "smooth"
-    });
-
-}
-
-
-/* ============================================================
-   STEP 1
-============================================================ */
-
-document
-    .getElementById("step1Next")
-    .addEventListener("click", () => {
-
-        const name =
-            document
-                .getElementById("fullName")
-                .value
-                .trim();
-
-        const dob =
-            document
-                .getElementById("dob")
-                .value;
-
-        const gender =
-            document
-                .getElementById("gender")
-                .value;
-
-
-        if (name.length < 2) {
-
-            alert(
-                "Please enter your full name."
-            );
-
-            return;
-        }
-
-
-        if (!dob) {
-
-            alert(
-                "Please select your date of birth."
-            );
-
-            return;
-        }
-
-
-        if (!gender) {
-
-            alert(
-                "Please select your gender."
-            );
-
-            return;
-        }
-
-
-        showStep(2);
-
-    });
-
-
-/* ============================================================
-   CLASS CHANGE
-============================================================ */
-
-document
-    .getElementById("className")
-    .addEventListener("change", updateClassFields);
-
-
-function updateClassFields() {
-
-    const className =
-        document
-            .getElementById("className")
-            .value;
-
-
-    const tenthFields =
-        document.getElementById(
-            "tenthFields"
-        );
-
-    const pucFields =
-        document.getElementById(
-            "pucFields"
-        );
-
-
-    tenthFields.classList.remove("show");
-    pucFields.classList.remove("show");
-
-
-    if (className === "10th") {
-
-        tenthFields.classList.add("show");
-
-    }
-
-
-    if (
-        className === "1st PUC" ||
-        className === "2nd PUC"
-    ) {
-
-        pucFields.classList.add("show");
-
-    }
-
-}
-
-
-/* ============================================================
-   STEP 2
-============================================================ */
-
-document
-    .getElementById("step2Back")
-    .addEventListener(
-        "click",
-        () => showStep(1)
-    );
-
-
-document
-    .getElementById("step2Next")
-    .addEventListener("click", () => {
-
-        const className =
-            document
-                .getElementById("className")
-                .value;
-
-        const medium =
-            document
-                .getElementById("medium")
-                .value;
-
-
-        if (!className) {
-
-            alert(
-                "Please select your current class."
-            );
-
-            return;
-        }
-
-
-        if (!medium) {
-
-            alert(
-                "Please select your medium."
-            );
-
-            return;
-        }
-
-
-        if (className === "10th") {
-
-            const board =
-                document
-                    .getElementById("board")
-                    .value;
-
-            if (!board) {
-
-                alert(
-                    "Please select your board."
-                );
-
-                return;
-            }
-
-        }
-
-
-        if (
-            className === "1st PUC" ||
-            className === "2nd PUC"
-        ) {
-
-            const combination =
-                document
-                    .getElementById("combination")
-                    .value;
-
-            const target =
-                document
-                    .getElementById("target")
-                    .value;
-
-
-            if (!combination) {
-
-                alert(
-                    "Please select your combination."
-                );
-
-                return;
-            }
-
-
-            if (!target) {
-
-                alert(
-                    "Please select your target."
-                );
-
-                return;
-            }
-
-        }
-
-
-        showStep(3);
-
-    });
-
-
-/* ============================================================
-   STEP 3 BACK
-============================================================ */
-
-document
-    .getElementById("step3Back")
-    .addEventListener(
-        "click",
-        () => showStep(2)
-    );
-
-
-/* ============================================================
-   FIREBASE MASTER DATA
-============================================================ */
 
 const districtSelect =
     document.getElementById("district");
@@ -452,15 +91,681 @@ const schoolSelect =
     document.getElementById("school");
 
 
-function resetSelect(
-    select,
-    placeholder
-) {
+const tenthFields =
+    document.getElementById("tenthFields");
 
-    select.innerHTML =
-        `<option value="">${placeholder}</option>`;
+const pucFields =
+    document.getElementById("pucFields");
 
-    select.disabled = true;
+
+const step1Next =
+    document.getElementById("step1Next");
+
+const step2Back =
+    document.getElementById("step2Back");
+
+const step2Next =
+    document.getElementById("step2Next");
+
+const step3Back =
+    document.getElementById("step3Back");
+
+const finishBtn =
+    document.getElementById("finishBtn");
+
+
+/* ============================================================
+   STATE
+============================================================ */
+
+let currentUser = null;
+
+let currentStep = 1;
+
+
+/*
+ * CRM master data
+ */
+let districts = [];
+let taluks = [];
+let gramPanchayats = [];
+let villages = [];
+let schools = [];
+
+
+/* ============================================================
+   AUTHENTICATION + ONBOARDING GUARD
+============================================================ */
+
+onAuthStateChanged(
+    auth,
+    async (user) => {
+
+        /*
+         * User is not logged in.
+         *
+         * Do not allow onboarding to open.
+         */
+        if (!user) {
+
+            window.location.replace(
+                "../login/"
+            );
+
+            return;
+        }
+
+
+        currentUser = user;
+
+
+        try {
+
+            /*
+             * Check student profile.
+             */
+            const studentRef =
+                doc(
+                    db,
+                    "students",
+                    user.uid
+                );
+
+
+            const studentSnapshot =
+                await getDoc(
+                    studentRef
+                );
+
+
+            /*
+             * IMPORTANT:
+             *
+             * If onboarding is already complete,
+             * this page must NEVER be shown.
+             */
+            if (
+                studentSnapshot.exists() &&
+                studentSnapshot.data()
+                    .onboardingComplete === true
+            ) {
+
+                window.location.replace(
+                    "../../home/"
+                );
+
+                return;
+            }
+
+
+            /*
+             * Prefill Google account name.
+             */
+            if (
+                user.displayName &&
+                !fullNameInput.value
+            ) {
+
+                fullNameInput.value =
+                    user.displayName;
+
+            }
+
+
+            /*
+             * Load all CRM master data.
+             */
+            await loadMasterData();
+
+
+            /*
+             * Show onboarding.
+             */
+            hideLoader();
+
+            showApp();
+
+
+            /*
+             * Start at step 1.
+             */
+            showStep(1);
+
+
+        } catch (error) {
+
+            console.error(
+                "ONBOARDING INITIALIZATION ERROR:",
+                error
+            );
+
+
+            hideLoader();
+
+            showApp();
+
+
+            showError(
+                "Unable to load onboarding data. Please refresh and try again."
+            );
+
+        }
+
+    }
+);
+
+
+/* ============================================================
+   LOADER
+============================================================ */
+
+function hideLoader() {
+
+    if (loader) {
+        loader.classList.add("hidden");
+    }
+
+}
+
+
+function showApp() {
+
+    if (app) {
+        app.classList.remove("hidden");
+    }
+
+}
+
+
+/* ============================================================
+   STEP NAVIGATION
+============================================================ */
+
+function showStep(step) {
+
+    currentStep = step;
+
+
+    document
+        .querySelectorAll(".step")
+        .forEach(
+            section => {
+                section.classList.remove(
+                    "active"
+                );
+            }
+        );
+
+
+    const selectedStep =
+        document.getElementById(
+            `step${step}`
+        );
+
+
+    if (selectedStep) {
+
+        selectedStep.classList.add(
+            "active"
+        );
+
+    }
+
+
+    if (stepText) {
+
+        stepText.textContent =
+            `${step} of 3`;
+
+    }
+
+
+    if (progressBar) {
+
+        progressBar.style.width =
+            `${(step / 3) * 100}%`;
+
+    }
+
+
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+    });
+
+}
+
+
+/* ============================================================
+   STEP 1
+============================================================ */
+
+step1Next?.addEventListener(
+    "click",
+    () => {
+
+        clearError();
+
+
+        const name =
+            fullNameInput.value.trim();
+
+        const dob =
+            dobInput.value;
+
+        const gender =
+            genderSelect.value;
+
+
+        if (name.length < 2) {
+
+            showError(
+                "Please enter your full name."
+            );
+
+            fullNameInput.focus();
+
+            return;
+        }
+
+
+        if (!dob) {
+
+            showError(
+                "Please select your date of birth."
+            );
+
+            dobInput.focus();
+
+            return;
+        }
+
+
+        if (!gender) {
+
+            showError(
+                "Please select your gender."
+            );
+
+            genderSelect.focus();
+
+            return;
+        }
+
+
+        showStep(2);
+
+    }
+);
+
+
+/* ============================================================
+   CLASS CHANGE
+============================================================ */
+
+classSelect?.addEventListener(
+    "change",
+    updateAcademicFields
+);
+
+
+function updateAcademicFields() {
+
+    const className =
+        classSelect.value;
+
+
+    /*
+     * Hide everything first.
+     */
+    tenthFields?.classList.remove(
+        "show"
+    );
+
+    pucFields?.classList.remove(
+        "show"
+    );
+
+
+    /*
+     * 10th
+     */
+    if (
+        className === "10th"
+    ) {
+
+        tenthFields?.classList.add(
+            "show"
+        );
+
+    }
+
+
+    /*
+     * PUC
+     */
+    if (
+        className === "1st PUC" ||
+        className === "2nd PUC"
+    ) {
+
+        pucFields?.classList.add(
+            "show"
+        );
+
+    }
+
+}
+
+
+/* ============================================================
+   STEP 2 BACK
+============================================================ */
+
+step2Back?.addEventListener(
+    "click",
+    () => {
+
+        clearError();
+
+        showStep(1);
+
+    }
+);
+
+
+/* ============================================================
+   STEP 2 NEXT
+============================================================ */
+
+step2Next?.addEventListener(
+    "click",
+    () => {
+
+        clearError();
+
+
+        const className =
+            classSelect.value;
+
+        const medium =
+            mediumSelect.value;
+
+
+        if (!className) {
+
+            showError(
+                "Please select your current class."
+            );
+
+            classSelect.focus();
+
+            return;
+        }
+
+
+        if (!medium) {
+
+            showError(
+                "Please select your medium."
+            );
+
+            mediumSelect.focus();
+
+            return;
+        }
+
+
+        /*
+         * 10th requires board.
+         */
+        if (
+            className === "10th"
+        ) {
+
+            if (!boardSelect.value) {
+
+                showError(
+                    "Please select your board."
+                );
+
+                boardSelect.focus();
+
+                return;
+            }
+
+        }
+
+
+        /*
+         * PUC requires combination
+         * and target.
+         */
+        if (
+            className === "1st PUC" ||
+            className === "2nd PUC"
+        ) {
+
+            if (
+                !combinationSelect.value
+            ) {
+
+                showError(
+                    "Please select your combination."
+                );
+
+                combinationSelect.focus();
+
+                return;
+            }
+
+
+            if (
+                !targetSelect.value
+            ) {
+
+                showError(
+                    "Please select your target."
+                );
+
+                targetSelect.focus();
+
+                return;
+            }
+
+        }
+
+
+        showStep(3);
+
+    }
+);
+
+
+/* ============================================================
+   STEP 3 BACK
+============================================================ */
+
+step3Back?.addEventListener(
+    "click",
+    () => {
+
+        clearError();
+
+        showStep(2);
+
+    }
+);
+
+
+/* ============================================================
+   LOAD ALL CRM MASTER DATA
+============================================================ */
+
+async function loadMasterData() {
+
+    /*
+     * Load everything once.
+     *
+     * Then filtering is done locally.
+     *
+     * This matches the CRM location architecture.
+     */
+
+    const [
+        districtSnapshot,
+        talukSnapshot,
+        gpSnapshot,
+        villageSnapshot,
+        schoolSnapshot
+    ] = await Promise.all([
+
+        getDocs(
+            collection(
+                db,
+                "crmDistricts"
+            )
+        ),
+
+        getDocs(
+            collection(
+                db,
+                "crmTaluks"
+            )
+        ),
+
+        getDocs(
+            collection(
+                db,
+                "crmGramPanchayats"
+            )
+        ),
+
+        getDocs(
+            collection(
+                db,
+                "crmVillages"
+            )
+        ),
+
+        getDocs(
+            collection(
+                db,
+                "crmSchools"
+            )
+        )
+
+    ]);
+
+
+    /*
+     * DISTRICTS
+     */
+    districts =
+        districtSnapshot.docs
+            .map(item => ({
+                id: item.id,
+                ...item.data()
+            }))
+            .filter(
+                item =>
+                    item.crmActive !== false
+            )
+            .sort(
+                sortByDistrictName
+            );
+
+
+    /*
+     * TALUKS
+     *
+     * Exact CRM field:
+     * crmDistrictId
+     */
+    taluks =
+        talukSnapshot.docs
+            .map(item => ({
+                id: item.id,
+                ...item.data()
+            }))
+            .filter(
+                item =>
+                    item.crmActive !== false
+            )
+            .sort(
+                sortByTalukName
+            );
+
+
+    /*
+     * GRAM PANCHAYATS
+     *
+     * Exact CRM fields:
+     * crmTalukId
+     * crmGPName
+     */
+    gramPanchayats =
+        gpSnapshot.docs
+            .map(item => ({
+                id: item.id,
+                ...item.data()
+            }))
+            .filter(
+                item =>
+                    item.crmActive !== false
+            )
+            .sort(
+                sortByGPName
+            );
+
+
+    /*
+     * VILLAGES
+     *
+     * Exact CRM fields:
+     * crmGPId
+     * crmVillageName
+     */
+    villages =
+        villageSnapshot.docs
+            .map(item => ({
+                id: item.id,
+                ...item.data()
+            }))
+            .filter(
+                item =>
+                    item.crmActive !== false
+            )
+            .sort(
+                sortByVillageName
+            );
+
+
+    /*
+     * SCHOOLS
+     *
+     * Loaded once and filtered by
+     * Taluk locally.
+     */
+    schools =
+        schoolSnapshot.docs
+            .map(item => ({
+                id: item.id,
+                ...item.data()
+            }))
+            .filter(
+                item =>
+                    item.crmActive !== false
+            )
+            .sort(
+                sortBySchoolName
+            );
+
+
+    /*
+     * Populate district dropdown.
+     */
+    populateDistricts();
 
 }
 
@@ -469,396 +774,16 @@ function resetSelect(
    DISTRICTS
 ============================================================ */
 
-async function loadDistricts() {
-
-    try {
-
-        const snapshot =
-            await getDocs(
-                collection(
-                    db,
-                    "crmDistricts"
-                )
-            );
-
-
-        snapshot.forEach(item => {
-
-            const data =
-                item.data();
-
-
-            const option =
-                document.createElement("option");
-
-
-            option.value =
-                item.id;
-
-            option.textContent =
-                data.crmDistrictName ||
-                data.districtName ||
-                data.name ||
-                "District";
-
-
-            districtSelect.appendChild(
-                option
-            );
-
-        });
-
-
-    } catch (error) {
-
-        console.error(
-            "District loading error:",
-            error
-        );
-
-    }
-
-}
-
-
-/*/* ============================================================
-   TALUKS
-============================================================ */
-
-districtSelect.addEventListener(
-    "change",
-    async () => {
-
-        const districtId =
-            districtSelect.value;
-
-        resetSelect(
-            talukSelect,
-            "Select taluk"
-        );
-
-        resetSelect(
-            gpSelect,
-            "Select Gram Panchayat"
-        );
-
-        resetSelect(
-            villageSelect,
-            "Select village"
-        );
-
-        resetSelect(
-            schoolSelect,
-            "Select your school"
-        );
-
-        if (!districtId) return;
-
-        try {
-
-            const q = query(
-                collection(
-                    db,
-                    "crmTaluks"
-                ),
-
-                // YOUR FIRESTORE FIELD
-                where(
-                    "crmDistrictId",
-                    "==",
-                    districtId
-                )
-            );
-
-            const snapshot =
-                await getDocs(q);
-
-            snapshot.forEach(item => {
-
-                const data =
-                    item.data();
-
-                const option =
-                    document.createElement("option");
-
-                option.value =
-                    item.id;
-
-                option.textContent =
-                    data.crmTalukName || "Taluk";
-
-                talukSelect.appendChild(
-                    option
-                );
-
-            });
-
-            talukSelect.disabled = false;
-
-        } catch (error) {
-
-            console.error(
-                "Taluk loading error:",
-                error
-            );
-
-        }
-
-    }
-);
-/* ============================================================
-   GRAM PANCHAYAT
-============================================================ */
-
-talukSelect.addEventListener(
-    "change",
-    async () => {
-
-        const talukId =
-            talukSelect.value;
-
-
-        resetSelect(
-            gpSelect,
-            "Select Gram Panchayat"
-        );
-
-        resetSelect(
-            villageSelect,
-            "Select village"
-        );
-
-        resetSelect(
-            schoolSelect,
-            "Select your school"
-        );
-
-
-        if (!talukId) return;
-
-
-        try {
-
-            const q =
-                query(
-                    collection(
-                        db,
-                        "crmGramPanchayats"
-                    ),
-                    where(
-                        "talukId",
-                        "==",
-                        talukId
-                    )
-                );
-
-
-            const snapshot =
-                await getDocs(q);
-
-
-            snapshot.forEach(item => {
-
-                const data =
-                    item.data();
-
-
-                const option =
-                    document.createElement(
-                        "option"
-                    );
-
-
-                option.value =
-                    item.id;
-
-                option.textContent =
-                    data.crmGramPanchayatName ||
-                    data.gramPanchayatName ||
-                    data.name ||
-                    "Gram Panchayat";
-
-
-                gpSelect.appendChild(
-                    option
-                );
-
-            });
-
-
-            gpSelect.disabled =
-                false;
-
-
-        } catch (error) {
-
-            console.error(
-                "GP loading error:",
-                error
-            );
-
-        }
-
-    }
-);
-
-
-/* ============================================================
-   VILLAGES
-============================================================ */
-
-gpSelect.addEventListener(
-    "change",
-    async () => {
-
-        const gpId =
-            gpSelect.value;
-
-
-        resetSelect(
-            villageSelect,
-            "Select village"
-        );
-
-
-        if (!gpId) return;
-
-
-        try {
-
-            const q =
-                query(
-                    collection(
-                        db,
-                        "crmVillages"
-                    ),
-                    where(
-                        "gramPanchayatId",
-                        "==",
-                        gpId
-                    )
-                );
-
-
-            const snapshot =
-                await getDocs(q);
-
-
-            snapshot.forEach(item => {
-
-                const data =
-                    item.data();
-
-
-                const option =
-                    document.createElement(
-                        "option"
-                    );
-
-
-                option.value =
-                    item.id;
-
-                option.textContent =
-                    data.crmVillageName ||
-                    data.villageName ||
-                    data.name ||
-                    "Village";
-
-
-                villageSelect.appendChild(
-                    option
-                );
-
-            });
-
-
-            villageSelect.disabled =
-                false;
-
-
-        } catch (error) {
-
-            console.error(
-                "Village loading error:",
-                error
-            );
-
-        }
-
-    }
-);
-
-
-/* ============================================================
-   SCHOOLS
-   School is filtered by TALUK,
-   not Gram Panchayat.
-============================================================ */
-
-talukSelect.addEventListener(
-    "change",
-    async () => {
-
-        /*
-         * We intentionally load schools by
-         * Taluk because students may study
-         * outside their Gram Panchayat.
-         */
-
-        await loadSchoolsForTaluk(
-            talukSelect.value
-        );
-
-    }
-);
-
-
-async function loadSchoolsForTaluk(
-    talukId
-) {
-
-    resetSelect(
-        schoolSelect,
-        "Select your school"
+function populateDistricts() {
+
+    clearSelect(
+        districtSelect,
+        "Select district"
     );
 
 
-    if (!talukId) return;
-
-
-    try {
-
-        const q =
-            query(
-                collection(
-                    db,
-                    "crmSchools"
-                ),
-                where(
-                    "crmTalukId",
-                    "==",
-                    talukId
-                )
-            );
-
-
-        const snapshot =
-            await getDocs(q);
-
-
-        snapshot.forEach(item => {
-
-            const data =
-                item.data();
-
-
-            if (
-                data.crmActive === false
-            ) {
-                return;
-            }
-
+    districts.forEach(
+        district => {
 
             const option =
                 document.createElement(
@@ -867,12 +792,294 @@ async function loadSchoolsForTaluk(
 
 
             option.value =
-                item.id;
+                district.id;
+
 
             option.textContent =
-                data.crmSchoolName ||
-                data.schoolName ||
-                data.name ||
+                district.crmDistrictName ||
+                "District";
+
+
+            districtSelect.appendChild(
+                option
+            );
+
+        }
+    );
+
+}
+
+
+/* ============================================================
+   DISTRICT CHANGE
+============================================================ */
+
+districtSelect?.addEventListener(
+    "change",
+    () => {
+
+        clearError();
+
+
+        const districtId =
+            districtSelect.value;
+
+
+        /*
+         * Reset everything below.
+         */
+        clearSelect(
+            talukSelect,
+            "Select taluk"
+        );
+
+        clearSelect(
+            gpSelect,
+            "Select Gram Panchayat"
+        );
+
+        clearSelect(
+            villageSelect,
+            "Select village"
+        );
+
+        clearSelect(
+            schoolSelect,
+            "Select your school"
+        );
+
+
+        if (!districtId) {
+
+            return;
+
+        }
+
+
+        /*
+         * EXACT FIELD:
+         *
+         * crmDistrictId
+         */
+        const matchingTaluks =
+            taluks.filter(
+                taluk =>
+                    taluk.crmDistrictId ===
+                    districtId
+            );
+
+
+        matchingTaluks.forEach(
+            taluk => {
+
+                const option =
+                    document.createElement(
+                        "option"
+                    );
+
+
+                option.value =
+                    taluk.id;
+
+
+                option.textContent =
+                    taluk.crmTalukName ||
+                    "Taluk";
+
+
+                talukSelect.appendChild(
+                    option
+                );
+
+            }
+        );
+
+
+        if (
+            matchingTaluks.length > 0
+        ) {
+
+            talukSelect.disabled =
+                false;
+
+        }
+
+    }
+);
+
+
+/* ============================================================
+   TALUK CHANGE
+============================================================ */
+
+talukSelect?.addEventListener(
+    "change",
+    () => {
+
+        clearError();
+
+
+        const talukId =
+            talukSelect.value;
+
+
+        /*
+         * Reset lower fields.
+         */
+        clearSelect(
+            gpSelect,
+            "Select Gram Panchayat"
+        );
+
+        clearSelect(
+            villageSelect,
+            "Select village"
+        );
+
+        clearSelect(
+            schoolSelect,
+            "Select your school"
+        );
+
+
+        if (!talukId) {
+
+            return;
+
+        }
+
+
+        /*
+         * =====================================================
+         * GRAM PANCHAYATS
+         *
+         * Exact CRM field:
+         * crmTalukId
+         * =====================================================
+         */
+
+        const matchingGPs =
+            gramPanchayats.filter(
+                gp =>
+                    gp.crmTalukId ===
+                    talukId
+            );
+
+
+        matchingGPs.forEach(
+            gp => {
+
+                const option =
+                    document.createElement(
+                        "option"
+                    );
+
+
+                option.value =
+                    gp.id;
+
+
+                option.textContent =
+                    gp.crmGPName ||
+                    "Gram Panchayat";
+
+
+                gpSelect.appendChild(
+                    option
+                );
+
+            }
+        );
+
+
+        if (
+            matchingGPs.length > 0
+        ) {
+
+            gpSelect.disabled =
+                false;
+
+        }
+
+
+        /*
+         * =====================================================
+         * SCHOOLS
+         *
+         * School selection is based on TALUK.
+         *
+         * Students can study outside their GP.
+         * =====================================================
+         */
+
+        loadSchoolsForTaluk(
+            talukId
+        );
+
+    }
+);
+
+
+/* ============================================================
+   LOAD SCHOOLS FOR TALUK
+============================================================ */
+
+function loadSchoolsForTaluk(
+    talukId
+) {
+
+    clearSelect(
+        schoolSelect,
+        "Select your school"
+    );
+
+
+    if (!talukId) {
+
+        return;
+
+    }
+
+
+    /*
+     * Primary expected CRM field:
+     *
+     * crmTalukId
+     */
+    const matchingSchools =
+        schools.filter(
+            school =>
+                school.crmTalukId ===
+                talukId
+        );
+
+
+    /*
+     * If schools have been created with
+     * district/taluk information but the
+     * taluk ID is missing, we do NOT guess.
+     *
+     * Only exact CRM Taluk ID matches
+     * are shown.
+     */
+
+    matchingSchools.forEach(
+        school => {
+
+            const option =
+                document.createElement(
+                    "option"
+                );
+
+
+            option.value =
+                school.id;
+
+
+            option.textContent =
+                school.crmSchoolName ||
+                school.schoolName ||
+                school.name ||
                 "School";
 
 
@@ -880,19 +1087,16 @@ async function loadSchoolsForTaluk(
                 option
             );
 
-        });
+        }
+    );
 
+
+    if (
+        matchingSchools.length > 0
+    ) {
 
         schoolSelect.disabled =
             false;
-
-
-    } catch (error) {
-
-        console.error(
-            "School loading error:",
-            error
-        );
 
     }
 
@@ -900,78 +1104,233 @@ async function loadSchoolsForTaluk(
 
 
 /* ============================================================
-   FINISH ONBOARDING
+   GP CHANGE
 ============================================================ */
 
-document
-    .getElementById("finishBtn")
-    .addEventListener(
-        "click",
-        completeOnboarding
-    );
+gpSelect?.addEventListener(
+    "change",
+    () => {
+
+        clearError();
+
+
+        const gpId =
+            gpSelect.value;
+
+
+        /*
+         * Reset village.
+         */
+        clearSelect(
+            villageSelect,
+            "Select village"
+        );
+
+
+        if (!gpId) {
+
+            return;
+
+        }
+
+
+        /*
+         * Exact CRM field:
+         *
+         * crmGPId
+         */
+        const matchingVillages =
+            villages.filter(
+                village =>
+                    village.crmGPId ===
+                    gpId
+            );
+
+
+        matchingVillages.forEach(
+            village => {
+
+                const option =
+                    document.createElement(
+                        "option"
+                    );
+
+
+                option.value =
+                    village.id;
+
+
+                option.textContent =
+                    village.crmVillageName ||
+                    "Village";
+
+
+                villageSelect.appendChild(
+                    option
+                );
+
+            }
+        );
+
+
+        if (
+            matchingVillages.length > 0
+        ) {
+
+            villageSelect.disabled =
+                false;
+
+        }
+
+    }
+);
+
+
+/* ============================================================
+   FINISH
+============================================================ */
+
+finishBtn?.addEventListener(
+    "click",
+    completeOnboarding
+);
 
 
 async function completeOnboarding() {
 
-    formError.textContent = "";
+    clearError();
 
 
     if (!currentUser) {
-        window.location.replace("../login/");
+
+        window.location.replace(
+            "../login/"
+        );
+
         return;
     }
 
 
-    const district =
+    /*
+     * Basic location validation.
+     */
+    const districtId =
         districtSelect.value;
 
-    const taluk =
+    const talukId =
         talukSelect.value;
 
-    const gramPanchayat =
+    const gpId =
         gpSelect.value;
 
-    const village =
+    const villageId =
         villageSelect.value;
 
-    const school =
+    const schoolId =
         schoolSelect.value;
 
 
-    if (!district) {
+    if (!districtId) {
 
-        formError.textContent =
-            "Please select your district.";
+        showError(
+            "Please select your district."
+        );
 
-        return;
-    }
-
-
-    if (!taluk) {
-
-        formError.textContent =
-            "Please select your taluk.";
+        districtSelect.focus();
 
         return;
     }
 
 
-    if (!school) {
+    if (!talukId) {
 
-        formError.textContent =
-            "Please select your school.";
+        showError(
+            "Please select your taluk."
+        );
+
+        talukSelect.focus();
 
         return;
     }
 
 
-    const finishBtn =
-        document.getElementById(
-            "finishBtn"
+    if (!schoolId) {
+
+        showError(
+            "Please select your school."
+        );
+
+        schoolSelect.focus();
+
+        return;
+    }
+
+
+    /*
+     * Get selected master records.
+     */
+    const district =
+        districts.find(
+            item =>
+                item.id ===
+                districtId
         );
 
 
-    finishBtn.disabled = true;
+    const taluk =
+        taluks.find(
+            item =>
+                item.id ===
+                talukId
+        );
+
+
+    const gp =
+        gramPanchayats.find(
+            item =>
+                item.id ===
+                gpId
+        );
+
+
+    const village =
+        villages.find(
+            item =>
+                item.id ===
+                villageId
+        );
+
+
+    const school =
+        schools.find(
+            item =>
+                item.id ===
+                schoolId
+        );
+
+
+    /*
+     * Make sure selected IDs are valid.
+     */
+    if (
+        !district ||
+        !taluk ||
+        !school
+    ) {
+
+        showError(
+            "Please check your location and school selection."
+        );
+
+        return;
+    }
+
+
+    /*
+     * Button loading.
+     */
+    finishBtn.disabled =
+        true;
 
     finishBtn.innerHTML =
         "Saving...";
@@ -980,88 +1339,151 @@ async function completeOnboarding() {
     try {
 
         const className =
-            document
-                .getElementById("className")
-                .value;
+            classSelect.value;
 
+
+        /*
+         * =====================================================
+         * STUDENT PROFILE
+         * =====================================================
+         */
 
         const studentData = {
 
-            uid: currentUser.uid,
+            /*
+             * Firebase Auth
+             */
+            uid:
+                currentUser.uid,
 
-            name:
-                document
-                    .getElementById("fullName")
-                    .value
-                    .trim(),
 
+            /*
+             * Google account
+             */
             email:
                 currentUser.email || "",
 
+
+            /*
+             * Name entered/confirmed
+             */
+            name:
+                fullNameInput.value.trim(),
+
+
+            /*
+             * Phone is available only if
+             * Firebase Auth has one.
+             *
+             * Otherwise empty.
+             */
             phone:
                 currentUser.phoneNumber || "",
 
+
+            /*
+             * Personal
+             */
             dateOfBirth:
-                document
-                    .getElementById("dob")
-                    .value,
+                dobInput.value,
 
             gender:
-                document
-                    .getElementById("gender")
-                    .value,
+                genderSelect.value,
 
-            className,
+
+            /*
+             * Academic
+             */
+            className:
+                className,
 
             board:
                 className === "10th"
-                    ? document
-                        .getElementById("board")
-                        .value
+                    ? boardSelect.value
                     : "",
 
             medium:
-                document
-                    .getElementById("medium")
-                    .value,
+                mediumSelect.value,
 
             combination:
-                className === "1st PUC" ||
-                className === "2nd PUC"
-                    ? document
-                        .getElementById(
-                            "combination"
-                        )
-                        .value
+                (
+                    className === "1st PUC" ||
+                    className === "2nd PUC"
+                )
+                    ? combinationSelect.value
                     : "",
 
             target:
-                className === "1st PUC" ||
-                className === "2nd PUC"
-                    ? document
-                        .getElementById(
-                            "target"
-                        )
-                        .value
+                (
+                    className === "1st PUC" ||
+                    className === "2nd PUC"
+                )
+                    ? targetSelect.value
                     : "",
 
+
+            /*
+             * =================================================
+             * LOCATION
+             *
+             * Save both IDs and names.
+             * This makes the student profile easy
+             * to display later.
+             * =================================================
+             */
+
             districtId:
-                district,
+                district.id,
+
+            districtName:
+                district.crmDistrictName || "",
+
 
             talukId:
-                taluk,
+                taluk.id,
+
+            talukName:
+                taluk.crmTalukName || "",
+
 
             gramPanchayatId:
-                gramPanchayat || "",
+                gp?.id || "",
+
+            gramPanchayatName:
+                gp?.crmGPName || "",
+
 
             villageId:
-                village || "",
+                village?.id || "",
+
+            villageName:
+                village?.crmVillageName || "",
+
 
             schoolId:
-                school,
+                school.id,
 
+            schoolName:
+                school.crmSchoolName ||
+                school.schoolName ||
+                school.name ||
+                "",
+
+
+            /*
+             * =================================================
+             * ONBOARDING STATUS
+             *
+             * ONLY THIS.
+             *
+             * No portalAccess.
+             * No approval.
+             * No pending.
+             * =================================================
+             */
             onboardingComplete:
                 true,
+
 
             updatedAt:
                 serverTimestamp(),
@@ -1073,7 +1495,9 @@ async function completeOnboarding() {
 
 
         /*
-         * Student profile.
+         * Save to:
+         *
+         * students/{Firebase Auth UID}
          */
         await setDoc(
             doc(
@@ -1089,15 +1513,13 @@ async function completeOnboarding() {
 
 
         /*
-         * IMPORTANT:
-         *
-         * Onboarding is finished.
-         * No portalAccess.
-         * No approval.
-         * No pending state.
+         * =====================================================
+         * FINISHED
          *
          * Go directly to Home.
+         * =====================================================
          */
+
         window.location.replace(
             "../../home/"
         );
@@ -1106,20 +1528,237 @@ async function completeOnboarding() {
     } catch (error) {
 
         console.error(
-            "Onboarding save error:",
+            "ONBOARDING SAVE ERROR:",
             error
         );
 
 
-        formError.textContent =
-            "Something went wrong while saving. Please try again.";
+        showError(
+            getFirebaseErrorMessage(error)
+        );
 
 
-        finishBtn.disabled = false;
+        finishBtn.disabled =
+            false;
+
 
         finishBtn.innerHTML =
             `Finish <span>→</span>`;
 
     }
+
+}
+
+
+/* ============================================================
+   CLEAR SELECT
+============================================================ */
+
+function clearSelect(
+    select,
+    placeholder
+) {
+
+    if (!select) return;
+
+
+    select.innerHTML =
+        "";
+
+
+    const option =
+        document.createElement(
+            "option"
+        );
+
+
+    option.value =
+        "";
+
+
+    option.textContent =
+        placeholder;
+
+
+    select.appendChild(
+        option
+    );
+
+
+    select.disabled =
+        true;
+
+}
+
+
+/* ============================================================
+   ERRORS
+============================================================ */
+
+function showError(message) {
+
+    if (!formError) return;
+
+
+    formError.textContent =
+        message;
+
+}
+
+
+function clearError() {
+
+    if (!formError) return;
+
+
+    formError.textContent =
+        "";
+
+}
+
+
+/* ============================================================
+   FIREBASE ERROR MESSAGE
+============================================================ */
+
+function getFirebaseErrorMessage(
+    error
+) {
+
+    if (!error) {
+
+        return "Something went wrong.";
+
+    }
+
+
+    if (
+        error.code ===
+        "permission-denied"
+    ) {
+
+        return (
+            "You don't have permission to save this information."
+        );
+
+    }
+
+
+    if (
+        error.code ===
+        "unavailable"
+    ) {
+
+        return (
+            "Internet connection problem. Please try again."
+        );
+
+    }
+
+
+    if (error.message) {
+
+        return error.message;
+
+    }
+
+
+    return (
+        "Something went wrong. Please try again."
+    );
+
+}
+
+
+/* ============================================================
+   SORTING
+============================================================ */
+
+function sortByDistrictName(
+    a,
+    b
+) {
+
+    return String(
+        a.crmDistrictName || ""
+    ).localeCompare(
+        String(
+            b.crmDistrictName || ""
+        )
+    );
+
+}
+
+
+function sortByTalukName(
+    a,
+    b
+) {
+
+    return String(
+        a.crmTalukName || ""
+    ).localeCompare(
+        String(
+            b.crmTalukName || ""
+        )
+    );
+
+}
+
+
+function sortByGPName(
+    a,
+    b
+) {
+
+    return String(
+        a.crmGPName || ""
+    ).localeCompare(
+        String(
+            b.crmGPName || ""
+        )
+    );
+
+}
+
+
+function sortByVillageName(
+    a,
+    b
+) {
+
+    return String(
+        a.crmVillageName || ""
+    ).localeCompare(
+        String(
+            b.crmVillageName || ""
+        )
+    );
+
+}
+
+
+function sortBySchoolName(
+    a,
+    b
+) {
+
+    const nameA =
+        a.crmSchoolName ||
+        a.schoolName ||
+        a.name ||
+        "";
+
+    const nameB =
+        b.crmSchoolName ||
+        b.schoolName ||
+        b.name ||
+        "";
+
+
+    return String(nameA)
+        .localeCompare(
+            String(nameB)
+        );
 
 }
