@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Home Banners | Zenova CRM</title>
+
+    <link rel="stylesheet" href="./banners.css">
+</head>
+
+<body>
+
+    <!-- ==============================
+         PAGE
+    =============================== -->
+
+    <div class="page">
+
+        <!-- Header -->
+        <header class="topbar">
+
+            <div class="topbar-left">
+
+                <button class="back-btn" id="backBtn" type="button">
+                    ←
+                </button>
+
+                <div>
+                    <div class="page-title">Home Banners</div>
+                    <div class="page-subtitle">
+                        Manage banners displayed on the student home page
+                    </div>
+                </div>
+
+            </div>
+
+            <button class="primary-btn" id="addBannerBtn">
+                + Add Banner
+            </button>
+
+        </header>
+
+
+        <!-- ==============================
+             SUMMARY
+        =============================== -->
+
+        <section class="summary-grid">
+
+            <div class="summary-card">
+                <div class="summary-label">Total Banners</div>
+                <div class="summary-value" id="totalCount">0</div>
+            </div>
+
+            <div class="summary-card">
+                <div class="summary-label">Active</div>
+                <div class="summary-value" id="activeCount">0</div>
+            </div>
+
+            <div class="summary-card">
+                <div class="summary-label">Inactive</div>
+                <div class="summary-value" id="inactiveCount">0</div>
+            </div>
+
+        </section>
+
+
+        <!-- ==============================
+             FILTER BAR
+        =============================== -->
+
+        <section class="toolbar">
+
+            <div class="search-box">
+                <span>⌕</span>
+
+                <input
+                    type="text"
+                    id="searchInput"
+                    placeholder="Search banners..."
+                    autocomplete="off"
+                >
+            </div>
+
+            <select id="statusFilter">
+                <option value="ALL">All Status</option>
+                <option value="ACTIVE">Active</option>
+                <option value="INACTIVE">Inactive</option>
+            </select>
+
+        </section>
+
+
+        <!-- ==============================
+             BANNERS
+        =============================== -->
+
+        <main>
+
+            <div id="emptyState" class="empty-state">
+
+                <div class="empty-icon">▧</div>
+
+                <h3>No banners yet</h3>
+
+                <p>
+                    Add your first banner to display it on the student home page.
+                </p>
+
+                <button class="primary-btn" id="emptyAddBtn">
+                    + Add Banner
+                </button>
+
+            </div>
+
+
+            <div id="bannerGrid" class="banner-grid"></div>
+
+        </main>
+
+    </div>
+
+
+    <!-- ==============================
+         MODAL
+    =============================== -->
+
+    <div class="modal-overlay" id="bannerModal">
+
+        <div class="modal">
+
+            <div class="modal-header">
+
+                <div>
+                    <h2 id="modalTitle">Add Banner</h2>
+
+                    <p>
+                        This banner will be shown on Student Home.
+                    </p>
+                </div>
+
+                <button class="close-btn" id="closeModal">
+                    ×
+                </button>
+
+            </div>
+
+
+            <form id="bannerForm">
+
+                <input type="hidden" id="bannerId">
+
+
+                <!-- Image -->
+
+                <div class="form-section">
+
+                    <label>Banner Image</label>
+
+                    <div class="upload-area" id="uploadArea">
+
+                        <input
+                            type="file"
+                            id="imageInput"
+                            accept="image/png,image/jpeg,image/webp"
+                            hidden
+                        >
+
+                        <div id="uploadPlaceholder">
+
+                            <div class="upload-icon">↑</div>
+
+                            <strong>Upload banner image</strong>
+
+                            <span>
+                                PNG, JPG or WEBP
+                            </span>
+
+                        </div>
+
+                        <img
+                            id="imagePreview"
+                            class="image-preview"
+                            alt="Banner preview"
+                        >
+
+                    </div>
+
+                    <div id="imageStatus" class="image-status"></div>
+
+                </div>
+
+
+                <!-- Text -->
+
+                <div class="form-grid">
+
+                    <div class="form-group">
+
+                        <label for="label">
+                            Label
+                        </label>
+
+                        <input
+                            type="text"
+                            id="label"
+                            placeholder="Example: SSLC 2026"
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="priority">
+                            Priority
+                        </label>
+
+                        <input
+                            type="number"
+                            id="priority"
+                            min="1"
+                            value="1"
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="title">
+                        Title
+                    </label>
+
+                    <input
+                        type="text"
+                        id="title"
+                        placeholder="Enter banner title"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="description">
+                        Description
+                    </label>
+
+                    <textarea
+                        id="description"
+                        rows="3"
+                        placeholder="Enter banner description"
+                    ></textarea>
+
+                </div>
+
+
+                <div class="form-grid">
+
+                    <div class="form-group">
+
+                        <label for="buttonText">
+                            Button Text
+                        </label>
+
+                        <input
+                            type="text"
+                            id="buttonText"
+                            placeholder="Example: Explore Now"
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="link">
+                            Destination Link
+                        </label>
+
+                        <input
+                            type="text"
+                            id="link"
+                            placeholder="Example: ../batches/"
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <!-- Active -->
+
+                <div class="active-row">
+
+                    <div>
+
+                        <strong>Show on Student Home</strong>
+
+                        <span>
+                            Students will see this banner when enabled.
+                        </span>
+
+                    </div>
+
+                    <label class="switch">
+
+                        <input
+                            type="checkbox"
+                            id="active"
+                            checked
+                        >
+
+                        <span class="slider"></span>
+
+                    </label>
+
+                </div>
+
+
+                <!-- Actions -->
+
+                <div class="modal-actions">
+
+                    <button
+                        type="button"
+                        class="secondary-btn"
+                        id="cancelBtn"
+                    >
+                        Cancel
+                    </button>
+
+                    <button
+                        type="submit"
+                        class="primary-btn"
+                        id="saveBtn"
+                    >
+                        Save Banner
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <!-- Firebase / Application -->
+
+    <script type="module" src="./banners.js"></script>
+
+</body>
+</html>
