@@ -1,172 +1,231 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0, maximum-scale=1.0"
-    >
 
-    <title>Login • Zenova Educations</title>
+  <meta charset="UTF-8">
 
-    <link rel="stylesheet" href="./login.css">
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>Login | Zenova Educations</title>
+
+  <link
+    rel="stylesheet"
+    href="login.css"
+  >
+
 </head>
+
 
 <body>
 
-    <main class="login-page">
 
-        <section class="login-container">
+  <!-- LOADER -->
 
-            <!-- Logo -->
-            <div class="brand">
-                <img
-                    src="../logo.png"
-                    alt="Zenova Educations"
-                    class="brand-logo"
-                >
-            </div>
-<div id="recaptcha-container"></div>
-            <!-- Phone Step -->
-            <section
-                id="phoneStep"
-                class="login-step active"
-            >
+  <div
+    id="loader"
+    class="loader-screen"
+  >
 
-                <h1>Welcome to Zenova</h1>
+    <div class="loader-ring"></div>
 
-                <p class="subtitle">
-                    Enter your mobile number to continue to your student portal.
-                </p>
+    <div class="loader-logo">
+      Z
+    </div>
 
-                <label for="phoneNumber">
-                    Mobile number
-                </label>
-
-                <div class="phone-input">
-
-                    <span class="country-code">
-                        +91
-                    </span>
-
-                    <input
-                        id="phoneNumber"
-                        type="tel"
-                        inputmode="numeric"
-                        autocomplete="tel"
-                        maxlength="10"
-                        placeholder="Enter mobile number"
-                    >
-
-                </div>
-
-                <button
-                    id="sendOtpBtn"
-                    class="primary-button"
-                    type="button"
-                >
-                    Continue
-                </button>
-
-                <!-- Invisible reCAPTCHA container -->
-                <div id="recaptcha-container"></div>
-
-                <p
-                    id="phoneMessage"
-                    class="message"
-                ></p>
-
-            </section>
+  </div>
 
 
-            <!-- OTP Step -->
-            <section
-                id="otpStep"
-                class="login-step"
-            >
 
-                <button
-                    id="backToPhoneBtn"
-                    class="back-button"
-                    type="button"
-                    aria-label="Back"
-                >
-                    <span>←</span>
-                </button>
+  <!-- LOGIN -->
 
-                <h1>Verify your number</h1>
+  <main class="page">
 
-                <p class="subtitle">
-                    Enter the 6-digit OTP sent to
-                    <strong id="displayPhone"></strong>
-                </p>
-
-                <label for="otp">
-                    Verification code
-                </label>
-
-                <input
-                    id="otp"
-                    class="otp-input"
-                    type="text"
-                    inputmode="numeric"
-                    autocomplete="one-time-code"
-                    maxlength="6"
-                    placeholder="000000"
-                >
-
-                <button
-                    id="verifyOtpBtn"
-                    class="primary-button"
-                    type="button"
-                >
-                    Verify & Continue
-                </button>
-
-                <button
-                    id="resendOtpBtn"
-                    class="secondary-button"
-                    type="button"
-                >
-                    Resend OTP
-                </button>
-
-                <p
-                    id="otpMessage"
-                    class="message"
-                ></p>
-
-            </section>
+    <div class="login-card">
 
 
-            <!-- Loading -->
-            <div
-                id="loginLoading"
-                class="login-loading"
-            >
+      <!-- LOGO -->
 
-                <div class="loading-ring"></div>
-
-                <img
-                    src="../logo.png"
-                    alt=""
-                >
-
-            </div>
-
-            <footer>
-                © Zenova Educations
-            </footer>
-
-        </section>
-
-    </main>
+      <img
+        src="../logo.png"
+        class="logo"
+        alt="Zenova Educations"
+      >
 
 
-    <script
-        type="module"
-        src="./login.js"
-    ></script>
+      <h1>
+        Welcome to Zenova
+      </h1>
+
+
+      <p class="subtitle">
+        Enter your mobile number to continue to your student portal.
+      </p>
+
+
+
+      <!-- PHONE STEP -->
+
+      <section id="phoneStep">
+
+
+        <label
+          for="phone"
+          class="label"
+        >
+          Mobile number
+        </label>
+
+
+        <div class="phone-box">
+
+          <div class="country-code">
+            +91
+          </div>
+
+          <input
+            type="tel"
+            id="phone"
+            maxlength="10"
+            inputmode="numeric"
+            placeholder="Enter mobile number"
+            autocomplete="tel"
+          >
+
+        </div>
+
+
+        <button
+          id="searchBtn"
+          class="primary-btn"
+        >
+          Continue
+        </button>
+
+
+        <div
+          id="errorBox"
+          class="error-box"
+        ></div>
+
+
+      </section>
+
+
+
+      <!-- CRM RESULT -->
+
+      <section
+        id="resultStep"
+        class="hidden"
+      >
+
+
+        <div
+          id="resultIcon"
+          class="result-icon"
+        >
+          ✓
+        </div>
+
+
+        <h2 id="resultTitle">
+          We found your account
+        </h2>
+
+
+        <p
+          id="resultMessage"
+          class="result-message"
+        ></p>
+
+
+        <div
+          id="crmInfo"
+          class="crm-info"
+        >
+
+          <div class="crm-label">
+            Name
+          </div>
+
+          <div
+            id="crmName"
+            class="crm-name"
+          ></div>
+
+        </div>
+
+
+
+        <!-- EXISTING CRM -->
+
+        <div
+          id="existingActions"
+          class="actions hidden"
+        >
+
+          <button
+            id="yesBtn"
+            class="primary-btn"
+          >
+            Yes, this is me
+          </button>
+
+
+          <button
+            id="noBtn"
+            class="secondary-btn"
+          >
+            No, create a new account
+          </button>
+
+        </div>
+
+
+
+        <!-- NEW ACCOUNT -->
+
+        <div
+          id="newActions"
+          class="actions hidden"
+        >
+
+          <button
+            id="createBtn"
+            class="primary-btn"
+          >
+            Create new account
+          </button>
+
+        </div>
+
+
+      </section>
+
+
+    </div>
+
+
+
+    <footer>
+      © Zenova Educations
+    </footer>
+
+
+  </main>
+
+
+
+  <script
+    type="module"
+    src="login.js"
+  ></script>
+
 
 </body>
+
 </html>
