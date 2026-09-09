@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    >
+
+    <title>Zenova — Home</title>
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.css"
+        rel="stylesheet"
+    >
+
+    <link
+        rel="stylesheet"
+        href="./home.css"
+    >
+
+</head>
+
+
+<body>
+
+
+<!-- =========================================================
+     LOADING
+========================================================= -->
+
+<div
+    id="zenovaLoader"
+    class="loader-screen"
+>
+
+    <div class="loader-ring">
+
+        <span>Z</span>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     APP
+========================================================= -->
+
+<div
+    id="zenovaApp"
+    class="app hidden"
+>
+
+
+    <!-- =====================================================
+         HEADER
+    ====================================================== -->
+
+    <header class="top-header">
+
+        <div class="brand">
+
+            <div class="brand-mark">
+                Z
+            </div>
+
+            <div class="brand-text">
+                <strong>ZENOVA</strong>
+                <span>EDUCATIONS</span>
+            </div>
+
+        </div>
+
+
+        <div class="header-actions">
+
+            <button
+                type="button"
+                id="notificationButton"
+                class="icon-button"
+                aria-label="Notifications"
+            >
+                <i class="ri-notification-3-line"></i>
+
+                <span
+                    id="notificationDot"
+                    class="notification-dot hidden"
+                ></span>
+
+            </button>
+
+
+            <button
+                type="button"
+                id="profileShortcut"
+                class="profile-button"
+            >
+                <span id="profileInitial">
+                    S
+                </span>
+            </button>
+
+        </div>
+
+    </header>
+
+
+
+    <main class="main-content">
+
+
+        <!-- =================================================
+             GREETING
+        ================================================== -->
+
+        <section class="welcome-section">
+
+            <div>
+
+                <p class="welcome-small">
+                    <span id="greeting">
+                        Good morning
+                    </span>
+                </p>
+
+                <h1>
+                    Hello,
+                    <span id="studentName">
+                        Student
+                    </span>
+                    <span class="wave">
+                        👋
+                    </span>
+                </h1>
+
+                <p
+                    id="studentAcademic"
+                    class="academic-line"
+                >
+                    Loading...
+                </p>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             HERO
+        ================================================== -->
+
+        <section
+            id="heroSection"
+            class="hero-section hidden"
+        >
+
+            <div
+                id="heroSlider"
+                class="hero-slider"
+            ></div>
+
+
+            <div
+                id="heroDots"
+                class="hero-dots"
+            ></div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             QUICK ACTIONS
+        ================================================== -->
+
+        <section class="quick-section">
+
+            <div class="section-heading">
+
+                <div>
+
+                    <span>
+                        QUICK ACCESS
+                    </span>
+
+                    <h2>
+                        What do you want to do?
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <div class="quick-grid">
+
+                <button
+                    type="button"
+                    class="quick-card"
+                    data-route="learn"
+                >
+
+                    <div class="quick-icon">
+                        <i class="ri-book-open-line"></i>
+                    </div>
+
+                    <strong>
+                        Learn
+                    </strong>
+
+                    <span>
+                        Courses & lessons
+                    </span>
+
+                </button>
+
+
+                <button
+                    type="button"
+                    class="quick-card"
+                    data-route="live"
+                >
+
+                    <div class="quick-icon">
+                        <i class="ri-live-line"></i>
+                    </div>
+
+                    <strong>
+                        Live
+                    </strong>
+
+                    <span>
+                        Live classes
+                    </span>
+
+                </button>
+
+
+                <button
+                    type="button"
+                    class="quick-card"
+                    data-route="tests"
+                >
+
+                    <div class="quick-icon">
+                        <i class="ri-file-list-3-line"></i>
+                    </div>
+
+                    <strong>
+                        Tests
+                    </strong>
+
+                    <span>
+                        Practice & exams
+                    </span>
+
+                </button>
+
+
+                <button
+                    type="button"
+                    class="quick-card"
+                    data-route="chat"
+                >
+
+                    <div class="quick-icon">
+                        <i class="ri-chat-3-line"></i>
+                    </div>
+
+                    <strong>
+                        Chat
+                    </strong>
+
+                    <span>
+                        Your batch
+                    </span>
+
+                </button>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             CONTINUE LEARNING
+        ================================================== -->
+
+        <section
+            id="learningSection"
+            class="section hidden"
+        >
+
+            <div class="section-heading">
+
+                <div>
+
+                    <span>
+                        YOUR LEARNING
+                    </span>
+
+                    <h2>
+                        Continue Learning
+                    </h2>
+
+                </div>
+
+                <button
+                    type="button"
+                    data-route="learn"
+                    class="section-link"
+                >
+                    View all
+                </button>
+
+            </div>
+
+
+            <div
+                id="learningCard"
+                class="learning-card"
+            ></div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             LIVE CLASSES
+        ================================================== -->
+
+        <section
+            id="liveSection"
+            class="section hidden"
+        >
+
+            <div class="section-heading">
+
+                <div>
+
+                    <span>
+                        LIVE
+                    </span>
+
+                    <h2>
+                        Upcoming Classes
+                    </h2>
+
+                </div>
+
+                <button
+                    type="button"
+                    data-route="live"
+                    class="section-link"
+                >
+                    View all
+                </button>
+
+            </div>
+
+
+            <div
+                id="liveList"
+                class="schedule-list"
+            ></div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             TESTS
+        ================================================== -->
+
+        <section
+            id="testsSection"
+            class="section hidden"
+        >
+
+            <div class="section-heading">
+
+                <div>
+
+                    <span>
+                        ASSESSMENTS
+                    </span>
+
+                    <h2>
+                        Upcoming Tests
+                    </h2>
+
+                </div>
+
+                <button
+                    type="button"
+                    data-route="tests"
+                    class="section-link"
+                >
+                    View all
+                </button>
+
+            </div>
+
+
+            <div
+                id="testsList"
+                class="schedule-list"
+            ></div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             ANNOUNCEMENTS
+        ================================================== -->
+
+        <section
+            id="announcementSection"
+            class="section hidden"
+        >
+
+            <div class="section-heading">
+
+                <div>
+
+                    <span>
+                        ZENOVA
+                    </span>
+
+                    <h2>
+                        Announcements
+                    </h2>
+
+                </div>
+
+                <button
+                    type="button"
+                    data-route="announcements"
+                    class="section-link"
+                >
+                    View all
+                </button>
+
+            </div>
+
+
+            <div
+                id="announcementList"
+                class="announcement-list"
+            ></div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             MY LEARNING
+        ================================================== -->
+
+        <section
+            id="myLearningSection"
+            class="section hidden"
+        >
+
+            <div class="section-heading">
+
+                <div>
+
+                    <span>
+                        ENROLLED
+                    </span>
+
+                    <h2>
+                        My Learning
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <div
+                id="myLearningList"
+                class="my-learning-list"
+            ></div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             PROGRESS
+        ================================================== -->
+
+        <section
+            id="progressSection"
+            class="section hidden"
+        >
+
+            <div class="section-heading">
+
+                <div>
+
+                    <span>
+                        YOUR JOURNEY
+                    </span>
+
+                    <h2>
+                        Learning Progress
+                    </h2>
+
+                </div>
+
+                <button
+                    type="button"
+                    data-route="performance"
+                    class="section-link"
+                >
+                    Details
+                </button>
+
+            </div>
+
+
+            <div
+                id="progressCard"
+                class="progress-card"
+            ></div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             FREE LEARNING
+        ================================================== -->
+
+        <section
+            id="freeSection"
+            class="section hidden"
+        >
+
+            <div class="section-heading">
+
+                <div>
+
+                    <span>
+                        FREE
+                    </span>
+
+                    <h2>
+                        Free Learning
+                    </h2>
+
+                </div>
+
+                <button
+                    type="button"
+                    data-route="free"
+                    class="section-link"
+                >
+                    View all
+                </button>
+
+            </div>
+
+
+            <div
+                id="freeList"
+                class="free-list"
+            ></div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             AI
+        ================================================== -->
+
+        <section class="ai-section">
+
+            <div class="ai-content">
+
+                <span class="ai-label">
+                    ZENOVA AI
+                </span>
+
+                <h2>
+                    Stuck on something?
+                </h2>
+
+                <p>
+                    Ask Zenova AI and get help
+                    with your learning.
+                </p>
+
+            </div>
+
+
+            <button
+                type="button"
+                id="aiButton"
+                class="ai-button"
+            >
+                Ask AI
+                <i class="ri-arrow-right-line"></i>
+            </button>
+
+        </section>
+
+
+    </main>
+
+
+
+    <!-- =====================================================
+         BOTTOM NAV
+    ====================================================== -->
+
+    <nav class="bottom-nav">
+
+        <a
+            href="./"
+            class="nav-item active"
+        >
+            <i class="ri-home-5-fill"></i>
+            <span>Home</span>
+        </a>
+
+
+        <a
+            href="../courses/"
+            class="nav-item"
+        >
+            <i class="ri-book-open-line"></i>
+            <span>Learn</span>
+        </a>
+
+
+        <a
+            href="../live/"
+            class="nav-item"
+        >
+            <i class="ri-live-line"></i>
+            <span>Live</span>
+        </a>
+
+
+        <a
+            href="../chat/"
+            class="nav-item"
+        >
+            <i class="ri-chat-3-line"></i>
+            <span>Chat</span>
+        </a>
+
+
+        <a
+            href="../profile/"
+            class="nav-item"
+        >
+            <i class="ri-user-3-line"></i>
+            <span>Profile</span>
+        </a>
+
+    </nav>
+
+
+</div>
+
+
+<script
+    type="module"
+    src="./home.js"
+></script>
+
+</body>
+</html>
