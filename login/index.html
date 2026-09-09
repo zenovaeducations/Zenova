@@ -4,349 +4,169 @@
     <meta charset="UTF-8">
     <meta
         name="viewport"
-        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0"
     >
 
     <title>Login • Zenova Educations</title>
 
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        html,
-        body {
-            width: 100%;
-            min-height: 100%;
-        }
-
-        body {
-            background: #ffffff;
-            color: #111111;
-            font-family: Arial, Helvetica, sans-serif;
-        }
-
-        .page {
-            min-height: 100vh;
-            min-height: 100dvh;
-
-            display: flex;
-            align-items: center;
-            justify-content: center;
-
-            padding: 28px 20px;
-        }
-
-        .login-container {
-            width: 100%;
-            max-width: 430px;
-        }
-
-        .brand {
-            text-align: center;
-            margin-bottom: 48px;
-        }
-
-        .brand img {
-            width: 62px;
-            height: 62px;
-            object-fit: contain;
-            margin-bottom: 20px;
-        }
-
-        .brand h1 {
-            font-size: 24px;
-            font-weight: 700;
-            letter-spacing: -0.5px;
-        }
-
-        .brand p {
-            margin-top: 8px;
-
-            color: #777777;
-
-            font-size: 14px;
-            line-height: 1.5;
-        }
-
-        .form-group {
-            margin-bottom: 18px;
-        }
-
-        .form-group label {
-            display: block;
-
-            margin-bottom: 8px;
-
-            font-size: 13px;
-            font-weight: 600;
-
-            color: #333333;
-        }
-
-        .phone-wrapper {
-            display: flex;
-
-            width: 100%;
-            height: 54px;
-
-            border: 1px solid #dddddd;
-            border-radius: 12px;
-
-            background: #ffffff;
-
-            transition:
-                border-color 0.2s ease,
-                box-shadow 0.2s ease;
-        }
-
-        .phone-wrapper:focus-within {
-            border-color: #7c3aed;
-
-            box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.08);
-        }
-
-        .country-code {
-            width: 62px;
-
-            display: flex;
-            align-items: center;
-            justify-content: center;
-
-            color: #444444;
-
-            font-size: 15px;
-            font-weight: 500;
-
-            border-right: 1px solid #eeeeee;
-        }
-
-        .phone-input {
-            flex: 1;
-
-            width: 100%;
-
-            border: none;
-            outline: none;
-
-            padding: 0 15px;
-
-            background: transparent;
-
-            color: #111111;
-
-            font-size: 16px;
-        }
-
-        .phone-input::placeholder {
-            color: #aaaaaa;
-        }
-
-        .continue-button {
-            width: 100%;
-            height: 54px;
-
-            margin-top: 8px;
-
-            border: none;
-            border-radius: 12px;
-
-            background: #111111;
-            color: #ffffff;
-
-            font-size: 15px;
-            font-weight: 600;
-
-            cursor: pointer;
-
-            transition:
-                transform 0.15s ease,
-                opacity 0.15s ease;
-        }
-
-        .continue-button:hover {
-            opacity: 0.92;
-        }
-
-        .continue-button:active {
-            transform: scale(0.985);
-        }
-
-        .continue-button:disabled {
-            cursor: not-allowed;
-            opacity: 0.55;
-        }
-
-        .message {
-            min-height: 20px;
-
-            margin-top: 16px;
-
-            text-align: center;
-
-            font-size: 13px;
-            line-height: 1.5;
-
-            color: #777777;
-        }
-
-        .terms {
-            margin-top: 32px;
-
-            text-align: center;
-
-            color: #999999;
-
-            font-size: 11px;
-            line-height: 1.6;
-        }
-
-        @media (max-width: 480px) {
-            .page {
-                align-items: flex-start;
-                padding-top: 90px;
-            }
-
-            .brand {
-                margin-bottom: 42px;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="./login.css">
 </head>
 
 <body>
 
-    <main class="page">
+    <main class="login-page">
 
         <section class="login-container">
 
+            <!-- Logo -->
             <div class="brand">
-
                 <img
                     src="../logo.png"
                     alt="Zenova Educations"
+                    class="brand-logo"
                 >
+            </div>
+
+            <!-- Phone Step -->
+            <section
+                id="phoneStep"
+                class="login-step active"
+            >
 
                 <h1>Welcome to Zenova</h1>
 
-                <p>
-                    Learn smarter. Learn better.
+                <p class="subtitle">
+                    Enter your mobile number to continue to your student portal.
                 </p>
 
-            </div>
+                <label for="phoneNumber">
+                    Mobile number
+                </label>
 
-            <form id="loginForm">
+                <div class="phone-input">
 
-                <div class="form-group">
+                    <span class="country-code">
+                        +91
+                    </span>
 
-                    <label for="phone">
-                        Mobile Number
-                    </label>
-
-                    <div class="phone-wrapper">
-
-                        <div class="country-code">
-                            +91
-                        </div>
-
-                        <input
-                            id="phone"
-                            class="phone-input"
-                            type="tel"
-                            inputmode="numeric"
-                            autocomplete="tel"
-                            maxlength="10"
-                            placeholder="Enter mobile number"
-                            required
-                        >
-
-                    </div>
+                    <input
+                        id="phoneNumber"
+                        type="tel"
+                        inputmode="numeric"
+                        autocomplete="tel"
+                        maxlength="10"
+                        placeholder="Enter mobile number"
+                    >
 
                 </div>
 
                 <button
-                    id="continueButton"
-                    class="continue-button"
-                    type="submit"
+                    id="sendOtpBtn"
+                    class="primary-button"
+                    type="button"
                 >
                     Continue
                 </button>
 
-                <div
-                    id="message"
+                <!-- Invisible reCAPTCHA container -->
+                <div id="recaptcha-container"></div>
+
+                <p
+                    id="phoneMessage"
                     class="message"
-                    aria-live="polite"
-                ></div>
+                ></p>
 
-            </form>
+            </section>
 
-            <div class="terms">
-                By continuing, you agree to use Zenova's
-                student services.
+
+            <!-- OTP Step -->
+            <section
+                id="otpStep"
+                class="login-step"
+            >
+
+                <button
+                    id="backToPhoneBtn"
+                    class="back-button"
+                    type="button"
+                    aria-label="Back"
+                >
+                    <span>←</span>
+                </button>
+
+                <h1>Verify your number</h1>
+
+                <p class="subtitle">
+                    Enter the 6-digit OTP sent to
+                    <strong id="displayPhone"></strong>
+                </p>
+
+                <label for="otp">
+                    Verification code
+                </label>
+
+                <input
+                    id="otp"
+                    class="otp-input"
+                    type="text"
+                    inputmode="numeric"
+                    autocomplete="one-time-code"
+                    maxlength="6"
+                    placeholder="000000"
+                >
+
+                <button
+                    id="verifyOtpBtn"
+                    class="primary-button"
+                    type="button"
+                >
+                    Verify & Continue
+                </button>
+
+                <button
+                    id="resendOtpBtn"
+                    class="secondary-button"
+                    type="button"
+                >
+                    Resend OTP
+                </button>
+
+                <p
+                    id="otpMessage"
+                    class="message"
+                ></p>
+
+            </section>
+
+
+            <!-- Loading -->
+            <div
+                id="loginLoading"
+                class="login-loading"
+            >
+
+                <div class="loading-ring"></div>
+
+                <img
+                    src="../logo.png"
+                    alt=""
+                >
+
             </div>
+
+            <footer>
+                © Zenova Educations
+            </footer>
 
         </section>
 
     </main>
 
-    <script>
-        const form = document.getElementById("loginForm");
-        const phoneInput = document.getElementById("phone");
-        const continueButton = document.getElementById("continueButton");
-        const message = document.getElementById("message");
 
-        phoneInput.addEventListener("input", () => {
-            phoneInput.value = phoneInput.value
-                .replace(/\D/g, "")
-                .slice(0, 10);
-
-            message.textContent = "";
-        });
-
-        form.addEventListener("submit", async (event) => {
-
-            event.preventDefault();
-
-            const phone = phoneInput.value.trim();
-
-            if (!/^[6-9]\d{9}$/.test(phone)) {
-                message.textContent =
-                    "Please enter a valid 10-digit mobile number.";
-                return;
-            }
-
-            continueButton.disabled = true;
-            continueButton.textContent = "Please wait...";
-
-            /*
-             * AUTHENTICATION WILL BE CONNECTED HERE.
-             *
-             * Final flow:
-             *
-             * Mobile number
-             *       ↓
-             * Firebase Authentication
-             *       ↓
-             * OTP verification
-             *       ↓
-             * CRM student/lead matching
-             *       ↓
-             * Access approval check
-             *
-             * We are deliberately not creating fake
-             * login behaviour here.
-             */
-
-            message.textContent =
-                "Authentication will be connected next.";
-
-            continueButton.disabled = false;
-            continueButton.textContent = "Continue";
-
-        });
-    </script>
+    <script
+        type="module"
+        src="./login.js"
+    ></script>
 
 </body>
 </html>
