@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Zenova | Account</title>
+
+  <link rel="stylesheet" href="google.css" />
+</head>
+
+<body>
+
+  <!-- Loader -->
+  <div id="loader" class="loader-screen">
+    <div class="loader-ring"></div>
+    <div class="loader-logo">Z</div>
+  </div>
+
+  <main class="page">
+
+    <div class="card">
+
+      <img src="../../logo.png" class="logo" alt="Zenova">
+
+      <!-- GOOGLE STEP -->
+      <section id="googleStep">
+
+        <h1>Continue with Google</h1>
+
+        <p class="subtitle">
+          Connect your Google account to continue setting up your Zenova account.
+        </p>
+
+        <button id="googleBtn" class="google-btn">
+          <span class="google-icon">G</span>
+          <span>Continue with Google</span>
+        </button>
+
+        <p id="googleError" class="error"></p>
+
+      </section>
+
+
+      <!-- PASSWORD STEP -->
+      <section id="passwordStep" class="hidden">
+
+        <h1>Create your password</h1>
+
+        <p class="subtitle">
+          Your password will be used along with your Zenova account.
+        </p>
+
+        <div class="account-info">
+          <span id="googleEmail"></span>
+        </div>
+
+        <div class="field">
+          <label for="password">Password</label>
+
+          <input
+            type="password"
+            id="password"
+            placeholder="Create a password"
+            autocomplete="new-password"
+          />
+        </div>
+
+        <div class="field">
+          <label for="confirmPassword">Confirm password</label>
+
+          <input
+            type="password"
+            id="confirmPassword"
+            placeholder="Re-enter your password"
+            autocomplete="new-password"
+          />
+        </div>
+
+        <div class="password-rules">
+          <div id="lengthRule">• At least 8 characters</div>
+          <div id="upperRule">• One uppercase letter</div>
+          <div id="numberRule">• One number</div>
+        </div>
+
+        <button id="passwordBtn" class="primary-btn">
+          Continue
+        </button>
+
+        <p id="passwordError" class="error"></p>
+
+      </section>
+
+    </div>
+
+  </main>
+
+  <script type="module" src="google.js"></script>
+
+</body>
+</html>
