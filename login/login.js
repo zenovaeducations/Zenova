@@ -39,7 +39,7 @@ onAuthStateChanged(
     if (user) {
 
       window.location.replace(
-        "../home/index.html"
+        "../home/"
       );
 
     }
@@ -111,7 +111,7 @@ googleBtn.addEventListener(
       */
 
       window.location.replace(
-        "../account/onboarding/index.html"
+        "../account/onboarding/"
       );
 
 
