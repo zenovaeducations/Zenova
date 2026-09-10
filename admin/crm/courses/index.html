@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
 
@@ -10,622 +11,163 @@
 
     <title>Courses | Zenova CRM</title>
 
-    <link rel="stylesheet" href="./courses.css">
+    <link
+        rel="stylesheet"
+        href="./courses.css"
+    >
 </head>
 
 <body>
 
-<!-- =====================================================
-     APP LOADER
-===================================================== -->
+<div class="crm-app">
 
-<div id="appLoader" class="app-loader">
+    <!-- =========================================
+         HEADER
+    ========================================== -->
 
-    <div class="loader-ring"></div>
+    <header class="topbar">
 
-    <div class="loader-z">Z</div>
-
-    <p>Loading Zenova CRM...</p>
-
-</div>
-
-
-<!-- =====================================================
-     CRM APP
-===================================================== -->
-
-<div id="crmApp" class="crm-app hidden">
-
-
-    <!-- =================================================
-         SIDEBAR
-    ================================================== -->
-
-    <aside class="sidebar" id="sidebar">
-
-        <div class="brand">
-
-            <div class="brand-logo">
-                Z
-            </div>
-
-            <div>
-                <strong>ZENOVA</strong>
-                <span>CRM</span>
-            </div>
-
-        </div>
-
-
-        <nav class="sidebar-nav">
-
-            <a href="../" class="nav-item">
-                <span>⌂</span>
-                Dashboard
-            </a>
-
-            <a href="../students/" class="nav-item">
-                <span>♙</span>
-                Students
-            </a>
-
-            <a href="../leads/" class="nav-item">
-                <span>◎</span>
-                Leads
-            </a>
-
-            <a href="../schools/" class="nav-item">
-                <span>▣</span>
-                Schools
-            </a>
-
-            <a href="../courses/" class="nav-item active">
-                <span>▤</span>
-                Courses
-            </a>
-
-            <a href="../admissions/" class="nav-item">
-                <span>□</span>
-                Admissions
-            </a>
-
-            <a href="../followups/" class="nav-item">
-                <span>◷</span>
-                Follow-ups
-            </a>
-
-            <a href="../payments/" class="nav-item">
-                <span>₹</span>
-                Payments
-            </a>
-
-            <a href="../reports/" class="nav-item">
-                <span>▥</span>
-                Reports
-            </a>
-
-        </nav>
-
-
-        <div class="sidebar-bottom">
-
-            <a href="../settings/" class="nav-item">
-                <span>⚙</span>
-                CRM Settings
-            </a>
-
-            <div class="sidebar-user">
-
-                <div
-                    class="avatar"
-                    id="sidebarAvatar"
-                >
-                    Z
-                </div>
-
-                <div class="user-details">
-
-                    <strong id="sidebarUserName">
-                        Admin
-                    </strong>
-
-                    <span id="sidebarUserEmail">
-                        Loading...
-                    </span>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </aside>
-
-
-    <!-- =================================================
-         MAIN
-    ================================================== -->
-
-    <main class="main-content">
-
-
-        <!-- TOPBAR -->
-
-        <header class="topbar">
+        <div class="topbar-left">
 
             <button
-                id="mobileMenuBtn"
-                class="mobile-menu-btn"
+                id="backBtn"
+                class="back-btn"
                 type="button"
             >
-                ☰
+                ←
             </button>
 
+            <div>
 
-            <div class="topbar-search">
+                <div class="eyebrow">
+                    ZENOVA CRM
+                </div>
 
-                <span>⌕</span>
+                <h1>Courses</h1>
 
-                <input
-                    id="globalSearch"
-                    type="text"
-                    placeholder="Search courses..."
-                    autocomplete="off"
-                >
+            </div>
+
+        </div>
+
+
+        <button
+            id="addCourseBtn"
+            class="primary-btn"
+            type="button"
+        >
+            + Add Course
+        </button>
+
+    </header>
+
+
+    <!-- =========================================
+         MAIN
+    ========================================== -->
+
+    <main class="main">
+
+
+        <!-- =====================================
+             SUMMARY
+        ====================================== -->
+
+        <section class="summary-grid">
+
+            <div class="summary-card">
+
+                <span>Total Courses</span>
+
+                <strong id="totalCourses">
+                    0
+                </strong>
 
             </div>
 
 
-            <div class="topbar-right">
+            <div class="summary-card">
 
-                <button
-                    class="icon-button"
-                    type="button"
-                >
-                    ♢
-                </button>
+                <span>Active Courses</span>
 
-                <div class="topbar-divider"></div>
-
-                <div class="topbar-profile">
-
-                    <div
-                        class="avatar small"
-                        id="topbarAvatar"
-                    >
-                        Z
-                    </div>
-
-                    <div class="topbar-profile-info">
-
-                        <strong id="topbarName">
-                            Admin
-                        </strong>
-
-                        <span>
-                            CRM Administrator
-                        </span>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </header>
-
-
-        <!-- =================================================
-             PAGE
-        ================================================== -->
-
-        <section class="page">
-
-
-            <!-- PAGE HEADER -->
-
-            <div class="page-header">
-
-                <div>
-
-                    <div class="breadcrumb">
-
-                        CRM
-                        <span>/</span>
-                        Master Data
-                        <span>/</span>
-
-                        <strong>
-                            Courses
-                        </strong>
-
-                    </div>
-
-                    <h1>
-                        Course Management
-                    </h1>
-
-                    <p>
-                        Create courses and manage subjects,
-                        chapters, videos and PDFs from one place.
-                    </p>
-
-                </div>
-
-
-                <button
-                    id="addCourseBtn"
-                    class="primary-button"
-                    type="button"
-                >
-
-                    <span>＋</span>
-
-                    Add Course
-
-                </button>
+                <strong id="activeCourses">
+                    0
+                </strong>
 
             </div>
 
 
-            <!-- =================================================
-                 STATS
-            ================================================== -->
+            <div class="summary-card">
 
-            <div class="stats-grid">
+                <span>Free Courses</span>
 
-                <div class="stat-card">
-
-                    <span class="stat-label">
-                        TOTAL COURSES
-                    </span>
-
-                    <strong id="totalCourses">
-                        0
-                    </strong>
-
-                </div>
-
-
-                <div class="stat-card">
-
-                    <span class="stat-label">
-                        ACTIVE
-                    </span>
-
-                    <strong id="activeCourses">
-                        0
-                    </strong>
-
-                </div>
-
-
-                <div class="stat-card">
-
-                    <span class="stat-label">
-                        FREE
-                    </span>
-
-                    <strong id="freeCourses">
-                        0
-                    </strong>
-
-                </div>
-
-
-                <div class="stat-card">
-
-                    <span class="stat-label">
-                        PAID
-                    </span>
-
-                    <strong id="paidCourses">
-                        0
-                    </strong>
-
-                </div>
+                <strong id="freeCourses">
+                    0
+                </strong>
 
             </div>
 
 
-            <!-- =================================================
-                 COURSE TABLE
-            ================================================== -->
+            <div class="summary-card">
 
-            <section class="panel">
+                <span>Paid Courses</span>
 
-                <div class="panel-header">
+                <strong id="paidCourses">
+                    0
+                </strong>
 
-                    <div>
-
-                        <h2>
-                            Courses
-                        </h2>
-
-                        <p>
-                            All CRM course programs
-                        </p>
-
-                    </div>
-
-
-                    <div class="table-search">
-
-                        <span>⌕</span>
-
-                        <input
-                            id="courseSearch"
-                            type="text"
-                            placeholder="Search..."
-                        >
-
-                    </div>
-
-                </div>
-
-
-                <div class="table-wrapper">
-
-                    <table>
-
-                        <thead>
-
-                            <tr>
-
-                                <th>
-                                    COURSE
-                                </th>
-
-                                <th>
-                                    CLASS
-                                </th>
-
-                                <th>
-                                    TEACHER
-                                </th>
-
-                                <th>
-                                    TYPE
-                                </th>
-
-                                <th>
-                                    PRICE
-                                </th>
-
-                                <th>
-                                    PRIORITY
-                                </th>
-
-                                <th>
-                                    STATUS
-                                </th>
-
-                                <th>
-                                    ACTIONS
-                                </th>
-
-                            </tr>
-
-                        </thead>
-
-
-                        <tbody id="courseTableBody">
-
-                        </tbody>
-
-                    </table>
-
-                </div>
-
-
-                <div
-                    id="courseEmpty"
-                    class="empty-state hidden"
-                >
-
-                    <div class="empty-icon">
-                        ▤
-                    </div>
-
-                    <h3>
-                        No courses yet
-                    </h3>
-
-                    <p>
-                        Create your first course to start
-                        adding subjects and learning content.
-                    </p>
-
-                    <button
-                        id="emptyAddCourse"
-                        class="primary-button"
-                        type="button"
-                    >
-                        Add Course
-                    </button>
-
-                </div>
-
-            </section>
+            </div>
 
         </section>
 
-    </main>
 
-</div>
+        <!-- =====================================
+             COURSE LIST
+        ====================================== -->
 
+        <section class="panel">
 
-<!-- =====================================================
-     COURSE MODAL
-===================================================== -->
+            <div class="panel-header">
 
-<div
-    id="courseModal"
-    class="modal-overlay hidden"
->
+                <div>
 
-    <div class="modal large-modal">
-
-        <div class="modal-header">
-
-            <div>
-
-                <span class="modal-eyebrow">
-                    COURSE MASTER
-                </span>
-
-                <h2 id="courseModalTitle">
-                    Add Course
-                </h2>
-
-            </div>
-
-            <button
-                class="close-btn"
-                id="closeCourseModal"
-                type="button"
-            >
-                ×
-            </button>
-
-        </div>
-
-
-        <form id="courseForm">
-
-
-            <!-- BASIC -->
-
-            <div class="form-section">
-
-                <div class="form-section-title">
-                    Basic Information
-                </div>
-
-
-                <div class="form-grid">
-
-                    <div class="form-group">
-
-                        <label>
-                            Class *
-                        </label>
-
-                        <select
-                            id="courseClass"
-                            required
-                        >
-
-                            <option value="">
-                                Select class
-                            </option>
-
-                            <option value="UNDER_8TH">
-                                Under 8th
-                            </option>
-
-                            <option value="8TH">
-                                8th
-                            </option>
-
-                            <option value="9TH">
-                                9th
-                            </option>
-
-                            <option value="10TH">
-                                10th
-                            </option>
-
-                            <option value="1ST_PUC">
-                                1st PUC
-                            </option>
-
-                            <option value="2ND_PUC">
-                                2nd PUC
-                            </option>
-
-                        </select>
-
+                    <div class="section-label">
+                        COURSE MASTER
                     </div>
 
-
-                    <div class="form-group">
-
-                        <label>
-                            Course Title *
-                        </label>
-
-                        <input
-                            id="courseTitle"
-                            type="text"
-                            placeholder="e.g. SSLC Victory Batch 2027"
-                            required
-                        >
-
-                    </div>
+                    <h2>All Courses</h2>
 
                 </div>
 
 
-                <div class="form-group">
+                <div class="toolbar">
 
-                    <label>
-                        Description *
-                    </label>
-
-                    <textarea
-                        id="courseDescription"
-                        rows="4"
-                        placeholder="Describe this course..."
-                        required
-                    ></textarea>
-
-                </div>
-
-            </div>
-
-
-            <!-- TEACHER -->
-
-            <div class="form-section">
-
-                <div class="section-title-row">
-
-                    <div>
-
-                        <div class="form-section-title">
-                            Teacher
-                        </div>
-
-                        <p>
-                            Optional. You can add teachers
-                            from here.
-                        </p>
-
-                    </div>
-
-
-                    <button
-                        id="addTeacherBtn"
-                        class="small-outline-btn"
-                        type="button"
+                    <input
+                        id="courseSearch"
+                        type="search"
+                        placeholder="Search courses..."
                     >
-                        ＋ Add Teacher
-                    </button>
 
-                </div>
+                    <select id="classFilter">
+
+                        <option value="ALL">
+                            All Classes
+                        </option>
+
+                    </select>
 
 
-                <div class="form-group">
+                    <select id="statusFilter">
 
-                    <label>
-                        Teacher
-                    </label>
+                        <option value="ALL">
+                            All Status
+                        </option>
 
-                    <select id="courseTeacher">
+                        <option value="ACTIVE">
+                            Active
+                        </option>
 
-                        <option value="">
-                            No teacher assigned
+                        <option value="INACTIVE">
+                            Inactive
                         </option>
 
                     </select>
@@ -635,464 +177,932 @@
             </div>
 
 
-            <!-- SUBJECTS -->
+            <div
+                id="courseTableWrapper"
+                class="table-wrapper"
+            >
 
-            <div class="form-section">
+                <table>
 
-                <div class="section-title-row">
+                    <thead>
 
-                    <div>
+                    <tr>
 
-                        <div class="form-section-title">
-                            Subjects
-                        </div>
+                        <th>Course</th>
 
-                        <p>
-                            Add the subjects belonging to this course.
-                        </p>
+                        <th>Class</th>
 
-                    </div>
+                        <th>Medium</th>
 
-                </div>
+                        <th>Type</th>
 
+                        <th>Price</th>
 
-                <div
-                    id="subjectEditor"
-                    class="subject-editor"
-                ></div>
+                        <th>Priority</th>
 
+                        <th>Status</th>
 
-                <button
-                    id="addSubjectBtn"
-                    class="add-row-btn"
-                    type="button"
-                >
-                    ＋ Add Subject
-                </button>
+                        <th></th>
 
-            </div>
+                    </tr>
 
+                    </thead>
 
-            <!-- THUMBNAIL -->
 
-            <div class="form-section">
+                    <tbody
+                        id="courseTableBody"
+                    ></tbody>
 
-                <div class="form-section-title">
-                    Course Thumbnail
-                </div>
-
-
-                <div class="thumbnail-options">
-
-                    <button
-                        type="button"
-                        class="thumbnail-option active"
-                        data-thumbnail-mode="upload"
-                    >
-                        Upload Image
-                    </button>
-
-                    <button
-                        type="button"
-                        class="thumbnail-option"
-                        data-thumbnail-mode="url"
-                    >
-                        Image URL
-                    </button>
-
-                </div>
-
-
-                <div
-                    id="thumbnailUploadBox"
-                    class="thumbnail-upload-box"
-                >
-
-                    <input
-                        id="thumbnailFile"
-                        type="file"
-                        accept="image/*"
-                        hidden
-                    >
-
-                    <label
-                        for="thumbnailFile"
-                        class="upload-label"
-                    >
-
-                        <span class="upload-icon">
-                            ↑
-                        </span>
-
-                        <strong>
-                            Choose image
-                        </strong>
-
-                        <small>
-                            JPG, PNG, WEBP
-                        </small>
-
-                    </label>
-
-                </div>
-
-
-                <div
-                    id="thumbnailUrlBox"
-                    class="hidden"
-                >
-
-                    <input
-                        id="thumbnailUrl"
-                        type="url"
-                        placeholder="https://example.com/course-image.jpg"
-                    >
-
-                </div>
-
-
-                <div
-                    id="thumbnailPreview"
-                    class="thumbnail-preview hidden"
-                >
-
-                    <img
-                        id="thumbnailPreviewImage"
-                        alt="Course thumbnail preview"
-                    >
-
-                    <button
-                        id="removeThumbnail"
-                        type="button"
-                    >
-                        Remove
-                    </button>
-
-                </div>
-
-            </div>
-
-
-            <!-- PRICE -->
-
-            <div class="form-section">
-
-                <div class="form-section-title">
-                    Course Pricing
-                </div>
-
-
-                <div class="pricing-type">
-
-                    <label class="radio-card">
-
-                        <input
-                            type="radio"
-                            name="courseType"
-                            value="FREE"
-                            checked
-                        >
-
-                        <span>
-
-                            <strong>
-                                Free
-                            </strong>
-
-                            <small>
-                                Anyone can access
-                            </small>
-
-                        </span>
-
-                    </label>
-
-
-                    <label class="radio-card">
-
-                        <input
-                            type="radio"
-                            name="courseType"
-                            value="PAID"
-                        >
-
-                        <span>
-
-                            <strong>
-                                Paid
-                            </strong>
-
-                            <small>
-                                Purchase required
-                            </small>
-
-                        </span>
-
-                    </label>
-
-                </div>
-
-
-                <div
-                    id="paidFields"
-                    class="form-grid hidden"
-                >
-
-                    <div class="form-group">
-
-                        <label>
-                            Course Price *
-                        </label>
-
-                        <input
-                            id="coursePrice"
-                            type="number"
-                            min="0"
-                            step="1"
-                            placeholder="₹ 0"
-                        >
-
-                    </div>
-
-
-                    <div class="form-group">
-
-                        <label>
-                            Discount
-                        </label>
-
-                        <input
-                            id="courseDiscount"
-                            type="number"
-                            min="0"
-                            step="1"
-                            value="0"
-                        >
-
-                    </div>
-
-
-                    <div class="form-group">
-
-                        <label>
-                            Final Price
-                        </label>
-
-                        <input
-                            id="courseFinalPrice"
-                            type="number"
-                            min="0"
-                            step="1"
-                            readonly
-                        >
-
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            <!-- PRIORITY -->
-
-            <div class="form-section">
-
-                <div class="form-grid">
-
-                    <div class="form-group">
-
-                        <label>
-                            Priority
-                        </label>
-
-                        <input
-                            id="coursePriority"
-                            type="number"
-                            min="1"
-                            value="1"
-                        >
-
-                        <small class="field-help">
-                            Lower number = higher priority.
-                        </small>
-
-                    </div>
-
-
-                    <div class="form-group">
-
-                        <label>
-                            Course Status
-                        </label>
-
-                        <select id="courseActive">
-
-                            <option value="true">
-                                Active
-                            </option>
-
-                            <option value="false">
-                                Inactive
-                            </option>
-
-                        </select>
-
-                    </div>
-
-                </div>
+                </table>
 
             </div>
 
 
             <div
-                id="courseFormMessage"
-                class="form-message hidden"
-            ></div>
+                id="emptyCourses"
+                class="empty-state hidden"
+            >
 
+                <div class="empty-icon">
+                    +
+                </div>
 
-            <div class="modal-footer">
+                <h3>No courses yet</h3>
+
+                <p>
+                    Create your first course to start
+                    adding subjects, chapters,
+                    videos and PDFs.
+                </p>
 
                 <button
-                    id="cancelCourseBtn"
-                    type="button"
-                    class="secondary-button"
+                    class="primary-btn"
+                    id="emptyAddCourseBtn"
                 >
-                    Cancel
-                </button>
-
-                <button
-                    id="saveCourseBtn"
-                    type="submit"
-                    class="primary-button"
-                >
-                    Save Course
+                    + Create Course
                 </button>
 
             </div>
 
-        </form>
+        </section>
 
-    </div>
-
-</div>
+    </main>
 
 
-<!-- =====================================================
-     CONTENT MODAL
-===================================================== -->
+    <!-- =========================================
+         COURSE MODAL
+    ========================================== -->
 
-<div
-    id="contentModal"
-    class="modal-overlay hidden"
->
+    <div
+        id="courseModal"
+        class="modal hidden"
+    >
 
-    <div class="modal content-modal">
-
-        <div class="modal-header">
-
-            <div>
-
-                <span
-                    class="modal-eyebrow"
-                    id="contentEyebrow"
-                >
-                    COURSE CONTENT
-                </span>
-
-                <h2 id="contentModalTitle">
-                    Manage Content
-                </h2>
-
-            </div>
-
-            <button
-                id="closeContentModal"
-                class="close-btn"
-                type="button"
-            >
-                ×
-            </button>
-
-        </div>
+        <div class="modal-overlay"></div>
 
 
-        <!-- CONTENT TABS -->
+        <div class="modal-card large-modal">
 
-        <div class="content-tabs">
+            <div class="modal-header">
 
-            <button
-                class="content-tab active"
-                data-content-tab="chapters"
-            >
-                Chapters
-            </button>
+                <div>
 
-            <button
-                class="content-tab"
-                data-content-tab="videos"
-            >
-                Videos
-            </button>
+                    <div
+                        id="courseModalLabel"
+                        class="section-label"
+                    >
+                        NEW COURSE
+                    </div>
 
-            <button
-                class="content-tab"
-                data-content-tab="pdfs"
-            >
-                PDFs
-            </button>
-
-        </div>
-
-
-        <!-- CHAPTERS -->
-
-        <div
-            id="chaptersPanel"
-            class="content-panel"
-        >
-
-            <div class="content-form">
-
-                <div class="form-group">
-
-                    <label>
-                        Subject *
-                    </label>
-
-                    <select id="chapterSubject">
-                    </select>
+                    <h2 id="courseModalTitle">
+                        Create Course
+                    </h2>
 
                 </div>
 
 
-                <div class="two-columns">
+                <button
+                    id="closeCourseModal"
+                    class="close-btn"
+                    type="button"
+                >
+                    ×
+                </button>
 
-                    <div class="form-group">
+            </div>
+
+
+            <form
+                id="courseForm"
+                autocomplete="off"
+            >
+
+                <input
+                    type="hidden"
+                    id="editingCourseId"
+                >
+
+
+                <!-- =================================
+                     BASIC DETAILS
+                ================================== -->
+
+                <div class="form-section">
+
+                    <div class="form-section-title">
+                        Basic Details
+                    </div>
+
+
+                    <div class="form-grid">
+
+                        <div class="field">
+
+                            <label>
+                                Class
+                                <span>*</span>
+                            </label>
+
+                            <select
+                                id="courseClass"
+                                required
+                            >
+
+                                <option value="">
+                                    Select class
+                                </option>
+
+                                <option value="UNDER_8TH">
+                                    Under 8th
+                                </option>
+
+                                <option value="8TH">
+                                    8th
+                                </option>
+
+                                <option value="9TH">
+                                    9th
+                                </option>
+
+                                <option value="10TH">
+                                    10th
+                                </option>
+
+                                <option value="1ST_PUC">
+                                    1st PUC
+                                </option>
+
+                                <option value="2ND_PUC">
+                                    2nd PUC
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <div class="field">
+
+                            <label>
+                                Course Code
+                            </label>
+
+                            <input
+                                id="courseCode"
+                                type="text"
+                                placeholder="Example: SSLC-VB-27"
+                            >
+
+                        </div>
+
+
+                        <div class="field full">
+
+                            <label>
+                                Course Title
+                                <span>*</span>
+                            </label>
+
+                            <input
+                                id="courseTitle"
+                                type="text"
+                                placeholder="Enter course title"
+                                required
+                            >
+
+                        </div>
+
+
+                        <div class="field full">
+
+                            <label>
+                                Description
+                                <span>*</span>
+                            </label>
+
+                            <textarea
+                                id="courseDescription"
+                                rows="4"
+                                placeholder="Describe this course..."
+                                required
+                            ></textarea>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =================================
+                     MEDIUM
+                ================================== -->
+
+                <div class="form-section">
+
+                    <div class="form-section-title">
+
+                        Medium
+
+                        <span class="required-note">
+                            At least one compulsory
+                        </span>
+
+                    </div>
+
+
+                    <div
+                        id="mediumList"
+                        class="chip-list"
+                    ></div>
+
+
+                    <div class="add-inline">
+
+                        <input
+                            id="newMedium"
+                            type="text"
+                            placeholder="Enter medium, e.g. Kannada"
+                        >
+
+                        <button
+                            id="addMediumBtn"
+                            type="button"
+                            class="secondary-btn"
+                        >
+                            + Add Medium
+                        </button>
+
+                    </div>
+
+
+                    <div
+                        id="mediumError"
+                        class="field-error hidden"
+                    >
+                        Please add at least one medium.
+                    </div>
+
+                </div>
+
+
+                <!-- =================================
+                     TEACHER
+                ================================== -->
+
+                <div class="form-section">
+
+                    <div class="form-section-title">
+
+                        Teacher
+
+                        <span class="optional">
+                            Optional
+                        </span>
+
+                    </div>
+
+
+                    <div class="teacher-row">
+
+                        <select id="courseTeacher">
+
+                            <option value="">
+                                No teacher selected
+                            </option>
+
+                        </select>
+
+
+                        <button
+                            id="addTeacherBtn"
+                            type="button"
+                            class="secondary-btn"
+                        >
+                            + Add Teacher
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =================================
+                     SUBJECTS
+                ================================== -->
+
+                <div class="form-section">
+
+                    <div class="form-section-title">
+
+                        Subjects
+
+                        <span class="required-note">
+                            Add one or more
+                        </span>
+
+                    </div>
+
+
+                    <div
+                        id="subjectList"
+                        class="subject-editor"
+                    ></div>
+
+
+                    <div class="add-inline">
+
+                        <input
+                            id="newSubject"
+                            type="text"
+                            placeholder="Enter subject name"
+                        >
+
+                        <button
+                            id="addSubjectBtn"
+                            type="button"
+                            class="secondary-btn"
+                        >
+                            + Add Subject
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =================================
+                     THUMBNAIL
+                ================================== -->
+
+                <div class="form-section">
+
+                    <div class="form-section-title">
+                        Course Thumbnail
+                    </div>
+
+
+                    <div class="thumbnail-layout">
+
+                        <div class="thumbnail-options">
+
+                            <div class="source-switch">
+
+                                <button
+                                    type="button"
+                                    class="source-btn active"
+                                    data-source="url"
+                                >
+                                    Image URL
+                                </button>
+
+                                <button
+                                    type="button"
+                                    class="source-btn"
+                                    data-source="upload"
+                                >
+                                    Upload Image
+                                </button>
+
+                            </div>
+
+
+                            <div
+                                id="urlSource"
+                                class="source-content"
+                            >
+
+                                <input
+                                    id="courseImageUrl"
+                                    type="url"
+                                    placeholder="https://example.com/image.jpg"
+                                >
+
+                            </div>
+
+
+                            <div
+                                id="uploadSource"
+                                class="source-content hidden"
+                            >
+
+                                <label
+                                    class="upload-box"
+                                    for="courseImageFile"
+                                >
+
+                                    <span>
+                                        Choose JPG, PNG, WEBP
+                                    </span>
+
+                                    <small>
+                                        Click to upload
+                                    </small>
+
+                                </label>
+
+                                <input
+                                    id="courseImageFile"
+                                    type="file"
+                                    accept="image/*"
+                                    hidden
+                                >
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="thumbnail-preview">
+
+                            <div class="preview-label">
+                                Preview
+                            </div>
+
+                            <div
+                                id="imagePreview"
+                                class="image-preview"
+                            >
+
+                                <span>
+                                    No image
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =================================
+                     PRICING
+                ================================== -->
+
+                <div class="form-section">
+
+                    <div class="form-section-title">
+                        Course Pricing
+                    </div>
+
+
+                    <div class="pricing-type">
+
+                        <label class="radio-card">
+
+                            <input
+                                type="radio"
+                                name="courseType"
+                                value="FREE"
+                                checked
+                            >
+
+                            <span>
+                                <strong>Free</strong>
+                                <small>
+                                    Everyone can access
+                                </small>
+                            </span>
+
+                        </label>
+
+
+                        <label class="radio-card">
+
+                            <input
+                                type="radio"
+                                name="courseType"
+                                value="PAID"
+                            >
+
+                            <span>
+                                <strong>Paid</strong>
+                                <small>
+                                    Purchase required
+                                </small>
+                            </span>
+
+                        </label>
+
+                    </div>
+
+
+                    <div
+                        id="paidFields"
+                        class="form-grid hidden"
+                    >
+
+                        <div class="field">
+
+                            <label>
+                                Course Price
+                            </label>
+
+                            <input
+                                id="coursePrice"
+                                type="number"
+                                min="0"
+                                step="1"
+                                placeholder="₹ 0"
+                            >
+
+                        </div>
+
+
+                        <div class="field">
+
+                            <label>
+                                Discount
+                            </label>
+
+                            <input
+                                id="courseDiscount"
+                                type="number"
+                                min="0"
+                                step="1"
+                                value="0"
+                                placeholder="₹ 0"
+                            >
+
+                        </div>
+
+
+                        <div class="price-result full">
+
+                            <span>
+                                Final Price
+                            </span>
+
+                            <strong id="finalPrice">
+                                ₹0
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =================================
+                     PRIORITY
+                ================================== -->
+
+                <div class="form-section">
+
+                    <div class="form-grid">
+
+                        <div class="field">
+
+                            <label>
+                                Priority
+                            </label>
+
+                            <input
+                                id="coursePriority"
+                                type="number"
+                                min="1"
+                                value="1"
+                            >
+
+                            <small class="field-help">
+                                Lower number appears first.
+                            </small>
+
+                        </div>
+
+
+                        <div class="field">
+
+                            <label>
+                                Course Status
+                            </label>
+
+                            <select id="courseActive">
+
+                                <option value="true">
+                                    Active
+                                </option>
+
+                                <option value="false">
+                                    Inactive
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =================================
+                     ACTIONS
+                ================================== -->
+
+                <div class="modal-actions">
+
+                    <button
+                        type="button"
+                        id="cancelCourseBtn"
+                        class="secondary-btn"
+                    >
+                        Cancel
+                    </button>
+
+
+                    <button
+                        type="submit"
+                        id="saveCourseBtn"
+                        class="primary-btn"
+                    >
+                        Save Course
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================================
+         TEACHER MODAL
+    ========================================== -->
+
+    <div
+        id="teacherModal"
+        class="modal hidden"
+    >
+
+        <div class="modal-overlay"></div>
+
+        <div class="modal-card small-modal">
+
+            <div class="modal-header">
+
+                <div>
+
+                    <div class="section-label">
+                        TEACHER MASTER
+                    </div>
+
+                    <h2>Add Teacher</h2>
+
+                </div>
+
+                <button
+                    id="closeTeacherModal"
+                    class="close-btn"
+                    type="button"
+                >
+                    ×
+                </button>
+
+            </div>
+
+
+            <form id="teacherForm">
+
+                <div class="field">
+
+                    <label>
+                        Teacher Name
+                        <span>*</span>
+                    </label>
+
+                    <input
+                        id="teacherName"
+                        type="text"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="field">
+
+                    <label>
+                        Phone
+                    </label>
+
+                    <input
+                        id="teacherPhone"
+                        type="tel"
+                    >
+
+                </div>
+
+
+                <div class="field">
+
+                    <label>
+                        Email
+                    </label>
+
+                    <input
+                        id="teacherEmail"
+                        type="email"
+                    >
+
+                </div>
+
+
+                <div class="field">
+
+                    <label>
+                        Qualification
+                    </label>
+
+                    <input
+                        id="teacherQualification"
+                        type="text"
+                    >
+
+                </div>
+
+
+                <div class="modal-actions">
+
+                    <button
+                        type="button"
+                        id="cancelTeacherBtn"
+                        class="secondary-btn"
+                    >
+                        Cancel
+                    </button>
+
+                    <button
+                        type="submit"
+                        class="primary-btn"
+                    >
+                        Save Teacher
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================================
+         CONTENT MODAL
+    ========================================== -->
+
+    <div
+        id="contentModal"
+        class="modal hidden"
+    >
+
+        <div class="modal-overlay"></div>
+
+        <div class="modal-card large-modal">
+
+            <div class="modal-header">
+
+                <div>
+
+                    <div class="section-label">
+                        COURSE CONTENT
+                    </div>
+
+                    <h2 id="contentModalTitle">
+                        Add Content
+                    </h2>
+
+                </div>
+
+                <button
+                    id="closeContentModal"
+                    class="close-btn"
+                    type="button"
+                >
+                    ×
+                </button>
+
+            </div>
+
+
+            <div class="content-tabs">
+
+                <button
+                    class="content-tab active"
+                    data-content-tab="chapter"
+                >
+                    + Chapter
+                </button>
+
+                <button
+                    class="content-tab"
+                    data-content-tab="video"
+                >
+                    + Video
+                </button>
+
+                <button
+                    class="content-tab"
+                    data-content-tab="pdf"
+                >
+                    + PDF
+                </button>
+
+            </div>
+
+
+            <!-- CHAPTER -->
+
+            <form
+                id="chapterForm"
+                class="content-form"
+            >
+
+                <div class="form-grid">
+
+                    <div class="field full">
 
                         <label>
-                            Chapter Number *
+                            Course
+                        </label>
+
+                        <select
+                            id="chapterCourse"
+                            disabled
+                        ></select>
+
+                    </div>
+
+
+                    <div class="field">
+
+                        <label>
+                            Subject
+                            <span>*</span>
+                        </label>
+
+                        <select
+                            id="chapterSubject"
+                            required
+                        ></select>
+
+                    </div>
+
+
+                    <div class="field">
+
+                        <label>
+                            Chapter Number
+                            <span>*</span>
                         </label>
 
                         <input
                             id="chapterNumber"
                             type="number"
                             min="1"
-                            placeholder="1"
+                            required
                         >
 
                     </div>
 
 
-                    <div class="form-group">
+                    <div class="field full">
 
                         <label>
-                            Chapter Name *
+                            Chapter Name
+                            <span>*</span>
                         </label>
 
                         <input
                             id="chapterName"
                             type="text"
-                            placeholder="Real Numbers"
+                            required
                         >
 
                     </div>
@@ -1100,495 +1110,328 @@
                 </div>
 
 
-                <button
-                    id="addChapterBtn"
-                    class="primary-button full"
-                    type="button"
-                >
-                    Add Chapter
-                </button>
-
-            </div>
-
-
-            <div class="existing-content">
-
-                <h3>
-                    Existing Chapters
-                </h3>
-
-                <div
-                    id="chapterList"
-                    class="content-list"
-                ></div>
-
-            </div>
-
-        </div>
-
-
-        <!-- VIDEOS -->
-
-        <div
-            id="videosPanel"
-            class="content-panel hidden"
-        >
-
-            <div class="content-form">
-
-                <div class="form-group">
-
-                    <label>
-                        Subject *
-                    </label>
-
-                    <select id="videoSubject">
-                    </select>
-
-                </div>
-
-
-                <div class="form-group">
-
-                    <label>
-                        Chapter *
-                    </label>
-
-                    <select id="videoChapter">
-                    </select>
-
-                </div>
-
-
-                <div class="form-group">
-
-                    <label>
-                        Video Title *
-                    </label>
-
-                    <input
-                        id="videoTitle"
-                        type="text"
-                        placeholder="Introduction to Real Numbers"
-                    >
-
-                </div>
-
-
-                <div class="form-group">
-
-                    <label>
-                        Video URL / Stream ID *
-                    </label>
-
-                    <input
-                        id="videoUrl"
-                        type="text"
-                        placeholder="https://..."
-                    >
-
-                    <small class="field-help">
-                        Video hosting can be changed later
-                        to Cloudflare Stream/Mux without changing
-                        the course hierarchy.
-                    </small>
-
-                </div>
-
-
-                <div class="form-group">
-
-                    <label>
-                        Description
-                    </label>
-
-                    <textarea
-                        id="videoDescription"
-                        rows="3"
-                        placeholder="Optional video description"
-                    ></textarea>
-
-                </div>
-
-
-                <button
-                    id="addVideoBtn"
-                    class="primary-button full"
-                    type="button"
-                >
-                    Add Video
-                </button>
-
-            </div>
-
-
-            <div class="existing-content">
-
-                <h3>
-                    Existing Videos
-                </h3>
-
-                <div
-                    id="videoList"
-                    class="content-list"
-                ></div>
-
-            </div>
-
-        </div>
-
-
-        <!-- PDF -->
-
-        <div
-            id="pdfsPanel"
-            class="content-panel hidden"
-        >
-
-            <div class="content-form">
-
-                <div class="form-group">
-
-                    <label>
-                        Subject *
-                    </label>
-
-                    <select id="pdfSubject">
-                    </select>
-
-                </div>
-
-
-                <div class="form-group">
-
-                    <label>
-                        Chapter *
-                    </label>
-
-                    <select id="pdfChapter">
-                    </select>
-
-                </div>
-
-
-                <div class="form-group">
-
-                    <label>
-                        PDF Title *
-                    </label>
-
-                    <input
-                        id="pdfTitle"
-                        type="text"
-                        placeholder="Chapter Notes"
-                    >
-
-                </div>
-
-
-                <div class="thumbnail-options">
+                <div class="modal-actions">
 
                     <button
                         type="button"
-                        class="pdf-source active"
-                        data-pdf-source="upload"
+                        class="secondary-btn close-content-action"
                     >
-                        Upload PDF
+                        Cancel
                     </button>
 
                     <button
-                        type="button"
-                        class="pdf-source"
-                        data-pdf-source="url"
+                        type="submit"
+                        class="primary-btn"
                     >
-                        PDF URL
+                        Add Chapter
                     </button>
 
                 </div>
 
+            </form>
 
-                <div id="pdfUploadBox">
 
-                    <input
-                        id="pdfFile"
-                        type="file"
-                        accept="application/pdf"
-                    >
+            <!-- VIDEO -->
+
+            <form
+                id="videoForm"
+                class="content-form hidden"
+            >
+
+                <div class="form-grid">
+
+                    <div class="field full">
+
+                        <label>
+                            Course
+                        </label>
+
+                        <select
+                            id="videoCourse"
+                            disabled
+                        ></select>
+
+                    </div>
+
+
+                    <div class="field">
+
+                        <label>
+                            Subject
+                            <span>*</span>
+                        </label>
+
+                        <select
+                            id="videoSubject"
+                            required
+                        ></select>
+
+                    </div>
+
+
+                    <div class="field">
+
+                        <label>
+                            Chapter
+                            <span>*</span>
+                        </label>
+
+                        <select
+                            id="videoChapter"
+                            required
+                        ></select>
+
+                    </div>
+
+
+                    <div class="field full">
+
+                        <label>
+                            Video Title
+                            <span>*</span>
+                        </label>
+
+                        <input
+                            id="videoTitle"
+                            type="text"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="field full">
+
+                        <label>
+                            Video URL
+                            <span>*</span>
+                        </label>
+
+                        <input
+                            id="videoUrl"
+                            type="url"
+                            placeholder="https://..."
+                            required
+                        >
+
+                        <small class="field-help">
+                            Video hosting can be YouTube,
+                            Cloudflare Stream, Mux or another
+                            approved video source.
+                        </small>
+
+                    </div>
+
+
+                    <div class="field full">
+
+                        <label>
+                            Description
+                        </label>
+
+                        <textarea
+                            id="videoDescription"
+                            rows="3"
+                        ></textarea>
+
+                    </div>
 
                 </div>
 
 
-                <div
-                    id="pdfUrlBox"
-                    class="hidden"
-                >
+                <div class="modal-actions">
 
-                    <input
-                        id="pdfUrl"
-                        type="url"
-                        placeholder="https://example.com/file.pdf"
+                    <button
+                        type="button"
+                        class="secondary-btn close-content-action"
                     >
+                        Cancel
+                    </button>
+
+                    <button
+                        type="submit"
+                        class="primary-btn"
+                    >
+                        Add Video
+                    </button>
+
+                </div>
+
+            </form>
+
+
+            <!-- PDF -->
+
+            <form
+                id="pdfForm"
+                class="content-form hidden"
+            >
+
+                <div class="form-grid">
+
+                    <div class="field full">
+
+                        <label>
+                            Course
+                        </label>
+
+                        <select
+                            id="pdfCourse"
+                            disabled
+                        ></select>
+
+                    </div>
+
+
+                    <div class="field">
+
+                        <label>
+                            Subject
+                            <span>*</span>
+                        </label>
+
+                        <select
+                            id="pdfSubject"
+                            required
+                        ></select>
+
+                    </div>
+
+
+                    <div class="field">
+
+                        <label>
+                            Chapter
+                            <span>*</span>
+                        </label>
+
+                        <select
+                            id="pdfChapter"
+                            required
+                        ></select>
+
+                    </div>
+
+
+                    <div class="field full">
+
+                        <label>
+                            PDF Title
+                            <span>*</span>
+                        </label>
+
+                        <input
+                            id="pdfTitle"
+                            type="text"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="field full">
+
+                        <div class="source-switch">
+
+                            <button
+                                type="button"
+                                class="pdf-source-btn active"
+                                data-pdf-source="url"
+                            >
+                                PDF URL
+                            </button>
+
+                            <button
+                                type="button"
+                                class="pdf-source-btn"
+                                data-pdf-source="upload"
+                            >
+                                Upload PDF
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <div
+                        id="pdfUrlSource"
+                        class="field full"
+                    >
+
+                        <label>
+                            PDF URL
+                        </label>
+
+                        <input
+                            id="pdfUrl"
+                            type="url"
+                            placeholder="https://..."
+                        >
+
+                    </div>
+
+
+                    <div
+                        id="pdfUploadSource"
+                        class="field full hidden"
+                    >
+
+                        <label>
+                            Upload PDF
+                        </label>
+
+                        <input
+                            id="pdfFile"
+                            type="file"
+                            accept="application/pdf,.pdf"
+                        >
+
+                    </div>
 
                 </div>
 
 
-                <button
-                    id="addPdfBtn"
-                    class="primary-button full"
-                    type="button"
-                >
-                    Add PDF
-                </button>
+                <div class="modal-actions">
 
-            </div>
+                    <button
+                        type="button"
+                        class="secondary-btn close-content-action"
+                    >
+                        Cancel
+                    </button>
 
+                    <button
+                        type="submit"
+                        class="primary-btn"
+                    >
+                        Add PDF
+                    </button>
 
-            <div class="existing-content">
+                </div>
 
-                <h3>
-                    Existing PDFs
-                </h3>
+            </form>
 
-                <div
-                    id="pdfList"
-                    class="content-list"
-                ></div>
-
-            </div>
 
         </div>
 
     </div>
 
-</div>
+
+    <!-- TOAST -->
+
+    <div
+        id="toast"
+        class="toast"
+    ></div>
 
 
-<!-- =====================================================
-     TEACHER MODAL
-===================================================== -->
-
-<div
-    id="teacherModal"
-    class="modal-overlay hidden"
->
-
-    <div class="modal small-modal">
-
-        <div class="modal-header">
-
-            <div>
-
-                <span class="modal-eyebrow">
-                    TEACHER MASTER
-                </span>
-
-                <h2>
-                    Add Teacher
-                </h2>
-
-            </div>
-
-            <button
-                id="closeTeacherModal"
-                class="close-btn"
-                type="button"
-            >
-                ×
-            </button>
-
-        </div>
-
-
-        <form id="teacherForm">
-
-            <div class="form-group">
-
-                <label>
-                    Teacher Name *
-                </label>
-
-                <input
-                    id="teacherName"
-                    type="text"
-                    required
-                    placeholder="Teacher name"
-                >
-
-            </div>
-
-
-            <div class="form-group">
-
-                <label>
-                    Phone
-                </label>
-
-                <input
-                    id="teacherPhone"
-                    type="tel"
-                    placeholder="Phone number"
-                >
-
-            </div>
-
-
-            <div class="form-group">
-
-                <label>
-                    Email
-                </label>
-
-                <input
-                    id="teacherEmail"
-                    type="email"
-                    placeholder="teacher@example.com"
-                >
-
-            </div>
-
-
-            <div class="form-group">
-
-                <label>
-                    Qualification
-                </label>
-
-                <input
-                    id="teacherQualification"
-                    type="text"
-                    placeholder="M.Sc, B.Ed..."
-                >
-
-            </div>
-
-
-            <div
-                id="teacherMessage"
-                class="form-message hidden"
-            ></div>
-
-
-            <div class="modal-footer">
-
-                <button
-                    type="button"
-                    id="cancelTeacherBtn"
-                    class="secondary-button"
-                >
-                    Cancel
-                </button>
-
-                <button
-                    type="submit"
-                    class="primary-button"
-                >
-                    Add Teacher
-                </button>
-
-            </div>
-
-        </form>
-
-    </div>
+    <script
+        type="module"
+        src="./courses.js"
+    ></script>
 
 </div>
-
-
-<!-- =====================================================
-     DELETE MODAL
-===================================================== -->
-
-<div
-    id="deleteModal"
-    class="modal-overlay hidden"
->
-
-    <div class="modal small-modal">
-
-        <div class="modal-header">
-
-            <div>
-
-                <span class="modal-eyebrow">
-                    CONFIRM
-                </span>
-
-                <h2>
-                    Delete Course?
-                </h2>
-
-            </div>
-
-            <button
-                id="closeDeleteModal"
-                class="close-btn"
-                type="button"
-            >
-                ×
-            </button>
-
-        </div>
-
-
-        <p class="delete-text">
-
-            This will remove the course from the
-            active course catalogue.
-
-            <br><br>
-
-            Its content is not automatically deleted.
-
-        </p>
-
-
-        <div class="modal-footer">
-
-            <button
-                id="cancelDeleteBtn"
-                class="secondary-button"
-                type="button"
-            >
-                Cancel
-            </button>
-
-            <button
-                id="confirmDeleteBtn"
-                class="danger-button"
-                type="button"
-            >
-                Delete
-            </button>
-
-        </div>
-
-    </div>
-
-</div>
-
-
-<!-- =====================================================
-     TOAST
-===================================================== -->
-
-<div
-    id="toast"
-    class="toast hidden"
->
-    <strong id="toastTitle">
-        Success
-    </strong>
-
-    <span id="toastMessage">
-        Done.
-    </span>
-</div>
-
-
-<script
-    type="module"
-    src="./courses.js"
-></script>
 
 </body>
 </html>
