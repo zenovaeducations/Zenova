@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    >
+
+    <title>Batch Details | Zenova Educations</title>
+
+    <link rel="stylesheet" href="./batchdetails.css">
+</head>
+
+<body>
+
+    <!-- LOADING -->
+    <div id="loadingScreen" class="loading-screen">
+        <div class="loader-ring">
+            <span>Z</span>
+        </div>
+    </div>
+
+
+    <!-- HEADER -->
+    <header class="top-header">
+
+        <button
+            id="backButton"
+            class="icon-button"
+            aria-label="Back"
+        >
+            <svg viewBox="0 0 24 24">
+                <path
+                    d="M15 18l-6-6 6-6"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                />
+            </svg>
+        </button>
+
+
+        <div class="header-brand">
+            ZENOVA EDUCATIONS
+        </div>
+
+
+        <button
+            id="notificationButton"
+            class="icon-button"
+            aria-label="Notifications"
+        >
+            <svg viewBox="0 0 24 24">
+                <path
+                    d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                />
+                <path
+                    d="M10 21h4"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                />
+            </svg>
+
+            <span class="notification-dot"></span>
+        </button>
+
+    </header>
+
+
+    <!-- MAIN -->
+    <main class="page-content">
+
+        <!-- HERO -->
+        <section class="course-hero">
+
+            <div class="course-image-wrap">
+
+                <img
+                    id="courseImage"
+                    class="course-image"
+                    src=""
+                    alt="Course"
+                >
+
+                <div
+                    id="courseBadge"
+                    class="course-badge hidden"
+                >
+                    ENROLLED
+                </div>
+
+            </div>
+
+
+            <div class="course-basic">
+
+                <div
+                    id="courseClass"
+                    class="course-class"
+                >
+                    —
+                </div>
+
+
+                <h1 id="courseTitle">
+                    Loading...
+                </h1>
+
+
+                <div
+                    id="courseCode"
+                    class="course-code"
+                ></div>
+
+
+                <div
+                    id="courseMeta"
+                    class="course-meta"
+                ></div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ACTION -->
+        <section
+            id="purchaseSection"
+            class="purchase-card"
+        >
+
+            <div class="price-area">
+
+                <span class="price-label">
+                    Course Fee
+                </span>
+
+                <div class="price-row">
+
+                    <span
+                        id="coursePrice"
+                        class="final-price"
+                    >
+                        —
+                    </span>
+
+                    <span
+                        id="originalPrice"
+                        class="original-price"
+                    ></span>
+
+                </div>
+
+            </div>
+
+
+            <button
+                id="mainActionButton"
+                class="main-action"
+                type="button"
+            >
+                BUY NOW
+            </button>
+
+        </section>
+
+
+        <!-- DESCRIPTION -->
+        <section class="details-section">
+
+            <div class="section-label">
+                ABOUT THIS BATCH
+            </div>
+
+            <h2>
+                Course Overview
+            </h2>
+
+            <p
+                id="courseDescription"
+                class="description"
+            >
+                —
+            </p>
+
+        </section>
+
+
+        <!-- HIGHLIGHTS -->
+        <section
+            id="highlightsSection"
+            class="details-section"
+        >
+
+            <div class="section-label">
+                WHAT YOU GET
+            </div>
+
+            <h2>
+                Course Highlights
+            </h2>
+
+
+            <div class="highlights-grid">
+
+                <div class="highlight-card">
+
+                    <div class="highlight-icon">
+                        <svg viewBox="0 0 24 24">
+                            <path
+                                d="M4 5.5A2.5 2.5 0 0 1 6.5 3H11v17H6.5A2.5 2.5 0 0 0 4 22V5.5Z"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="1.7"
+                            />
+
+                            <path
+                                d="M20 5.5A2.5 2.5 0 0 0 17.5 3H13v17h4.5A2.5 2.5 0 0 1 20 22V5.5Z"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="1.7"
+                            />
+                        </svg>
+                    </div>
+
+                    <div>
+                        <strong id="subjectsValue">
+                            —
+                        </strong>
+
+                        <span>
+                            Subjects
+                        </span>
+                    </div>
+
+                </div>
+
+
+                <div class="highlight-card">
+
+                    <div class="highlight-icon">
+                        <svg viewBox="0 0 24 24">
+                            <circle
+                                cx="12"
+                                cy="12"
+                                r="9"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="1.7"
+                            />
+
+                            <path
+                                d="M12 7v5l3 2"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="1.7"
+                                stroke-linecap="round"
+                            />
+                        </svg>
+                    </div>
+
+                    <div>
+                        <strong id="durationValue">
+                            —
+                        </strong>
+
+                        <span>
+                            Duration
+                        </span>
+                    </div>
+
+                </div>
+
+
+                <div class="highlight-card">
+
+                    <div class="highlight-icon">
+                        <svg viewBox="0 0 24 24">
+                            <path
+                                d="M4 5h16v14H4z"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="1.7"
+                            />
+
+                            <path
+                                d="M8 9h8M8 13h5"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="1.7"
+                                stroke-linecap="round"
+                            />
+                        </svg>
+                    </div>
+
+                    <div>
+                        <strong id="classesValue">
+                            —
+                        </strong>
+
+                        <span>
+                            Classes
+                        </span>
+                    </div>
+
+                </div>
+
+
+                <div class="highlight-card">
+
+                    <div class="highlight-icon">
+                        <svg viewBox="0 0 24 24">
+                            <path
+                                d="M12 3l7 3v5c0 4.5-3 7.8-7 10-4-2.2-7-5.5-7-10V6l7-3Z"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="1.7"
+                                stroke-linejoin="round"
+                            />
+                        </svg>
+                    </div>
+
+                    <div>
+                        <strong>
+                            Premium
+                        </strong>
+
+                        <span>
+                            Learning
+                        </span>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- COURSE INFORMATION -->
+        <section class="details-section">
+
+            <div class="section-label">
+                COURSE INFORMATION
+            </div>
+
+            <h2>
+                Details
+            </h2>
+
+
+            <div class="info-list">
+
+                <div class="info-row">
+                    <span>Class</span>
+                    <strong id="infoClass">—</strong>
+                </div>
+
+                <div class="info-row">
+                    <span>Board</span>
+                    <strong id="infoBoard">—</strong>
+                </div>
+
+                <div class="info-row">
+                    <span>Medium</span>
+                    <strong id="infoMedium">—</strong>
+                </div>
+
+                <div class="info-row">
+                    <span>Course Code</span>
+                    <strong id="infoCode">—</strong>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- LANGUAGE SELECTION -->
+        <section
+            id="languageSection"
+            class="details-section hidden"
+        >
+
+            <div class="section-label">
+                YOUR LANGUAGE
+            </div>
+
+            <h2>
+                Select Languages
+            </h2>
+
+            <p class="section-note">
+                Select the languages required for this course.
+            </p>
+
+
+            <div id="languageOptions"></div>
+
+        </section>
+
+
+        <!-- BOTTOM SPACE -->
+        <div class="bottom-space"></div>
+
+    </main>
+
+
+    <!-- FIXED BOTTOM NAV -->
+    <nav class="bottom-navigation">
+
+        <a
+            href="../"
+            class="nav-item"
+        >
+            <span class="nav-icon">
+                <svg viewBox="0 0 24 24">
+                    <path
+                        d="M3 11.5L12 4l9 7.5"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    />
+
+                    <path
+                        d="M5.5 10.5V20h13v-9.5"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                    />
+                </svg>
+            </span>
+
+            <span>
+                Home
+            </span>
+        </a>
+
+
+        <a
+            href="../batches/"
+            class="nav-item"
+        >
+            <span class="nav-icon">
+                <svg viewBox="0 0 24 24">
+                    <rect
+                        x="5"
+                        y="4"
+                        width="14"
+                        height="16"
+                        rx="2"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                    />
+
+                    <path
+                        d="M9 8h6M9 12h6M9 16h3"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        stroke-linecap="round"
+                    />
+                </svg>
+            </span>
+
+            <span>
+                Courses
+            </span>
+        </a>
+
+
+        <a
+            href="../study/"
+            class="nav-item"
+        >
+            <span class="nav-icon">
+                <svg viewBox="0 0 24 24">
+                    <path
+                        d="M4 5.5A2.5 2.5 0 0 1 6.5 3H11v17H6.5A2.5 2.5 0 0 0 4 22V5.5Z"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.7"
+                    />
+
+                    <path
+                        d="M20 5.5A2.5 2.5 0 0 0 17.5 3H13v17h4.5A2.5 2.5 0 0 1 20 22V5.5Z"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.7"
+                    />
+                </svg>
+            </span>
+
+            <span>
+                Study Now
+            </span>
+        </a>
+
+
+        <a
+            href="../ai/"
+            class="nav-item"
+        >
+            <span class="nav-icon ai-icon">
+                Z
+            </span>
+
+            <span>
+                Zenova AI
+            </span>
+        </a>
+
+
+        <a
+            href="../profile/"
+            class="nav-item"
+        >
+            <span class="nav-icon">
+                <svg viewBox="0 0 24 24">
+                    <circle
+                        cx="12"
+                        cy="8"
+                        r="3.5"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                    />
+
+                    <path
+                        d="M5 20c.8-3.4 3.3-5.2 7-5.2s6.2 1.8 7 5.2"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        stroke-linecap="round"
+                    />
+                </svg>
+            </span>
+
+            <span>
+                Profile
+            </span>
+        </a>
+
+    </nav>
+
+
+    <script
+        type="module"
+        src="./batchdetails.js"
+    ></script>
+
+</body>
+</html>
