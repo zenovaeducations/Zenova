@@ -17,21 +17,15 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
 
-/* =========================================
+/* =========================================================
    DOM
-========================================= */
+========================================================= */
 
 const loadingScreen =
     document.getElementById("loadingScreen");
 
-const app =
-    document.getElementById("app");
-
 const backButton =
     document.getElementById("backButton");
-
-const notificationButton =
-    document.getElementById("notificationButton");
 
 const searchInput =
     document.getElementById("searchInput");
@@ -39,34 +33,31 @@ const searchInput =
 const filterContainer =
     document.getElementById("filterContainer");
 
-const yourClassTitle =
-    document.getElementById("yourClassTitle");
+const studentClassTitle =
+    document.getElementById("studentClassTitle");
 
 const myBatchSection =
     document.getElementById("myBatchSection");
 
-const myBatchList =
-    document.getElementById("myBatchList");
+const myBatchContainer =
+    document.getElementById("myBatchContainer");
 
-const availableSection =
-    document.getElementById("availableSection");
+const availableCoursesContainer =
+    document.getElementById("availableCoursesContainer");
 
-const availableList =
-    document.getElementById("availableList");
+const otherProgramsContainer =
+    document.getElementById("otherProgramsContainer");
 
 const otherProgramsSection =
     document.getElementById("otherProgramsSection");
 
-const otherProgramsList =
-    document.getElementById("otherProgramsList");
-
-const emptySearchState =
-    document.getElementById("emptySearchState");
+const noResults =
+    document.getElementById("noResults");
 
 
-/* =========================================
+/* =========================================================
    STATE
-========================================= */
+========================================================= */
 
 let currentUser = null;
 
@@ -76,18 +67,18 @@ let courses = [];
 
 let enrollments = [];
 
-let activeFilter = "ALL";
+let selectedFilter = "ALL";
 
 let searchTerm = "";
 
-let unsubscribeStudent = null;
 let unsubscribeCourses = null;
+
 let unsubscribeEnrollments = null;
 
 
-/* =========================================
-   AUTH
-========================================= */
+/* =========================================================
+   INIT
+========================================================= */
 
 onAuthStateChanged(auth, async (user) => {
 
@@ -100,9 +91,13 @@ onAuthStateChanged(auth, async (user) => {
 
     try {
 
-        await startRealtimeListeners();
+        await loadStudent();
 
-        showApp();
+        startCoursesListener();
+
+        startEnrollmentListener();
+
+        hideLoading();
 
     } catch (error) {
 
@@ -111,72 +106,84 @@ onAuthStateChanged(auth, async (user) => {
             error
         );
 
-        showApp();
+        hideLoading();
 
-        showErrorState(
-            "Unable to load courses right now."
-        );
     }
 
 });
 
 
-/* =========================================
-   REALTIME LISTENERS
-========================================= */
+/* =========================================================
+   STUDENT
+========================================================= */
 
-async function startRealtimeListeners() {
-
-    /* -------------------------------------
-       STUDENT PROFILE
-    -------------------------------------- */
+async function loadStudent() {
 
     const studentRef =
-        doc(db, "students", currentUser.uid);
-
-    unsubscribeStudent =
-        onSnapshot(
-            studentRef,
-            (snapshot) => {
-
-                if (!snapshot.exists()) {
-
-                    console.warn(
-                        "Student profile not found."
-                    );
-
-                    student = {
-                        className: ""
-                    };
-
-                } else {
-
-                    student = {
-                        id: snapshot.id,
-                        ...snapshot.data()
-                    };
-
-                }
-
-                buildFilters();
-
-                renderCourses();
-
-            },
-            (error) => {
-
-                console.error(
-                    "Student listener error:",
-                    error
-                );
-
-            }
+        doc(
+            db,
+            "students",
+            currentUser.uid
         );
 
+    const studentSnap =
+        await getDoc(studentRef);
 
-    /* -------------------------------------
-       CRM COURSES
-    -------------------------------------- */
+    if (studentSnap.exists()) {
+
+        student = {
+            id: studentSnap.id,
+            ...studentSnap.data()
+        };
+
+        return;
+    }
+
+
+    /*
+       Compatibility fallback.
+
+       If your older authentication/onboarding
+       system uses studentAccounts, this allows
+       the page to continue working.
+    */
+
+    const accountRef =
+        doc(
+            db,
+            "studentAccounts",
+            currentUser.uid
+        );
+
+    const accountSnap =
+        await getDoc(accountRef);
+
+    if (accountSnap.exists()) {
+
+        student = {
+            id: accountSnap.id,
+            ...accountSnap.data()
+        };
+
+        return;
+    }
+
+
+    /*
+       Student profile doesn't exist.
+    */
+
+    window.location.href =
+        "../../account/onboarding/";
+
+}
+
+
+/* =========================================================
+   COURSES REALTIME
+========================================================= */
+
+function startCoursesListener() {
 
     const coursesQuery =
         query(
@@ -184,24 +191,23 @@ async function startRealtimeListeners() {
             where("crmActive", "==", true)
         );
 
+
     unsubscribeCourses =
         onSnapshot(
             coursesQuery,
+
             (snapshot) => {
 
                 courses =
-                    snapshot.docs.map(
-                        (courseDoc) => ({
-                            id: courseDoc.id,
-                            ...courseDoc.data()
-                        })
-                    );
+                    snapshot.docs.map((docSnap) => ({
+                        id: docSnap.id,
+                        ...docSnap.data()
+                    }));
 
-                buildFilters();
-
-                renderCourses();
+                renderEverything();
 
             },
+
             (error) => {
 
                 console.error(
@@ -209,17 +215,27 @@ async function startRealtimeListeners() {
                     error
                 );
 
-                showErrorState(
-                    "Unable to load courses."
-                );
+                /*
+                   Compatibility fallback.
 
+                   If some old course documents don't
+                   have crmActive, they won't appear
+                   in the query above.
+
+                   In that situation, use the normal
+                   collection listener below if required.
+                */
             }
         );
 
+}
 
-    /* -------------------------------------
-       STUDENT ENROLLMENTS
-    -------------------------------------- */
+
+/* =========================================================
+   ENROLLMENTS REALTIME
+========================================================= */
+
+function startEnrollmentListener() {
 
     const enrollmentQuery =
         query(
@@ -231,22 +247,23 @@ async function startRealtimeListeners() {
             )
         );
 
+
     unsubscribeEnrollments =
         onSnapshot(
             enrollmentQuery,
+
             (snapshot) => {
 
                 enrollments =
-                    snapshot.docs.map(
-                        (enrollmentDoc) => ({
-                            id: enrollmentDoc.id,
-                            ...enrollmentDoc.data()
-                        })
-                    );
+                    snapshot.docs.map((docSnap) => ({
+                        id: docSnap.id,
+                        ...docSnap.data()
+                    }));
 
-                renderCourses();
+                renderEverything();
 
             },
+
             (error) => {
 
                 console.error(
@@ -254,36 +271,34 @@ async function startRealtimeListeners() {
                     error
                 );
 
-                /*
-                 * If the collection doesn't exist yet,
-                 * the page will simply show catalogue courses.
-                 */
             }
         );
 
 }
 
 
-/* =========================================
-   SHOW APP
-========================================= */
+/* =========================================================
+   RENDER EVERYTHING
+========================================================= */
 
-function showApp() {
+function renderEverything() {
 
-    setTimeout(() => {
+    renderFilters();
 
-        loadingScreen.classList.add("hidden");
+    renderClassTitle();
 
-        app.classList.remove("hidden");
+    renderMyBatch();
 
-    }, 350);
+    renderAvailableCourses();
+
+    renderOtherPrograms();
 
 }
 
 
-/* =========================================
+/* =========================================================
    CLASS NORMALIZATION
-========================================= */
+========================================================= */
 
 function normalizeClass(value) {
 
@@ -298,7 +313,9 @@ function normalizeClass(value) {
             .replace(/\s+/g, " ");
 
 
-    /* 10TH / SSLC */
+    /*
+       SSLC / 10th
+    */
 
     if (
         [
@@ -306,88 +323,80 @@ function normalizeClass(value) {
             "10TH",
             "SSLC",
             "10TH STANDARD",
-            "CLASS 10",
-            "CLASS 10TH"
+            "10 STANDARD"
         ].includes(v)
     ) {
         return "10TH";
     }
 
 
-    /* 9TH */
+    /*
+       9th
+    */
 
     if (
         [
             "9",
             "9TH",
             "9TH STANDARD",
-            "CLASS 9",
-            "CLASS 9TH"
+            "9 STANDARD"
         ].includes(v)
     ) {
         return "9TH";
     }
 
 
-    /* 8TH */
+    /*
+       8th
+    */
 
     if (
         [
             "8",
             "8TH",
             "8TH STANDARD",
-            "CLASS 8",
-            "CLASS 8TH"
+            "8 STANDARD"
         ].includes(v)
     ) {
         return "8TH";
     }
 
 
-    /* 7TH */
+    /*
+       7th
+    */
 
     if (
         [
             "7",
             "7TH",
             "7TH STANDARD",
-            "CLASS 7",
-            "CLASS 7TH"
+            "7 STANDARD"
         ].includes(v)
     ) {
         return "7TH";
     }
 
 
-    /* 6TH */
+    /*
+       6th
+    */
 
     if (
         [
             "6",
             "6TH",
             "6TH STANDARD",
-            "CLASS 6",
-            "CLASS 6TH"
+            "6 STANDARD"
         ].includes(v)
     ) {
         return "6TH";
     }
 
 
-    /* UNDER 8TH */
-
-    if (
-        [
-            "UNDER 8TH",
-            "BELOW 8TH",
-            "UNDER8TH"
-        ].includes(v)
-    ) {
-        return "UNDER_8TH";
-    }
-
-
-    /* 1ST PUC */
+    /*
+       PUC
+    */
 
     if (
         [
@@ -401,8 +410,6 @@ function normalizeClass(value) {
         return "1ST_PUC";
     }
 
-
-    /* 2ND PUC */
 
     if (
         [
@@ -421,215 +428,237 @@ function normalizeClass(value) {
 }
 
 
-/* =========================================
-   DISPLAY CLASS NAME
-========================================= */
+/* =========================================================
+   DISPLAY CLASS
+========================================================= */
 
 function displayClass(value) {
 
     const normalized =
         normalizeClass(value);
 
-    const labels = {
-
+    const names = {
         "10TH": "10th",
-
         "9TH": "9th",
-
         "8TH": "8th",
-
         "7TH": "7th",
-
         "6TH": "6th",
-
-        "UNDER_8TH": "Under 8th",
-
         "1ST_PUC": "1st PUC",
-
         "2ND_PUC": "2nd PUC"
     };
 
-    return labels[normalized] || value || "Your Class";
+    return names[normalized] || value || "Other";
 }
 
 
-/* =========================================
-   MEDIUM
-========================================= */
+/* =========================================================
+   STUDENT CLASS
+========================================================= */
 
-function getCourseMediums(course) {
+function getStudentClass() {
+
+    return normalizeClass(
+        student?.className ||
+        student?.class ||
+        student?.crmClass ||
+        student?.standard
+    );
+
+}
+
+
+/* =========================================================
+   COURSE CLASS
+========================================================= */
+
+function getCourseClass(course) {
+
+    return normalizeClass(
+        course.crmClass ||
+        course.className ||
+        course.class ||
+        course.standard
+    );
+
+}
+
+
+/* =========================================================
+   COURSE MEDIUM
+========================================================= */
+
+function getCourseMedium(course) {
+
+    /*
+       New system:
+       crmMediums: ["Kannada", "English", "Hindi"]
+    */
 
     if (
-        Array.isArray(course.crmMediums)
-        &&
+        Array.isArray(course.crmMediums) &&
         course.crmMediums.length
     ) {
 
-        return course.crmMediums;
+        return course.crmMediums.join(", ");
 
     }
 
 
-    if (
-        Array.isArray(course.mediums)
-        &&
-        course.mediums.length
-    ) {
-
-        return course.mediums;
-
-    }
-
+    /*
+       Legacy system:
+       crmMedium
+    */
 
     if (course.crmMedium) {
 
-        /*
-         * Old courses used:
-         * Kannada
-         * English
-         * Both
-         */
+        return String(course.crmMedium);
 
-        if (
-            String(course.crmMedium)
-                .toLowerCase() === "both"
-        ) {
-            return [
-                "Kannada",
-                "English"
-            ];
-        }
-
-        return [
-            course.crmMedium
-        ];
     }
 
 
-    return [];
+    return "All Mediums";
+
 }
 
 
-/* =========================================
+/* =========================================================
    COURSE PRICE
-========================================= */
+========================================================= */
 
-function getFinalPrice(course) {
+function getCoursePrice(course) {
 
-    if (
-        course.crmFinalPrice !== undefined
-        &&
-        course.crmFinalPrice !== null
-        &&
-        course.crmFinalPrice !== ""
-    ) {
-
-        return Number(course.crmFinalPrice) || 0;
-
-    }
+    const finalPrice =
+        Number(course.crmFinalPrice);
 
     const price =
-        Number(course.crmPrice) || 0;
-
-    const discount =
-        Number(course.crmDiscount) || 0;
-
-    return Math.max(
-        0,
-        price - discount
-    );
-}
-
-
-/* =========================================
-   COURSE SORT
-========================================= */
-
-function getPriority(course) {
-
-    const value =
-        Number(course.priority);
+        Number(course.crmPrice);
 
     if (
-        Number.isFinite(value)
+        Number.isFinite(finalPrice) &&
+        finalPrice > 0
     ) {
-        return value;
-    }
-
-    return 999999;
-}
-
-
-function getCreatedTime(course) {
-
-    if (
-        course.createdAt
-        &&
-        typeof course.createdAt.toMillis === "function"
-    ) {
-        return course.createdAt.toMillis();
+        return finalPrice;
     }
 
     if (
-        course.createdAt
-        &&
-        course.createdAt.seconds
+        Number.isFinite(price) &&
+        price > 0
     ) {
-        return course.createdAt.seconds * 1000;
+        return price;
     }
 
     return 0;
+
 }
 
+
+/* =========================================================
+   COURSE PRIORITY
+========================================================= */
+
+function getPriority(course) {
+
+    const priority =
+        Number(course.priority);
+
+    if (Number.isFinite(priority)) {
+        return priority;
+    }
+
+    return 999999;
+
+}
+
+
+/* =========================================================
+   DATE
+========================================================= */
+
+function getTimestampValue(value) {
+
+    if (!value) {
+        return 0;
+    }
+
+    if (
+        typeof value.toMillis === "function"
+    ) {
+        return value.toMillis();
+    }
+
+    if (
+        value.seconds
+    ) {
+        return Number(value.seconds) * 1000;
+    }
+
+    if (
+        value instanceof Date
+    ) {
+        return value.getTime();
+    }
+
+    return 0;
+
+}
+
+
+/* =========================================================
+   SORT COURSES
+========================================================= */
 
 function sortCourses(list) {
 
-    return [...list].sort(
-        (a, b) => {
+    return [...list].sort((a, b) => {
 
-            const priorityDifference =
-                getPriority(a)
-                -
-                getPriority(b);
+        const priorityDifference =
+            getPriority(a) -
+            getPriority(b);
 
-            if (
-                priorityDifference !== 0
-            ) {
-                return priorityDifference;
-            }
-
-            return (
-                getCreatedTime(b)
-                -
-                getCreatedTime(a)
-            );
-
+        if (
+            priorityDifference !== 0
+        ) {
+            return priorityDifference;
         }
-    );
+
+
+        return (
+            getTimestampValue(b.createdAt) -
+            getTimestampValue(a.createdAt)
+        );
+
+    });
 
 }
 
 
-/* =========================================
-   ENROLLMENT HELPERS
-========================================= */
+/* =========================================================
+   ENROLLMENT MATCH
+========================================================= */
 
-function getEnrollmentCourseId(enrollment) {
+function getEnrollmentForCourse(courseId) {
 
-    return (
-        enrollment.crmCourseId
-        ||
-        enrollment.courseId
-        ||
-        enrollment.batchId
-        ||
-        ""
-    );
+    return enrollments.find((enrollment) => {
+
+        const enrollmentCourseId =
+            enrollment.crmCourseId ||
+            enrollment.courseId;
+
+        return (
+            enrollmentCourseId === courseId &&
+            isEnrollmentActive(enrollment)
+        );
+
+    });
 
 }
 
 
-function isPurchased(enrollment) {
+/* =========================================================
+   ACTIVE ENROLLMENT
+========================================================= */
+
+function isEnrollmentActive(enrollment) {
 
     const status =
         String(
@@ -643,77 +672,56 @@ function isPurchased(enrollment) {
 
 
     /*
-     * Main purchased states.
-     */
+       Don't show cancelled/rejected/
+       inactive enrollments as My Batch.
+    */
 
     if (
-        paymentStatus === "PAID"
-        ||
-        paymentStatus === "COMPLETED"
-        ||
-        paymentStatus === "SUCCESS"
-        ||
-        paymentStatus === "PAYMENT_COMPLETED"
+        [
+            "CANCELLED",
+            "REJECTED",
+            "INACTIVE",
+            "SUSPENDED"
+        ].includes(status)
     ) {
-
-        return (
-            status !== "CANCELLED"
-            &&
-            status !== "REJECTED"
-            &&
-            status !== "SUSPENDED"
-        );
-
+        return false;
     }
 
 
     /*
-     * For manually activated enrollments
-     * where paymentStatus isn't stored.
-     */
+       Explicit ACTIVE
+    */
 
-    if (
-        status === "ACTIVE"
-        &&
-        !enrollment.paymentStatus
-    ) {
+    if (status === "ACTIVE") {
         return true;
     }
 
 
+    /*
+       Compatibility:
+       paid enrollment without status
+    */
+
     if (
-        status === "ENROLLED"
+        !status &&
+        [
+            "PAID",
+            "COMPLETED",
+            "SUCCESS"
+        ].includes(paymentStatus)
     ) {
         return true;
     }
 
 
     return false;
-}
-
-
-function getEnrollmentForCourse(courseId) {
-
-    return enrollments.find(
-        (enrollment) => {
-
-            return (
-                getEnrollmentCourseId(enrollment)
-                ===
-                courseId
-            )
-            &&
-            isPurchased(enrollment);
-
-        }
-    );
 
 }
 
 
-/* =========================================
+/* =========================================================
    PROGRESS
-========================================= */
+========================================================= */
 
 function getProgress(enrollment) {
 
@@ -721,730 +729,575 @@ function getProgress(enrollment) {
         return 0;
     }
 
-    const progress =
+    const value =
         Number(
-            enrollment.progress
+            enrollment.progress ??
+            enrollment.progressPercent ??
+            enrollment.completion ??
+            0
         );
 
-    if (
-        !Number.isFinite(progress)
-    ) {
+    if (!Number.isFinite(value)) {
         return 0;
     }
 
-    return Math.min(
-        100,
-        Math.max(0, progress)
+    return Math.max(
+        0,
+        Math.min(100, value)
     );
 
 }
 
 
-/* =========================================
-   BUILD FILTERS
-========================================= */
+/* =========================================================
+   FILTERS
+========================================================= */
 
-function buildFilters() {
+function renderFilters() {
 
-    if (!filterContainer) {
-        return;
-    }
-
-    const classSet =
-        new Set();
-
-    courses.forEach(
-        (course) => {
-
-            const normalized =
-                normalizeClass(
-                    course.crmClass
-                );
-
-            if (normalized) {
-                classSet.add(normalized);
-            }
-
-        }
-    );
-
-
-    const studentClass =
-        normalizeClass(
-            student?.className
-            ||
-            student?.class
-            ||
-            student?.standard
-        );
-
-
-    const orderedClasses =
-        [...classSet].sort(
-            (a, b) => {
-
-                return (
-                    classOrder(a)
-                    -
-                    classOrder(b)
-                );
-
-            }
-        );
+    const classOptions =
+        [...new Set(
+            courses
+                .map(course => getCourseClass(course))
+                .filter(Boolean)
+        )];
 
 
     const filters = [
         {
-            key: "ALL",
+            value: "ALL",
             label: "All"
         },
         {
-            key: "MY_CLASS",
+            value: "MY_CLASS",
             label: "My Class"
         }
     ];
 
 
-    orderedClasses.forEach(
-        (classKey) => {
-
-            if (
-                classKey !== studentClass
-            ) {
-
-                filters.push({
-                    key: classKey,
-                    label: displayClass(classKey)
-                });
-
-            }
-
-        }
-    );
-
-
-    /*
-     * Make sure current class can be
-     * selected even if CRM has no course.
-     */
-
-    if (
-        studentClass
-        &&
-        !filters.some(
-            (filter) =>
-                filter.key === studentClass
+    classOptions
+        .filter(
+            className =>
+                className !== getStudentClass()
         )
-    ) {
+        .sort()
+        .forEach(className => {
 
-        filters.push({
-            key: studentClass,
-            label: displayClass(studentClass)
+            filters.push({
+                value: className,
+                label: displayClass(className)
+            });
+
         });
 
-    }
+
+    filterContainer.innerHTML =
+        filters.map(filter => {
+
+            const active =
+                selectedFilter === filter.value
+                    ? "active"
+                    : "";
+
+            return `
+                <button
+                    class="filter-button ${active}"
+                    data-filter="${escapeHtml(filter.value)}"
+                >
+                    ${escapeHtml(filter.label)}
+                </button>
+            `;
+
+        }).join("");
 
 
-    filterContainer.innerHTML = "";
-
-
-    filters.forEach(
-        (filter) => {
-
-            const button =
-                document.createElement("button");
-
-            button.type = "button";
-
-            button.className =
-                "filter-button"
-                +
-                (
-                    activeFilter === filter.key
-                        ? " active"
-                        : ""
-                );
-
-            button.textContent =
-                filter.label;
-
+    filterContainer
+        .querySelectorAll(".filter-button")
+        .forEach(button => {
 
             button.addEventListener(
                 "click",
                 () => {
 
-                    activeFilter =
-                        filter.key;
+                    selectedFilter =
+                        button.dataset.filter;
 
-                    buildFilters();
-
-                    renderCourses();
+                    renderEverything();
 
                 }
             );
 
-
-            filterContainer.appendChild(button);
-
-        }
-    );
+        });
 
 }
 
 
-/* =========================================
-   CLASS ORDER
-========================================= */
+/* =========================================================
+   CLASS TITLE
+========================================================= */
 
-function classOrder(value) {
+function renderClassTitle() {
 
-    const order = {
-        "UNDER_8TH": 1,
-        "8TH": 2,
-        "9TH": 3,
-        "10TH": 4,
-        "1ST_PUC": 5,
-        "2ND_PUC": 6
-    };
+    const className =
+        getStudentClass();
 
-    return (
-        order[value]
-        ||
-        999
-    );
-
-}
-
-
-/* =========================================
-   RENDER
-========================================= */
-
-function renderCourses() {
-
-    if (!student) {
-        return;
-    }
-
-
-    const studentClass =
-        normalizeClass(
-            student.className
-            ||
-            student.class
-            ||
-            student.standard
+    studentClassTitle.textContent =
+        displayClass(
+            className
         );
 
-
-    yourClassTitle.textContent =
-        displayClass(studentClass);
-
-
-    let visibleCourses =
-        [...courses];
-
-
-    /*
-     * SEARCH
-     */
-
-    if (searchTerm) {
-
-        const term =
-            searchTerm.toLowerCase();
-
-        visibleCourses =
-            visibleCourses.filter(
-                (course) => {
-
-                    const name =
-                        String(
-                            course.crmCourseName || ""
-                        ).toLowerCase();
-
-                    const code =
-                        String(
-                            course.crmCourseCode || ""
-                        ).toLowerCase();
-
-                    const className =
-                        String(
-                            course.crmClass || ""
-                        ).toLowerCase();
-
-                    const description =
-                        String(
-                            course.crmDescription || ""
-                        ).toLowerCase();
-
-                    return (
-                        name.includes(term)
-                        ||
-                        code.includes(term)
-                        ||
-                        className.includes(term)
-                        ||
-                        description.includes(term)
-                    );
-
-                }
-            );
-
-    }
-
-
-    /*
-     * FILTER
-     */
-
-    if (activeFilter === "MY_CLASS") {
-
-        visibleCourses =
-            visibleCourses.filter(
-                (course) =>
-                    normalizeClass(
-                        course.crmClass
-                    )
-                    ===
-                    studentClass
-            );
-
-    }
-    else if (
-        activeFilter !== "ALL"
-    ) {
-
-        visibleCourses =
-            visibleCourses.filter(
-                (course) =>
-                    normalizeClass(
-                        course.crmClass
-                    )
-                    ===
-                    activeFilter
-            );
-
-    }
-
-
-    /*
-     * SEARCH RESULT MODE
-     */
-
-    if (searchTerm) {
-
-        renderSearchResults(
-            visibleCourses
-        );
-
-        return;
-
-    }
-
-
-    /*
-     * NORMAL PAGE
-     */
-
-    renderNormalPage(
-        visibleCourses,
-        studentClass
-    );
-
 }
 
 
-/* =========================================
-   NORMAL PAGE
-========================================= */
+/* =========================================================
+   MY BATCH
+========================================================= */
 
-function renderNormalPage(
-    visibleCourses,
-    studentClass
-) {
-
-    /*
-     * Purchased courses.
-     */
+function renderMyBatch() {
 
     const purchasedCourses =
-        visibleCourses.filter(
-            (course) =>
-                !!getEnrollmentForCourse(
-                    course.id
-                )
-        );
+        courses
+            .map(course => {
 
-
-    /*
-     * Only student's class.
-     */
-
-    const sameClassCourses =
-        visibleCourses.filter(
-            (course) => {
-
-                return (
-                    normalizeClass(
-                        course.crmClass
-                    )
-                    ===
-                    studentClass
-                    &&
-                    !getEnrollmentForCourse(
+                const enrollment =
+                    getEnrollmentForCourse(
                         course.id
-                    )
-                );
+                    );
 
-            }
-        );
+                if (!enrollment) {
+                    return null;
+                }
 
+                return {
+                    course,
+                    enrollment
+                };
 
-    /*
-     * Other classes.
-     */
-
-    const otherCourses =
-        visibleCourses.filter(
-            (course) => {
-
-                return (
-                    normalizeClass(
-                        course.crmClass
-                    )
-                    !==
-                    studentClass
-                );
-
-            }
-        );
+            })
+            .filter(Boolean);
 
 
-    /*
-     * MY BATCH
-     */
-
-    if (
-        purchasedCourses.length
-    ) {
-
-        myBatchSection.classList.remove(
-            "hidden"
-        );
-
-        renderMyBatches(
-            sortCourses(
-                purchasedCourses
-            )
-        );
-
-    } else {
+    if (!purchasedCourses.length) {
 
         myBatchSection.classList.add(
             "hidden"
         );
 
-        myBatchList.innerHTML = "";
+        myBatchContainer.innerHTML = "";
 
+        return;
     }
 
 
     /*
-     * AVAILABLE FOR YOU
-     */
+       Always priority sort.
+    */
 
-    if (
-        sameClassCourses.length
-    ) {
-
-        availableSection.classList.remove(
-            "hidden"
-        );
-
-        renderCourseList(
-            sortCourses(
-                sameClassCourses
-            ),
-            availableList
-        );
-
-    } else {
-
-        availableSection.classList.remove(
-            "hidden"
-        );
-
-        availableList.innerHTML = `
-            <div class="no-courses">
-                No courses available for your class yet.
-            </div>
-        `;
-
-    }
-
-
-    /*
-     * OTHER PROGRAMS
-     */
-
-    renderOtherPrograms(
-        sortCourses(
-            otherCourses
-        )
+    purchasedCourses.sort(
+        (a, b) =>
+            getPriority(a.course) -
+            getPriority(b.course)
     );
 
-}
+
+    /*
+       My Batch should always be
+       visible regardless of filter.
+    */
+
+    myBatchSection.classList.remove(
+        "hidden"
+    );
 
 
-/* =========================================
-   MY BATCH RENDER
-========================================= */
-
-function renderMyBatches(list) {
-
-    myBatchList.innerHTML = "";
-
-
-    list.forEach(
-        (course) => {
-
-            const enrollment =
-                getEnrollmentForCourse(
-                    course.id
-                );
-
-            const progress =
-                getProgress(
+    myBatchContainer.innerHTML =
+        purchasedCourses
+            .map(
+                ({
+                    course,
                     enrollment
-                );
+                }) =>
+                    createMyBatchCard(
+                        course,
+                        enrollment
+                    )
+            )
+            .join("");
 
 
-            const card =
-                document.createElement("div");
-
-            card.className =
-                "my-batch-card";
-
-
-            const image =
-                getCourseImage(
-                    course
-                );
-
-
-            const meta =
-                buildCourseMeta(
-                    course
-                );
-
-
-            card.innerHTML = `
-
-                <img
-                    class="my-batch-image"
-                    src="${escapeAttribute(image)}"
-                    alt=""
-                    loading="lazy"
-                >
-
-                <div class="my-batch-content">
-
-                    <div class="my-batch-status">
-                        ✓ ENROLLED
-                    </div>
-
-                    <div class="my-batch-name">
-                        ${escapeHTML(
-                            course.crmCourseName
-                            ||
-                            "Your Batch"
-                        )}
-                    </div>
-
-                    <div class="my-batch-meta">
-                        ${escapeHTML(meta)}
-                    </div>
-
-                    <div class="progress-row">
-
-                        <span class="progress-label">
-                            Your Progress
-                        </span>
-
-                        <span class="progress-percent">
-                            ${progress}%
-                        </span>
-
-                    </div>
-
-                    <div class="progress-bar">
-
-                        <div
-                            class="progress-fill"
-                            style="width:${progress}%"
-                        ></div>
-
-                    </div>
-
-                    <div class="continue-button">
-                        CONTINUE LEARNING →
-                    </div>
-
-                </div>
-            `;
-
-
-            attachImageFallback(
-                card
-            );
-
+    myBatchContainer
+        .querySelectorAll(
+            "[data-course-id]"
+        )
+        .forEach(card => {
 
             card.addEventListener(
                 "click",
                 () => {
 
-                    openCourse(
-                        course.id
-                    );
+                    const courseId =
+                        card.dataset.courseId;
+
+                    openCourse(courseId);
 
                 }
             );
 
-
-            myBatchList.appendChild(
-                card
-            );
-
-        }
-    );
+        });
 
 }
 
 
-/* =========================================
-   COURSE LIST
-========================================= */
+/* =========================================================
+   MY BATCH CARD
+========================================================= */
 
-function renderCourseList(
-    list,
-    container
+function createMyBatchCard(
+    course,
+    enrollment
 ) {
 
-    container.innerHTML = "";
+    const progress =
+        getProgress(enrollment);
+
+    const image =
+        getCourseImage(course);
+
+    const className =
+        displayClass(
+            getCourseClass(course)
+        );
+
+    const medium =
+        getCourseMedium(course);
+
+    const mode =
+        enrollment.batchMode ||
+        enrollment.mode ||
+        course.batchMode ||
+        "";
 
 
-    list.forEach(
-        (course) => {
+    const metaParts = [
+        className,
+        medium,
+        mode
+    ].filter(Boolean);
 
-            const card =
-                createCourseCard(
-                    course
-                );
 
-            container.appendChild(
-                card
-            );
+    return `
+        <div
+            class="my-batch-card"
+            data-course-id="${escapeHtml(course.id)}"
+        >
 
-        }
-    );
+            <img
+                class="my-batch-image"
+                src="${escapeHtml(image)}"
+                alt="${escapeHtml(course.crmCourseName || "Course")}"
+                loading="lazy"
+                onerror="this.src='${escapeHtml(getFallbackImage())}'"
+            >
+
+            <div class="my-batch-body">
+
+                <div class="enrolled-label">
+
+                    <span class="enrolled-check">
+                        ✓
+                    </span>
+
+                    ENROLLED
+
+                </div>
+
+
+                <div class="my-batch-title">
+                    ${escapeHtml(
+                        course.crmCourseName ||
+                        "My Course"
+                    )}
+                </div>
+
+
+                <div class="my-batch-meta">
+                    ${escapeHtml(
+                        metaParts.join(" • ")
+                    )}
+                </div>
+
+
+                <div class="progress-row">
+
+                    <span class="progress-label">
+                        Your progress
+                    </span>
+
+                    <span class="progress-value">
+                        ${progress}%
+                    </span>
+
+                </div>
+
+
+                <div class="progress-track">
+
+                    <div
+                        class="progress-fill"
+                        style="width:${progress}%"
+                    ></div>
+
+                </div>
+
+
+                <button
+                    class="continue-button"
+                    type="button"
+                >
+                    CONTINUE LEARNING →
+                </button>
+
+            </div>
+
+        </div>
+    `;
 
 }
 
 
-/* =========================================
-   COURSE CARD
-========================================= */
+/* =========================================================
+   AVAILABLE COURSES
+========================================================= */
 
-function createCourseCard(course) {
+function renderAvailableCourses() {
 
-    const card =
-        document.createElement("div");
-
-    card.className =
-        "course-card";
+    const studentClass =
+        getStudentClass();
 
 
-    const image =
-        getCourseImage(
-            course
-        );
+    let available =
+        courses.filter(course => {
+
+            const courseClass =
+                getCourseClass(course);
+
+            /*
+               Must match student's class.
+            */
+
+            if (
+                courseClass !== studentClass
+            ) {
+                return false;
+            }
 
 
-    const meta =
-        buildCourseMeta(
-            course
-        );
+            /*
+               Purchased courses are
+               already shown in My Batch.
+            */
+
+            if (
+                getEnrollmentForCourse(
+                    course.id
+                )
+            ) {
+                return false;
+            }
 
 
-    card.innerHTML = `
+            return matchesSearch(course);
 
-        <img
-            class="course-image"
-            src="${escapeAttribute(image)}"
-            alt=""
-            loading="lazy"
-        >
+        });
 
-        <div class="course-information">
 
-            <div class="course-name">
-                ${escapeHTML(
-                    course.crmCourseName
-                    ||
-                    "Untitled Course"
-                )}
+    /*
+       Apply selected filter.
+    */
+
+    if (
+        selectedFilter !== "ALL" &&
+        selectedFilter !== "MY_CLASS"
+    ) {
+
+        available =
+            available.filter(
+                course =>
+                    getCourseClass(course) ===
+                    selectedFilter
+            );
+
+    }
+
+
+    available =
+        sortCourses(available);
+
+
+    /*
+       Search/filter can hide the
+       entire class section.
+    */
+
+    if (
+        selectedFilter !== "ALL" &&
+        selectedFilter !== "MY_CLASS"
+    ) {
+
+        availableCoursesContainer.innerHTML =
+            "";
+
+        return;
+
+    }
+
+
+    if (!available.length) {
+
+        availableCoursesContainer.innerHTML = `
+            <div class="empty-course">
+                No courses available for your class yet.
             </div>
+        `;
 
-            <div class="course-meta">
-                ${escapeHTML(meta)}
-            </div>
+        return;
 
+    }
+
+
+    availableCoursesContainer.innerHTML = `
+        <div class="course-list">
+            ${available
+                .map(
+                    course =>
+                        createCourseCard(
+                            course
+                        )
+                )
+                .join("")
+            }
         </div>
-
-        <div class="course-arrow">
-            →
-        </div>
-
     `;
 
 
-    attachImageFallback(
-        card
+    attachCourseClicks(
+        availableCoursesContainer
     );
-
-
-    card.addEventListener(
-        "click",
-        () => {
-
-            openCourse(
-                course.id
-            );
-
-        }
-    );
-
-
-    return card;
 
 }
 
 
-/* =========================================
+/* =========================================================
    OTHER PROGRAMS
-========================================= */
+========================================================= */
 
-function renderOtherPrograms(list) {
+function renderOtherPrograms() {
 
-    otherProgramsList.innerHTML = "";
+    const studentClass =
+        getStudentClass();
 
 
-    if (!list.length) {
+    let others =
+        courses.filter(course => {
+
+            const courseClass =
+                getCourseClass(course);
+
+            /*
+               Don't show student's own
+               class here.
+            */
+
+            if (
+                courseClass === studentClass
+            ) {
+                return false;
+            }
+
+
+            /*
+               Purchased other-class courses
+               should still not appear here.
+            */
+
+            if (
+                getEnrollmentForCourse(
+                    course.id
+                )
+            ) {
+                return false;
+            }
+
+
+            return matchesSearch(course);
+
+        });
+
+
+    /*
+       Filter.
+    */
+
+    if (
+        selectedFilter === "MY_CLASS"
+    ) {
+
+        others = [];
+
+    } else if (
+        selectedFilter !== "ALL"
+    ) {
+
+        others =
+            others.filter(
+                course =>
+                    getCourseClass(course) ===
+                    selectedFilter
+            );
+
+    }
+
+
+    /*
+       Group by class.
+    */
+
+    const groups = new Map();
+
+
+    sortCourses(others)
+        .forEach(course => {
+
+            const className =
+                getCourseClass(course) ||
+                "OTHER";
+
+            if (!groups.has(className)) {
+
+                groups.set(
+                    className,
+                    []
+                );
+
+            }
+
+            groups
+                .get(className)
+                .push(course);
+
+        });
+
+
+    if (!groups.size) {
 
         otherProgramsSection.classList.add(
             "hidden"
         );
+
+        otherProgramsContainer.innerHTML =
+            "";
+
+        updateNoResults();
 
         return;
 
@@ -1456,326 +1309,333 @@ function renderOtherPrograms(list) {
     );
 
 
-    const groups =
-        new Map();
+    otherProgramsContainer.innerHTML =
+        [...groups.entries()]
+            .map(
+                ([className, classCourses]) =>
+                    createOtherClassGroup(
+                        className,
+                        classCourses
+                    )
+            )
+            .join("");
 
 
-    list.forEach(
-        (course) => {
-
-            const classKey =
-                normalizeClass(
-                    course.crmClass
-                )
-                ||
-                "OTHER";
-
-
-            if (
-                !groups.has(classKey)
-            ) {
-
-                groups.set(
-                    classKey,
-                    []
-                );
-
-            }
-
-
-            groups.get(
-                classKey
-            ).push(course);
-
-        }
+    attachCourseClicks(
+        otherProgramsContainer
     );
 
+    updateNoResults();
 
-    const sortedGroups =
-        [...groups.entries()].sort(
-            (a, b) =>
-                classOrder(a[0])
-                -
-                classOrder(b[0])
+}
+
+
+/* =========================================================
+   OTHER CLASS GROUP
+========================================================= */
+
+function createOtherClassGroup(
+    className,
+    classCourses
+) {
+
+    return `
+        <div class="other-class-group">
+
+            <div class="other-class-title">
+                ${escapeHtml(
+                    displayClass(className)
+                )}
+            </div>
+
+            <div class="other-course-list">
+
+                ${classCourses
+                    .map(
+                        course =>
+                            createCourseCard(
+                                course
+                            )
+                    )
+                    .join("")
+                }
+
+            </div>
+
+        </div>
+    `;
+
+}
+
+
+/* =========================================================
+   NORMAL COURSE CARD
+========================================================= */
+
+function createCourseCard(course) {
+
+    const image =
+        getCourseImage(course);
+
+    const className =
+        displayClass(
+            getCourseClass(course)
         );
 
+    const medium =
+        getCourseMedium(course);
 
-    sortedGroups.forEach(
-        ([classKey, groupCourses]) => {
-
-            const group =
-                document.createElement("div");
-
-            group.className =
-                "class-group";
+    const price =
+        getCoursePrice(course);
 
 
-            group.innerHTML = `
+    let priceText =
+        "Free";
 
-                <div class="class-group-title">
-                    ${escapeHTML(
-                        displayClass(classKey)
+
+    if (price > 0) {
+
+        priceText =
+            `₹${formatPrice(price)}`;
+
+    }
+
+
+    return `
+        <div
+            class="course-card"
+            data-course-id="${escapeHtml(course.id)}"
+            role="button"
+            tabindex="0"
+        >
+
+            <img
+                class="course-image"
+                src="${escapeHtml(image)}"
+                alt="${escapeHtml(
+                    course.crmCourseName ||
+                    "Course"
+                )}"
+                loading="lazy"
+                onerror="this.src='${escapeHtml(getFallbackImage())}'"
+            >
+
+
+            <div class="course-info">
+
+                <div class="course-title">
+                    ${escapeHtml(
+                        course.crmCourseName ||
+                        "Untitled Course"
                     )}
                 </div>
 
-                <div class="class-group-list"></div>
 
-            `;
-
-
-            const groupList =
-                group.querySelector(
-                    ".class-group-list"
-                );
-
-
-            sortCourses(
-                groupCourses
-            ).forEach(
-                (course) => {
-
-                    groupList.appendChild(
-                        createCourseCard(
-                            course
-                        )
-                    );
-
-                }
-            );
+                <div class="course-meta">
+                    ${escapeHtml(className)}
+                    ${medium
+                        ? ` • ${escapeHtml(medium)}`
+                        : ""
+                    }
+                </div>
 
 
-            otherProgramsList.appendChild(
-                group
-            );
+                <div class="course-price">
+                    ${escapeHtml(priceText)}
+                </div>
 
-        }
-    );
+            </div>
+
+
+            <div class="course-arrow">
+                →
+            </div>
+
+        </div>
+    `;
 
 }
 
 
-/* =========================================
-   SEARCH RESULTS
-========================================= */
-
-function renderSearchResults(
-    list
-) {
-
-    myBatchSection.classList.add(
-        "hidden"
-    );
-
-    availableSection.classList.add(
-        "hidden"
-    );
-
-    otherProgramsSection.classList.add(
-        "hidden"
-    );
-
-
-    if (!list.length) {
-
-        emptySearchState.classList.remove(
-            "hidden"
-        );
-
-        return;
-
-    }
-
-
-    emptySearchState.classList.add(
-        "hidden"
-    );
-
-
-    availableSection.classList.remove(
-        "hidden"
-    );
-
-
-    availableSection.querySelector(
-        ".subsection-heading"
-    ).textContent =
-        "SEARCH RESULTS";
-
-
-    renderCourseList(
-        sortCourses(list),
-        availableList
-    );
-
-}
-
-
-/* =========================================
-   COURSE META
-========================================= */
-
-function buildCourseMeta(course) {
-
-    const parts = [];
-
-
-    if (course.crmClass) {
-
-        parts.push(
-            displayClass(
-                course.crmClass
-            )
-        );
-
-    }
-
-
-    if (course.crmBoard) {
-
-        parts.push(
-            course.crmBoard
-        );
-
-    }
-
-
-    const mediums =
-        getCourseMediums(
-            course
-        );
-
-
-    if (mediums.length) {
-
-        parts.push(
-            mediums.join(", ")
-        );
-
-    }
-
-
-    return parts.join(" • ");
-
-}
-
-
-/* =========================================
-   IMAGE
-========================================= */
+/* =========================================================
+   COURSE IMAGE
+========================================================= */
 
 function getCourseImage(course) {
 
     return (
-        course.crmImageUrl
-        ||
-        course.imageUrl
-        ||
-        createPlaceholderImage(
-            course.crmCourseName
-            ||
-            "Zenova Course"
-        )
+        course.crmImageUrl ||
+        course.imageUrl ||
+        course.thumbnailUrl ||
+        getFallbackImage()
     );
 
 }
 
 
-function createPlaceholderImage(title) {
+/* =========================================================
+   FALLBACK IMAGE
+========================================================= */
+
+function getFallbackImage() {
 
     /*
-     * SVG placeholder.
-     * This prevents the broken-image icon
-     * seen in the screenshot.
-     */
+       Inline SVG.
 
-    const safeTitle =
-        String(title)
-            .slice(0, 25)
-            .replace(/[<>&"]/g, "");
-
+       This prevents broken-image icons when
+       an old CRM course has no image.
+    */
 
     const svg = `
         <svg
             xmlns="http://www.w3.org/2000/svg"
-            width="800"
-            height="450"
-            viewBox="0 0 800 450"
+            width="600"
+            height="400"
+            viewBox="0 0 600 400"
         >
             <rect
-                width="800"
-                height="450"
+                width="600"
+                height="400"
                 fill="#f3f3f3"
             />
 
             <text
-                x="50%"
-                y="47%"
-                dominant-baseline="middle"
+                x="300"
+                y="205"
                 text-anchor="middle"
-                font-family="Arial, sans-serif"
-                font-size="34"
+                font-family="Arial"
+                font-size="54"
                 font-weight="700"
-                fill="#555555"
+                fill="#6d28d9"
             >
-                ZENOVA
-            </text>
-
-            <text
-                x="50%"
-                y="58%"
-                dominant-baseline="middle"
-                text-anchor="middle"
-                font-family="Arial, sans-serif"
-                font-size="20"
-                fill="#888888"
-            >
-                ${safeTitle}
+                Z
             </text>
         </svg>
     `;
 
-
     return (
-        "data:image/svg+xml;charset=UTF-8,"
-        +
+        "data:image/svg+xml;charset=UTF-8," +
         encodeURIComponent(svg)
     );
 
 }
 
 
-function attachImageFallback(card) {
+/* =========================================================
+   SEARCH
+========================================================= */
 
-    const image =
-        card.querySelector("img");
+searchInput.addEventListener(
+    "input",
+    (event) => {
+
+        searchTerm =
+            String(
+                event.target.value || ""
+            )
+            .trim()
+            .toLowerCase();
+
+        renderEverything();
+
+    }
+);
 
 
-    if (!image) {
-        return;
+/* =========================================================
+   SEARCH MATCH
+========================================================= */
+
+function matchesSearch(course) {
+
+    if (!searchTerm) {
+        return true;
     }
 
 
-    image.addEventListener(
-        "error",
-        () => {
+    const searchableText = [
 
-            image.src =
-                createPlaceholderImage(
-                    "Zenova Course"
-                );
+        course.crmCourseName,
 
-        },
-        {
-            once: true
-        }
+        course.crmCourseCode,
+
+        course.crmClass,
+
+        course.crmBoard,
+
+        course.crmDescription,
+
+        course.crmMedium,
+
+        Array.isArray(course.crmMediums)
+            ? course.crmMediums.join(" ")
+            : ""
+
+    ]
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase();
+
+
+    return searchableText.includes(
+        searchTerm
     );
 
 }
 
 
-/* =========================================
+/* =========================================================
+   COURSE CLICK
+========================================================= */
+
+function attachCourseClicks(container) {
+
+    container
+        .querySelectorAll(
+            "[data-course-id]"
+        )
+        .forEach(card => {
+
+            card.addEventListener(
+                "click",
+                () => {
+
+                    openCourse(
+                        card.dataset.courseId
+                    );
+
+                }
+            );
+
+
+            card.addEventListener(
+                "keydown",
+                (event) => {
+
+                    if (
+                        event.key === "Enter" ||
+                        event.key === " "
+                    ) {
+
+                        event.preventDefault();
+
+                        openCourse(
+                            card.dataset.courseId
+                        );
+
+                    }
+
+                }
+            );
+
+        });
+
+}
+
+
+/* =========================================================
    OPEN COURSE
-========================================= */
+========================================================= */
 
 function openCourse(courseId) {
 
@@ -1783,57 +1643,24 @@ function openCourse(courseId) {
         return;
     }
 
-
     window.location.href =
         `../batchdetails/?id=${encodeURIComponent(courseId)}`;
 
 }
 
 
-/* =========================================
-   SEARCH
-========================================= */
-
-searchInput.addEventListener(
-    "input",
-    (event) => {
-
-        searchTerm =
-            event.target.value
-                .trim()
-                .toLowerCase();
-
-
-        if (!searchTerm) {
-
-            availableSection.querySelector(
-                ".subsection-heading"
-            ).textContent =
-                "AVAILABLE FOR YOU";
-
-        }
-
-
-        renderCourses();
-
-    }
-);
-
-
-/* =========================================
+/* =========================================================
    BACK BUTTON
-========================================= */
+========================================================= */
 
 backButton.addEventListener(
     "click",
     () => {
 
         /*
-         * Courses is a child page of Home.
-         *
-         * If there is a valid browser history,
-         * use it. Otherwise go Home.
-         */
+           If the student came from another
+           page, go back normally.
+        */
 
         if (
             window.history.length > 1
@@ -1841,56 +1668,88 @@ backButton.addEventListener(
 
             window.history.back();
 
-        } else {
-
-            window.location.href =
-                "../";
-
+            return;
         }
 
-    }
-);
 
-
-/* =========================================
-   NOTIFICATIONS
-========================================= */
-
-notificationButton.addEventListener(
-    "click",
-    () => {
+        /*
+           Fallback to Student Home.
+        */
 
         window.location.href =
-            "../notifications/";
+            "../";
 
     }
 );
 
 
-/* =========================================
-   ERROR
-========================================= */
+/* =========================================================
+   NOTIFICATION
+========================================================= */
 
-function showErrorState(message) {
+document
+    .getElementById("notificationButton")
+    .addEventListener(
+        "click",
+        () => {
 
-    availableSection.classList.remove(
-        "hidden"
+            /*
+               Change this later to your
+               notifications route.
+            */
+
+            window.location.href =
+                "../notifications/";
+
+        }
     );
 
-    availableList.innerHTML = `
-        <div class="no-courses">
-            ${escapeHTML(message)}
-        </div>
-    `;
+
+/* =========================================================
+   NO RESULTS
+========================================================= */
+
+function updateNoResults() {
+
+    const hasAvailable =
+        availableCoursesContainer
+            .querySelector(
+                "[data-course-id]"
+            );
+
+    const hasOther =
+        otherProgramsContainer
+            .querySelector(
+                "[data-course-id]"
+            );
+
+    const hasMyBatch =
+        myBatchContainer
+            .querySelector(
+                "[data-course-id]"
+            );
+
+
+    const shouldShow =
+        !hasAvailable &&
+        !hasOther &&
+        !hasMyBatch &&
+        searchTerm;
+
+
+    noResults.classList.toggle(
+        "hidden",
+        !shouldShow
+    );
 
 }
 
 
-/* =========================================
-   HTML ESCAPING
-========================================= */
+/* =========================================================
+   HTML ESCAPE
+========================================================= */
 
-function escapeHTML(value) {
+function escapeHtml(value) {
 
     return String(value ?? "")
         .replaceAll("&", "&amp;")
@@ -1902,8 +1761,61 @@ function escapeHTML(value) {
 }
 
 
-function escapeAttribute(value) {
+/* =========================================================
+   PRICE FORMAT
+========================================================= */
 
-    return escapeHTML(value);
+function formatPrice(value) {
+
+    const number =
+        Number(value);
+
+    if (!Number.isFinite(number)) {
+        return "0";
+    }
+
+    return number.toLocaleString(
+        "en-IN",
+        {
+            maximumFractionDigits: 0
+        }
+    );
 
 }
+
+
+/* =========================================================
+   LOADING
+========================================================= */
+
+function hideLoading() {
+
+    setTimeout(() => {
+
+        loadingScreen.classList.add(
+            "hidden"
+        );
+
+    }, 250);
+
+}
+
+
+/* =========================================================
+   CLEANUP
+========================================================= */
+
+window.addEventListener(
+    "beforeunload",
+    () => {
+
+        if (unsubscribeCourses) {
+            unsubscribeCourses();
+        }
+
+        if (unsubscribeEnrollments) {
+            unsubscribeEnrollments();
+        }
+
+    }
+);
