@@ -1,446 +1,455 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
     <meta charset="UTF-8">
 
     <meta
         name="viewport"
-        content="width=device-width, initial-scale=1.0"
+        content="width=device-width, initial-scale=1.0, viewport-fit=cover"
     >
 
     <title>Courses | Zenova Educations</title>
 
-    <link
-        rel="stylesheet"
-        href="./batches.css"
-    >
-
+    <link rel="stylesheet" href="./batches.css">
 </head>
-
 
 <body>
 
-<div class="app">
+    <!-- =========================
+         LOADING SCREEN
+    ========================== -->
+    <div id="loadingScreen" class="loading-screen">
+        <div class="loading-ring">
+            <div class="loading-z">Z</div>
+        </div>
+
+        <div class="loading-text">
+            Zenova Educations
+        </div>
+    </div>
 
 
-    <!-- =====================================================
-         TOP HEADER
-    ====================================================== -->
+    <!-- =========================
+         APP
+    ========================== -->
+    <div id="app" class="app hidden">
 
-    <header class="top-header">
-
-        <div class="header-left">
+        <!-- =========================
+             FIXED TOP HEADER
+        ========================== -->
+        <header class="top-header">
 
             <button
                 id="backButton"
                 class="back-button"
-                type="button"
                 aria-label="Go back"
             >
-                ←
+                <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                >
+                    <path
+                        d="M19 12H5"
+                        stroke-linecap="round"
+                    />
+                    <path
+                        d="M11 18l-6-6 6-6"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    />
+                </svg>
             </button>
 
 
-            <div class="brand-area">
+            <div class="header-center">
 
-                <div class="brand-name">
+                <div class="header-brand">
                     ZENOVA
                 </div>
 
-                <div class="brand-subtitle">
-                    EDUCATONS
+                <div class="header-title">
+                    Courses
                 </div>
 
             </div>
 
-        </div>
+
+            <button
+                id="notificationButton"
+                class="notification-button"
+                aria-label="Notifications"
+            >
+                <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                >
+                    <path
+                        d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    />
+                    <path
+                        d="M10 21h4"
+                        stroke-linecap="round"
+                    />
+                </svg>
+
+                <span id="notificationDot" class="notification-dot"></span>
+            </button>
+
+        </header>
 
 
-        <div class="header-title">
-
-            <span class="header-label">
-                LEARNING
-            </span>
-
-            <h1>
-                Courses
-            </h1>
-
-        </div>
+        <!-- =========================
+             MAIN CONTENT
+        ========================== -->
+        <main class="main-content">
 
 
-        <button
-            id="notificationButton"
-            class="notification-button"
-            type="button"
-            aria-label="Notifications"
-        >
+            <!-- SEARCH -->
+            <section class="search-section">
 
-            <span class="notification-icon">
-                ♧
-            </span>
+                <div class="search-box">
 
-            <span
-                id="notificationDot"
-                class="notification-dot hidden"
-            ></span>
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                    >
+                        <circle
+                            cx="11"
+                            cy="11"
+                            r="7"
+                        />
+                        <path
+                            d="M20 20l-4-4"
+                            stroke-linecap="round"
+                        />
+                    </svg>
 
-        </button>
+                    <input
+                        id="searchInput"
+                        type="search"
+                        placeholder="Search courses..."
+                        autocomplete="off"
+                    >
 
-    </header>
+                </div>
+
+            </section>
 
 
+            <!-- FILTERS -->
+            <section class="filter-section">
 
-    <!-- =====================================================
-         MAIN CONTENT
-    ====================================================== -->
+                <div
+                    id="filterContainer"
+                    class="filter-container"
+                ></div>
 
-    <main class="main-content">
+            </section>
 
 
-        <!-- SEARCH -->
+            <!-- =========================
+                 YOUR CLASS
+            ========================== -->
+            <section
+                id="yourClassSection"
+                class="content-section"
+            >
 
-        <section class="search-section">
+                <div class="section-label">
+                    YOUR CLASS
+                </div>
 
-            <div class="search-box">
+                <h1 id="yourClassTitle" class="section-title">
+                    —
+                </h1>
 
-                <span class="search-icon">
-                    ⌕
+
+                <!-- MY BATCH -->
+                <div
+                    id="myBatchSection"
+                    class="my-batch-section hidden"
+                >
+
+                    <div class="subsection-heading">
+                        MY BATCH
+                    </div>
+
+                    <div
+                        id="myBatchList"
+                        class="my-batch-list"
+                    ></div>
+
+                </div>
+
+
+                <!-- AVAILABLE FOR YOU -->
+                <div
+                    id="availableSection"
+                    class="available-section"
+                >
+
+                    <div class="subsection-heading">
+                        AVAILABLE FOR YOU
+                    </div>
+
+                    <div
+                        id="availableList"
+                        class="course-list"
+                    ></div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =========================
+                 OTHER PROGRAMS
+            ========================== -->
+            <section
+                id="otherProgramsSection"
+                class="content-section other-programs-section"
+            >
+
+                <div class="section-label">
+                    EXPLORE
+                </div>
+
+                <h2 class="section-title">
+                    Other Programs
+                </h2>
+
+
+                <div
+                    id="otherProgramsList"
+                    class="other-programs-list"
+                ></div>
+
+            </section>
+
+
+            <!-- NO SEARCH RESULTS -->
+            <div
+                id="emptySearchState"
+                class="empty-state hidden"
+            >
+
+                <div class="empty-icon">
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.6"
+                    >
+                        <circle
+                            cx="11"
+                            cy="11"
+                            r="7"
+                        />
+                        <path
+                            d="M20 20l-4-4"
+                            stroke-linecap="round"
+                        />
+                    </svg>
+                </div>
+
+                <h3>No courses found</h3>
+
+                <p>
+                    Try searching with a different course name.
+                </p>
+
+            </div>
+
+
+        </main>
+
+
+        <!-- =========================
+             FIXED BOTTOM NAVIGATION
+        ========================== -->
+        <nav class="bottom-navigation">
+
+            <!-- HOME -->
+            <a
+                href="../"
+                class="nav-item"
+                data-nav="home"
+            >
+
+                <span class="nav-icon">
+
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                    >
+                        <path
+                            d="M3 10.5L12 3l9 7.5"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        />
+
+                        <path
+                            d="M5 9.5V21h14V9.5"
+                            stroke-linejoin="round"
+                        />
+
+                        <path
+                            d="M9 21v-6h6v6"
+                            stroke-linejoin="round"
+                        />
+                    </svg>
+
                 </span>
 
-                <input
-                    id="searchInput"
-                    type="search"
-                    placeholder="Search courses..."
-                    autocomplete="off"
-                >
+                <span class="nav-label">
+                    Home
+                </span>
 
-                <button
-                    id="clearSearch"
-                    class="clear-search hidden"
-                    type="button"
-                >
-                    ×
-                </button>
-
-            </div>
-
-        </section>
+            </a>
 
 
-
-        <!-- FILTERS -->
-
-        <section class="filter-section">
-
-            <div
-                id="filterList"
-                class="filter-list"
-            ></div>
-
-        </section>
-
-
-
-        <!-- =================================================
-             MY BATCH
-        ================================================== -->
-
-        <section
-            id="myBatchSection"
-            class="content-section hidden"
-        >
-
-            <div class="section-heading">
-
-                <div>
-
-                    <span class="section-label">
-                        YOUR LEARNING
-                    </span>
-
-                    <h2>
-                        My Batch
-                    </h2>
-
-                </div>
-
-            </div>
-
-
-            <div
-                id="myBatchCard"
-                class="my-batch-card"
-            ></div>
-
-        </section>
-
-
-
-        <!-- =================================================
-             RECOMMENDED
-        ================================================== -->
-
-        <section
-            id="recommendedSection"
-            class="content-section hidden"
-        >
-
-            <div class="section-heading">
-
-                <div>
-
-                    <span class="section-label">
-                        FOR YOU
-                    </span>
-
-                    <h2>
-                        Recommended
-                    </h2>
-
-                </div>
-
-            </div>
-
-
-            <div
-                id="recommendedList"
-                class="course-horizontal-list"
-            ></div>
-
-        </section>
-
-
-
-        <!-- =================================================
-             MY CLASS
-        ================================================== -->
-
-        <section
-            id="myClassSection"
-            class="content-section"
-        >
-
-            <div class="section-heading">
-
-                <div>
-
-                    <span class="section-label">
-                        YOUR CLASS
-                    </span>
-
-                    <h2 id="myClassTitle">
-                        My Class
-                    </h2>
-
-                </div>
-
-            </div>
-
-
-            <div
-                id="myClassList"
-                class="course-grid"
-            ></div>
-
-
-            <div
-                id="myClassEmpty"
-                class="section-empty hidden"
+            <!-- COURSES -->
+            <a
+                href="./"
+                class="nav-item active"
+                data-nav="courses"
             >
-                No courses available for your class yet.
-            </div>
 
-        </section>
+                <span class="nav-icon">
 
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                    >
+                        <rect
+                            x="4"
+                            y="4"
+                            width="16"
+                            height="16"
+                            rx="2"
+                        />
 
+                        <path
+                            d="M8 8h8M8 12h8M8 16h5"
+                            stroke-linecap="round"
+                        />
+                    </svg>
 
-        <!-- =================================================
-             OTHER PROGRAMS
-        ================================================== -->
+                </span>
 
-        <section
-            id="otherProgramsSection"
-            class="content-section"
-        >
+                <span class="nav-label">
+                    Courses
+                </span>
 
-            <div class="section-heading">
-
-                <div>
-
-                    <span class="section-label">
-                        EXPLORE
-                    </span>
-
-                    <h2>
-                        Other Programs
-                    </h2>
-
-                </div>
-
-            </div>
-
-
-            <div
-                id="otherPrograms"
-                class="other-programs"
-            ></div>
-
-        </section>
+            </a>
 
 
+            <!-- STUDY NOW -->
+            <a
+                href="../study/"
+                class="nav-item"
+                data-nav="study"
+            >
 
-        <!-- BOTTOM SAFE SPACE -->
+                <span class="nav-icon">
 
-        <div class="bottom-space"></div>
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                    >
+                        <path
+                            d="M4 5.5A2.5 2.5 0 0 1 6.5 3H11v17H6.5A2.5 2.5 0 0 0 4 22V5.5Z"
+                            stroke-linejoin="round"
+                        />
 
-    </main>
+                        <path
+                            d="M20 5.5A2.5 2.5 0 0 0 17.5 3H13v17h4.5A2.5 2.5 0 0 1 20 22V5.5Z"
+                            stroke-linejoin="round"
+                        />
+                    </svg>
 
+                </span>
 
+                <span class="nav-label">
+                    Study Now
+                </span>
 
-    <!-- =====================================================
-         FIXED BOTTOM NAVIGATION
-    ====================================================== -->
-
-    <nav
-        id="bottomNavigation"
-        class="bottom-navigation"
-    >
-
-        <button
-            class="nav-item"
-            data-route="home"
-            type="button"
-        >
-
-            <span class="nav-icon">
-                ⌂
-            </span>
-
-            <span class="nav-label">
-                Home
-            </span>
-
-        </button>
-
-
-        <button
-            class="nav-item active"
-            data-route="batches"
-            type="button"
-        >
-
-            <span class="nav-icon nav-pulse">
-                ▣
-            </span>
-
-            <span class="nav-label">
-                Courses
-            </span>
-
-            <span class="active-indicator"></span>
-
-        </button>
+            </a>
 
 
-        <button
-            class="nav-item"
-            data-route="study"
-            type="button"
-        >
+            <!-- ZENOVA AI -->
+            <a
+                href="../ai/"
+                class="nav-item"
+                data-nav="ai"
+            >
 
-            <span class="nav-icon">
-                ◫
-            </span>
+                <span class="nav-icon ai-icon">
+                    Z
+                </span>
 
-            <span class="nav-label">
-                Study
-            </span>
+                <span class="nav-label">
+                    Zenova AI
+                </span>
 
-        </button>
-
-
-        <button
-            class="nav-item"
-            data-route="timetable"
-            type="button"
-        >
-
-            <span class="nav-icon">
-                □
-            </span>
-
-            <span class="nav-label">
-                Schedule
-            </span>
-
-        </button>
+            </a>
 
 
-        <button
-            class="nav-item"
-            data-route="more"
-            type="button"
-        >
+            <!-- PROFILE -->
+            <a
+                href="../profile/"
+                class="nav-item"
+                data-nav="profile"
+            >
 
-            <span class="nav-icon">
-                •••
-            </span>
+                <span class="nav-icon">
 
-            <span class="nav-label">
-                More
-            </span>
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                    >
+                        <circle
+                            cx="12"
+                            cy="8"
+                            r="3.5"
+                        />
 
-        </button>
+                        <path
+                            d="M5 21a7 7 0 0 1 14 0"
+                            stroke-linecap="round"
+                        />
+                    </svg>
 
-    </nav>
+                </span>
 
+                <span class="nav-label">
+                    Profile
+                </span>
 
+            </a>
 
-    <!-- =====================================================
-         LOADING
-    ====================================================== -->
-
-    <div
-        id="loadingScreen"
-        class="loading-screen"
-    >
-
-        <div class="loading-ring">
-
-            <span>
-                Z
-            </span>
-
-        </div>
-
-        <p>
-            Loading courses
-        </p>
+        </nav>
 
     </div>
 
 
-
-    <!-- =====================================================
-         TOAST
-    ====================================================== -->
-
-    <div
-        id="toast"
-        class="toast"
-    ></div>
-
-
-    <script
-        type="module"
-        src="./batches.js"
-    ></script>
-
-</div>
+    <script type="module" src="./batches.js"></script>
 
 </body>
-
 </html>
