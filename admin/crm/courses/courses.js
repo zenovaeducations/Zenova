@@ -4,7 +4,6 @@ import {
     storage
 } from "../../../firebase/firebase-config.js";
 
-
 import {
     collection,
     addDoc,
@@ -14,20 +13,16 @@ import {
     onSnapshot,
     query,
     where,
-    orderBy,
     updateDoc,
     deleteDoc,
     serverTimestamp
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
-
 import {
     ref,
     uploadBytes,
-    getDownloadURL,
-    deleteObject
+    getDownloadURL
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-storage.js";
-
 
 import {
     onAuthStateChanged
@@ -42,11 +37,29 @@ let currentUser = null;
 
 let courses = [];
 
-let teachers = [];
-
 let mediums = [];
 
 let subjects = [];
+
+let languageConfig = {
+    firstLanguage: {
+        enabled: false,
+        required: false,
+        options: []
+    },
+
+    secondLanguage: {
+        enabled: false,
+        required: false,
+        options: []
+    },
+
+    thirdLanguage: {
+        enabled: false,
+        required: false,
+        options: []
+    }
+};
 
 let selectedImageSource = "url";
 
@@ -54,9 +67,17 @@ let selectedPdfSource = "url";
 
 let selectedCourseForContent = null;
 
+let selectedSubjectForContent = null;
+
 let unsubscribeCourses = null;
 
-let unsubscribeTeachers = null;
+let unsubscribeSubjects = null;
+
+let unsubscribeChapters = null;
+
+let allSubjects = [];
+
+let allChapters = [];
 
 
 /* =========================================================
@@ -64,88 +85,58 @@ let unsubscribeTeachers = null;
 ========================================================= */
 
 const courseModal =
-    document.getElementById(
-        "courseModal"
-    );
-
-const teacherModal =
-    document.getElementById(
-        "teacherModal"
-    );
+    document.getElementById("courseModal");
 
 const contentModal =
-    document.getElementById(
-        "contentModal"
-    );
+    document.getElementById("contentModal");
+
+const contentEditModal =
+    document.getElementById("contentEditModal");
 
 const courseForm =
-    document.getElementById(
-        "courseForm"
-    );
+    document.getElementById("courseForm");
 
-const teacherForm =
-    document.getElementById(
-        "teacherForm"
-    );
-
-const chapterForm =
-    document.getElementById(
-        "chapterForm"
-    );
-
-const videoForm =
-    document.getElementById(
-        "videoForm"
-    );
-
-const pdfForm =
-    document.getElementById(
-        "pdfForm"
-    );
+const contentEditForm =
+    document.getElementById("contentEditForm");
 
 const courseTableBody =
-    document.getElementById(
-        "courseTableBody"
-    );
+    document.getElementById("courseTableBody");
 
 const emptyCourses =
-    document.getElementById(
-        "emptyCourses"
-    );
+    document.getElementById("emptyCourses");
 
 const courseSearch =
-    document.getElementById(
-        "courseSearch"
-    );
+    document.getElementById("courseSearch");
 
 const classFilter =
-    document.getElementById(
-        "classFilter"
-    );
+    document.getElementById("classFilter");
 
 const statusFilter =
-    document.getElementById(
-        "statusFilter"
-    );
+    document.getElementById("statusFilter");
 
 const mediumList =
-    document.getElementById(
-        "mediumList"
-    );
-
-const subjectList =
-    document.getElementById(
-        "subjectList"
-    );
+    document.getElementById("mediumList");
 
 const newMedium =
-    document.getElementById(
-        "newMedium"
-    );
+    document.getElementById("newMedium");
+
+const subjectList =
+    document.getElementById("subjectList");
 
 const newSubject =
+    document.getElementById("newSubject");
+
+const newSubjectType =
+    document.getElementById("newSubjectType");
+
+const newSubjectLanguageSlot =
     document.getElementById(
-        "newSubject"
+        "newSubjectLanguageSlot"
+    );
+
+const newSubjectLanguage =
+    document.getElementById(
+        "newSubjectLanguage"
     );
 
 const courseImageUrl =
@@ -183,15 +174,8 @@ const finalPrice =
         "finalPrice"
     );
 
-const courseTeacher =
-    document.getElementById(
-        "courseTeacher"
-    );
-
 const toast =
-    document.getElementById(
-        "toast"
-    );
+    document.getElementById("toast");
 
 
 /* =========================================================
@@ -208,28 +192,27 @@ onAuthStateChanged(
                 "../../../login/";
 
             return;
-
         }
 
         currentUser = user;
 
         /*
-         * Frontend gate only.
+         * This is only a frontend gate.
          *
-         * Production Firestore/Storage rules
-         * must independently verify admin access.
+         * Your Firestore and Storage rules must
+         * independently enforce admin access.
          */
 
         startCoursesListener();
 
-        startTeachersListener();
+        await loadAllSubjects();
 
     }
 );
 
 
 /* =========================================================
-   COURSE LISTENER
+   COURSES REALTIME
 ========================================================= */
 
 function startCoursesListener() {
@@ -240,16 +223,9 @@ function startCoursesListener() {
             "crmCourses"
         );
 
-
-    const coursesQuery =
-        query(
-            coursesRef
-        );
-
-
     unsubscribeCourses =
         onSnapshot(
-            coursesQuery,
+            coursesRef,
 
             snapshot => {
 
@@ -261,11 +237,9 @@ function startCoursesListener() {
                         })
                     );
 
-
                 courses.sort(
                     sortCourses
                 );
-
 
                 updateSummary();
 
@@ -278,6 +252,7 @@ function startCoursesListener() {
             error => {
 
                 console.error(
+                    "Courses listener:",
                     error
                 );
 
@@ -292,69 +267,46 @@ function startCoursesListener() {
 
 
 /* =========================================================
-   TEACHER LISTENER
+   SUBJECT MASTER
 ========================================================= */
 
-function startTeachersListener() {
+async function loadAllSubjects() {
 
-    const teachersRef =
-        collection(
-            db,
-            "crmTeachers"
+    try {
+
+        const snapshot =
+            await getDocs(
+                collection(
+                    db,
+                    "hybridSubjects"
+                )
+            );
+
+        allSubjects =
+            snapshot.docs.map(
+                item => ({
+                    id: item.id,
+                    ...item.data()
+                })
+            );
+
+    } catch (error) {
+
+        console.error(
+            "Subject master:",
+            error
         );
 
-
-    unsubscribeTeachers =
-        onSnapshot(
-            teachersRef,
-
-            snapshot => {
-
-                teachers =
-                    snapshot.docs.map(
-                        item => ({
-                            id: item.id,
-                            ...item.data()
-                        })
-                    );
-
-
-                teachers.sort(
-                    (a, b) =>
-                        String(
-                            a.name || ""
-                        ).localeCompare(
-                            String(
-                                b.name || ""
-                            )
-                        )
-                );
-
-
-                renderTeachers();
-
-            },
-
-            error => {
-
-                console.error(
-                    error
-                );
-
-            }
-        );
+    }
 
 }
 
 
 /* =========================================================
-   SORT
+   COURSE SORT
 ========================================================= */
 
-function sortCourses(
-    a,
-    b
-) {
+function sortCourses(a, b) {
 
     const priorityA =
         Number(
@@ -365,7 +317,6 @@ function sortCourses(
         Number(
             b.priority ?? 999999
         );
-
 
     if (
         priorityA !==
@@ -379,7 +330,6 @@ function sortCourses(
 
     }
 
-
     return (
         timestampValue(
             b.createdAt
@@ -392,11 +342,11 @@ function sortCourses(
 }
 
 
-function timestampValue(
-    value
-) {
+function timestampValue(value) {
 
-    if (!value) return 0;
+    if (!value) {
+        return 0;
+    }
 
     if (
         typeof value.toMillis ===
@@ -407,9 +357,7 @@ function timestampValue(
 
     }
 
-    if (
-        value.seconds
-    ) {
+    if (value.seconds) {
 
         return (
             value.seconds *
@@ -419,7 +367,6 @@ function timestampValue(
     }
 
     return 0;
-
 }
 
 
@@ -429,62 +376,39 @@ function timestampValue(
 
 function updateSummary() {
 
-    const total =
-        courses.length;
-
-
-    const active =
-        courses.filter(
-            course =>
-                course.crmActive ===
-                true
-        ).length;
-
-
-    const free =
-        courses.filter(
-            course =>
-                String(
-                    course.courseType ||
-                    "FREE"
-                ).toUpperCase() ===
-                "FREE"
-        ).length;
-
-
-    const paid =
-        courses.filter(
-            course =>
-                String(
-                    course.courseType ||
-                    "FREE"
-                ).toUpperCase() ===
-                "PAID"
-        ).length;
-
-
     document.getElementById(
         "totalCourses"
     ).textContent =
-        total;
+        courses.length;
 
 
     document.getElementById(
         "activeCourses"
     ).textContent =
-        active;
+        courses.filter(
+            course =>
+                course.crmActive === true
+        ).length;
 
 
     document.getElementById(
         "freeCourses"
     ).textContent =
-        free;
+        courses.filter(
+            course =>
+                getCourseType(course) ===
+                "FREE"
+        ).length;
 
 
     document.getElementById(
         "paidCourses"
     ).textContent =
-        paid;
+        courses.filter(
+            course =>
+                getCourseType(course) ===
+                "PAID"
+        ).length;
 
 }
 
@@ -499,31 +423,23 @@ function buildClassFilter() {
         classFilter.value ||
         "ALL";
 
+    const classes = [
+        ...new Set(
+            courses
+                .map(
+                    course =>
+                        course.crmClass
+                )
+                .filter(Boolean)
+        )
+    ].sort(
+        compareClasses
+    );
 
-    const classes =
-        [
-            ...new Set(
-                courses
-                    .map(
-                        course =>
-                            course.crmClass
-                    )
-                    .filter(Boolean)
-            )
-        ]
-        .sort(
-            compareClasses
-        );
-
-
-    classFilter.innerHTML = `
-
-        <option value="ALL">
+    classFilter.innerHTML =
+        `<option value="ALL">
             All Classes
-        </option>
-
-    `;
-
+        </option>`;
 
     classes.forEach(
         className => {
@@ -548,11 +464,8 @@ function buildClassFilter() {
         }
     );
 
-
     if (
-        classes.includes(
-            current
-        )
+        classes.includes(current)
     ) {
 
         classFilter.value =
@@ -563,10 +476,7 @@ function buildClassFilter() {
 }
 
 
-function compareClasses(
-    a,
-    b
-) {
+function compareClasses(a, b) {
 
     const order = {
 
@@ -578,7 +488,6 @@ function compareClasses(
         "2ND_PUC": 6
 
     };
-
 
     return (
         (order[a] || 99) -
@@ -599,14 +508,11 @@ function renderCourses() {
             .trim()
             .toLowerCase();
 
-
     const classValue =
         classFilter.value;
 
-
     const statusValue =
         statusFilter.value;
-
 
     const filtered =
         courses.filter(
@@ -622,7 +528,7 @@ function renderCourses() {
 
                     course.crmClass,
 
-                    ...(course.mediums || [])
+                    ...getCourseMediums(course)
 
                 ]
                     .filter(Boolean)
@@ -643,8 +549,7 @@ function renderCourses() {
 
 
                 if (
-                    classValue !==
-                    "ALL" &&
+                    classValue !== "ALL" &&
                     course.crmClass !==
                     classValue
                 ) {
@@ -657,8 +562,7 @@ function renderCourses() {
                 if (
                     statusValue ===
                     "ACTIVE" &&
-                    course.crmActive !==
-                    true
+                    course.crmActive !== true
                 ) {
 
                     return false;
@@ -669,8 +573,7 @@ function renderCourses() {
                 if (
                     statusValue ===
                     "INACTIVE" &&
-                    course.crmActive ===
-                    true
+                    course.crmActive === true
                 ) {
 
                     return false;
@@ -684,13 +587,10 @@ function renderCourses() {
         );
 
 
-    courseTableBody.innerHTML =
-        "";
+    courseTableBody.innerHTML = "";
 
 
-    if (
-        filtered.length === 0
-    ) {
+    if (!filtered.length) {
 
         emptyCourses.classList.remove(
             "hidden"
@@ -741,40 +641,28 @@ function renderCourses() {
    COURSE ROW
 ========================================================= */
 
-function createCourseRow(
-    course
-) {
+function createCourseRow(course) {
 
     const row =
         document.createElement(
             "tr"
         );
 
-
     const image =
         safeUrl(
             course.crmImageUrl
         );
 
+    const courseMediums =
+        getCourseMediums(course);
 
-    const mediums =
-        Array.isArray(
-            course.mediums
-        )
-            ? course.mediums
-            : (
-                course.crmMedium
-                    ? [course.crmMedium]
-                    : []
-            );
-
+    const languages =
+        getLanguageSummary(
+            course
+        );
 
     const type =
-        String(
-            course.courseType ||
-            "FREE"
-        ).toUpperCase();
-
+        getCourseType(course);
 
     const price =
         Number(
@@ -807,7 +695,6 @@ function createCourseRow(
                     ></div>
                     `
                 }
-
 
                 <div>
 
@@ -846,19 +733,50 @@ function createCourseRow(
             <div class="medium-stack">
 
                 ${
-                    mediums.length
+                    courseMediums.length
                     ?
-                    mediums.map(
-                        medium => `
+                    courseMediums
+                        .map(
+                            medium => `
                             <span class="medium-pill">
                                 ${escapeHtml(
                                     medium
                                 )}
                             </span>
-                        `
-                    ).join("")
+                            `
+                        )
+                        .join("")
                     :
                     "-"
+                }
+
+            </div>
+
+        </td>
+
+
+        <td>
+
+            <div class="language-stack">
+
+                ${
+                    languages.length
+                    ?
+                    languages
+                        .map(
+                            language => `
+                            <span class="language-pill">
+                                ${escapeHtml(
+                                    language
+                                )}
+                            </span>
+                            `
+                        )
+                        .join("")
+                    :
+                    `<span style="color:#999;font-size:10px">
+                        None
+                    </span>`
                 }
 
             </div>
@@ -871,8 +789,8 @@ function createCourseRow(
             <span
                 class="type-pill ${
                     type === "PAID"
-                        ? "type-paid"
-                        : "type-free"
+                    ? "type-paid"
+                    : "type-free"
                 }"
             >
                 ${type}
@@ -882,18 +800,19 @@ function createCourseRow(
 
 
         <td>
+
             ${
                 type === "PAID"
-                    ? formatPrice(price)
-                    : "Free"
+                ? formatPrice(price)
+                : "Free"
             }
+
         </td>
 
 
         <td>
             ${Number(
-                course.priority ??
-                999
+                course.priority ?? 999
             )}
         </td>
 
@@ -903,14 +822,14 @@ function createCourseRow(
             <span
                 class="status-pill ${
                     course.crmActive
-                        ? "status-active"
-                        : "status-inactive"
+                    ? "status-active"
+                    : "status-inactive"
                 }"
             >
                 ${
                     course.crmActive
-                        ? "ACTIVE"
-                        : "INACTIVE"
+                    ? "ACTIVE"
+                    : "INACTIVE"
                 }
             </span>
 
@@ -923,61 +842,36 @@ function createCourseRow(
 
                 <button
                     class="icon-btn purple"
-                    title="Add chapter"
-                    data-action="chapter"
+                    data-action="content"
+                    title="Course content"
                 >
-                    Ch
+                    Content
                 </button>
-
-
-                <button
-                    class="icon-btn purple"
-                    title="Add video"
-                    data-action="video"
-                >
-                    V
-                </button>
-
-
-                <button
-                    class="icon-btn purple"
-                    title="Add PDF"
-                    data-action="pdf"
-                >
-                    PDF
-                </button>
-
 
                 <button
                     class="icon-btn"
-                    title="Edit"
                     data-action="edit"
+                    title="Edit course"
                 >
-                    ✎
+                    Edit
                 </button>
-
 
                 <button
                     class="icon-btn"
-                    title="${
-                        course.crmActive
-                            ? "Deactivate"
-                            : "Activate"
-                    }"
                     data-action="toggle"
+                    title="Toggle status"
                 >
                     ${
                         course.crmActive
-                            ? "●"
-                            : "○"
+                        ? "Off"
+                        : "On"
                     }
                 </button>
 
-
                 <button
                     class="icon-btn"
-                    title="Delete"
                     data-action="delete"
+                    title="Delete course"
                 >
                     ×
                 </button>
@@ -1018,38 +912,11 @@ function createCourseRow(
 
                         if (
                             action ===
-                            "chapter"
+                            "content"
                         ) {
 
                             openContentModal(
-                                course,
-                                "chapter"
-                            );
-
-                        }
-
-
-                        if (
-                            action ===
-                            "video"
-                        ) {
-
-                            openContentModal(
-                                course,
-                                "video"
-                            );
-
-                        }
-
-
-                        if (
-                            action ===
-                            "pdf"
-                        ) {
-
-                            openContentModal(
-                                course,
-                                "pdf"
+                                course
                             );
 
                         }
@@ -1091,7 +958,7 @@ function createCourseRow(
 
 
 /* =========================================================
-   OPEN COURSE MODAL
+   ADD COURSE
 ========================================================= */
 
 document
@@ -1136,8 +1003,7 @@ function resetCourseForm() {
 
     document.getElementById(
         "editingCourseId"
-    ).value =
-        "";
+    ).value = "";
 
 
     document.getElementById(
@@ -1156,18 +1022,18 @@ function resetCourseForm() {
 
     subjects = [];
 
+    resetLanguageConfig();
 
     renderMediums();
 
     renderSubjects();
 
+    renderLanguageConfig();
 
-    document
-        .querySelector(
-            'input[name="courseType"][value="FREE"]'
-        )
-        .checked =
-        true;
+
+    document.querySelector(
+        'input[name="courseType"][value="FREE"]'
+    ).checked = true;
 
 
     paidFields.classList.add(
@@ -1175,14 +1041,14 @@ function resetCourseForm() {
     );
 
 
-    courseImageUrl.value =
-        "";
+    courseImageUrl.value = "";
 
-    courseImageFile.value =
-        "";
+    courseImageFile.value = "";
 
-    selectedImageSource =
-        "url";
+    selectedImageSource = "url";
+
+    imagePreview.innerHTML =
+        "<span>No image</span>";
 
 
     document
@@ -1210,7 +1076,6 @@ function resetCourseForm() {
             "hidden"
         );
 
-
     document
         .getElementById(
             "uploadSource"
@@ -1220,11 +1085,7 @@ function resetCourseForm() {
         );
 
 
-    imagePreview.innerHTML =
-        "<span>No image</span>";
-
-
-    renderTeachers();
+    updateFinalPrice();
 
 }
 
@@ -1233,9 +1094,7 @@ function resetCourseForm() {
    EDIT COURSE
 ========================================================= */
 
-async function openEditCourse(
-    course
-) {
+function openEditCourse(course) {
 
     document.getElementById(
         "editingCourseId"
@@ -1284,42 +1143,38 @@ async function openEditCourse(
 
 
     mediums =
-        Array.isArray(
-            course.mediums
-        )
-            ? [...course.mediums]
-            : (
-                course.crmMedium
-                    ? [course.crmMedium]
-                    : []
-            );
+        getCourseMediums(course);
 
 
     subjects =
         Array.isArray(
             course.subjects
         )
-            ? [...course.subjects]
-            : [];
+        ?
+        JSON.parse(
+            JSON.stringify(
+                course.subjects
+            )
+        )
+        :
+        [];
+
+
+    languageConfig =
+        normalizeLanguageConfig(
+            course.languageConfig
+        );
 
 
     renderMediums();
 
     renderSubjects();
 
-
-    document.getElementById(
-        "courseTeacher"
-    ).value =
-        course.teacherId ||
-        "";
+    renderLanguageConfig();
 
 
     const type =
-        String(
-            course.courseType ||
-            "FREE"
-        ).toUpperCase();
+        getCourseType(course);
 
 
     document
@@ -1337,9 +1192,7 @@ async function openEditCourse(
         );
 
 
-    if (
-        type === "PAID"
-    ) {
+    if (type === "PAID") {
 
         paidFields.classList.remove(
             "hidden"
@@ -1354,16 +1207,12 @@ async function openEditCourse(
     }
 
 
-    document.getElementById(
-        "coursePrice"
-    ).value =
+    coursePrice.value =
         course.crmPrice ??
-        "";
+        0;
 
 
-    document.getElementById(
-        "courseDiscount"
-    ).value =
+    courseDiscount.value =
         course.crmDiscount ??
         0;
 
@@ -1379,8 +1228,7 @@ async function openEditCourse(
         "courseActive"
     ).value =
         String(
-            course.crmActive !==
-            false
+            course.crmActive !== false
         );
 
 
@@ -1389,9 +1237,7 @@ async function openEditCourse(
         "";
 
 
-    if (
-        course.crmImageUrl
-    ) {
+    if (course.crmImageUrl) {
 
         showImagePreview(
             course.crmImageUrl
@@ -1406,12 +1252,6 @@ async function openEditCourse(
 
 
     updateFinalPrice();
-
-    renderTeachers();
-
-    courseTeacher.value =
-        course.teacherId ||
-        "";
 
 
     courseModal.classList.remove(
@@ -1445,7 +1285,7 @@ courseForm.addEventListener(
                 );
 
             showToast(
-                "Add at least one medium."
+                "Medium is compulsory."
             );
 
             return;
@@ -1462,19 +1302,6 @@ courseForm.addEventListener(
             );
 
 
-        if (
-            subjects.length === 0
-        ) {
-
-            showToast(
-                "Add at least one subject."
-            );
-
-            return;
-
-        }
-
-
         const editingId =
             document.getElementById(
                 "editingCourseId"
@@ -1489,18 +1316,22 @@ courseForm.addEventListener(
 
         const price =
             type === "PAID"
-                ? numberValue(
-                    coursePrice.value
-                )
-                : 0;
+            ?
+            numberValue(
+                coursePrice.value
+            )
+            :
+            0;
 
 
         const discount =
             type === "PAID"
-                ? numberValue(
-                    courseDiscount.value
-                )
-                : 0;
+            ?
+            numberValue(
+                courseDiscount.value
+            )
+            :
+            0;
 
 
         const final =
@@ -1510,39 +1341,29 @@ courseForm.addEventListener(
             );
 
 
-        const teacherId =
-            courseTeacher.value ||
-            "";
-
-
-        const teacher =
-            teachers.find(
-                item =>
-                    item.id ===
-                    teacherId
-            );
+        let imageUrl =
+            courseImageUrl.value
+                .trim();
 
 
         try {
 
-            setSaving(
+            setButtonLoading(
+                "saveCourseBtn",
                 true
             );
 
 
-            let imageUrl =
-                courseImageUrl.value
-                    .trim();
-
-
             /*
-             * Upload only when the admin selected
-             * an actual image file.
+             * Optional image upload.
+             *
+             * If Storage CORS is not configured,
+             * URL mode can still be used.
              */
 
             if (
                 selectedImageSource ===
-                    "upload" &&
+                "upload" &&
                 courseImageFile.files.length
             ) {
 
@@ -1555,14 +1376,14 @@ courseForm.addEventListener(
                 );
 
 
-                const fileName =
+                const safeName =
                     createSafeFileName(
                         file.name
                     );
 
 
                 const storagePath =
-                    `crm/courses/${Date.now()}_${fileName}`;
+                    `crm/courses/${Date.now()}_${safeName}`;
 
 
                 const storageRef =
@@ -1586,6 +1407,15 @@ courseForm.addEventListener(
             }
 
 
+            /*
+             * IMPORTANT:
+             *
+             * crmMedium remains.
+             *
+             * mediums[] is the new canonical
+             * multi-medium field.
+             */
+
             const data = {
 
                 crmClass:
@@ -1597,23 +1427,23 @@ courseForm.addEventListener(
                     document.getElementById(
                         "courseCode"
                     ).value
-                    .trim(),
+                        .trim(),
 
                 crmCourseName:
                     document.getElementById(
                         "courseTitle"
                     ).value
-                    .trim(),
+                        .trim(),
 
                 crmDescription:
                     document.getElementById(
                         "courseDescription"
                     ).value
-                    .trim(),
+                        .trim(),
 
 
                 /*
-                 * MULTIPLE MEDIUMS
+                 * NEW
                  */
 
                 mediums:
@@ -1621,24 +1451,31 @@ courseForm.addEventListener(
 
 
                 /*
-                 * Compatibility field.
-                 *
-                 * New code should use mediums[].
+                 * OLD FIELD PRESERVED
                  */
 
                 crmMedium:
                     mediums.join(", "),
 
+
+                /*
+                 * Course subject configuration
+                 */
+
                 subjects:
                     [...subjects],
 
 
-                teacherId:
-                    teacherId,
+                /*
+                 * NEW LANGUAGE CONFIGURATION
+                 */
 
-                teacherName:
-                    teacher?.name ||
-                    "",
+                languageConfig:
+                    JSON.parse(
+                        JSON.stringify(
+                            languageConfig
+                        )
+                    ),
 
 
                 crmImageUrl:
@@ -1652,8 +1489,10 @@ courseForm.addEventListener(
                 crmPrice:
                     price,
 
+
                 crmDiscount:
                     discount,
+
 
                 crmFinalPrice:
                     final,
@@ -1683,21 +1522,26 @@ courseForm.addEventListener(
             };
 
 
-            if (
-                editingId
-            ) {
+            if (editingId) {
 
-                const courseRef =
+                await updateDoc(
                     doc(
                         db,
                         "crmCourses",
                         editingId
-                    );
-
-
-                await updateDoc(
-                    courseRef,
+                    ),
                     data
+                );
+
+
+                /*
+                 * Make sure associated subjects
+                 * have the CRM course relationship.
+                 */
+
+                await syncCourseSubjects(
+                    editingId,
+                    subjects
                 );
 
 
@@ -1724,49 +1568,23 @@ courseForm.addEventListener(
                     );
 
 
+                await syncCourseSubjects(
+                    created.id,
+                    subjects
+                );
+
+
                 showToast(
                     "Course created successfully."
                 );
-
-
-                /*
-                 * We can immediately offer
-                 * content creation after creation.
-                 */
-
-                setTimeout(
-                    () => {
-
-                        const createdCourse =
-                            {
-                                id: created.id,
-                                ...data
-                            };
-
-
-                        closeCourseModal();
-
-
-                        openContentModal(
-                            createdCourse,
-                            "chapter"
-                        );
-
-                    },
-                    350
-                );
-
-
-                return;
 
             }
 
 
             closeCourseModal();
 
-        } catch (
-            error
-        ) {
+
+        } catch (error) {
 
             console.error(
                 "Course save error:",
@@ -1781,7 +1599,8 @@ courseForm.addEventListener(
 
         } finally {
 
-            setSaving(
+            setButtonLoading(
+                "saveCourseBtn",
                 false
             );
 
@@ -1832,9 +1651,7 @@ function addMedium() {
 
 
     if (!value) {
-
         return;
-
     }
 
 
@@ -1846,12 +1663,10 @@ function addMedium() {
         );
 
 
-    if (
-        exists
-    ) {
+    if (exists) {
 
         showToast(
-            "This medium is already added."
+            "Medium already added."
         );
 
         return;
@@ -1864,9 +1679,7 @@ function addMedium() {
     );
 
 
-    newMedium.value =
-        "";
-
+    newMedium.value = "";
 
     renderMediums();
 
@@ -1884,9 +1697,7 @@ function addMedium() {
 
 function renderMediums() {
 
-    mediumList.innerHTML =
-        "";
-
+    mediumList.innerHTML = "";
 
     mediums.forEach(
         (medium, index) => {
@@ -1895,7 +1706,6 @@ function renderMediums() {
                 document.createElement(
                     "div"
                 );
-
 
             chip.className =
                 "medium-editor-chip";
@@ -1911,7 +1721,6 @@ function renderMediums() {
 
                 <button
                     type="button"
-                    data-index="${index}"
                 >
                     ×
                 </button>
@@ -1944,6 +1753,448 @@ function renderMediums() {
 
         }
     );
+
+}
+
+
+/* =========================================================
+   LANGUAGE CONFIG
+========================================================= */
+
+function resetLanguageConfig() {
+
+    languageConfig = {
+
+        firstLanguage: {
+            enabled: false,
+            required: false,
+            options: []
+        },
+
+        secondLanguage: {
+            enabled: false,
+            required: false,
+            options: []
+        },
+
+        thirdLanguage: {
+            enabled: false,
+            required: false,
+            options: []
+        }
+
+    };
+
+}
+
+
+function normalizeLanguageConfig(config) {
+
+    const source =
+        config || {};
+
+    return {
+
+        firstLanguage: {
+
+            enabled:
+                Boolean(
+                    source.firstLanguage?.enabled
+                ),
+
+            required:
+                Boolean(
+                    source.firstLanguage?.required
+                ),
+
+            options:
+                Array.isArray(
+                    source.firstLanguage?.options
+                )
+                ?
+                [...source.firstLanguage.options]
+                :
+                []
+
+        },
+
+
+        secondLanguage: {
+
+            enabled:
+                Boolean(
+                    source.secondLanguage?.enabled
+                ),
+
+            required:
+                Boolean(
+                    source.secondLanguage?.required
+                ),
+
+            options:
+                Array.isArray(
+                    source.secondLanguage?.options
+                )
+                ?
+                [...source.secondLanguage.options]
+                :
+                []
+
+        },
+
+
+        thirdLanguage: {
+
+            enabled:
+                Boolean(
+                    source.thirdLanguage?.enabled
+                ),
+
+            required:
+                Boolean(
+                    source.thirdLanguage?.required
+                ),
+
+            options:
+                Array.isArray(
+                    source.thirdLanguage?.options
+                )
+                ?
+                [...source.thirdLanguage.options]
+                :
+                []
+
+        }
+
+    };
+
+}
+
+
+function renderLanguageConfig() {
+
+    renderLanguageSlot(
+        "FIRST",
+        languageConfig.firstLanguage
+    );
+
+    renderLanguageSlot(
+        "SECOND",
+        languageConfig.secondLanguage
+    );
+
+    renderLanguageSlot(
+        "THIRD",
+        languageConfig.thirdLanguage
+    );
+
+}
+
+
+function renderLanguageSlot(
+    slot,
+    config
+) {
+
+    const lower =
+        slot.toLowerCase();
+
+
+    const enabled =
+        document.getElementById(
+            `${lower}LanguageEnabled`
+        );
+
+
+    const required =
+        document.getElementById(
+            `${lower}LanguageRequired`
+        );
+
+
+    const optionsBox =
+        document.getElementById(
+            `${lower}LanguageOptions`
+        );
+
+
+    const list =
+        document.getElementById(
+            `${lower}LanguageList`
+        );
+
+
+    enabled.checked =
+        Boolean(
+            config.enabled
+        );
+
+
+    required.checked =
+        Boolean(
+            config.required
+        );
+
+
+    optionsBox.classList.toggle(
+        "hidden",
+        !config.enabled
+    );
+
+
+    list.innerHTML = "";
+
+
+    config.options.forEach(
+        (language, index) => {
+
+            const chip =
+                document.createElement(
+                    "div"
+                );
+
+            chip.className =
+                "language-editor-chip";
+
+
+            chip.innerHTML = `
+
+                <span>
+                    ${escapeHtml(
+                        language
+                    )}
+                </span>
+
+                <button
+                    type="button"
+                >
+                    ×
+                </button>
+
+            `;
+
+
+            chip
+                .querySelector(
+                    "button"
+                )
+                .addEventListener(
+                    "click",
+                    () => {
+
+                        config.options.splice(
+                            index,
+                            1
+                        );
+
+                        renderLanguageConfig();
+
+                    }
+                );
+
+
+            list.appendChild(
+                chip
+            );
+
+        }
+    );
+
+}
+
+
+/* LANGUAGE TOGGLES */
+
+[
+    ["FIRST", "firstLanguage"],
+    ["SECOND", "secondLanguage"],
+    ["THIRD", "thirdLanguage"]
+].forEach(
+    ([slot, key]) => {
+
+        const lower =
+            slot.toLowerCase();
+
+
+        document
+            .getElementById(
+                `${lower}LanguageEnabled`
+            )
+            .addEventListener(
+                "change",
+                event => {
+
+                    languageConfig[
+                        key
+                    ].enabled =
+                        event.target.checked;
+
+
+                    if (
+                        !event.target.checked
+                    ) {
+
+                        languageConfig[
+                            key
+                        ].required =
+                            false;
+
+                    }
+
+
+                    renderLanguageConfig();
+
+                }
+            );
+
+
+        document
+            .getElementById(
+                `${lower}LanguageRequired`
+            )
+            .addEventListener(
+                "change",
+                event => {
+
+                    languageConfig[
+                        key
+                    ].required =
+                        event.target.checked;
+
+                }
+            );
+
+    }
+);
+
+
+/* ADD LANGUAGE */
+
+document
+    .querySelectorAll(
+        "[data-language-add]"
+    )
+    .forEach(
+        button => {
+
+            button.addEventListener(
+                "click",
+                () => {
+
+                    addLanguage(
+                        button.dataset.languageAdd
+                    );
+
+                }
+            );
+
+        }
+    );
+
+
+[
+    ["FIRST", "firstLanguage"],
+    ["SECOND", "secondLanguage"],
+    ["THIRD", "thirdLanguage"]
+].forEach(
+    ([slot, key]) => {
+
+        const input =
+            document.getElementById(
+                `${slot.toLowerCase()}LanguageInput`
+            );
+
+
+        input.addEventListener(
+            "keydown",
+            event => {
+
+                if (
+                    event.key ===
+                    "Enter"
+                ) {
+
+                    event.preventDefault();
+
+                    addLanguage(
+                        slot
+                    );
+
+                }
+
+            }
+        );
+
+    }
+);
+
+
+function addLanguage(slot) {
+
+    const lower =
+        slot.toLowerCase();
+
+
+    const input =
+        document.getElementById(
+            `${lower}LanguageInput`
+        );
+
+
+    const value =
+        input.value.trim();
+
+
+    if (!value) {
+        return;
+    }
+
+
+    const key =
+        slot === "FIRST"
+        ?
+        "firstLanguage"
+        :
+        slot === "SECOND"
+        ?
+        "secondLanguage"
+        :
+        "thirdLanguage";
+
+
+    const exists =
+        languageConfig[key]
+            .options
+            .some(
+                language =>
+                    language.toLowerCase() ===
+                    value.toLowerCase()
+            );
+
+
+    if (exists) {
+
+        showToast(
+            "Language already added."
+        );
+
+        return;
+
+    }
+
+
+    languageConfig[key]
+        .enabled = true;
+
+
+    languageConfig[key]
+        .options
+        .push(value);
+
+
+    input.value = "";
+
+    renderLanguageConfig();
 
 }
 
@@ -1983,32 +2234,48 @@ newSubject.addEventListener(
 
 function addSubject() {
 
-    const value =
-        newSubject.value
-            .trim();
+    const name =
+        newSubject.value.trim();
 
 
-    if (!value) {
+    if (!name) {
+
+        showToast(
+            "Enter subject name."
+        );
 
         return;
 
     }
 
 
-    const exists =
-        subjects.some(
-            subject =>
-                subject.toLowerCase() ===
-                value.toLowerCase()
-        );
+    const type =
+        newSubjectType.value;
+
+
+    const languageSlot =
+        type === "LANGUAGE"
+        ?
+        newSubjectLanguageSlot.value
+        :
+        "";
+
+
+    const language =
+        type === "LANGUAGE"
+        ?
+        newSubjectLanguage.value.trim()
+        :
+        "";
 
 
     if (
-        exists
+        type === "LANGUAGE" &&
+        !languageSlot
     ) {
 
         showToast(
-            "This subject is already added."
+            "Select language slot."
         );
 
         return;
@@ -2016,14 +2283,39 @@ function addSubject() {
     }
 
 
+    const subject = {
+
+        id:
+            `new_${Date.now()}_${Math.random()
+                .toString(36)
+                .slice(2, 7)}`,
+
+        name,
+
+        subjectType:
+            type,
+
+        languageSlot,
+
+        language,
+
+        priority:
+            subjects.length + 1,
+
+        active:
+            true
+
+    };
+
+
     subjects.push(
-        value
+        subject
     );
 
 
-    newSubject.value =
-        "";
+    newSubject.value = "";
 
+    newSubjectLanguage.value = "";
 
     renderSubjects();
 
@@ -2032,8 +2324,24 @@ function addSubject() {
 
 function renderSubjects() {
 
-    subjectList.innerHTML =
-        "";
+    subjectList.innerHTML = "";
+
+
+    if (!subjects.length) {
+
+        subjectList.innerHTML = `
+            <div style="
+                color:#999;
+                font-size:11px;
+                padding:8px 0;
+            ">
+                No subjects added yet.
+            </div>
+        `;
+
+        return;
+
+    }
 
 
     subjects.forEach(
@@ -2044,26 +2352,56 @@ function renderSubjects() {
                     "div"
                 );
 
-
             row.className =
                 "subject-row";
 
 
+            const languageInfo =
+                subject.subjectType ===
+                "LANGUAGE"
+                ?
+                `${slotLabel(
+                    subject.languageSlot
+                )}${subject.language
+                    ? ` • ${subject.language}`
+                    : ""
+                }`
+                :
+                "Common subject";
+
+
             row.innerHTML = `
 
-                <div class="subject-number">
-                    ${index + 1}
+                <div class="subject-main">
+
+                    <div class="subject-title">
+                        ${escapeHtml(
+                            subject.name
+                        )}
+                    </div>
+
+                    <div class="subject-meta">
+
+                        <span class="subject-tag">
+                            ${escapeHtml(
+                                subject.subjectType
+                            )}
+                        </span>
+
+                        <span class="subject-tag">
+                            ${escapeHtml(
+                                languageInfo
+                            )}
+                        </span>
+
+                    </div>
+
                 </div>
 
-                <span>
-                    ${escapeHtml(
-                        subject
-                    )}
-                </span>
 
                 <button
                     type="button"
-                    class="remove-subject"
+                    class="subject-delete"
                 >
                     ×
                 </button>
@@ -2073,7 +2411,7 @@ function renderSubjects() {
 
             row
                 .querySelector(
-                    ".remove-subject"
+                    ".subject-delete"
                 )
                 .addEventListener(
                     "click",
@@ -2101,168 +2439,1998 @@ function renderSubjects() {
 
 
 /* =========================================================
-   TEACHERS
+   SYNC SUBJECTS TO HYBRID SUBJECT MASTER
 ========================================================= */
 
-function renderTeachers() {
+async function syncCourseSubjects(
+    courseId,
+    courseSubjects
+) {
 
-    const current =
-        courseTeacher.value;
-
-
-    courseTeacher.innerHTML = `
-
-        <option value="">
-            No teacher selected
-        </option>
-
-    `;
+    if (!Array.isArray(courseSubjects)) {
+        return;
+    }
 
 
-    teachers.forEach(
-        teacher => {
+    for (
+        const subject of courseSubjects
+    ) {
 
-            const option =
-                document.createElement(
-                    "option"
+        /*
+         * Existing subject:
+         *
+         * Keep its ID so existing
+         * hybridChapters.subjectId
+         * remains valid.
+         */
+
+        if (
+            subject.id &&
+            !subject.id.startsWith(
+                "new_"
+            )
+        ) {
+
+            try {
+
+                await updateDoc(
+                    doc(
+                        db,
+                        "hybridSubjects",
+                        subject.id
+                    ),
+                    {
+
+                        crmCourseId:
+                            courseId,
+
+                        courseId:
+                            courseId,
+
+                        subjectType:
+                            subject.subjectType ||
+                            "COMMON",
+
+                        languageSlot:
+                            subject.languageSlot ||
+                            "",
+
+                        language:
+                            subject.language ||
+                            "",
+
+                        priority:
+                            subject.priority ??
+                            1,
+
+                        updatedAt:
+                            serverTimestamp(),
+
+                        updatedBy:
+                            currentUser.uid
+
+                    }
+                );
+
+            } catch (error) {
+
+                console.warn(
+                    "Existing subject sync failed:",
+                    error
+                );
+
+            }
+
+            continue;
+
+        }
+
+
+        /*
+         * New subject.
+         *
+         * Create it in the EXISTING
+         * hybridSubjects collection.
+         */
+
+        try {
+
+            const newSubjectRef =
+                await addDoc(
+                    collection(
+                        db,
+                        "hybridSubjects"
+                    ),
+                    {
+
+                        name:
+                            subject.name,
+
+                        description:
+                            "",
+
+                        medium:
+                            getLegacySubjectMedium(),
+
+                        mediums:
+                            [...mediums],
+
+                        crmCourseId:
+                            courseId,
+
+                        courseId:
+                            courseId,
+
+                        subjectType:
+                            subject.subjectType ||
+                            "COMMON",
+
+                        languageSlot:
+                            subject.languageSlot ||
+                            "",
+
+                        language:
+                            subject.language ||
+                            "",
+
+                        priority:
+                            subject.priority ??
+                            1,
+
+                        active:
+                            true,
+
+                        createdAt:
+                            serverTimestamp(),
+
+                        createdBy:
+                            currentUser.uid,
+
+                        updatedAt:
+                            serverTimestamp(),
+
+                        updatedBy:
+                            currentUser.uid
+
+                    }
                 );
 
 
-            option.value =
-                teacher.id;
+            subject.id =
+                newSubjectRef.id;
 
 
-            option.textContent =
-                teacher.name ||
-                "Unnamed Teacher";
+        } catch (error) {
 
-
-            courseTeacher.appendChild(
-                option
+            console.error(
+                "New subject creation:",
+                error
             );
 
+            throw error;
+
         }
-    );
-
-
-    if (
-        teachers.some(
-            teacher =>
-                teacher.id ===
-                current
-        )
-    ) {
-
-        courseTeacher.value =
-            current;
 
     }
 
 }
 
 
+/*
+ * Old student code understands:
+ *
+ * Kannada
+ * English
+ * Both
+ *
+ * For a new arbitrary medium,
+ * keep the first medium in the
+ * legacy scalar field while the
+ * new `mediums[]` contains all.
+ */
+
+function getLegacySubjectMedium() {
+
+    if (mediums.length === 1) {
+
+        return mediums[0];
+
+    }
+
+
+    const lower =
+        mediums.map(
+            item =>
+                item.toLowerCase()
+        );
+
+
+    if (
+        lower.includes("english") &&
+        lower.includes("kannada")
+    ) {
+
+        return "Both";
+
+    }
+
+
+    return mediums[0] || "Kannada";
+
+}
+
+
+/* =========================================================
+   COURSE CONTENT MODAL
+========================================================= */
+
+function openContentModal(course) {
+
+    selectedCourseForContent =
+        course;
+
+    selectedSubjectForContent =
+        null;
+
+
+    document.getElementById(
+        "contentCourseName"
+    ).textContent =
+        course.crmCourseName ||
+        "Course";
+
+
+    document.getElementById(
+        "contentCourseMeta"
+    ).textContent =
+        `${displayClass(course.crmClass)} • ${
+            getCourseMediums(course).join(
+                ", "
+            )
+        }`;
+
+
+    document.getElementById(
+        "chaptersSection"
+    ).classList.add(
+        "hidden"
+    );
+
+
+    contentModal.classList.remove(
+        "hidden"
+    );
+
+
+    loadCourseSubjects(
+        course
+    );
+
+}
+
+
+/* =========================================================
+   LOAD COURSE SUBJECTS
+========================================================= */
+
+async function loadCourseSubjects(course) {
+
+    const container =
+        document.getElementById(
+            "contentSubjectList"
+        );
+
+
+    container.innerHTML = `
+        <div style="
+            color:#999;
+            font-size:12px;
+            padding:10px;
+        ">
+            Loading subjects...
+        </div>
+    `;
+
+
+    try {
+
+        const courseSubjects =
+            [];
+
+
+        /*
+         * First priority:
+         * subjects[] stored on crmCourses.
+         */
+
+        if (
+            Array.isArray(
+                course.subjects
+            )
+        ) {
+
+            course.subjects.forEach(
+                subject => {
+
+                    courseSubjects.push(
+                        subject
+                    );
+
+                }
+            );
+
+        }
+
+
+        /*
+         * Then load hybridSubjects
+         * linked with crmCourseId/courseId.
+         */
+
+        const snapshot =
+            await getDocs(
+                collection(
+                    db,
+                    "hybridSubjects"
+                )
+            );
+
+
+        const linked =
+            snapshot.docs
+                .map(
+                    item => ({
+                        id: item.id,
+                        ...item.data()
+                    })
+                )
+                .filter(
+                    subject =>
+                        subject.crmCourseId ===
+                            course.id ||
+                        subject.courseId ===
+                            course.id
+                );
+
+
+        linked.forEach(
+            subject => {
+
+                const exists =
+                    courseSubjects.some(
+                        item =>
+                            item.id ===
+                            subject.id
+                    );
+
+
+                if (!exists) {
+
+                    courseSubjects.push({
+
+                        id:
+                            subject.id,
+
+                        name:
+                            subject.name ||
+                            subject.title ||
+                            "Subject",
+
+                        subjectType:
+                            subject.subjectType ||
+                            "COMMON",
+
+                        languageSlot:
+                            subject.languageSlot ||
+                            "",
+
+                        language:
+                            subject.language ||
+                            "",
+
+                        priority:
+                            subject.priority ??
+                            999,
+
+                        active:
+                            subject.active !==
+                            false
+
+                    });
+
+                }
+
+            }
+        );
+
+
+        courseSubjects.sort(
+            (a, b) =>
+                Number(
+                    a.priority ??
+                    999
+                ) -
+                Number(
+                    b.priority ??
+                    999
+                )
+        );
+
+
+        renderContentSubjects(
+            courseSubjects
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            error
+        );
+
+        container.innerHTML = `
+            <div style="
+                color:#b42318;
+                font-size:12px;
+                padding:10px;
+            ">
+                Unable to load subjects.
+            </div>
+        `;
+
+    }
+
+}
+
+
+function renderContentSubjects(
+    courseSubjects
+) {
+
+    const container =
+        document.getElementById(
+            "contentSubjectList"
+        );
+
+
+    container.innerHTML = "";
+
+
+    if (!courseSubjects.length) {
+
+        container.innerHTML = `
+            <div style="
+                color:#999;
+                font-size:12px;
+                padding:10px;
+            ">
+                No subjects linked to this course.
+                Edit the course and add subjects first.
+            </div>
+        `;
+
+        return;
+
+    }
+
+
+    courseSubjects.forEach(
+        subject => {
+
+            const card =
+                document.createElement(
+                    "button"
+                );
+
+            card.type = "button";
+
+            card.className =
+                "content-subject-card";
+
+
+            card.innerHTML = `
+
+                <strong>
+                    ${escapeHtml(
+                        subject.name ||
+                        "Subject"
+                    )}
+                </strong>
+
+                <span>
+                    ${escapeHtml(
+                        subject.subjectType ||
+                        "COMMON"
+                    )}
+
+                    ${
+                        subject.language
+                        ?
+                        ` • ${escapeHtml(
+                            subject.language
+                        )}`
+                        :
+                        ""
+                    }
+                </span>
+
+            `;
+
+
+            card.addEventListener(
+                "click",
+                () => {
+
+                    document
+                        .querySelectorAll(
+                            ".content-subject-card"
+                        )
+                        .forEach(
+                            item =>
+                                item.classList.remove(
+                                    "active"
+                                )
+                        );
+
+
+                    card.classList.add(
+                        "active"
+                    );
+
+
+                    selectedSubjectForContent =
+                        subject;
+
+
+                    document.getElementById(
+                        "selectedSubjectName"
+                    ).textContent =
+                        subject.name ||
+                        "Chapters";
+
+
+                    document
+                        .getElementById(
+                            "chaptersSection"
+                        )
+                        .classList.remove(
+                            "hidden"
+                        );
+
+
+                    loadChapters(
+                        subject
+                    );
+
+                }
+            );
+
+
+            container.appendChild(
+                card
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   LOAD CHAPTERS
+========================================================= */
+
+async function loadChapters(subject) {
+
+    const list =
+        document.getElementById(
+            "chapterList"
+        );
+
+
+    list.innerHTML = `
+        <div style="
+            color:#999;
+            font-size:12px;
+            padding:10px;
+        ">
+            Loading chapters...
+        </div>
+    `;
+
+
+    try {
+
+        const snapshot =
+            await getDocs(
+                collection(
+                    db,
+                    "hybridChapters"
+                )
+            );
+
+
+        allChapters =
+            snapshot.docs
+                .map(
+                    item => ({
+                        id: item.id,
+                        ...item.data()
+                    })
+                )
+                .filter(
+                    chapter =>
+                        chapter.subjectId ===
+                        subject.id
+                )
+                .sort(
+                    (a, b) =>
+                        Number(
+                            a.priority ??
+                            a.chapterNumber ??
+                            999
+                        ) -
+                        Number(
+                            b.priority ??
+                            b.chapterNumber ??
+                            999
+                        )
+                );
+
+
+        renderChapters(
+            allChapters
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            error
+        );
+
+        list.innerHTML = `
+            <div style="
+                color:#b42318;
+                font-size:12px;
+                padding:10px;
+            ">
+                Unable to load chapters.
+            </div>
+        `;
+
+    }
+
+}
+
+
+/* =========================================================
+   CHAPTER RENDER
+========================================================= */
+
+function renderChapters(
+    chapters
+) {
+
+    const list =
+        document.getElementById(
+            "chapterList"
+        );
+
+
+    list.innerHTML = "";
+
+
+    if (!chapters.length) {
+
+        list.innerHTML = `
+            <div style="
+                color:#999;
+                font-size:12px;
+                padding:10px;
+            ">
+                No chapters yet. Add your first chapter.
+            </div>
+        `;
+
+        return;
+
+    }
+
+
+    chapters.forEach(
+        chapter => {
+
+            const card =
+                document.createElement(
+                    "div"
+                );
+
+            card.className =
+                "chapter-card";
+
+
+            const videoUrl =
+                getVideoUrl(
+                    chapter
+                );
+
+            const pdfUrl =
+                getPdfUrl(
+                    chapter
+                );
+
+
+            const thumbnail =
+                getChapterThumbnail(
+                    chapter
+                );
+
+
+            card.innerHTML = `
+
+                <div class="chapter-number">
+                    ${escapeHtml(
+                        chapter.chapterNumber ??
+                        "-"
+                    )}
+                </div>
+
+
+                ${
+                    thumbnail
+                    ?
+                    `
+                    <img
+                        src="${thumbnail}"
+                        style="
+                            width:90px;
+                            height:55px;
+                            border-radius:7px;
+                            object-fit:cover;
+                            flex:0 0 auto;
+                        "
+                        alt=""
+                    >
+                    `
+                    :
+                    ""
+                }
+
+
+                <div class="chapter-info">
+
+                    <div class="chapter-title">
+                        ${escapeHtml(
+                            chapter.title ||
+                            chapter.name ||
+                            "Untitled chapter"
+                        )}
+                    </div>
+
+
+                    <div class="chapter-meta">
+
+                        <span class="content-badge">
+                            Priority:
+                            ${Number(
+                                chapter.priority ??
+                                999
+                            )}
+                        </span>
+
+
+                        <span class="content-badge ${
+                            videoUrl
+                            ? "available"
+                            : ""
+                        }">
+                            ${
+                                videoUrl
+                                ? "Video"
+                                : "No Video"
+                            }
+                        </span>
+
+
+                        <span class="content-badge ${
+                            pdfUrl
+                            ? "available"
+                            : ""
+                        }">
+                            ${
+                                pdfUrl
+                                ? "Notes / PDF"
+                                : "No PDF"
+                            }
+                        </span>
+
+
+                        <span class="content-badge">
+                            ${
+                                chapter.active === false
+                                ? "Inactive"
+                                : "Active"
+                            }
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="chapter-actions">
+
+                    <button
+                        data-chapter-action="video"
+                    >
+                        ${
+                            videoUrl
+                            ? "Edit Video"
+                            : "+ Video"
+                        }
+                    </button>
+
+
+                    <button
+                        data-chapter-action="pdf"
+                    >
+                        ${
+                            pdfUrl
+                            ? "Edit PDF"
+                            : "+ PDF"
+                        }
+                    </button>
+
+
+                    <button
+                        data-chapter-action="edit"
+                    >
+                        Edit
+                    </button>
+
+                </div>
+
+            `;
+
+
+            card
+                .querySelectorAll(
+                    "[data-chapter-action]"
+                )
+                .forEach(
+                    button => {
+
+                        button.addEventListener(
+                            "click",
+                            () => {
+
+                                const action =
+                                    button.dataset
+                                        .chapterAction;
+
+
+                                openContentEdit(
+                                    action ===
+                                    "edit"
+                                    ?
+                                    "chapter"
+                                    :
+                                    action,
+                                    chapter
+                                );
+
+                            }
+                        );
+
+                    }
+                );
+
+
+            list.appendChild(
+                card
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   CONTENT EDIT
+========================================================= */
+
+function openContentEdit(
+    type,
+    chapter = null
+) {
+
+    document.getElementById(
+        "contentEditType"
+    ).value =
+        type;
+
+
+    document.getElementById(
+        "contentEditChapterId"
+    ).value =
+        chapter?.id ||
+        "";
+
+
+    document.getElementById(
+        "contentEditTitle"
+    ).textContent =
+        type === "video"
+        ?
+        "Add Video"
+        :
+        type === "pdf"
+        ?
+        "Add Notes / PDF"
+        :
+        chapter
+        ?
+        "Edit Chapter"
+        :
+        "Add Chapter";
+
+
+    document.getElementById(
+        "contentEditLabel"
+    ).textContent =
+        type === "video"
+        ?
+        "VIDEO"
+        :
+        type === "pdf"
+        ?
+        "NOTES / PDF"
+        :
+        "CHAPTER";
+
+
+    buildContentSubjectOptions();
+
+
+    const subjectId =
+        chapter?.subjectId ||
+        selectedSubjectForContent?.id ||
+        "";
+
+
+    document.getElementById(
+        "contentEditSubject"
+    ).value =
+        subjectId;
+
+
+    buildContentChapterOptions(
+        subjectId,
+        chapter?.id || ""
+    );
+
+
+    document.getElementById(
+        "contentChapterNumber"
+    ).value =
+        chapter?.chapterNumber ??
+        getNextChapterNumber();
+
+
+    document.getElementById(
+        "contentChapterPriority"
+    ).value =
+        chapter?.priority ??
+        getNextChapterNumber();
+
+
+    document.getElementById(
+        "contentChapterTitle"
+    ).value =
+        chapter?.title ||
+        chapter?.name ||
+        "";
+
+
+    document.getElementById(
+        "contentDescription"
+    ).value =
+        chapter?.description ||
+        "";
+
+
+    document.getElementById(
+        "contentActive"
+    ).checked =
+        chapter?.active !== false;
+
+
+    document.getElementById(
+        "contentVideoUrl"
+    ).value =
+        getVideoUrl(
+            chapter || {}
+        );
+
+
+    document.getElementById(
+        "contentThumbnailUrl"
+    ).value =
+        chapter?.thumbnailUrl ||
+        "";
+
+
+    document.getElementById(
+        "contentPdfUrl"
+    ).value =
+        getPdfUrl(
+            chapter || {}
+        );
+
+
+    document.getElementById(
+        "contentPdfName"
+    ).value =
+        chapter?.pdfName ||
+        chapter?.notesName ||
+        "";
+
+
+    document.getElementById(
+        "contentPdfFile"
+    ).value = "";
+
+
+    document
+        .getElementById(
+            "videoContentFields"
+        )
+        .classList.toggle(
+            "hidden",
+            type !== "video"
+        );
+
+
+    document
+        .getElementById(
+            "pdfContentFields"
+        )
+        .classList.toggle(
+            "hidden",
+            type !== "pdf"
+        );
+
+
+    if (
+        type === "video"
+    ) {
+
+        updateVideoPreview();
+
+    }
+
+
+    contentEditModal.classList.remove(
+        "hidden"
+    );
+
+}
+
+
+/* =========================================================
+   CONTENT SUBJECT OPTIONS
+========================================================= */
+
+function buildContentSubjectOptions() {
+
+    const select =
+        document.getElementById(
+            "contentEditSubject"
+        );
+
+
+    select.innerHTML = "";
+
+
+    const courseSubjects =
+        getCurrentCourseSubjects();
+
+
+    courseSubjects.forEach(
+        subject => {
+
+            const option =
+                document.createElement(
+                    "option"
+                );
+
+            option.value =
+                subject.id;
+
+            option.textContent =
+                subject.name ||
+                "Subject";
+
+            select.appendChild(
+                option
+            );
+
+        }
+    );
+
+}
+
+
+function getCurrentCourseSubjects() {
+
+    const result = [];
+
+
+    if (
+        Array.isArray(
+            selectedCourseForContent?.subjects
+        )
+    ) {
+
+        result.push(
+            ...selectedCourseForContent.subjects
+        );
+
+    }
+
+
+    allSubjects
+        .filter(
+            subject =>
+                subject.crmCourseId ===
+                    selectedCourseForContent?.id ||
+                subject.courseId ===
+                    selectedCourseForContent?.id
+        )
+        .forEach(
+            subject => {
+
+                if (
+                    !result.some(
+                        item =>
+                            item.id ===
+                            subject.id
+                    )
+                ) {
+
+                    result.push({
+
+                        id:
+                            subject.id,
+
+                        name:
+                            subject.name,
+
+                        subjectType:
+                            subject.subjectType ||
+                            "COMMON"
+
+                    });
+
+                }
+
+            }
+        );
+
+
+    return result;
+
+}
+
+
+/* =========================================================
+   CHAPTER OPTIONS
+========================================================= */
+
+async function buildContentChapterOptions(
+    subjectId,
+    selectedChapterId = ""
+) {
+
+    const select =
+        document.getElementById(
+            "contentEditChapter"
+        );
+
+
+    select.innerHTML = `
+        <option value="">
+            Create new chapter
+        </option>
+    `;
+
+
+    if (!subjectId) {
+        return;
+    }
+
+
+    try {
+
+        const snapshot =
+            await getDocs(
+                collection(
+                    db,
+                    "hybridChapters"
+                )
+            );
+
+
+        const chapters =
+            snapshot.docs
+                .map(
+                    item => ({
+                        id: item.id,
+                        ...item.data()
+                    })
+                )
+                .filter(
+                    chapter =>
+                        chapter.subjectId ===
+                        subjectId
+                )
+                .sort(
+                    (a, b) =>
+                        Number(
+                            a.chapterNumber ??
+                            999
+                        ) -
+                        Number(
+                            b.chapterNumber ??
+                            999
+                        )
+                );
+
+
+        chapters.forEach(
+            chapter => {
+
+                const option =
+                    document.createElement(
+                        "option"
+                    );
+
+                option.value =
+                    chapter.id;
+
+                option.textContent =
+                    `${chapter.chapterNumber ?? "-"} — ${
+                        chapter.title ||
+                        chapter.name ||
+                        "Untitled"
+                    }`;
+
+                select.appendChild(
+                    option
+                );
+
+            }
+        );
+
+
+        select.value =
+            selectedChapterId ||
+            "";
+
+    } catch (error) {
+
+        console.error(
+            error
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   CHAPTER SELECT
+========================================================= */
+
 document
     .getElementById(
-        "addTeacherBtn"
+        "contentEditSubject"
     )
     .addEventListener(
-        "click",
-        () => {
+        "change",
+        event => {
 
-            teacherForm.reset();
-
-            teacherModal.classList.remove(
-                "hidden"
+            buildContentChapterOptions(
+                event.target.value
             );
 
         }
     );
 
 
-teacherForm.addEventListener(
+document
+    .getElementById(
+        "contentEditChapter"
+    )
+    .addEventListener(
+        "change",
+        async event => {
+
+            const id =
+                event.target.value;
+
+
+            if (!id) {
+                return;
+            }
+
+
+            const snapshot =
+                await getDoc(
+                    doc(
+                        db,
+                        "hybridChapters",
+                        id
+                    )
+                );
+
+
+            if (
+                !snapshot.exists()
+            ) {
+
+                return;
+
+            }
+
+
+            const chapter = {
+
+                id,
+
+                ...snapshot.data()
+
+            };
+
+
+            document.getElementById(
+                "contentChapterNumber"
+            ).value =
+                chapter.chapterNumber ??
+                1;
+
+
+            document.getElementById(
+                "contentChapterPriority"
+            ).value =
+                chapter.priority ??
+                1;
+
+
+            document.getElementById(
+                "contentChapterTitle"
+            ).value =
+                chapter.title ||
+                chapter.name ||
+                "";
+
+
+            document.getElementById(
+                "contentDescription"
+            ).value =
+                chapter.description ||
+                "";
+
+
+            document.getElementById(
+                "contentActive"
+            ).checked =
+                chapter.active !== false;
+
+
+            document.getElementById(
+                "contentVideoUrl"
+            ).value =
+                getVideoUrl(
+                    chapter
+                );
+
+
+            document.getElementById(
+                "contentThumbnailUrl"
+            ).value =
+                chapter.thumbnailUrl ||
+                "";
+
+
+            document.getElementById(
+                "contentPdfUrl"
+            ).value =
+                getPdfUrl(
+                    chapter
+                );
+
+
+            document.getElementById(
+                "contentPdfName"
+            ).value =
+                chapter.pdfName ||
+                chapter.notesName ||
+                "";
+
+
+            updateVideoPreview();
+
+        }
+    );
+
+
+/* =========================================================
+   ADD CONTENT BUTTONS
+========================================================= */
+
+document
+    .getElementById(
+        "addChapterBtn"
+    )
+    .addEventListener(
+        "click",
+        () => {
+
+            openContentEdit(
+                "chapter"
+            );
+
+        }
+    );
+
+
+document
+    .getElementById(
+        "addVideoBtn"
+    )
+    .addEventListener(
+        "click",
+        () => {
+
+            openContentEdit(
+                "video"
+            );
+
+        }
+    );
+
+
+document
+    .getElementById(
+        "addPdfBtn"
+    )
+    .addEventListener(
+        "click",
+        () => {
+
+            openContentEdit(
+                "pdf"
+            );
+
+        }
+    );
+
+
+/* =========================================================
+   SAVE CONTENT
+========================================================= */
+
+contentEditForm.addEventListener(
     "submit",
     async event => {
 
         event.preventDefault();
 
 
-        const name =
+        if (
+            !selectedCourseForContent
+        ) {
+
+            showToast(
+                "Course not selected."
+            );
+
+            return;
+
+        }
+
+
+        const type =
             document.getElementById(
-                "teacherName"
-            ).value
-            .trim();
+                "contentEditType"
+            ).value;
 
 
-        if (!name) return;
+        const existingId =
+            document.getElementById(
+                "contentEditChapterId"
+            ).value;
+
+
+        const selectedExistingId =
+            document.getElementById(
+                "contentEditChapter"
+            ).value;
+
+
+        const chapterId =
+            existingId ||
+            selectedExistingId;
+
+
+        const subjectId =
+            document.getElementById(
+                "contentEditSubject"
+            ).value;
+
+
+        const title =
+            document.getElementById(
+                "contentChapterTitle"
+            ).value.trim();
+
+
+        if (!subjectId) {
+
+            showToast(
+                "Select a subject."
+            );
+
+            return;
+
+        }
+
+
+        if (!title) {
+
+            showToast(
+                "Enter chapter title."
+            );
+
+            return;
+
+        }
 
 
         try {
 
-            await addDoc(
-                collection(
-                    db,
-                    "crmTeachers"
-                ),
-                {
+            const baseData = {
 
-                    name,
+                subjectId,
 
-                    phone:
+                courseId:
+                    selectedCourseForContent.id,
+
+                crmCourseId:
+                    selectedCourseForContent.id,
+
+                chapterNumber:
+                    numberValue(
                         document.getElementById(
-                            "teacherPhone"
+                            "contentChapterNumber"
                         ).value
-                        .trim(),
+                    ) || 1,
 
-                    email:
+                title,
+
+                description:
+                    document.getElementById(
+                        "contentDescription"
+                    ).value.trim(),
+
+                priority:
+                    numberValue(
                         document.getElementById(
-                            "teacherEmail"
+                            "contentChapterPriority"
                         ).value
-                        .trim(),
+                    ) || 1,
 
-                    qualification:
-                        document.getElementById(
-                            "teacherQualification"
-                        ).value
-                        .trim(),
+                active:
+                    document.getElementById(
+                        "contentActive"
+                    ).checked,
 
-                    active:
-                        true,
+                updatedAt:
+                    serverTimestamp(),
 
-                    createdAt:
-                        serverTimestamp(),
+                updatedBy:
+                    currentUser.uid
 
-                    createdBy:
-                        currentUser.uid
+            };
+
+
+            /*
+             * VIDEO
+             */
+
+            if (
+                type === "video"
+            ) {
+
+                const videoUrl =
+                    document.getElementById(
+                        "contentVideoUrl"
+                    ).value.trim();
+
+
+                if (!videoUrl) {
+
+                    showToast(
+                        "Enter video URL."
+                    );
+
+                    return;
 
                 }
+
+
+                baseData.videoUrl =
+                    videoUrl;
+
+
+                /*
+                 * Preserve / add YouTube URL.
+                 */
+
+                if (
+                    extractYouTubeId(
+                        videoUrl
+                    )
+                ) {
+
+                    baseData.youtubeUrl =
+                        videoUrl;
+
+                }
+
+
+                let thumbnail =
+                    document.getElementById(
+                        "contentThumbnailUrl"
+                    ).value.trim();
+
+
+                if (!thumbnail) {
+
+                    thumbnail =
+                        getYouTubeThumbnail(
+                            videoUrl
+                        );
+
+                }
+
+
+                if (thumbnail) {
+
+                    baseData.thumbnailUrl =
+                        thumbnail;
+
+                }
+
+            }
+
+
+            /*
+             * PDF
+             */
+
+            if (
+                type === "pdf"
+            ) {
+
+                let pdfUrl =
+                    document.getElementById(
+                        "contentPdfUrl"
+                    ).value.trim();
+
+
+                const pdfFile =
+                    document.getElementById(
+                        "contentPdfFile"
+                    ).files[0];
+
+
+                /*
+                 * Upload if selected.
+                 */
+
+                if (
+                    selectedPdfSource ===
+                    "upload" &&
+                    pdfFile
+                ) {
+
+                    if (
+                        pdfFile.type !==
+                        "application/pdf"
+                    ) {
+
+                        showToast(
+                            "Please select a PDF."
+                        );
+
+                        return;
+
+                    }
+
+
+                    const safeName =
+                        createSafeFileName(
+                            pdfFile.name
+                        );
+
+
+                    const storagePath =
+                        `crm/course-content/${selectedCourseForContent.id}/${subjectId}/${Date.now()}_${safeName}`;
+
+
+                    const storageRef =
+                        ref(
+                            storage,
+                            storagePath
+                        );
+
+
+                    await uploadBytes(
+                        storageRef,
+                        pdfFile
+                    );
+
+
+                    pdfUrl =
+                        await getDownloadURL(
+                            storageRef
+                        );
+
+                }
+
+
+                if (!pdfUrl) {
+
+                    showToast(
+                        "Enter PDF URL or upload a PDF."
+                    );
+
+                    return;
+
+                }
+
+
+                baseData.pdfUrl =
+                    pdfUrl;
+
+
+                baseData.pdfName =
+                    document.getElementById(
+                        "contentPdfName"
+                    ).value.trim() ||
+                    "Notes / PDF";
+
+            }
+
+
+            /*
+             * CHAPTER CREATE / UPDATE
+             */
+
+            if (chapterId) {
+
+                await updateDoc(
+                    doc(
+                        db,
+                        "hybridChapters",
+                        chapterId
+                    ),
+                    baseData
+                );
+
+
+                showToast(
+                    "Content updated."
+                );
+
+            } else {
+
+                baseData.createdAt =
+                    serverTimestamp();
+
+                baseData.createdBy =
+                    currentUser.uid;
+
+
+                await addDoc(
+                    collection(
+                        db,
+                        "hybridChapters"
+                    ),
+                    baseData
+                );
+
+
+                showToast(
+                    "Content added."
+                );
+
+            }
+
+
+            closeContentEditModal();
+
+            await loadChapters(
+                selectedSubjectForContent
             );
 
 
-            showToast(
-                "Teacher added."
-            );
-
-
-            teacherModal.classList.add(
-                "hidden"
-            );
-
-        } catch (
-            error
-        ) {
+        } catch (error) {
 
             console.error(
+                "Content save:",
                 error
             );
 
+
             showToast(
-                "Unable to add teacher."
+                error.message ||
+                "Unable to save content."
             );
 
         }
 
     }
 );
+
+
+/* =========================================================
+   PDF SOURCE
+========================================================= */
+
+document
+    .querySelectorAll(
+        ".pdf-source-btn"
+    )
+    .forEach(
+        button => {
+
+            button.addEventListener(
+                "click",
+                () => {
+
+                    selectedPdfSource =
+                        button.dataset.pdfSource;
+
+
+                    document
+                        .querySelectorAll(
+                            ".pdf-source-btn"
+                        )
+                        .forEach(
+                            item =>
+                                item.classList.toggle(
+                                    "active",
+                                    item ===
+                                    button
+                                )
+                        );
+
+
+                    document
+                        .getElementById(
+                            "pdfUrlBox"
+                        )
+                        .classList.toggle(
+                            "hidden",
+                            selectedPdfSource !==
+                            "url"
+                        );
+
+
+                    document
+                        .getElementById(
+                            "pdfUploadBox"
+                        )
+                        .classList.toggle(
+                            "hidden",
+                            selectedPdfSource !==
+                            "upload"
+                        );
+
+                }
+            );
+
+        }
+    );
+
+
+/* =========================================================
+   VIDEO PREVIEW
+========================================================= */
+
+document
+    .getElementById(
+        "contentVideoUrl"
+    )
+    .addEventListener(
+        "input",
+        updateVideoPreview
+    );
+
+
+document
+    .getElementById(
+        "contentThumbnailUrl"
+    )
+    .addEventListener(
+        "input",
+        updateVideoPreview
+    );
+
+
+function updateVideoPreview() {
+
+    const url =
+        document.getElementById(
+            "contentVideoUrl"
+        ).value.trim();
+
+
+    let thumbnail =
+        document.getElementById(
+            "contentThumbnailUrl"
+        ).value.trim();
+
+
+    if (!thumbnail) {
+
+        thumbnail =
+            getYouTubeThumbnail(
+                url
+            );
+
+    }
+
+
+    const img =
+        document.getElementById(
+            "videoThumbnailPreview"
+        );
+
+
+    const box =
+        document.querySelector(
+            ".video-preview-box"
+        );
+
+
+    if (thumbnail) {
+
+        img.src =
+            thumbnail;
+
+        box.classList.add(
+            "has-image"
+        );
+
+    } else {
+
+        img.removeAttribute(
+            "src"
+        );
+
+        box.classList.remove(
+            "has-image"
+        );
+
+    }
+
+}
 
 
 /* =========================================================
@@ -2289,15 +4457,12 @@ document
                             ".source-btn"
                         )
                         .forEach(
-                            item => {
-
+                            item =>
                                 item.classList.toggle(
                                     "active",
                                     item ===
                                     button
-                                );
-
-                            }
+                                )
                         );
 
 
@@ -2334,32 +4499,12 @@ courseImageUrl.addEventListener(
     () => {
 
         if (
-            selectedImageSource !==
-            "url"
-        ) {
-
-            return;
-
-        }
-
-
-        const url =
-            courseImageUrl.value
-                .trim();
-
-
-        if (
-            url
+            courseImageUrl.value.trim()
         ) {
 
             showImagePreview(
-                url
+                courseImageUrl.value.trim()
             );
-
-        } else {
-
-            imagePreview.innerHTML =
-                "<span>No image</span>";
 
         }
 
@@ -2375,22 +4520,27 @@ courseImageFile.addEventListener(
             courseImageFile.files[0];
 
 
-        if (!file) return;
+        if (!file) {
+            return;
+        }
 
 
-        validateImageFile(
+        const reader =
+            new FileReader();
+
+
+        reader.onload =
+            event => {
+
+                showImagePreview(
+                    event.target.result
+                );
+
+            };
+
+
+        reader.readAsDataURL(
             file
-        );
-
-
-        const objectUrl =
-            URL.createObjectURL(
-                file
-            );
-
-
-        showImagePreview(
-            objectUrl
         );
 
     }
@@ -2401,29 +4551,11 @@ function showImagePreview(
     url
 ) {
 
-    const safe =
-        safeUrl(
-            url
-        );
-
-
-    if (!safe) {
-
-        imagePreview.innerHTML =
-            "<span>Invalid image URL</span>";
-
-        return;
-
-    }
-
-
     imagePreview.innerHTML = `
-
         <img
-            src="${safe}"
-            alt="Course thumbnail preview"
+            src="${safeUrl(url)}"
+            alt=""
         >
-
     `;
 
 }
@@ -2444,16 +4576,16 @@ document
                 "change",
                 () => {
 
-                    const paid =
+                    const type =
                         document.querySelector(
                             'input[name="courseType"]:checked'
-                        ).value ===
-                        "PAID";
+                        ).value;
 
 
                     paidFields.classList.toggle(
                         "hidden",
-                        !paid
+                        type !==
+                        "PAID"
                     );
 
 
@@ -2508,1106 +4640,7 @@ function updateFinalPrice() {
 
 
 /* =========================================================
-   CONTENT MODAL
-========================================================= */
-
-function openContentModal(
-    course,
-    tab
-) {
-
-    selectedCourseForContent =
-        course;
-
-
-    document.getElementById(
-        "contentModalTitle"
-    ).textContent =
-        `Add Content — ${
-            course.crmCourseName ||
-            "Course"
-        }`;
-
-
-    populateContentCourse(
-        course
-    );
-
-
-    populateCourseSubjects(
-        course
-    );
-
-
-    activateContentTab(
-        tab
-    );
-
-
-    contentModal.classList.remove(
-        "hidden"
-    );
-
-}
-
-
-function populateContentCourse(
-    course
-) {
-
-    const selects = [
-
-        document.getElementById(
-            "chapterCourse"
-        ),
-
-        document.getElementById(
-            "videoCourse"
-        ),
-
-        document.getElementById(
-            "pdfCourse"
-        )
-
-    ];
-
-
-    selects.forEach(
-        select => {
-
-            select.innerHTML = `
-
-                <option value="${
-                    escapeAttribute(
-                        course.id
-                    )
-                }">
-
-                    ${escapeHtml(
-                        course.crmCourseName ||
-                        "Course"
-                    )}
-
-                </option>
-
-            `;
-
-        }
-    );
-
-}
-
-
-function populateCourseSubjects(
-    course
-) {
-
-    const courseSubjects =
-        Array.isArray(
-            course.subjects
-        )
-            ? course.subjects
-            : [];
-
-
-    const selectIds = [
-
-        "chapterSubject",
-        "videoSubject",
-        "pdfSubject"
-
-    ];
-
-
-    selectIds.forEach(
-        id => {
-
-            const select =
-                document.getElementById(
-                    id
-                );
-
-
-            select.innerHTML =
-                "";
-
-
-            if (
-                courseSubjects.length ===
-                0
-            ) {
-
-                select.innerHTML = `
-
-                    <option value="">
-                        No subjects available
-                    </option>
-
-                `;
-
-                return;
-
-            }
-
-
-            select.innerHTML = `
-
-                <option value="">
-                    Select subject
-                </option>
-
-            `;
-
-
-            courseSubjects.forEach(
-                subject => {
-
-                    const option =
-                        document.createElement(
-                            "option"
-                        );
-
-
-                    option.value =
-                        subject;
-
-
-                    option.textContent =
-                        subject;
-
-
-                    select.appendChild(
-                        option
-                    );
-
-                }
-            );
-
-        }
-    );
-
-}
-
-
-/* =========================================================
-   CONTENT TABS
-========================================================= */
-
-document
-    .querySelectorAll(
-        ".content-tab"
-    )
-    .forEach(
-        button => {
-
-            button.addEventListener(
-                "click",
-                () => {
-
-                    activateContentTab(
-                        button.dataset.contentTab
-                    );
-
-                }
-            );
-
-        }
-    );
-
-
-function activateContentTab(
-    tab
-) {
-
-    document
-        .querySelectorAll(
-            ".content-tab"
-        )
-        .forEach(
-            button => {
-
-                button.classList.toggle(
-                    "active",
-                    button.dataset.contentTab ===
-                    tab
-                );
-
-            }
-        );
-
-
-    chapterForm.classList.toggle(
-        "hidden",
-        tab !== "chapter"
-    );
-
-
-    videoForm.classList.toggle(
-        "hidden",
-        tab !== "video"
-    );
-
-
-    pdfForm.classList.toggle(
-        "hidden",
-        tab !== "pdf"
-    );
-
-
-    if (
-        tab === "chapter"
-    ) {
-
-        document.getElementById(
-            "chapterName"
-        ).focus();
-
-    }
-
-
-    if (
-        tab === "video"
-    ) {
-
-        loadChaptersForContent(
-            "video"
-        );
-
-    }
-
-
-    if (
-        tab === "pdf"
-    ) {
-
-        loadChaptersForContent(
-            "pdf"
-        );
-
-    }
-
-}
-
-
-/* =========================================================
-   CHAPTER
-========================================================= */
-
-chapterForm.addEventListener(
-    "submit",
-    async event => {
-
-        event.preventDefault();
-
-
-        if (
-            !selectedCourseForContent
-        ) return;
-
-
-        const subject =
-            document.getElementById(
-                "chapterSubject"
-            ).value;
-
-
-        const chapterNumber =
-            numberValue(
-                document.getElementById(
-                    "chapterNumber"
-                ).value
-            );
-
-
-        const chapterName =
-            document.getElementById(
-                "chapterName"
-            ).value
-            .trim();
-
-
-        if (
-            !subject ||
-            !chapterNumber ||
-            !chapterName
-        ) {
-
-            showToast(
-                "Fill all chapter details."
-            );
-
-            return;
-
-        }
-
-
-        try {
-
-            await addDoc(
-                collection(
-                    db,
-                    "crmCourseChapters"
-                ),
-                {
-
-                    courseId:
-                        selectedCourseForContent.id,
-
-                    courseName:
-                        selectedCourseForContent.crmCourseName ||
-                        "",
-
-                    subject:
-                        subject,
-
-                    chapterNumber:
-                        chapterNumber,
-
-                    chapterName:
-                        chapterName,
-
-                    active:
-                        true,
-
-                    createdAt:
-                        serverTimestamp(),
-
-                    createdBy:
-                        currentUser.uid
-
-                }
-            );
-
-
-            showToast(
-                "Chapter added."
-            );
-
-
-            chapterForm.reset();
-
-            populateContentCourse(
-                selectedCourseForContent
-            );
-
-            populateCourseSubjects(
-                selectedCourseForContent
-            );
-
-
-            activateContentTab(
-                "chapter"
-            );
-
-        } catch (
-            error
-        ) {
-
-            console.error(
-                error
-            );
-
-            showToast(
-                "Unable to add chapter."
-            );
-
-        }
-
-    }
-);
-
-
-/* =========================================================
-   VIDEO
-========================================================= */
-
-videoForm.addEventListener(
-    "submit",
-    async event => {
-
-        event.preventDefault();
-
-
-        if (
-            !selectedCourseForContent
-        ) return;
-
-
-        const subject =
-            document.getElementById(
-                "videoSubject"
-            ).value;
-
-
-        const chapterId =
-            document.getElementById(
-                "videoChapter"
-            ).value;
-
-
-        const chapterOption =
-            document.getElementById(
-                "videoChapter"
-            )
-            .selectedOptions[0];
-
-
-        const title =
-            document.getElementById(
-                "videoTitle"
-            ).value
-            .trim();
-
-
-        const url =
-            document.getElementById(
-                "videoUrl"
-            ).value
-            .trim();
-
-
-        const description =
-            document.getElementById(
-                "videoDescription"
-            ).value
-            .trim();
-
-
-        if (
-            !subject ||
-            !chapterId ||
-            !title ||
-            !url
-        ) {
-
-            showToast(
-                "Fill all required video details."
-            );
-
-            return;
-
-        }
-
-
-        try {
-
-            await addDoc(
-                collection(
-                    db,
-                    "crmCourseVideos"
-                ),
-                {
-
-                    courseId:
-                        selectedCourseForContent.id,
-
-                    courseName:
-                        selectedCourseForContent.crmCourseName ||
-                        "",
-
-                    subject:
-                        subject,
-
-                    chapterId:
-                        chapterId,
-
-                    chapterNumber:
-                        chapterOption?.dataset
-                            ?.number ||
-                        "",
-
-                    chapterName:
-                        chapterOption?.dataset
-                            ?.name ||
-                        "",
-
-                    videoTitle:
-                        title,
-
-                    videoUrl:
-                        url,
-
-                    description:
-                        description,
-
-                    active:
-                        true,
-
-                    createdAt:
-                        serverTimestamp(),
-
-                    createdBy:
-                        currentUser.uid
-
-                }
-            );
-
-
-            showToast(
-                "Video added."
-            );
-
-
-            videoForm.reset();
-
-            populateContentCourse(
-                selectedCourseForContent
-            );
-
-            populateCourseSubjects(
-                selectedCourseForContent
-            );
-
-            activateContentTab(
-                "video"
-            );
-
-            loadChaptersForContent(
-                "video"
-            );
-
-        } catch (
-            error
-        ) {
-
-            console.error(
-                error
-            );
-
-            showToast(
-                "Unable to add video."
-            );
-
-        }
-
-    }
-);
-
-
-/* =========================================================
-   PDF
-========================================================= */
-
-pdfForm.addEventListener(
-    "submit",
-    async event => {
-
-        event.preventDefault();
-
-
-        if (
-            !selectedCourseForContent
-        ) return;
-
-
-        const subject =
-            document.getElementById(
-                "pdfSubject"
-            ).value;
-
-
-        const chapterId =
-            document.getElementById(
-                "pdfChapter"
-            ).value;
-
-
-        const chapterOption =
-            document.getElementById(
-                "pdfChapter"
-            )
-            .selectedOptions[0];
-
-
-        const title =
-            document.getElementById(
-                "pdfTitle"
-            ).value
-            .trim();
-
-
-        let pdfUrl =
-            document.getElementById(
-                "pdfUrl"
-            ).value
-            .trim();
-
-
-        if (
-            !subject ||
-            !chapterId ||
-            !title
-        ) {
-
-            showToast(
-                "Fill all required PDF details."
-            );
-
-            return;
-
-        }
-
-
-        try {
-
-            if (
-                selectedPdfSource ===
-                    "upload"
-            ) {
-
-                const file =
-                    document.getElementById(
-                        "pdfFile"
-                    ).files[0];
-
-
-                if (!file) {
-
-                    showToast(
-                        "Select a PDF file."
-                    );
-
-                    return;
-
-                }
-
-
-                if (
-                    file.type !==
-                    "application/pdf"
-                ) {
-
-                    showToast(
-                        "Only PDF files are allowed."
-                    );
-
-                    return;
-
-                }
-
-
-                const fileName =
-                    createSafeFileName(
-                        file.name
-                    );
-
-
-                const storagePath =
-                    `crm/courses/${selectedCourseForContent.id}/pdfs/${Date.now()}_${fileName}`;
-
-
-                const storageRef =
-                    ref(
-                        storage,
-                        storagePath
-                    );
-
-
-                await uploadBytes(
-                    storageRef,
-                    file
-                );
-
-
-                pdfUrl =
-                    await getDownloadURL(
-                        storageRef
-                    );
-
-            }
-
-
-            if (!pdfUrl) {
-
-                showToast(
-                    "Enter a PDF URL or upload a PDF."
-                );
-
-                return;
-
-            }
-
-
-            await addDoc(
-                collection(
-                    db,
-                    "crmCoursePdfs"
-                ),
-                {
-
-                    courseId:
-                        selectedCourseForContent.id,
-
-                    courseName:
-                        selectedCourseForContent.crmCourseName ||
-                        "",
-
-                    subject:
-                        subject,
-
-                    chapterId:
-                        chapterId,
-
-                    chapterNumber:
-                        chapterOption?.dataset
-                            ?.number ||
-                        "",
-
-                    chapterName:
-                        chapterOption?.dataset
-                            ?.name ||
-                        "",
-
-                    pdfTitle:
-                        title,
-
-                    pdfUrl:
-                        pdfUrl,
-
-                    active:
-                        true,
-
-                    createdAt:
-                        serverTimestamp(),
-
-                    createdBy:
-                        currentUser.uid
-
-                }
-            );
-
-
-            showToast(
-                "PDF added."
-            );
-
-
-            pdfForm.reset();
-
-            activateContentTab(
-                "pdf"
-            );
-
-            populateContentCourse(
-                selectedCourseForContent
-            );
-
-            populateCourseSubjects(
-                selectedCourseForContent
-            );
-
-            loadChaptersForContent(
-                "pdf"
-            );
-
-        } catch (
-            error
-        ) {
-
-            console.error(
-                error
-            );
-
-            showToast(
-                error.message ||
-                "Unable to add PDF."
-            );
-
-        }
-
-    }
-);
-
-
-/* =========================================================
-   LOAD CHAPTERS
-========================================================= */
-
-async function loadChaptersForContent(
-    type
-) {
-
-    if (
-        !selectedCourseForContent
-    ) return;
-
-
-    const subjectId =
-        type === "video"
-            ? "videoSubject"
-            : "pdfSubject";
-
-
-    const chapterId =
-        type === "video"
-            ? "videoChapter"
-            : "pdfChapter";
-
-
-    const subject =
-        document.getElementById(
-            subjectId
-        ).value;
-
-
-    const select =
-        document.getElementById(
-            chapterId
-        );
-
-
-    select.innerHTML = `
-
-        <option value="">
-            Loading chapters...
-        </option>
-
-    `;
-
-
-    if (!subject) {
-
-        select.innerHTML = `
-
-            <option value="">
-                Select subject first
-            </option>
-
-        `;
-
-        return;
-
-    }
-
-
-    try {
-
-        const chaptersQuery =
-            query(
-                collection(
-                    db,
-                    "crmCourseChapters"
-                ),
-                where(
-                    "courseId",
-                    "==",
-                    selectedCourseForContent.id
-                ),
-                where(
-                    "subject",
-                    "==",
-                    subject
-                )
-            );
-
-
-        const snapshot =
-            await getDocs(
-                chaptersQuery
-            );
-
-
-        const chapters =
-            snapshot.docs.map(
-                item => ({
-                    id: item.id,
-                    ...item.data()
-                })
-            );
-
-
-        chapters.sort(
-            (a, b) =>
-                Number(
-                    a.chapterNumber ||
-                    999999
-                ) -
-                Number(
-                    b.chapterNumber ||
-                    999999
-                )
-        );
-
-
-        select.innerHTML = `
-
-            <option value="">
-                Select chapter
-            </option>
-
-        `;
-
-
-        chapters.forEach(
-            chapter => {
-
-                const option =
-                    document.createElement(
-                        "option"
-                    );
-
-
-                option.value =
-                    chapter.id;
-
-
-                option.textContent =
-                    `Chapter ${
-                        chapter.chapterNumber
-                    } — ${
-                        chapter.chapterName
-                    }`;
-
-
-                option.dataset.number =
-                    chapter.chapterNumber;
-
-
-                option.dataset.name =
-                    chapter.chapterName;
-
-
-                select.appendChild(
-                    option
-                );
-
-            }
-        );
-
-
-        if (
-            chapters.length === 0
-        ) {
-
-            select.innerHTML = `
-
-                <option value="">
-                    No chapters found
-                </option>
-
-            `;
-
-        }
-
-    } catch (
-        error
-    ) {
-
-        console.error(
-            error
-        );
-
-
-        select.innerHTML = `
-
-            <option value="">
-                Unable to load chapters
-            </option>
-
-        `;
-
-    }
-
-}
-
-
-/* =========================================================
-   SUBJECT CHANGE → CHAPTERS
-========================================================= */
-
-document
-    .getElementById(
-        "videoSubject"
-    )
-    .addEventListener(
-        "change",
-        () =>
-            loadChaptersForContent(
-                "video"
-            )
-    );
-
-
-document
-    .getElementById(
-        "pdfSubject"
-    )
-    .addEventListener(
-        "change",
-        () =>
-            loadChaptersForContent(
-                "pdf"
-            )
-    );
-
-
-/* =========================================================
-   PDF SOURCE
-========================================================= */
-
-document
-    .querySelectorAll(
-        ".pdf-source-btn"
-    )
-    .forEach(
-        button => {
-
-            button.addEventListener(
-                "click",
-                () => {
-
-                    selectedPdfSource =
-                        button.dataset
-                            .pdfSource;
-
-
-                    document
-                        .querySelectorAll(
-                            ".pdf-source-btn"
-                        )
-                        .forEach(
-                            item => {
-
-                                item.classList.toggle(
-                                    "active",
-                                    item ===
-                                    button
-                                );
-
-                            }
-                        );
-
-
-                    document
-                        .getElementById(
-                            "pdfUrlSource"
-                        )
-                        .classList.toggle(
-                            "hidden",
-                            selectedPdfSource !==
-                            "url"
-                        );
-
-
-                    document
-                        .getElementById(
-                            "pdfUploadSource"
-                        )
-                        .classList.toggle(
-                            "hidden",
-                            selectedPdfSource !==
-                            "upload"
-                        );
-
-                }
-            );
-
-        }
-    );
-
-
-/* =========================================================
-   COURSE TOGGLE
+   TOGGLE / DELETE COURSE
 ========================================================= */
 
 async function toggleCourse(
@@ -3625,8 +4658,7 @@ async function toggleCourse(
             {
 
                 crmActive:
-                    course.crmActive !==
-                    true,
+                    !course.crmActive,
 
                 updatedAt:
                     serverTimestamp(),
@@ -3640,20 +4672,21 @@ async function toggleCourse(
 
         showToast(
             course.crmActive
-                ? "Course deactivated."
-                : "Course activated."
+            ?
+            "Course deactivated."
+            :
+            "Course activated."
         );
 
-    } catch (
-        error
-    ) {
+
+    } catch (error) {
 
         console.error(
             error
         );
 
         showToast(
-            "Unable to update course."
+            "Unable to change course status."
         );
 
     }
@@ -3661,21 +4694,19 @@ async function toggleCourse(
 }
 
 
-/* =========================================================
-   DELETE COURSE
-========================================================= */
-
 async function deleteCourse(
     course
 ) {
 
     const confirmed =
-        window.confirm(
-            `Delete "${course.crmCourseName}"?\n\nThis removes the course master document. Content documents are not automatically deleted.`
+        confirm(
+            `Delete "${course.crmCourseName}"?\n\nThis will remove the course from CRM. Existing content documents are not automatically deleted.`
         );
 
 
-    if (!confirmed) return;
+    if (!confirmed) {
+        return;
+    }
 
 
     try {
@@ -3693,9 +4724,8 @@ async function deleteCourse(
             "Course deleted."
         );
 
-    } catch (
-        error
-    ) {
+
+    } catch (error) {
 
         console.error(
             error
@@ -3711,17 +4741,8 @@ async function deleteCourse(
 
 
 /* =========================================================
-   MODAL CLOSE
+   CLOSE MODALS
 ========================================================= */
-
-function closeCourseModal() {
-
-    courseModal.classList.add(
-        "hidden"
-    );
-
-}
-
 
 document
     .getElementById(
@@ -3745,97 +4766,59 @@ document
 
 document
     .getElementById(
-        "closeTeacherModal"
-    )
-    .addEventListener(
-        "click",
-        () => {
-
-            teacherModal.classList.add(
-                "hidden"
-            );
-
-        }
-    );
-
-
-document
-    .getElementById(
-        "cancelTeacherBtn"
-    )
-    .addEventListener(
-        "click",
-        () => {
-
-            teacherModal.classList.add(
-                "hidden"
-            );
-
-        }
-    );
-
-
-document
-    .getElementById(
         "closeContentModal"
     )
     .addEventListener(
         "click",
-        () => {
-
-            contentModal.classList.add(
-                "hidden"
-            );
-
-        }
+        closeContentModal
     );
 
 
 document
-    .querySelectorAll(
-        ".close-content-action"
+    .getElementById(
+        "closeContentEditModal"
     )
-    .forEach(
-        button => {
-
-            button.addEventListener(
-                "click",
-                () => {
-
-                    contentModal.classList.add(
-                        "hidden"
-                    );
-
-                }
-            );
-
-        }
+    .addEventListener(
+        "click",
+        closeContentEditModal
     );
 
 
 document
-    .querySelectorAll(
-        ".modal-overlay"
+    .getElementById(
+        "cancelContentEditBtn"
     )
-    .forEach(
-        overlay => {
-
-            overlay.addEventListener(
-                "click",
-                () => {
-
-                    overlay
-                        .parentElement
-                        .classList
-                        .add(
-                            "hidden"
-                        );
-
-                }
-            );
-
-        }
+    .addEventListener(
+        "click",
+        closeContentEditModal
     );
+
+
+function closeCourseModal() {
+
+    courseModal.classList.add(
+        "hidden"
+    );
+
+}
+
+
+function closeContentModal() {
+
+    contentModal.classList.add(
+        "hidden"
+    );
+
+}
+
+
+function closeContentEditModal() {
+
+    contentEditModal.classList.add(
+        "hidden"
+    );
+
+}
 
 
 /* =========================================================
@@ -3861,6 +4844,42 @@ statusFilter.addEventListener(
 
 
 /* =========================================================
+   REFRESH CONTENT
+========================================================= */
+
+document
+    .getElementById(
+        "refreshContentBtn"
+    )
+    .addEventListener(
+        "click",
+        async () => {
+
+            if (
+                selectedCourseForContent
+            ) {
+
+                await loadCourseSubjects(
+                    selectedCourseForContent
+                );
+
+            }
+
+            if (
+                selectedSubjectForContent
+            ) {
+
+                await loadChapters(
+                    selectedSubjectForContent
+                );
+
+            }
+
+        }
+    );
+
+
+/* =========================================================
    BACK
 ========================================================= */
 
@@ -3873,11 +4892,11 @@ document
         () => {
 
             if (
-                window.history.length >
+                history.length >
                 1
             ) {
 
-                window.history.back();
+                history.back();
 
             } else {
 
@@ -3894,48 +4913,312 @@ document
    HELPERS
 ========================================================= */
 
-function numberValue(
-    value
-) {
-
-    const number =
-        Number(value);
-
-
-    return Number.isFinite(
-        number
-    )
-        ? number
-        : 0;
-
-}
-
-
-function formatPrice(
-    value
-) {
-
-    const number =
-        numberValue(
-            value
-        );
-
+function getCourseMediums(course) {
 
     if (
-        number <= 0
+        Array.isArray(
+            course.mediums
+        ) &&
+        course.mediums.length
     ) {
 
-        return "Free";
+        return [
+            ...course.mediums
+        ];
 
     }
 
 
-    return (
-        "₹" +
-        number.toLocaleString(
-            "en-IN"
-        )
+    if (
+        Array.isArray(
+            course.crmMediums
+        ) &&
+        course.crmMediums.length
+    ) {
+
+        return [
+            ...course.crmMediums
+        ];
+
+    }
+
+
+    if (
+        typeof course.crmMedium ===
+        "string" &&
+        course.crmMedium.trim()
+    ) {
+
+        return course.crmMedium
+            .split(",")
+            .map(
+                item =>
+                    item.trim()
+            )
+            .filter(Boolean);
+
+    }
+
+
+    return [];
+
+}
+
+
+function getCourseType(course) {
+
+    return String(
+        course.courseType ||
+        "FREE"
+    ).toUpperCase();
+
+}
+
+
+function getLanguageSummary(course) {
+
+    const config =
+        normalizeLanguageConfig(
+            course.languageConfig
+        );
+
+
+    const result = [];
+
+
+    [
+        ["1st", config.firstLanguage],
+        ["2nd", config.secondLanguage],
+        ["3rd", config.thirdLanguage]
+    ].forEach(
+        ([label, slot]) => {
+
+            if (
+                slot.enabled
+            ) {
+
+                result.push(
+                    `${label} Language`
+                );
+
+            }
+
+        }
     );
+
+
+    return result;
+
+}
+
+
+function getVideoUrl(chapter) {
+
+    return (
+        chapter.videoUrl ||
+        chapter.youtubeUrl ||
+        chapter.video ||
+        ""
+    );
+
+}
+
+
+function getPdfUrl(chapter) {
+
+    return (
+        chapter.pdfUrl ||
+        chapter.notesUrl ||
+        chapter.pdf ||
+        ""
+    );
+
+}
+
+
+function getChapterThumbnail(
+    chapter
+) {
+
+    if (
+        chapter.thumbnailUrl
+    ) {
+
+        return chapter.thumbnailUrl;
+
+    }
+
+
+    return getYouTubeThumbnail(
+        getVideoUrl(chapter)
+    );
+
+}
+
+
+function extractYouTubeId(
+    url
+) {
+
+    if (!url) {
+        return "";
+    }
+
+
+    try {
+
+        const parsed =
+            new URL(url);
+
+
+        if (
+            parsed.hostname.includes(
+                "youtu.be"
+            )
+        ) {
+
+            return parsed.pathname
+                .replace(
+                    "/",
+                    ""
+                );
+
+        }
+
+
+        if (
+            parsed.hostname.includes(
+                "youtube.com"
+            )
+        ) {
+
+            const queryId =
+                parsed.searchParams.get(
+                    "v"
+                );
+
+
+            if (queryId) {
+                return queryId;
+            }
+
+
+            const parts =
+                parsed.pathname
+                    .split("/")
+                    .filter(Boolean);
+
+
+            const index =
+                parts.findIndex(
+                    item =>
+                        item ===
+                        "embed" ||
+                        item ===
+                        "shorts"
+                );
+
+
+            if (
+                index !== -1 &&
+                parts[index + 1]
+            ) {
+
+                return parts[index + 1];
+
+            }
+
+        }
+
+    } catch {
+
+        return "";
+
+    }
+
+
+    return "";
+
+}
+
+
+function getYouTubeThumbnail(
+    url
+) {
+
+    const id =
+        extractYouTubeId(
+            url
+        );
+
+
+    if (!id) {
+        return "";
+    }
+
+
+    return `https://img.youtube.com/vi/${id}/hqdefault.jpg`;
+
+}
+
+
+function getNextChapterNumber() {
+
+    if (!allChapters.length) {
+        return 1;
+    }
+
+
+    return (
+        Math.max(
+            ...allChapters.map(
+                chapter =>
+                    Number(
+                        chapter.chapterNumber ||
+                        0
+                    )
+            )
+        ) + 1
+    );
+
+}
+
+
+function slotLabel(
+    slot
+) {
+
+    if (
+        slot ===
+        "FIRST"
+    ) {
+
+        return "1st Language";
+
+    }
+
+
+    if (
+        slot ===
+        "SECOND"
+    ) {
+
+        return "2nd Language";
+
+    }
+
+
+    if (
+        slot ===
+        "THIRD"
+    ) {
+
+        return "3rd Language";
+
+    }
+
+
+    return "";
 
 }
 
@@ -3944,7 +5227,7 @@ function displayClass(
     value
 ) {
 
-    const names = {
+    const labels = {
 
         UNDER_8TH:
             "Under 8th",
@@ -3968,16 +5251,134 @@ function displayClass(
 
 
     return (
-        names[value] ||
-        String(
-            value ||
-            ""
-        )
-            .replace(
-                /_/g,
-                " "
-            )
+        labels[value] ||
+        value ||
+        "—"
     );
+
+}
+
+
+function formatPrice(
+    value
+) {
+
+    return new Intl.NumberFormat(
+        "en-IN",
+        {
+            style: "currency",
+            currency: "INR",
+            maximumFractionDigits: 0
+        }
+    ).format(
+        Number(value) || 0
+    );
+
+}
+
+
+function numberValue(
+    value
+) {
+
+    const number =
+        Number(value);
+
+
+    return Number.isFinite(
+        number
+    )
+    ?
+    number
+    :
+    0;
+
+}
+
+
+function safeUrl(
+    value
+) {
+
+    if (!value) {
+        return "";
+    }
+
+
+    try {
+
+        const url =
+            new URL(value);
+
+
+        if (
+            url.protocol ===
+            "https:" ||
+            url.protocol ===
+            "http:"
+        ) {
+
+            return url.href;
+
+        }
+
+    } catch {
+
+        return "";
+
+    }
+
+
+    return "";
+
+}
+
+
+function createSafeFileName(
+    filename
+) {
+
+    return filename
+        .toLowerCase()
+        .replace(
+            /[^a-z0-9.]+/g,
+            "-"
+        )
+        .replace(
+            /^-+|-+$/g,
+            ""
+        );
+
+}
+
+
+function validateImageFile(
+    file
+) {
+
+    if (
+        !file.type.startsWith(
+            "image/"
+        )
+    ) {
+
+        throw new Error(
+            "Please select an image file."
+        );
+
+    }
+
+
+    if (
+        file.size >
+        8 * 1024 * 1024
+    ) {
+
+        throw new Error(
+            "Image must be below 8 MB."
+        );
+
+    }
 
 }
 
@@ -4013,129 +5414,45 @@ function escapeHtml(
 }
 
 
-function escapeAttribute(
-    value
-) {
-
-    return escapeHtml(
-        value
-    );
-
-}
-
-
-function safeUrl(
-    value
-) {
-
-    if (!value) return "";
-
-    try {
-
-        const url =
-            new URL(
-                value,
-                window.location.href
-            );
-
-
-        if (
-            url.protocol ===
-                "https:" ||
-            url.protocol ===
-                "http:"
-        ) {
-
-            return url.href;
-
-        }
-
-
-        return "";
-
-    } catch {
-
-        return "";
-
-    }
-
-}
-
-
-function validateImageFile(
-    file
-) {
-
-    if (
-        !file.type.startsWith(
-            "image/"
-        )
-    ) {
-
-        throw new Error(
-            "Please select an image file."
-        );
-
-    }
-
-
-    /*
-     * 10 MB max for course thumbnail.
-     */
-
-    if (
-        file.size >
-        10 * 1024 * 1024
-    ) {
-
-        throw new Error(
-            "Image must be smaller than 10 MB."
-        );
-
-    }
-
-}
-
-
-function createSafeFileName(
-    name
-) {
-
-    return String(
-        name
-    )
-        .replace(
-            /[^a-zA-Z0-9._-]/g,
-            "_"
-        );
-
-}
-
-
-function setSaving(
-    saving
+function setButtonLoading(
+    id,
+    loading
 ) {
 
     const button =
         document.getElementById(
-            "saveCourseBtn"
+            id
         );
 
 
-    button.disabled =
-        saving;
+    if (!button) {
+        return;
+    }
 
 
-    button.textContent =
-        saving
-            ? "Saving..."
-            : (
-                document.getElementById(
-                    "editingCourseId"
-                ).value
-                    ? "Update Course"
-                    : "Save Course"
-            );
+    if (
+        loading
+    ) {
+
+        button.dataset.originalText =
+            button.textContent;
+
+        button.disabled =
+            true;
+
+        button.textContent =
+            "Saving...";
+
+    } else {
+
+        button.disabled =
+            false;
+
+        button.textContent =
+            button.dataset.originalText ||
+            "Save";
+
+    }
 
 }
 
@@ -4167,7 +5484,7 @@ function showToast(
                 );
 
             },
-            2800
+            3000
         );
 
 }
