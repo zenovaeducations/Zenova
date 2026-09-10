@@ -10,7 +10,6 @@ import {
 
 import {
     doc,
-    getDoc,
     onSnapshot
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
@@ -21,84 +20,131 @@ import {
 
 /* =========================================================
    STATE
-========================================================= */
+   ========================================================= */
 
 let currentUser = null;
 let currentCourse = null;
 let unsubscribeCourse = null;
-
-let isLoading = true;
 let isPaying = false;
+
+let selectedLanguage = "";
 
 
 /* =========================================================
-   ELEMENT HELPERS
-========================================================= */
+   ELEMENT HELPER
+   ========================================================= */
 
-function getElement(id) {
+function el(id) {
     return document.getElementById(id);
 }
 
 
 /* =========================================================
    ELEMENTS
-========================================================= */
+   ========================================================= */
 
-const courseImage =
-    getElement("courseImage");
+/* Loader / App */
 
-const courseImageFallback =
-    getElement("courseImageFallback");
-
-const courseName =
-    getElement("courseName");
-
-const courseClass =
-    getElement("courseClass");
-
-const courseMedium =
-    getElement("courseMedium");
-
-const courseCode =
-    getElement("courseCode");
-
-const coursePrice =
-    getElement("coursePrice");
-
-const courseDiscount =
-    getElement("courseDiscount");
-
-const courseFinalPrice =
-    getElement("courseFinalPrice");
-
-const totalAmount =
-    getElement("totalAmount");
-
-const payNowBtn =
-    getElement("payNowBtn");
-
-const loader =
-    getElement("loader");
+const loadingScreen =
+    el("loadingScreen");
 
 const app =
-    getElement("app");
+    el("app");
 
-const errorState =
-    getElement("errorState");
+
+/* Header */
+
+const backButton =
+    el("backButton");
+
+const notificationButton =
+    el("notificationButton");
+
+
+/* Course */
+
+const courseImage =
+    el("courseImage");
+
+const courseImageFallback =
+    el("courseImageFallback");
+
+const courseName =
+    el("courseName");
+
+const courseMeta =
+    el("courseMeta");
+
+const courseCode =
+    el("courseCode");
+
+
+/* Language */
+
+const languageSection =
+    el("languageSection");
+
+const languageOptions =
+    el("languageOptions");
+
+const summaryLanguageRow =
+    el("summaryLanguageRow");
+
+const summaryLanguage =
+    el("summaryLanguage");
+
+
+/* Course summary */
+
+const summaryCourseName =
+    el("summaryCourseName");
+
+const summaryClass =
+    el("summaryClass");
+
+
+/* Pricing */
+
+const originalPrice =
+    el("originalPrice");
+
+const discountRow =
+    el("discountRow");
+
+const discountAmount =
+    el("discountAmount");
+
+const finalPrice =
+    el("finalPrice");
+
+
+/* Payment */
+
+const paymentBar =
+    el("paymentBar");
+
+const bottomPrice =
+    el("bottomPrice");
+
+const payNowButton =
+    el("payNowButton");
+
+
+/* Error */
+
+const errorSection =
+    el("errorSection");
 
 const errorMessage =
-    getElement("errorMessage");
+    el("errorMessage");
 
-const backBtn =
-    getElement("backBtn");
-
-const notificationBtn =
-    getElement("notificationBtn");
+const errorBackButton =
+    el("errorBackButton");
 
 
 /* =========================================================
    URL
-========================================================= */
+   ========================================================= */
 
 function getCourseId() {
 
@@ -117,39 +163,58 @@ function getCourseId() {
 
 
 /* =========================================================
-   AUTH
-========================================================= */
+   AUTHENTICATION
+   ========================================================= */
 
 onAuthStateChanged(
     auth,
     async user => {
 
-        if (!user) {
+        try {
 
-            window.location.href =
-                "../login/";
+            if (!user) {
 
-            return;
-        }
+                window.location.href =
+                    "../login/";
 
-        currentUser =
-            user;
+                return;
+            }
 
-        const courseId =
-            getCourseId();
 
-        if (!courseId) {
+            currentUser =
+                user;
 
-            showError(
-                "Course information is missing."
+
+            const courseId =
+                getCourseId();
+
+
+            if (!courseId) {
+
+                showError(
+                    "Course information is missing."
+                );
+
+                return;
+            }
+
+
+            startCourseListener(
+                courseId
             );
 
-            return;
-        }
+        } catch (error) {
 
-        startCourseListener(
-            courseId
-        );
+            console.error(
+                "Zenova Checkout Authentication Error:",
+                error
+            );
+
+            showError(
+                getReadableError(error)
+            );
+
+        }
 
     }
 );
@@ -157,17 +222,18 @@ onAuthStateChanged(
 
 /* =========================================================
    COURSE LISTENER
-========================================================= */
+   ========================================================= */
 
-function startCourseListener(
-    courseId
-) {
+function startCourseListener(courseId) {
 
-    if (
-        unsubscribeCourse
-    ) {
+    if (unsubscribeCourse) {
+
         unsubscribeCourse();
+
+        unsubscribeCourse =
+            null;
     }
+
 
     const courseRef =
         doc(
@@ -176,48 +242,93 @@ function startCourseListener(
             courseId
         );
 
+
     unsubscribeCourse =
         onSnapshot(
+
             courseRef,
 
             snapshot => {
 
-                if (
-                    !snapshot.exists()
-                ) {
+                try {
 
-                    showError(
-                        "This course is no longer available."
+                    if (!snapshot.exists()) {
+
+                        showError(
+                            "This course is no longer available."
+                        );
+
+                        return;
+                    }
+
+
+                    currentCourse = {
+                        id: snapshot.id,
+                        ...snapshot.data()
+                    };
+
+
+                    console.log(
+                        "Zenova Checkout Course:",
+                        currentCourse
                     );
 
-                    return;
+
+                    /*
+                     * If CRM explicitly marks
+                     * the course inactive,
+                     * do not allow checkout.
+                     */
+
+                    if (
+                        currentCourse.crmActive === false
+                    ) {
+
+                        showError(
+                            "This course is currently unavailable."
+                        );
+
+                        return;
+                    }
+
+
+                    renderCheckout(
+                        currentCourse
+                    );
+
+
+                    hideLoading();
+
+
+                } catch (error) {
+
+                    console.error(
+                        "Checkout render error:",
+                        error
+                    );
+
+                    showError(
+                        "Unable to display course details."
+                    );
+
                 }
-
-                currentCourse = {
-                    id: snapshot.id,
-                    ...snapshot.data()
-                };
-
-                renderCheckout(
-                    currentCourse
-                );
-
-                hideLoader();
 
             },
 
             error => {
 
                 console.error(
-                    "CHECKOUT COURSE ERROR:",
+                    "CHECKOUT FIREBASE ERROR:",
                     error
                 );
 
+
                 showError(
-                    "Unable to load course details."
+                    getReadableError(error)
                 );
 
             }
+
         );
 
 }
@@ -225,47 +336,53 @@ function startCourseListener(
 
 /* =========================================================
    RENDER CHECKOUT
-========================================================= */
+   ========================================================= */
 
-function renderCheckout(
-    course
-) {
+function renderCheckout(course) {
 
     if (!course) {
         return;
     }
 
 
-    /* -----------------------------------------------------
-       BASIC COURSE DETAILS
-    ----------------------------------------------------- */
+    /* =====================================================
+       COURSE NAME
+       ===================================================== */
 
     const name =
         course.crmCourseName ||
+        course.courseName ||
         course.name ||
         course.title ||
         "Zenova Course";
+
+
+    /* =====================================================
+       CLASS
+       ===================================================== */
 
     const className =
         displayClass(
             course.crmClass ||
             course.className ||
+            course.targetClass ||
             ""
         );
 
+
+    /* =====================================================
+       MEDIUM
+       ===================================================== */
+
     const medium =
-        course.crmMedium ||
-        (
-            Array.isArray(
-                course.mediums
-            )
-                ? course.mediums.join(
-                    ", "
-                )
-                : ""
-        ) ||
-        course.medium ||
-        "English";
+        getCourseMediumText(
+            course
+        );
+
+
+    /* =====================================================
+       COURSE CODE
+       ===================================================== */
 
     const code =
         course.crmCourseCode ||
@@ -273,73 +390,141 @@ function renderCheckout(
         "";
 
 
-    /* -----------------------------------------------------
-       COURSE IMAGE
-    ----------------------------------------------------- */
+    /* =====================================================
+       IMAGE
+       ===================================================== */
 
     loadCourseImage(
         course
     );
 
 
-    /* -----------------------------------------------------
-       TEXT
-    ----------------------------------------------------- */
+    /* =====================================================
+       TOP COURSE CARD
+       ===================================================== */
 
     setText(
         courseName,
         name
     );
 
-    setText(
-        courseClass,
-        className
-    );
 
     setText(
-        courseMedium,
-        medium
+        courseMeta,
+        buildCourseMeta(
+            className,
+            medium
+        )
     );
+
 
     setText(
         courseCode,
         code
+            ? `Course Code: ${code}`
+            : ""
     );
 
 
-    /* -----------------------------------------------------
-       PRICING
-    ----------------------------------------------------- */
+    /* =====================================================
+       COURSE SUMMARY
+       ===================================================== */
+
+    setText(
+        summaryCourseName,
+        name
+    );
+
+
+    setText(
+        summaryClass,
+        className || "—"
+    );
+
+
+    /* =====================================================
+       LANGUAGE
+       ===================================================== */
+
+    setupLanguages(
+        course
+    );
+
+
+    /* =====================================================
+       PRICE
+       ===================================================== */
 
     const pricing =
         calculatePricing(
             course
         );
 
+
     renderPricing(
         pricing
     );
 
 
-    /* -----------------------------------------------------
-       PAY BUTTON
-    ----------------------------------------------------- */
+    /* =====================================================
+       PAYMENT BAR
+       ===================================================== */
+
+    setText(
+        bottomPrice,
+        formatPrice(
+            pricing.finalPrice
+        )
+    );
+
 
     updatePayButton(
-        pricing.finalPrice,
-        name
+        pricing.finalPrice
     );
+
+
+    if (paymentBar) {
+
+        paymentBar.classList.remove(
+            "hidden"
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   COURSE META
+   ========================================================= */
+
+function buildCourseMeta(
+    className,
+    medium
+) {
+
+    const parts = [];
+
+    if (className) {
+        parts.push(className);
+    }
+
+    if (medium) {
+        parts.push(medium);
+    }
+
+    return parts.length
+        ? parts.join(" • ")
+        : "Course details";
 
 }
 
 
 /* =========================================================
    IMAGE
-========================================================= */
+   ========================================================= */
 
-function loadCourseImage(
-    course
-) {
+function loadCourseImage(course) {
 
     const imageUrl =
         course?.crmImageUrl ||
@@ -347,25 +532,21 @@ function loadCourseImage(
         course?.courseImageUrl ||
         "";
 
+
     console.log(
-        "Checkout thumbnail URL:",
+        "Checkout thumbnail:",
         imageUrl
     );
+
+
+    if (!courseImage) {
+        return;
+    }
 
 
     if (!imageUrl) {
 
         showImageFallback();
-
-        return;
-    }
-
-
-    if (!courseImage) {
-
-        console.warn(
-            "courseImage element not found."
-        );
 
         return;
     }
@@ -393,7 +574,7 @@ function loadCourseImage(
 
 /* =========================================================
    IMAGE ERROR
-========================================================= */
+   ========================================================= */
 
 if (courseImage) {
 
@@ -402,7 +583,7 @@ if (courseImage) {
         () => {
 
             console.error(
-                "Checkout thumbnail failed:",
+                "Checkout image failed:",
                 courseImage.src
             );
 
@@ -416,7 +597,7 @@ if (courseImage) {
 
 /* =========================================================
    IMAGE FALLBACK
-========================================================= */
+   ========================================================= */
 
 function showImageFallback() {
 
@@ -435,49 +616,322 @@ function showImageFallback() {
             "hidden"
         );
 
+    }
+
+}
+
+
+/* =========================================================
+   LANGUAGE
+   ========================================================= */
+
+function setupLanguages(course) {
+
+    if (!languageSection) {
+        return;
+    }
+
+
+    if (!languageOptions) {
+        return;
+    }
+
+
+    let languages = [];
+
+
+    /*
+     * Support different CRM formats.
+     */
+
+    if (
+        Array.isArray(
+            course.languages
+        )
+    ) {
+
+        languages =
+            course.languages;
+
+    } else if (
+        Array.isArray(
+            course.availableLanguages
+        )
+    ) {
+
+        languages =
+            course.availableLanguages;
+
+    } else if (
+        Array.isArray(
+            course.mediums
+        )
+    ) {
+
+        languages =
+            course.mediums;
+
+    } else if (
+        Array.isArray(
+            course.crmMediums
+        )
+    ) {
+
+        languages =
+            course.crmMediums;
+
+    } else if (
+        typeof course.crmMedium ===
+        "string"
+    ) {
+
+        languages =
+            course.crmMedium
+                .split(",")
+                .map(
+                    item =>
+                        item.trim()
+                )
+                .filter(Boolean);
+
+    } else if (
+        typeof course.medium ===
+        "string"
+    ) {
+
+        languages =
+            course.medium
+                .split(",")
+                .map(
+                    item =>
+                        item.trim()
+                )
+                .filter(Boolean);
+
+    }
+
+
+    /*
+     * Remove duplicates.
+     */
+
+    languages =
+        [
+            ...new Set(
+                languages
+                    .map(
+                        item =>
+                            String(item)
+                                .trim()
+                    )
+                    .filter(Boolean)
+            )
+        ];
+
+
+    /*
+     * No language information.
+     */
+
+    if (!languages.length) {
+
+        languageSection.classList.add(
+            "hidden"
+        );
+
+        if (summaryLanguageRow) {
+
+            summaryLanguageRow.classList.add(
+                "hidden"
+            );
+
+        }
+
+        selectedLanguage = "";
+
         return;
     }
 
 
     /*
-     * If the fallback element does not
-     * exist in HTML, create a simple
-     * fallback inside the image parent.
+     * One language only.
+     * Automatically select it.
      */
 
-    if (
-        courseImage &&
-        courseImage.parentElement
-    ) {
+    if (languages.length === 1) {
 
-        const parent =
-            courseImage.parentElement;
+        selectedLanguage =
+            languages[0];
 
-        let fallback =
-            parent.querySelector(
-                ".checkout-image-fallback"
-            );
 
-        if (!fallback) {
+        languageSection.classList.add(
+            "hidden"
+        );
 
-            fallback =
+
+        showSelectedLanguage(
+            selectedLanguage
+        );
+
+
+        return;
+    }
+
+
+    /*
+     * Multiple languages.
+     * Show selection.
+     */
+
+    languageSection.classList.remove(
+        "hidden"
+    );
+
+
+    languageOptions.innerHTML =
+        "";
+
+
+    /*
+     * Reset until user chooses.
+     */
+
+    selectedLanguage =
+        "";
+
+
+    if (summaryLanguageRow) {
+
+        summaryLanguageRow.classList.add(
+            "hidden"
+        );
+
+    }
+
+
+    languages.forEach(
+        language => {
+
+            const button =
                 document.createElement(
-                    "div"
+                    "button"
                 );
 
-            fallback.className =
-                "checkout-image-fallback";
 
-            fallback.innerHTML =
-                "Z";
+            button.type =
+                "button";
 
-            parent.appendChild(
-                fallback
+
+            button.className =
+                "language-option";
+
+
+            button.innerHTML = `
+                <div class="language-main">
+                    <span class="language-name">
+                        ${escapeHtml(language)}
+                    </span>
+
+                    <span class="language-description">
+                        Study in ${escapeHtml(language)}
+                    </span>
+                </div>
+
+                <div class="language-check">
+                    ✓
+                </div>
+            `;
+
+
+            button.addEventListener(
+                "click",
+                () => {
+
+                    selectLanguage(
+                        language
+                    );
+
+                }
+            );
+
+
+            languageOptions.appendChild(
+                button
             );
 
         }
+    );
 
-        fallback.classList.remove(
+}
+
+
+/* =========================================================
+   SELECT LANGUAGE
+   ========================================================= */
+
+function selectLanguage(
+    language
+) {
+
+    selectedLanguage =
+        language;
+
+
+    document
+        .querySelectorAll(
+            ".language-option"
+        )
+        .forEach(
+            button => {
+
+                const name =
+                    button.querySelector(
+                        ".language-name"
+                    )?.textContent
+                    ?.trim();
+
+
+                button.classList.toggle(
+                    "selected",
+                    name === language
+                );
+
+            }
+        );
+
+
+    showSelectedLanguage(
+        language
+    );
+
+}
+
+
+/* =========================================================
+   SHOW SELECTED LANGUAGE
+   ========================================================= */
+
+function showSelectedLanguage(
+    language
+) {
+
+    if (
+        !language ||
+        !summaryLanguage
+    ) {
+        return;
+    }
+
+
+    setText(
+        summaryLanguage,
+        language
+    );
+
+
+    if (summaryLanguageRow) {
+
+        summaryLanguageRow.classList.remove(
             "hidden"
         );
 
@@ -487,29 +941,85 @@ function showImageFallback() {
 
 
 /* =========================================================
+   GET MEDIUM TEXT
+   ========================================================= */
+
+function getCourseMediumText(
+    course
+) {
+
+    if (
+        Array.isArray(
+            course.crmMedium
+        )
+    ) {
+
+        return course.crmMedium.join(
+            ", "
+        );
+
+    }
+
+
+    if (
+        course.crmMedium
+    ) {
+
+        return String(
+            course.crmMedium
+        );
+
+    }
+
+
+    if (
+        Array.isArray(
+            course.mediums
+        )
+    ) {
+
+        return course.mediums.join(
+            ", "
+        );
+
+    }
+
+
+    if (
+        course.medium
+    ) {
+
+        return String(
+            course.medium
+        );
+
+    }
+
+
+    return "";
+
+}
+
+
+/* =========================================================
    PRICING
-========================================================= */
+   ========================================================= */
 
 function calculatePricing(
     course
 ) {
-
-    const type =
-        String(
-            course.courseType ||
-            ""
-        ).toUpperCase();
-
 
     let price =
         numberValue(
             course.crmPrice
         );
 
+
     let discount =
         numberValue(
             course.crmDiscount
         );
+
 
     let finalPrice =
         numberValue(
@@ -517,12 +1027,21 @@ function calculatePricing(
         );
 
 
+    const courseType =
+        String(
+            course.courseType ||
+            course.type ||
+            ""
+        ).toUpperCase();
+
+
     /*
      * FREE COURSE
      */
 
     if (
-        type === "FREE"
+        courseType === "FREE" ||
+        course.isPaid === false
     ) {
 
         price = 0;
@@ -552,8 +1071,7 @@ function calculatePricing(
 
 
     /*
-     * If price is missing but
-     * final price exists.
+     * If only final price exists.
      */
 
     if (
@@ -570,8 +1088,7 @@ function calculatePricing(
 
 
     /*
-     * Never allow discount greater
-     * than course price.
+     * Discount cannot exceed price.
      */
 
     if (
@@ -585,7 +1102,7 @@ function calculatePricing(
 
 
     /*
-     * Final calculation protection.
+     * Final safety calculation.
      */
 
     if (
@@ -605,11 +1122,9 @@ function calculatePricing(
     return {
 
         type:
-            type || (
-                finalPrice > 0
-                    ? "PAID"
-                    : "FREE"
-            ),
+            finalPrice > 0
+                ? "PAID"
+                : "FREE",
 
         price,
 
@@ -624,7 +1139,7 @@ function calculatePricing(
 
 /* =========================================================
    RENDER PRICING
-========================================================= */
+   ========================================================= */
 
 function renderPricing(
     pricing
@@ -639,12 +1154,12 @@ function renderPricing(
         type,
         price,
         discount,
-        finalPrice
+        finalPrice: total
     } = pricing;
 
 
     /*
-     * FREE COURSE
+     * FREE
      */
 
     if (
@@ -652,36 +1167,48 @@ function renderPricing(
     ) {
 
         setText(
-            coursePrice,
+            originalPrice,
             "Free"
         );
 
+
         setText(
-            courseDiscount,
+            discountAmount,
             "₹0"
         );
 
+
         setText(
-            courseFinalPrice,
+            finalPrice,
             "Free"
         );
 
+
         setText(
-            totalAmount,
+            bottomPrice,
             "₹0"
         );
+
+
+        if (discountRow) {
+
+            discountRow.classList.add(
+                "hidden"
+            );
+
+        }
+
 
         return;
-
     }
 
 
     /*
-     * PAID COURSE
+     * PAID
      */
 
     setText(
-        coursePrice,
+        originalPrice,
         formatPrice(
             price
         )
@@ -693,18 +1220,17 @@ function renderPricing(
     ) {
 
         setText(
-            courseDiscount,
+            discountAmount,
             "-" +
             formatPrice(
                 discount
             )
         );
 
-        if (
-            courseDiscount
-        ) {
 
-            courseDiscount.classList.remove(
+        if (discountRow) {
+
+            discountRow.classList.remove(
                 "hidden"
             );
 
@@ -712,25 +1238,29 @@ function renderPricing(
 
     } else {
 
-        setText(
-            courseDiscount,
-            "₹0"
-        );
+        if (discountRow) {
+
+            discountRow.classList.add(
+                "hidden"
+            );
+
+        }
 
     }
 
 
     setText(
-        courseFinalPrice,
+        finalPrice,
         formatPrice(
-            finalPrice
+            total
         )
     );
 
+
     setText(
-        totalAmount,
+        bottomPrice,
         formatPrice(
-            finalPrice
+            total
         )
     );
 
@@ -739,14 +1269,13 @@ function renderPricing(
 
 /* =========================================================
    PAY BUTTON
-========================================================= */
+   ========================================================= */
 
 function updatePayButton(
-    amount,
-    name
+    amount
 ) {
 
-    if (!payNowBtn) {
+    if (!payNowButton) {
         return;
     }
 
@@ -755,56 +1284,89 @@ function updatePayButton(
         Number(amount) <= 0
     ) {
 
-        payNowBtn.textContent =
-            "GET COURSE  →";
+        payNowButton.innerHTML =
+            `GET COURSE <span>→</span>`;
 
-        payNowBtn.dataset.action =
+        payNowButton.dataset.action =
             "free";
 
         return;
-
     }
 
 
-    payNowBtn.textContent =
-        "PAY NOW  →";
+    payNowButton.innerHTML =
+        `PAY NOW <span>→</span>`;
 
-    payNowBtn.dataset.action =
+    payNowButton.dataset.action =
         "payment";
-
-    payNowBtn.dataset.courseName =
-        name || "";
 
 }
 
 
 /* =========================================================
-   PAY NOW
-========================================================= */
+   PAY BUTTON CLICK
+   ========================================================= */
 
-if (payNowBtn) {
+if (payNowButton) {
 
-    payNowBtn.addEventListener(
+    payNowButton.addEventListener(
         "click",
         async () => {
 
-            if (
-                isPaying
-            ) {
+            if (isPaying) {
                 return;
             }
 
 
-            if (
-                !currentCourse
-            ) {
+            if (!currentUser) {
+
+                window.location.href =
+                    "../login/";
+
+                return;
+            }
+
+
+            if (!currentCourse) {
 
                 showError(
                     "Course information is not available."
                 );
 
                 return;
+            }
 
+
+            /*
+             * If multiple languages exist,
+             * require selection.
+             */
+
+            const languageButtons =
+                document.querySelectorAll(
+                    ".language-option"
+                );
+
+
+            if (
+                languageButtons.length > 1 &&
+                !selectedLanguage
+            ) {
+
+                showToast(
+                    "Please select a language."
+                );
+
+                if (languageSection) {
+
+                    languageSection.scrollIntoView({
+                        behavior: "smooth",
+                        block: "center"
+                    });
+
+                }
+
+                return;
             }
 
 
@@ -814,10 +1376,6 @@ if (payNowBtn) {
                 );
 
 
-            /*
-             * FREE COURSE
-             */
-
             if (
                 pricing.finalPrice <= 0
             ) {
@@ -825,13 +1383,8 @@ if (payNowBtn) {
                 await handleFreeCourse();
 
                 return;
-
             }
 
-
-            /*
-             * PAID COURSE
-             */
 
             await handlePaidCourse(
                 pricing
@@ -845,19 +1398,9 @@ if (payNowBtn) {
 
 /* =========================================================
    FREE COURSE
-========================================================= */
+   ========================================================= */
 
 async function handleFreeCourse() {
-
-    if (!currentUser) {
-
-        window.location.href =
-            "../login/";
-
-        return;
-
-    }
-
 
     try {
 
@@ -867,33 +1410,42 @@ async function handleFreeCourse() {
         );
 
 
-        /*
-         * IMPORTANT:
-         *
-         * This only moves to the
-         * next step.
-         *
-         * Actual enrollment should
-         * be created by the trusted
-         * backend/admin/payment flow.
-         */
+        const courseId =
+            currentCourse.id;
 
-        window.location.href =
+
+        let url =
             `../success/?courseId=${encodeURIComponent(
-                currentCourse.id
+                courseId
             )}&type=FREE`;
 
-    }
-    catch (error) {
+
+        if (selectedLanguage) {
+
+            url +=
+                `&language=${encodeURIComponent(
+                    selectedLanguage
+                )}`;
+
+        }
+
+
+        window.location.href =
+            url;
+
+
+    } catch (error) {
 
         console.error(
             "FREE COURSE ERROR:",
             error
         );
 
+
         showToast(
             "Unable to continue."
         );
+
 
         setPayingState(
             false
@@ -906,21 +1458,11 @@ async function handleFreeCourse() {
 
 /* =========================================================
    PAID COURSE
-========================================================= */
+   ========================================================= */
 
 async function handlePaidCourse(
     pricing
 ) {
-
-    if (!currentUser) {
-
-        window.location.href =
-            "../login/";
-
-        return;
-
-    }
-
 
     try {
 
@@ -929,15 +1471,6 @@ async function handlePaidCourse(
             "PROCESSING..."
         );
 
-
-        /*
-         * Store only the course reference
-         * and amount needed for the payment
-         * page.
-         *
-         * The payment gateway should verify
-         * the amount again server-side.
-         */
 
         const checkoutData = {
 
@@ -958,6 +1491,10 @@ async function handlePaidCourse(
 
             medium:
                 currentCourse.crmMedium ||
+                "",
+
+            language:
+                selectedLanguage ||
                 "",
 
             price:
@@ -986,31 +1523,38 @@ async function handlePaidCourse(
         );
 
 
-        /*
-         * Continue to your payment
-         * gateway page.
-         *
-         * Change this route only if
-         * your payment page has another
-         * folder name.
-         */
-
-        window.location.href =
+        let url =
             `../payment/?courseId=${encodeURIComponent(
                 currentCourse.id
             )}`;
 
-    }
-    catch (error) {
+
+        if (selectedLanguage) {
+
+            url +=
+                `&language=${encodeURIComponent(
+                    selectedLanguage
+                )}`;
+
+        }
+
+
+        window.location.href =
+            url;
+
+
+    } catch (error) {
 
         console.error(
             "PAYMENT START ERROR:",
             error
         );
 
+
         showToast(
             "Unable to start payment."
         );
+
 
         setPayingState(
             false
@@ -1022,8 +1566,8 @@ async function handlePaidCourse(
 
 
 /* =========================================================
-   PAY BUTTON STATE
-========================================================= */
+   PAYING STATE
+   ========================================================= */
 
 function setPayingState(
     paying,
@@ -1034,41 +1578,67 @@ function setPayingState(
         paying;
 
 
-    if (!payNowBtn) {
+    if (!payNowButton) {
         return;
     }
 
 
-    payNowBtn.disabled =
+    payNowButton.disabled =
         paying;
 
 
-    payNowBtn.textContent =
-        paying
-            ? text
-            : "PAY NOW  →";
+    if (paying) {
+
+        payNowButton.innerHTML =
+            `${escapeHtml(text)}`;
+
+    } else {
+
+        const amount =
+            currentCourse
+                ? calculatePricing(
+                    currentCourse
+                ).finalPrice
+                : 0;
+
+
+        if (
+            Number(amount) <= 0
+        ) {
+
+            payNowButton.innerHTML =
+                `GET COURSE <span>→</span>`;
+
+        } else {
+
+            payNowButton.innerHTML =
+                `PAY NOW <span>→</span>`;
+
+        }
+
+    }
 
 }
 
 
 /* =========================================================
    BACK BUTTON
-========================================================= */
+   ========================================================= */
 
-if (backBtn) {
+if (backButton) {
 
-    backBtn.addEventListener(
+    backButton.addEventListener(
         "click",
         () => {
 
             if (
+                document.referrer &&
                 window.history.length > 1
             ) {
 
                 window.history.back();
 
                 return;
-
             }
 
 
@@ -1083,11 +1653,11 @@ if (backBtn) {
 
 /* =========================================================
    NOTIFICATIONS
-========================================================= */
+   ========================================================= */
 
-if (notificationBtn) {
+if (notificationButton) {
 
-    notificationBtn.addEventListener(
+    notificationButton.addEventListener(
         "click",
         () => {
 
@@ -1101,75 +1671,54 @@ if (notificationBtn) {
 
 
 /* =========================================================
-   BOTTOM NAVIGATION
-========================================================= */
+   ERROR BACK BUTTON
+   ========================================================= */
 
-document
-    .querySelectorAll(
-        "[data-route]"
-    )
-    .forEach(
-        element => {
+if (errorBackButton) {
 
-            element.addEventListener(
-                "click",
-                () => {
+    errorBackButton.addEventListener(
+        "click",
+        () => {
 
-                    const route =
-                        element.dataset.route;
-
-                    navigate(
-                        route
-                    );
-
-                }
-            );
+            window.location.href =
+                "../batches/";
 
         }
     );
 
+}
+
 
 /* =========================================================
-   NAVIGATION
-========================================================= */
+   LOADING
+   ========================================================= */
 
-function navigate(
-    route
-) {
+function hideLoading() {
 
-    const routes = {
+    /*
+     * THIS IS THE IMPORTANT FIX.
+     *
+     * HTML uses:
+     * #loadingScreen
+     *
+     * not:
+     * #loader
+     */
 
-        home:
-            "../",
+    if (loadingScreen) {
 
-        courses:
-            "../batches/",
+        loadingScreen.classList.add(
+            "hidden"
+        );
 
-        study:
-            "../study/",
-
-        ai:
-            "../ai/",
-
-        profile:
-            "../profile/",
-
-        notifications:
-            "../notifications/"
-
-    };
+    }
 
 
-    const destination =
-        routes[route];
+    if (app) {
 
-
-    if (
-        destination
-    ) {
-
-        window.location.href =
-            destination;
+        app.classList.remove(
+            "hidden"
+        );
 
     }
 
@@ -1177,13 +1726,26 @@ function navigate(
 
 
 /* =========================================================
-   LOADER
-========================================================= */
+   ERROR
+   ========================================================= */
 
-function hideLoader() {
+function showError(
+    message
+) {
 
-    isLoading =
-        false;
+    console.error(
+        "ZENOVA CHECKOUT ERROR:",
+        message
+    );
+
+
+    if (loadingScreen) {
+
+        loadingScreen.classList.add(
+            "hidden"
+        );
+
+    }
 
 
     if (app) {
@@ -1195,52 +1757,48 @@ function hideLoader() {
     }
 
 
-    if (loader) {
+    /*
+     * Hide normal checkout
+     * sections when there is an error.
+     */
 
-        loader.classList.add(
+    const content =
+        document.querySelector(
+            ".checkout-content"
+        );
+
+
+    if (content) {
+
+        content
+            .querySelectorAll(
+                ".course-card, .section, .secure-note, .bottom-space"
+            )
+            .forEach(
+                element => {
+
+                    element.classList.add(
+                        "hidden"
+                    );
+
+                }
+            );
+
+    }
+
+
+    if (paymentBar) {
+
+        paymentBar.classList.add(
             "hidden"
         );
 
     }
 
-}
 
+    if (errorSection) {
 
-/* =========================================================
-   ERROR STATE
-========================================================= */
-
-function showError(
-    message
-) {
-
-    console.error(
-        "CHECKOUT ERROR:",
-        message
-    );
-
-
-    if (loader) {
-
-        loader.classList.add(
-            "hidden"
-        );
-
-    }
-
-
-    if (app) {
-
-        app.classList.add(
-            "hidden"
-        );
-
-    }
-
-
-    if (errorState) {
-
-        errorState.classList.remove(
+        errorSection.classList.remove(
             "hidden"
         );
 
@@ -1249,7 +1807,8 @@ function showError(
 
     setText(
         errorMessage,
-        message
+        message ||
+        "Something went wrong."
     );
 
 }
@@ -1257,7 +1816,7 @@ function showError(
 
 /* =========================================================
    TOAST
-========================================================= */
+   ========================================================= */
 
 let toastTimer = null;
 
@@ -1268,7 +1827,7 @@ function showToast(
 
     let toast =
         document.getElementById(
-            "toast"
+            "zenovaCheckoutToast"
         );
 
 
@@ -1279,11 +1838,46 @@ function showToast(
                 "div"
             );
 
-        toast.id =
-            "toast";
 
-        toast.className =
-            "toast";
+        toast.id =
+            "zenovaCheckoutToast";
+
+
+        toast.style.position =
+            "fixed";
+
+        toast.style.left =
+            "50%";
+
+        toast.style.bottom =
+            "105px";
+
+        toast.style.transform =
+            "translateX(-50%)";
+
+        toast.style.zIndex =
+            "99999";
+
+        toast.style.background =
+            "#171717";
+
+        toast.style.color =
+            "#ffffff";
+
+        toast.style.padding =
+            "11px 16px";
+
+        toast.style.borderRadius =
+            "10px";
+
+        toast.style.fontSize =
+            "13px";
+
+        toast.style.fontWeight =
+            "600";
+
+        toast.style.whiteSpace =
+            "nowrap";
 
         document.body.appendChild(
             toast
@@ -1296,9 +1890,8 @@ function showToast(
         message;
 
 
-    toast.classList.add(
-        "show"
-    );
+    toast.style.opacity =
+        "1";
 
 
     clearTimeout(
@@ -1310,9 +1903,8 @@ function showToast(
         setTimeout(
             () => {
 
-                toast.classList.remove(
-                    "show"
-                );
+                toast.style.opacity =
+                    "0";
 
             },
             2800
@@ -1322,8 +1914,8 @@ function showToast(
 
 
 /* =========================================================
-   TEXT HELPER
-========================================================= */
+   TEXT
+   ========================================================= */
 
 function setText(
     element,
@@ -1342,8 +1934,8 @@ function setText(
 
 
 /* =========================================================
-   NUMBER HELPER
-========================================================= */
+   NUMBER
+   ========================================================= */
 
 function numberValue(
     value
@@ -1365,8 +1957,8 @@ function numberValue(
 
 
 /* =========================================================
-   PRICE FORMAT
-========================================================= */
+   PRICE
+   ========================================================= */
 
 function formatPrice(
     value
@@ -1398,8 +1990,8 @@ function formatPrice(
 
 
 /* =========================================================
-   CLASS FORMAT
-========================================================= */
+   CLASS
+   ========================================================= */
 
 function displayClass(
     value
@@ -1428,11 +2020,14 @@ function displayClass(
     };
 
 
+    if (!value) {
+        return "";
+    }
+
+
     return (
         names[value] ||
-        String(
-            value || ""
-        )
+        String(value)
             .replace(
                 /_/g,
                 " "
@@ -1443,8 +2038,83 @@ function displayClass(
 
 
 /* =========================================================
+   ESCAPE HTML
+   ========================================================= */
+
+function escapeHtml(
+    value
+) {
+
+    return String(
+        value ?? ""
+    )
+        .replaceAll(
+            "&",
+            "&amp;"
+        )
+        .replaceAll(
+            "<",
+            "&lt;"
+        )
+        .replaceAll(
+            ">",
+            "&gt;"
+        )
+        .replaceAll(
+            '"',
+            "&quot;"
+        )
+        .replaceAll(
+            "'",
+            "&#039;"
+        );
+
+}
+
+
+/* =========================================================
+   FIREBASE ERROR
+   ========================================================= */
+
+function getReadableError(
+    error
+) {
+
+    if (
+        error?.code ===
+        "permission-denied"
+    ) {
+
+        return (
+            "You do not have permission to view this course."
+        );
+
+    }
+
+
+    if (
+        error?.code ===
+        "not-found"
+    ) {
+
+        return (
+            "This course could not be found."
+        );
+
+    }
+
+
+    return (
+        error?.message ||
+        "Unable to load course details."
+    );
+
+}
+
+
+/* =========================================================
    CLEANUP
-========================================================= */
+   ========================================================= */
 
 window.addEventListener(
     "beforeunload",
@@ -1463,8 +2133,8 @@ window.addEventListener(
 
 
 /* =========================================================
-   INITIAL UI
-========================================================= */
+   INITIAL STATE
+   ========================================================= */
 
 if (app) {
 
@@ -1474,9 +2144,10 @@ if (app) {
 
 }
 
-if (errorState) {
 
-    errorState.classList.add(
+if (errorSection) {
+
+    errorSection.classList.add(
         "hidden"
     );
 
