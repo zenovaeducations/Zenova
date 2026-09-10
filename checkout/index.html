@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    >
+
+    <title>Checkout | Zenova Educations</title>
+
+    <link rel="stylesheet" href="./checkout.css">
+</head>
+
+<body>
+
+    <!-- =========================
+         LOADING
+    ========================== -->
+
+    <div id="loadingScreen" class="loading-screen">
+        <div class="loader-ring">
+            <span>Z</span>
+        </div>
+    </div>
+
+
+    <!-- =========================
+         APP
+    ========================== -->
+
+    <main id="app" class="app hidden">
+
+        <!-- =========================
+             HEADER
+        ========================== -->
+
+        <header class="checkout-header">
+
+            <button
+                id="backButton"
+                class="back-button"
+                type="button"
+                aria-label="Go back"
+            >
+                <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.4"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                >
+                    <path d="M15 18l-6-6 6-6"/>
+                </svg>
+            </button>
+
+
+            <div class="header-title">
+
+                <div class="header-brand">
+                    ZENOVA EDUCATONS
+                </div>
+
+                <h1>
+                    Checkout
+                </h1>
+
+            </div>
+
+
+            <button
+                id="notificationButton"
+                class="notification-button"
+                type="button"
+                aria-label="Notifications"
+            >
+
+                <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                >
+                    <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/>
+                    <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                </svg>
+
+                <span id="notificationDot" class="notification-dot"></span>
+
+            </button>
+
+        </header>
+
+
+        <!-- =========================
+             CONTENT
+        ========================== -->
+
+        <section class="checkout-content">
+
+
+            <!-- COURSE -->
+            <section class="course-card">
+
+                <div class="course-thumbnail-wrapper">
+
+                    <img
+                        id="courseImage"
+                        class="course-thumbnail"
+                        src=""
+                        alt="Course thumbnail"
+                    >
+
+                    <div
+                        id="courseImageFallback"
+                        class="course-image-fallback"
+                    >
+                        Z
+                    </div>
+
+                </div>
+
+
+                <div class="course-info">
+
+                    <div class="course-badge">
+                        COURSE
+                    </div>
+
+                    <h2 id="courseName">
+                        Loading...
+                    </h2>
+
+                    <p id="courseMeta">
+                        Loading course details...
+                    </p>
+
+                    <div
+                        id="courseCode"
+                        class="course-code"
+                    ></div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =========================
+                 LANGUAGE
+            ========================== -->
+
+            <section
+                id="languageSection"
+                class="section language-section hidden"
+            >
+
+                <div class="section-heading">
+
+                    <div>
+                        <span class="section-label">
+                            COURSE PREFERENCE
+                        </span>
+
+                        <h2>
+                            Select Language
+                        </h2>
+
+                        <p>
+                            Choose the language you want to study in.
+                        </p>
+                    </div>
+
+                </div>
+
+
+                <div
+                    id="languageOptions"
+                    class="language-options"
+                ></div>
+
+            </section>
+
+
+            <!-- =========================
+                 COURSE DETAILS
+            ========================== -->
+
+            <section class="section">
+
+                <div class="section-heading">
+
+                    <div>
+                        <span class="section-label">
+                            YOUR COURSE
+                        </span>
+
+                        <h2>
+                            Course Details
+                        </h2>
+                    </div>
+
+                </div>
+
+
+                <div class="details-card">
+
+                    <div class="detail-row">
+
+                        <span>
+                            Course
+                        </span>
+
+                        <strong id="summaryCourseName">
+                            —
+                        </strong>
+
+                    </div>
+
+
+                    <div class="detail-row">
+
+                        <span>
+                            Class
+                        </span>
+
+                        <strong id="summaryClass">
+                            —
+                        </strong>
+
+                    </div>
+
+
+                    <div
+                        id="summaryLanguageRow"
+                        class="detail-row hidden"
+                    >
+
+                        <span>
+                            Language
+                        </span>
+
+                        <strong id="summaryLanguage">
+                            —
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =========================
+                 PRICE
+            ========================== -->
+
+            <section class="section">
+
+                <div class="section-heading">
+
+                    <div>
+                        <span class="section-label">
+                            PAYMENT
+                        </span>
+
+                        <h2>
+                            Order Summary
+                        </h2>
+                    </div>
+
+                </div>
+
+
+                <div class="price-card">
+
+                    <div class="price-row">
+
+                        <span>
+                            Course price
+                        </span>
+
+                        <strong id="originalPrice">
+                            ₹0
+                        </strong>
+
+                    </div>
+
+
+                    <div
+                        id="discountRow"
+                        class="price-row discount-row hidden"
+                    >
+
+                        <span>
+                            Discount
+                        </span>
+
+                        <strong id="discountAmount">
+                            -₹0
+                        </strong>
+
+                    </div>
+
+
+                    <div class="price-divider"></div>
+
+
+                    <div class="total-row">
+
+                        <div>
+                            <span>
+                                Total
+                            </span>
+
+                            <small>
+                                Complete course access
+                            </small>
+                        </div>
+
+                        <strong id="finalPrice">
+                            ₹0
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =========================
+                 SECURE NOTE
+            ========================== -->
+
+            <div class="secure-note">
+
+                <div class="secure-icon">
+
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    >
+                        <rect
+                            x="4"
+                            y="10"
+                            width="16"
+                            height="11"
+                            rx="2"
+                        />
+                        <path d="M8 10V7a4 4 0 0 1 8 0v3"/>
+                    </svg>
+
+                </div>
+
+                <div>
+
+                    <strong>
+                        Secure checkout
+                    </strong>
+
+                    <p>
+                        Your payment and account information are protected.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- =========================
+                 ERROR
+            ========================== -->
+
+            <section
+                id="errorSection"
+                class="error-section hidden"
+            >
+
+                <div class="error-icon">
+                    !
+                </div>
+
+                <h2>
+                    Unable to load course
+                </h2>
+
+                <p id="errorMessage">
+                    Please try again.
+                </p>
+
+                <button
+                    id="errorBackButton"
+                    class="secondary-button"
+                    type="button"
+                >
+                    Go Back
+                </button>
+
+            </section>
+
+
+            <div class="bottom-space"></div>
+
+        </section>
+
+
+        <!-- =========================
+             PAY BAR
+        ========================== -->
+
+        <div
+            id="paymentBar"
+            class="payment-bar hidden"
+        >
+
+            <div class="payment-total">
+
+                <span>
+                    Total
+                </span>
+
+                <strong id="bottomPrice">
+                    ₹0
+                </strong>
+
+            </div>
+
+
+            <button
+                id="payNowButton"
+                class="pay-button"
+                type="button"
+            >
+                PAY NOW
+                <span>→</span>
+            </button>
+
+        </div>
+
+
+        <!-- =========================
+             BOTTOM NAV
+        ========================== -->
+
+        <nav class="bottom-navigation">
+
+            <a
+                href="../"
+                class="nav-item"
+            >
+
+                <div class="nav-icon">
+
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    >
+                        <path d="M3 11.5L12 4l9 7.5"/>
+                        <path d="M5 10.5V20h14v-9.5"/>
+                    </svg>
+
+                </div>
+
+                <span class="nav-label">
+                    Home
+                </span>
+
+            </a>
+
+
+            <a
+                href="../batches/"
+                class="nav-item active"
+            >
+
+                <div class="nav-icon">
+
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    >
+                        <rect
+                            x="5"
+                            y="3"
+                            width="14"
+                            height="18"
+                            rx="2"
+                        />
+                        <path d="M8 8h8"/>
+                        <path d="M8 12h8"/>
+                        <path d="M8 16h5"/>
+                    </svg>
+
+                </div>
+
+                <span class="nav-label">
+                    Courses
+                </span>
+
+                <span class="nav-active-line"></span>
+
+            </a>
+
+
+            <a
+                href="../study/"
+                class="nav-item"
+            >
+
+                <div class="nav-icon">
+
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    >
+                        <path d="M6 4v16"/>
+                        <path d="M18 4v16"/>
+                        <path d="M6 4c4-1 8-1 12 0"/>
+                        <path d="M6 20c4-1 8-1 12 0"/>
+                    </svg>
+
+                </div>
+
+                <span class="nav-label">
+                    Study Now
+                </span>
+
+            </a>
+
+
+            <a
+                href="../ai/"
+                class="nav-item"
+            >
+
+                <div class="nav-icon ai-icon">
+                    Z
+                </div>
+
+                <span class="nav-label">
+                    Zenova AI
+                </span>
+
+            </a>
+
+
+            <a
+                href="../profile/"
+                class="nav-item"
+            >
+
+                <div class="nav-icon">
+
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    >
+                        <circle
+                            cx="12"
+                            cy="8"
+                            r="3.5"
+                        />
+                        <path d="M5 21c.8-4 3-6 7-6s6.2 2 7 6"/>
+                    </svg>
+
+                </div>
+
+                <span class="nav-label">
+                    Profile
+                </span>
+
+            </a>
+
+        </nav>
+
+    </main>
+
+
+    <script type="module" src="./checkout.js"></script>
+
+</body>
+  </html>
