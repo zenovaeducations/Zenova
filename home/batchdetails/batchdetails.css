@@ -159,56 +159,210 @@ body {
    PAGE HEADER
 ========================================= */
 
-.page-header {
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 20px 20px 10px;
+/* =========================================
+   COURSES-STYLE HEADER
+========================================= */
 
-  display: grid;
-  grid-template-columns: 44px 1fr 44px;
-  align-items: center;
-}
+.course-header {
+  position: relative;
 
-.back-button {
-  width: 40px;
-  height: 40px;
+  width: 100%;
+  height: 145px;
 
-  border: 1px solid var(--border);
-  border-radius: 12px;
+  border-bottom: 1px solid #eeeeee;
 
   background: #ffffff;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 18px 28px;
+}
+
+
+/* CENTER */
+
+.header-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  text-align: center;
+}
+
+.brand-name {
+  font-size: 22px;
+  font-weight: 850;
+  letter-spacing: 3px;
+
+  color: #6d28d9;
+
+  line-height: 1.1;
+}
+
+.header-center h1 {
+  margin-top: 9px;
+
+  font-size: 39px;
+  line-height: 1;
+
+  font-weight: 800;
+  letter-spacing: -1px;
+
+  color: #111111;
+}
+
+
+/* BACK BUTTON */
+
+.back-button {
+  position: absolute;
+
+  left: 28px;
+  top: 50%;
+  transform: translateY(-50%);
+
+  width: 94px;
+  height: 94px;
+
+  border-radius: 30px;
+
+  border: 1px solid #e1e1e1;
+
+  background: #ffffff;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
   color: #111111;
 
-  font-size: 24px;
-  line-height: 1;
+  cursor: pointer;
+
+  transition:
+    border-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.back-button svg {
+  width: 42px;
+  height: 42px;
+}
+
+.back-button:hover {
+  border-color: #cfcfcf;
+}
+
+
+/* NOTIFICATION */
+
+.notification-button {
+  position: absolute;
+
+  right: 28px;
+  top: 50%;
+  transform: translateY(-50%);
+
+  width: 58px;
+  height: 58px;
+
+  border: 0;
+
+  background: transparent;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: #111111;
 
   cursor: pointer;
 }
 
-.back-button:hover {
-  border-color: #cccccc;
+.notification-button svg {
+  width: 42px;
+  height: 42px;
 }
 
-.page-title {
-  padding-left: 8px;
+
+/* NOTIFICATION DOT */
+
+.notification-dot {
+  position: absolute;
+
+  top: 10px;
+  right: 7px;
+
+  width: 8px;
+  height: 8px;
+
+  border-radius: 50%;
+
+  background: #6d28d9;
+
+  border: 2px solid #ffffff;
 }
 
-.page-title h1 {
-  font-size: 21px;
-  font-weight: 750;
-  letter-spacing: -0.5px;
-}
 
-.page-title p {
-  margin-top: 3px;
-  font-size: 12px;
-  color: var(--muted);
-}
+/* =========================================
+   MOBILE HEADER
+========================================= */
 
-.header-notification {
-  justify-self: end;
-}
+@media (max-width: 700px) {
 
+  .course-header {
+    height: 125px;
+
+    padding: 14px 16px;
+  }
+
+
+  .brand-name {
+    font-size: 15px;
+    letter-spacing: 2.3px;
+  }
+
+
+  .header-center h1 {
+    margin-top: 7px;
+
+    font-size: 28px;
+    letter-spacing: -0.7px;
+  }
+
+
+  .back-button {
+    left: 16px;
+
+    width: 58px;
+    height: 58px;
+
+    border-radius: 18px;
+  }
+
+
+  .back-button svg {
+    width: 30px;
+    height: 30px;
+  }
+
+
+  .notification-button {
+    right: 12px;
+
+    width: 52px;
+    height: 52px;
+  }
+
+
+  .notification-button svg {
+    width: 31px;
+    height: 31px;
+  }
+
+}
 
 /* =========================================
    COURSE CONTENT
