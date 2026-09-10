@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Home Banners | Zenova Admin</title>
+
+    <link
+        rel="stylesheet"
+        href="./banners.css"
+    >
+
+</head>
+
+
+<body>
+
+
+    <!-- ==============================
+         HEADER
+    =============================== -->
+
+    <header class="topbar">
+
+        <div class="topbar-left">
+
+            <button
+                id="backButton"
+                class="icon-button"
+                type="button"
+            >
+                ←
+            </button>
+
+
+            <div>
+
+                <div class="brand">
+                    ZENOVA EDUCATONS
+                </div>
+
+                <h1>
+                    Home Banners
+                </h1>
+
+            </div>
+
+        </div>
+
+
+        <button
+            id="addBannerButton"
+            class="primary-button"
+            type="button"
+        >
+            + Add Banner
+        </button>
+
+    </header>
+
+
+
+    <!-- ==============================
+         MAIN
+    =============================== -->
+
+    <main class="page">
+
+
+        <!-- ==========================
+             STATS
+        =========================== -->
+
+        <section class="stats-grid">
+
+            <div class="stat-card">
+
+                <span>
+                    Total Banners
+                </span>
+
+                <strong id="totalCount">
+                    0
+                </strong>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <span>
+                    Active
+                </span>
+
+                <strong id="activeCount">
+                    0
+                </strong>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <span>
+                    Hidden
+                </span>
+
+                <strong id="hiddenCount">
+                    0
+                </strong>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ==========================
+             INFO
+        =========================== -->
+
+        <div class="info-box">
+
+            <div class="info-icon">
+                i
+            </div>
+
+            <div>
+
+                <strong>
+                    Student Home is connected
+                </strong>
+
+                <p>
+                    Changes made here are reflected
+                    automatically on the Student Home.
+                </p>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- ==========================
+             BANNERS
+        =========================== -->
+
+        <section class="content-section">
+
+            <div class="section-header">
+
+                <div>
+
+                    <span class="section-label">
+                        HOME CONTENT
+                    </span>
+
+                    <h2>
+                        All Banners
+                    </h2>
+
+                </div>
+
+
+                <select
+                    id="statusFilter"
+                    class="filter-select"
+                >
+
+                    <option value="ALL">
+                        All
+                    </option>
+
+                    <option value="ACTIVE">
+                        Active
+                    </option>
+
+                    <option value="HIDDEN">
+                        Hidden
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div
+                id="bannerList"
+                class="banner-list"
+            >
+
+                <div
+                    id="emptyState"
+                    class="empty-state"
+                >
+
+                    <div class="empty-icon">
+                        +
+                    </div>
+
+                    <h3>
+                        No banners yet
+                    </h3>
+
+                    <p>
+                        Add your first banner for the
+                        Student Home.
+                    </p>
+
+                    <button
+                        id="emptyAddButton"
+                        class="primary-button"
+                        type="button"
+                    >
+                        Add Banner
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+
+    <!-- ==============================
+         MODAL
+    =============================== -->
+
+    <div
+        id="modalOverlay"
+        class="modal-overlay hidden"
+    >
+
+        <div class="modal">
+
+
+            <div class="modal-header">
+
+                <div>
+
+                    <span class="section-label">
+                        HOME BANNER
+                    </span>
+
+                    <h2 id="modalTitle">
+                        Add Banner
+                    </h2>
+
+                </div>
+
+
+                <button
+                    id="closeModalButton"
+                    class="close-button"
+                    type="button"
+                >
+                    ×
+                </button>
+
+            </div>
+
+
+
+            <!-- ======================
+                 IMAGE
+            ======================= -->
+
+            <div class="form-section">
+
+                <label>
+                    Banner Image
+                </label>
+
+                <div class="image-source-buttons">
+
+                    <button
+                        id="urlSourceButton"
+                        class="source-button active"
+                        type="button"
+                    >
+                        Image URL
+                    </button>
+
+                    <button
+                        id="uploadSourceButton"
+                        class="source-button"
+                        type="button"
+                    >
+                        Upload Image
+                    </button>
+
+                </div>
+
+
+                <div
+                    id="urlSource"
+                    class="source-content"
+                >
+
+                    <input
+                        id="imageUrlInput"
+                        type="url"
+                        placeholder="https://example.com/banner.jpg"
+                    >
+
+                </div>
+
+
+                <div
+                    id="uploadSource"
+                    class="source-content hidden"
+                >
+
+                    <input
+                        id="imageFileInput"
+                        type="file"
+                        accept="image/png,image/jpeg,image/webp"
+                    >
+
+                    <small>
+                        Recommended size: 1600 × 600 px
+                    </small>
+
+                </div>
+
+
+                <div
+                    id="imagePreviewWrapper"
+                    class="image-preview-wrapper hidden"
+                >
+
+                    <img
+                        id="imagePreview"
+                        src=""
+                        alt="Banner preview"
+                    >
+
+                </div>
+
+            </div>
+
+
+
+            <!-- ======================
+                 TEXT
+            ======================= -->
+
+            <div class="form-grid">
+
+                <div class="form-section">
+
+                    <label for="labelInput">
+                        Small Label
+                    </label>
+
+                    <input
+                        id="labelInput"
+                        type="text"
+                        placeholder="NEW BATCH"
+                    >
+
+                </div>
+
+
+                <div class="form-section">
+
+                    <label for="priorityInput">
+                        Priority
+                    </label>
+
+                    <input
+                        id="priorityInput"
+                        type="number"
+                        min="1"
+                        step="1"
+                        value="1"
+                    >
+
+                </div>
+
+            </div>
+
+
+
+            <div class="form-section">
+
+                <label for="titleInput">
+                    Banner Title
+                </label>
+
+                <input
+                    id="titleInput"
+                    type="text"
+                    placeholder="Your main banner title"
+                >
+
+            </div>
+
+
+
+            <div class="form-section">
+
+                <label for="descriptionInput">
+                    Description
+                </label>
+
+                <textarea
+                    id="descriptionInput"
+                    rows="3"
+                    placeholder="Short description for the banner"
+                ></textarea>
+
+            </div>
+
+
+
+            <!-- ======================
+                 ACTION
+            ======================= -->
+
+            <div class="form-grid">
+
+                <div class="form-section">
+
+                    <label for="buttonTextInput">
+                        Button Text
+                    </label>
+
+                    <input
+                        id="buttonTextInput"
+                        type="text"
+                        placeholder="Explore Now"
+                    >
+
+                </div>
+
+
+                <div class="form-section">
+
+                    <label for="linkInput">
+                        Button / Banner Link
+                    </label>
+
+                    <input
+                        id="linkInput"
+                        type="text"
+                        placeholder="../batches/"
+                    >
+
+                </div>
+
+            </div>
+
+
+
+            <!-- ======================
+                 STATUS
+            ======================= -->
+
+            <div class="status-row">
+
+                <div>
+
+                    <strong>
+                        Show on Student Home
+                    </strong>
+
+                    <p>
+                        Turn this off to temporarily
+                        hide the banner.
+                    </p>
+
+                </div>
+
+
+                <label class="switch">
+
+                    <input
+                        id="activeInput"
+                        type="checkbox"
+                        checked
+                    >
+
+                    <span class="slider"></span>
+
+                </label>
+
+            </div>
+
+
+
+            <!-- ======================
+                 ACTIONS
+            ======================= -->
+
+            <div class="modal-actions">
+
+                <button
+                    id="cancelButton"
+                    class="secondary-button"
+                    type="button"
+                >
+                    Cancel
+                </button>
+
+
+                <button
+                    id="saveButton"
+                    class="primary-button"
+                    type="button"
+                >
+                    Save Banner
+                </button>
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ==============================
+         TOAST
+    =============================== -->
+
+    <div
+        id="toast"
+        class="toast"
+    ></div>
+
+
+
+    <script
+        type="module"
+        src="./banners.js"
+    ></script>
+
+</body>
+
+  </html>
