@@ -1,8 +1,3 @@
-/* =========================================================
-   ZENOVA BATCH DETAILS
-   Compact Mobile-App UI
-========================================================= */
-
 * {
   box-sizing: border-box;
   margin: 0;
@@ -12,27 +7,21 @@
 :root {
   --purple: #6d28d9;
   --purple-dark: #5b21b6;
-
   --black: #111111;
-  --text: #222222;
-  --gray: #777777;
-  --light-gray: #999999;
-
-  --border: #e6e6e6;
-  --soft: #f7f7f7;
-  --white: #ffffff;
-
-  --success: #16834a;
+  --text: #1f1f1f;
+  --muted: #777777;
+  --border: #e9e9e9;
+  --background: #ffffff;
+  --soft: #f7f7f8;
+  --success: #18864b;
 }
 
 html,
 body {
   width: 100%;
   min-height: 100%;
-
-  background: #ffffff;
+  background: var(--background);
   color: var(--text);
-
   font-family:
     Inter,
     -apple-system,
@@ -41,337 +30,394 @@ body {
     Roboto,
     Arial,
     sans-serif;
-
-  overflow-x: hidden;
 }
 
 body {
-  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
 }
 
 
-/* =========================================================
-   HIDDEN
-========================================================= */
+/* =========================================
+   LOADING
+========================================= */
+
+.loading-screen {
+  position: fixed;
+  inset: 0;
+  background: #ffffff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.loading-ring {
+  width: 64px;
+  height: 64px;
+  border: 2px solid #ededed;
+  border-top-color: var(--purple);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: spin 1s linear infinite;
+}
+
+.loading-z {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--purple);
+  animation: counterSpin 1s linear infinite;
+}
+
+.loading-text {
+  margin-top: 16px;
+  color: #777;
+  font-size: 13px;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes counterSpin {
+  to {
+    transform: rotate(-360deg);
+  }
+}
 
 .hidden {
   display: none !important;
 }
 
 
-/* =========================================================
-   LOADING SCREEN
-========================================================= */
-
-.loading-screen {
-  position: fixed;
-  inset: 0;
-
-  z-index: 9999;
-
-  background: #ffffff;
-
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-
-.loading-ring {
-  width: 52px;
-  height: 52px;
-
-  border: 2px solid #eeeeee;
-  border-top-color: var(--purple);
-
-  border-radius: 50%;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  animation: loadingSpin 0.9s linear infinite;
-}
-
-.loading-z {
-  color: var(--purple);
-
-  font-size: 19px;
-  font-weight: 800;
-
-  animation: loadingCounterSpin 0.9s linear infinite;
-}
-
-.loading-text {
-  margin-top: 13px;
-
-  color: #777777;
-
-  font-size: 12px;
-}
-
-@keyframes loadingSpin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@keyframes loadingCounterSpin {
-  to {
-    transform: rotate(-360deg);
-  }
-}
-
-
-/* =========================================================
+/* =========================================
    APP
-========================================================= */
+========================================= */
 
 .app {
-  width: 100%;
   min-height: 100vh;
-
   background: #ffffff;
 }
 
 
-/* =========================================================
-   HEADER
-   Same compact style as Courses page
-========================================================= */
+/* =========================================
+   BRAND HEADER
+========================================= */
+
+.brand-header {
+  height: 64px;
+  padding:
+    env(safe-area-inset-top)
+    18px
+    0
+    18px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  border-bottom: 1px solid #eeeeee;
+  background: #ffffff;
+
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.brand-name {
+  font-size: 19px;
+  font-weight: 750;
+  letter-spacing: -0.4px;
+  color: #111111;
+}
+
+.icon-button,
+.header-notification {
+  width: 40px;
+  height: 40px;
+  border: 0;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #111111;
+  position: relative;
+}
+
+.notification-icon,
+.header-notification {
+  font-size: 22px;
+}
+
+
+/* =========================================
+   PAGE HEADER
+========================================= */
+
+/* =========================================
+   COURSES-STYLE HEADER
+========================================= */
 
 .course-header {
   position: relative;
 
   width: 100%;
-  height: 122px;
-
-  background: #ffffff;
+  height: 145px;
 
   border-bottom: 1px solid #eeeeee;
+
+  background: #ffffff;
 
   display: flex;
   align-items: center;
   justify-content: center;
 
-  padding: 10px 70px;
+  padding: 18px 28px;
 }
 
 
-/* =========================================================
-   HEADER CENTER
-========================================================= */
+/* CENTER */
 
 .header-center {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
 
   text-align: center;
 }
 
 .brand-name {
-  color: var(--purple);
-
-  font-size: 15px;
+  font-size: 22px;
   font-weight: 850;
+  letter-spacing: 3px;
 
-  letter-spacing: 2.4px;
+  color: #6d28d9;
 
-  line-height: 1.2;
+  line-height: 1.1;
 }
 
 .header-center h1 {
-  margin-top: 5px;
+  margin-top: 9px;
+
+  font-size: 39px;
+  line-height: 1;
+
+  font-weight: 800;
+  letter-spacing: -1px;
 
   color: #111111;
-
-  font-size: 29px;
-  font-weight: 800;
-
-  line-height: 1.05;
-
-  letter-spacing: -0.6px;
 }
 
 
-/* =========================================================
-   BACK BUTTON
-========================================================= */
+/* BACK BUTTON */
 
 .back-button {
   position: absolute;
 
-  left: 26px;
+  left: 28px;
   top: 50%;
-
   transform: translateY(-50%);
 
-  width: 58px;
-  height: 58px;
+  width: 94px;
+  height: 94px;
+
+  border-radius: 30px;
 
   border: 1px solid #e1e1e1;
-  border-radius: 18px;
 
   background: #ffffff;
-
-  color: #111111;
 
   display: flex;
   align-items: center;
   justify-content: center;
+
+  color: #111111;
 
   cursor: pointer;
 
   transition:
     border-color 0.2s ease,
-    background 0.2s ease;
-}
-
-.back-button:hover {
-  background: #fafafa;
-  border-color: #cccccc;
+    transform 0.2s ease;
 }
 
 .back-button svg {
-  width: 29px;
-  height: 29px;
+  width: 42px;
+  height: 42px;
+}
+
+.back-button:hover {
+  border-color: #cfcfcf;
 }
 
 
-/* =========================================================
-   NOTIFICATION
-========================================================= */
+/* NOTIFICATION */
 
 .notification-button {
   position: absolute;
 
-  right: 25px;
+  right: 28px;
   top: 50%;
-
   transform: translateY(-50%);
 
-  width: 48px;
-  height: 48px;
+  width: 58px;
+  height: 58px;
 
   border: 0;
 
   background: transparent;
 
-  color: #111111;
-
   display: flex;
   align-items: center;
   justify-content: center;
+
+  color: #111111;
 
   cursor: pointer;
 }
 
 .notification-button svg {
-  width: 30px;
-  height: 30px;
+  width: 42px;
+  height: 42px;
 }
+
+
+/* NOTIFICATION DOT */
 
 .notification-dot {
   position: absolute;
 
-  top: 7px;
-  right: 5px;
+  top: 10px;
+  right: 7px;
 
-  width: 7px;
-  height: 7px;
+  width: 8px;
+  height: 8px;
 
   border-radius: 50%;
 
-  background: var(--purple);
+  background: #6d28d9;
 
   border: 2px solid #ffffff;
 }
 
 
-/* =========================================================
+/* =========================================
+   MOBILE HEADER
+========================================= */
+
+@media (max-width: 700px) {
+
+  .course-header {
+    height: 125px;
+
+    padding: 14px 16px;
+  }
+
+
+  .brand-name {
+    font-size: 15px;
+    letter-spacing: 2.3px;
+  }
+
+
+  .header-center h1 {
+    margin-top: 7px;
+
+    font-size: 28px;
+    letter-spacing: -0.7px;
+  }
+
+
+  .back-button {
+    left: 16px;
+
+    width: 58px;
+    height: 58px;
+
+    border-radius: 18px;
+  }
+
+
+  .back-button svg {
+    width: 30px;
+    height: 30px;
+  }
+
+
+  .notification-button {
+    right: 12px;
+
+    width: 52px;
+    height: 52px;
+  }
+
+
+  .notification-button svg {
+    width: 31px;
+    height: 31px;
+  }
+
+}
+
+/* =========================================
    COURSE CONTENT
-========================================================= */
+========================================= */
 
 .course-content {
-  width: 100%;
-  max-width: 920px;
-
+  max-width: 1100px;
   margin: 0 auto;
-
-  padding: 20px 24px 150px;
+  padding: 10px 20px 30px;
 }
 
 
-/* =========================================================
-   COURSE HERO
-========================================================= */
+/* =========================================
+   HERO
+========================================= */
 
 .course-hero {
   display: grid;
-
-  grid-template-columns: 280px 1fr;
-
-  gap: 24px;
-
+  grid-template-columns: minmax(280px, 430px) 1fr;
+  gap: 32px;
   align-items: center;
-
-  margin-top: 2px;
+  margin-top: 14px;
 }
-
-
-/* =========================================================
-   COURSE IMAGE
-========================================================= */
 
 .course-image-wrapper {
   position: relative;
-
   width: 100%;
-
-  aspect-ratio: 16 / 10;
-
+  aspect-ratio: 16 / 9;
+  border-radius: 18px;
   overflow: hidden;
-
-  border-radius: 15px;
-
+  background: #f1f1f1;
   border: 1px solid var(--border);
-
-  background: #f6f6f6;
 }
 
 .course-image {
   width: 100%;
   height: 100%;
-
   display: block;
-
   object-fit: cover;
 }
 
 .course-image-fallback {
   position: absolute;
   inset: 0;
-
-  background: #f5f5f5;
-
   display: none;
-
   align-items: center;
   justify-content: center;
+  background: #f6f6f6;
 }
 
 .course-image-fallback span {
-  color: var(--purple);
-
-  font-size: 46px;
+  font-size: 60px;
   font-weight: 800;
+  color: var(--purple);
 }
-
-
-/* =========================================================
-   HERO INFORMATION
-========================================================= */
 
 .course-hero-info {
   min-width: 0;
@@ -379,471 +425,157 @@ body {
 
 .course-badges {
   display: flex;
-
-  align-items: center;
-
-  gap: 7px;
-
-  margin-bottom: 8px;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
 }
 
 .badge {
   display: inline-flex;
-
   align-items: center;
-
-  min-height: 23px;
-
-  padding: 0 9px;
-
+  min-height: 28px;
+  padding: 0 11px;
   border-radius: 20px;
-
-  background: #f1f1f1;
-
-  color: #555555;
-
-  font-size: 10px;
-  font-weight: 750;
-
+  background: #f2f2f3;
+  color: #444;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
   text-transform: uppercase;
-
-  letter-spacing: 0.3px;
 }
 
 .badge-active {
-  background: #eef9f2;
-
+  background: #edf8f1;
   color: var(--success);
 }
 
 .course-hero-info h2 {
-  color: #111111;
-
-  font-size: 26px;
+  font-size: clamp(26px, 4vw, 42px);
+  line-height: 1.08;
+  letter-spacing: -1.3px;
   font-weight: 800;
-
-  line-height: 1.13;
-
-  letter-spacing: -0.6px;
-
+  color: #111111;
   word-break: break-word;
 }
 
 .course-code {
-  margin-top: 6px;
-
-  color: #888888;
-
-  font-size: 11px;
+  margin-top: 10px;
+  color: var(--muted);
+  font-size: 13px;
   font-weight: 600;
 }
 
-
-/* =========================================================
-   META
-========================================================= */
-
 .course-meta {
   display: flex;
-
   flex-wrap: wrap;
-
-  gap: 7px;
-
-  margin-top: 15px;
+  gap: 10px;
+  margin-top: 22px;
 }
 
 .meta-item {
-  min-width: 88px;
-
-  padding: 9px 11px;
-
+  min-width: 105px;
+  padding: 12px 14px;
   border: 1px solid var(--border);
-
-  border-radius: 10px;
-
+  border-radius: 12px;
   background: #ffffff;
 }
 
 .meta-label {
   display: block;
-
-  color: #999999;
-
-  font-size: 8px;
-  font-weight: 700;
-
-  letter-spacing: 0.5px;
-
+  color: #888;
+  font-size: 10px;
   text-transform: uppercase;
+  letter-spacing: 0.4px;
+  font-weight: 700;
 }
 
 .meta-value {
   display: block;
-
-  margin-top: 3px;
-
-  color: #222222;
-
-  font-size: 11px;
+  margin-top: 4px;
+  color: #111;
+  font-size: 13px;
   font-weight: 700;
 }
 
 
-/* =========================================================
-   DESCRIPTION
-========================================================= */
-
-.details-section {
-  margin-top: 25px;
-}
-
-.section-heading {
-  margin-bottom: 8px;
-}
-
-.section-heading h3 {
-  color: #111111;
-
-  font-size: 16px;
-  font-weight: 800;
-
-  letter-spacing: -0.2px;
-}
-
-.description {
-  max-width: 850px;
-
-  color: #666666;
-
-  font-size: 12px;
-
-  line-height: 1.65;
-
-  white-space: pre-line;
-}
-
-
-/* =========================================================
-   HIGHLIGHTS
-========================================================= */
-
-.highlights-grid {
-  display: grid;
-
-  grid-template-columns: repeat(3, 1fr);
-
-  gap: 8px;
-}
-
-.highlight-card {
-  padding: 13px;
-
-  border: 1px solid var(--border);
-
-  border-radius: 11px;
-
-  background: #ffffff;
-}
-
-.highlight-number {
-  color: var(--purple);
-
-  font-size: 19px;
-  font-weight: 800;
-}
-
-.highlight-title {
-  margin-top: 3px;
-
-  color: #888888;
-
-  font-size: 9px;
-  font-weight: 600;
-}
-
-
-/* =========================================================
-   COURSE INFORMATION
-========================================================= */
-
-.info-list {
-  border-top: 1px solid var(--border);
-}
-
-.info-row {
-  min-height: 40px;
-
-  padding: 9px 0;
-
-  display: flex;
-
-  align-items: center;
-  justify-content: space-between;
-
-  gap: 20px;
-
-  border-bottom: 1px solid var(--border);
-
-  font-size: 11px;
-}
-
-.info-row span {
-  color: #888888;
-}
-
-.info-row strong {
-  color: #222222;
-
-  font-weight: 700;
-
-  text-align: right;
-}
-
-
-/* =========================================================
-   ENROLLED NOTE
-========================================================= */
-
-.enrolled-note {
-  margin-top: 18px;
-
-  padding: 11px 13px;
-
-  display: flex;
-
-  align-items: center;
-
-  gap: 9px;
-
-  border: 1px solid #dcefe3;
-
-  border-radius: 10px;
-
-  background: #f8fcf9;
-}
-
-.enrolled-check {
-  width: 27px;
-  height: 27px;
-
-  flex: 0 0 27px;
-
-  border-radius: 50%;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  background: #e5f5ea;
-
-  color: var(--success);
-
-  font-size: 12px;
-  font-weight: 800;
-}
-
-.enrolled-note strong {
-  display: block;
-
-  color: #205333;
-
-  font-size: 11px;
-}
-
-.enrolled-note p {
-  margin-top: 2px;
-
-  color: #718276;
-
-  font-size: 9px;
-}
-
-
-/* =========================================================
-   ERROR
-========================================================= */
-
-.error-section {
-  max-width: 420px;
-
-  margin: 80px auto;
-
+/* =========================================
+   PURCHASE CARD
+========================================= */
+
+.purchase-card {
+  margin-top: 32px;
   padding: 20px;
 
-  text-align: center;
-}
-
-.error-icon {
-  width: 42px;
-  height: 42px;
-
-  margin: 0 auto 12px;
-
-  border-radius: 50%;
-
-  background: #f2f2f2;
+  border: 1px solid var(--border);
+  border-radius: 16px;
 
   display: flex;
   align-items: center;
-  justify-content: center;
-
-  font-size: 18px;
-  font-weight: 800;
-}
-
-.error-section h2 {
-  font-size: 18px;
-}
-
-.error-section p {
-  margin-top: 7px;
-
-  color: #777777;
-
-  font-size: 11px;
-
-  line-height: 1.5;
-}
-
-.primary-button {
-  margin-top: 17px;
-
-  min-height: 40px;
-
-  padding: 0 17px;
-
-  border: 0;
-
-  border-radius: 9px;
-
-  background: var(--purple);
-
-  color: #ffffff;
-
-  font-size: 11px;
-
-  font-weight: 750;
-
-  cursor: pointer;
-}
-
-
-/* =========================================================
-   FIXED PURCHASE BAR
-========================================================= */
-
-.purchase-bar {
-  position: fixed;
-
-  left: 50%;
-  bottom: 70px;
-
-  transform: translateX(-50%);
-
-  width: min(920px, calc(100% - 30px));
-
-  min-height: 67px;
-
-  padding: 9px 13px;
-
-  z-index: 150;
+  justify-content: space-between;
+  gap: 20px;
 
   background: #ffffff;
-
-  border: 1px solid #e3e3e3;
-
-  border-radius: 13px;
-
-  display: flex;
-
-  align-items: center;
-
-  justify-content: space-between;
-
-  gap: 15px;
 }
 
-
-/* =========================================================
-   PURCHASE CARD
-========================================================= */
-
-.purchase-info {
+.price-area {
   min-width: 0;
-
-  flex: 1;
 }
 
-.purchase-course-name {
-  overflow: hidden;
+.old-price {
+  color: #999;
+  font-size: 13px;
+  text-decoration: line-through;
+}
 
-  white-space: nowrap;
+.price-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
 
-  text-overflow: ellipsis;
-
-  color: #111111;
-
-  font-size: 12px;
-
+.final-price {
+  font-size: 28px;
   font-weight: 800;
+  color: #111;
+  letter-spacing: -0.6px;
 }
 
-.purchase-meta {
-  margin-top: 2px;
-
-  color: #888888;
-
-  font-size: 9px;
-}
-
-.purchase-price {
-  margin-top: 3px;
-
+.discount-badge {
+  display: inline-flex;
+  align-items: center;
+  height: 24px;
+  padding: 0 9px;
+  border-radius: 6px;
+  background: #f2eaff;
   color: var(--purple);
-
-  font-size: 14px;
-
+  font-size: 11px;
   font-weight: 800;
 }
 
-
-/* =========================================================
-   BUY BUTTON
-========================================================= */
+.price-note {
+  margin-top: 4px;
+  color: #888;
+  font-size: 12px;
+}
 
 .buy-button,
 .continue-button {
-  flex: 0 0 auto;
-
-  min-width: 112px;
-
-  height: 40px;
-
-  padding: 0 15px;
+  min-width: 180px;
+  min-height: 48px;
+  padding: 0 22px;
 
   border: 0;
-
-  border-radius: 9px;
+  border-radius: 11px;
 
   background: var(--purple);
-
   color: #ffffff;
 
-  font-size: 10px;
-
+  font-size: 13px;
   font-weight: 800;
-
-  letter-spacing: 0.3px;
+  letter-spacing: 0.4px;
 
   cursor: pointer;
-
-  display: flex;
-
-  align-items: center;
-  justify-content: center;
-
-  gap: 8px;
 }
 
 .buy-button:hover,
@@ -851,455 +583,373 @@ body {
   background: var(--purple-dark);
 }
 
-.buy-button:active,
-.continue-button:active {
-  transform: scale(0.98);
+.buy-button:disabled,
+.continue-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.continue-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
 }
 
 
-/* =========================================================
-   BOTTOM NAVIGATION
-========================================================= */
+/* =========================================
+   DETAILS
+========================================= */
+
+.details-section {
+  margin-top: 34px;
+}
+
+.section-heading {
+  margin-bottom: 13px;
+}
+
+.section-heading h3 {
+  font-size: 17px;
+  font-weight: 780;
+  color: #111;
+}
+
+.description {
+  color: #555;
+  font-size: 14px;
+  line-height: 1.7;
+  white-space: pre-line;
+  max-width: 850px;
+}
+
+
+/* =========================================
+   HIGHLIGHTS
+========================================= */
+
+.highlights-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.highlight-card {
+  padding: 18px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: #ffffff;
+}
+
+.highlight-number {
+  font-size: 23px;
+  font-weight: 800;
+  color: var(--purple);
+}
+
+.highlight-title {
+  margin-top: 5px;
+  font-size: 12px;
+  color: #777;
+}
+
+
+/* =========================================
+   COURSE INFO
+========================================= */
+
+.info-list {
+  border-top: 1px solid var(--border);
+}
+
+.info-row {
+  min-height: 48px;
+  padding: 12px 0;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+
+  border-bottom: 1px solid var(--border);
+
+  font-size: 13px;
+}
+
+.info-row span {
+  color: #777;
+}
+
+.info-row strong {
+  color: #111;
+  font-weight: 700;
+  text-align: right;
+}
+
+
+/* =========================================
+   ENROLLED NOTE
+========================================= */
+
+.enrolled-note {
+  margin-top: 25px;
+  padding: 15px;
+
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  border: 1px solid #dcefe3;
+  border-radius: 13px;
+
+  background: #f7fcf8;
+}
+
+.enrolled-check {
+  width: 32px;
+  height: 32px;
+
+  border-radius: 50%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: #e4f5e9;
+  color: var(--success);
+
+  font-weight: 800;
+}
+
+.enrolled-note strong {
+  font-size: 13px;
+  color: #1a4e30;
+}
+
+.enrolled-note p {
+  margin-top: 2px;
+  color: #6b806f;
+  font-size: 11px;
+}
+
+
+/* =========================================
+   ERROR
+========================================= */
+
+.error-section {
+  max-width: 500px;
+  margin: 100px auto;
+  padding: 20px;
+  text-align: center;
+}
+
+.error-icon {
+  width: 48px;
+  height: 48px;
+  margin: 0 auto 15px;
+
+  border-radius: 50%;
+  background: #f2f2f2;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 22px;
+  font-weight: 800;
+}
+
+.error-section h2 {
+  font-size: 20px;
+}
+
+.error-section p {
+  margin-top: 8px;
+  color: #777;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.primary-button {
+  margin-top: 22px;
+  min-height: 44px;
+  padding: 0 18px;
+  border: 0;
+  border-radius: 10px;
+  background: var(--purple);
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+
+/* =========================================
+   BOTTOM NAV
+========================================= */
 
 .bottom-nav {
   position: fixed;
-
   left: 0;
   right: 0;
   bottom: 0;
 
-  height: 68px;
+  height: calc(68px + env(safe-area-inset-bottom));
 
   padding:
-    4px 6px
+    5px
+    8px
     env(safe-area-inset-bottom);
 
-  z-index: 200;
-
   background: #ffffff;
-
-  border-top: 1px solid #e7e7e7;
+  border-top: 1px solid #e9e9e9;
 
   display: grid;
+  grid-template-columns: repeat(5, 1fr);
 
-  grid-template-columns:
-    repeat(5, 1fr);
+  z-index: 200;
 }
 
 .nav-item {
   min-width: 0;
 
-  text-decoration: none;
-
-  color: #888888;
-
   display: flex;
-
   flex-direction: column;
-
   align-items: center;
-
   justify-content: center;
-
   gap: 4px;
 
-  font-size: 9px;
+  text-decoration: none;
 
-  font-weight: 650;
+  color: #888;
+
+  font-size: 10px;
+  font-weight: 600;
 }
 
 .nav-icon {
-  width: 23px;
-  height: 23px;
-
-  display: flex;
-
-  align-items: center;
-  justify-content: center;
-
-  font-size: 18px;
-
+  font-size: 19px;
   line-height: 1;
 }
 
 .nav-item.active {
   color: var(--purple);
-
   font-weight: 800;
 }
 
-.nav-item.active::after {
-  content: "";
-
-  position: absolute;
-
-  bottom: 4px;
-
-  width: 35px;
-
-  height: 3px;
-
-  border-radius: 5px;
-
-  background: var(--purple);
+.nav-item.active .nav-icon {
+  font-weight: 800;
 }
-
-
-/* =========================================================
-   BOTTOM SPACE
-========================================================= */
 
 .bottom-space {
   height: 80px;
 }
 
 
-/* =========================================================
-   MOBILE
-========================================================= */
-
-@media (max-width: 700px) {
-
-  .course-header {
-    height: 118px;
-
-    padding:
-      10px 65px;
-  }
-
-
-  .brand-name {
-    font-size: 14px;
-
-    letter-spacing: 2.1px;
-  }
-
-
-  .header-center h1 {
-    margin-top: 5px;
-
-    font-size: 27px;
-  }
-
-
-  .back-button {
-    left: 20px;
-
-    width: 58px;
-    height: 58px;
-
-    border-radius: 17px;
-  }
-
-
-  .back-button svg {
-    width: 28px;
-    height: 28px;
-  }
-
-
-  .notification-button {
-    right: 15px;
-
-    width: 44px;
-    height: 44px;
-  }
-
-
-  .notification-button svg {
-    width: 29px;
-    height: 29px;
-  }
-
-
-  .course-content {
-    padding:
-      17px 18px
-      145px;
-  }
-
-
-  /* Hero becomes compact */
-
-  .course-hero {
-    display: block;
-
-    margin-top: 0;
-  }
-
-
-  .course-image-wrapper {
-    width: 100%;
-
-    aspect-ratio: 16 / 8.8;
-
-    border-radius: 13px;
-  }
-
-
-  .course-hero-info {
-    margin-top: 14px;
-  }
-
-
-  .course-hero-info h2 {
-    font-size: 23px;
-
-    line-height: 1.12;
-  }
-
-
-  .course-code {
-    font-size: 10px;
-
-    margin-top: 5px;
-  }
-
-
-  .course-meta {
-    margin-top: 12px;
-
-    gap: 6px;
-  }
-
-
-  .meta-item {
-    min-width: 82px;
-
-    padding: 8px 9px;
-
-    border-radius: 9px;
-  }
-
-
-  .meta-label {
-    font-size: 7px;
-  }
-
-
-  .meta-value {
-    font-size: 10px;
-  }
-
-
-  .details-section {
-    margin-top: 23px;
-  }
-
-
-  .section-heading h3 {
-    font-size: 15px;
-  }
-
-
-  .description {
-    font-size: 11px;
-
-    line-height: 1.65;
-  }
-
-
-  .highlights-grid {
-    gap: 6px;
-  }
-
-
-  .highlight-card {
-    padding: 11px;
-
-    border-radius: 10px;
-  }
-
-
-  .highlight-number {
-    font-size: 17px;
-  }
-
-
-  .highlight-title {
-    font-size: 8px;
-  }
-
-
-  .info-row {
-    min-height: 38px;
-
-    padding: 8px 0;
-
-    font-size: 10px;
-  }
-
-
-  /* FIXED PURCHASE BAR */
-
-  .purchase-bar {
-    bottom: 68px;
-
-    width: calc(100% - 20px);
-
-    min-height: 62px;
-
-    padding: 8px 9px;
-
-    border-radius: 11px;
-
-    gap: 8px;
-  }
-
-
-  .purchase-course-name {
-    font-size: 10px;
-  }
-
-
-  .purchase-meta {
-    font-size: 8px;
-  }
-
-
-  .purchase-price {
-    font-size: 12px;
-  }
-
-
-  .buy-button,
-  .continue-button {
-    min-width: 91px;
-
-    height: 37px;
-
-    padding: 0 10px;
-
-    border-radius: 8px;
-
-    font-size: 9px;
-  }
-
-
-  .bottom-nav {
-    height: 68px;
-  }
-
-
-  .nav-item {
-    font-size: 8px;
-
-    gap: 3px;
-  }
-
-
-  .nav-icon {
-    width: 21px;
-    height: 21px;
-
-    font-size: 17px;
-  }
-
-
-  .nav-item.active::after {
-    width: 32px;
-
-    height: 3px;
-
-    bottom: 3px;
-  }
-
-
-  .bottom-space {
-    height: 75px;
-  }
-
-}
-
-
-/* =========================================================
-   VERY SMALL PHONES
-========================================================= */
-
-@media (max-width: 380px) {
-
-  .course-header {
-    height: 108px;
-  }
-
-
-  .brand-name {
-    font-size: 12px;
-
-    letter-spacing: 1.8px;
-  }
-
-
-  .header-center h1 {
-    font-size: 24px;
-  }
-
-
-  .back-button {
-    left: 14px;
-
-    width: 52px;
-    height: 52px;
-
-    border-radius: 16px;
-  }
-
-
-  .back-button svg {
-    width: 25px;
-    height: 25px;
-  }
-
-
-  .notification-button {
-    right: 9px;
-  }
-
-
-  .course-content {
-    padding-left: 14px;
-    padding-right: 14px;
-  }
-
-
-  .course-hero-info h2 {
-    font-size: 21px;
-  }
-
-
-  .purchase-bar {
-    width: calc(100% - 14px);
-  }
-
-
-  .buy-button,
-  .continue-button {
-    min-width: 82px;
-
-    font-size: 8px;
-  }
-
-}
-
-
-/* =========================================================
+/* =========================================
    DESKTOP
-========================================================= */
+========================================= */
 
 @media (min-width: 900px) {
 
-  .course-header {
-    height: 125px;
+  .brand-header {
+    padding-left: max(24px, calc((100vw - 1100px) / 2));
+    padding-right: max(24px, calc((100vw - 1100px) / 2));
   }
 
+  .bottom-nav {
+    max-width: 600px;
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+    border: 1px solid #e5e5e5;
+    border-bottom: 0;
+    border-radius: 16px 16px 0 0;
+  }
+
+}
+
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 700px) {
+
+  .brand-header {
+    height: 58px;
+  }
+
+  .brand-name {
+    font-size: 17px;
+  }
+
+  .page-header {
+    padding: 15px 15px 8px;
+    grid-template-columns: 40px 1fr 40px;
+  }
+
+  .page-title h1 {
+    font-size: 18px;
+  }
+
+  .page-title p {
+    font-size: 11px;
+  }
 
   .course-content {
-    padding-top: 24px;
+    padding: 8px 15px 25px;
   }
 
-
-  .purchase-bar {
-    bottom: 68px;
+  .course-hero {
+    display: block;
+    margin-top: 10px;
   }
 
+  .course-image-wrapper {
+    border-radius: 14px;
   }
+
+  .course-hero-info {
+    margin-top: 18px;
+  }
+
+  .course-hero-info h2 {
+    font-size: 27px;
+  }
+
+  .course-meta {
+    margin-top: 16px;
+  }
+
+  .meta-item {
+    flex: 1;
+    min-width: 90px;
+  }
+
+  .purchase-card {
+    margin-top: 24px;
+    padding: 16px;
+
+    display: block;
+  }
+
+  .buy-button,
+  .continue-button {
+    width: 100%;
+    margin-top: 15px;
+  }
+
+  .highlights-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .details-section {
+    margin-top: 28px;
+  }
+
+  .info-row {
+    font-size: 12px;
+  }
+
+}
