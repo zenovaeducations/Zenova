@@ -40,33 +40,78 @@
     </header>
 
 
-    <!-- PAGE HEADER -->
-    <div class="page-header">
+<header class="course-header">
 
-      <button
-        id="backButton"
-        class="back-button"
-        aria-label="Back to Courses"
-      >
-        ←
-      </button>
+  <button
+    id="backButton"
+    class="back-button"
+    aria-label="Back to Courses"
+  >
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
+      <path
+        d="M15 18l-6-6 6-6"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2.4"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+    </svg>
+  </button>
 
-      <div class="page-title">
-        <h1>Course Details</h1>
-        <p>Explore your learning program</p>
-      </div>
 
-      <button
-        id="pageNotificationBtn"
-        class="header-notification"
-        aria-label="Notifications"
-      >
-        ♢
-      </button>
+  <div class="header-center">
 
+    <div class="brand-name">
+      ZENOVA EDUCATONS
     </div>
 
+    <h1>
+      Course Details
+    </h1>
 
+  </div>
+
+
+  <button
+    id="notificationBtn"
+    class="notification-button"
+    aria-label="Notifications"
+  >
+
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
+      <path
+        d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+
+      <path
+        d="M10 21h4"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+      />
+    </svg>
+
+    <span
+      id="notificationDot"
+      class="notification-dot hidden"
+    ></span>
+
+  </button>
+
+</header>
     <!-- ERROR -->
     <section id="errorSection" class="error-section hidden">
       <div class="error-icon">!</div>
