@@ -617,7 +617,9 @@ async function loadCourse(courseId) {
 
         };
 
+paymentBar.classList.remove("hidden");
 
+showApp();
         /* =========================
            COURSE UI
         ========================== */
@@ -849,30 +851,33 @@ function escapeHtml(value) {
    AUTH
 ========================= */
 
-onAuthStateChanged(
-    auth,
-    async user => {
+onAuthStateChanged(auth, async (user) => {
+    console.log("Checkout auth state:", user);
 
-        if (!user) {
-
-            window.location.href =
-                "../login/";
-
-            return;
-
-        }
-
-
-        currentUser = user;
-
-
-        const courseId =
-            getCourseId();
-
-
-        await loadCourse(
-            courseId
-        );
-
+    if (!user) {
+        window.location.href = "../login/";
+        return;
     }
-);
+
+    currentUser = user;
+
+    const courseId = getCourseId();
+
+    console.log("Checkout course ID:", courseId);
+
+    if (!courseId) {
+        showError("No course was selected.");
+        return;
+    }
+
+    try {
+        await loadCourse(courseId);
+    } catch (error) {
+        console.error("Checkout initialization error:", error);
+
+        showError(
+            error?.message ||
+            "Unable to load checkout."
+        );
+    }
+});
