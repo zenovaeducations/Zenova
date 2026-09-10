@@ -1,542 +1,419 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
-    >
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 
-    <title>Batch Details | Zenova Educations</title>
+  <title>Course Details | Zenova Educations</title>
 
-    <link rel="stylesheet" href="./batchdetails.css">
+  <link rel="stylesheet" href="batchdetails.css">
 </head>
 
 <body>
 
-    <!-- LOADING -->
-    <div id="loadingScreen" class="loading-screen">
-        <div class="loader-ring">
-            <span>Z</span>
-        </div>
+  <!-- Loading -->
+  <div id="loadingScreen" class="loading-screen">
+    <div class="loading-ring">
+      <div class="loading-z">Z</div>
     </div>
+    <div class="loading-text">Loading course...</div>
+  </div>
 
 
-    <!-- HEADER -->
-    <header class="top-header">
+  <!-- App -->
+  <div id="app" class="app hidden">
 
-        <button
-            id="backButton"
-            class="icon-button"
-            aria-label="Back"
-        >
-            <svg viewBox="0 0 24 24">
-                <path
-                    d="M15 18l-6-6 6-6"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                />
-            </svg>
-        </button>
+    <!-- BRAND HEADER -->
+    <header class="brand-header">
+      <div class="brand-name">
+        Zenova Educations
+      </div>
 
-
-        <div class="header-brand">
-            ZENOVA EDUCATIONS
-        </div>
-
-
-        <button
-            id="notificationButton"
-            class="icon-button"
-            aria-label="Notifications"
-        >
-            <svg viewBox="0 0 24 24">
-                <path
-                    d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="1.8"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                />
-                <path
-                    d="M10 21h4"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="1.8"
-                    stroke-linecap="round"
-                />
-            </svg>
-
-            <span class="notification-dot"></span>
-        </button>
-
+      <button
+        id="topNotificationBtn"
+        class="icon-button"
+        aria-label="Notifications"
+      >
+        <span class="notification-icon">♢</span>
+        <span id="notificationDot" class="notification-dot hidden"></span>
+      </button>
     </header>
 
 
-    <!-- MAIN -->
-    <main class="page-content">
+    <!-- PAGE HEADER -->
+    <div class="page-header">
 
-        <!-- HERO -->
-        <section class="course-hero">
+      <button
+        id="backButton"
+        class="back-button"
+        aria-label="Back to Courses"
+      >
+        ←
+      </button>
 
-            <div class="course-image-wrap">
+      <div class="page-title">
+        <h1>Course Details</h1>
+        <p>Explore your learning program</p>
+      </div>
 
-                <img
-                    id="courseImage"
-                    class="course-image"
-                    src=""
-                    alt="Course"
-                >
+      <button
+        id="pageNotificationBtn"
+        class="header-notification"
+        aria-label="Notifications"
+      >
+        ♢
+      </button>
 
-                <div
-                    id="courseBadge"
-                    class="course-badge hidden"
-                >
-                    ENROLLED
-                </div>
-
-            </div>
-
-
-            <div class="course-basic">
-
-                <div
-                    id="courseClass"
-                    class="course-class"
-                >
-                    —
-                </div>
+    </div>
 
 
-                <h1 id="courseTitle">
-                    Loading...
-                </h1>
+    <!-- ERROR -->
+    <section id="errorSection" class="error-section hidden">
+      <div class="error-icon">!</div>
+      <h2>Course unavailable</h2>
+      <p id="errorMessage">
+        We couldn't load this course.
+      </p>
+
+      <button id="backToCoursesBtn" class="primary-button">
+        BACK TO COURSES
+      </button>
+    </section>
 
 
-                <div
-                    id="courseCode"
-                    class="course-code"
-                ></div>
+    <!-- COURSE CONTENT -->
+    <main id="courseContent" class="course-content hidden">
+
+      <!-- HERO -->
+      <section class="course-hero">
+
+        <div class="course-image-wrapper">
+
+          <img
+            id="courseImage"
+            class="course-image"
+            src=""
+            alt="Course"
+          >
+
+          <div
+            id="courseImageFallback"
+            class="course-image-fallback"
+          >
+            <span>Z</span>
+          </div>
+
+        </div>
 
 
-                <div
-                    id="courseMeta"
-                    class="course-meta"
-                ></div>
+        <div class="course-hero-info">
 
-            </div>
+          <div class="course-badges">
 
-        </section>
+            <span id="classBadge" class="badge">
+              Class
+            </span>
 
-
-        <!-- ACTION -->
-        <section
-            id="purchaseSection"
-            class="purchase-card"
-        >
-
-            <div class="price-area">
-
-                <span class="price-label">
-                    Course Fee
-                </span>
-
-                <div class="price-row">
-
-                    <span
-                        id="coursePrice"
-                        class="final-price"
-                    >
-                        —
-                    </span>
-
-                    <span
-                        id="originalPrice"
-                        class="original-price"
-                    ></span>
-
-                </div>
-
-            </div>
-
-
-            <button
-                id="mainActionButton"
-                class="main-action"
-                type="button"
+            <span
+              id="activeBadge"
+              class="badge badge-active hidden"
             >
-                BUY NOW
-            </button>
+              ACTIVE
+            </span>
 
-        </section>
+          </div>
 
 
-        <!-- DESCRIPTION -->
-        <section class="details-section">
+          <h2 id="courseTitle">
+            Course Name
+          </h2>
 
-            <div class="section-label">
-                ABOUT THIS BATCH
-            </div>
 
-            <h2>
-                Course Overview
-            </h2>
+          <div
+            id="courseCode"
+            class="course-code"
+          >
+            Course Code
+          </div>
 
-            <p
-                id="courseDescription"
-                class="description"
-            >
+
+          <div class="course-meta">
+
+            <div class="meta-item">
+              <span class="meta-label">Medium</span>
+              <span id="courseMedium" class="meta-value">
                 —
-            </p>
+              </span>
+            </div>
 
-        </section>
+            <div
+              id="durationMeta"
+              class="meta-item"
+            >
+              <span class="meta-label">Duration</span>
+              <span id="courseDuration" class="meta-value">
+                —
+              </span>
+            </div>
+
+            <div
+              id="classesMeta"
+              class="meta-item"
+            >
+              <span class="meta-label">Classes</span>
+              <span id="totalClasses" class="meta-value">
+                —
+              </span>
+            </div>
+
+          </div>
+
+        </div>
+
+      </section>
 
 
-        <!-- HIGHLIGHTS -->
-        <section
-            id="highlightsSection"
-            class="details-section"
+      <!-- PURCHASE CARD -->
+      <section class="purchase-card">
+
+        <div class="price-area">
+
+          <div
+            id="oldPrice"
+            class="old-price hidden"
+          >
+            ₹0
+          </div>
+
+          <div class="price-row">
+
+            <span id="finalPrice" class="final-price">
+              ₹0
+            </span>
+
+            <span
+              id="discountBadge"
+              class="discount-badge hidden"
+            >
+              0% OFF
+            </span>
+
+          </div>
+
+          <div class="price-note">
+            Complete course access
+          </div>
+
+        </div>
+
+
+        <button
+          id="buyNowBtn"
+          class="buy-button"
         >
-
-            <div class="section-label">
-                WHAT YOU GET
-            </div>
-
-            <h2>
-                Course Highlights
-            </h2>
+          BUY NOW
+        </button>
 
 
-            <div class="highlights-grid">
+        <button
+          id="continueBtn"
+          class="continue-button hidden"
+        >
+          CONTINUE LEARNING
+          <span>→</span>
+        </button>
 
-                <div class="highlight-card">
-
-                    <div class="highlight-icon">
-                        <svg viewBox="0 0 24 24">
-                            <path
-                                d="M4 5.5A2.5 2.5 0 0 1 6.5 3H11v17H6.5A2.5 2.5 0 0 0 4 22V5.5Z"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="1.7"
-                            />
-
-                            <path
-                                d="M20 5.5A2.5 2.5 0 0 0 17.5 3H13v17h4.5A2.5 2.5 0 0 1 20 22V5.5Z"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="1.7"
-                            />
-                        </svg>
-                    </div>
-
-                    <div>
-                        <strong id="subjectsValue">
-                            —
-                        </strong>
-
-                        <span>
-                            Subjects
-                        </span>
-                    </div>
-
-                </div>
+      </section>
 
 
-                <div class="highlight-card">
+      <!-- DESCRIPTION -->
+      <section class="details-section">
 
-                    <div class="highlight-icon">
-                        <svg viewBox="0 0 24 24">
-                            <circle
-                                cx="12"
-                                cy="12"
-                                r="9"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="1.7"
-                            />
+        <div class="section-heading">
+          <h3>About this course</h3>
+        </div>
 
-                            <path
-                                d="M12 7v5l3 2"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="1.7"
-                                stroke-linecap="round"
-                            />
-                        </svg>
-                    </div>
+        <div
+          id="courseDescription"
+          class="description"
+        >
+          Course description will appear here.
+        </div>
 
-                    <div>
-                        <strong id="durationValue">
-                            —
-                        </strong>
-
-                        <span>
-                            Duration
-                        </span>
-                    </div>
-
-                </div>
+      </section>
 
 
-                <div class="highlight-card">
+      <!-- HIGHLIGHTS -->
+      <section
+        id="highlightsSection"
+        class="details-section hidden"
+      >
 
-                    <div class="highlight-icon">
-                        <svg viewBox="0 0 24 24">
-                            <path
-                                d="M4 5h16v14H4z"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="1.7"
-                            />
+        <div class="section-heading">
+          <h3>Course Highlights</h3>
+        </div>
 
-                            <path
-                                d="M8 9h8M8 13h5"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="1.7"
-                                stroke-linecap="round"
-                            />
-                        </svg>
-                    </div>
+        <div
+          id="highlightsGrid"
+          class="highlights-grid"
+        >
+        </div>
 
-                    <div>
-                        <strong id="classesValue">
-                            —
-                        </strong>
-
-                        <span>
-                            Classes
-                        </span>
-                    </div>
-
-                </div>
+      </section>
 
 
-                <div class="highlight-card">
+      <!-- COURSE INFORMATION -->
+      <section class="details-section">
 
-                    <div class="highlight-icon">
-                        <svg viewBox="0 0 24 24">
-                            <path
-                                d="M12 3l7 3v5c0 4.5-3 7.8-7 10-4-2.2-7-5.5-7-10V6l7-3Z"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="1.7"
-                                stroke-linejoin="round"
-                            />
-                        </svg>
-                    </div>
-
-                    <div>
-                        <strong>
-                            Premium
-                        </strong>
-
-                        <span>
-                            Learning
-                        </span>
-                    </div>
-
-                </div>
-
-            </div>
-
-        </section>
+        <div class="section-heading">
+          <h3>Course Information</h3>
+        </div>
 
 
-        <!-- COURSE INFORMATION -->
-        <section class="details-section">
+        <div class="info-list">
 
-            <div class="section-label">
-                COURSE INFORMATION
-            </div>
-
-            <h2>
-                Details
-            </h2>
+          <div class="info-row">
+            <span>Course</span>
+            <strong id="infoCourseName">
+              —
+            </strong>
+          </div>
 
 
-            <div class="info-list">
-
-                <div class="info-row">
-                    <span>Class</span>
-                    <strong id="infoClass">—</strong>
-                </div>
-
-                <div class="info-row">
-                    <span>Board</span>
-                    <strong id="infoBoard">—</strong>
-                </div>
-
-                <div class="info-row">
-                    <span>Medium</span>
-                    <strong id="infoMedium">—</strong>
-                </div>
-
-                <div class="info-row">
-                    <span>Course Code</span>
-                    <strong id="infoCode">—</strong>
-                </div>
-
-            </div>
-
-        </section>
+          <div class="info-row">
+            <span>Course Code</span>
+            <strong id="infoCourseCode">
+              —
+            </strong>
+          </div>
 
 
-        <!-- BOTTOM SPACE -->
-        <div class="bottom-space"></div>
+          <div class="info-row">
+            <span>Class</span>
+            <strong id="infoClass">
+              —
+            </strong>
+          </div>
+
+
+          <div class="info-row">
+            <span>Board</span>
+            <strong id="infoBoard">
+              —
+            </strong>
+          </div>
+
+
+          <div class="info-row">
+            <span>Medium</span>
+            <strong id="infoMedium">
+              —
+            </strong>
+          </div>
+
+
+          <div
+            id="infoDurationRow"
+            class="info-row"
+          >
+            <span>Duration</span>
+            <strong id="infoDuration">
+              —
+            </strong>
+          </div>
+
+
+          <div
+            id="infoClassesRow"
+            class="info-row"
+          >
+            <span>Total Classes</span>
+            <strong id="infoTotalClasses">
+              —
+            </strong>
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- ACCESS NOTE -->
+      <section
+        id="enrolledNote"
+        class="enrolled-note hidden"
+      >
+        <div class="enrolled-check">
+          ✓
+        </div>
+
+        <div>
+          <strong>You are enrolled in this course</strong>
+          <p>
+            Continue learning from where you stopped.
+          </p>
+        </div>
+      </section>
+
+
+      <div class="bottom-space"></div>
 
     </main>
 
 
-    <!-- FIXED BOTTOM NAV -->
-    <nav class="bottom-navigation">
+    <!-- BOTTOM NAV -->
+    <nav class="bottom-nav">
 
-        <a
-            href="../"
-            class="nav-item"
-        >
-            <span class="nav-icon">
-                <svg viewBox="0 0 24 24">
-                    <path
-                        d="M3 11.5L12 4l9 7.5"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="1.8"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                    />
-
-                    <path
-                        d="M5.5 10.5V20h13v-9.5"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="1.8"
-                    />
-                </svg>
-            </span>
-
-            <span>
-                Home
-            </span>
-        </a>
+      <a
+        href="../"
+        class="nav-item"
+      >
+        <span class="nav-icon">⌂</span>
+        <span>Home</span>
+      </a>
 
 
-        <a
-            href="../batches/"
-            class="nav-item"
-        >
-            <span class="nav-icon">
-                <svg viewBox="0 0 24 24">
-                    <rect
-                        x="5"
-                        y="4"
-                        width="14"
-                        height="16"
-                        rx="2"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="1.8"
-                    />
-
-                    <path
-                        d="M9 8h6M9 12h6M9 16h3"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="1.8"
-                        stroke-linecap="round"
-                    />
-                </svg>
-            </span>
-
-            <span>
-                Courses
-            </span>
-        </a>
+      <a
+        href="../batches/"
+        class="nav-item active"
+      >
+        <span class="nav-icon">▣</span>
+        <span>Courses</span>
+      </a>
 
 
-        <a
-            href="../study/"
-            class="nav-item"
-        >
-            <span class="nav-icon">
-                <svg viewBox="0 0 24 24">
-                    <path
-                        d="M4 5.5A2.5 2.5 0 0 1 6.5 3H11v17H6.5A2.5 2.5 0 0 0 4 22V5.5Z"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="1.7"
-                    />
-
-                    <path
-                        d="M20 5.5A2.5 2.5 0 0 0 17.5 3H13v17h4.5A2.5 2.5 0 0 1 20 22V5.5Z"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="1.7"
-                    />
-                </svg>
-            </span>
-
-            <span>
-                Study Now
-            </span>
-        </a>
+      <a
+        href="../study/"
+        class="nav-item"
+      >
+        <span class="nav-icon">▶</span>
+        <span>Study Now</span>
+      </a>
 
 
-        <a
-            href="../ai/"
-            class="nav-item"
-        >
-            <span class="nav-icon ai-icon">
-                Z
-            </span>
-
-            <span>
-                Zenova AI
-            </span>
-        </a>
+      <a
+        href="../ai/"
+        class="nav-item"
+      >
+        <span class="nav-icon">✦</span>
+        <span>Zenova AI</span>
+      </a>
 
 
-        <a
-            href="../profile/"
-            class="nav-item"
-        >
-            <span class="nav-icon">
-                <svg viewBox="0 0 24 24">
-                    <circle
-                        cx="12"
-                        cy="8"
-                        r="3.5"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="1.8"
-                    />
-
-                    <path
-                        d="M5 20c.8-3.4 3.3-5.2 7-5.2s6.2 1.8 7 5.2"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="1.8"
-                        stroke-linecap="round"
-                    />
-                </svg>
-            </span>
-
-            <span>
-                Profile
-            </span>
-        </a>
+      <a
+        href="../profile/"
+        class="nav-item"
+      >
+        <span class="nav-icon">○</span>
+        <span>Profile</span>
+      </a>
 
     </nav>
 
+  </div>
 
-    <script
-        type="module"
-        src="./batchdetails.js"
-    ></script>
+
+  <script type="module" src="batchdetails.js"></script>
 
 </body>
 </html>
