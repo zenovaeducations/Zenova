@@ -644,8 +644,10 @@ showApp();
 
 
         loadCourseImage(
-            currentCourse.crmImageUrl
-        );
+    currentCourse.crmImageUrl ||
+    currentCourse.imageUrl ||
+    currentCourse.courseImageUrl
+);
 
 
         /* =========================
