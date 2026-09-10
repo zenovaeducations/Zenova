@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Courses | Zenova Educations</title>
+
+    <link
+        rel="stylesheet"
+        href="./batches.css"
+    >
+
+</head>
+
+
+<body>
+
+<div class="app">
+
+
+    <!-- =====================================================
+         TOP HEADER
+    ====================================================== -->
+
+    <header class="top-header">
+
+        <div class="header-left">
+
+            <button
+                id="backButton"
+                class="back-button"
+                type="button"
+                aria-label="Go back"
+            >
+                ←
+            </button>
+
+
+            <div class="brand-area">
+
+                <div class="brand-name">
+                    ZENOVA
+                </div>
+
+                <div class="brand-subtitle">
+                    EDUCATONS
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="header-title">
+
+            <span class="header-label">
+                LEARNING
+            </span>
+
+            <h1>
+                Courses
+            </h1>
+
+        </div>
+
+
+        <button
+            id="notificationButton"
+            class="notification-button"
+            type="button"
+            aria-label="Notifications"
+        >
+
+            <span class="notification-icon">
+                ♧
+            </span>
+
+            <span
+                id="notificationDot"
+                class="notification-dot hidden"
+            ></span>
+
+        </button>
+
+    </header>
+
+
+
+    <!-- =====================================================
+         MAIN CONTENT
+    ====================================================== -->
+
+    <main class="main-content">
+
+
+        <!-- SEARCH -->
+
+        <section class="search-section">
+
+            <div class="search-box">
+
+                <span class="search-icon">
+                    ⌕
+                </span>
+
+                <input
+                    id="searchInput"
+                    type="search"
+                    placeholder="Search courses..."
+                    autocomplete="off"
+                >
+
+                <button
+                    id="clearSearch"
+                    class="clear-search hidden"
+                    type="button"
+                >
+                    ×
+                </button>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- FILTERS -->
+
+        <section class="filter-section">
+
+            <div
+                id="filterList"
+                class="filter-list"
+            ></div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             MY BATCH
+        ================================================== -->
+
+        <section
+            id="myBatchSection"
+            class="content-section hidden"
+        >
+
+            <div class="section-heading">
+
+                <div>
+
+                    <span class="section-label">
+                        YOUR LEARNING
+                    </span>
+
+                    <h2>
+                        My Batch
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <div
+                id="myBatchCard"
+                class="my-batch-card"
+            ></div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             RECOMMENDED
+        ================================================== -->
+
+        <section
+            id="recommendedSection"
+            class="content-section hidden"
+        >
+
+            <div class="section-heading">
+
+                <div>
+
+                    <span class="section-label">
+                        FOR YOU
+                    </span>
+
+                    <h2>
+                        Recommended
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <div
+                id="recommendedList"
+                class="course-horizontal-list"
+            ></div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             MY CLASS
+        ================================================== -->
+
+        <section
+            id="myClassSection"
+            class="content-section"
+        >
+
+            <div class="section-heading">
+
+                <div>
+
+                    <span class="section-label">
+                        YOUR CLASS
+                    </span>
+
+                    <h2 id="myClassTitle">
+                        My Class
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <div
+                id="myClassList"
+                class="course-grid"
+            ></div>
+
+
+            <div
+                id="myClassEmpty"
+                class="section-empty hidden"
+            >
+                No courses available for your class yet.
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             OTHER PROGRAMS
+        ================================================== -->
+
+        <section
+            id="otherProgramsSection"
+            class="content-section"
+        >
+
+            <div class="section-heading">
+
+                <div>
+
+                    <span class="section-label">
+                        EXPLORE
+                    </span>
+
+                    <h2>
+                        Other Programs
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <div
+                id="otherPrograms"
+                class="other-programs"
+            ></div>
+
+        </section>
+
+
+
+        <!-- BOTTOM SAFE SPACE -->
+
+        <div class="bottom-space"></div>
+
+    </main>
+
+
+
+    <!-- =====================================================
+         FIXED BOTTOM NAVIGATION
+    ====================================================== -->
+
+    <nav
+        id="bottomNavigation"
+        class="bottom-navigation"
+    >
+
+        <button
+            class="nav-item"
+            data-route="home"
+            type="button"
+        >
+
+            <span class="nav-icon">
+                ⌂
+            </span>
+
+            <span class="nav-label">
+                Home
+            </span>
+
+        </button>
+
+
+        <button
+            class="nav-item active"
+            data-route="batches"
+            type="button"
+        >
+
+            <span class="nav-icon nav-pulse">
+                ▣
+            </span>
+
+            <span class="nav-label">
+                Courses
+            </span>
+
+            <span class="active-indicator"></span>
+
+        </button>
+
+
+        <button
+            class="nav-item"
+            data-route="study"
+            type="button"
+        >
+
+            <span class="nav-icon">
+                ◫
+            </span>
+
+            <span class="nav-label">
+                Study
+            </span>
+
+        </button>
+
+
+        <button
+            class="nav-item"
+            data-route="timetable"
+            type="button"
+        >
+
+            <span class="nav-icon">
+                □
+            </span>
+
+            <span class="nav-label">
+                Schedule
+            </span>
+
+        </button>
+
+
+        <button
+            class="nav-item"
+            data-route="more"
+            type="button"
+        >
+
+            <span class="nav-icon">
+                •••
+            </span>
+
+            <span class="nav-label">
+                More
+            </span>
+
+        </button>
+
+    </nav>
+
+
+
+    <!-- =====================================================
+         LOADING
+    ====================================================== -->
+
+    <div
+        id="loadingScreen"
+        class="loading-screen"
+    >
+
+        <div class="loading-ring">
+
+            <span>
+                Z
+            </span>
+
+        </div>
+
+        <p>
+            Loading courses
+        </p>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         TOAST
+    ====================================================== -->
+
+    <div
+        id="toast"
+        class="toast"
+    ></div>
+
+
+    <script
+        type="module"
+        src="./batches.js"
+    ></script>
+
+</div>
+
+</body>
+
+</html>
