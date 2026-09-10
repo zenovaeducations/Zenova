@@ -11,61 +11,94 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
 
-/* =========================================
-   ELEMENTS
-========================================= */
+/* =========================================================
+   PAGE ELEMENTS
+========================================================= */
 
-const loadingScreen = document.getElementById("loadingScreen");
-const app = document.getElementById("app");
+const loadingScreen =
+  document.getElementById("loadingScreen");
 
-const courseContent = document.getElementById("courseContent");
-const errorSection = document.getElementById("errorSection");
-const errorMessage = document.getElementById("errorMessage");
+const app =
+  document.getElementById("app");
 
-const backButton = document.getElementById("backButton");
-const backToCoursesBtn = document.getElementById("backToCoursesBtn");
+const courseContent =
+  document.getElementById("courseContent");
 
-const buyNowBtn = document.getElementById("buyNowBtn");
-const continueBtn = document.getElementById("continueBtn");
-const enrolledNote = document.getElementById("enrolledNote");
+const errorSection =
+  document.getElementById("errorSection");
 
-
-/* COURSE */
-
-const courseImage = document.getElementById("courseImage");
-const courseImageFallback = document.getElementById("courseImageFallback");
-
-const courseTitle = document.getElementById("courseTitle");
-const courseCode = document.getElementById("courseCode");
-const classBadge = document.getElementById("classBadge");
-const activeBadge = document.getElementById("activeBadge");
-
-const courseMedium = document.getElementById("courseMedium");
-const courseDuration = document.getElementById("courseDuration");
-const totalClasses = document.getElementById("totalClasses");
-
-const oldPrice = document.getElementById("oldPrice");
-const finalPrice = document.getElementById("finalPrice");
-const discountBadge = document.getElementById("discountBadge");
-
-const courseDescription = document.getElementById("courseDescription");
+const errorMessage =
+  document.getElementById("errorMessage");
 
 
-/* INFO */
+/* =========================================================
+   HEADER
+========================================================= */
 
-const infoCourseName = document.getElementById("infoCourseName");
-const infoCourseCode = document.getElementById("infoCourseCode");
-const infoClass = document.getElementById("infoClass");
-const infoBoard = document.getElementById("infoBoard");
-const infoMedium = document.getElementById("infoMedium");
-const infoDuration = document.getElementById("infoDuration");
-const infoTotalClasses = document.getElementById("infoTotalClasses");
+const backButton =
+  document.getElementById("backButton");
 
-const infoDurationRow = document.getElementById("infoDurationRow");
-const infoClassesRow = document.getElementById("infoClassesRow");
+const notificationBtn =
+  document.getElementById("notificationBtn");
 
 
-/* HIGHLIGHTS */
+/* =========================================================
+   COURSE
+========================================================= */
+
+const courseImage =
+  document.getElementById("courseImage");
+
+const courseImageFallback =
+  document.getElementById("courseImageFallback");
+
+const courseTitle =
+  document.getElementById("courseTitle");
+
+const courseCode =
+  document.getElementById("courseCode");
+
+const classBadge =
+  document.getElementById("classBadge");
+
+const activeBadge =
+  document.getElementById("activeBadge");
+
+const courseMedium =
+  document.getElementById("courseMedium");
+
+const courseDuration =
+  document.getElementById("courseDuration");
+
+const totalClasses =
+  document.getElementById("totalClasses");
+
+
+/* =========================================================
+   PRICE
+========================================================= */
+
+const oldPrice =
+  document.getElementById("oldPrice");
+
+const finalPrice =
+  document.getElementById("finalPrice");
+
+const discountBadge =
+  document.getElementById("discountBadge");
+
+
+/* =========================================================
+   DESCRIPTION
+========================================================= */
+
+const courseDescription =
+  document.getElementById("courseDescription");
+
+
+/* =========================================================
+   HIGHLIGHTS
+========================================================= */
 
 const highlightsSection =
   document.getElementById("highlightsSection");
@@ -74,436 +107,479 @@ const highlightsGrid =
   document.getElementById("highlightsGrid");
 
 
-/* =========================================
+/* =========================================================
+   COURSE INFORMATION
+========================================================= */
+
+const infoCourseName =
+  document.getElementById("infoCourseName");
+
+const infoCourseCode =
+  document.getElementById("infoCourseCode");
+
+const infoClass =
+  document.getElementById("infoClass");
+
+const infoBoard =
+  document.getElementById("infoBoard");
+
+const infoMedium =
+  document.getElementById("infoMedium");
+
+const infoDuration =
+  document.getElementById("infoDuration");
+
+const infoTotalClasses =
+  document.getElementById("infoTotalClasses");
+
+const infoDurationRow =
+  document.getElementById("infoDurationRow");
+
+const infoClassesRow =
+  document.getElementById("infoClassesRow");
+
+
+/* =========================================================
+   PURCHASE / ACCESS
+========================================================= */
+
+const buyNowBtn =
+  document.getElementById("buyNowBtn");
+
+const continueBtn =
+  document.getElementById("continueBtn");
+
+const enrolledNote =
+  document.getElementById("enrolledNote");
+
+
+const backToCoursesBtn =
+  document.getElementById("backToCoursesBtn");
+
+
+/* =========================================================
    STATE
-========================================= */
+========================================================= */
 
 let currentUser = null;
+
 let currentCourse = null;
+
 let currentEnrollment = null;
 
 let unsubscribeCourse = null;
 
 
-/* =========================================
-   COURSE ID
-========================================= */
+/* =========================================================
+   GET COURSE ID
+========================================================= */
 
-const params =
+const urlParams =
   new URLSearchParams(window.location.search);
 
 const courseId =
-  params.get("id");
+  urlParams.get("id");
 
 
-console.log("Batch Details Course ID:", courseId);
+console.log(
+  "[Batch Details] Course ID:",
+  courseId
+);
 
 
-/* =========================================
-   BASIC HELPERS
-========================================= */
+/* =========================================================
+   LOADING
+========================================================= */
 
 function showLoading() {
-  loadingScreen.classList.remove("hidden");
-  app.classList.add("hidden");
+
+  if (loadingScreen) {
+    loadingScreen.classList.remove("hidden");
+  }
+
+  if (app) {
+    app.classList.add("hidden");
+  }
+
 }
 
 
 function showApp() {
-  loadingScreen.classList.add("hidden");
-  app.classList.remove("hidden");
+
+  if (loadingScreen) {
+    loadingScreen.classList.add("hidden");
+  }
+
+  if (app) {
+    app.classList.remove("hidden");
+  }
+
 }
 
 
 function showError(message) {
 
-  loadingScreen.classList.add("hidden");
+  console.error(
+    "[Batch Details]",
+    message
+  );
 
-  app.classList.remove("hidden");
 
-  courseContent.classList.add("hidden");
+  if (loadingScreen) {
+    loadingScreen.classList.add("hidden");
+  }
 
-  errorSection.classList.remove("hidden");
+  if (app) {
+    app.classList.remove("hidden");
+  }
 
-  errorMessage.textContent =
-    message || "Unable to load this course.";
+  if (courseContent) {
+    courseContent.classList.add("hidden");
+  }
+
+  if (errorSection) {
+    errorSection.classList.remove("hidden");
+  }
+
+  if (errorMessage) {
+    errorMessage.textContent =
+      message ||
+      "Unable to load this course.";
+  }
+
 }
 
 
 function hideError() {
 
-  errorSection.classList.add("hidden");
-  courseContent.classList.remove("hidden");
+  if (errorSection) {
+    errorSection.classList.add("hidden");
+  }
+
+  if (courseContent) {
+    courseContent.classList.remove("hidden");
+  }
 
 }
 
 
-function money(value) {
+/* =========================================================
+   MONEY
+========================================================= */
+
+function formatMoney(value) {
 
   const number =
     Number(value || 0);
 
   return `₹${number.toLocaleString("en-IN")}`;
+
 }
 
 
-/* =========================================
+/* =========================================================
    MEDIUM
-========================================= */
+========================================================= */
 
-function getMediums(course) {
+function getCourseMediums(course) {
+
+  /*
+   * New structure
+   */
 
   if (
     Array.isArray(course.crmMediums) &&
-    course.crmMediums.length
+    course.crmMediums.length > 0
   ) {
+
     return course.crmMediums;
+
   }
+
+
+  /*
+   * Alternate array
+   */
 
   if (
     Array.isArray(course.mediums) &&
-    course.mediums.length
+    course.mediums.length > 0
   ) {
+
     return course.mediums;
+
   }
+
+
+  /*
+   * Old structure
+   */
 
   if (course.crmMedium) {
 
+    const medium =
+      String(course.crmMedium).trim();
+
     if (
-      String(course.crmMedium).toLowerCase() === "both"
+      medium.toLowerCase() === "both"
     ) {
-      return ["Kannada", "English"];
+
+      return [
+        "Kannada",
+        "English"
+      ];
+
     }
 
-    return [course.crmMedium];
+    return [medium];
+
   }
 
+
   return [];
+
 }
 
 
-function getMediumText(course) {
+function getCourseMediumText(course) {
 
   const mediums =
-    getMediums(course);
+    getCourseMediums(course);
 
   if (!mediums.length) {
     return "—";
   }
 
   return mediums.join(" • ");
+
 }
 
 
-/* =========================================
+/* =========================================================
    IMAGE
-========================================= */
+========================================================= */
 
-function renderImage(course) {
+function renderCourseImage(course) {
 
   const imageUrl =
     course.crmImageUrl ||
     course.imageUrl ||
     course.courseImage ||
+    course.image ||
     "";
+
 
   if (!imageUrl) {
 
-    courseImage.style.display = "none";
-    courseImageFallback.style.display = "flex";
+    if (courseImage) {
+      courseImage.style.display = "none";
+    }
+
+    if (courseImageFallback) {
+      courseImageFallback.style.display = "flex";
+    }
 
     return;
+
   }
 
-  courseImage.src = imageUrl;
 
-  courseImage.style.display = "block";
-  courseImageFallback.style.display = "none";
+  if (courseImage) {
 
-  courseImage.onerror = function () {
+    courseImage.src =
+      imageUrl;
 
-    courseImage.style.display = "none";
-    courseImageFallback.style.display = "flex";
+    courseImage.style.display =
+      "block";
 
-  };
+
+    courseImage.onerror =
+      () => {
+
+        courseImage.style.display =
+          "none";
+
+        if (courseImageFallback) {
+
+          courseImageFallback.style.display =
+            "flex";
+
+        }
+
+      };
+
+  }
+
+
+  if (courseImageFallback) {
+
+    courseImageFallback.style.display =
+      "none";
+
+  }
+
 }
 
 
-/* =========================================
+/* =========================================================
    PRICE
-========================================= */
+========================================================= */
 
 function renderPrice(course) {
 
-  const price =
-    Number(course.crmPrice ?? course.price ?? 0);
-
-  const discount =
-    Number(course.crmDiscount ?? course.discount ?? 0);
-
-  let final =
+  const originalPrice =
     Number(
-      course.crmFinalPrice ??
-      course.finalPrice ??
-      price - discount
+      course.crmPrice ??
+      course.price ??
+      0
     );
 
-  if (final < 0) {
-    final = 0;
+
+  const discount =
+    Number(
+      course.crmDiscount ??
+      course.discount ??
+      0
+    );
+
+
+  let calculatedFinal =
+    originalPrice - discount;
+
+
+  if (calculatedFinal < 0) {
+    calculatedFinal = 0;
   }
 
 
-  if (price > final) {
+  const final =
+    Number(
+      course.crmFinalPrice ??
+      course.finalPrice ??
+      calculatedFinal
+    );
+
+
+  /*
+   * Original price
+   */
+
+  if (
+    originalPrice > 0 &&
+    originalPrice > final
+  ) {
 
     oldPrice.textContent =
-      money(price);
+      formatMoney(originalPrice);
 
-    oldPrice.classList.remove("hidden");
+    oldPrice.classList.remove(
+      "hidden"
+    );
+
+  } else {
+
+    oldPrice.classList.add(
+      "hidden"
+    );
+
+  }
+
+
+  /*
+   * Final price
+   */
+
+  finalPrice.textContent =
+    formatMoney(final);
+
+
+  /*
+   * Discount percentage
+   */
+
+  if (
+    originalPrice > 0 &&
+    final < originalPrice
+  ) {
 
     const percentage =
       Math.round(
-        ((price - final) / price) * 100
+        (
+          (originalPrice - final) /
+          originalPrice
+        ) * 100
       );
+
 
     discountBadge.textContent =
       `${percentage}% OFF`;
 
-    discountBadge.classList.remove("hidden");
+
+    discountBadge.classList.remove(
+      "hidden"
+    );
 
   } else {
 
-    oldPrice.classList.add("hidden");
-    discountBadge.classList.add("hidden");
+    discountBadge.classList.add(
+      "hidden"
+    );
 
   }
 
-
-  finalPrice.textContent =
-    money(final);
 }
 
 
-/* =========================================
-   COURSE RENDER
-========================================= */
+/* =========================================================
+   DESCRIPTION
+========================================================= */
 
-function renderCourse(course) {
-
-  currentCourse = course;
-
-  hideError();
-
-
-  /* IMAGE */
-
-  renderImage(course);
-
-
-  /* NAME */
-
-  const name =
-    course.crmCourseName ||
-    course.courseName ||
-    "Course";
-
-  courseTitle.textContent =
-    name;
-
-
-  /* CODE */
-
-  courseCode.textContent =
-    course.crmCourseCode ||
-    course.courseCode ||
-    "—";
-
-
-  /* CLASS */
-
-  classBadge.textContent =
-    course.crmClass ||
-    course.className ||
-    "—";
-
-
-  /* ACTIVE */
-
-  if (course.crmActive === false) {
-
-    activeBadge.classList.add("hidden");
-
-  } else {
-
-    activeBadge.classList.remove("hidden");
-
-  }
-
-
-  /* MEDIUM */
-
-  const medium =
-    getMediumText(course);
-
-  courseMedium.textContent =
-    medium;
-
-
-  /* DURATION */
-
-  if (
-    course.durationMonths !== undefined &&
-    course.durationMonths !== null &&
-    course.durationMonths !== ""
-  ) {
-
-    courseDuration.textContent =
-      `${course.durationMonths} month${
-        Number(course.durationMonths) === 1 ? "" : "s"
-      }`;
-
-    document
-      .getElementById("durationMeta")
-      .classList.remove("hidden");
-
-  } else {
-
-    document
-      .getElementById("durationMeta")
-      .classList.add("hidden");
-
-  }
-
-
-  /* TOTAL CLASSES */
-
-  if (
-    course.totalClasses !== undefined &&
-    course.totalClasses !== null &&
-    course.totalClasses !== ""
-  ) {
-
-    totalClasses.textContent =
-      course.totalClasses;
-
-    document
-      .getElementById("classesMeta")
-      .classList.remove("hidden");
-
-  } else {
-
-    document
-      .getElementById("classesMeta")
-      .classList.add("hidden");
-
-  }
-
-
-  /* PRICE */
-
-  renderPrice(course);
-
-
-  /* DESCRIPTION */
+function renderDescription(course) {
 
   const description =
     course.crmDescription ||
     course.description ||
     "";
 
-  courseDescription.textContent =
-    description.trim()
-      ? description
-      : "This course provides structured learning and academic support.";
-
-
-  /* INFO */
-
-  infoCourseName.textContent =
-    name;
-
-  infoCourseCode.textContent =
-    course.crmCourseCode ||
-    course.courseCode ||
-    "—";
-
-  infoClass.textContent =
-    course.crmClass ||
-    course.className ||
-    "—";
-
-  infoBoard.textContent =
-    course.crmBoard ||
-    course.board ||
-    "—";
-
-  infoMedium.textContent =
-    medium;
-
-
-  /* DURATION INFO */
 
   if (
-    course.durationMonths !== undefined &&
-    course.durationMonths !== null &&
-    course.durationMonths !== ""
+    String(description).trim()
   ) {
 
-    infoDuration.textContent =
-      `${course.durationMonths} month${
-        Number(course.durationMonths) === 1 ? "" : "s"
-      }`;
-
-    infoDurationRow.classList.remove("hidden");
+    courseDescription.textContent =
+      description;
 
   } else {
 
-    infoDurationRow.classList.add("hidden");
+    courseDescription.textContent =
+      "This course provides structured learning and academic support.";
 
   }
-
-
-  /* CLASSES INFO */
-
-  if (
-    course.totalClasses !== undefined &&
-    course.totalClasses !== null &&
-    course.totalClasses !== ""
-  ) {
-
-    infoTotalClasses.textContent =
-      course.totalClasses;
-
-    infoClassesRow.classList.remove("hidden");
-
-  } else {
-
-    infoClassesRow.classList.add("hidden");
-
-  }
-
-
-  renderHighlights(course);
-
-  renderEnrollment();
 
 }
 
 
-/* =========================================
-   HIGHLIGHTS
-========================================= */
+/* =========================================================
+   COURSE HIGHLIGHTS
+========================================================= */
 
 function renderHighlights(course) {
 
   highlightsGrid.innerHTML = "";
 
+
   const items = [];
 
 
-  const mediums =
-    getMediums(course);
+  /*
+   * MEDIUM
+   */
 
-  if (mediums.length) {
+  const mediums =
+    getCourseMediums(course);
+
+
+  if (mediums.length > 0) {
 
     items.push({
       value: mediums.length,
@@ -516,6 +592,10 @@ function renderHighlights(course) {
   }
 
 
+  /*
+   * DURATION
+   */
+
   if (
     course.durationMonths !== undefined &&
     course.durationMonths !== null &&
@@ -523,12 +603,17 @@ function renderHighlights(course) {
   ) {
 
     items.push({
-      value: course.durationMonths,
+      value:
+        course.durationMonths,
       title: "Months"
     });
 
   }
 
+
+  /*
+   * CLASSES
+   */
 
   if (
     course.totalClasses !== undefined &&
@@ -537,61 +622,391 @@ function renderHighlights(course) {
   ) {
 
     items.push({
-      value: course.totalClasses,
+      value:
+        course.totalClasses,
       title: "Classes"
     });
 
   }
 
 
+  /*
+   * Nothing to show
+   */
+
   if (!items.length) {
 
-    highlightsSection.classList.add("hidden");
+    highlightsSection.classList.add(
+      "hidden"
+    );
 
     return;
+
   }
 
 
+  /*
+   * Render
+   */
+
   items.forEach(item => {
 
-    const div =
+    const card =
       document.createElement("div");
 
-    div.className =
+    card.className =
       "highlight-card";
 
-    div.innerHTML = `
-      <div class="highlight-number">
-        ${item.value}
-      </div>
 
-      <div class="highlight-title">
-        ${item.title}
-      </div>
-    `;
+    const number =
+      document.createElement("div");
 
-    highlightsGrid.appendChild(div);
+    number.className =
+      "highlight-number";
+
+    number.textContent =
+      item.value;
+
+
+    const title =
+      document.createElement("div");
+
+    title.className =
+      "highlight-title";
+
+    title.textContent =
+      item.title;
+
+
+    card.appendChild(number);
+    card.appendChild(title);
+
+    highlightsGrid.appendChild(card);
 
   });
 
 
-  highlightsSection.classList.remove("hidden");
+  highlightsSection.classList.remove(
+    "hidden"
+  );
+
 }
 
 
-/* =========================================
-   ENROLLMENT
-========================================= */
+/* =========================================================
+   COURSE INFORMATION
+========================================================= */
 
-function renderEnrollment() {
+function renderCourseInformation(course) {
+
+  const name =
+    course.crmCourseName ||
+    course.courseName ||
+    "—";
+
+
+  const code =
+    course.crmCourseCode ||
+    course.courseCode ||
+    "—";
+
+
+  const className =
+    course.crmClass ||
+    course.className ||
+    "—";
+
+
+  const board =
+    course.crmBoard ||
+    course.board ||
+    "—";
+
+
+  const medium =
+    getCourseMediumText(course);
+
+
+  infoCourseName.textContent =
+    name;
+
+  infoCourseCode.textContent =
+    code;
+
+  infoClass.textContent =
+    className;
+
+  infoBoard.textContent =
+    board;
+
+  infoMedium.textContent =
+    medium;
+
+
+  /*
+   * Duration
+   */
+
+  if (
+    course.durationMonths !== undefined &&
+    course.durationMonths !== null &&
+    course.durationMonths !== ""
+  ) {
+
+    infoDuration.textContent =
+      `${course.durationMonths} month${
+        Number(course.durationMonths) === 1
+          ? ""
+          : "s"
+      }`;
+
+
+    infoDurationRow.classList.remove(
+      "hidden"
+    );
+
+  } else {
+
+    infoDurationRow.classList.add(
+      "hidden"
+    );
+
+  }
+
+
+  /*
+   * Total classes
+   */
+
+  if (
+    course.totalClasses !== undefined &&
+    course.totalClasses !== null &&
+    course.totalClasses !== ""
+  ) {
+
+    infoTotalClasses.textContent =
+      course.totalClasses;
+
+
+    infoClassesRow.classList.remove(
+      "hidden"
+    );
+
+  } else {
+
+    infoClassesRow.classList.add(
+      "hidden"
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   RENDER COURSE
+========================================================= */
+
+function renderCourse(course) {
+
+  currentCourse =
+    course;
+
+
+  hideError();
+
+
+  /*
+   * IMAGE
+   */
+
+  renderCourseImage(course);
+
+
+  /*
+   * COURSE NAME
+   */
+
+  const name =
+    course.crmCourseName ||
+    course.courseName ||
+    "Course";
+
+
+  courseTitle.textContent =
+    name;
+
+
+  /*
+   * COURSE CODE
+   */
+
+  courseCode.textContent =
+    course.crmCourseCode ||
+    course.courseCode ||
+    "—";
+
+
+  /*
+   * CLASS
+   */
+
+  classBadge.textContent =
+    course.crmClass ||
+    course.className ||
+    "—";
+
+
+  /*
+   * ACTIVE BADGE
+   */
+
+  if (
+    course.crmActive === false
+  ) {
+
+    activeBadge.classList.add(
+      "hidden"
+    );
+
+  } else {
+
+    activeBadge.classList.remove(
+      "hidden"
+    );
+
+  }
+
+
+  /*
+   * MEDIUM
+   */
+
+  courseMedium.textContent =
+    getCourseMediumText(course);
+
+
+  /*
+   * DURATION
+   */
+
+  if (
+    course.durationMonths !== undefined &&
+    course.durationMonths !== null &&
+    course.durationMonths !== ""
+  ) {
+
+    courseDuration.textContent =
+      `${course.durationMonths} month${
+        Number(course.durationMonths) === 1
+          ? ""
+          : "s"
+      }`;
+
+
+    document
+      .getElementById("durationMeta")
+      ?.classList.remove("hidden");
+
+  } else {
+
+    document
+      .getElementById("durationMeta")
+      ?.classList.add("hidden");
+
+  }
+
+
+  /*
+   * TOTAL CLASSES
+   */
+
+  if (
+    course.totalClasses !== undefined &&
+    course.totalClasses !== null &&
+    course.totalClasses !== ""
+  ) {
+
+    totalClasses.textContent =
+      course.totalClasses;
+
+
+    document
+      .getElementById("classesMeta")
+      ?.classList.remove("hidden");
+
+  } else {
+
+    document
+      .getElementById("classesMeta")
+      ?.classList.add("hidden");
+
+  }
+
+
+  /*
+   * PRICE
+   */
+
+  renderPrice(course);
+
+
+  /*
+   * DESCRIPTION
+   */
+
+  renderDescription(course);
+
+
+  /*
+   * HIGHLIGHTS
+   */
+
+  renderHighlights(course);
+
+
+  /*
+   * INFORMATION
+   */
+
+  renderCourseInformation(course);
+
+
+  /*
+   * ENROLLMENT BUTTON
+   */
+
+  renderEnrollmentState();
+
+}
+
+
+/* =========================================================
+   ENROLLMENT STATE
+========================================================= */
+
+function renderEnrollmentState() {
+
+  /*
+   * No enrollment
+   */
 
   if (!currentEnrollment) {
 
-    buyNowBtn.classList.remove("hidden");
-    continueBtn.classList.add("hidden");
-    enrolledNote.classList.add("hidden");
+    buyNowBtn.classList.remove(
+      "hidden"
+    );
+
+    continueBtn.classList.add(
+      "hidden"
+    );
+
+    enrolledNote.classList.add(
+      "hidden"
+    );
 
     return;
+
   }
 
 
@@ -613,27 +1028,51 @@ function renderEnrollment() {
     paymentStatus === "PAID";
 
 
+  /*
+   * Not active
+   */
+
   if (!isActive) {
 
-    buyNowBtn.classList.remove("hidden");
-    continueBtn.classList.add("hidden");
-    enrolledNote.classList.add("hidden");
+    buyNowBtn.classList.remove(
+      "hidden"
+    );
+
+    continueBtn.classList.add(
+      "hidden"
+    );
+
+    enrolledNote.classList.add(
+      "hidden"
+    );
 
     return;
+
   }
 
 
-  buyNowBtn.classList.add("hidden");
+  /*
+   * Student already owns course
+   */
 
-  continueBtn.classList.remove("hidden");
+  buyNowBtn.classList.add(
+    "hidden"
+  );
 
-  enrolledNote.classList.remove("hidden");
+  continueBtn.classList.remove(
+    "hidden"
+  );
+
+  enrolledNote.classList.remove(
+    "hidden"
+  );
+
 }
 
 
-/* =========================================
+/* =========================================================
    CHECK ENROLLMENT
-========================================= */
+========================================================= */
 
 async function checkEnrollment(uid) {
 
@@ -645,7 +1084,8 @@ async function checkEnrollment(uid) {
   try {
 
     /*
-     * Recommended document:
+     * Recommended enrollment ID:
+     *
      * studentEnrollments/{uid}_{courseId}
      */
 
@@ -658,7 +1098,9 @@ async function checkEnrollment(uid) {
 
 
     const snapshot =
-      await getDoc(enrollmentRef);
+      await getDoc(
+        enrollmentRef
+      );
 
 
     if (snapshot.exists()) {
@@ -670,54 +1112,60 @@ async function checkEnrollment(uid) {
 
     } else {
 
-      currentEnrollment = null;
+      currentEnrollment =
+        null;
 
     }
 
 
-    renderEnrollment();
+    renderEnrollmentState();
+
 
   } catch (error) {
 
     /*
-     * IMPORTANT:
-     *
-     * Enrollment failure must NOT
-     * stop Course Details from opening.
+     * Enrollment failure should
+     * NEVER block Course Details.
      */
 
     console.error(
-      "Enrollment check failed:",
+      "[Batch Details] Enrollment error:",
       error
     );
 
-    currentEnrollment = null;
 
-    renderEnrollment();
+    currentEnrollment =
+      null;
+
+
+    renderEnrollmentState();
+
   }
+
 }
 
 
-/* =========================================
-   START COURSE
-========================================= */
+/* =========================================================
+   LOAD COURSE
+========================================================= */
 
-function startCourse() {
-
-  console.log(
-    "Starting course:",
-    courseId
-  );
-
+function loadCourse() {
 
   if (!courseId) {
 
     showError(
-      "No course ID was found in the URL."
+      "No course was selected."
     );
 
     return;
+
   }
+
+
+  console.log(
+    "[Batch Details] Loading:",
+    `crmCourses/${courseId}`
+  );
 
 
   const courseRef =
@@ -736,7 +1184,7 @@ function startCourse() {
       snapshot => {
 
         console.log(
-          "Course snapshot received:",
+          "[Batch Details] Course snapshot:",
           snapshot.exists()
         );
 
@@ -744,10 +1192,11 @@ function startCourse() {
         if (!snapshot.exists()) {
 
           showError(
-            "This course could not be found in CRM."
+            "This course could not be found."
           );
 
           return;
+
         }
 
 
@@ -756,15 +1205,16 @@ function startCourse() {
 
 
         console.log(
-          "CRM Course:",
+          "[Batch Details] Course data:",
           course
         );
 
 
         /*
-         * FIRST SHOW COURSE.
+         * IMPORTANT:
          *
-         * Don't wait for enrollment.
+         * Course is shown immediately.
+         * Enrollment is checked separately.
          */
 
         renderCourse(course);
@@ -773,7 +1223,8 @@ function startCourse() {
 
 
         /*
-         * THEN CHECK ENROLLMENT.
+         * Check purchase status
+         * after page is already visible.
          */
 
         if (currentUser) {
@@ -786,27 +1237,29 @@ function startCourse() {
 
       },
 
+
       error => {
 
         console.error(
-          "CRM Course Firebase error:",
+          "[Batch Details] Firebase course error:",
           error
         );
 
 
         showError(
-          `Unable to load course: ${error.message}`
+          `Unable to load course. ${error.message}`
         );
 
       }
 
     );
+
 }
 
 
-/* =========================================
-   AUTH
-========================================= */
+/* =========================================================
+   AUTHENTICATION
+========================================================= */
 
 showLoading();
 
@@ -817,16 +1270,18 @@ onAuthStateChanged(
   user => {
 
     console.log(
-      "Auth state:",
-      user ? user.uid : "NO USER"
+      "[Batch Details] Auth:",
+      user
+        ? user.uid
+        : "Not logged in"
     );
 
 
     if (!user) {
 
       /*
-       * Give Firebase a moment to restore
-       * the authentication state.
+       * Wait briefly for Firebase to
+       * restore the existing session.
        */
 
       setTimeout(() => {
@@ -841,6 +1296,7 @@ onAuthStateChanged(
       }, 1200);
 
       return;
+
     }
 
 
@@ -848,63 +1304,16 @@ onAuthStateChanged(
       user;
 
 
-    startCourse();
+    loadCourse();
 
   }
+
 );
 
 
-/* =========================================
-   BUY NOW
-========================================= */
-
-buyNowBtn.addEventListener(
-  "click",
-
-  () => {
-
-    if (!courseId) {
-      return;
-    }
-
-
-    console.log(
-      "Opening checkout:",
-      courseId
-    );
-
-
-    window.location.href =
-      `../checkout/?id=${encodeURIComponent(courseId)}`;
-
-  }
-);
-
-
-/* =========================================
-   CONTINUE
-========================================= */
-
-continueBtn.addEventListener(
-  "click",
-
-  () => {
-
-    if (!courseId) {
-      return;
-    }
-
-
-    window.location.href =
-      `../study/?courseId=${encodeURIComponent(courseId)}`;
-
-  }
-);
-
-
-/* =========================================
-   BACK
-========================================= */
+/* =========================================================
+   BACK TO COURSES
+========================================================= */
 
 function goToCourses() {
 
@@ -914,49 +1323,119 @@ function goToCourses() {
 }
 
 
-backButton.addEventListener(
-  "click",
-  goToCourses
-);
+if (backButton) {
 
-
-backToCoursesBtn.addEventListener(
-  "click",
-  goToCourses
-);
-
-
-/* =========================================
-   NOTIFICATIONS
-========================================= */
-
-function openNotifications() {
-
-  window.location.href =
-    "../notifications/";
+  backButton.addEventListener(
+    "click",
+    goToCourses
+  );
 
 }
 
 
-document
-  .getElementById("topNotificationBtn")
-  .addEventListener(
+if (backToCoursesBtn) {
+
+  backToCoursesBtn.addEventListener(
     "click",
-    openNotifications
+    goToCourses
   );
 
+}
 
-document
-  .getElementById("pageNotificationBtn")
-  .addEventListener(
+
+/* =========================================================
+   NOTIFICATIONS
+========================================================= */
+
+if (notificationBtn) {
+
+  notificationBtn.addEventListener(
     "click",
-    openNotifications
+
+    () => {
+
+      window.location.href =
+        "../notifications/";
+
+    }
+
   );
 
+}
 
-/* =========================================
+
+/* =========================================================
+   BUY NOW
+========================================================= */
+
+if (buyNowBtn) {
+
+  buyNowBtn.addEventListener(
+    "click",
+
+    () => {
+
+      if (!courseId) {
+
+        console.error(
+          "[Batch Details] Missing course ID"
+        );
+
+        return;
+
+      }
+
+
+      console.log(
+        "[Batch Details] Opening checkout:",
+        courseId
+      );
+
+
+      /*
+       * Language selection will happen
+       * inside Checkout.
+       */
+
+      window.location.href =
+        `../checkout/?id=${encodeURIComponent(courseId)}`;
+
+    }
+
+  );
+
+}
+
+
+/* =========================================================
+   CONTINUE LEARNING
+========================================================= */
+
+if (continueBtn) {
+
+  continueBtn.addEventListener(
+    "click",
+
+    () => {
+
+      if (!courseId) {
+        return;
+      }
+
+
+      window.location.href =
+        `../study/?courseId=${encodeURIComponent(courseId)}`;
+
+    }
+
+  );
+
+}
+
+
+/* =========================================================
    CLEANUP
-========================================= */
+========================================================= */
 
 window.addEventListener(
   "beforeunload",
@@ -964,8 +1443,11 @@ window.addEventListener(
   () => {
 
     if (unsubscribeCourse) {
+
       unsubscribeCourse();
+
     }
 
   }
+
 );
