@@ -1,1148 +1,2193 @@
-/* =========================================================
-   ZENOVA STUDY NOW
-========================================================= */
+/* ============================================================
+   ZENOVA EDUCATIONS
+   STUDY NOW
+============================================================ */
 
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
+import {
+    auth,
+    db
+} from "../../firebase/firebase-config.js";
+
+
+import {
+    onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+
+
+import {
+    collection,
+    doc,
+    getDoc,
+    getDocs,
+    onSnapshot,
+    query,
+    where
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
+
+/* ============================================================
+   ELEMENTS
+============================================================ */
+
+const loader =
+    document.getElementById("loader");
+
+const app =
+    document.getElementById("app");
+
+const backButton =
+    document.getElementById("backButton");
+
+const studentMeta =
+    document.getElementById("studentMeta");
+
+const purchasedSection =
+    document.getElementById("purchasedSection");
+
+const purchasedCourseImage =
+    document.getElementById("purchasedCourseImage");
+
+const purchasedCourseTitle =
+    document.getElementById("purchasedCourseTitle");
+
+const purchasedCourseMeta =
+    document.getElementById("purchasedCourseMeta");
+
+const courseProgress =
+    document.getElementById("courseProgress");
+
+const courseProgressBar =
+    document.getElementById("courseProgressBar");
+
+const purchasedCourseCard =
+    document.getElementById("purchasedCourseCard");
+
+const freeContentList =
+    document.getElementById("freeContentList");
+
+const liveClassesList =
+    document.getElementById("liveClassesList");
+
+const dateList =
+    document.getElementById("dateList");
+
+const scheduleList =
+    document.getElementById("scheduleList");
+
+const subjectsList =
+    document.getElementById("subjectsList");
+
+const previousDate =
+    document.getElementById("previousDate");
+
+const nextDate =
+    document.getElementById("nextDate");
+
+const errorState =
+    document.getElementById("errorState");
+
+const errorMessage =
+    document.getElementById("errorMessage");
+
+const retryButton =
+    document.getElementById("retryButton");
+
+
+/* ============================================================
+   URL
+============================================================ */
+
+const params =
+    new URLSearchParams(
+        window.location.search
+    );
+
+
+/*
+ * Continue Learning / Home can send:
+ *
+ * ?courseId=COURSE_ID
+ *
+ * We also accept batchId.
+ */
+
+const requestedCourseId =
+    params.get("courseId") ||
+    params.get("batchId") ||
+    params.get("id") ||
+    null;
+
+
+/* ============================================================
+   STATE
+============================================================ */
+
+let currentUser = null;
+
+let student = null;
+
+let purchasedCourse = null;
+
+let purchasedEnrollment = null;
+
+let enrollments = [];
+
+let subjects = [];
+
+let chapters = [];
+
+let freeContent = [];
+
+let liveClasses = [];
+
+let selectedDate = new Date();
+
+let dateOffset = 0;
+
+let unsubscribeEnrollments = null;
+
+let unsubscribeLiveClasses = null;
+
+
+/* ============================================================
+   HELPERS
+============================================================ */
+
+function $(id) {
+    return document.getElementById(id);
 }
 
-html {
-    scroll-behavior: smooth;
-}
 
-body {
-    font-family: "Poppins", sans-serif;
-    background: #ffffff;
-    color: #111111;
-}
+function escapeHtml(value) {
 
-button,
-a {
-    font-family: inherit;
-}
+    return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
 
-button {
-    border: 0;
-}
-
-a {
-    text-decoration: none;
-    color: inherit;
-}
-
-.hidden {
-    display: none !important;
 }
 
 
-/* =========================================================
-   APP
-========================================================= */
+function formatDate(date) {
 
-.app {
-    width: 100%;
-    min-height: 100vh;
-    background: #ffffff;
+    return date.toISOString()
+        .split("T")[0];
+
 }
 
 
-/* =========================================================
-   LOADER
-========================================================= */
+function formatDateReadable(date) {
 
-.loader-screen {
-    position: fixed;
-    inset: 0;
-    z-index: 9999;
+    return new Intl.DateTimeFormat(
+        "en-IN",
+        {
+            day: "numeric",
+            month: "short",
+            year: "numeric"
+        }
+    ).format(date);
 
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-
-    background: #ffffff;
 }
 
-.loader-ring {
-    width: 58px;
-    height: 58px;
 
-    border: 2px solid #eeeeee;
-    border-top-color: #6c35de;
+function formatTime(value) {
 
-    border-radius: 50%;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    animation: loaderSpin 1s linear infinite;
-}
-
-.loader-z {
-    font-size: 20px;
-    font-weight: 700;
-    color: #6c35de;
-
-    animation: loaderCounterSpin 1s linear infinite;
-}
-
-.loader-text {
-    margin-top: 15px;
-
-    color: #777777;
-
-    font-size: 12px;
-    font-weight: 500;
-}
-
-@keyframes loaderSpin {
-    to {
-        transform: rotate(360deg);
+    if (!value) {
+        return "";
     }
-}
 
-@keyframes loaderCounterSpin {
-    to {
-        transform: rotate(-360deg);
+    /*
+     * Handles:
+     *
+     * "18:00"
+     * "18:30"
+     * Firestore Timestamp
+     * JS Date
+     */
+
+    if (
+        value?.toDate
+    ) {
+        value =
+            value.toDate();
     }
+
+    if (
+        value instanceof Date
+    ) {
+
+        return value.toLocaleTimeString(
+            "en-IN",
+            {
+                hour: "numeric",
+                minute: "2-digit"
+            }
+        );
+
+    }
+
+
+    const stringValue =
+        String(value);
+
+    if (
+        /^\d{1,2}:\d{2}$/.test(
+            stringValue
+        )
+    ) {
+
+        const [
+            hours,
+            minutes
+        ] =
+            stringValue
+                .split(":")
+                .map(Number);
+
+        const d =
+            new Date();
+
+        d.setHours(
+            hours,
+            minutes,
+            0,
+            0
+        );
+
+        return d.toLocaleTimeString(
+            "en-IN",
+            {
+                hour: "numeric",
+                minute: "2-digit"
+            }
+        );
+
+    }
+
+
+    return stringValue;
+
 }
 
 
-/* =========================================================
-   HEADER
-========================================================= */
+function getImage(value) {
 
-.top-header {
-    position: sticky;
-    top: 0;
-    z-index: 100;
+    return (
+        value?.crmImageUrl ||
+        value?.imageUrl ||
+        value?.courseImageUrl ||
+        value?.thumbnailUrl ||
+        value?.thumbnail ||
+        ""
+    );
 
-    height: 64px;
-
-    display: grid;
-    grid-template-columns: 44px 1fr 44px;
-    align-items: center;
-
-    padding: 0 16px;
-
-    background: rgba(255, 255, 255, 0.97);
-
-    border-bottom: 1px solid #eeeeee;
-}
-
-.back-button,
-.notification-button {
-    width: 38px;
-    height: 38px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    border-radius: 11px;
-
-    background: #f7f7f8;
-
-    color: #111111;
-
-    cursor: pointer;
-
-    transition: 0.2s;
-}
-
-.back-button:hover,
-.notification-button:hover {
-    background: #eeeeee;
-}
-
-.back-button i,
-.notification-button i {
-    font-size: 20px;
-}
-
-.brand {
-    text-align: center;
-    line-height: 1;
-}
-
-.brand-name {
-    font-size: 20px;
-    font-weight: 700;
-    letter-spacing: 2px;
-}
-
-.brand-subtitle {
-    margin-top: 4px;
-
-    font-size: 7px;
-    font-weight: 600;
-
-    letter-spacing: 4px;
-
-    color: #777777;
 }
 
 
-/* =========================================================
-   MAIN
-========================================================= */
+function showApp() {
 
-.main-content {
-    width: min(100%, 900px);
+    loader.classList.add(
+        "hidden"
+    );
 
-    margin: 0 auto;
+    app.classList.remove(
+        "hidden"
+    );
 
-    padding:
-        24px 18px
-        calc(100px + env(safe-area-inset-bottom))
-        18px;
 }
 
 
-/* =========================================================
-   PAGE HEADING
-========================================================= */
+function showError(message) {
 
-.page-heading {
-    margin-bottom: 25px;
-}
+    loader.classList.add(
+        "hidden"
+    );
 
-.eyebrow {
-    display: block;
+    app.classList.remove(
+        "hidden"
+    );
 
-    margin-bottom: 4px;
+    errorState.classList.remove(
+        "hidden"
+    );
 
-    color: #6c35de;
+    errorMessage.textContent =
+        message ||
+        "Something went wrong.";
 
-    font-size: 10px;
-    font-weight: 700;
-
-    letter-spacing: 1.5px;
-}
-
-.page-heading h1 {
-    font-size: 25px;
-    font-weight: 700;
-
-    line-height: 1.2;
-}
-
-.page-heading p {
-    margin-top: 5px;
-
-    color: #777777;
-
-    font-size: 12px;
 }
 
 
-/* =========================================================
-   SECTION
-========================================================= */
+/* ============================================================
+   AUTH
+============================================================ */
 
-.section {
-    margin-bottom: 30px;
+onAuthStateChanged(
+    auth,
+    async user => {
+
+        if (!user) {
+
+            window.location.href =
+                "../login/";
+
+            return;
+
+        }
+
+
+        currentUser =
+            user;
+
+
+        try {
+
+            await initialize();
+
+        } catch (error) {
+
+            console.error(
+                "ZENOVA STUDY ERROR:",
+                error
+            );
+
+            showError(
+                error.message ||
+                "Unable to load Study."
+            );
+
+        }
+
+    }
+);
+
+
+/* ============================================================
+   INITIALIZE
+============================================================ */
+
+async function initialize() {
+
+    await loadStudent();
+
+    await loadEnrollments();
+
+    await determinePurchasedCourse();
+
+    await loadSubjects();
+
+    await loadFreeContent();
+
+    startLiveClassesListener();
+
+    renderDates();
+
+    await loadSchedule(
+        selectedDate
+    );
+
+    renderStudentMeta();
+
+    showApp();
+
 }
 
-.section-heading {
-    display: flex;
 
-    align-items: center;
-    justify-content: space-between;
+/* ============================================================
+   STUDENT
+============================================================ */
 
-    margin-bottom: 13px;
-}
+async function loadStudent() {
 
-.section-heading span {
-    display: block;
+    const studentRef =
+        doc(
+            db,
+            "students",
+            currentUser.uid
+        );
 
-    margin-bottom: 2px;
 
-    color: #888888;
+    const snapshot =
+        await getDoc(
+            studentRef
+        );
 
-    font-size: 9px;
-    font-weight: 700;
 
-    letter-spacing: 1.3px;
-}
+    if (!snapshot.exists()) {
 
-.section-heading h2 {
-    font-size: 18px;
-    font-weight: 700;
-}
+        throw new Error(
+            "Student profile not found."
+        );
 
-.section-heading > i {
-    width: 38px;
-    height: 38px;
+    }
 
-    display: flex;
-    align-items: center;
-    justify-content: center;
 
-    border-radius: 11px;
+    student = {
+        id: snapshot.id,
+        ...snapshot.data()
+    };
 
-    background: #f5f1ff;
-
-    color: #6c35de;
-
-    font-size: 19px;
 }
 
 
-/* =========================================================
+/* ============================================================
+   STUDENT META
+============================================================ */
+
+function renderStudentMeta() {
+
+    const details = [];
+
+
+    if (student?.className) {
+
+        details.push(
+            student.className
+        );
+
+    }
+
+
+    if (student?.combination) {
+
+        details.push(
+            student.combination
+        );
+
+    }
+
+
+    if (purchasedCourse?.crmCourseName) {
+
+        details.push(
+            purchasedCourse.crmCourseName
+        );
+
+    }
+
+
+    studentMeta.textContent =
+        details.length
+            ? details.join(" • ")
+            : "Your learning space";
+
+}
+
+
+/* ============================================================
+   LOAD ENROLLMENTS
+============================================================ */
+
+async function loadEnrollments() {
+
+    const enrollmentRef =
+        collection(
+            db,
+            "studentEnrollments"
+        );
+
+
+    /*
+     * Query only studentUid.
+     *
+     * We sort/filter locally to avoid
+     * unnecessary composite indexes.
+     */
+
+    const q =
+        query(
+            enrollmentRef,
+            where(
+                "studentUid",
+                "==",
+                currentUser.uid
+            )
+        );
+
+
+    const snapshot =
+        await getDocs(q);
+
+
+    enrollments =
+        snapshot.docs
+            .map(item => ({
+                id: item.id,
+                ...item.data()
+            }))
+            .filter(
+                enrollment =>
+                    enrollment.status !==
+                    "CANCELLED" &&
+                    enrollment.status !==
+                    "REJECTED"
+            );
+
+}
+
+
+/* ============================================================
+   DETERMINE PURCHASED COURSE
+============================================================ */
+
+async function determinePurchasedCourse() {
+
+    let enrollment = null;
+
+
+    /*
+     * If Study was opened from Continue Learning,
+     * prefer that course.
+     */
+
+    if (requestedCourseId) {
+
+        enrollment =
+            enrollments.find(
+                item =>
+                    (
+                        item.crmCourseId ||
+                        item.courseId
+                    ) ===
+                    requestedCourseId
+            );
+
+    }
+
+
+    /*
+     * Otherwise use first active enrollment.
+     */
+
+    if (!enrollment) {
+
+        enrollment =
+            enrollments.find(
+                item =>
+                    (
+                        item.status ===
+                        "ACTIVE" ||
+                        item.accessGranted === true
+                    )
+            );
+
+    }
+
+
+    if (!enrollment) {
+
+        purchasedCourse = null;
+
+        purchasedEnrollment = null;
+
+        purchasedSection.classList.add(
+            "hidden"
+        );
+
+        return;
+
+    }
+
+
+    purchasedEnrollment =
+        enrollment;
+
+
+    const courseId =
+        enrollment.crmCourseId ||
+        enrollment.courseId;
+
+
+    if (!courseId) {
+
+        purchasedSection.classList.add(
+            "hidden"
+        );
+
+        return;
+
+    }
+
+
+    const courseRef =
+        doc(
+            db,
+            "crmCourses",
+            courseId
+        );
+
+
+    const courseSnapshot =
+        await getDoc(
+            courseRef
+        );
+
+
+    if (!courseSnapshot.exists()) {
+
+        purchasedSection.classList.add(
+            "hidden"
+        );
+
+        return;
+
+    }
+
+
+    purchasedCourse = {
+        id: courseSnapshot.id,
+        ...courseSnapshot.data()
+    };
+
+
+    renderPurchasedCourse();
+
+}
+
+
+/* ============================================================
    PURCHASED COURSE
-========================================================= */
+============================================================ */
 
-.course-card {
-    display: flex;
+function renderPurchasedCourse() {
 
-    overflow: hidden;
+    if (!purchasedCourse) {
 
-    min-height: 145px;
+        purchasedSection.classList.add(
+            "hidden"
+        );
 
-    border: 1px solid #e8e8e8;
-    border-radius: 16px;
+        return;
 
-    background: #ffffff;
+    }
 
-    cursor: pointer;
 
-    transition:
-        transform 0.2s,
-        border-color 0.2s;
-}
+    purchasedSection.classList.remove(
+        "hidden"
+    );
 
-.course-card:hover {
-    transform: translateY(-1px);
-    border-color: #d7d7d7;
-}
 
-.course-image-wrapper {
-    width: 38%;
+    const image =
+        getImage(
+            purchasedCourse
+        );
 
-    min-width: 145px;
 
-    background: #f3f3f3;
+    purchasedCourseImage.src =
+        image ||
+        "../assets/images/course-placeholder.png";
 
-    overflow: hidden;
-}
 
-.course-image-wrapper img {
-    width: 100%;
-    height: 100%;
+    purchasedCourseTitle.textContent =
+        purchasedCourse.crmCourseName ||
+        "My Course";
 
-    display: block;
 
-    object-fit: cover;
-}
+    purchasedCourseMeta.textContent =
+        [
+            purchasedCourse.crmClass,
+            purchasedCourse.crmBoard,
+            purchasedCourse.crmMedium
+        ]
+            .filter(Boolean)
+            .join(" • ");
 
-.course-card-content {
-    flex: 1;
 
-    padding: 15px;
-}
+    const progress =
+        Number(
+            purchasedEnrollment?.progress ||
+            0
+        );
 
-.course-badge {
-    display: inline-flex;
 
-    padding: 4px 8px;
+    const safeProgress =
+        Math.min(
+            100,
+            Math.max(
+                0,
+                progress
+            )
+        );
 
-    border-radius: 6px;
 
-    background: #f1ecff;
+    courseProgress.textContent =
+        `${safeProgress}%`;
 
-    color: #6c35de;
 
-    font-size: 8px;
-    font-weight: 700;
+    courseProgressBar.style.width =
+        `${safeProgress}%`;
 
-    letter-spacing: 0.7px;
-}
 
-.course-card h3 {
-    margin-top: 8px;
+    purchasedCourseCard.onclick =
+        () => {
 
-    font-size: 16px;
-    font-weight: 700;
+            openCurrentCourse();
 
-    line-height: 1.3;
-}
+        };
 
-.course-card p {
-    margin-top: 3px;
-
-    color: #777777;
-
-    font-size: 10px;
-}
-
-.progress-area {
-    margin-top: 15px;
-}
-
-.progress-label {
-    display: flex;
-
-    justify-content: space-between;
-
-    margin-bottom: 6px;
-
-    color: #777777;
-
-    font-size: 9px;
-}
-
-.progress-label strong {
-    color: #111111;
-}
-
-.progress-track {
-    width: 100%;
-    height: 5px;
-
-    overflow: hidden;
-
-    border-radius: 10px;
-
-    background: #eeeeee;
-}
-
-.progress-bar {
-    width: 0%;
-    height: 100%;
-
-    border-radius: inherit;
-
-    background: #6c35de;
-
-    transition: width 0.3s ease;
 }
 
 
-/* =========================================================
+/* ============================================================
+   OPEN PURCHASED COURSE
+============================================================ */
+
+function openCurrentCourse() {
+
+    if (!purchasedCourse?.id) {
+        return;
+    }
+
+
+    /*
+     * Study page already represents
+     * the course.
+     *
+     * Clicking the course card does NOT
+     * go to Batch Details.
+     */
+
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+    });
+
+}
+
+
+/* ============================================================
+   LOAD SUBJECTS
+============================================================ */
+
+async function loadSubjects() {
+
+    subjects = [];
+
+
+    if (!purchasedCourse?.id) {
+
+        renderSubjects();
+
+        return;
+
+    }
+
+
+    const subjectSnapshot =
+        await getDocs(
+            collection(
+                db,
+                "hybridSubjects"
+            )
+        );
+
+
+    const rawSubjects =
+        subjectSnapshot.docs
+            .map(item => ({
+                id: item.id,
+                ...item.data()
+            }));
+
+
+    const courseId =
+        purchasedCourse.id;
+
+
+    /*
+     * Match the subject to the CRM course.
+     *
+     * Supports the structures already used
+     * by the existing CRM content manager.
+     */
+
+    subjects =
+        rawSubjects.filter(
+            subject => {
+
+                return (
+                    subject.courseId ===
+                    courseId ||
+
+                    subject.crmCourseId ===
+                    courseId ||
+
+                    subject.targetCourseId ===
+                    courseId ||
+
+                    subject.courseID ===
+                    courseId
+                );
+
+            }
+        );
+
+
+    /*
+     * If the course itself contains
+     * commonSubjects / subjects,
+     * use their names as fallback.
+     */
+
+    if (!subjects.length) {
+
+        const names =
+            new Set([
+                ...(purchasedCourse.commonSubjects || [])
+                    .map(
+                        item =>
+                            item?.name ||
+                            item
+                    ),
+
+                ...(purchasedCourse.subjects || [])
+                    .map(
+                        item =>
+                            typeof item === "string"
+                                ? item
+                                : item?.name
+                    )
+            ]);
+
+
+        if (names.size) {
+
+            subjects =
+                rawSubjects.filter(
+                    subject =>
+                        names.has(
+                            subject.name ||
+                            subject.subjectName
+                        )
+                );
+
+        }
+
+    }
+
+
+    /*
+     * Active only.
+     */
+
+    subjects =
+        subjects.filter(
+            subject =>
+                subject.active !== false
+        );
+
+
+    /*
+     * Sort by priority / order.
+     */
+
+    subjects.sort(
+        (a, b) => {
+
+            const orderA =
+                Number(
+                    a.priority ??
+                    a.order ??
+                    9999
+                );
+
+            const orderB =
+                Number(
+                    b.priority ??
+                    b.order ??
+                    9999
+                );
+
+            return orderA - orderB;
+
+        }
+    );
+
+
+    await loadChapterCounts();
+
+    renderSubjects();
+
+}
+
+
+/* ============================================================
+   CHAPTER COUNTS
+============================================================ */
+
+async function loadChapterCounts() {
+
+    if (!subjects.length) {
+        return;
+    }
+
+
+    const chapterSnapshot =
+        await getDocs(
+            collection(
+                db,
+                "hybridChapters"
+            )
+        );
+
+
+    chapters =
+        chapterSnapshot.docs
+            .map(item => ({
+                id: item.id,
+                ...item.data()
+            }))
+            .filter(
+                chapter =>
+                    chapter.active !== false
+            );
+
+
+    subjects =
+        subjects.map(
+            subject => {
+
+                const subjectChapters =
+                    chapters.filter(
+                        chapter =>
+                            chapter.subjectId ===
+                            subject.id
+                    );
+
+
+                return {
+                    ...subject,
+                    chapterCount:
+                        subjectChapters.length
+                };
+
+            }
+        );
+
+}
+
+
+/* ============================================================
+   RENDER SUBJECTS
+============================================================ */
+
+function renderSubjects() {
+
+    subjectsList.innerHTML = "";
+
+
+    if (!purchasedCourse) {
+
+        subjectsList.innerHTML = `
+            <div class="empty-message">
+                Purchase a course to access its subjects.
+            </div>
+        `;
+
+        return;
+
+    }
+
+
+    if (!subjects.length) {
+
+        subjectsList.innerHTML = `
+            <div class="empty-message">
+                No subjects are available yet.
+            </div>
+        `;
+
+        return;
+
+    }
+
+
+    subjects.forEach(
+        (subject, index) => {
+
+            const card =
+                document.createElement(
+                    "article"
+                );
+
+
+            card.className =
+                "subject-card";
+
+
+            card.innerHTML = `
+
+                <div class="subject-icon">
+
+                    <i class="ri-book-2-line"></i>
+
+                </div>
+
+
+                <div class="subject-info">
+
+                    <h3>
+                        ${escapeHtml(
+                            subject.name ||
+                            subject.subjectName ||
+                            "Subject"
+                        )}
+                    </h3>
+
+                    <p>
+                        ${
+                            subject.chapterCount || 0
+                        }
+                        ${
+                            (subject.chapterCount || 0) === 1
+                                ? "Chapter"
+                                : "Chapters"
+                        }
+                    </p>
+
+                </div>
+
+
+                <div class="subject-arrow">
+
+                    <i class="ri-arrow-right-s-line"></i>
+
+                </div>
+
+            `;
+
+
+            card.addEventListener(
+                "click",
+                () => {
+
+                    openSubject(
+                        subject
+                    );
+
+                }
+            );
+
+
+            subjectsList.appendChild(
+                card
+            );
+
+        }
+    );
+
+}
+
+
+/* ============================================================
+   OPEN SUBJECT
+============================================================ */
+
+function openSubject(subject) {
+
+    if (!subject?.id) {
+        return;
+    }
+
+
+    const params =
+        new URLSearchParams();
+
+
+    params.set(
+        "subjectId",
+        subject.id
+    );
+
+
+    if (purchasedCourse?.id) {
+
+        params.set(
+            "courseId",
+            purchasedCourse.id
+        );
+
+    }
+
+
+    window.location.href =
+        `../chapters/?${params.toString()}`;
+
+}
+
+
+/* ============================================================
    FREE CONTENT
-========================================================= */
+============================================================ */
 
-.free-content-list {
-    display: grid;
+async function loadFreeContent() {
 
-    grid-template-columns:
-        repeat(2, minmax(0, 1fr));
+    freeContent = [];
 
-    gap: 12px;
-}
 
-.free-card {
-    overflow: hidden;
+    /*
+     * For now free learning is represented by
+     * active chapters marked accessType FREE.
+     *
+     * This lets us build Study without creating
+     * another content collection.
+     */
 
-    border: 1px solid #e8e8e8;
+    const snapshot =
+        await getDocs(
+            collection(
+                db,
+                "hybridChapters"
+            )
+        );
 
-    border-radius: 14px;
 
-    background: #ffffff;
+    freeContent =
+        snapshot.docs
+            .map(item => ({
+                id: item.id,
+                ...item.data()
+            }))
+            .filter(
+                chapter =>
+                    chapter.active !== false &&
+                    (
+                        chapter.accessType ===
+                        "FREE" ||
 
-    cursor: pointer;
+                        chapter.isFree ===
+                        true ||
 
-    transition: 0.2s;
-}
+                        chapter.free ===
+                        true
+                    )
+            );
 
-.free-card:hover {
-    transform: translateY(-1px);
-}
 
-.free-thumbnail {
-    position: relative;
+    freeContent.sort(
+        (a, b) => {
 
-    aspect-ratio: 16 / 9;
+            const numberA =
+                Number(
+                    a.chapterNumber ||
+                    9999
+                );
 
-    overflow: hidden;
+            const numberB =
+                Number(
+                    b.chapterNumber ||
+                    9999
+                );
 
-    background: #eeeeee;
-}
+            return numberA - numberB;
 
-.free-thumbnail img {
-    width: 100%;
-    height: 100%;
+        }
+    );
 
-    display: block;
 
-    object-fit: cover;
-}
+    renderFreeContent();
 
-.free-play {
-    position: absolute;
-
-    left: 10px;
-    bottom: 10px;
-
-    width: 31px;
-    height: 31px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    border-radius: 50%;
-
-    background: #ffffff;
-
-    color: #6c35de;
-
-    font-size: 17px;
-}
-
-.free-info {
-    padding: 11px;
-}
-
-.free-label {
-    color: #6c35de;
-
-    font-size: 8px;
-    font-weight: 700;
-
-    letter-spacing: 0.8px;
-}
-
-.free-info h3 {
-    margin-top: 4px;
-
-    font-size: 13px;
-    font-weight: 600;
-
-    line-height: 1.35;
-}
-
-.free-info p {
-    margin-top: 3px;
-
-    color: #888888;
-
-    font-size: 9px;
 }
 
 
-/* =========================================================
-   LIVE CLASSES
-========================================================= */
+/* ============================================================
+   FREE CONTENT RENDER
+============================================================ */
 
-.live-list,
-.schedule-list {
-    display: flex;
-    flex-direction: column;
+function renderFreeContent() {
 
-    gap: 10px;
-}
+    freeContentList.innerHTML = "";
 
-.live-card,
-.schedule-card {
-    display: flex;
 
-    gap: 12px;
+    if (!freeContent.length) {
 
-    padding: 11px;
+        freeContentList.innerHTML = `
+            <div class="empty-message">
+                Free learning content will appear here.
+            </div>
+        `;
 
-    border: 1px solid #e8e8e8;
+        return;
 
-    border-radius: 14px;
-
-    background: #ffffff;
-}
-
-.live-thumbnail {
-    width: 110px;
-    min-width: 110px;
-
-    aspect-ratio: 16 / 9;
-
-    overflow: hidden;
-
-    border-radius: 9px;
-
-    background: #eeeeee;
-}
-
-.live-thumbnail img {
-    width: 100%;
-    height: 100%;
-
-    display: block;
-
-    object-fit: cover;
-}
-
-.live-content {
-    flex: 1;
-
-    min-width: 0;
-}
-
-.live-status {
-    display: inline-flex;
-
-    align-items: center;
-
-    gap: 4px;
-
-    color: #6c35de;
-
-    font-size: 8px;
-    font-weight: 700;
-
-    letter-spacing: 0.7px;
-}
-
-.live-status-dot {
-    width: 6px;
-    height: 6px;
-
-    border-radius: 50%;
-
-    background: #6c35de;
-}
-
-.live-content h3 {
-    margin-top: 4px;
-
-    font-size: 13px;
-    font-weight: 600;
-}
-
-.live-content p {
-    margin-top: 3px;
-
-    color: #777777;
-
-    font-size: 9px;
-}
-
-.join-button {
-    align-self: center;
-
-    min-width: 76px;
-    height: 34px;
-
-    padding: 0 11px;
-
-    border-radius: 9px;
-
-    background: #6c35de;
-
-    color: #ffffff;
-
-    font-size: 9px;
-    font-weight: 600;
-
-    cursor: pointer;
-}
-
-.join-button.disabled {
-    background: #eeeeee;
-    color: #888888;
-
-    cursor: default;
-}
-
-
-/* =========================================================
-   DATE SELECTOR
-========================================================= */
-
-.date-selector {
-    display: flex;
-
-    align-items: center;
-
-    gap: 7px;
-
-    margin-bottom: 12px;
-}
-
-.date-arrow {
-    width: 34px;
-    height: 42px;
-
-    min-width: 34px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    border: 1px solid #e8e8e8;
-
-    border-radius: 10px;
-
-    background: #ffffff;
-
-    cursor: pointer;
-}
-
-.date-list {
-    flex: 1;
-
-    display: grid;
-
-    grid-template-columns:
-        repeat(5, minmax(0, 1fr));
-
-    gap: 6px;
-}
-
-.date-item {
-    height: 42px;
-
-    display: flex;
-    flex-direction: column;
-
-    align-items: center;
-    justify-content: center;
-
-    border: 1px solid #e8e8e8;
-
-    border-radius: 10px;
-
-    background: #ffffff;
-
-    cursor: pointer;
-}
-
-.date-item .day {
-    color: #888888;
-
-    font-size: 8px;
-}
-
-.date-item .number {
-    margin-top: 1px;
-
-    font-size: 12px;
-    font-weight: 600;
-}
-
-.date-item.active {
-    border-color: #6c35de;
-
-    background: #6c35de;
-
-    color: #ffffff;
-}
-
-.date-item.active .day {
-    color: #ffffff;
-}
-
-
-/* =========================================================
-   SCHEDULE
-========================================================= */
-
-.schedule-card {
-    align-items: center;
-}
-
-.schedule-time {
-    width: 65px;
-    min-width: 65px;
-
-    color: #6c35de;
-
-    font-size: 10px;
-    font-weight: 600;
-}
-
-.schedule-content {
-    flex: 1;
-}
-
-.schedule-content h3 {
-    font-size: 13px;
-    font-weight: 600;
-}
-
-.schedule-content p {
-    margin-top: 2px;
-
-    color: #888888;
-
-    font-size: 9px;
-}
-
-.schedule-type {
-    padding: 5px 7px;
-
-    border-radius: 6px;
-
-    background: #f5f5f5;
-
-    color: #777777;
-
-    font-size: 8px;
-    font-weight: 600;
-}
-
-
-/* =========================================================
-   SUBJECTS
-========================================================= */
-
-.subjects-list {
-    display: flex;
-    flex-direction: column;
-
-    gap: 9px;
-}
-
-.subject-card {
-    display: flex;
-
-    align-items: center;
-
-    gap: 12px;
-
-    padding: 13px;
-
-    border: 1px solid #e8e8e8;
-
-    border-radius: 14px;
-
-    background: #ffffff;
-
-    cursor: pointer;
-
-    transition: 0.2s;
-}
-
-.subject-card:hover {
-    border-color: #d8d8d8;
-    transform: translateY(-1px);
-}
-
-.subject-icon {
-    width: 43px;
-    height: 43px;
-
-    min-width: 43px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    border-radius: 11px;
-
-    background: #f5f1ff;
-
-    color: #6c35de;
-
-    font-size: 20px;
-}
-
-.subject-info {
-    flex: 1;
-
-    min-width: 0;
-}
-
-.subject-info h3 {
-    font-size: 14px;
-    font-weight: 600;
-}
-
-.subject-info p {
-    margin-top: 2px;
-
-    color: #888888;
-
-    font-size: 9px;
-}
-
-.subject-arrow {
-    color: #999999;
-
-    font-size: 18px;
-}
-
-
-/* =========================================================
-   EMPTY / LOADING
-========================================================= */
-
-.section-loading {
-    padding: 20px;
-
-    text-align: center;
-
-    border: 1px dashed #dddddd;
-
-    border-radius: 12px;
-
-    color: #999999;
-
-    font-size: 10px;
-}
-
-.empty-message {
-    padding: 22px;
-
-    text-align: center;
-
-    border: 1px dashed #dddddd;
-
-    border-radius: 12px;
-
-    color: #888888;
-
-    font-size: 10px;
-}
-
-
-/* =========================================================
-   ERROR
-========================================================= */
-
-.error-state {
-    padding: 35px 20px;
-
-    text-align: center;
-
-    border: 1px solid #eeeeee;
-
-    border-radius: 15px;
-}
-
-.error-icon {
-    width: 45px;
-    height: 45px;
-
-    margin: 0 auto 10px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    border-radius: 50%;
-
-    background: #f5f1ff;
-
-    color: #6c35de;
-
-    font-size: 22px;
-}
-
-.error-state h3 {
-    font-size: 15px;
-}
-
-.error-state p {
-    margin-top: 5px;
-
-    color: #888888;
-
-    font-size: 10px;
-}
-
-.primary-button {
-    margin-top: 15px;
-
-    height: 38px;
-
-    padding: 0 18px;
-
-    border-radius: 9px;
-
-    background: #6c35de;
-
-    color: #ffffff;
-
-    font-size: 10px;
-    font-weight: 600;
-
-    cursor: pointer;
-}
-
-
-/* =========================================================
-   BOTTOM NAV
-========================================================= */
-
-.bottom-nav {
-    position: fixed;
-
-    left: 0;
-    right: 0;
-    bottom: 0;
-
-    z-index: 200;
-
-    height: calc(68px + env(safe-area-inset-bottom));
-
-    display: grid;
-
-    grid-template-columns:
-        repeat(5, 1fr);
-
-    align-items: start;
-
-    padding:
-        8px 8px
-        env(safe-area-inset-bottom);
-
-    background: #ffffff;
-
-    border-top: 1px solid #eeeeee;
-}
-
-.nav-item {
-    height: 52px;
-
-    display: flex;
-    flex-direction: column;
-
-    align-items: center;
-    justify-content: center;
-
-    gap: 3px;
-
-    color: #888888;
-
-    font-size: 8px;
-    font-weight: 500;
-}
-
-.nav-item i {
-    font-size: 19px;
-}
-
-.nav-item.active {
-    color: #6c35de;
-}
-
-.nav-item.active i {
-    font-weight: 600;
-}
-
-
-/* =========================================================
-   MOBILE
-========================================================= */
-
-@media (max-width: 520px) {
-
-    .main-content {
-        padding-left: 15px;
-        padding-right: 15px;
     }
 
-    .page-heading h1 {
-        font-size: 23px;
-    }
 
-    .course-image-wrapper {
-        width: 40%;
-        min-width: 120px;
-    }
+    /*
+     * Show a reasonable number on Study page.
+     *
+     * We can later add "View All".
+     */
 
-    .course-card-content {
-        padding: 12px;
-    }
+    freeContent
+        .slice(0, 6)
+        .forEach(
+            chapter => {
 
-    .course-card h3 {
-        font-size: 14px;
-    }
+                const card =
+                    document.createElement(
+                        "article"
+                    );
 
-    .free-content-list {
-        gap: 9px;
-    }
 
-    .free-info {
-        padding: 9px;
-    }
+                card.className =
+                    "free-card";
 
-    .free-info h3 {
-        font-size: 11px;
-    }
 
-    .live-thumbnail {
-        width: 95px;
-        min-width: 95px;
-    }
+                const thumbnail =
+                    chapter.thumbnailUrl ||
+                    chapter.imageUrl ||
+                    "";
 
-    .join-button {
-        min-width: 64px;
-        height: 32px;
 
-        padding: 0 8px;
+                card.innerHTML = `
 
-        font-size: 8px;
-    }
+                    <div class="free-thumbnail">
+
+                        ${
+                            thumbnail
+                                ? `
+                                    <img
+                                        src="${escapeHtml(thumbnail)}"
+                                        alt="">
+                                  `
+                                : `
+                                    <div
+                                        style="
+                                            width:100%;
+                                            height:100%;
+                                            display:flex;
+                                            align-items:center;
+                                            justify-content:center;
+                                            color:#6c35de;
+                                            font-size:28px;
+                                        ">
+
+                                        <i class="ri-play-circle-line"></i>
+
+                                    </div>
+                                  `
+                        }
+
+
+                        <div class="free-play">
+
+                            <i class="ri-play-fill"></i>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="free-info">
+
+                        <div class="free-label">
+                            FREE
+                        </div>
+
+                        <h3>
+                            ${escapeHtml(
+                                chapter.title ||
+                                chapter.chapterName ||
+                                "Free Lesson"
+                            )}
+                        </h3>
+
+                        <p>
+                            Chapter
+                            ${
+                                chapter.chapterNumber ||
+                                ""
+                            }
+                        </p>
+
+                    </div>
+
+                `;
+
+
+                card.addEventListener(
+                    "click",
+                    () => {
+
+                        openChapter(
+                            chapter
+                        );
+
+                    }
+                );
+
+
+                freeContentList.appendChild(
+                    card
+                );
+
+            }
+        );
+
 }
 
 
-@media (max-width: 380px) {
+/* ============================================================
+   OPEN CHAPTER
+============================================================ */
 
-    .top-header {
-        padding: 0 12px;
+function openChapter(chapter) {
+
+    if (!chapter?.id) {
+        return;
     }
 
-    .brand-name {
-        font-size: 18px;
+
+    /*
+     * We keep the actual video/chapter page
+     * for the next stage.
+     *
+     * If a dedicated chapter player exists,
+     * this can be changed to that route.
+     */
+
+    const params =
+        new URLSearchParams();
+
+
+    params.set(
+        "chapterId",
+        chapter.id
+    );
+
+
+    if (chapter.subjectId) {
+
+        params.set(
+            "subjectId",
+            chapter.subjectId
+        );
+
     }
 
-    .main-content {
-        padding-top: 20px;
+
+    if (purchasedCourse?.id) {
+
+        params.set(
+            "courseId",
+            purchasedCourse.id
+        );
+
     }
 
-    .course-card {
-        min-height: 125px;
-    }
 
-    .course-image-wrapper {
-        width: 37%;
-        min-width: 105px;
-    }
+    /*
+     * Temporary route:
+     *
+     * chapters/?chapterId=...
+     *
+     * Later we can make:
+     *
+     * player/?chapterId=...
+     */
 
-    .course-card-content {
-        padding: 10px;
-    }
+    window.location.href =
+        `../chapters/?${params.toString()}`;
 
-    .course-card h3 {
-        font-size: 13px;
-    }
-
-    .free-content-list {
-        grid-template-columns: 1fr 1fr;
-    }
-
-    .live-card {
-        gap: 8px;
-    }
-
-    .live-thumbnail {
-        width: 82px;
-        min-width: 82px;
-    }
-
-    .date-list {
-        gap: 4px;
-    }
-
-    .date-item {
-        height: 40px;
-    }
-
-    .date-item .number {
-        font-size: 11px;
-    }
-
-    .subject-card {
-        padding: 11px;
-    }
-
-    .subject-icon {
-        width: 39px;
-        height: 39px;
-        min-width: 39px;
-    }
 }
+
+
+/* ============================================================
+   LIVE CLASSES REALTIME
+============================================================ */
+
+function startLiveClassesListener() {
+
+    if (
+        unsubscribeLiveClasses
+    ) {
+
+        unsubscribeLiveClasses();
+
+    }
+
+
+    const liveRef =
+        collection(
+            db,
+            "liveClasses"
+        );
+
+
+    /*
+     * We intentionally query without
+     * multiple filters so this doesn't
+     * require a composite index.
+     */
+
+    unsubscribeLiveClasses =
+        onSnapshot(
+            liveRef,
+            snapshot => {
+
+                liveClasses =
+                    snapshot.docs
+                        .map(item => ({
+                            id: item.id,
+                            ...item.data()
+                        }))
+                        .filter(
+                            liveClass =>
+                                liveClass.active !== false
+                        );
+
+
+                /*
+                 * Show classes belonging to
+                 * the purchased course.
+                 */
+
+                if (
+                    purchasedCourse?.id
+                ) {
+
+                    liveClasses =
+                        liveClasses.filter(
+                            liveClass => {
+
+                                const courseId =
+                                    liveClass.courseId ||
+                                    liveClass.crmCourseId;
+
+
+                                return (
+                                    !courseId ||
+                                    courseId ===
+                                    purchasedCourse.id
+                                );
+
+                            }
+                        );
+
+                }
+
+
+                liveClasses.sort(
+                    sortByTime
+                );
+
+
+                renderLiveClasses();
+
+                loadSchedule(
+                    selectedDate
+                );
+
+            },
+            error => {
+
+                console.error(
+                    "Live class listener:",
+                    error
+                );
+
+                liveClassesList.innerHTML = `
+                    <div class="empty-message">
+                        Live classes are unavailable right now.
+                    </div>
+                `;
+
+            }
+        );
+
+}
+
+
+/* ============================================================
+   SORT TIME
+============================================================ */
+
+function sortByTime(a, b) {
+
+    const timeA =
+        String(
+            a.startTime ||
+            a.time ||
+            "23:59"
+        );
+
+    const timeB =
+        String(
+            b.startTime ||
+            b.time ||
+            "23:59"
+        );
+
+
+    return timeA.localeCompare(
+        timeB
+    );
+
+}
+
+
+/* ============================================================
+   RENDER LIVE CLASSES
+============================================================ */
+
+function renderLiveClasses() {
+
+    liveClassesList.innerHTML = "";
+
+
+    const today =
+        formatDate(
+            new Date()
+        );
+
+
+    const todayClasses =
+        liveClasses.filter(
+            liveClass => {
+
+                const date =
+                    getClassDate(
+                        liveClass
+                    );
+
+                return date ===
+                    today;
+
+            }
+        );
+
+
+    if (!todayClasses.length) {
+
+        liveClassesList.innerHTML = `
+            <div class="empty-message">
+                No live classes scheduled for today.
+            </div>
+        `;
+
+        return;
+
+    }
+
+
+    todayClasses.forEach(
+        liveClass => {
+
+            liveClassesList.appendChild(
+                createLiveCard(
+                    liveClass
+                )
+            );
+
+        }
+    );
+
+}
+
+
+/* ============================================================
+   CLASS DATE
+============================================================ */
+
+function getClassDate(liveClass) {
+
+    const value =
+        liveClass.date ||
+        liveClass.classDate ||
+        liveClass.startDate;
+
+
+    if (!value) {
+        return "";
+    }
+
+
+    if (
+        value?.toDate
+    ) {
+
+        return formatDate(
+            value.toDate()
+        );
+
+    }
+
+
+    if (
+        value instanceof Date
+    ) {
+
+        return formatDate(
+            value
+        );
+
+    }
+
+
+    return String(
+        value
+    ).split("T")[0];
+
+}
+
+
+/* ============================================================
+   LIVE CARD
+============================================================ */
+
+function createLiveCard(liveClass) {
+
+    const card =
+        document.createElement(
+            "article"
+        );
+
+
+    card.className =
+        "live-card";
+
+
+    const thumbnail =
+        liveClass.thumbnailUrl ||
+        liveClass.imageUrl ||
+        liveClass.thumbnail ||
+        "";
+
+
+    const isLive =
+        liveClass.status ===
+        "LIVE" ||
+        liveClass.isLive ===
+        true;
+
+
+    const title =
+        liveClass.title ||
+        liveClass.subjectName ||
+        liveClass.subject ||
+        "Live Class";
+
+
+    const subject =
+        liveClass.subjectName ||
+        liveClass.subject ||
+        "";
+
+
+    const time =
+        formatTime(
+            liveClass.startTime ||
+            liveClass.time
+        );
+
+
+    card.innerHTML = `
+
+        <div class="live-thumbnail">
+
+            ${
+                thumbnail
+                    ? `
+                        <img
+                            src="${escapeHtml(thumbnail)}"
+                            alt="">
+                      `
+                    : `
+                        <div
+                            style="
+                                width:100%;
+                                height:100%;
+                                display:flex;
+                                align-items:center;
+                                justify-content:center;
+                                color:#6c35de;
+                                font-size:25px;
+                            ">
+
+                            <i class="ri-live-line"></i>
+
+                        </div>
+                      `
+            }
+
+        </div>
+
+
+        <div class="live-content">
+
+            <div class="live-status">
+
+                <span class="live-status-dot"></span>
+
+                ${
+                    isLive
+                        ? "LIVE NOW"
+                        : "SCHEDULED"
+                }
+
+            </div>
+
+
+            <h3>
+                ${escapeHtml(title)}
+            </h3>
+
+
+            <p>
+                ${
+                    escapeHtml(subject)
+                }
+
+                ${
+                    time
+                        ? ` • ${escapeHtml(time)}`
+                        : ""
+                }
+            </p>
+
+        </div>
+
+
+        <button
+            class="
+                join-button
+                ${isLive ? "" : "disabled"}
+            "
+            ${isLive ? "" : "disabled"}>
+
+            ${
+                isLive
+                    ? "JOIN NOW"
+                    : "UPCOMING"
+            }
+
+        </button>
+
+    `;
+
+
+    const button =
+        card.querySelector(
+            ".join-button"
+        );
+
+
+    if (isLive) {
+
+        button.addEventListener(
+            "click",
+            event => {
+
+                event.stopPropagation();
+
+                joinLiveClass(
+                    liveClass
+                );
+
+            }
+        );
+
+    }
+
+
+    return card;
+
+}
+
+
+/* ============================================================
+   JOIN LIVE CLASS
+============================================================ */
+
+function joinLiveClass(liveClass) {
+
+    const link =
+        liveClass.joinUrl ||
+        liveClass.meetingUrl ||
+        liveClass.liveUrl ||
+        liveClass.roomUrl;
+
+
+    if (!link) {
+
+        alert(
+            "The live class link is not available yet."
+        );
+
+        return;
+
+    }
+
+
+    window.location.href =
+        link;
+
+}
+
+
+/* ============================================================
+   DATES
+============================================================ */
+
+function renderDates() {
+
+    dateList.innerHTML = "";
+
+
+    /*
+     * Five dates around selectedDate.
+     */
+
+    for (
+        let i = 0;
+        i < 5;
+        i++
+    ) {
+
+        const date =
+            new Date(
+                selectedDate
+            );
+
+
+        date.setDate(
+            date.getDate() +
+            i -
+            2
+        );
+
+
+        const item =
+            document.createElement(
+                "button"
+            );
+
+
+        item.className =
+            "date-item";
+
+
+        if (
+            formatDate(date) ===
+            formatDate(selectedDate)
+        ) {
+
+            item.classList.add(
+                "active"
+            );
+
+        }
+
+
+        const day =
+            new Intl.DateTimeFormat(
+                "en-IN",
+                {
+                    weekday: "short"
+                }
+            ).format(date);
+
+
+        item.innerHTML = `
+
+            <span class="day">
+                ${day}
+            </span>
+
+            <span class="number">
+                ${date.getDate()}
+            </span>
+
+        `;
+
+
+        item.addEventListener(
+            "click",
+            async () => {
+
+                selectedDate =
+                    date;
+
+
+                renderDates();
+
+                await loadSchedule(
+                    selectedDate
+                );
+
+            }
+        );
+
+
+        dateList.appendChild(
+            item
+        );
+
+    }
+
+}
+
+
+/* ============================================================
+   DATE ARROWS
+============================================================ */
+
+previousDate.addEventListener(
+    "click",
+    async () => {
+
+        selectedDate =
+            new Date(
+                selectedDate
+            );
+
+
+        selectedDate.setDate(
+            selectedDate.getDate() -
+            1
+        );
+
+
+        renderDates();
+
+        await loadSchedule(
+            selectedDate
+        );
+
+    }
+);
+
+
+nextDate.addEventListener(
+    "click",
+    async () => {
+
+        selectedDate =
+            new Date(
+                selectedDate
+            );
+
+
+        selectedDate.setDate(
+            selectedDate.getDate() +
+            1
+        );
+
+
+        renderDates();
+
+        await loadSchedule(
+            selectedDate
+        );
+
+    }
+);
+
+
+/* ============================================================
+   LOAD SCHEDULE
+============================================================ */
+
+async function loadSchedule(date) {
+
+    scheduleList.innerHTML = `
+        <div class="section-loading">
+            Loading schedule...
+        </div>
+    `;
+
+
+    const targetDate =
+        formatDate(date);
+
+
+    const classes =
+        liveClasses.filter(
+            liveClass =>
+                getClassDate(
+                    liveClass
+                ) ===
+                targetDate
+        );
+
+
+    renderSchedule(
+        classes
+    );
+
+}
+
+
+/* ============================================================
+   RENDER SCHEDULE
+============================================================ */
+
+function renderSchedule(classes) {
+
+    scheduleList.innerHTML = "";
+
+
+    if (!classes.length) {
+
+        scheduleList.innerHTML = `
+            <div class="empty-message">
+                No classes scheduled for
+                ${formatDateReadable(selectedDate)}.
+            </div>
+        `;
+
+        return;
+
+    }
+
+
+    classes
+        .sort(sortByTime)
+        .forEach(
+            liveClass => {
+
+                const card =
+                    document.createElement(
+                        "article"
+                    );
+
+
+                card.className =
+                    "schedule-card";
+
+
+                const time =
+                    formatTime(
+                        liveClass.startTime ||
+                        liveClass.time
+                    );
+
+
+                const title =
+                    liveClass.title ||
+                    liveClass.subjectName ||
+                    liveClass.subject ||
+                    "Class";
+
+
+                const subject =
+                    liveClass.subjectName ||
+                    liveClass.subject ||
+                    "";
+
+
+                card.innerHTML = `
+
+                    <div class="schedule-time">
+
+                        ${escapeHtml(
+                            time || "--"
+                        )}
+
+                    </div>
+
+
+                    <div class="schedule-content">
+
+                        <h3>
+                            ${escapeHtml(title)}
+                        </h3>
+
+                        <p>
+                            ${escapeHtml(subject)}
+                        </p>
+
+                    </div>
+
+
+                    <div class="schedule-type">
+
+                        ${
+                            liveClass.type ||
+                            "LIVE"
+                        }
+
+                    </div>
+
+                `;
+
+
+                scheduleList.appendChild(
+                    card
+                );
+
+            }
+        );
+
+}
+
+
+/* ============================================================
+   BACK BUTTON
+============================================================ */
+
+backButton.addEventListener(
+    "click",
+    () => {
+
+        if (
+            window.history.length >
+            1
+        ) {
+
+            window.history.back();
+
+        } else {
+
+            window.location.href =
+                "../";
+
+        }
+
+    }
+);
+
+
+/* ============================================================
+   RETRY
+============================================================ */
+
+retryButton.addEventListener(
+    "click",
+    () => {
+
+        window.location.reload();
+
+    }
+);
+
+
+/* ============================================================
+   CLEANUP
+============================================================ */
+
+window.addEventListener(
+    "beforeunload",
+    () => {
+
+        if (
+            unsubscribeEnrollments
+        ) {
+
+            unsubscribeEnrollments();
+
+        }
+
+
+        if (
+            unsubscribeLiveClasses
+        ) {
+
+            unsubscribeLiveClasses();
+
+        }
+
+    }
+);
