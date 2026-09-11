@@ -2,7 +2,7 @@ import {
     auth,
     db,
     storage
-} from "../../../firebase/firebase-config.js";
+} from "../../firebase/firebase-config.js";
 
 import {
     collection,
