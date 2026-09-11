@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Enrollment Requests | Zenova CRM</title>
+
+    <link
+        rel="icon"
+        href="../../../logo.png"
+    >
+
+    <link
+        rel="stylesheet"
+        href="./enrollment-requests.css"
+    >
+</head>
+
+
+<body>
+
+
+<!-- =====================================================
+     LOADER
+====================================================== -->
+
+<div
+    id="appLoader"
+    class="app-loader"
+>
+
+    <div class="loader-spinner"></div>
+
+    <p>
+        Loading Zenova CRM
+    </p>
+
+</div>
+
+
+
+<!-- =====================================================
+     CRM APP
+====================================================== -->
+
+<div
+    id="crmApp"
+    class="crm-app hidden"
+>
+
+
+    <!-- =================================================
+         MOBILE OVERLAY
+    ================================================== -->
+
+    <div
+        id="sidebarOverlay"
+        class="sidebar-overlay"
+    ></div>
+
+
+
+    <!-- =================================================
+         SIDEBAR
+    ================================================== -->
+
+    <aside
+        id="sidebar"
+        class="sidebar"
+    >
+
+        <div class="sidebar-top">
+
+
+            <div class="brand">
+
+                <img
+                    src="../../../logo.png"
+                    class="brand-logo"
+                    alt="Zenova"
+                >
+
+                <div class="brand-text">
+
+                    <strong>
+                        ZENOVA
+                    </strong>
+
+                    <span>
+                        CRM
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <button
+                id="sidebarClose"
+                class="mobile-close"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+
+        <!-- WORKSPACE -->
+
+        <div class="sidebar-section">
+
+            <span class="sidebar-label">
+                WORKSPACE
+            </span>
+
+
+            <nav class="sidebar-nav">
+
+
+                <a
+                    href="../dashboard/"
+                    class="nav-item"
+                >
+                    <span class="nav-icon">⌂</span>
+                    <span>Dashboard</span>
+                </a>
+
+
+                <a
+                    href="../students/"
+                    class="nav-item"
+                >
+                    <span class="nav-icon">♙</span>
+                    <span>Students</span>
+                </a>
+
+
+                <a
+                    href="../leads/"
+                    class="nav-item"
+                >
+                    <span class="nav-icon">◎</span>
+                    <span>Leads</span>
+                </a>
+
+
+                <a
+                    href="../schools/"
+                    class="nav-item"
+                >
+                    <span class="nav-icon">▣</span>
+                    <span>Schools</span>
+                </a>
+
+
+                <a
+                    href="../courses/"
+                    class="nav-item"
+                >
+                    <span class="nav-icon">▤</span>
+                    <span>Courses</span>
+                </a>
+
+
+                <a
+                    href="../admissions/"
+                    class="nav-item"
+                >
+                    <span class="nav-icon">□</span>
+                    <span>Admissions</span>
+                </a>
+
+
+                <!-- CURRENT PAGE -->
+
+                <a
+                    href="./"
+                    class="nav-item active"
+                >
+
+                    <span class="nav-icon">
+                        ✓
+                    </span>
+
+                    <span>
+                        Enrollment Requests
+                    </span>
+
+                    <span
+                        id="sidebarPendingCount"
+                        class="nav-count"
+                    >
+                        0
+                    </span>
+
+                </a>
+
+
+                <a
+                    href="../followups/"
+                    class="nav-item"
+                >
+                    <span class="nav-icon">◷</span>
+                    <span>Follow-ups</span>
+                </a>
+
+
+                <a
+                    href="../interactions/"
+                    class="nav-item"
+                >
+                    <span class="nav-icon">↗</span>
+                    <span>Interactions</span>
+                </a>
+
+
+                <a
+                    href="../payments/"
+                    class="nav-item"
+                >
+                    <span class="nav-icon">₹</span>
+                    <span>Payments</span>
+                </a>
+
+
+            </nav>
+
+        </div>
+
+
+
+        <!-- INSIGHTS -->
+
+        <div class="sidebar-section">
+
+            <span class="sidebar-label">
+                INSIGHTS
+            </span>
+
+
+            <nav class="sidebar-nav">
+
+                <a
+                    href="../reports/"
+                    class="nav-item"
+                >
+
+                    <span class="nav-icon">
+                        ▥
+                    </span>
+
+                    <span>
+                        Reports
+                    </span>
+
+                </a>
+
+            </nav>
+
+        </div>
+
+
+
+        <!-- BOTTOM -->
+
+        <div class="sidebar-bottom">
+
+            <a
+                href="../settings/"
+                class="nav-item"
+            >
+
+                <span class="nav-icon">
+                    ⚙
+                </span>
+
+                <span>
+                    CRM Settings
+                </span>
+
+            </a>
+
+
+            <div class="sidebar-user">
+
+                <div
+                    class="user-avatar"
+                    id="sidebarAvatar"
+                >
+                    Z
+                </div>
+
+
+                <div class="sidebar-user-info">
+
+                    <strong
+                        id="sidebarUserName"
+                    >
+                        Admin
+                    </strong>
+
+                    <span
+                        id="sidebarUserEmail"
+                    >
+                        Loading...
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </aside>
+
+
+
+    <!-- =================================================
+         MAIN
+    ================================================== -->
+
+    <main class="main-content">
+
+
+        <!-- TOPBAR -->
+
+        <header class="topbar">
+
+
+            <button
+                id="sidebarOpen"
+                class="menu-button"
+            >
+                ☰
+            </button>
+
+
+            <div class="topbar-search">
+
+                <span class="search-icon">
+                    ⌕
+                </span>
+
+                <input
+                    id="globalSearch"
+                    type="text"
+                    placeholder="Search enrollment requests..."
+                    autocomplete="off"
+                >
+
+            </div>
+
+
+            <div class="topbar-actions">
+
+                <button
+                    id="notificationButton"
+                    class="topbar-button"
+                    title="Notifications"
+                >
+
+                    ♢
+
+                    <span
+                        id="notificationDot"
+                        class="notification-dot hidden"
+                    ></span>
+
+                </button>
+
+
+                <div class="topbar-divider"></div>
+
+
+                <div class="topbar-profile">
+
+                    <div
+                        id="topbarAvatar"
+                        class="topbar-avatar"
+                    >
+                        Z
+                    </div>
+
+
+                    <div class="topbar-profile-text">
+
+                        <strong
+                            id="topbarName"
+                        >
+                            Admin
+                        </strong>
+
+                        <span>
+                            CRM Administrator
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </header>
+
+
+
+        <!-- =================================================
+             PAGE CONTENT
+        ================================================== -->
+
+        <section class="page-content">
+
+
+            <!-- PAGE HEADER -->
+
+            <div class="page-header">
+
+                <div>
+
+                    <div class="breadcrumb">
+
+                        CRM
+
+                        <span>/</span>
+
+                        Admissions
+
+                        <span>/</span>
+
+                        <strong>
+                            Enrollment Requests
+                        </strong>
+
+                    </div>
+
+
+                    <h1>
+                        Enrollment Requests
+                    </h1>
+
+
+                    <p>
+                        Verify student enrollment requests,
+                        confirm manual payments and activate
+                        course access.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- =================================================
+                 STATS
+            ================================================== -->
+
+            <div class="stats-grid">
+
+
+                <div class="stat-card">
+
+                    <div class="stat-top">
+
+                        <div class="stat-icon purple">
+                            ⏱
+                        </div>
+
+                        <span class="live-label">
+                            LIVE
+                        </span>
+
+                    </div>
+
+                    <div
+                        id="pendingCount"
+                        class="stat-number"
+                    >
+                        0
+                    </div>
+
+                    <div class="stat-title">
+                        Pending Requests
+                    </div>
+
+                </div>
+
+
+
+                <div class="stat-card">
+
+                    <div class="stat-top">
+
+                        <div class="stat-icon orange">
+                            ₹
+                        </div>
+
+                        <span class="live-label">
+                            LIVE
+                        </span>
+
+                    </div>
+
+                    <div
+                        id="paymentCount"
+                        class="stat-number"
+                    >
+                        0
+                    </div>
+
+                    <div class="stat-title">
+                        Payment Received
+                    </div>
+
+                </div>
+
+
+
+                <div class="stat-card">
+
+                    <div class="stat-top">
+
+                        <div class="stat-icon green">
+                            ✓
+                        </div>
+
+                        <span class="live-label">
+                            LIVE
+                        </span>
+
+                    </div>
+
+                    <div
+                        id="approvedCount"
+                        class="stat-number"
+                    >
+                        0
+                    </div>
+
+                    <div class="stat-title">
+                        Approved
+                    </div>
+
+                </div>
+
+
+
+                <div class="stat-card">
+
+                    <div class="stat-top">
+
+                        <div class="stat-icon red">
+                            ×
+                        </div>
+
+                        <span class="live-label">
+                            LIVE
+                        </span>
+
+                    </div>
+
+                    <div
+                        id="rejectedCount"
+                        class="stat-number"
+                    >
+                        0
+                    </div>
+
+                    <div class="stat-title">
+                        Rejected
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- =================================================
+                 REQUEST MANAGER
+            ================================================== -->
+
+            <div class="request-card">
+
+
+                <div class="request-card-header">
+
+                    <div>
+
+                        <h2>
+                            Student Enrollment Requests
+                        </h2>
+
+                        <p>
+                            Review and activate student
+                            course access.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- FILTERS -->
+
+                <div class="filters">
+
+
+                    <div class="filter-search">
+
+                        <span>
+                            ⌕
+                        </span>
+
+                        <input
+                            id="tableSearch"
+                            type="text"
+                            placeholder="Search student, phone or course..."
+                        >
+
+                    </div>
+
+
+                    <select
+                        id="statusFilter"
+                        class="filter-select"
+                    >
+
+                        <option value="ALL">
+                            All Status
+                        </option>
+
+                        <option value="PENDING">
+                            Pending
+                        </option>
+
+                        <option value="PAYMENT_RECEIVED">
+                            Payment Received
+                        </option>
+
+                        <option value="APPROVED">
+                            Approved
+                        </option>
+
+                        <option value="REJECTED">
+                            Rejected
+                        </option>
+
+                    </select>
+
+
+                    <select
+                        id="paymentFilter"
+                        class="filter-select"
+                    >
+
+                        <option value="ALL">
+                            All Payments
+                        </option>
+
+                        <option value="MANUAL_PAYMENT_PENDING">
+                            Payment Pending
+                        </option>
+
+                        <option value="PAID">
+                            Paid
+                        </option>
+
+                    </select>
+
+
+                </div>
+
+
+
+                <!-- TABLE -->
+
+                <div class="table-wrapper">
+
+                    <table>
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    STUDENT
+                                </th>
+
+                                <th>
+                                    COURSE
+                                </th>
+
+                                <th>
+                                    CLASS
+                                </th>
+
+                                <th>
+                                    AMOUNT
+                                </th>
+
+                                <th>
+                                    PAYMENT
+                                </th>
+
+                                <th>
+                                    STATUS
+                                </th>
+
+                                <th>
+                                    REQUESTED
+                                </th>
+
+                                <th>
+                                    ACTION
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody
+                            id="requestsTable"
+                        >
+
+                            <tr>
+
+                                <td
+                                    colspan="8"
+                                    class="table-loading"
+                                >
+                                    Loading requests...
+                                </td>
+
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+
+                <div
+                    id="emptyState"
+                    class="empty-state hidden"
+                >
+
+                    <div class="empty-icon">
+                        ✓
+                    </div>
+
+                    <h3>
+                        No enrollment requests
+                    </h3>
+
+                    <p>
+                        New student enrollment requests
+                        will appear here automatically.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+
+
+<!-- =====================================================
+     DETAILS MODAL
+====================================================== -->
+
+<div
+    id="detailsModal"
+    class="modal hidden"
+>
+
+    <div
+        class="modal-overlay"
+        id="modalOverlay"
+    ></div>
+
+
+    <div class="modal-panel">
+
+
+        <div class="modal-header">
+
+            <div>
+
+                <span>
+                    ENROLLMENT REQUEST
+                </span>
+
+                <h2>
+                    Verify Student
+                </h2>
+
+            </div>
+
+
+            <button
+                id="modalClose"
+                class="modal-close"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+
+        <div
+            id="modalContent"
+            class="modal-content"
+        ></div>
+
+
+    </div>
+
+</div>
+
+
+
+<script
+    type="module"
+    src="./enrollment-requests.js"
+></script>
+
+
+</body>
+</html>
