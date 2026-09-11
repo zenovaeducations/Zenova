@@ -1,269 +1,299 @@
-/* ============================================================
-   ZENOVA UNIVERSAL STUDENT HOME
-============================================================ */
-
 import {
     auth,
     db
 } from "../firebase/firebase-config.js";
 
+import {
+    collection,
+    doc,
+    onSnapshot,
+    query,
+    where
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
 import {
     onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
 
 
-import {
-    collection,
-    doc,
-    getDoc,
-    getDocs,
-    query,
-    where,
-    limit
-} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
-
-
-/* ============================================================
+/* =========================================================
    STATE
-============================================================ */
+========================================================= */
 
 let currentUser = null;
-let student = null;
+
+let studentData = null;
 
 let banners = [];
-let courses = [];
-let freeLearning = [];
-let announcements = [];
+
+let currentBanner = 0;
 
 let bannerTimer = null;
 
+let enrolledCourses = [];
 
-/* ============================================================
+let allCourses = [];
+
+let unsubscribeStudent = null;
+
+let unsubscribeBanners = null;
+
+let unsubscribeEnrollments = null;
+
+let unsubscribeCourses = null;
+
+
+/* =========================================================
    ELEMENTS
-============================================================ */
+========================================================= */
 
-const loader =
+const loadingScreen =
     document.getElementById(
-        "zenovaLoader"
+        "loadingScreen"
     );
 
 const app =
     document.getElementById(
-        "zenovaApp"
+        "app"
+    );
+
+const studentName =
+    document.getElementById(
+        "studentName"
+    );
+
+const studentAvatar =
+    document.getElementById(
+        "studentAvatar"
+    );
+
+const welcomeTime =
+    document.getElementById(
+        "welcomeTime"
+    );
+
+const profileButton =
+    document.getElementById(
+        "profileButton"
+    );
+
+const notificationButton =
+    document.getElementById(
+        "notificationButton"
+    );
+
+const bannerSection =
+    document.getElementById(
+        "bannerSection"
+    );
+
+const bannerSlider =
+    document.getElementById(
+        "bannerSlider"
+    );
+
+const bannerDots =
+    document.getElementById(
+        "bannerDots"
+    );
+
+const batchesContainer =
+    document.getElementById(
+        "batchesContainer"
+    );
+
+const exploreBatches =
+    document.getElementById(
+        "exploreBatches"
+    );
+
+const aiCard =
+    document.getElementById(
+        "aiCard"
+    );
+
+const videosExplore =
+    document.getElementById(
+        "videosExplore"
     );
 
 
-/* ============================================================
+/* =========================================================
    AUTH
-============================================================ */
+========================================================= */
 
 onAuthStateChanged(
     auth,
-    async (user) => {
+    user => {
 
-        /*
-         * Not logged in
-         */
         if (!user) {
 
-            window.location.replace(
-                "../account/login/"
-            );
+            window.location.href =
+                "../login/";
 
             return;
-        }
-
-
-        currentUser = user;
-
-
-        try {
-
-            /*
-             * Get student profile.
-             */
-            const studentRef =
-                doc(
-                    db,
-                    "students",
-                    user.uid
-                );
-
-
-            const studentSnapshot =
-                await getDoc(
-                    studentRef
-                );
-
-
-            /*
-             * Student profile doesn't exist.
-             */
-            if (
-                !studentSnapshot.exists()
-            ) {
-
-                window.location.replace(
-                    "../account/onboarding/"
-                );
-
-                return;
-            }
-
-
-            student =
-                studentSnapshot.data();
-
-
-            /*
-             * IMPORTANT:
-             *
-             * If onboarding isn't complete,
-             * Home cannot be opened.
-             */
-            if (
-                student.onboardingComplete !== true
-            ) {
-
-                window.location.replace(
-                    "../account/onboarding/"
-                );
-
-                return;
-            }
-
-
-            /*
-             * Render student immediately.
-             */
-            renderStudent();
-
-
-            /*
-             * Load all universal content.
-             */
-            await Promise.all([
-
-                loadBanners(),
-
-                loadRecommendedCourses(),
-
-                loadFreeLearning(),
-
-                loadAnnouncements()
-
-            ]);
-
-
-            /*
-             * Show page.
-             */
-            showApp();
-
-
-        } catch (error) {
-
-            console.error(
-                "HOME INITIALIZATION ERROR:",
-                error
-            );
-
-            showHomeError();
 
         }
+
+
+        currentUser =
+            user;
+
+
+        updateGreeting();
+
+
+        loadStudent(
+            user.uid
+        );
+
+
+        loadBanners();
+
+
+        loadEnrollments(
+            user.uid
+        );
+
+
+        loadCourses();
 
     }
 );
 
 
-/* ============================================================
-   STUDENT HEADER
-============================================================ */
+/* =========================================================
+   STUDENT
+========================================================= */
 
-function renderStudent() {
+function loadStudent(
+    uid
+) {
 
-    const name =
-        student.name ||
-        student.fullName ||
-        currentUser.displayName ||
-        "Student";
+    if (
+        unsubscribeStudent
+    ) {
+
+        unsubscribeStudent();
+
+    }
 
 
-    document.getElementById(
-        "studentName"
-    ).textContent =
+    const studentRef =
+        doc(
+            db,
+            "students",
+            uid
+        );
+
+
+    unsubscribeStudent =
+        onSnapshot(
+
+            studentRef,
+
+            snapshot => {
+
+                if (
+                    !snapshot.exists()
+                ) {
+
+                    console.warn(
+                        "Student document not found."
+                    );
+
+                    setStudentName(
+                        currentUser?.displayName ||
+                        "Student"
+                    );
+
+                    hideLoading();
+
+                    return;
+
+                }
+
+
+                studentData =
+                    snapshot.data();
+
+
+                const name =
+                    studentData.name ||
+                    studentData.fullName ||
+                    currentUser?.displayName ||
+                    "Student";
+
+
+                setStudentName(
+                    name
+                );
+
+
+                hideLoading();
+
+            },
+
+            error => {
+
+                console.error(
+                    "Student loading error:",
+                    error
+                );
+
+
+                setStudentName(
+                    currentUser?.displayName ||
+                    "Student"
+                );
+
+
+                hideLoading();
+
+            }
+
+        );
+
+}
+
+
+/* =========================================================
+   STUDENT NAME
+========================================================= */
+
+function setStudentName(
+    name
+) {
+
+    studentName.textContent =
         name;
 
 
-    document.getElementById(
-        "profileInitial"
-    ).textContent =
-        name
+    const firstLetter =
+        String(name)
             .trim()
             .charAt(0)
             .toUpperCase();
 
 
-    /*
-     * Academic information.
-     */
-    const academic = [];
+    studentAvatar.textContent =
+        firstLetter || "Z";
+
+}
 
 
-    if (student.className) {
+/* =========================================================
+   GREETING
+========================================================= */
 
-        academic.push(
-            student.className
-        );
+function updateGreeting() {
 
-    }
-
-
-    if (student.board) {
-
-        academic.push(
-            student.board
-        );
-
-    }
-
-
-    if (student.medium) {
-
-        academic.push(
-            student.medium
-        );
-
-    }
-
-
-    if (student.combination) {
-
-        academic.push(
-            student.combination
-        );
-
-    }
-
-
-    document.getElementById(
-        "academicInfo"
-    ).textContent =
-        academic.length
-            ? academic.join(" • ")
-            : "Let's make today productive.";
-
-
-    /*
-     * Greeting.
-     */
     const hour =
         new Date().getHours();
 
 
     let greeting =
-        "Good morning";
+        "GOOD MORNING";
 
 
     if (
@@ -272,7 +302,7 @@ function renderStudent() {
     ) {
 
         greeting =
-            "Good afternoon";
+            "GOOD AFTERNOON";
 
     }
 
@@ -282,240 +312,327 @@ function renderStudent() {
     ) {
 
         greeting =
-            "Good evening";
+            "GOOD EVENING";
 
     }
 
 
-    document.getElementById(
-        "greetingText"
-    ).textContent =
+    welcomeTime.textContent =
         greeting;
-
-
-    /*
-     * Motivation.
-     */
-    const motivations = [
-
-        "Small steps, big results.",
-
-        "Learn something new today.",
-
-        "Your consistency creates results.",
-
-        "One lesson closer to your goal.",
-
-        "Keep learning. Keep growing."
-
-    ];
-
-
-    const random =
-        Math.floor(
-            Math.random() *
-            motivations.length
-        );
-
-
-    document.getElementById(
-        "motivationText"
-    ).textContent =
-        motivations[random];
 
 }
 
 
-/* ============================================================
-   BANNERS
-============================================================ */
+/* =========================================================
+   HOME BANNERS
+========================================================= */
 
-async function loadBanners() {
+function loadBanners() {
 
-    try {
+    if (
+        unsubscribeBanners
+    ) {
 
-        const q =
-            query(
-                collection(
-                    db,
-                    "homeBanners"
-                ),
+        unsubscribeBanners();
 
-                where(
-                    "active",
-                    "==",
-                    true
-                ),
-
-                limit(20)
-            );
+    }
 
 
-        const snapshot =
-            await getDocs(q);
+    const bannersRef =
+        collection(
+            db,
+            "homeBanners"
+        );
 
 
-        banners =
-            snapshot.docs.map(
-                item => ({
-                    id: item.id,
-                    ...item.data()
-                })
-            );
+    unsubscribeBanners =
+        onSnapshot(
+
+            bannersRef,
+
+            snapshot => {
+
+                banners =
+                    snapshot.docs
+                        .map(
+                            item => ({
+                                id: item.id,
+                                ...item.data()
+                            })
+                        )
+                        .filter(
+                            banner =>
+                                banner.active === true
+                        )
+                        .sort(
+                            (a, b) =>
+                                Number(
+                                    a.priority ?? 999
+                                ) -
+                                Number(
+                                    b.priority ?? 999
+                                )
+                        );
 
 
-        banners.sort(
-            (a, b) => {
+                renderBanners();
 
-                return Number(
-                    a.order || 999
-                )
-                -
-                Number(
-                    b.order || 999
+            },
+
+            error => {
+
+                console.error(
+                    "Banner listener error:",
+                    error
                 );
 
             }
+
         );
-
-
-        renderBanners();
-
-
-    } catch (error) {
-
-        console.warn(
-            "Banners unavailable:",
-            error
-        );
-
-        hideSection(
-            "bannerSection"
-        );
-
-    }
 
 }
 
 
-/* ============================================================
+/* =========================================================
    RENDER BANNERS
-============================================================ */
+========================================================= */
 
 function renderBanners() {
 
-    const section =
-        document.getElementById(
-            "bannerSection"
-        );
-
-    const slider =
-        document.getElementById(
-            "bannerSlider"
-        );
-
-    const dots =
-        document.getElementById(
-            "bannerDots"
-        );
+    clearBannerTimer();
 
 
-    if (!banners.length) {
+    if (
+        !banners.length
+    ) {
 
-        section.classList.add(
+        bannerSection.classList.add(
             "hidden"
         );
 
+        bannerSlider.innerHTML =
+            "";
+
+        bannerDots.innerHTML =
+            "";
+
         return;
+
     }
 
 
-    section.classList.remove(
+    bannerSection.classList.remove(
         "hidden"
     );
 
 
-    slider.innerHTML =
+    currentBanner = 0;
+
+
+    bannerSlider.innerHTML =
         banners
             .map(
-                (banner, index) => `
+                (banner, index) => {
 
-                    <div
-                        class="banner-slide ${
-                            index === 0
-                                ? "active"
-                                : ""
-                        }"
-                        data-link="${escapeAttr(
-                            banner.link ||
-                            banner.buttonLink ||
+                    const image =
+                        banner.imageUrl ||
+                        banner.crmImageUrl ||
+                        "";
+
+
+                    const title =
+                        escapeHtml(
+                            banner.title ||
                             ""
-                        )}"
-                    >
+                        );
 
-                        <img
-                            src="${escapeAttr(
-                                banner.imageUrl ||
-                                banner.image ||
-                                ""
-                            )}"
-                            alt=""
+
+                    const label =
+                        escapeHtml(
+                            banner.label ||
+                            ""
+                        );
+
+
+                    const description =
+                        escapeHtml(
+                            banner.description ||
+                            ""
+                        );
+
+
+                    const buttonText =
+                        escapeHtml(
+                            banner.buttonText ||
+                            ""
+                        );
+
+
+                    return `
+
+                        <article
+                            class="home-banner ${
+                                index === 0
+                                    ? "active"
+                                    : ""
+                            }"
+                            data-banner-id="${banner.id}"
                         >
 
-                    </div>
+                            ${
+                                image
+                                    ? `
+                                        <img
+                                            src="${escapeAttribute(image)}"
+                                            alt="${title}"
+                                        >
+                                    `
+                                    : ""
+                            }
 
-                `
+
+                            ${
+                                title ||
+                                description ||
+                                buttonText
+                                    ? `
+
+                                        <div
+                                            class="banner-overlay"
+                                        >
+
+                                            ${
+                                                label
+                                                    ? `
+                                                        <span class="banner-label">
+                                                            ${label}
+                                                        </span>
+                                                    `
+                                                    : ""
+                                            }
+
+
+                                            ${
+                                                title
+                                                    ? `
+                                                        <h3>
+                                                            ${title}
+                                                        </h3>
+                                                    `
+                                                    : ""
+                                            }
+
+
+                                            ${
+                                                description
+                                                    ? `
+                                                        <p>
+                                                            ${description}
+                                                        </p>
+                                                    `
+                                                    : ""
+                                            }
+
+
+                                            ${
+                                                buttonText
+                                                    ? `
+                                                        <span class="banner-button">
+                                                            ${buttonText}
+                                                        </span>
+                                                    `
+                                                    : ""
+                                            }
+
+                                        </div>
+
+                                    `
+                                    : ""
+                            }
+
+                        </article>
+
+                    `;
+
+                }
             )
             .join("");
 
 
-    dots.innerHTML =
+    bannerDots.innerHTML =
         banners
             .map(
                 (_, index) => `
 
-                    <button
+                    <span
                         class="banner-dot ${
                             index === 0
                                 ? "active"
                                 : ""
                         }"
                         data-index="${index}"
-                        type="button"
-                        aria-label="Banner ${
-                            index + 1
-                        }"
-                    ></button>
+                    ></span>
 
                 `
             )
             .join("");
 
 
-    setupBannerSlider();
+    /*
+     * Banner click
+     */
+
+    bannerSlider
+        .querySelectorAll(
+            ".home-banner"
+        )
+        .forEach(
+            element => {
+
+                element.addEventListener(
+                    "click",
+                    () => {
+
+                        const id =
+                            element.dataset.bannerId;
+
+
+                        const banner =
+                            banners.find(
+                                item =>
+                                    item.id === id
+                            );
+
+
+                        if (
+                            banner?.link
+                        ) {
+
+                            window.location.href =
+                                banner.link;
+
+                        }
+
+                    }
+                );
+
+            }
+        );
+
+
+    startBannerTimer();
 
 }
 
 
-/* ============================================================
-   BANNER SLIDER
-============================================================ */
+/* =========================================================
+   BANNER TIMER
+========================================================= */
 
-function setupBannerSlider() {
-
-    const slides =
-        document.querySelectorAll(
-            ".banner-slide"
-        );
-
-    const dots =
-        document.querySelectorAll(
-            ".banner-dot"
-        );
-
+function startBannerTimer() {
 
     if (
-        slides.length <= 1
+        banners.length <= 1
     ) {
 
         return;
@@ -523,77 +640,19 @@ function setupBannerSlider() {
     }
 
 
-    let current =
-        0;
-
-
-    function showSlide(
-        index
-    ) {
-
-        current =
-            (index + slides.length)
-            %
-            slides.length;
-
-
-        slides.forEach(
-            (slide, i) => {
-
-                slide.classList.toggle(
-                    "active",
-                    i === current
-                );
-
-            }
-        );
-
-
-        dots.forEach(
-            (dot, i) => {
-
-                dot.classList.toggle(
-                    "active",
-                    i === current
-                );
-
-            }
-        );
-
-    }
-
-
-    dots.forEach(
-        dot => {
-
-            dot.addEventListener(
-                "click",
-                () => {
-
-                    showSlide(
-                        Number(
-                            dot.dataset.index
-                        )
-                    );
-
-                }
-            );
-
-        }
-    );
-
-
-    clearInterval(
-        bannerTimer
-    );
-
-
     bannerTimer =
         setInterval(
             () => {
 
-                showSlide(
-                    current + 1
+                currentBanner =
+                    (
+                        currentBanner + 1
+                    ) %
+                    banners.length;
+
+
+                showBanner(
+                    currentBanner
                 );
 
             },
@@ -603,394 +662,446 @@ function setupBannerSlider() {
 }
 
 
-/* ============================================================
-   RECOMMENDED COURSES / BATCHES
-============================================================ */
+function clearBannerTimer() {
 
-async function loadRecommendedCourses() {
+    if (
+        bannerTimer
+    ) {
 
-    try {
+        clearInterval(
+            bannerTimer
+        );
 
-        /*
-         * CRM course master.
-         */
-        const snapshot =
-            await getDocs(
-                collection(
-                    db,
-                    "crmCourses"
-                )
-            );
+        bannerTimer = null;
+
+    }
+
+}
 
 
-        const allCourses =
-            snapshot.docs.map(
-                item => ({
-                    id: item.id,
-                    ...item.data()
-                })
-            );
+function showBanner(
+    index
+) {
+
+    bannerSlider
+        .querySelectorAll(
+            ".home-banner"
+        )
+        .forEach(
+            (banner, bannerIndex) => {
+
+                banner.classList.toggle(
+                    "active",
+                    bannerIndex === index
+                );
+
+            }
+        );
 
 
-        /*
-         * Only active courses.
-         */
-        const activeCourses =
-            allCourses.filter(
-                course =>
-                    course.crmActive !== false
-            );
+    bannerDots
+        .querySelectorAll(
+            ".banner-dot"
+        )
+        .forEach(
+            (dot, dotIndex) => {
+
+                dot.classList.toggle(
+                    "active",
+                    dotIndex === index
+                );
+
+            }
+        );
+
+}
 
 
-        /*
-         * Match according to onboarding.
-         */
-        courses =
-            activeCourses
-                .filter(
-                    matchesStudent
-                )
-                .slice(0, 10);
+/* =========================================================
+   ENROLLMENTS
+========================================================= */
+
+function loadEnrollments(
+    uid
+) {
+
+    if (
+        unsubscribeEnrollments
+    ) {
+
+        unsubscribeEnrollments();
+
+    }
 
 
-        /*
-         * If there aren't enough exact
-         * matches, show active courses
-         * rather than an empty Home.
-         */
-        if (
-            courses.length < 3
-        ) {
+    const enrollmentRef =
+        collection(
+            db,
+            "studentEnrollments"
+        );
 
-            const remaining =
-                activeCourses.filter(
-                    course =>
-                        !courses.some(
-                            selected =>
-                                selected.id ===
-                                course.id
+
+    const enrollmentQuery =
+        query(
+            enrollmentRef,
+            where(
+                "studentUid",
+                "==",
+                uid
+            )
+        );
+
+
+    unsubscribeEnrollments =
+        onSnapshot(
+
+            enrollmentQuery,
+
+            snapshot => {
+
+                enrolledCourses =
+                    snapshot.docs
+                        .map(
+                            item => ({
+                                id: item.id,
+                                ...item.data()
+                            })
                         )
+                        .filter(
+                            enrollment => {
+
+                                const status =
+                                    String(
+                                        enrollment.status ||
+                                        ""
+                                    ).toUpperCase();
+
+
+                                return (
+                                    status ===
+                                        "ACTIVE" ||
+                                    status ===
+                                        "ENROLLED" ||
+                                    status ===
+                                        "APPROVED" ||
+                                    !status
+                                );
+
+                            }
+                        );
+
+
+                renderBatches();
+
+            },
+
+            error => {
+
+                console.error(
+                    "Enrollment error:",
+                    error
+                );
+
+                enrolledCourses = [];
+
+                renderBatches();
+
+            }
+
+        );
+
+}
+
+
+/* =========================================================
+   CRM COURSES
+========================================================= */
+
+function loadCourses() {
+
+    if (
+        unsubscribeCourses
+    ) {
+
+        unsubscribeCourses();
+
+    }
+
+
+    const coursesRef =
+        collection(
+            db,
+            "crmCourses"
+        );
+
+
+    const coursesQuery =
+        query(
+            coursesRef,
+            where(
+                "crmActive",
+                "==",
+                true
+            )
+        );
+
+
+    unsubscribeCourses =
+        onSnapshot(
+
+            coursesQuery,
+
+            snapshot => {
+
+                allCourses =
+                    snapshot.docs
+                        .map(
+                            item => ({
+                                id: item.id,
+                                ...item.data()
+                            })
+                        )
+                        .sort(
+                            (a, b) =>
+                                Number(
+                                    a.priority ?? 999
+                                ) -
+                                Number(
+                                    b.priority ?? 999
+                                )
+                        );
+
+
+                renderBatches();
+
+            },
+
+            error => {
+
+                console.error(
+                    "Courses error:",
+                    error
                 );
 
 
-            courses =
-                [
-                    ...courses,
-                    ...remaining
-                ]
-                .slice(0, 10);
+                /*
+                 * If the catalogue query fails,
+                 * don't break the complete Home page.
+                 */
+
+                allCourses = [];
+
+                renderBatches();
+
+            }
+
+        );
+
+}
+
+
+/* =========================================================
+   BATCHES FOR YOU
+========================================================= */
+
+function renderBatches() {
+
+    if (
+        !batchesContainer
+    ) {
+
+        return;
+
+    }
+
+
+    const cards = [];
+
+
+    /*
+     * -----------------------------------------------------
+     * 1. ENROLLED COURSES FIRST
+     * -----------------------------------------------------
+     */
+
+    enrolledCourses.forEach(
+        enrollment => {
+
+            const courseId =
+                enrollment.crmCourseId ||
+                enrollment.courseId;
+
+
+            const course =
+                allCourses.find(
+                    item =>
+                        item.id === courseId
+                );
+
+
+            if (
+                course
+            ) {
+
+                cards.push({
+                    course,
+                    enrollment,
+                    enrolled: true
+                });
+
+            }
 
         }
-
-
-        renderRecommendedCourses();
-
-
-    } catch (error) {
-
-        console.warn(
-            "Recommended courses unavailable:",
-            error
-        );
-
-        renderRecommendedCourses();
-
-    }
-
-}
-
-
-/* ============================================================
-   MATCH COURSE TO STUDENT
-============================================================ */
-
-function matchesStudent(
-    course
-) {
-
-    let score = 0;
+    );
 
 
     /*
-     * Class.
+     * -----------------------------------------------------
+     * 2. SAME CLASS COURSES
+     * -----------------------------------------------------
      */
-    if (
-        student.className &&
-        (
-            course.crmClass ===
-            student.className
-            ||
-            course.className ===
-            student.className
-        )
-    ) {
 
-        score += 4;
-
-    }
+    const studentClass =
+        studentData?.className ||
+        studentData?.crmClass ||
+        studentData?.class ||
+        "";
 
 
-    /*
-     * Board.
-     */
-    if (
-        student.board &&
-        (
-            course.crmBoard ===
-            student.board
-            ||
-            course.board ===
-            student.board
-        )
-    ) {
-
-        score += 3;
-
-    }
-
-
-    /*
-     * Medium.
-     */
-    if (
-        student.medium &&
-        (
-            course.crmMedium ===
-            student.medium
-            ||
-            course.medium ===
-            student.medium
-        )
-    ) {
-
-        score += 2;
-
-    }
-
-
-    /*
-     * Combination.
-     */
-    if (
-        student.combination &&
-        (
-            course.crmCombination ===
-            student.combination
-            ||
-            course.combination ===
-            student.combination
-        )
-    ) {
-
-        score += 2;
-
-    }
-
-
-    /*
-     * A course is considered relevant
-     * if it matches at least the class.
-     */
-    return score > 0;
-
-}
-
-
-/* ============================================================
-   RENDER RECOMMENDED
-============================================================ */
-
-function renderRecommendedCourses() {
-
-    const list =
-        document.getElementById(
-            "recommendedList"
+    const enrolledIds =
+        new Set(
+            enrolledCourses.map(
+                enrollment =>
+                    enrollment.crmCourseId ||
+                    enrollment.courseId
+            )
         );
 
 
-    if (!courses.length) {
+    const sameClass =
+        allCourses
+            .filter(
+                course => {
 
-        list.innerHTML = `
+                    if (
+                        enrolledIds.has(
+                            course.id
+                        )
+                    ) {
 
-            <div class="empty-state">
+                        return false;
 
-                New batches will appear here
-                as they become available.
+                    }
 
+
+                    return sameClassMatch(
+                        course.crmClass,
+                        studentClass
+                    );
+
+                }
+            );
+
+
+    sameClass.forEach(
+        course => {
+
+            cards.push({
+                course,
+                enrollment: null,
+                enrolled: false
+            });
+
+        }
+    );
+
+
+    /*
+     * -----------------------------------------------------
+     * 3. OTHER PROGRAMS
+     * -----------------------------------------------------
+     */
+
+    const otherCourses =
+        allCourses
+            .filter(
+                course => {
+
+                    if (
+                        enrolledIds.has(
+                            course.id
+                        )
+                    ) {
+
+                        return false;
+
+                    }
+
+
+                    return !sameClassMatch(
+                        course.crmClass,
+                        studentClass
+                    );
+
+                }
+            );
+
+
+    otherCourses.forEach(
+        course => {
+
+            cards.push({
+                course,
+                enrollment: null,
+                enrolled: false
+            });
+
+        }
+    );
+
+
+    /*
+     * LIMIT HOME
+     */
+
+    const visible =
+        cards.slice(
+            0,
+            8
+        );
+
+
+    if (
+        !visible.length
+    ) {
+
+        batchesContainer.innerHTML = `
+
+            <div class="section-loading">
+                No batches available right now.
             </div>
 
         `;
 
         return;
+
     }
 
 
-    list.innerHTML =
-        courses
+    batchesContainer.innerHTML =
+        visible
             .map(
-                course => {
-
-                    const image =
-                        course.crmImageUrl ||
-                        course.imageUrl ||
-                        course.image ||
-                        "";
-
-
-                    const name =
-                        course.crmCourseName ||
-                        course.courseName ||
-                        "Zenova Batch";
-
-
-                    const description =
-                        course.crmDescription ||
-                        course.description ||
-                        "";
-
-
-                    const finalPrice =
-                        course.crmFinalPrice ??
-                        course.finalPrice ??
-                        course.crmPrice ??
-                        course.price;
-
-
-                    const originalPrice =
-                        course.crmPrice ??
-                        course.price;
-
-
-                    return `
-
-                        <article
-                            class="batch-card"
-                            data-id="${escapeAttr(
-                                course.id
-                            )}"
-                        >
-
-                            ${
-                                image
-                                    ? `
-                                        <img
-                                            class="batch-image"
-                                            src="${escapeAttr(
-                                                image
-                                            )}"
-                                            alt=""
-                                            loading="lazy"
-                                        >
-                                    `
-                                    : `
-                                        <div
-                                            class="batch-image"
-                                        ></div>
-                                    `
-                            }
-
-
-                            <div
-                                class="batch-content"
-                            >
-
-                                <span
-                                    class="batch-tag"
-                                >
-                                    RECOMMENDED
-                                </span>
-
-
-                                <h3>
-                                    ${escapeHtml(
-                                        name
-                                    )}
-                                </h3>
-
-
-                                <p
-                                    class="batch-description"
-                                >
-                                    ${escapeHtml(
-                                        description
-                                    )}
-                                </p>
-
-
-                                <div
-                                    class="batch-bottom"
-                                >
-
-                                    <div
-                                        class="batch-price"
-                                    >
-
-                                        ${
-                                            finalPrice !==
-                                            undefined &&
-                                            finalPrice !==
-                                            null
-                                                ? `
-                                                    ₹${escapeHtml(
-                                                        formatPrice(
-                                                            finalPrice
-                                                        )
-                                                    )}
-                                                `
-                                                : ""
-                                        }
-
-
-                                        ${
-                                            originalPrice &&
-                                            String(
-                                                originalPrice
-                                            ) !==
-                                            String(
-                                                finalPrice
-                                            )
-                                                ? `
-                                                    <del>
-                                                        ₹${escapeHtml(
-                                                            formatPrice(
-                                                                originalPrice
-                                                            )
-                                                        )}
-                                                    </del>
-                                                `
-                                                : ""
-                                        }
-
-                                    </div>
-
-
-                                    <button
-                                        type="button"
-                                        class="batch-action"
-                                    >
-
-                                        <i
-                                            class="ri-arrow-right-line"
-                                        ></i>
-
-                                    </button>
-
-                                </div>
-
-                            </div>
-
-                        </article>
-
-                    `;
-
-                }
+                item =>
+                    createBatchCard(
+                        item
+                    )
             )
             .join("");
 
 
-    list
+    batchesContainer
         .querySelectorAll(
-            ".batch-card"
+            "[data-course-id]"
         )
         .forEach(
             card => {
@@ -1000,411 +1111,25 @@ function renderRecommendedCourses() {
                     () => {
 
                         const id =
-                            card.dataset.id;
+                            card.dataset.courseId;
 
 
-                        /*
-                         * Batch/course details page.
-                         *
-                         * We keep the ID in the URL
-                         * for the next page.
-                         */
-                        window.location.href =
-                            `../batches/?course=${encodeURIComponent(
-                                id
-                            )}`;
+                        const enrolled =
+                            card.dataset.enrolled ===
+                            "true";
 
-                    }
-                );
-
-            }
-        );
-
-}
-
-
-/* ============================================================
-   FREE LEARNING
-============================================================ */
-
-async function loadFreeLearning() {
-
-    try {
-
-        const q =
-            query(
-                collection(
-                    db,
-                    "freeLearning"
-                ),
-
-                where(
-                    "active",
-                    "==",
-                    true
-                ),
-
-                limit(10)
-            );
-
-
-        const snapshot =
-            await getDocs(q);
-
-
-        freeLearning =
-            snapshot.docs.map(
-                item => ({
-                    id: item.id,
-                    ...item.data()
-                })
-            );
-
-
-        renderFreeLearning();
-
-
-    } catch (error) {
-
-        console.warn(
-            "Free learning unavailable:",
-            error
-        );
-
-        renderFreeLearning();
-
-    }
-
-}
-
-
-/* ============================================================
-   RENDER FREE LEARNING
-============================================================ */
-
-function renderFreeLearning() {
-
-    const list =
-        document.getElementById(
-            "freeLearningList"
-        );
-
-
-    if (!freeLearning.length) {
-
-        list.innerHTML = `
-
-            <div class="empty-state">
-
-                Free learning content
-                will appear here.
-
-            </div>
-
-        `;
-
-        return;
-
-    }
-
-
-    list.innerHTML =
-        freeLearning
-            .slice(0, 8)
-            .map(
-                item => {
-
-                    const image =
-                        item.imageUrl ||
-                        item.thumbnailUrl ||
-                        item.image ||
-                        "";
-
-
-                    return `
-
-                        <article
-                            class="free-card"
-                            data-link="${escapeAttr(
-                                item.link ||
-                                item.videoUrl ||
-                                ""
-                            )}"
-                        >
-
-                            <div
-                                class="free-image-wrapper"
-                            >
-
-                                ${
-                                    image
-                                        ? `
-                                            <img
-                                                class="free-image"
-                                                src="${escapeAttr(
-                                                    image
-                                                )}"
-                                                alt=""
-                                                loading="lazy"
-                                            >
-                                        `
-                                        : ""
-                                }
-
-
-                                <div
-                                    class="free-play"
-                                >
-
-                                    <i
-                                        class="ri-play-fill"
-                                    ></i>
-
-                                </div>
-
-                            </div>
-
-
-                            <div
-                                class="free-content"
-                            >
-
-                                <strong>
-                                    ${escapeHtml(
-                                        item.title ||
-                                        "Free Learning"
-                                    )}
-                                </strong>
-
-
-                                <p>
-                                    ${escapeHtml(
-                                        item.description ||
-                                        item.subject ||
-                                        "Learn with Zenova."
-                                    )}
-                                </p>
-
-                            </div>
-
-                        </article>
-
-                    `;
-
-                }
-            )
-            .join("");
-
-
-    list
-        .querySelectorAll(
-            ".free-card"
-        )
-        .forEach(
-            card => {
-
-                card.addEventListener(
-                    "click",
-                    () => {
-
-                        const link =
-                            card.dataset.link;
-
-
-                        if (link) {
-
-                            window.location.href =
-                                link;
-
-                        }
-
-                    }
-                );
-
-            }
-        );
-
-}
-
-
-/* ============================================================
-   ANNOUNCEMENTS
-============================================================ */
-
-async function loadAnnouncements() {
-
-    try {
-
-        const q =
-            query(
-                collection(
-                    db,
-                    "announcements"
-                ),
-
-                where(
-                    "active",
-                    "==",
-                    true
-                ),
-
-                limit(10)
-            );
-
-
-        const snapshot =
-            await getDocs(q);
-
-
-        announcements =
-            snapshot.docs.map(
-                item => ({
-                    id: item.id,
-                    ...item.data()
-                })
-            );
-
-
-        renderAnnouncements();
-
-
-    } catch (error) {
-
-        console.warn(
-            "Announcements unavailable:",
-            error
-        );
-
-        renderAnnouncements();
-
-    }
-
-}
-
-
-/* ============================================================
-   RENDER ANNOUNCEMENTS
-============================================================ */
-
-function renderAnnouncements() {
-
-    const section =
-        document.getElementById(
-            "announcementSection"
-        );
-
-    const list =
-        document.getElementById(
-            "announcementList"
-        );
-
-
-    if (!announcements.length) {
-
-        section.classList.add(
-            "hidden"
-        );
-
-        return;
-
-    }
-
-
-    section.classList.remove(
-        "hidden"
-    );
-
-
-    list.innerHTML =
-        announcements
-            .slice(0, 4)
-            .map(
-                item => {
-
-                    const date =
-                        getDateInfo(
-                            item.date ||
-                            item.createdAt
-                        );
-
-
-                    return `
-
-                        <article
-                            class="announcement"
-                            data-link="${escapeAttr(
-                                item.link || ""
-                            )}"
-                        >
-
-                            <div
-                                class="announcement-date"
-                            >
-
-                                <strong>
-                                    ${date.day}
-                                </strong>
-
-                                <span>
-                                    ${date.month}
-                                </span>
-
-                            </div>
-
-
-                            <div
-                                class="announcement-body"
-                            >
-
-                                <strong>
-                                    ${escapeHtml(
-                                        item.title ||
-                                        "Announcement"
-                                    )}
-                                </strong>
-
-
-                                <p>
-                                    ${escapeHtml(
-                                        item.description ||
-                                        item.message ||
-                                        ""
-                                    )}
-                                </p>
-
-                            </div>
-
-
-                            <i
-                                class="ri-arrow-right-line announcement-arrow"
-                            ></i>
-
-                        </article>
-
-                    `;
-
-                }
-            )
-            .join("");
-
-
-    list
-        .querySelectorAll(
-            ".announcement"
-        )
-        .forEach(
-            item => {
-
-                item.addEventListener(
-                    "click",
-                    () => {
 
                         if (
-                            item.dataset.link
+                            enrolled
                         ) {
 
                             window.location.href =
-                                item.dataset.link;
+                                `../study/?courseId=${encodeURIComponent(id)}`;
+
+                        } else {
+
+                            window.location.href =
+                                `../batchdetails/?id=${encodeURIComponent(id)}`;
 
                         }
 
@@ -1417,26 +1142,205 @@ function renderAnnouncements() {
 }
 
 
-/* ============================================================
+/* =========================================================
+   CREATE BATCH CARD
+========================================================= */
+
+function createBatchCard(
+    item
+) {
+
+    const course =
+        item.course;
+
+
+    const enrollment =
+        item.enrollment;
+
+
+    const image =
+        course.crmImageUrl ||
+        course.imageUrl ||
+        course.courseImageUrl ||
+        "";
+
+
+    const title =
+        escapeHtml(
+            course.crmCourseName ||
+            course.name ||
+            "Course"
+        );
+
+
+    const className =
+        escapeHtml(
+            formatClass(
+                course.crmClass ||
+                ""
+            )
+        );
+
+
+    const enrolled =
+        item.enrolled;
+
+
+    const progress =
+        Number(
+            enrollment?.progress ??
+            enrollment?.progressPercent ??
+            0
+        );
+
+
+    return `
+
+        <article
+            class="batch-card"
+            data-course-id="${escapeAttribute(course.id)}"
+            data-enrolled="${enrolled}"
+        >
+
+            <div class="batch-image">
+
+                ${
+                    image
+                        ? `
+                            <img
+                                src="${escapeAttribute(image)}"
+                                alt="${title}"
+                                loading="lazy"
+                            >
+                        `
+                        : ""
+                }
+
+            </div>
+
+
+            <div class="batch-body">
+
+                <span class="batch-status">
+
+                    ${
+                        enrolled
+                            ? "✓ ENROLLED"
+                            : "RECOMMENDED"
+                    }
+
+                </span>
+
+
+                <h3>
+                    ${title}
+                </h3>
+
+
+                <p>
+                    ${className}
+                </p>
+
+
+                <div class="batch-action">
+
+                    <span>
+
+                        ${
+                            enrolled
+                                ? `${progress}% completed`
+                                : "Explore course"
+                        }
+
+                    </span>
+
+
+                    <span>
+                        →
+                    </span>
+
+                </div>
+
+            </div>
+
+        </article>
+
+    `;
+
+}
+
+
+/* =========================================================
+   CLASS MATCH
+========================================================= */
+
+function sameClassMatch(
+    courseClass,
+    studentClass
+) {
+
+    if (
+        !courseClass ||
+        !studentClass
+    ) {
+
+        return false;
+
+    }
+
+
+    return normalizeClass(
+        courseClass
+    ) ===
+    normalizeClass(
+        studentClass
+    );
+
+}
+
+
+function normalizeClass(
+    value
+) {
+
+    return String(
+        value || ""
+    )
+        .toUpperCase()
+        .replace(
+            /\s+/g,
+            ""
+        )
+        .replace(
+            /_/g,
+            ""
+        );
+
+}
+
+
+/* =========================================================
    NAVIGATION
-============================================================ */
+========================================================= */
 
 document
     .querySelectorAll(
         "[data-route]"
     )
     .forEach(
-        element => {
+        button => {
 
-            element.addEventListener(
+            button.addEventListener(
                 "click",
                 () => {
 
                     const route =
-                        element.dataset.route;
+                        button.dataset.route;
 
 
-                    if (route) {
+                    if (
+                        route
+                    ) {
 
                         window.location.href =
                             route;
@@ -1450,272 +1354,230 @@ document
     );
 
 
-/* ============================================================
-   HEADER BUTTONS
-============================================================ */
+/* =========================================================
+   PROFILE
+========================================================= */
+
+profileButton.addEventListener(
+    "click",
+    () => {
+
+        window.location.href =
+            "./profile/";
+
+    }
+);
+
+
+/* =========================================================
+   NOTIFICATIONS
+========================================================= */
+
+notificationButton.addEventListener(
+    "click",
+    () => {
+
+        window.location.href =
+            "./notifications/";
+
+    }
+);
+
+
+/* =========================================================
+   EXPLORE BATCHES
+========================================================= */
+
+exploreBatches.addEventListener(
+    "click",
+    () => {
+
+        window.location.href =
+            "./batches/";
+
+    }
+);
+
+
+/* =========================================================
+   AI
+========================================================= */
+
+aiCard.addEventListener(
+    "click",
+    () => {
+
+        window.location.href =
+            "./ai/";
+
+    }
+);
+
+
+/* =========================================================
+   VIDEOS
+========================================================= */
+
+videosExplore.addEventListener(
+    "click",
+    () => {
+
+        /*
+         * Change this once the dedicated
+         * video library route is finalized.
+         */
+
+        window.location.href =
+            "./library/";
+
+    }
+);
+
+
+/* =========================================================
+   BOTTOM NAV
+========================================================= */
 
 document
-    .getElementById(
-        "notificationBtn"
+    .querySelectorAll(
+        "[data-nav]"
     )
-    ?.addEventListener(
-        "click",
-        () => {
+    .forEach(
+        button => {
 
-            window.location.href =
-                "../notifications/";
+            button.addEventListener(
+                "click",
+                () => {
 
-        }
-    );
-
-
-document
-    .getElementById(
-        "profileBtn"
-    )
-    ?.addEventListener(
-        "click",
-        () => {
-
-            window.location.href =
-                "../profile/";
-
-        }
-    );
+                    const route =
+                        button.dataset.nav;
 
 
-document
-    .getElementById(
-        "aiBtn"
-    )
-    ?.addEventListener(
-        "click",
-        () => {
+                    switch (route) {
 
-            window.location.href =
-                "../ai/";
+                        case "home":
 
-        }
-    );
+                            break;
 
 
-/* ============================================================
-   SHOW APP
-============================================================ */
+                        case "courses":
 
-function showApp() {
+                            window.location.href =
+                                "./batches/";
 
-    app.classList.remove(
-        "hidden"
-    );
+                            break;
 
 
-    setTimeout(
-        () => {
+                        case "study":
 
-            loader.classList.add(
-                "hide"
+                            window.location.href =
+                                "./study/";
+
+                            break;
+
+
+                        case "ai":
+
+                            window.location.href =
+                                "./ai/";
+
+                            break;
+
+
+                        case "profile":
+
+                            window.location.href =
+                                "./profile/";
+
+                            break;
+
+                    }
+
+                }
             );
 
-        },
-        100
+        }
     );
 
-}
 
+/* =========================================================
+   LOADING
+========================================================= */
 
-/* ============================================================
-   ERROR
-============================================================ */
+function hideLoading() {
 
-function showHomeError() {
+    if (
+        loadingScreen
+    ) {
 
-    loader.innerHTML = `
-
-        <div
-            style="
-                text-align:center;
-                padding:30px;
-            "
-        >
-
-            <div
-                style="
-                    width:55px;
-                    height:55px;
-                    margin:0 auto 18px;
-                    border-radius:50%;
-                    background:#111;
-                    color:#fff;
-                    display:flex;
-                    align-items:center;
-                    justify-content:center;
-                    font-weight:800;
-                "
-            >
-                Z
-            </div>
-
-
-            <strong>
-                Something went wrong
-            </strong>
-
-
-            <p
-                style="
-                    color:#777;
-                    font-size:12px;
-                "
-            >
-                Please try again.
-            </p>
-
-
-            <button
-                onclick="location.reload()"
-                style="
-                    padding:11px 18px;
-                    border:0;
-                    border-radius:9px;
-                    background:#111;
-                    color:#fff;
-                    font-weight:700;
-                "
-            >
-                TRY AGAIN
-            </button>
-
-        </div>
-
-    `;
-
-}
-
-
-/* ============================================================
-   HELPERS
-============================================================ */
-
-function hideSection(
-    id
-) {
-
-    document
-        .getElementById(id)
-        ?.classList.add(
+        loadingScreen.classList.add(
             "hidden"
         );
 
-}
-
-
-function formatPrice(
-    value
-) {
-
-    const number =
-        Number(value);
-
-
-    if (
-        Number.isNaN(number)
-    ) {
-
-        return value;
-
     }
 
 
-    return number.toLocaleString(
-        "en-IN"
+    if (
+        app
+    ) {
+
+        app.classList.remove(
+            "hidden"
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   FORMAT CLASS
+========================================================= */
+
+function formatClass(
+    value
+) {
+
+    const classes = {
+
+        UNDER_8TH:
+            "Under 8th",
+
+        "8TH":
+            "8th",
+
+        "9TH":
+            "9th",
+
+        "10TH":
+            "10th",
+
+        "1ST_PUC":
+            "1st PUC",
+
+        "2ND_PUC":
+            "2nd PUC"
+
+    };
+
+
+    return (
+        classes[value] ||
+        String(
+            value || ""
+        )
+            .replace(
+                /_/g,
+                " "
+            )
     );
 
 }
 
 
-function getDateInfo(
-    value
-) {
-
-    if (!value) {
-
-        return {
-            day: "--",
-            month: ""
-        };
-
-    }
-
-
-    let date;
-
-
-    try {
-
-        if (
-            typeof value.toDate ===
-            "function"
-        ) {
-
-            date =
-                value.toDate();
-
-        } else {
-
-            date =
-                new Date(value);
-
-        }
-
-    } catch {
-
-        return {
-            day: "--",
-            month: ""
-        };
-
-    }
-
-
-    if (
-        Number.isNaN(
-            date.getTime()
-        )
-    ) {
-
-        return {
-            day: "--",
-            month: ""
-        };
-
-    }
-
-
-    return {
-
-        day:
-            String(
-                date.getDate()
-            ).padStart(
-                2,
-                "0"
-            ),
-
-        month:
-            date
-                .toLocaleString(
-                    "en-IN",
-                    {
-                        month: "short"
-                    }
-                )
-                .toUpperCase()
-
-    };
-
-}
-
+/* =========================================================
+   HTML SAFETY
+========================================================= */
 
 function escapeHtml(
     value
@@ -1724,31 +1586,31 @@ function escapeHtml(
     return String(
         value ?? ""
     )
-        .replaceAll(
-            "&",
+        .replace(
+            /&/g,
             "&amp;"
         )
-        .replaceAll(
-            "<",
+        .replace(
+            /</g,
             "&lt;"
         )
-        .replaceAll(
-            ">",
+        .replace(
+            />/g,
             "&gt;"
         )
-        .replaceAll(
-            '"',
+        .replace(
+            /"/g,
             "&quot;"
         )
-        .replaceAll(
-            "'",
+        .replace(
+            /'/g,
             "&#039;"
         );
 
 }
 
 
-function escapeAttr(
+function escapeAttribute(
     value
 ) {
 
@@ -1757,3 +1619,53 @@ function escapeAttr(
     );
 
 }
+
+
+/* =========================================================
+   CLEANUP
+========================================================= */
+
+window.addEventListener(
+    "beforeunload",
+    () => {
+
+        clearBannerTimer();
+
+
+        if (
+            unsubscribeStudent
+        ) {
+
+            unsubscribeStudent();
+
+        }
+
+
+        if (
+            unsubscribeBanners
+        ) {
+
+            unsubscribeBanners();
+
+        }
+
+
+        if (
+            unsubscribeEnrollments
+        ) {
+
+            unsubscribeEnrollments();
+
+        }
+
+
+        if (
+            unsubscribeCourses
+        ) {
+
+            unsubscribeCourses();
+
+        }
+
+    }
+);
