@@ -1,38 +1,47 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-    <title>Courses | Zenova CRM</title>
+    <title>CRM Courses</title>
 
     <link rel="stylesheet" href="./courses.css">
 </head>
 
 <body>
 
-<div class="crm-app">
+    <!-- LOADING -->
+    <div id="loader">
+        <div class="loader-ring"></div>
+        <div class="loader-text">
+            Loading Courses...
+        </div>
+    </div>
+
 
     <!-- HEADER -->
     <header class="topbar">
 
-        <div class="topbar-left">
+        <button
+            id="backBtn"
+            class="icon-btn"
+            type="button"
+        >
+            ←
+        </button>
 
-            <button
-                id="backBtn"
-                class="back-btn"
-                type="button"
-                aria-label="Go back"
-            >
-                ←
-            </button>
-
-            <div>
-                <div class="eyebrow">ZENOVA CRM</div>
-                <h1>Courses</h1>
+        <div class="brand-area">
+            <div class="eyebrow">
+                ZENOVA CRM
             </div>
 
+            <h1>
+                Courses
+            </h1>
         </div>
 
         <button
@@ -47,120 +56,97 @@
 
 
     <!-- MAIN -->
-    <main class="main">
+    <main class="page">
 
-        <!-- SUMMARY -->
-        <section class="summary-grid">
+        <!-- FILTERS -->
+        <div class="toolbar">
 
-            <div class="summary-card">
-                <span>Total Courses</span>
-                <strong id="totalCourses">0</strong>
-            </div>
-
-            <div class="summary-card">
-                <span>Active Courses</span>
-                <strong id="activeCourses">0</strong>
-            </div>
-
-            <div class="summary-card">
-                <span>Free Courses</span>
-                <strong id="freeCourses">0</strong>
-            </div>
-
-            <div class="summary-card">
-                <span>Paid Courses</span>
-                <strong id="paidCourses">0</strong>
-            </div>
-
-        </section>
-
-
-        <!-- COURSE MASTER -->
-        <section class="panel">
-
-            <div class="panel-header">
-
-                <div>
-                    <div class="section-label">COURSE MASTER</div>
-                    <h2>All Courses</h2>
-                </div>
-
-                <div class="toolbar">
-
-                    <input
-                        id="courseSearch"
-                        type="search"
-                        placeholder="Search courses..."
-                    >
-
-                    <select id="classFilter">
-                        <option value="ALL">All Classes</option>
-                    </select>
-
-                    <select id="statusFilter">
-                        <option value="ALL">All Status</option>
-                        <option value="ACTIVE">Active</option>
-                        <option value="INACTIVE">Inactive</option>
-                    </select>
-
-                </div>
-
-            </div>
-
-
-            <div
-                id="courseTableWrapper"
-                class="table-wrapper"
+            <input
+                id="courseSearch"
+                class="search-input"
+                type="search"
+                placeholder="Search courses..."
             >
 
-                <table>
-
-                    <thead>
-                    <tr>
-                        <th>Course</th>
-                        <th>Class</th>
-                        <th>Medium</th>
-                        <th>Languages</th>
-                        <th>Type</th>
-                        <th>Price</th>
-                        <th>Priority</th>
-                        <th>Status</th>
-                        <th></th>
-                    </tr>
-                    </thead>
-
-                    <tbody id="courseTableBody"></tbody>
-
-                </table>
-
-            </div>
-
-
-            <div
-                id="emptyCourses"
-                class="empty-state hidden"
+            <select
+                id="classFilter"
+                class="select-input"
             >
+                <option value="">
+                    All Classes
+                </option>
 
-                <div class="empty-icon">+</div>
+                <option value="UNDER_8TH">
+                    Under 8th
+                </option>
 
-                <h3>No courses yet</h3>
+                <option value="8TH">
+                    8th
+                </option>
 
-                <p>
-                    Create your first course and then add
-                    subjects, chapters, videos and notes.
-                </p>
+                <option value="9TH">
+                    9th
+                </option>
 
-                <button
-                    id="emptyAddCourseBtn"
-                    class="primary-btn"
-                    type="button"
-                >
-                    + Create Course
-                </button>
+                <option value="10TH">
+                    10th
+                </option>
 
+                <option value="1ST_PUC">
+                    1st PUC
+                </option>
+
+                <option value="2ND_PUC">
+                    2nd PUC
+                </option>
+
+            </select>
+
+
+            <select
+                id="statusFilter"
+                class="select-input"
+            >
+                <option value="">
+                    All Status
+                </option>
+
+                <option value="active">
+                    Active
+                </option>
+
+                <option value="inactive">
+                    Inactive
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <!-- COURSE LIST -->
+        <section
+            id="courseGrid"
+            class="course-grid"
+        ></section>
+
+
+        <div
+            id="emptyCourses"
+            class="empty-state hidden"
+        >
+            <div class="empty-icon">
+                +
             </div>
 
-        </section>
+            <h3>
+                No courses found
+            </h3>
+
+            <p>
+                Create your first course.
+            </p>
+        </div>
 
     </main>
 
@@ -176,14 +162,16 @@
 
         <div class="modal-overlay"></div>
 
-        <div class="modal-card large-modal">
+
+        <div class="modal-card">
 
             <div class="modal-header">
 
                 <div>
+
                     <div
                         id="courseModalLabel"
-                        class="section-label"
+                        class="eyebrow"
                     >
                         NEW COURSE
                     </div>
@@ -191,11 +179,13 @@
                     <h2 id="courseModalTitle">
                         Create Course
                     </h2>
+
                 </div>
+
 
                 <button
                     id="closeCourseModal"
-                    class="close-btn"
+                    class="icon-btn"
                     type="button"
                 >
                     ×
@@ -210,24 +200,59 @@
             >
 
                 <input
-                    id="editingCourseId"
                     type="hidden"
+                    id="editingCourseId"
                 >
 
 
                 <!-- BASIC DETAILS -->
+
                 <div class="form-section">
 
-                    <div class="form-section-title">
-                        Basic Details
+                    <div class="section-title">
+                        Course Details
                     </div>
+
 
                     <div class="form-grid">
 
                         <div class="field">
 
                             <label>
-                                Class <span>*</span>
+                                Course Name
+                                <span>*</span>
+                            </label>
+
+                            <input
+                                id="courseName"
+                                type="text"
+                                required
+                                placeholder="Example: 2nd PUC Science"
+                            >
+
+                        </div>
+
+
+                        <div class="field">
+
+                            <label>
+                                Course Code
+                            </label>
+
+                            <input
+                                id="courseCode"
+                                type="text"
+                                placeholder="Example: PUC-SCI-26"
+                            >
+
+                        </div>
+
+
+                        <div class="field">
+
+                            <label>
+                                Class
+                                <span>*</span>
                             </label>
 
                             <select
@@ -271,13 +296,13 @@
                         <div class="field">
 
                             <label>
-                                Course Code
+                                Board
                             </label>
 
                             <input
-                                id="courseCode"
+                                id="courseBoard"
                                 type="text"
-                                placeholder="Example: ZNV-10-VB"
+                                placeholder="Example: Karnataka State Board"
                             >
 
                         </div>
@@ -286,31 +311,45 @@
                         <div class="field full">
 
                             <label>
-                                Course Title <span>*</span>
-                            </label>
-
-                            <input
-                                id="courseTitle"
-                                type="text"
-                                placeholder="Enter course title"
-                                required
-                            >
-
-                        </div>
-
-
-                        <div class="field full">
-
-                            <label>
-                                Description <span>*</span>
+                                Description
                             </label>
 
                             <textarea
                                 id="courseDescription"
-                                rows="4"
+                                rows="3"
                                 placeholder="Describe this course..."
-                                required
                             ></textarea>
+
+                        </div>
+
+
+                        <div class="field">
+
+                            <label>
+                                Course Image URL
+                            </label>
+
+                            <input
+                                id="courseImageUrl"
+                                type="url"
+                                placeholder="https://..."
+                            >
+
+                        </div>
+
+
+                        <div class="field">
+
+                            <label>
+                                Priority
+                            </label>
+
+                            <input
+                                id="coursePriority"
+                                type="number"
+                                min="1"
+                                value="1"
+                            >
 
                         </div>
 
@@ -319,27 +358,29 @@
                 </div>
 
 
-                <!-- MEDIUM -->
+                <!-- =================================================
+                     LANGUAGES
+                ================================================== -->
+
                 <div class="form-section">
 
-                    <div class="form-section-title">
-
-                        Medium
-
-                        <span class="required-note">
-                            Required • Add unlimited mediums
-                        </span>
-
+                    <div class="section-title">
+                        Languages
                     </div>
+
+                    <p class="help-text">
+                        Add the languages available for this course.
+                        Students will select their languages during checkout.
+                    </p>
 
 
                     <div
                         id="mediumList"
-                        class="chip-list"
+                        class="tag-list"
                     ></div>
 
 
-                    <div class="add-inline">
+                    <div class="add-item-row">
 
                         <input
                             id="newMedium"
@@ -349,300 +390,44 @@
 
                         <button
                             id="addMediumBtn"
-                            class="secondary-btn"
                             type="button"
+                            class="secondary-btn"
                         >
-                            + Add Medium
+                            + Add
                         </button>
 
                     </div>
 
-
-                    <div
-                        id="mediumError"
-                        class="field-error hidden"
-                    >
-                        Please add at least one medium.
-                    </div>
-
                 </div>
 
 
-                <!-- LANGUAGE CONFIGURATION -->
+                <!-- =================================================
+                     SUBJECTS
+                ================================================== -->
+
                 <div class="form-section">
 
-                    <div class="form-section-title">
-
-                        Language Configuration
-
-                        <span class="optional">
-                            Only use if this course has language subjects
-                        </span>
-
+                    <div class="section-title">
+                        Subjects
                     </div>
 
-                    <p class="section-description">
-                        Configure 1st, 2nd and 3rd language only when
-                        required by this course. PUC courses can leave
-                        all three disabled.
+                    <p class="help-text">
+                        Add each subject only once.
                     </p>
 
 
-                    <!-- FIRST -->
-                    <div class="language-config-card">
+                    <div
+                        id="subjectList"
+                        class="tag-list"
+                    ></div>
 
-                        <div class="language-head">
 
-                            <label class="switch-label">
-
-                                <input
-                                    type="checkbox"
-                                    id="firstLanguageEnabled"
-                                >
-
-                                <span>
-                                    1st Language
-                                </span>
-
-                            </label>
-
-                            <label class="required-check">
-
-                                <input
-                                    type="checkbox"
-                                    id="firstLanguageRequired"
-                                >
-
-                                Required
-
-                            </label>
-
-                        </div>
-
-
-                        <div
-                            id="firstLanguageOptions"
-                            class="language-options hidden"
-                        >
-
-                            <div
-                                id="firstLanguageList"
-                                class="chip-list"
-                            ></div>
-
-                            <div class="add-inline">
-
-                                <input
-                                    id="firstLanguageInput"
-                                    type="text"
-                                    placeholder="Example: Kannada"
-                                >
-
-                                <button
-                                    type="button"
-                                    class="secondary-btn"
-                                    data-language-add="FIRST"
-                                >
-                                    + Add Language
-                                </button>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-
-                    <!-- SECOND -->
-                    <div class="language-config-card">
-
-                        <div class="language-head">
-
-                            <label class="switch-label">
-
-                                <input
-                                    type="checkbox"
-                                    id="secondLanguageEnabled"
-                                >
-
-                                <span>
-                                    2nd Language
-                                </span>
-
-                            </label>
-
-                            <label class="required-check">
-
-                                <input
-                                    type="checkbox"
-                                    id="secondLanguageRequired"
-                                >
-
-                                Required
-
-                            </label>
-
-                        </div>
-
-
-                        <div
-                            id="secondLanguageOptions"
-                            class="language-options hidden"
-                        >
-
-                            <div
-                                id="secondLanguageList"
-                                class="chip-list"
-                            ></div>
-
-                            <div class="add-inline">
-
-                                <input
-                                    id="secondLanguageInput"
-                                    type="text"
-                                    placeholder="Example: English"
-                                >
-
-                                <button
-                                    type="button"
-                                    class="secondary-btn"
-                                    data-language-add="SECOND"
-                                >
-                                    + Add Language
-                                </button>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-
-                    <!-- THIRD -->
-                    <div class="language-config-card">
-
-                        <div class="language-head">
-
-                            <label class="switch-label">
-
-                                <input
-                                    type="checkbox"
-                                    id="thirdLanguageEnabled"
-                                >
-
-                                <span>
-                                    3rd Language
-                                </span>
-
-                            </label>
-
-                            <label class="required-check">
-
-                                <input
-                                    type="checkbox"
-                                    id="thirdLanguageRequired"
-                                >
-
-                                Required
-
-                            </label>
-
-                        </div>
-
-
-                        <div
-                            id="thirdLanguageOptions"
-                            class="language-options hidden"
-                        >
-
-                            <div
-                                id="thirdLanguageList"
-                                class="chip-list"
-                            ></div>
-
-                            <div class="add-inline">
-
-                                <input
-                                    id="thirdLanguageInput"
-                                    type="text"
-                                    placeholder="Example: Hindi"
-                                >
-
-                                <button
-                                    type="button"
-                                    class="secondary-btn"
-                                    data-language-add="THIRD"
-                                >
-                                    + Add Language
-                                </button>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-
-                <!-- SUBJECTS -->
-                <div class="form-section">
-
-                    <div class="form-section-title">
-
-                        Course Subjects
-
-                        <span class="required-note">
-                            Common + Language subjects
-                        </span>
-
-                    </div>
-
-
-                    <div class="subject-add-box">
+                    <div class="add-item-row">
 
                         <input
                             id="newSubject"
                             type="text"
-                            placeholder="Subject name"
-                        >
-
-                        <select id="newSubjectType">
-
-                            <option value="COMMON">
-                                Common Subject
-                            </option>
-
-                            <option value="LANGUAGE">
-                                Language Subject
-                            </option>
-
-                        </select>
-
-                        <select id="newSubjectLanguageSlot">
-
-                            <option value="">
-                                No language slot
-                            </option>
-
-                            <option value="FIRST">
-                                1st Language
-                            </option>
-
-                            <option value="SECOND">
-                                2nd Language
-                            </option>
-
-                            <option value="THIRD">
-                                3rd Language
-                            </option>
-
-                        </select>
-
-                        <input
-                            id="newSubjectLanguage"
-                            type="text"
-                            placeholder="Language name if applicable"
+                            placeholder="Example: Mathematics"
                         >
 
                         <button
@@ -650,163 +435,45 @@
                             type="button"
                             class="secondary-btn"
                         >
-                            + Add Subject
+                            + Add
                         </button>
 
                     </div>
 
-
-                    <div
-                        id="subjectList"
-                        class="subject-editor"
-                    ></div>
-
                 </div>
 
 
-                <!-- THUMBNAIL -->
+                <!-- =================================================
+                     FEE
+                ================================================== -->
+
                 <div class="form-section">
 
-                    <div class="form-section-title">
-                        Course Thumbnail
+                    <div class="section-title">
+                        Course Fee
                     </div>
 
 
-                    <div class="thumbnail-layout">
+                    <div class="radio-row">
 
-                        <div class="thumbnail-options">
-
-                            <div class="source-switch">
-
-                                <button
-                                    type="button"
-                                    class="source-btn active"
-                                    data-source="url"
-                                >
-                                    Image URL
-                                </button>
-
-                                <button
-                                    type="button"
-                                    class="source-btn"
-                                    data-source="upload"
-                                >
-                                    Upload Image
-                                </button>
-
-                            </div>
-
-
-                            <div
-                                id="urlSource"
-                                class="source-content"
-                            >
-
-                                <input
-                                    id="courseImageUrl"
-                                    type="url"
-                                    placeholder="https://..."
-                                >
-
-                            </div>
-
-
-                            <div
-                                id="uploadSource"
-                                class="source-content hidden"
-                            >
-
-                                <label
-                                    class="upload-box"
-                                    for="courseImageFile"
-                                >
-
-                                    <span>
-                                        Choose JPG, PNG or WEBP
-                                    </span>
-
-                                    <small>
-                                        Click to upload
-                                    </small>
-
-                                </label>
-
-                                <input
-                                    id="courseImageFile"
-                                    type="file"
-                                    accept="image/*"
-                                    hidden
-                                >
-
-                            </div>
-
-                        </div>
-
-
-                        <div class="thumbnail-preview">
-
-                            <div class="preview-label">
-                                Preview
-                            </div>
-
-                            <div
-                                id="imagePreview"
-                                class="image-preview"
-                            >
-                                <span>No image</span>
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-
-                <!-- PRICING -->
-                <div class="form-section">
-
-                    <div class="form-section-title">
-                        Course Pricing
-                    </div>
-
-
-                    <div class="pricing-type">
-
-                        <label class="radio-card">
-
+                        <label>
                             <input
                                 type="radio"
                                 name="courseType"
                                 value="FREE"
                                 checked
                             >
-
-                            <span>
-                                <strong>Free</strong>
-                                <small>
-                                    Free access
-                                </small>
-                            </span>
-
+                            Free
                         </label>
 
 
-                        <label class="radio-card">
-
+                        <label>
                             <input
                                 type="radio"
                                 name="courseType"
                                 value="PAID"
                             >
-
-                            <span>
-                                <strong>Paid</strong>
-                                <small>
-                                    Purchase required
-                                </small>
-                            </span>
-
+                            Paid
                         </label>
 
                     </div>
@@ -820,7 +487,7 @@
                         <div class="field">
 
                             <label>
-                                Course Price
+                                Price
                             </label>
 
                             <input
@@ -828,7 +495,6 @@
                                 type="number"
                                 min="0"
                                 step="1"
-                                placeholder="₹ 0"
                             >
 
                         </div>
@@ -850,75 +516,40 @@
 
                         </div>
 
+                    </div>
 
-                        <div class="price-result full">
 
-                            <span>
-                                Final Price
-                            </span>
-
-                            <strong id="finalPrice">
-                                ₹0
-                            </strong>
-
-                        </div>
-
+                    <div
+                        id="finalPrice"
+                        class="final-price"
+                    >
+                        Free
                     </div>
 
                 </div>
 
 
-                <!-- PRIORITY -->
+                <!-- ACTIVE -->
+
                 <div class="form-section">
 
-                    <div class="form-grid">
+                    <label class="check-label">
 
-                        <div class="field">
+                        <input
+                            id="courseActive"
+                            type="checkbox"
+                            checked
+                        >
 
-                            <label>
-                                Priority
-                            </label>
+                        Course Active
 
-                            <input
-                                id="coursePriority"
-                                type="number"
-                                min="1"
-                                value="1"
-                            >
-
-                            <small class="field-help">
-                                Lower number appears first.
-                            </small>
-
-                        </div>
-
-
-                        <div class="field">
-
-                            <label>
-                                Course Status
-                            </label>
-
-                            <select id="courseActive">
-
-                                <option value="true">
-                                    Active
-                                </option>
-
-                                <option value="false">
-                                    Inactive
-                                </option>
-
-                            </select>
-
-                        </div>
-
-                    </div>
+                    </label>
 
                 </div>
 
 
                 <!-- ACTIONS -->
+
                 <div class="modal-actions">
 
                     <button
@@ -930,8 +561,8 @@
                     </button>
 
                     <button
-                        id="saveCourseBtn"
                         type="submit"
+                        id="saveCourseBtn"
                         class="primary-btn"
                     >
                         Save Course
@@ -957,25 +588,27 @@
 
         <div class="modal-overlay"></div>
 
-        <div class="modal-card content-modal-card">
+
+        <div class="modal-card content-modal">
 
             <div class="modal-header">
 
                 <div>
 
-                    <div class="section-label">
+                    <div class="eyebrow">
                         COURSE CONTENT
                     </div>
 
-                    <h2 id="contentModalTitle">
+                    <h2 id="contentCourseTitle">
                         Course Content
                     </h2>
 
                 </div>
 
+
                 <button
                     id="closeContentModal"
-                    class="close-btn"
+                    class="icon-btn"
                     type="button"
                 >
                     ×
@@ -984,431 +617,7 @@
             </div>
 
 
-            <div class="content-course-header">
-
-                <div id="contentCourseName">
-                    Course
-                </div>
-
-                <div id="contentCourseMeta">
-                    —
-                </div>
-
-            </div>
-
-
-            <!-- SUBJECTS -->
-            <div class="content-section">
-
-                <div class="content-section-head">
-
-                    <div>
-                        <span class="section-label">
-                            SUBJECTS
-                        </span>
-
-                        <h3>Select Subject</h3>
-                    </div>
-
-                    <button
-                        id="refreshContentBtn"
-                        class="secondary-btn"
-                        type="button"
-                    >
-                        Refresh
-                    </button>
-
-                </div>
-
-
-                <div
-                    id="contentSubjectList"
-                    class="content-subject-grid"
-                ></div>
-
-            </div>
-
-
-            <!-- CHAPTERS -->
-            <div
-                id="chaptersSection"
-                class="content-section hidden"
-            >
-
-                <div class="content-section-head">
-
-                    <div>
-
-                        <span class="section-label">
-                            CHAPTERS
-                        </span>
-
-                        <h3 id="selectedSubjectName">
-                            Chapters
-                        </h3>
-
-                    </div>
-
-                    <div class="content-actions">
-
-                        <button
-                            id="addChapterBtn"
-                            class="secondary-btn"
-                            type="button"
-                        >
-                            + Chapter
-                        </button>
-
-                        <button
-                            id="addVideoBtn"
-                            class="primary-btn"
-                            type="button"
-                        >
-                            + Add Video
-                        </button>
-
-                        <button
-                            id="addPdfBtn"
-                            class="secondary-btn"
-                            type="button"
-                        >
-                            + Add Notes / PDF
-                        </button>
-
-                    </div>
-
-                </div>
-
-
-                <div
-                    id="chapterList"
-                    class="chapter-list"
-                ></div>
-
-            </div>
-
-        </div>
-
-    </div>
-
-
-    <!-- =====================================================
-         CONTENT EDIT MODAL
-    ====================================================== -->
-
-    <div
-        id="contentEditModal"
-        class="modal hidden"
-    >
-
-        <div class="modal-overlay"></div>
-
-        <div class="modal-card medium-modal">
-
-            <div class="modal-header">
-
-                <div>
-
-                    <div
-                        id="contentEditLabel"
-                        class="section-label"
-                    >
-                        CONTENT
-                    </div>
-
-                    <h2 id="contentEditTitle">
-                        Add Content
-                    </h2>
-
-                </div>
-
-                <button
-                    id="closeContentEditModal"
-                    class="close-btn"
-                    type="button"
-                >
-                    ×
-                </button>
-
-            </div>
-
-
-            <form id="contentEditForm">
-
-                <input
-                    id="contentEditType"
-                    type="hidden"
-                >
-
-                <input
-                    id="contentEditChapterId"
-                    type="hidden"
-                >
-
-
-                <div class="field">
-
-                    <label>
-                        Subject
-                    </label>
-
-                    <select
-                        id="contentEditSubject"
-                        required
-                    ></select>
-
-                </div>
-
-
-                <div class="field">
-
-                    <label>
-                        Existing Chapter
-                    </label>
-
-                    <select id="contentEditChapter">
-
-                        <option value="">
-                            Create / choose chapter
-                        </option>
-
-                    </select>
-
-                </div>
-
-
-                <div class="form-grid">
-
-                    <div class="field">
-
-                        <label>
-                            Chapter Number
-                        </label>
-
-                        <input
-                            id="contentChapterNumber"
-                            type="number"
-                            min="1"
-                            value="1"
-                        >
-
-                    </div>
-
-
-                    <div class="field">
-
-                        <label>
-                            Priority
-                        </label>
-
-                        <input
-                            id="contentChapterPriority"
-                            type="number"
-                            min="1"
-                            value="1"
-                        >
-
-                    </div>
-
-                </div>
-
-
-                <div class="field">
-
-                    <label>
-                        Chapter Title <span>*</span>
-                    </label>
-
-                    <input
-                        id="contentChapterTitle"
-                        type="text"
-                        required
-                    >
-
-                </div>
-
-
-                <div
-                    id="videoContentFields"
-                    class="content-extra-fields hidden"
-                >
-
-                    <div class="field">
-
-                        <label>
-                            Video URL
-                        </label>
-
-                        <input
-                            id="contentVideoUrl"
-                            type="url"
-                            placeholder="https://youtube.com/... or video URL"
-                        >
-
-                    </div>
-
-
-                    <div class="field">
-
-                        <label>
-                            Thumbnail URL
-                        </label>
-
-                        <input
-                            id="contentThumbnailUrl"
-                            type="url"
-                            placeholder="Optional — YouTube thumbnail is automatic"
-                        >
-
-                    </div>
-
-
-                    <div class="video-preview-box">
-
-                        <img
-                            id="videoThumbnailPreview"
-                            alt=""
-                        >
-
-                        <span id="videoThumbnailText">
-                            Video thumbnail preview
-                        </span>
-
-                    </div>
-
-                </div>
-
-
-                <div
-                    id="pdfContentFields"
-                    class="content-extra-fields hidden"
-                >
-
-                    <div class="source-switch">
-
-                        <button
-                            type="button"
-                            class="pdf-source-btn active"
-                            data-pdf-source="url"
-                        >
-                            PDF URL
-                        </button>
-
-                        <button
-                            type="button"
-                            class="pdf-source-btn"
-                            data-pdf-source="upload"
-                        >
-                            Upload PDF
-                        </button>
-
-                    </div>
-
-
-                    <div
-                        id="pdfUrlBox"
-                        class="field"
-                    >
-
-                        <label>
-                            PDF / Notes URL
-                        </label>
-
-                        <input
-                            id="contentPdfUrl"
-                            type="url"
-                            placeholder="https://..."
-                        >
-
-                    </div>
-
-
-                    <div
-                        id="pdfUploadBox"
-                        class="field hidden"
-                    >
-
-                        <label>
-                            Upload PDF
-                        </label>
-
-                        <input
-                            id="contentPdfFile"
-                            type="file"
-                            accept="application/pdf,.pdf"
-                        >
-
-                    </div>
-
-
-                    <div class="field">
-
-                        <label>
-                            PDF / Notes Name
-                        </label>
-
-                        <input
-                            id="contentPdfName"
-                            type="text"
-                            placeholder="Chapter notes"
-                        >
-
-                    </div>
-
-                </div>
-
-
-                <div class="field">
-
-                    <label>
-                        Description
-                    </label>
-
-                    <textarea
-                        id="contentDescription"
-                        rows="3"
-                    ></textarea>
-
-                </div>
-
-
-                <div class="field-inline">
-
-                    <label class="switch-label">
-
-                        <input
-                            id="contentActive"
-                            type="checkbox"
-                            checked
-                        >
-
-                        Active
-
-                    </label>
-
-                </div>
-
-
-                <div class="modal-actions">
-
-                    <button
-                        id="cancelContentEditBtn"
-                        type="button"
-                        class="secondary-btn"
-                    >
-                        Cancel
-                    </button>
-
-                    <button
-                        type="submit"
-                        class="primary-btn"
-                    >
-                        Save Content
-                    </button>
-
-                </div>
-
-            </form>
+            <div id="contentBody"></div>
 
         </div>
 
@@ -1416,15 +625,17 @@
 
 
     <!-- TOAST -->
-    <div id="toast" class="toast"></div>
+
+    <div
+        id="toast"
+        class="toast"
+    ></div>
 
 
     <script
         type="module"
         src="./courses.js"
     ></script>
-
-</div>
 
 </body>
 </html>
