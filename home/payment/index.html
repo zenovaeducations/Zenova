@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    >
+
+    <title>Enrollment | Zenova Educations</title>
+
+    <link
+        rel="stylesheet"
+        href="./payment.css"
+    >
+
+</head>
+
+
+<body>
+
+
+<!-- =====================================================
+     LOADING
+====================================================== -->
+
+<div
+    id="loadingScreen"
+    class="loading-screen"
+>
+
+    <div class="loading-ring">
+
+        <span>Z</span>
+
+    </div>
+
+</div>
+
+
+
+<!-- =====================================================
+     APP
+====================================================== -->
+
+<div
+    id="app"
+    class="app hidden"
+>
+
+
+    <!-- =================================================
+         HEADER
+    ================================================== -->
+
+    <header class="top-header">
+
+
+        <button
+            id="backButton"
+            class="header-button"
+            aria-label="Go back"
+        >
+
+            ←
+
+        </button>
+
+
+        <div class="header-title">
+
+            <span>
+                ZENOVA EDUCATIONS
+            </span>
+
+            <h1>
+                Enrollment
+            </h1>
+
+        </div>
+
+
+        <button
+            id="notificationButton"
+            class="header-button"
+            aria-label="Notifications"
+        >
+
+            ♧
+
+        </button>
+
+
+    </header>
+
+
+
+    <!-- =================================================
+         CONTENT
+    ================================================== -->
+
+    <main class="page">
+
+
+        <!-- =============================================
+             NOTICE
+        ============================================== -->
+
+        <section class="notice-card">
+
+            <div class="notice-icon">
+                Z
+            </div>
+
+
+            <div>
+
+                <span class="notice-label">
+                    ENROLLMENT
+                </span>
+
+                <h2>
+                    Complete your enrollment
+                </h2>
+
+                <p>
+                    Online payment is currently unavailable.
+                    Contact Zenova Educations to complete
+                    your payment and activate your batch.
+                </p>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =============================================
+             COURSE
+        ============================================== -->
+
+        <section class="section">
+
+            <div class="section-heading">
+
+                <span>
+                    YOUR COURSE
+                </span>
+
+                <h2>
+                    Course Details
+                </h2>
+
+            </div>
+
+
+            <div class="course-card">
+
+
+                <div class="course-image-wrapper">
+
+                    <img
+                        id="courseImage"
+                        src=""
+                        alt="Course"
+                        class="course-image"
+                    >
+
+                    <div
+                        id="courseImageFallback"
+                        class="course-fallback"
+                    >
+                        Z
+                    </div>
+
+                </div>
+
+
+                <div class="course-information">
+
+                    <span class="course-badge">
+                        COURSE
+                    </span>
+
+
+                    <h3 id="courseName">
+                        Loading...
+                    </h3>
+
+
+                    <p id="courseMeta">
+                        Loading...
+                    </p>
+
+
+                    <span
+                        id="courseCode"
+                        class="course-code"
+                    ></span>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =============================================
+             ORDER
+        ============================================== -->
+
+        <section class="section">
+
+            <div class="section-heading">
+
+                <span>
+                    ORDER
+                </span>
+
+                <h2>
+                    Enrollment Summary
+                </h2>
+
+            </div>
+
+
+            <div class="summary-card">
+
+
+                <div class="summary-row">
+
+                    <span>
+                        Course
+                    </span>
+
+                    <strong id="summaryCourse">
+                        —
+                    </strong>
+
+                </div>
+
+
+                <div class="summary-row">
+
+                    <span>
+                        Class
+                    </span>
+
+                    <strong id="summaryClass">
+                        —
+                    </strong>
+
+                </div>
+
+
+                <div
+                    id="languageRow"
+                    class="summary-row hidden"
+                >
+
+                    <span>
+                        Language
+                    </span>
+
+                    <strong id="summaryLanguage">
+                        —
+                    </strong>
+
+                </div>
+
+
+                <div class="summary-divider"></div>
+
+
+                <div class="summary-row">
+
+                    <span>
+                        Course Price
+                    </span>
+
+                    <strong id="coursePrice">
+                        ₹0
+                    </strong>
+
+                </div>
+
+
+                <div
+                    id="discountRow"
+                    class="summary-row discount-row hidden"
+                >
+
+                    <span>
+                        Discount
+                    </span>
+
+                    <strong id="discountAmount">
+                        -₹0
+                    </strong>
+
+                </div>
+
+
+                <div class="summary-divider"></div>
+
+
+                <div class="total-row">
+
+                    <span>
+                        Amount to Pay
+                    </span>
+
+                    <strong id="finalPrice">
+                        ₹0
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =============================================
+             CONTACT ADMIN
+        ============================================== -->
+
+        <section class="section">
+
+            <div class="section-heading">
+
+                <span>
+                    PAYMENT
+                </span>
+
+                <h2>
+                    Contact Zenova
+                </h2>
+
+            </div>
+
+
+            <div class="contact-card">
+
+
+                <div class="contact-top">
+
+                    <div class="contact-icon">
+                        ☎
+                    </div>
+
+
+                    <div>
+
+                        <strong>
+                            Need help completing payment?
+                        </strong>
+
+                        <p>
+                            Contact our admin team and
+                            complete the payment manually.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <button
+                    id="contactAdminButton"
+                    class="contact-button"
+                >
+
+                    Contact Admin
+
+                    <span>
+                        →
+                    </span>
+
+                </button>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =============================================
+             ENROLL
+        ============================================== -->
+
+        <section class="enroll-section">
+
+            <p class="enroll-note">
+
+                By clicking below, your enrollment request
+                and student details will be sent to Zenova
+                Educations for verification.
+
+            </p>
+
+
+            <button
+                id="enrollButton"
+                class="enroll-button"
+            >
+
+                <span id="enrollButtonText">
+                    CLICK HERE TO ENROLL
+                </span>
+
+                <span>
+                    →
+                </span>
+
+            </button>
+
+        </section>
+
+
+
+        <!-- =============================================
+             SUCCESS
+        ============================================== -->
+
+        <section
+            id="successState"
+            class="success-state hidden"
+        >
+
+            <div class="success-icon">
+                ✓
+            </div>
+
+
+            <span class="success-label">
+                REQUEST RECEIVED
+            </span>
+
+
+            <h2>
+                Enrollment request submitted
+            </h2>
+
+
+            <p>
+                Your details have been saved successfully.
+                Please contact Zenova Educations to complete
+                payment. Your batch will be activated by
+                Admin after verification.
+            </p>
+
+
+            <button
+                id="successContactButton"
+                class="primary-button"
+            >
+                Contact Admin →
+            </button>
+
+
+            <button
+                id="goCoursesButton"
+                class="secondary-button"
+            >
+                Go to My Courses
+            </button>
+
+        </section>
+
+
+        <div class="bottom-space"></div>
+
+    </main>
+
+
+
+    <!-- =================================================
+         BOTTOM NAV
+    ================================================== -->
+
+    <nav class="bottom-nav">
+
+
+        <button data-nav="home">
+
+            <span>⌂</span>
+
+            <small>
+                Home
+            </small>
+
+        </button>
+
+
+        <button
+            data-nav="courses"
+            class="active"
+        >
+
+            <span>▣</span>
+
+            <small>
+                Courses
+            </small>
+
+        </button>
+
+
+        <button data-nav="study">
+
+            <span>▶</span>
+
+            <small>
+                Study Now
+            </small>
+
+        </button>
+
+
+        <button data-nav="ai">
+
+            <span>✦</span>
+
+            <small>
+                Zenova AI
+            </small>
+
+        </button>
+
+
+        <button data-nav="profile">
+
+            <span>○</span>
+
+            <small>
+                Profile
+            </small>
+
+        </button>
+
+
+    </nav>
+
+
+</div>
+
+
+
+<script
+    type="module"
+    src="./payment.js"
+></script>
+
+
+</body>
+
+</html>
