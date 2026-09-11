@@ -1124,12 +1124,12 @@ function renderBatches() {
                         ) {
 
                             window.location.href =
-                                `../study/?courseId=${encodeURIComponent(id)}`;
+                                `../home/study/?courseId=${encodeURIComponent(id)}`;
 
                         } else {
 
                             window.location.href =
-                                `../batchdetails/?id=${encodeURIComponent(id)}`;
+                                `../home/batchdetails/?id=${encodeURIComponent(id)}`;
 
                         }
 
