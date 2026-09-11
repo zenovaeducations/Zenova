@@ -1,205 +1,111 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
-
     <meta
         name="viewport"
         content="width=device-width, initial-scale=1.0, viewport-fit=cover"
     >
 
-    <title>Zenova Educations</title>
+    <title>Home | Zenova Educations</title>
 
-    <link
-        rel="preconnect"
-        href="https://fonts.googleapis.com"
-    >
-
-    <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
-        rel="stylesheet"
-    >
-
-    <link
-        href="https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.css"
-        rel="stylesheet"
-    >
-
-    <link
-        rel="stylesheet"
-        href="./home.css"
-    >
+    <link rel="stylesheet" href="./home.css">
 </head>
-
 
 <body>
 
+<!-- ================= LOADING ================= -->
 
-<!-- =========================================================
-     LOADING SCREEN
-========================================================= -->
-
-<div
-    id="zenovaLoader"
-    class="loader-screen"
->
-
-    <div class="loader-ring">
+<div id="loadingScreen" class="loading-screen">
+    <div class="loading-ring">
         <span>Z</span>
     </div>
-
 </div>
 
 
+<!-- ================= APP ================= -->
 
-<!-- =========================================================
-     MAIN APP
-========================================================= -->
+<div id="app" class="app hidden">
 
-<div
-    id="zenovaApp"
-    class="app hidden"
->
-
-
-    <!-- =====================================================
-         FIXED TOP HEADER
-    ====================================================== -->
+    <!-- ================= HEADER ================= -->
 
     <header class="top-header">
 
         <div class="brand">
+            <div class="brand-z">Z</div>
 
-            <div class="brand-logo">
-                Z
-            </div>
-
-            <div class="brand-name">
-
-                <strong>
+            <div>
+                <div class="brand-name">
                     ZENOVA
-                </strong>
+                </div>
 
-                <span>
+                <div class="brand-subtitle">
                     EDUCATIONS
-                </span>
-
+                </div>
             </div>
-
         </div>
 
 
-        <div class="header-right">
+        <button
+            id="notificationButton"
+            class="notification-button"
+            aria-label="Notifications"
+        >
+            <span class="bell-icon">♧</span>
 
-            <button
-                id="notificationBtn"
-                class="header-icon"
-                type="button"
-                aria-label="Notifications"
-            >
-
-                <i class="ri-notification-3-line"></i>
-
-                <span
-                    id="notificationDot"
-                    class="notification-dot hidden"
-                ></span>
-
-            </button>
-
-
-            <button
-                id="profileBtn"
-                class="profile-avatar"
-                type="button"
-                aria-label="Profile"
-            >
-
-                <span id="profileInitial">
-                    S
-                </span>
-
-            </button>
-
-        </div>
+            <span
+                id="notificationDot"
+                class="notification-dot hidden"
+            ></span>
+        </button>
 
     </header>
 
 
+    <!-- ================= MAIN ================= -->
 
-    <!-- =====================================================
-         CONTENT
-    ====================================================== -->
-
-    <main class="home-content">
+    <main class="home-page">
 
 
-        <!-- =================================================
-             WELCOME
-        ================================================== -->
+        <!-- ================= WELCOME ================= -->
 
         <section class="welcome-section">
 
             <div class="welcome-text">
 
-                <p
-                    id="greetingText"
-                    class="greeting"
-                >
-                    Good morning
-                </p>
+                <span id="welcomeTime">
+                    GOOD MORNING
+                </span>
 
                 <h1>
-                    Welcome,
-                    <span id="studentName">
+                    Hello,
+                    <strong id="studentName">
                         Student
-                    </span>
-                    <span class="wave">
-                        👋
-                    </span>
+                    </strong>
+                    👋
                 </h1>
 
-                <p
-                    id="academicInfo"
-                    class="academic-info"
-                >
-                    Let's make today productive.
+                <p>
+                    Ready to learn something new today?
                 </p>
 
             </div>
 
 
-            <div class="motivation-card">
-
-                <div class="motivation-icon">
-                    <i class="ri-focus-3-line"></i>
-                </div>
-
-                <div>
-
-                    <span>
-                        TODAY'S FOCUS
-                    </span>
-
-                    <strong id="motivationText">
-                        Small steps,
-                        big results.
-                    </strong>
-
-                </div>
-
-                <i class="ri-arrow-right-line"></i>
-
-            </div>
+            <button
+                id="profileButton"
+                class="profile-avatar"
+            >
+                <span id="studentAvatar">
+                    Z
+                </span>
+            </button>
 
         </section>
 
 
 
-        <!-- =================================================
-             TOP MOVING BANNER
-        ================================================== -->
+        <!-- ================= HERO BANNERS ================= -->
 
         <section
             id="bannerSection"
@@ -211,7 +117,6 @@
                 class="banner-slider"
             ></div>
 
-
             <div
                 id="bannerDots"
                 class="banner-dots"
@@ -221,122 +126,132 @@
 
 
 
-        <!-- =================================================
-             FOUR MAIN CARDS
-        ================================================== -->
+        <!-- ================= QUICK CARDS ================= -->
 
         <section class="quick-section">
 
             <div class="quick-grid">
 
 
+                <!-- COURSES -->
+
                 <button
                     class="quick-card"
-                    data-route="../courses/"
-                    type="button"
+                    data-route="../batches/"
                 >
 
-                    <div class="quick-card-icon">
-                        <i class="ri-book-open-line"></i>
+                    <div class="quick-icon purple">
+                        ◈
                     </div>
 
-                    <div class="quick-card-text">
+                    <div class="quick-content">
+
+                        <strong>
+                            My Courses
+                        </strong>
+
+                        <span>
+                            Continue learning
+                        </span>
+
+                    </div>
+
+                    <span class="quick-arrow">
+                        ›
+                    </span>
+
+                </button>
+
+
+
+                <!-- STUDY -->
+
+                <button
+                    class="quick-card"
+                    data-route="../study/"
+                >
+
+                    <div class="quick-icon blue">
+                        ▶
+                    </div>
+
+                    <div class="quick-content">
 
                         <strong>
                             Study Now
                         </strong>
 
                         <span>
-                            Learn & explore
+                            Start learning
                         </span>
 
                     </div>
 
-                    <i class="ri-arrow-right-line quick-arrow"></i>
+                    <span class="quick-arrow">
+                        ›
+                    </span>
 
                 </button>
 
 
 
-                <button
-                    class="quick-card"
-                    data-route="../batches/"
-                    type="button"
-                >
-
-                    <div class="quick-card-icon">
-                        <i class="ri-graduation-cap-line"></i>
-                    </div>
-
-                    <div class="quick-card-text">
-
-                        <strong>
-                            Batches
-                        </strong>
-
-                        <span>
-                            Find your batch
-                        </span>
-
-                    </div>
-
-                    <i class="ri-arrow-right-line quick-arrow"></i>
-
-                </button>
-
-
+                <!-- TESTS -->
 
                 <button
                     class="quick-card"
                     data-route="../tests/"
-                    type="button"
                 >
 
-                    <div class="quick-card-icon">
-                        <i class="ri-file-list-3-line"></i>
+                    <div class="quick-icon orange">
+                        ✓
                     </div>
 
-                    <div class="quick-card-text">
+                    <div class="quick-content">
 
                         <strong>
-                            Tests
+                            Tests & Results
                         </strong>
 
                         <span>
-                            Practice & improve
+                            Check performance
                         </span>
 
                     </div>
 
-                    <i class="ri-arrow-right-line quick-arrow"></i>
+                    <span class="quick-arrow">
+                        ›
+                    </span>
 
                 </button>
 
 
 
+                <!-- ATTENDANCE -->
+
                 <button
                     class="quick-card"
-                    data-route="../live/"
-                    type="button"
+                    data-route="../attendance/"
                 >
 
-                    <div class="quick-card-icon">
-                        <i class="ri-live-line"></i>
+                    <div class="quick-icon green">
+                        %
                     </div>
 
-                    <div class="quick-card-text">
+                    <div class="quick-content">
 
                         <strong>
-                            Live Classes
+                            Attendance
                         </strong>
 
                         <span>
-                            Learn live
+                            View attendance
                         </span>
 
                     </div>
 
-                    <i class="ri-arrow-right-line quick-arrow"></i>
+                    <span class="quick-arrow">
+                        ›
+                    </span>
 
                 </button>
 
@@ -346,32 +261,65 @@
 
 
 
-        <!-- =================================================
-             STUDY WITH ZENOVA AI
-        ================================================== -->
+        <!-- ================= BATCHES FOR YOU ================= -->
 
-        <section class="ai-section">
+        <section class="content-section">
 
-            <div class="ai-left">
-
-                <div class="ai-symbol">
-                    ✦
-                </div>
+            <div class="section-header">
 
                 <div>
 
                     <span class="section-label">
-                        ZENOVA AI
+                        LEARNING
                     </span>
 
                     <h2>
-                        Study with Zenova AI
+                        Batches for You
                     </h2>
 
-                    <p>
-                        Ask doubts, understand concepts
-                        and learn smarter.
-                    </p>
+                </div>
+
+                <button
+                    id="exploreBatches"
+                    class="explore-button"
+                >
+                    Explore
+                    <span>→</span>
+                </button>
+
+            </div>
+
+
+            <div
+                id="batchesContainer"
+                class="horizontal-scroll"
+            >
+
+                <div class="section-loading">
+                    Loading...
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ================= LEARN WITH AI ================= -->
+
+        <section class="content-section">
+
+            <div class="section-header">
+
+                <div>
+
+                    <span class="section-label">
+                        SMART LEARNING
+                    </span>
+
+                    <h2>
+                        Learn with Zenova AI
+                    </h2>
 
                 </div>
 
@@ -379,14 +327,35 @@
 
 
             <button
-                id="aiBtn"
-                class="ai-button"
-                type="button"
+                id="aiCard"
+                class="ai-card"
             >
 
-                Ask AI
+                <div class="ai-left">
 
-                <i class="ri-arrow-right-line"></i>
+                    <div class="ai-symbol">
+                        AI
+                    </div>
+
+                    <div>
+
+                        <strong>
+                            Your personal AI tutor
+                        </strong>
+
+                        <span>
+                            Ask questions, understand concepts
+                            and learn at your own pace.
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <span class="ai-arrow">
+                    →
+                </span>
 
             </button>
 
@@ -394,102 +363,111 @@
 
 
 
-        <!-- =================================================
-             RECOMMENDED BATCHES
-        ================================================== -->
+        <!-- ================= RECOMMENDED VIDEOS ================= -->
 
-        <section
-            id="recommendedSection"
-            class="content-section"
-        >
+        <section class="content-section">
 
             <div class="section-header">
 
                 <div>
 
                     <span class="section-label">
-                        MADE FOR YOU
+                        WATCH & LEARN
                     </span>
 
                     <h2>
-                        Recommended Batches
+                        Recommended Videos
                     </h2>
 
                 </div>
 
-
                 <button
-                    type="button"
-                    class="view-all"
-                    data-route="../batches/"
+                    id="videosExplore"
+                    class="explore-button"
                 >
-                    View all
+                    Explore
+                    <span>→</span>
                 </button>
 
             </div>
 
 
             <div
-                id="recommendedList"
-                class="horizontal-scroll"
-            ></div>
+                id="videosContainer"
+                class="horizontal-scroll videos-scroll"
+            >
 
-        </section>
+                <article class="video-card">
 
+                    <div class="video-thumbnail placeholder">
+                        <span>▶</span>
+                    </div>
 
+                    <div class="video-info">
 
-        <!-- =================================================
-             FREE LEARNING
-        ================================================== -->
+                        <strong>
+                            Learning at Zenova
+                        </strong>
 
-        <section
-            id="freeLearningSection"
-            class="content-section"
-        >
+                        <span>
+                            Discover better ways to learn
+                        </span>
 
-            <div class="section-header">
+                    </div>
 
-                <div>
-
-                    <span class="section-label">
-                        START LEARNING
-                    </span>
-
-                    <h2>
-                        Free Learning
-                    </h2>
-
-                </div>
+                </article>
 
 
-                <button
-                    type="button"
-                    class="view-all"
-                    data-route="../library/"
-                >
-                    View all
-                </button>
+                <article class="video-card">
+
+                    <div class="video-thumbnail placeholder">
+                        <span>▶</span>
+                    </div>
+
+                    <div class="video-info">
+
+                        <strong>
+                            Study Smarter
+                        </strong>
+
+                        <span>
+                            Tips for effective learning
+                        </span>
+
+                    </div>
+
+                </article>
+
+
+                <article class="video-card">
+
+                    <div class="video-thumbnail placeholder">
+                        <span>▶</span>
+                    </div>
+
+                    <div class="video-info">
+
+                        <strong>
+                            Learn with AI
+                        </strong>
+
+                        <span>
+                            Make AI your study partner
+                        </span>
+
+                    </div>
+
+                </article>
 
             </div>
 
-
-            <div
-                id="freeLearningList"
-                class="horizontal-scroll"
-            ></div>
-
         </section>
 
 
 
-        <!-- =================================================
-             ANNOUNCEMENTS
-        ================================================== -->
+        <!-- ================= FEATURES ================= -->
 
-        <section
-            id="announcementSection"
-            class="content-section"
-        >
+        <section class="content-section features-section">
 
             <div class="section-header">
 
@@ -500,217 +478,187 @@
                     </span>
 
                     <h2>
-                        Announcements
+                        Features of Zenova
                     </h2>
 
                 </div>
 
-
-                <button
-                    type="button"
-                    class="view-all"
-                    data-route="../announcements/"
-                >
-                    View all
-                </button>
-
             </div>
 
 
-            <div
-                id="announcementList"
-                class="announcement-list"
-            ></div>
+            <div class="features-grid">
+
+
+                <article class="feature-card">
+
+                    <div class="feature-icon purple">
+                        ▶
+                    </div>
+
+                    <strong>
+                        Live Classes
+                    </strong>
+
+                    <span>
+                        Learn directly with teachers.
+                    </span>
+
+                </article>
+
+
+
+                <article class="feature-card">
+
+                    <div class="feature-icon blue">
+                        ✓
+                    </div>
+
+                    <strong>
+                        Tests
+                    </strong>
+
+                    <span>
+                        Practice and track your results.
+                    </span>
+
+                </article>
+
+
+
+                <article class="feature-card">
+
+                    <div class="feature-icon orange">
+                        ✦
+                    </div>
+
+                    <strong>
+                        AI Learning
+                    </strong>
+
+                    <span>
+                        Learn with your personal AI tutor.
+                    </span>
+
+                </article>
+
+
+
+                <article class="feature-card">
+
+                    <div class="feature-icon green">
+                        ◈
+                    </div>
+
+                    <strong>
+                        Personalised Learning
+                    </strong>
+
+                    <span>
+                        Learning designed around you.
+                    </span>
+
+                </article>
+
+
+
+                <article class="feature-card">
+
+                    <div class="feature-icon purple">
+                        ▣
+                    </div>
+
+                    <strong>
+                        Study Resources
+                    </strong>
+
+                    <span>
+                        Notes and useful resources in one place.
+                    </span>
+
+                </article>
+
+
+
+                <article class="feature-card">
+
+                    <div class="feature-icon blue">
+                        %
+                    </div>
+
+                    <strong>
+                        Progress Tracking
+                    </strong>
+
+                    <span>
+                        See how far you've come.
+                    </span>
+
+                </article>
+
+            </div>
 
         </section>
 
 
-
-        <!-- =================================================
-             WHY ZENOVA
-        ================================================== -->
-
-        <section class="why-section">
-
-            <div class="why-heading">
-
-                <span class="section-label">
-                    WHY ZENOVA
-                </span>
-
-                <h2>
-                    Everything you need
-                    to learn better.
-                </h2>
-
-            </div>
-
-
-            <div class="why-grid">
-
-                <div class="why-item">
-
-                    <div class="why-icon">
-                        <i class="ri-user-star-line"></i>
-                    </div>
-
-                    <strong>
-                        Expert Teaching
-                    </strong>
-
-                    <span>
-                        Learn with clear,
-                        structured guidance.
-                    </span>
-
-                </div>
-
-
-                <div class="why-item">
-
-                    <div class="why-icon">
-                        <i class="ri-route-line"></i>
-                    </div>
-
-                    <strong>
-                        Structured Learning
-                    </strong>
-
-                    <span>
-                        Follow a clear path
-                        from basics to mastery.
-                    </span>
-
-                </div>
-
-
-                <div class="why-item">
-
-                    <div class="why-icon">
-                        <i class="ri-bar-chart-box-line"></i>
-                    </div>
-
-                    <strong>
-                        Practice & Tests
-                    </strong>
-
-                    <span>
-                        Practice regularly
-                        and track improvement.
-                    </span>
-
-                </div>
-
-
-                <div class="why-item">
-
-                    <div class="why-icon">
-                        <i class="ri-sparkling-2-line"></i>
-                    </div>
-
-                    <strong>
-                        AI Support
-                    </strong>
-
-                    <span>
-                        Get help whenever
-                        you need it.
-                    </span>
-
-                </div>
-
-            </div>
-
-        </section>
-
+        <div class="bottom-space"></div>
 
     </main>
 
 
 
-    <!-- =====================================================
-         BOTTOM NAVIGATION
-    ====================================================== -->
+    <!-- ================= BOTTOM NAV ================= -->
 
     <nav class="bottom-nav">
 
-
-        <a
-            href="./"
-            class="bottom-item active"
+        <button
+            data-nav="home"
+            class="active"
         >
 
-            <i class="ri-home-5-fill"></i>
+            <span>⌂</span>
+            <small>Home</small>
 
-            <span>
-                Home
-            </span>
-
-        </a>
+        </button>
 
 
-        <a
-            href="../courses/"
-            class="bottom-item"
-        >
+        <button data-nav="courses">
 
-            <i class="ri-book-open-line"></i>
+            <span>▣</span>
+            <small>Courses</small>
 
-            <span>
-                Learn
-            </span>
-
-        </a>
+        </button>
 
 
-        <a
-            href="../live/"
-            class="bottom-item"
-        >
+        <button data-nav="study">
 
-            <i class="ri-live-line"></i>
+            <span>▶</span>
+            <small>Study Now</small>
 
-            <span>
-                Live
-            </span>
-
-        </a>
+        </button>
 
 
-        <a
-            href="../chat/"
-            class="bottom-item"
-        >
+        <button data-nav="ai">
 
-            <i class="ri-chat-3-line"></i>
+            <span>✦</span>
+            <small>Zenova AI</small>
 
-            <span>
-                Chat
-            </span>
-
-        </a>
+        </button>
 
 
-        <a
-            href="../profile/"
-            class="bottom-item"
-        >
+        <button data-nav="profile">
 
-            <i class="ri-user-3-line"></i>
+            <span>○</span>
+            <small>Profile</small>
 
-            <span>
-                Profile
-            </span>
-
-        </a>
-
+        </button>
 
     </nav>
-
 
 </div>
 
 
+
+<!-- ================= SCRIPT ================= -->
 
 <script
     type="module"
@@ -718,4 +666,4 @@
 ></script>
 
 </body>
-</html>
+                    </html>
