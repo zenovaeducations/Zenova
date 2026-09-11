@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Profile | Zenova Educations</title>
+
+    <link rel="stylesheet" href="./profile.css">
+</head>
+
+<body>
+
+    <!-- LOADING -->
+    <div id="loadingScreen" class="loading-screen">
+        <div class="loading-ring">
+            <span>Z</span>
+        </div>
+    </div>
+
+
+    <!-- APP -->
+    <div id="app" class="app hidden">
+
+        <!-- HEADER -->
+        <header class="header">
+
+            <button id="backButton" class="header-btn">
+                ←
+            </button>
+
+            <div class="header-title">
+                <span>ZENOVA EDUCATONS</span>
+                <h1>Profile</h1>
+            </div>
+
+            <button id="notificationButton" class="header-btn">
+                <span class="bell">♧</span>
+            </button>
+
+        </header>
+
+
+        <main class="page">
+
+            <!-- PROFILE HERO -->
+            <section class="profile-card">
+
+                <div class="profile-top">
+
+                    <div id="avatar" class="avatar">
+                        Z
+                    </div>
+
+                    <div class="profile-main">
+
+                        <h2 id="studentName">
+                            Student
+                        </h2>
+
+                        <p id="studentEmail">
+                            —
+                        </p>
+
+                        <div class="verified">
+                            <span>✓</span>
+                            Verified Student
+                        </div>
+
+                    </div>
+
+                    <button
+                        id="editProfileButton"
+                        class="edit-btn"
+                    >
+                        Edit
+                    </button>
+
+                </div>
+
+
+                <div class="student-id-row">
+
+                    <div>
+                        <span>STUDENT ID</span>
+                        <strong id="studentId">
+                            —
+                        </strong>
+                    </div>
+
+                    <div>
+                        <span>CLASS</span>
+                        <strong id="studentClass">
+                            —
+                        </strong>
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- LEARNING SNAPSHOT -->
+            <section class="section">
+
+                <div class="section-heading">
+                    <span>LEARNING</span>
+                    <h3>Your Snapshot</h3>
+                </div>
+
+
+                <div class="snapshot">
+
+                    <div class="snapshot-item">
+                        <strong id="courseCount">0</strong>
+                        <span>Courses</span>
+                    </div>
+
+                    <div class="snapshot-divider"></div>
+
+                    <div class="snapshot-item">
+                        <strong id="progressValue">0%</strong>
+                        <span>Progress</span>
+                    </div>
+
+                    <div class="snapshot-divider"></div>
+
+                    <div class="snapshot-item">
+                        <strong id="testCount">0</strong>
+                        <span>Tests</span>
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- MY LEARNING -->
+            <section class="section">
+
+                <div class="section-heading">
+                    <span>MY LEARNING</span>
+                    <h3>Keep Learning</h3>
+                </div>
+
+
+                <div class="menu-card">
+
+                    <button
+                        class="menu-item"
+                        data-route="../batches/"
+                    >
+
+                        <div class="menu-icon purple">
+                            ◈
+                        </div>
+
+                        <div class="menu-text">
+                            <strong>My Courses</strong>
+                            <span>View your enrolled courses</span>
+                        </div>
+
+                        <span class="arrow">›</span>
+
+                    </button>
+
+
+                    <button
+                        class="menu-item"
+                        data-route="../tests/"
+                    >
+
+                        <div class="menu-icon blue">
+                            ✓
+                        </div>
+
+                        <div class="menu-text">
+                            <strong>Tests & Results</strong>
+                            <span>Marks and performance</span>
+                        </div>
+
+                        <span class="arrow">›</span>
+
+                    </button>
+
+
+                    <button
+                        class="menu-item"
+                        data-route="../timetable/"
+                    >
+
+                        <div class="menu-icon orange">
+                            ◷
+                        </div>
+
+                        <div class="menu-text">
+                            <strong>Timetable</strong>
+                            <span>Classes and schedule</span>
+                        </div>
+
+                        <span class="arrow">›</span>
+
+                    </button>
+
+
+                    <button
+                        class="menu-item"
+                        data-route="../attendance/"
+                    >
+
+                        <div class="menu-icon green">
+                            %
+                        </div>
+
+                        <div class="menu-text">
+                            <strong>Attendance</strong>
+                            <span>Your attendance record</span>
+                        </div>
+
+                        <span class="arrow">›</span>
+
+                    </button>
+
+                </div>
+
+            </section>
+
+
+            <!-- ACCOUNT -->
+            <section class="section">
+
+                <div class="section-heading">
+                    <span>ACCOUNT</span>
+                    <h3>Your Information</h3>
+                </div>
+
+
+                <div class="menu-card">
+
+                    <button
+                        class="menu-item"
+                        data-route="./personal/"
+                    >
+
+                        <div class="menu-icon purple">
+                            ◎
+                        </div>
+
+                        <div class="menu-text">
+                            <strong>Personal Information</strong>
+                            <span>Name, phone, email and DOB</span>
+                        </div>
+
+                        <span class="arrow">›</span>
+
+                    </button>
+
+
+                    <button
+                        class="menu-item"
+                        data-route="./academic/"
+                    >
+
+                        <div class="menu-icon blue">
+                            ▣
+                        </div>
+
+                        <div class="menu-text">
+                            <strong>Academic Details</strong>
+                            <span>Class, board and medium</span>
+                        </div>
+
+                        <span class="arrow">›</span>
+
+                    </button>
+
+
+                    <button
+                        class="menu-item"
+                        data-route="./school/"
+                    >
+
+                        <div class="menu-icon orange">
+                            ⌖
+                        </div>
+
+                        <div class="menu-text">
+                            <strong>School & Location</strong>
+                            <span>Your school and location</span>
+                        </div>
+
+                        <span class="arrow">›</span>
+
+                    </button>
+
+                </div>
+
+            </section>
+
+
+            <!-- ZENOVA -->
+            <section class="section">
+
+                <div class="section-heading">
+                    <span>ZENOVA</span>
+                    <h3>More</h3>
+                </div>
+
+
+                <div class="menu-card">
+
+                    <button
+                        class="menu-item"
+                        data-route="../notifications/"
+                    >
+
+                        <div class="menu-icon purple">
+                            ♢
+                        </div>
+
+                        <div class="menu-text">
+                            <strong>Notifications</strong>
+                            <span>Updates from Zenova</span>
+                        </div>
+
+                        <span class="arrow">›</span>
+
+                    </button>
+
+
+                    <button
+                        class="menu-item"
+                        data-route="../ai/"
+                    >
+
+                        <div class="menu-icon blue">
+                            AI
+                        </div>
+
+                        <div class="menu-text">
+                            <strong>Zenova AI</strong>
+                            <span>Your personal study assistant</span>
+                        </div>
+
+                        <span class="arrow">›</span>
+
+                    </button>
+
+
+                    <button
+                        class="menu-item"
+                        data-route="../help/"
+                    >
+
+                        <div class="menu-icon green">
+                            ?
+                        </div>
+
+                        <div class="menu-text">
+                            <strong>Help & Support</strong>
+                            <span>Need help? We're here</span>
+                        </div>
+
+                        <span class="arrow">›</span>
+
+                    </button>
+
+
+                    <button
+                        class="menu-item"
+                        data-route="../settings/"
+                    >
+
+                        <div class="menu-icon gray">
+                            ⚙
+                        </div>
+
+                        <div class="menu-text">
+                            <strong>Settings</strong>
+                            <span>Manage your app</span>
+                        </div>
+
+                        <span class="arrow">›</span>
+
+                    </button>
+
+                </div>
+
+            </section>
+
+
+            <!-- LOGOUT -->
+            <button
+                id="logoutButton"
+                class="logout-button"
+            >
+                <span>↪</span>
+                Log Out
+            </button>
+
+
+            <p class="version">
+                Zenova Educations
+            </p>
+
+        </main>
+
+
+        <!-- BOTTOM NAV -->
+        <nav class="bottom-nav">
+
+            <button data-nav="home">
+                <span>⌂</span>
+                <small>Home</small>
+            </button>
+
+            <button data-nav="courses">
+                <span>▣</span>
+                <small>Courses</small>
+            </button>
+
+            <button data-nav="study">
+                <span>▶</span>
+                <small>Study Now</small>
+            </button>
+
+            <button data-nav="ai">
+                <span>✦</span>
+                <small>Zenova AI</small>
+            </button>
+
+            <button
+                data-nav="profile"
+                class="active"
+            >
+                <span>○</span>
+                <small>Profile</small>
+            </button>
+
+        </nav>
+
+    </div>
+
+
+    <!-- ERROR -->
+    <div
+        id="errorState"
+        class="error-state hidden"
+    >
+
+        <div class="error-z">
+            Z
+        </div>
+
+        <h2>
+            Unable to load profile
+        </h2>
+
+        <p id="errorMessage">
+            Please try again.
+        </p>
+
+        <button
+            id="errorBackButton"
+            class="primary-btn"
+        >
+            Go Back
+        </button>
+
+    </div>
+
+
+    <script
+        type="module"
+        src="./profile.js"
+    ></script>
+
+</body>
+                      </html>
