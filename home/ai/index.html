@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+  />
+
+  <title>Zenova AI</title>
+
+  <link rel="stylesheet" href="./ai.css" />
+</head>
+
+<body>
+
+  <!-- =========================
+       LOADING SCREEN
+  ========================== -->
+
+  <div id="loadingScreen" class="loading-screen">
+    <div class="loader-ring">
+      <div class="loader-z">Z</div>
+    </div>
+  </div>
+
+
+  <!-- =========================
+       APP
+  ========================== -->
+
+  <div id="app" class="app hidden">
+
+    <!-- HEADER -->
+
+    <header class="top-header">
+
+      <button class="icon-btn back-btn" id="backBtn" aria-label="Go back">
+        ←
+      </button>
+
+      <div class="brand">
+        <div class="brand-z">Z</div>
+
+        <div>
+          <div class="brand-name">ZENOVA</div>
+          <div class="brand-subtitle">AI</div>
+        </div>
+      </div>
+
+      <button
+        class="icon-btn"
+        id="notificationBtn"
+        aria-label="Notifications"
+      >
+        <span class="bell">♧</span>
+        <span class="notification-dot"></span>
+      </button>
+
+    </header>
+
+
+    <!-- =========================
+         MAIN
+    ========================== -->
+
+    <main class="main-content">
+
+      <!-- AI INTRO -->
+
+      <section class="ai-intro">
+
+        <div class="ai-orb">
+          <span>Z</span>
+        </div>
+
+        <div class="intro-text">
+          <h1>Zenova AI</h1>
+          <p>Your personal learning coach</p>
+        </div>
+
+      </section>
+
+
+      <!-- GREETING -->
+
+      <section class="greeting-card">
+
+        <div>
+          <span class="small-label">GOOD MORNING</span>
+
+          <h2 id="studentGreeting">
+            Hello 👋
+          </h2>
+
+          <p>
+            Let's make today's learning count.
+          </p>
+        </div>
+
+      </section>
+
+
+      <!-- NEXT BEST ACTION -->
+
+      <section class="section">
+
+        <div class="section-heading">
+          <div>
+            <span class="eyebrow">AI RECOMMENDATION</span>
+            <h2>Your next best action</h2>
+          </div>
+        </div>
+
+
+        <div class="next-action-card">
+
+          <div class="action-top">
+
+            <div class="subject-icon">
+              ⚡
+            </div>
+
+            <div class="action-course">
+
+              <span id="recommendedSubject">
+                Physics
+              </span>
+
+              <h3 id="recommendedTopic">
+                Current Electricity
+              </h3>
+
+            </div>
+
+            <span class="attention-tag">
+              Needs attention
+            </span>
+
+          </div>
+
+
+          <div class="action-message">
+
+            <p id="recommendationText">
+              Your recent answers show that you need more
+              practice with application-based questions.
+            </p>
+
+          </div>
+
+
+          <div class="action-content">
+
+            <div class="content-icon">
+              ▶
+            </div>
+
+            <div class="content-info">
+
+              <strong id="videoTitle">
+                Ohm's Law — Application
+              </strong>
+
+              <span id="videoMeta">
+                Your Zenova course · 6 min
+              </span>
+
+            </div>
+
+          </div>
+
+
+          <button
+            class="primary-btn"
+            id="startRecommendationBtn"
+          >
+            START LEARNING
+            <span>→</span>
+          </button>
+
+        </div>
+
+      </section>
+
+
+      <!-- QUICK ACTIONS -->
+
+      <section class="section">
+
+        <div class="section-heading">
+          <div>
+            <span class="eyebrow">LEARN YOUR WAY</span>
+            <h2>What do you want to do?</h2>
+          </div>
+        </div>
+
+
+        <div class="quick-grid">
+
+          <button class="quick-card" data-mode="doubt">
+
+            <div class="quick-icon">
+              ?
+            </div>
+
+            <div>
+              <strong>Ask a Doubt</strong>
+              <span>Get an explanation</span>
+            </div>
+
+          </button>
+
+
+          <button class="quick-card" data-mode="practice">
+
+            <div class="quick-icon">
+              ✓
+            </div>
+
+            <div>
+              <strong>Practice</strong>
+              <span>Questions for you</span>
+            </div>
+
+          </button>
+
+
+          <button class="quick-card" data-mode="revise">
+
+            <div class="quick-icon">
+              ↻
+            </div>
+
+            <div>
+              <strong>Revise</strong>
+              <span>Refresh your memory</span>
+            </div>
+
+          </button>
+
+
+          <button class="quick-card" data-mode="master">
+
+            <div class="quick-icon">
+              ★
+            </div>
+
+            <div>
+              <strong>Master a Topic</strong>
+              <span>Learn until you can solve</span>
+            </div>
+
+          </button>
+
+        </div>
+
+      </section>
+
+
+      <!-- COURSE CONTENT -->
+
+      <section class="section">
+
+        <div class="section-heading">
+
+          <div>
+            <span class="eyebrow">YOUR COURSE</span>
+            <h2>Learn from Zenova</h2>
+          </div>
+
+          <button class="text-btn" id="viewCourseBtn">
+            View all
+          </button>
+
+        </div>
+
+
+        <div class="course-recommendation">
+
+          <div class="course-video-thumb">
+
+            <div class="play-button">
+              ▶
+            </div>
+
+            <span class="video-duration">
+              06:14
+            </span>
+
+          </div>
+
+
+          <div class="course-video-info">
+
+            <span class="content-type">
+              COURSE VIDEO
+            </span>
+
+            <h3 id="courseVideoTitle">
+              Kirchhoff's Second Law
+            </h3>
+
+            <p id="courseVideoPath">
+              Physics · Current Electricity
+            </p>
+
+            <div class="timestamp">
+              <span>Recommended section</span>
+              <strong>12:22 – 14:51</strong>
+            </div>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- LEARNING INSIGHT -->
+
+      <section class="section">
+
+        <div class="section-heading">
+          <div>
+            <span class="eyebrow">AI INSIGHT</span>
+            <h2>What Zenova noticed</h2>
+          </div>
+        </div>
+
+
+        <div class="insight-card">
+
+          <div class="insight-mark">
+            ✦
+          </div>
+
+          <div>
+
+            <p id="aiInsightText">
+              You understand concepts well, but you're
+              losing marks when applying them to unfamiliar
+              problems.
+            </p>
+
+            <button
+              class="outline-btn"
+              id="fixWeaknessBtn"
+            >
+              FIX THIS WEAKNESS
+            </button>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- LEARNING PROFILE -->
+
+      <section class="section">
+
+        <div class="section-heading">
+
+          <div>
+            <span class="eyebrow">YOUR LEARNING</span>
+            <h2>Learning strengths</h2>
+          </div>
+
+          <button
+            class="text-btn"
+            id="progressBtn"
+          >
+            Details
+          </button>
+
+        </div>
+
+
+        <div class="learning-card">
+
+          <div class="learning-row">
+
+            <div>
+              <span>Understanding</span>
+            </div>
+
+            <strong>78%</strong>
+
+          </div>
+
+          <div class="progress-line">
+            <span style="width:78%"></span>
+          </div>
+
+
+          <div class="learning-row">
+
+            <div>
+              <span>Problem solving</span>
+            </div>
+
+            <strong>64%</strong>
+
+          </div>
+
+          <div class="progress-line">
+            <span style="width:64%"></span>
+          </div>
+
+
+          <div class="learning-row">
+
+            <div>
+              <span>Recall</span>
+            </div>
+
+            <strong>82%</strong>
+
+          </div>
+
+          <div class="progress-line">
+            <span style="width:82%"></span>
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- MISTAKES -->
+
+      <section class="section">
+
+        <div class="section-heading">
+
+          <div>
+            <span class="eyebrow">AI MEMORY</span>
+            <h2>Your recent mistakes</h2>
+          </div>
+
+          <button
+            class="text-btn"
+            id="mistakesBtn"
+          >
+            See all
+          </button>
+
+        </div>
+
+
+        <div class="mistake-list">
+
+          <div class="mistake-item">
+
+            <div class="mistake-status">
+              !
+            </div>
+
+            <div>
+              <strong>Parallel resistance</strong>
+              <span>Physics · Current Electricity</span>
+            </div>
+
+            <span class="mistake-arrow">→</span>
+
+          </div>
+
+
+          <div class="mistake-item">
+
+            <div class="mistake-status">
+              !
+            </div>
+
+            <div>
+              <strong>Sign convention</strong>
+              <span>Physics · Optics</span>
+            </div>
+
+            <span class="mistake-arrow">→</span>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- AI CHAT ENTRY -->
+
+      <section class="ask-section">
+
+        <div class="ask-title">
+          Ask Zenova anything
+        </div>
+
+        <div class="ask-box">
+
+          <button
+            class="ask-icon"
+            id="cameraBtn"
+            aria-label="Upload question"
+          >
+            📷
+          </button>
+
+          <input
+            id="questionInput"
+            type="text"
+            placeholder="Ask a question..."
+            autocomplete="off"
+          />
+
+          <button
+            class="ask-icon mic"
+            id="voiceBtn"
+            aria-label="Voice question"
+          >
+            🎤
+          </button>
+
+          <button
+            class="send-btn"
+            id="sendBtn"
+            aria-label="Send"
+          >
+            ↑
+          </button>
+
+        </div>
+
+      </section>
+
+    </main>
+
+
+    <!-- =========================
+         BOTTOM NAV
+    ========================== -->
+
+    <nav class="bottom-nav">
+
+      <button
+        class="nav-item"
+        data-route="../"
+      >
+        <span class="nav-icon">⌂</span>
+        <span>Home</span>
+      </button>
+
+
+      <button
+        class="nav-item"
+        data-route="../batches/"
+      >
+        <span class="nav-icon">▣</span>
+        <span>Courses</span>
+      </button>
+
+
+      <button
+        class="nav-item"
+        data-route="../study/"
+      >
+        <span class="nav-icon">▶</span>
+        <span>Study Now</span>
+      </button>
+
+
+      <button
+        class="nav-item active"
+        data-route="../ai/"
+      >
+        <span class="nav-icon">✦</span>
+        <span>Zenova AI</span>
+      </button>
+
+
+      <button
+        class="nav-item"
+        data-route="../profile/"
+      >
+        <span class="nav-icon">◯</span>
+        <span>Profile</span>
+      </button>
+
+    </nav>
+
+
+    <!-- =========================
+         CHAT MODAL
+    ========================== -->
+
+    <div
+      id="chatModal"
+      class="modal hidden"
+    >
+
+      <div class="modal-backdrop"></div>
+
+      <div class="chat-sheet">
+
+        <div class="sheet-header">
+
+          <div>
+            <span class="eyebrow">ZENOVA AI</span>
+            <h2 id="chatTitle">
+              Ask Zenova
+            </h2>
+          </div>
+
+          <button
+            class="close-btn"
+            id="closeChatBtn"
+          >
+            ×
+          </button>
+
+        </div>
+
+
+        <div
+          id="chatMessages"
+          class="chat-messages"
+        >
+
+          <div class="message ai-message">
+
+            <div class="message-avatar">
+              Z
+            </div>
+
+            <div class="message-bubble">
+
+              <strong>Zenova AI</strong>
+
+              <p>
+                Hi! Tell me what you're struggling with.
+                You can type a question, upload a photo,
+                or use your voice.
+              </p>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <div class="chat-input-area">
+
+          <button id="chatCameraBtn">
+            📷
+          </button>
+
+          <input
+            id="chatInput"
+            type="text"
+            placeholder="Ask Zenova..."
+          />
+
+          <button id="chatSendBtn">
+            ↑
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- FILE INPUT -->
+
+    <input
+      type="file"
+      id="questionImageInput"
+      accept="image/*"
+      capture="environment"
+      hidden
+    />
+
+  </div>
+
+
+  <script type="module" src="./ai.js"></script>
+
+</body>
+  </html>
