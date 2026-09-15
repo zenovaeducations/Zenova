@@ -1,12 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
-
     <meta
         name="viewport"
-        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+        content="width=device-width, initial-scale=1.0, viewport-fit=cover"
     >
 
     <title>Checkout | Zenova Educations</title>
@@ -16,76 +14,96 @@
 
 <body>
 
-    <!-- LOADING -->
+    <!-- =====================================================
+         LOADING
+    ====================================================== -->
 
     <div id="loadingScreen" class="loading-screen">
-        <div class="loader-ring">
-            <span>Z</span>
-        </div>
+
+        <div class="loading-ring"></div>
+
+        <div class="loading-logo">Z</div>
+
     </div>
 
 
-    <!-- APP -->
+    <!-- =====================================================
+         APP
+    ====================================================== -->
 
-    <main id="app" class="app hidden">
+    <div id="app" class="app hidden">
 
+        <!-- =================================================
+             HEADER
+        ================================================== -->
 
-        <!-- HEADER -->
-
-        <header class="checkout-header">
+        <header class="top-header">
 
             <button
                 id="backButton"
-                class="header-button"
-                type="button"
-                aria-label="Go back"
+                class="icon-button"
+                aria-label="Back"
             >
                 ←
             </button>
 
-            <div class="header-title">
 
-                <div class="header-brand">
-                    ZENOVA EDUCATONS
+            <div class="brand">
+
+                <div class="brand-name">
+                    Zenova
                 </div>
 
-                <h1>Checkout</h1>
+                <div class="brand-subtitle">
+                    Educations
+                </div>
 
             </div>
 
+
             <button
                 id="notificationButton"
-                class="header-button notification-button"
-                type="button"
+                class="icon-button notification-button"
                 aria-label="Notifications"
             >
-
-                <svg
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="1.9"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                >
-                    <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/>
-                    <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
-                </svg>
-
-                <span id="notificationDot"></span>
-
+                <span class="bell">♧</span>
+                <span class="notification-dot"></span>
             </button>
 
         </header>
 
 
+        <!-- =================================================
+             MAIN
+        ================================================== -->
 
-        <!-- CONTENT -->
-
-        <section class="checkout-content">
+        <main class="checkout-content">
 
 
-            <!-- COURSE -->
+            <!-- =============================================
+                 PAGE TITLE
+            ============================================== -->
+
+            <section class="page-heading">
+
+                <div class="eyebrow">
+                    SECURE CHECKOUT
+                </div>
+
+                <h1>
+                    Complete your purchase
+                </h1>
+
+                <p>
+                    Review your course and select your languages.
+                </p>
+
+            </section>
+
+
+            <!-- =============================================
+                 COURSE CARD
+            ============================================== -->
 
             <section class="course-card">
 
@@ -93,7 +111,7 @@
 
                     <img
                         id="courseImage"
-                        class="course-image"
+                        class="course-image hidden"
                         alt="Course"
                     >
 
@@ -107,50 +125,59 @@
                 </div>
 
 
-                <div class="course-info">
+                <div class="course-card-info">
 
-                    <span class="course-badge">
-                        COURSE
-                    </span>
+                    <div
+                        id="courseClass"
+                        class="course-class"
+                    >
+                        —
+                    </div>
 
                     <h2 id="courseName">
-                        Loading...
+                        Loading course...
                     </h2>
 
-                    <p id="courseMeta">
-                        Loading course details...
-                    </p>
-
-                    <span id="courseCode"></span>
+                    <div
+                        id="courseCode"
+                        class="course-code"
+                    >
+                        —
+                    </div>
 
                 </div>
 
             </section>
 
 
-
-            <!-- LANGUAGE SELECTION -->
+            <!-- =============================================
+                 LANGUAGES
+            ============================================== -->
 
             <section
                 id="languageSection"
-                class="section hidden"
+                class="section language-section hidden"
             >
 
-                <div class="section-heading">
+                <div class="section-header">
 
-                    <span class="section-label">
-                        COURSE LANGUAGE
-                    </span>
+                    <div>
+                        <div class="section-kicker">
+                            COURSE LANGUAGE
+                        </div>
 
-                    <h2>
-                        Select Your Languages
-                    </h2>
-
-                    <p>
-                        Choose the language for each subject level.
-                    </p>
+                        <h2>
+                            Select your languages
+                        </h2>
+                    </div>
 
                 </div>
+
+
+                <p class="section-description">
+                    Choose the language for each language slot included
+                    in this course.
+                </p>
 
 
                 <div
@@ -161,35 +188,88 @@
 
                 <div
                     id="languageError"
-                    class="language-error hidden"
-                ></div>
+                    class="field-error hidden"
+                >
+                    Please select all required languages.
+                </div>
 
             </section>
 
 
+            <!-- =============================================
+                 SUBJECTS
+            ============================================== -->
 
-            <!-- COURSE DETAILS -->
+            <section
+                id="subjectsSection"
+                class="section subjects-section"
+            >
 
-            <section class="section">
+                <div class="section-header">
 
-                <div class="section-heading">
+                    <div>
+                        <div class="section-kicker">
+                            INCLUDED
+                        </div>
 
-                    <span class="section-label">
-                        YOUR COURSE
-                    </span>
-
-                    <h2>
-                        Course Details
-                    </h2>
+                        <h2>
+                            Subjects
+                        </h2>
+                    </div>
 
                 </div>
 
 
-                <div class="details-card">
+                <p class="section-description">
+                    All subjects created by Admin for this course
+                    are included with your purchase.
+                </p>
 
-                    <div class="detail-row">
 
-                        <span>Course</span>
+                <div
+                    id="subjectsList"
+                    class="subjects-list"
+                ></div>
+
+
+                <div
+                    id="noSubjects"
+                    class="empty-state hidden"
+                >
+                    No subjects have been added to this course yet.
+                </div>
+
+            </section>
+
+
+            <!-- =============================================
+                 COURSE SUMMARY
+            ============================================== -->
+
+            <section class="section summary-section">
+
+                <div class="section-header">
+
+                    <div>
+                        <div class="section-kicker">
+                            ORDER
+                        </div>
+
+                        <h2>
+                            Course summary
+                        </h2>
+                    </div>
+
+                </div>
+
+
+                <div class="summary-card">
+
+                    <div class="summary-row">
+
+                        <span>
+                            Course
+                        </span>
 
                         <strong id="summaryCourseName">
                             —
@@ -198,9 +278,11 @@
                     </div>
 
 
-                    <div class="detail-row">
+                    <div class="summary-row">
 
-                        <span>Class</span>
+                        <span>
+                            Class
+                        </span>
 
                         <strong id="summaryClass">
                             —
@@ -210,118 +292,31 @@
 
 
                     <div
-                        id="summaryBoardRow"
-                        class="detail-row hidden"
+                        id="summaryLanguages"
+                        class="summary-language-block hidden"
                     >
 
-                        <span>Board</span>
+                        <div class="summary-divider"></div>
 
-                        <strong id="summaryBoard">
-                            —
-                        </strong>
+                        <div class="summary-label">
+                            Selected languages
+                        </div>
+
+                        <div
+                            id="summaryLanguageList"
+                            class="summary-language-list"
+                        ></div>
 
                     </div>
 
 
-                    <div
-                        id="summaryFirstLanguageRow"
-                        class="detail-row hidden"
-                    >
-
-                        <span>First Language</span>
-
-                        <strong id="summaryFirstLanguage">
-                            —
-                        </strong>
-
-                    </div>
+                    <div class="summary-divider"></div>
 
 
-                    <div
-                        id="summarySecondLanguageRow"
-                        class="detail-row hidden"
-                    >
-
-                        <span>Second Language</span>
-
-                        <strong id="summarySecondLanguage">
-                            —
-                        </strong>
-
-                    </div>
-
-
-                    <div
-                        id="summaryThirdLanguageRow"
-                        class="detail-row hidden"
-                    >
-
-                        <span>Third Language</span>
-
-                        <strong id="summaryThirdLanguage">
-                            —
-                        </strong>
-
-                    </div>
-
-                </div>
-
-            </section>
-
-
-
-            <!-- SUBJECTS -->
-
-            <section
-                id="subjectsSection"
-                class="section hidden"
-            >
-
-                <div class="section-heading">
-
-                    <span class="section-label">
-                        INCLUDED
-                    </span>
-
-                    <h2>
-                        Subjects
-                    </h2>
-
-                </div>
-
-
-                <div
-                    id="subjectsList"
-                    class="subjects-list"
-                ></div>
-
-            </section>
-
-
-
-            <!-- ORDER SUMMARY -->
-
-            <section class="section">
-
-                <div class="section-heading">
-
-                    <span class="section-label">
-                        PAYMENT
-                    </span>
-
-                    <h2>
-                        Order Summary
-                    </h2>
-
-                </div>
-
-
-                <div class="price-card">
-
-                    <div class="price-row">
+                    <div class="summary-row">
 
                         <span>
-                            Course Price
+                            Course price
                         </span>
 
                         <strong id="originalPrice">
@@ -333,7 +328,7 @@
 
                     <div
                         id="discountRow"
-                        class="price-row discount-row hidden"
+                        class="summary-row discount-row hidden"
                     >
 
                         <span>
@@ -341,28 +336,20 @@
                         </span>
 
                         <strong id="discountAmount">
-                            -₹0
+                            - ₹0
                         </strong>
 
                     </div>
 
 
-                    <div class="price-divider"></div>
+                    <div class="summary-divider"></div>
 
 
-                    <div class="total-row">
+                    <div class="summary-total">
 
-                        <div>
-
-                            <span>
-                                Total
-                            </span>
-
-                            <small>
-                                Complete course access
-                            </small>
-
-                        </div>
+                        <span>
+                            Total
+                        </span>
 
                         <strong id="finalPrice">
                             ₹0
@@ -375,34 +362,15 @@
             </section>
 
 
-
-            <!-- SECURE NOTE -->
+            <!-- =============================================
+                 SECURITY
+            ============================================== -->
 
             <div class="secure-note">
 
                 <div class="secure-icon">
-
-                    <svg
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="1.8"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                    >
-                        <rect
-                            x="4"
-                            y="10"
-                            width="16"
-                            height="11"
-                            rx="2"
-                        />
-
-                        <path d="M8 10V7a4 4 0 0 1 8 0v3"/>
-                    </svg>
-
+                    ✓
                 </div>
-
 
                 <div>
 
@@ -411,7 +379,8 @@
                     </strong>
 
                     <p>
-                        Your course and account information are securely processed.
+                        Your course and language preferences are
+                        securely saved with your enrollment.
                     </p>
 
                 </div>
@@ -419,48 +388,18 @@
             </div>
 
 
-
-            <!-- ERROR -->
-
-            <section
-                id="errorSection"
-                class="error-section hidden"
-            >
-
-                <div class="error-icon">
-                    !
-                </div>
-
-                <h2>
-                    Unable to load course
-                </h2>
-
-                <p id="errorMessage">
-                    Please try again.
-                </p>
-
-                <button
-                    id="errorBackButton"
-                    class="secondary-button"
-                    type="button"
-                >
-                    Go Back
-                </button>
-
-            </section>
-
-
             <div class="bottom-space"></div>
 
-        </section>
+        </main>
 
 
-
-        <!-- FIXED PAYMENT BAR -->
+        <!-- =================================================
+             FIXED PAYMENT BAR
+        ================================================== -->
 
         <div
             id="paymentBar"
-            class="payment-bar hidden"
+            class="payment-bar"
         >
 
             <div class="payment-total">
@@ -479,7 +418,7 @@
             <button
                 id="payNowButton"
                 class="pay-button"
-                type="button"
+                disabled
             >
                 PAY NOW
                 <span>→</span>
@@ -488,10 +427,11 @@
         </div>
 
 
+        <!-- =================================================
+             BOTTOM NAV
+        ================================================== -->
 
-        <!-- BOTTOM NAV -->
-
-        <nav class="bottom-navigation">
+        <nav class="bottom-nav">
 
             <a
                 href="../"
@@ -506,9 +446,8 @@
                 href="../batches/"
                 class="nav-item active"
             >
-                <span class="nav-icon">▣</span>
+                <span class="nav-icon">▦</span>
                 <span>Courses</span>
-                <i></i>
             </a>
 
 
@@ -516,7 +455,7 @@
                 href="../study/"
                 class="nav-item"
             >
-                <span class="nav-icon">▤</span>
+                <span class="nav-icon">▶</span>
                 <span>Study Now</span>
             </a>
 
@@ -525,7 +464,7 @@
                 href="../ai/"
                 class="nav-item"
             >
-                <span class="nav-ai">Z</span>
+                <span class="nav-icon">✦</span>
                 <span>Zenova AI</span>
             </a>
 
@@ -540,7 +479,38 @@
 
         </nav>
 
-    </main>
+
+        <!-- =================================================
+             ERROR
+        ================================================== -->
+
+        <section
+            id="errorSection"
+            class="error-section hidden"
+        >
+
+            <div class="error-icon">
+                !
+            </div>
+
+            <h2>
+                Unable to load checkout
+            </h2>
+
+            <p id="errorMessage">
+                Something went wrong.
+            </p>
+
+            <button
+                id="errorBackButton"
+                class="error-button"
+            >
+                Back to Courses
+            </button>
+
+        </section>
+
+    </div>
 
 
     <script
@@ -549,5 +519,4 @@
     ></script>
 
 </body>
-
 </html>
