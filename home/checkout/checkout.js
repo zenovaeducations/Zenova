@@ -1,6 +1,6 @@
 /* =========================================================
    ZENOVA EDUCATONS
-   CHECKOUT
+   NEW CHECKOUT
    ========================================================= */
 
 import {
@@ -8,42 +8,83 @@ import {
     db
 } from "../../firebase/firebase-config.js";
 
+
 import {
     doc,
-    onSnapshot
+    onSnapshot,
+    collection,
+    addDoc,
+    serverTimestamp
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
 
 import {
     onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
 
 
+
 /* =========================================================
    STATE
-   ========================================================= */
+========================================================= */
 
 let currentUser = null;
+
 let currentCourse = null;
+
 let unsubscribeCourse = null;
+
 let isPaying = false;
 
-let selectedLanguage = "";
+
+/*
+    New language state.
+
+    Example:
+
+    {
+        firstLanguage: "Kannada",
+        secondLanguage: "English",
+        thirdLanguage: "Hindi"
+    }
+*/
+
+const selectedLanguages = {
+
+    firstLanguage: "",
+
+    secondLanguage: "",
+
+    thirdLanguage: ""
+
+};
+
+
+
+/*
+    Languages actually available
+    in the CRM course.
+*/
+
+let availableLanguages = [];
+
 
 
 /* =========================================================
    ELEMENT HELPER
-   ========================================================= */
+========================================================= */
 
 function el(id) {
+
     return document.getElementById(id);
+
 }
+
 
 
 /* =========================================================
    ELEMENTS
-   ========================================================= */
-
-/* Loader / App */
+========================================================= */
 
 const loadingScreen =
     el("loadingScreen");
@@ -52,16 +93,12 @@ const app =
     el("app");
 
 
-/* Header */
-
 const backButton =
     el("backButton");
 
 const notificationButton =
     el("notificationButton");
 
-
-/* Course */
 
 const courseImage =
     el("courseImage");
@@ -79,22 +116,15 @@ const courseCode =
     el("courseCode");
 
 
-/* Language */
-
 const languageSection =
     el("languageSection");
 
-const languageOptions =
-    el("languageOptions");
+const languageSelectors =
+    el("languageSelectors");
 
-const summaryLanguageRow =
-    el("summaryLanguageRow");
+const languageError =
+    el("languageError");
 
-const summaryLanguage =
-    el("summaryLanguage");
-
-
-/* Course summary */
 
 const summaryCourseName =
     el("summaryCourseName");
@@ -102,8 +132,40 @@ const summaryCourseName =
 const summaryClass =
     el("summaryClass");
 
+const summaryBoardRow =
+    el("summaryBoardRow");
 
-/* Pricing */
+const summaryBoard =
+    el("summaryBoard");
+
+
+const summaryFirstLanguageRow =
+    el("summaryFirstLanguageRow");
+
+const summaryFirstLanguage =
+    el("summaryFirstLanguage");
+
+
+const summarySecondLanguageRow =
+    el("summarySecondLanguageRow");
+
+const summarySecondLanguage =
+    el("summarySecondLanguage");
+
+
+const summaryThirdLanguageRow =
+    el("summaryThirdLanguageRow");
+
+const summaryThirdLanguage =
+    el("summaryThirdLanguage");
+
+
+const subjectsSection =
+    el("subjectsSection");
+
+const subjectsList =
+    el("subjectsList");
+
 
 const originalPrice =
     el("originalPrice");
@@ -118,8 +180,6 @@ const finalPrice =
     el("finalPrice");
 
 
-/* Payment */
-
 const paymentBar =
     el("paymentBar");
 
@@ -129,8 +189,6 @@ const bottomPrice =
 const payNowButton =
     el("payNowButton");
 
-
-/* Error */
 
 const errorSection =
     el("errorSection");
@@ -142,9 +200,10 @@ const errorBackButton =
     el("errorBackButton");
 
 
+
 /* =========================================================
-   URL
-   ========================================================= */
+   COURSE ID
+========================================================= */
 
 function getCourseId() {
 
@@ -152,6 +211,7 @@ function getCourseId() {
         new URLSearchParams(
             window.location.search
         );
+
 
     return (
         params.get("id") ||
@@ -162,67 +222,51 @@ function getCourseId() {
 }
 
 
+
 /* =========================================================
-   AUTHENTICATION
-   ========================================================= */
+   AUTH
+========================================================= */
 
 onAuthStateChanged(
     auth,
-    async user => {
+    user => {
 
-        try {
+        if (!user) {
 
-            if (!user) {
+            window.location.href =
+                "../login/";
 
-                window.location.href =
-                    "../login/";
-
-                return;
-            }
+            return;
+        }
 
 
-            currentUser =
-                user;
+        currentUser = user;
 
 
-            const courseId =
-                getCourseId();
+        const courseId =
+            getCourseId();
 
 
-            if (!courseId) {
-
-                showError(
-                    "Course information is missing."
-                );
-
-                return;
-            }
-
-
-            startCourseListener(
-                courseId
-            );
-
-        } catch (error) {
-
-            console.error(
-                "Zenova Checkout Authentication Error:",
-                error
-            );
+        if (!courseId) {
 
             showError(
-                getReadableError(error)
+                "Course information is missing."
             );
 
+            return;
         }
+
+
+        startCourseListener(courseId);
 
     }
 );
 
 
+
 /* =========================================================
-   COURSE LISTENER
-   ========================================================= */
+   COURSE REALTIME LISTENER
+========================================================= */
 
 function startCourseListener(courseId) {
 
@@ -230,8 +274,7 @@ function startCourseListener(courseId) {
 
         unsubscribeCourse();
 
-        unsubscribeCourse =
-            null;
+        unsubscribeCourse = null;
     }
 
 
@@ -250,75 +293,58 @@ function startCourseListener(courseId) {
 
             snapshot => {
 
-                try {
-
-                    if (!snapshot.exists()) {
-
-                        showError(
-                            "This course is no longer available."
-                        );
-
-                        return;
-                    }
-
-
-                    currentCourse = {
-                        id: snapshot.id,
-                        ...snapshot.data()
-                    };
-
-
-                    console.log(
-                        "Zenova Checkout Course:",
-                        currentCourse
-                    );
-
-
-                    /*
-                     * If CRM explicitly marks
-                     * the course inactive,
-                     * do not allow checkout.
-                     */
-
-                    if (
-                        currentCourse.crmActive === false
-                    ) {
-
-                        showError(
-                            "This course is currently unavailable."
-                        );
-
-                        return;
-                    }
-
-
-                    renderCheckout(
-                        currentCourse
-                    );
-
-
-                    hideLoading();
-
-
-                } catch (error) {
-
-                    console.error(
-                        "Checkout render error:",
-                        error
-                    );
+                if (!snapshot.exists()) {
 
                     showError(
-                        "Unable to display course details."
+                        "This course is no longer available."
                     );
 
+                    return;
                 }
+
+
+                const data =
+                    snapshot.data();
+
+
+                currentCourse = {
+
+                    id: snapshot.id,
+
+                    ...data
+
+                };
+
+
+                /*
+                    CRM is the source of truth.
+                */
+
+                if (
+                    currentCourse.crmActive === false
+                ) {
+
+                    showError(
+                        "This course is currently unavailable."
+                    );
+
+                    return;
+                }
+
+
+                renderCheckout(
+                    currentCourse
+                );
+
+
+                hideLoading();
 
             },
 
             error => {
 
                 console.error(
-                    "CHECKOUT FIREBASE ERROR:",
+                    "Zenova Checkout Firebase Error:",
                     error
                 );
 
@@ -334,74 +360,46 @@ function startCourseListener(courseId) {
 }
 
 
+
 /* =========================================================
    RENDER CHECKOUT
-   ========================================================= */
+========================================================= */
 
 function renderCheckout(course) {
 
-    if (!course) {
-        return;
-    }
-
-
-    /* =====================================================
-       COURSE NAME
-       ===================================================== */
-
     const name =
         course.crmCourseName ||
-        course.courseName ||
-        course.name ||
-        course.title ||
         "Zenova Course";
 
 
-    /* =====================================================
-       CLASS
-       ===================================================== */
-
     const className =
         displayClass(
-            course.crmClass ||
-            course.className ||
-            course.targetClass ||
-            ""
+            course.crmClass || ""
         );
 
 
-    /* =====================================================
-       MEDIUM
-       ===================================================== */
-
-    const medium =
-        getCourseMediumText(
-            course
-        );
-
-
-    /* =====================================================
-       COURSE CODE
-       ===================================================== */
-
-    const code =
-        course.crmCourseCode ||
-        course.courseCode ||
+    const board =
+        course.crmBoard ||
+        course.board ||
         "";
 
 
-    /* =====================================================
-       IMAGE
-       ===================================================== */
-
-    loadCourseImage(
-        course
-    );
+    const code =
+        course.crmCourseCode ||
+        "";
 
 
-    /* =====================================================
-       TOP COURSE CARD
-       ===================================================== */
+    const languages =
+        getCourseLanguages(course);
+
+
+    availableLanguages =
+        languages;
+
+
+    /*
+        COURSE CARD
+    */
 
     setText(
         courseName,
@@ -413,7 +411,7 @@ function renderCheckout(course) {
         courseMeta,
         buildCourseMeta(
             className,
-            medium
+            board
         )
     );
 
@@ -426,9 +424,16 @@ function renderCheckout(course) {
     );
 
 
-    /* =====================================================
-       COURSE SUMMARY
-       ===================================================== */
+    /*
+        COURSE IMAGE
+    */
+
+    loadCourseImage(course);
+
+
+    /*
+        COURSE SUMMARY
+    */
 
     setText(
         summaryCourseName,
@@ -442,33 +447,57 @@ function renderCheckout(course) {
     );
 
 
-    /* =====================================================
-       LANGUAGE
-       ===================================================== */
+    if (board) {
 
-    setupLanguages(
-        course
+        summaryBoardRow
+            ?.classList
+            .remove("hidden");
+
+        setText(
+            summaryBoard,
+            board
+        );
+
+    } else {
+
+        summaryBoardRow
+            ?.classList
+            .add("hidden");
+
+    }
+
+
+
+    /*
+        LANGUAGES
+    */
+
+    setupLanguageSelectors(
+        languages
     );
 
 
-    /* =====================================================
-       PRICE
-       ===================================================== */
+    /*
+        SUBJECTS
+    */
+
+    renderSubjects(
+        course.subjects
+    );
+
+
+    /*
+        PRICE
+    */
 
     const pricing =
-        calculatePricing(
-            course
-        );
+        calculatePricing(course);
 
 
     renderPricing(
         pricing
     );
 
-
-    /* =====================================================
-       PAYMENT BAR
-       ===================================================== */
 
     setText(
         bottomPrice,
@@ -483,65 +512,931 @@ function renderCheckout(course) {
     );
 
 
-    if (paymentBar) {
+    paymentBar
+        ?.classList
+        .remove("hidden");
 
-        paymentBar.classList.remove(
-            "hidden"
+}
+
+
+
+/* =========================================================
+   COURSE LANGUAGES
+========================================================= */
+
+function getCourseLanguages(course) {
+
+    let languages = [];
+
+
+    /*
+        NEW CRM STRUCTURE
+
+        mediums: [
+            "Kannada",
+            "English",
+            "Hindi"
+        ]
+    */
+
+    if (
+        Array.isArray(course.mediums)
+    ) {
+
+        languages =
+            course.mediums;
+
+    }
+
+
+    /*
+        Backward compatibility
+        with existing data.
+    */
+
+    else if (
+        typeof course.crmMedium === "string"
+    ) {
+
+        languages =
+            course.crmMedium
+                .split(",")
+                .map(
+                    item =>
+                        item.trim()
+                );
+
+    }
+
+
+    else if (
+        Array.isArray(course.crmMediums)
+    ) {
+
+        languages =
+            course.crmMediums;
+
+    }
+
+
+    /*
+        CLEAN + DEDUPLICATE
+
+        This is important because
+        the same language should never
+        appear twice in checkout.
+    */
+
+    const unique = [];
+
+    const seen =
+        new Set();
+
+
+    languages.forEach(
+        language => {
+
+            const clean =
+                String(language)
+                    .trim();
+
+
+            if (!clean) {
+                return;
+            }
+
+
+            const key =
+                clean.toLowerCase();
+
+
+            if (
+                seen.has(key)
+            ) {
+                return;
+            }
+
+
+            seen.add(key);
+
+            unique.push(clean);
+
+        }
+    );
+
+
+    return unique;
+
+}
+
+
+
+/* =========================================================
+   LANGUAGE SELECTORS
+========================================================= */
+
+function setupLanguageSelectors(
+    languages
+) {
+
+    languageSelectors.innerHTML = "";
+
+
+    /*
+        Reset previous selection
+        whenever CRM course changes.
+    */
+
+    selectedLanguages.firstLanguage = "";
+
+    selectedLanguages.secondLanguage = "";
+
+    selectedLanguages.thirdLanguage = "";
+
+
+    hideLanguageSummary();
+
+
+    /*
+        No languages configured.
+    */
+
+    if (!languages.length) {
+
+        languageSection
+            ?.classList
+            .add("hidden");
+
+        updatePayButton();
+
+        return;
+    }
+
+
+    /*
+        Only one language.
+
+        No need to make the student
+        select something unnecessarily.
+
+        Automatically assign it
+        to First Language.
+    */
+
+    if (languages.length === 1) {
+
+        selectedLanguages.firstLanguage =
+            languages[0];
+
+
+        languageSection
+            ?.classList
+            .add("hidden");
+
+
+        updateLanguageSummary();
+
+        return;
+    }
+
+
+    /*
+        Two or three languages.
+
+        Show the appropriate selectors.
+    */
+
+    languageSection
+        ?.classList
+        .remove("hidden");
+
+
+    createLanguageSelector(
+        "firstLanguage",
+        "First Language",
+        languages
+    );
+
+
+    /*
+        Second language exists when
+        CRM has at least two languages.
+    */
+
+    if (languages.length >= 2) {
+
+        createLanguageSelector(
+            "secondLanguage",
+            "Second Language",
+            languages
         );
 
     }
 
+
+    /*
+        Third language exists only when
+        CRM has at least three languages.
+    */
+
+    if (languages.length >= 3) {
+
+        createLanguageSelector(
+            "thirdLanguage",
+            "Third Language",
+            languages
+        );
+
+    }
+
+
+    updatePayButton();
+
 }
+
 
 
 /* =========================================================
-   COURSE META
-   ========================================================= */
+   CREATE LANGUAGE SELECTOR
+========================================================= */
 
-function buildCourseMeta(
-    className,
-    medium
+function createLanguageSelector(
+    key,
+    label,
+    languages
 ) {
 
-    const parts = [];
+    const box =
+        document.createElement("div");
 
-    if (className) {
-        parts.push(className);
-    }
 
-    if (medium) {
-        parts.push(medium);
-    }
+    box.className =
+        "language-box";
 
-    return parts.length
-        ? parts.join(" • ")
-        : "Course details";
+
+    const top =
+        document.createElement("div");
+
+
+    top.className =
+        "language-box-top";
+
+
+    const number =
+        document.createElement("span");
+
+
+    number.className =
+        "language-number";
+
+
+    number.textContent =
+        label;
+
+
+    const required =
+        document.createElement("span");
+
+
+    required.className =
+        "language-required";
+
+
+    required.textContent =
+        "Required";
+
+
+    top.appendChild(number);
+
+    top.appendChild(required);
+
+
+    const wrapper =
+        document.createElement("div");
+
+
+    wrapper.className =
+        "language-select-wrapper";
+
+
+    const select =
+        document.createElement("select");
+
+
+    select.className =
+        "language-select";
+
+
+    select.dataset.languageKey =
+        key;
+
+
+    /*
+        Placeholder
+    */
+
+    const placeholder =
+        document.createElement("option");
+
+
+    placeholder.value = "";
+
+    placeholder.textContent =
+        `Select ${label}`;
+
+
+    placeholder.disabled =
+        false;
+
+
+    placeholder.selected =
+        true;
+
+
+    select.appendChild(
+        placeholder
+    );
+
+
+    /*
+        Language options
+    */
+
+    languages.forEach(
+        language => {
+
+            const option =
+                document.createElement("option");
+
+
+            option.value =
+                language;
+
+
+            option.textContent =
+                language;
+
+
+            select.appendChild(
+                option
+            );
+
+        }
+    );
+
+
+    select.addEventListener(
+        "change",
+        () => {
+
+            handleLanguageChange(
+                key,
+                select.value
+            );
+
+        }
+    );
+
+
+    wrapper.appendChild(
+        select
+    );
+
+
+    box.appendChild(
+        top
+    );
+
+
+    box.appendChild(
+        wrapper
+    );
+
+
+    languageSelectors.appendChild(
+        box
+    );
 
 }
+
+
+
+/* =========================================================
+   LANGUAGE CHANGE
+========================================================= */
+
+function handleLanguageChange(
+    key,
+    value
+) {
+
+    clearLanguageError();
+
+
+    /*
+        Check if another selector
+        already has the same language.
+    */
+
+    const duplicate =
+        Object.entries(
+            selectedLanguages
+        ).some(
+            ([otherKey, otherValue]) => {
+
+                return (
+                    otherKey !== key &&
+                    otherValue &&
+                    otherValue.toLowerCase() ===
+                    value.toLowerCase()
+                );
+
+            }
+        );
+
+
+    if (duplicate) {
+
+        showLanguageError(
+            "The same language cannot be selected more than once."
+        );
+
+
+        /*
+            Reset the current selector.
+        */
+
+        selectedLanguages[key] =
+            "";
+
+
+        const currentSelect =
+            document.querySelector(
+                `select[data-language-key="${key}"]`
+            );
+
+
+        if (currentSelect) {
+
+            currentSelect.value =
+                "";
+
+        }
+
+
+        updateLanguageOptionStates();
+
+        updateLanguageSummary();
+
+        updatePayButton();
+
+        return;
+    }
+
+
+    selectedLanguages[key] =
+        value;
+
+
+    updateLanguageOptionStates();
+
+    updateLanguageSummary();
+
+    updatePayButton();
+
+}
+
+
+
+/* =========================================================
+   DISABLE DUPLICATE OPTIONS
+========================================================= */
+
+function updateLanguageOptionStates() {
+
+    const selects =
+        document.querySelectorAll(
+            ".language-select"
+        );
+
+
+    selects.forEach(
+        select => {
+
+            const currentKey =
+                select.dataset.languageKey;
+
+
+            const currentValue =
+                selectedLanguages[currentKey];
+
+
+            Array.from(
+                select.options
+            ).forEach(
+                option => {
+
+                    if (!option.value) {
+
+                        option.disabled =
+                            false;
+
+                        return;
+                    }
+
+
+                    const selectedElsewhere =
+                        Object.entries(
+                            selectedLanguages
+                        ).some(
+                            ([key, value]) => {
+
+                                return (
+                                    key !== currentKey &&
+                                    value &&
+                                    value.toLowerCase() ===
+                                    option.value.toLowerCase()
+                                );
+
+                            }
+                        );
+
+
+                    option.disabled =
+                        selectedElsewhere;
+
+
+                    /*
+                        Keep current selection
+                        enabled.
+                    */
+
+                    if (
+                        currentValue &&
+                        option.value.toLowerCase() ===
+                        currentValue.toLowerCase()
+                    ) {
+
+                        option.disabled =
+                            false;
+
+                    }
+
+                }
+            );
+
+        }
+    );
+
+}
+
+
+
+/* =========================================================
+   LANGUAGE VALIDATION
+========================================================= */
+
+function validateLanguages() {
+
+    const count =
+        availableLanguages.length;
+
+
+    /*
+        0 languages
+        = nothing to validate.
+    */
+
+    if (count === 0) {
+
+        return true;
+
+    }
+
+
+    /*
+        One language
+        = automatically selected.
+    */
+
+    if (count === 1) {
+
+        return Boolean(
+            selectedLanguages.firstLanguage
+        );
+
+    }
+
+
+    /*
+        Two languages.
+    */
+
+    if (count === 2) {
+
+        if (
+            !selectedLanguages.firstLanguage ||
+            !selectedLanguages.secondLanguage
+        ) {
+
+            showLanguageError(
+                "Please select your First Language and Second Language."
+            );
+
+            return false;
+
+        }
+
+    }
+
+
+    /*
+        Three languages.
+    */
+
+    if (count >= 3) {
+
+        if (
+            !selectedLanguages.firstLanguage ||
+            !selectedLanguages.secondLanguage ||
+            !selectedLanguages.thirdLanguage
+        ) {
+
+            showLanguageError(
+                "Please select your First, Second and Third Language."
+            );
+
+            return false;
+
+        }
+
+    }
+
+
+    /*
+        No duplicate.
+    */
+
+    const values =
+        Object.values(
+            selectedLanguages
+        )
+        .filter(Boolean)
+        .map(
+            value =>
+                value.toLowerCase()
+        );
+
+
+    if (
+        new Set(values).size !==
+        values.length
+    ) {
+
+        showLanguageError(
+            "Each language must be different."
+        );
+
+        return false;
+
+    }
+
+
+    return true;
+
+}
+
+
+
+/* =========================================================
+   LANGUAGE SUMMARY
+========================================================= */
+
+function updateLanguageSummary() {
+
+    updateSummaryRow(
+        summaryFirstLanguageRow,
+        summaryFirstLanguage,
+        selectedLanguages.firstLanguage
+    );
+
+
+    updateSummaryRow(
+        summarySecondLanguageRow,
+        summarySecondLanguage,
+        selectedLanguages.secondLanguage
+    );
+
+
+    updateSummaryRow(
+        summaryThirdLanguageRow,
+        summaryThirdLanguage,
+        selectedLanguages.thirdLanguage
+    );
+
+}
+
+
+function updateSummaryRow(
+    row,
+    valueElement,
+    value
+) {
+
+    if (!row || !valueElement) {
+        return;
+    }
+
+
+    if (value) {
+
+        row.classList.remove(
+            "hidden"
+        );
+
+        valueElement.textContent =
+            value;
+
+    } else {
+
+        row.classList.add(
+            "hidden"
+        );
+
+        valueElement.textContent =
+            "—";
+
+    }
+
+}
+
+
+function hideLanguageSummary() {
+
+    [
+        summaryFirstLanguageRow,
+        summarySecondLanguageRow,
+        summaryThirdLanguageRow
+    ]
+    .forEach(
+        row => {
+
+            row?.classList.add(
+                "hidden"
+            );
+
+        }
+    );
+
+}
+
+
+
+/* =========================================================
+   LANGUAGE ERROR
+========================================================= */
+
+function showLanguageError(
+    message
+) {
+
+    if (!languageError) {
+        return;
+    }
+
+
+    languageError.textContent =
+        message;
+
+
+    languageError.classList.remove(
+        "hidden"
+    );
+
+}
+
+
+function clearLanguageError() {
+
+    languageError
+        ?.classList
+        .add("hidden");
+
+}
+
+
+
+/* =========================================================
+   SUBJECTS
+========================================================= */
+
+function renderSubjects(
+    subjects
+) {
+
+    subjectsList.innerHTML = "";
+
+
+    if (
+        !Array.isArray(subjects) ||
+        !subjects.length
+    ) {
+
+        subjectsSection
+            ?.classList
+            .add("hidden");
+
+        return;
+    }
+
+
+    /*
+        Defensive deduplication.
+
+        If old Firestore data contains
+        the same subject more than once,
+        Checkout still displays it only once.
+    */
+
+    const uniqueSubjects = [];
+
+    const seen =
+        new Set();
+
+
+    subjects.forEach(
+        subject => {
+
+            const name =
+                String(subject)
+                    .trim();
+
+
+            if (!name) {
+                return;
+            }
+
+
+            const key =
+                name.toLowerCase();
+
+
+            if (
+                seen.has(key)
+            ) {
+                return;
+            }
+
+
+            seen.add(key);
+
+            uniqueSubjects.push(name);
+
+        }
+    );
+
+
+    uniqueSubjects.forEach(
+        subject => {
+
+            const chip =
+                document.createElement("div");
+
+
+            chip.className =
+                "subject-chip";
+
+
+            chip.textContent =
+                subject;
+
+
+            subjectsList.appendChild(
+                chip
+            );
+
+        }
+    );
+
+
+    subjectsSection
+        ?.classList
+        .remove("hidden");
+
+}
+
 
 
 /* =========================================================
    IMAGE
-   ========================================================= */
+========================================================= */
 
 function loadCourseImage(course) {
 
     const imageUrl =
-        course?.crmImageUrl ||
-        course?.imageUrl ||
-        course?.courseImageUrl ||
+        course.crmImageUrl ||
+        course.imageUrl ||
         "";
-
-
-    console.log(
-        "Checkout thumbnail:",
-        imageUrl
-    );
-
-
-    if (!courseImage) {
-        return;
-    }
 
 
     if (!imageUrl) {
@@ -552,18 +1447,14 @@ function loadCourseImage(course) {
     }
 
 
-    courseImage.classList.remove(
-        "hidden"
-    );
+    courseImage
+        ?.classList
+        .remove("hidden");
 
 
-    if (courseImageFallback) {
-
-        courseImageFallback.classList.add(
-            "hidden"
-        );
-
-    }
+    courseImageFallback
+        ?.classList
+        .add("hidden");
 
 
     courseImage.src =
@@ -572,679 +1463,141 @@ function loadCourseImage(course) {
 }
 
 
-/* =========================================================
-   IMAGE ERROR
-   ========================================================= */
+courseImage?.addEventListener(
+    "error",
+    showImageFallback
+);
 
-if (courseImage) {
-
-    courseImage.addEventListener(
-        "error",
-        () => {
-
-            console.error(
-                "Checkout image failed:",
-                courseImage.src
-            );
-
-            showImageFallback();
-
-        }
-    );
-
-}
-
-
-/* =========================================================
-   IMAGE FALLBACK
-   ========================================================= */
 
 function showImageFallback() {
 
-    if (courseImage) {
-
-        courseImage.classList.add(
-            "hidden"
-        );
-
-    }
+    courseImage
+        ?.classList
+        .add("hidden");
 
 
-    if (courseImageFallback) {
-
-        courseImageFallback.classList.remove(
-            "hidden"
-        );
-
-    }
+    courseImageFallback
+        ?.classList
+        .remove("hidden");
 
 }
 
-
-/* =========================================================
-   LANGUAGE
-   ========================================================= */
-
-function setupLanguages(course) {
-
-    if (!languageSection) {
-        return;
-    }
-
-
-    if (!languageOptions) {
-        return;
-    }
-
-
-    let languages = [];
-
-
-    /*
-     * Support different CRM formats.
-     */
-
-    if (
-        Array.isArray(
-            course.languages
-        )
-    ) {
-
-        languages =
-            course.languages;
-
-    } else if (
-        Array.isArray(
-            course.availableLanguages
-        )
-    ) {
-
-        languages =
-            course.availableLanguages;
-
-    } else if (
-        Array.isArray(
-            course.mediums
-        )
-    ) {
-
-        languages =
-            course.mediums;
-
-    } else if (
-        Array.isArray(
-            course.crmMediums
-        )
-    ) {
-
-        languages =
-            course.crmMediums;
-
-    } else if (
-        typeof course.crmMedium ===
-        "string"
-    ) {
-
-        languages =
-            course.crmMedium
-                .split(",")
-                .map(
-                    item =>
-                        item.trim()
-                )
-                .filter(Boolean);
-
-    } else if (
-        typeof course.medium ===
-        "string"
-    ) {
-
-        languages =
-            course.medium
-                .split(",")
-                .map(
-                    item =>
-                        item.trim()
-                )
-                .filter(Boolean);
-
-    }
-
-
-    /*
-     * Remove duplicates.
-     */
-
-    languages =
-        [
-            ...new Set(
-                languages
-                    .map(
-                        item =>
-                            String(item)
-                                .trim()
-                    )
-                    .filter(Boolean)
-            )
-        ];
-
-
-    /*
-     * No language information.
-     */
-
-    if (!languages.length) {
-
-        languageSection.classList.add(
-            "hidden"
-        );
-
-        if (summaryLanguageRow) {
-
-            summaryLanguageRow.classList.add(
-                "hidden"
-            );
-
-        }
-
-        selectedLanguage = "";
-
-        return;
-    }
-
-
-    /*
-     * One language only.
-     * Automatically select it.
-     */
-
-    if (languages.length === 1) {
-
-        selectedLanguage =
-            languages[0];
-
-
-        languageSection.classList.add(
-            "hidden"
-        );
-
-
-        showSelectedLanguage(
-            selectedLanguage
-        );
-
-
-        return;
-    }
-
-
-    /*
-     * Multiple languages.
-     * Show selection.
-     */
-
-    languageSection.classList.remove(
-        "hidden"
-    );
-
-
-    languageOptions.innerHTML =
-        "";
-
-
-    /*
-     * Reset until user chooses.
-     */
-
-    selectedLanguage =
-        "";
-
-
-    if (summaryLanguageRow) {
-
-        summaryLanguageRow.classList.add(
-            "hidden"
-        );
-
-    }
-
-
-    languages.forEach(
-        language => {
-
-            const button =
-                document.createElement(
-                    "button"
-                );
-
-
-            button.type =
-                "button";
-
-
-            button.className =
-                "language-option";
-
-
-            button.innerHTML = `
-                <div class="language-main">
-                    <span class="language-name">
-                        ${escapeHtml(language)}
-                    </span>
-
-                    <span class="language-description">
-                        Study in ${escapeHtml(language)}
-                    </span>
-                </div>
-
-                <div class="language-check">
-                    ✓
-                </div>
-            `;
-
-
-            button.addEventListener(
-                "click",
-                () => {
-
-                    selectLanguage(
-                        language
-                    );
-
-                }
-            );
-
-
-            languageOptions.appendChild(
-                button
-            );
-
-        }
-    );
-
-}
-
-
-/* =========================================================
-   SELECT LANGUAGE
-   ========================================================= */
-
-function selectLanguage(
-    language
-) {
-
-    selectedLanguage =
-        language;
-
-
-    document
-        .querySelectorAll(
-            ".language-option"
-        )
-        .forEach(
-            button => {
-
-                const name =
-                    button.querySelector(
-                        ".language-name"
-                    )?.textContent
-                    ?.trim();
-
-
-                button.classList.toggle(
-                    "selected",
-                    name === language
-                );
-
-            }
-        );
-
-
-    showSelectedLanguage(
-        language
-    );
-
-}
-
-
-/* =========================================================
-   SHOW SELECTED LANGUAGE
-   ========================================================= */
-
-function showSelectedLanguage(
-    language
-) {
-
-    if (
-        !language ||
-        !summaryLanguage
-    ) {
-        return;
-    }
-
-
-    setText(
-        summaryLanguage,
-        language
-    );
-
-
-    if (summaryLanguageRow) {
-
-        summaryLanguageRow.classList.remove(
-            "hidden"
-        );
-
-    }
-
-}
-
-
-/* =========================================================
-   GET MEDIUM TEXT
-   ========================================================= */
-
-function getCourseMediumText(
-    course
-) {
-
-    if (
-        Array.isArray(
-            course.crmMedium
-        )
-    ) {
-
-        return course.crmMedium.join(
-            ", "
-        );
-
-    }
-
-
-    if (
-        course.crmMedium
-    ) {
-
-        return String(
-            course.crmMedium
-        );
-
-    }
-
-
-    if (
-        Array.isArray(
-            course.mediums
-        )
-    ) {
-
-        return course.mediums.join(
-            ", "
-        );
-
-    }
-
-
-    if (
-        course.medium
-    ) {
-
-        return String(
-            course.medium
-        );
-
-    }
-
-
-    return "";
-
-}
 
 
 /* =========================================================
    PRICING
-   ========================================================= */
+========================================================= */
 
-function calculatePricing(
-    course
-) {
+function calculatePricing(course) {
 
-    let price =
-        numberValue(
+    const original =
+        toNumber(
             course.crmPrice
         );
 
 
-    let discount =
-        numberValue(
-            course.crmDiscount
-        );
-
-
-    let finalPrice =
-        numberValue(
+    let final =
+        toNumber(
             course.crmFinalPrice
         );
 
 
-    const courseType =
-        String(
-            course.courseType ||
-            course.type ||
-            ""
-        ).toUpperCase();
-
-
     /*
-     * FREE COURSE
-     */
+        If CRM final price is not
+        available, calculate it.
+    */
 
     if (
-        courseType === "FREE" ||
-        course.isPaid === false
+        !Number.isFinite(final) ||
+        final < 0
     ) {
 
-        price = 0;
-        discount = 0;
-        finalPrice = 0;
+        const discount =
+            toNumber(
+                course.crmDiscount
+            );
 
-    }
 
-
-    /*
-     * If final price is missing,
-     * calculate it.
-     */
-
-    if (
-        finalPrice <= 0 &&
-        price > 0
-    ) {
-
-        finalPrice =
+        final =
             Math.max(
                 0,
-                price - discount
+                original - discount
             );
 
     }
 
 
     /*
-     * If only final price exists.
-     */
+        Never allow final price
+        above original price.
+    */
 
-    if (
-        price <= 0 &&
-        finalPrice > 0
-    ) {
-
-        price =
-            finalPrice;
-
-        discount = 0;
-
-    }
+    final =
+        Math.min(
+            final,
+            original
+        );
 
 
-    /*
-     * Discount cannot exceed price.
-     */
-
-    if (
-        discount > price
-    ) {
-
-        discount =
-            price;
-
-    }
-
-
-    /*
-     * Final safety calculation.
-     */
-
-    if (
-        price > 0 &&
-        finalPrice <= 0
-    ) {
-
-        finalPrice =
-            Math.max(
-                0,
-                price - discount
-            );
-
-    }
+    const discount =
+        Math.max(
+            0,
+            original - final
+        );
 
 
     return {
 
-        type:
-            finalPrice > 0
-                ? "PAID"
-                : "FREE",
+        originalPrice: original,
 
-        price,
+        discountAmount: discount,
 
-        discount,
-
-        finalPrice
+        finalPrice: final
 
     };
 
 }
 
 
+
 /* =========================================================
    RENDER PRICING
-   ========================================================= */
+========================================================= */
 
 function renderPricing(
     pricing
 ) {
 
-    if (!pricing) {
-        return;
-    }
-
-
-    const {
-        type,
-        price,
-        discount,
-        finalPrice: total
-    } = pricing;
-
-
-    /*
-     * FREE
-     */
-
-    if (
-        type === "FREE"
-    ) {
-
-        setText(
-            originalPrice,
-            "Free"
-        );
-
-
-        setText(
-            discountAmount,
-            "₹0"
-        );
-
-
-        setText(
-            finalPrice,
-            "Free"
-        );
-
-
-        setText(
-            bottomPrice,
-            "₹0"
-        );
-
-
-        if (discountRow) {
-
-            discountRow.classList.add(
-                "hidden"
-            );
-
-        }
-
-
-        return;
-    }
-
-
-    /*
-     * PAID
-     */
-
     setText(
         originalPrice,
         formatPrice(
-            price
+            pricing.originalPrice
         )
     );
 
 
     if (
-        discount > 0
+        pricing.discountAmount > 0
     ) {
+
+        discountRow
+            ?.classList
+            .remove("hidden");
+
 
         setText(
             discountAmount,
             "-" +
             formatPrice(
-                discount
+                pricing.discountAmount
             )
         );
 
-
-        if (discountRow) {
-
-            discountRow.classList.remove(
-                "hidden"
-            );
-
-        }
-
     } else {
 
-        if (discountRow) {
-
-            discountRow.classList.add(
-                "hidden"
-            );
-
-        }
+        discountRow
+            ?.classList
+            .add("hidden");
 
     }
 
@@ -1252,27 +1605,20 @@ function renderPricing(
     setText(
         finalPrice,
         formatPrice(
-            total
-        )
-    );
-
-
-    setText(
-        bottomPrice,
-        formatPrice(
-            total
+            pricing.finalPrice
         )
     );
 
 }
 
 
+
 /* =========================================================
    PAY BUTTON
-   ========================================================= */
+========================================================= */
 
 function updatePayButton(
-    amount
+    price = null
 ) {
 
     if (!payNowButton) {
@@ -1280,642 +1626,502 @@ function updatePayButton(
     }
 
 
-    if (
-        Number(amount) <= 0
-    ) {
+    const languagesValid =
+        validateLanguagesSilently();
 
-        payNowButton.innerHTML =
-            `GET COURSE <span>→</span>`;
 
-        payNowButton.dataset.action =
-            "free";
+    payNowButton.disabled =
+        !languagesValid ||
+        isPaying;
 
-        return;
+
+    if (price !== null) {
+
+        setText(
+            bottomPrice,
+            formatPrice(price)
+        );
+
     }
-
-
-    payNowButton.innerHTML =
-        `PAY NOW <span>→</span>`;
-
-    payNowButton.dataset.action =
-        "payment";
 
 }
 
 
+
 /* =========================================================
-   PAY BUTTON CLICK
-   ========================================================= */
+   SILENT LANGUAGE VALIDATION
+========================================================= */
 
-if (payNowButton) {
+function validateLanguagesSilently() {
 
-    payNowButton.addEventListener(
-        "click",
-        async () => {
-
-            if (isPaying) {
-                return;
-            }
+    const count =
+        availableLanguages.length;
 
 
-            if (!currentUser) {
+    if (count <= 1) {
 
-                window.location.href =
-                    "../login/";
+        return Boolean(
+            selectedLanguages.firstLanguage
+        );
 
-                return;
-            }
+    }
 
 
-            if (!currentCourse) {
+    if (
+        !selectedLanguages.firstLanguage
+    ) {
 
-                showError(
-                    "Course information is not available."
-                );
+        return false;
 
-                return;
-            }
+    }
+
+
+    if (
+        count >= 2 &&
+        !selectedLanguages.secondLanguage
+    ) {
+
+        return false;
+
+    }
+
+
+    if (
+        count >= 3 &&
+        !selectedLanguages.thirdLanguage
+    ) {
+
+        return false;
+
+    }
+
+
+    const values =
+        Object.values(
+            selectedLanguages
+        )
+        .filter(Boolean)
+        .map(
+            value =>
+                value.toLowerCase()
+        );
+
+
+    return (
+        new Set(values).size ===
+        values.length
+    );
+
+}
+
+
+
+/* =========================================================
+   PAY NOW
+========================================================= */
+
+payNowButton?.addEventListener(
+    "click",
+    async () => {
+
+        if (isPaying) {
+            return;
+        }
+
+
+        if (!currentUser) {
+
+            window.location.href =
+                "../login/";
+
+            return;
+        }
+
+
+        /*
+            Validate language selection.
+        */
+
+        if (
+            !validateLanguages()
+        ) {
+
+            return;
+        }
+
+
+        if (!currentCourse) {
+
+            showError(
+                "Course information is unavailable."
+            );
+
+            return;
+        }
+
+
+        const pricing =
+            calculatePricing(
+                currentCourse
+            );
+
+
+        isPaying = true;
+
+
+        payNowButton.disabled =
+            true;
+
+
+        payNowButton.innerHTML =
+            "PROCESSING...";
+
+
+        try {
+
+            /*
+                Prepare the exact language
+                structure that will follow
+                the student into enrollment
+                and Study.
+            */
+
+            const languageSelection = {
+
+                firstLanguage:
+                    selectedLanguages.firstLanguage ||
+                    "",
+
+                secondLanguage:
+                    selectedLanguages.secondLanguage ||
+                    "",
+
+                thirdLanguage:
+                    selectedLanguages.thirdLanguage ||
+                    ""
+
+            };
 
 
             /*
-             * If multiple languages exist,
-             * require selection.
-             */
+                Save checkout information
+                temporarily.
 
-            const languageButtons =
-                document.querySelectorAll(
-                    ".language-option"
-                );
+                Payment gateway can then
+                continue from here.
+            */
+
+            const checkoutData = {
+
+                courseId:
+                    currentCourse.id,
+
+                courseName:
+                    currentCourse.crmCourseName ||
+                    "",
+
+                className:
+                    currentCourse.crmClass ||
+                    "",
+
+                board:
+                    currentCourse.crmBoard ||
+                    "",
+
+                languages:
+                    languageSelection,
+
+                price:
+                    pricing.finalPrice,
+
+                originalPrice:
+                    pricing.originalPrice,
+
+                discount:
+                    pricing.discountAmount,
+
+                createdAt:
+                    Date.now()
+
+            };
 
 
-            if (
-                languageButtons.length > 1 &&
-                !selectedLanguage
-            ) {
-
-                showToast(
-                    "Please select a language."
-                );
-
-                if (languageSection) {
-
-                    languageSection.scrollIntoView({
-                        behavior: "smooth",
-                        block: "center"
-                    });
-
-                }
-
-                return;
-            }
+            sessionStorage.setItem(
+                "zenova_checkout",
+                JSON.stringify(
+                    checkoutData
+                )
+            );
 
 
-            const pricing =
-                calculatePricing(
-                    currentCourse
-                );
+            /*
+                ------------------------------------------------
+                IMPORTANT
+                ------------------------------------------------
 
+                Payment gateway can be connected here.
+
+                For FREE courses we can immediately
+                create/access the enrollment.
+
+                For PAID courses the payment gateway
+                should verify payment on the backend
+                before creating APPROVED enrollment.
+            */
 
             if (
                 pricing.finalPrice <= 0
             ) {
 
-                await handleFreeCourse();
+                await createFreeEnrollment(
+                    checkoutData
+                );
+
+
+                window.location.href =
+                    `../study/?courseId=${encodeURIComponent(
+                        currentCourse.id
+                    )}`;
 
                 return;
+
             }
 
 
-            await handlePaidCourse(
-                pricing
-            );
+            /*
+                Temporary payment route.
+
+                Replace this with the actual
+                payment gateway page when connected.
+            */
+
+            window.location.href =
+                `../payment/?courseId=${encodeURIComponent(
+                    currentCourse.id
+                )}`;
 
         }
+
+        catch (error) {
+
+            console.error(
+                "Zenova Checkout Payment Error:",
+                error
+            );
+
+
+            showLanguageError(
+                "Unable to continue checkout. Please try again."
+            );
+
+
+            isPaying = false;
+
+
+            payNowButton.disabled =
+                false;
+
+
+            payNowButton.innerHTML =
+                'PAY NOW <span>→</span>';
+
+        }
+
+    }
+);
+
+
+
+/* =========================================================
+   FREE ENROLLMENT
+========================================================= */
+
+async function createFreeEnrollment(
+    checkoutData
+) {
+
+    /*
+        This is intentionally kept simple.
+
+        The final production version should
+        preferably create enrollments through
+        a trusted backend/Cloud Function so
+        students cannot manufacture their own
+        paid enrollments.
+    */
+
+
+    const enrollment = {
+
+        studentUid:
+            currentUser.uid,
+
+        crmCourseId:
+            checkoutData.courseId,
+
+        courseName:
+            checkoutData.courseName,
+
+        className:
+            checkoutData.className,
+
+        board:
+            checkoutData.board,
+
+        firstLanguage:
+            checkoutData.languages.firstLanguage,
+
+        secondLanguage:
+            checkoutData.languages.secondLanguage,
+
+        thirdLanguage:
+            checkoutData.languages.thirdLanguage,
+
+        status:
+            "ACTIVE",
+
+        paymentStatus:
+            "FREE",
+
+        price:
+            0,
+
+        source:
+            "STUDENT_CHECKOUT",
+
+        createdAt:
+            serverTimestamp(),
+
+        updatedAt:
+            serverTimestamp()
+
+    };
+
+
+    await addDoc(
+        collection(
+            db,
+            "studentEnrollments"
+        ),
+        enrollment
     );
 
 }
 
-
-/* =========================================================
-   FREE COURSE
-   ========================================================= */
-
-async function handleFreeCourse() {
-
-    try {
-
-        setPayingState(
-            true,
-            "PROCESSING..."
-        );
-
-
-        const courseId =
-            currentCourse.id;
-
-
-        let url =
-            `../success/?courseId=${encodeURIComponent(
-                courseId
-            )}&type=FREE`;
-
-
-        if (selectedLanguage) {
-
-            url +=
-                `&language=${encodeURIComponent(
-                    selectedLanguage
-                )}`;
-
-        }
-
-
-        window.location.href =
-            url;
-
-
-    } catch (error) {
-
-        console.error(
-            "FREE COURSE ERROR:",
-            error
-        );
-
-
-        showToast(
-            "Unable to continue."
-        );
-
-
-        setPayingState(
-            false
-        );
-
-    }
-
-}
-
-
-/* =========================================================
-   PAID COURSE
-   ========================================================= */
-
-async function handlePaidCourse(
-    pricing
-) {
-
-    try {
-
-        setPayingState(
-            true,
-            "PROCESSING..."
-        );
-
-
-        const checkoutData = {
-
-            courseId:
-                currentCourse.id,
-
-            courseName:
-                currentCourse.crmCourseName ||
-                "",
-
-            courseCode:
-                currentCourse.crmCourseCode ||
-                "",
-
-            className:
-                currentCourse.crmClass ||
-                "",
-
-            medium:
-                currentCourse.crmMedium ||
-                "",
-
-            language:
-                selectedLanguage ||
-                "",
-
-            price:
-                pricing.price,
-
-            discount:
-                pricing.discount,
-
-            finalPrice:
-                pricing.finalPrice,
-
-            studentUid:
-                currentUser.uid,
-
-            createdAt:
-                Date.now()
-
-        };
-
-
-        sessionStorage.setItem(
-            "zenova_checkout",
-            JSON.stringify(
-                checkoutData
-            )
-        );
-
-
-        let url =
-            `../payment/?courseId=${encodeURIComponent(
-                currentCourse.id
-            )}`;
-
-
-        if (selectedLanguage) {
-
-            url +=
-                `&language=${encodeURIComponent(
-                    selectedLanguage
-                )}`;
-
-        }
-
-
-        window.location.href =
-            url;
-
-
-    } catch (error) {
-
-        console.error(
-            "PAYMENT START ERROR:",
-            error
-        );
-
-
-        showToast(
-            "Unable to start payment."
-        );
-
-
-        setPayingState(
-            false
-        );
-
-    }
-
-}
-
-
-/* =========================================================
-   PAYING STATE
-   ========================================================= */
-
-function setPayingState(
-    paying,
-    text = "PAY NOW  →"
-) {
-
-    isPaying =
-        paying;
-
-
-    if (!payNowButton) {
-        return;
-    }
-
-
-    payNowButton.disabled =
-        paying;
-
-
-    if (paying) {
-
-        payNowButton.innerHTML =
-            `${escapeHtml(text)}`;
-
-    } else {
-
-        const amount =
-            currentCourse
-                ? calculatePricing(
-                    currentCourse
-                ).finalPrice
-                : 0;
-
-
-        if (
-            Number(amount) <= 0
-        ) {
-
-            payNowButton.innerHTML =
-                `GET COURSE <span>→</span>`;
-
-        } else {
-
-            payNowButton.innerHTML =
-                `PAY NOW <span>→</span>`;
-
-        }
-
-    }
-
-}
 
 
 /* =========================================================
    BACK BUTTON
-   ========================================================= */
+========================================================= */
 
-if (backButton) {
+backButton?.addEventListener(
+    "click",
+    () => {
 
-    backButton.addEventListener(
-        "click",
-        () => {
+        if (
+            window.history.length > 1
+        ) {
 
-            if (
-                document.referrer &&
-                window.history.length > 1
-            ) {
+            window.history.back();
 
-                window.history.back();
-
-                return;
-            }
-
+        } else {
 
             window.location.href =
                 "../batches/";
 
         }
-    );
 
-}
+    }
+);
+
 
 
 /* =========================================================
    NOTIFICATIONS
-   ========================================================= */
+========================================================= */
 
-if (notificationButton) {
+notificationButton?.addEventListener(
+    "click",
+    () => {
 
-    notificationButton.addEventListener(
-        "click",
-        () => {
+        window.location.href =
+            "../notifications/";
 
-            window.location.href =
-                "../notifications/";
+    }
+);
 
-        }
-    );
-
-}
 
 
 /* =========================================================
-   ERROR BACK BUTTON
-   ========================================================= */
+   ERROR BACK
+========================================================= */
 
-if (errorBackButton) {
+errorBackButton?.addEventListener(
+    "click",
+    () => {
 
-    errorBackButton.addEventListener(
-        "click",
-        () => {
+        window.location.href =
+            "../batches/";
 
-            window.location.href =
-                "../batches/";
+    }
+);
 
-        }
-    );
-
-}
 
 
 /* =========================================================
-   LOADING
-   ========================================================= */
+   UI HELPERS
+========================================================= */
 
 function hideLoading() {
 
-    /*
-     * THIS IS THE IMPORTANT FIX.
-     *
-     * HTML uses:
-     * #loadingScreen
-     *
-     * not:
-     * #loader
-     */
-
-    if (loadingScreen) {
-
-        loadingScreen.classList.add(
-            "hidden"
-        );
-
-    }
+    loadingScreen
+        ?.classList
+        .add("hidden");
 
 
-    if (app) {
-
-        app.classList.remove(
-            "hidden"
-        );
-
-    }
+    app
+        ?.classList
+        .remove("hidden");
 
 }
 
-
-/* =========================================================
-   ERROR
-   ========================================================= */
 
 function showError(
     message
 ) {
 
-    console.error(
-        "ZENOVA CHECKOUT ERROR:",
-        message
-    );
+    loadingScreen
+        ?.classList
+        .add("hidden");
 
 
-    if (loadingScreen) {
-
-        loadingScreen.classList.add(
-            "hidden"
-        );
-
-    }
+    app
+        ?.classList
+        .remove("hidden");
 
 
-    if (app) {
-
-        app.classList.remove(
-            "hidden"
-        );
-
-    }
-
-
-    /*
-     * Hide normal checkout
-     * sections when there is an error.
-     */
-
-    const content =
-        document.querySelector(
-            ".checkout-content"
-        );
-
-
-    if (content) {
-
-        content
-            .querySelectorAll(
-                ".course-card, .section, .secure-note, .bottom-space"
-            )
-            .forEach(
-                element => {
-
-                    element.classList.add(
-                        "hidden"
-                    );
-
-                }
-            );
-
-    }
-
-
-    if (paymentBar) {
-
-        paymentBar.classList.add(
-            "hidden"
-        );
-
-    }
-
-
-    if (errorSection) {
-
-        errorSection.classList.remove(
-            "hidden"
-        );
-
-    }
+    errorSection
+        ?.classList
+        .remove("hidden");
 
 
     setText(
         errorMessage,
-        message ||
-        "Something went wrong."
-    );
-
-}
-
-
-/* =========================================================
-   TOAST
-   ========================================================= */
-
-let toastTimer = null;
-
-
-function showToast(
-    message
-) {
-
-    let toast =
-        document.getElementById(
-            "zenovaCheckoutToast"
-        );
-
-
-    if (!toast) {
-
-        toast =
-            document.createElement(
-                "div"
-            );
-
-
-        toast.id =
-            "zenovaCheckoutToast";
-
-
-        toast.style.position =
-            "fixed";
-
-        toast.style.left =
-            "50%";
-
-        toast.style.bottom =
-            "105px";
-
-        toast.style.transform =
-            "translateX(-50%)";
-
-        toast.style.zIndex =
-            "99999";
-
-        toast.style.background =
-            "#171717";
-
-        toast.style.color =
-            "#ffffff";
-
-        toast.style.padding =
-            "11px 16px";
-
-        toast.style.borderRadius =
-            "10px";
-
-        toast.style.fontSize =
-            "13px";
-
-        toast.style.fontWeight =
-            "600";
-
-        toast.style.whiteSpace =
-            "nowrap";
-
-        document.body.appendChild(
-            toast
-        );
-
-    }
-
-
-    toast.textContent =
-        message;
-
-
-    toast.style.opacity =
-        "1";
-
-
-    clearTimeout(
-        toastTimer
+        message
     );
 
 
-    toastTimer =
-        setTimeout(
-            () => {
+    languageSection
+        ?.classList
+        .add("hidden");
 
-                toast.style.opacity =
-                    "0";
 
-            },
-            2800
-        );
+    paymentBar
+        ?.classList
+        .add("hidden");
 
 }
 
-
-/* =========================================================
-   TEXT
-   ========================================================= */
 
 function setText(
     element,
@@ -1933,71 +2139,51 @@ function setText(
 }
 
 
-/* =========================================================
-   NUMBER
-   ========================================================= */
-
-function numberValue(
+function toNumber(
     value
 ) {
 
     const number =
-        Number(
-            value
-        );
+        Number(value);
 
 
-    return Number.isFinite(
-        number
-    )
+    return Number.isFinite(number)
         ? number
         : 0;
 
 }
 
 
-/* =========================================================
-   PRICE
-   ========================================================= */
-
 function formatPrice(
     value
 ) {
 
     const number =
-        numberValue(
-            value
-        );
+        toNumber(value);
 
 
-    if (
-        number <= 0
-    ) {
-
-        return "₹0";
-
-    }
-
-
-    return (
-        "₹" +
-        number.toLocaleString(
-            "en-IN"
-        )
-    );
+    return new Intl.NumberFormat(
+        "en-IN",
+        {
+            style: "currency",
+            currency: "INR",
+            maximumFractionDigits: 0
+        }
+    ).format(number);
 
 }
 
-
-/* =========================================================
-   CLASS
-   ========================================================= */
 
 function displayClass(
     value
 ) {
 
-    const names = {
+    if (!value) {
+        return "";
+    }
+
+
+    const map = {
 
         UNDER_8TH:
             "Under 8th",
@@ -2020,135 +2206,85 @@ function displayClass(
     };
 
 
-    if (!value) {
-        return "";
-    }
-
-
     return (
-        names[value] ||
+        map[value] ||
         String(value)
-            .replace(
-                /_/g,
-                " "
-            )
     );
 
 }
 
 
-/* =========================================================
-   ESCAPE HTML
-   ========================================================= */
-
-function escapeHtml(
-    value
+function buildCourseMeta(
+    className,
+    board
 ) {
 
-    return String(
-        value ?? ""
-    )
-        .replaceAll(
-            "&",
-            "&amp;"
-        )
-        .replaceAll(
-            "<",
-            "&lt;"
-        )
-        .replaceAll(
-            ">",
-            "&gt;"
-        )
-        .replaceAll(
-            '"',
-            "&quot;"
-        )
-        .replaceAll(
-            "'",
-            "&#039;"
+    const parts = [];
+
+
+    if (className) {
+
+        parts.push(
+            className
         );
+
+    }
+
+
+    if (board) {
+
+        parts.push(
+            board
+        );
+
+    }
+
+
+    return parts.length
+        ? parts.join(" • ")
+        : "Course details";
 
 }
 
-
-/* =========================================================
-   FIREBASE ERROR
-   ========================================================= */
 
 function getReadableError(
     error
 ) {
 
+    if (!error) {
+
+        return "Something went wrong.";
+
+    }
+
+
     if (
-        error?.code ===
+        error.code ===
         "permission-denied"
     ) {
 
         return (
-            "You do not have permission to view this course."
+            "You do not have permission to access this course."
         );
 
     }
 
 
     if (
-        error?.code ===
-        "not-found"
+        error.code ===
+        "unavailable"
     ) {
 
         return (
-            "This course could not be found."
+            "Network unavailable. Please try again."
         );
 
     }
 
 
     return (
-        error?.message ||
-        "Unable to load course details."
-    );
-
-}
-
-
-/* =========================================================
-   CLEANUP
-   ========================================================= */
-
-window.addEventListener(
-    "beforeunload",
-    () => {
-
-        if (
-            unsubscribeCourse
-        ) {
-
-            unsubscribeCourse();
-
-        }
-
-    }
-);
-
-
-/* =========================================================
-   INITIAL STATE
-   ========================================================= */
-
-if (app) {
-
-    app.classList.add(
-        "hidden"
-    );
-
-}
-
-
-if (errorSection) {
-
-    errorSection.classList.add(
-        "hidden"
+        error.message ||
+        "Unable to load the course."
     );
 
 }
