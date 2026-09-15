@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
+
     <meta
         name="viewport"
         content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
@@ -14,9 +16,7 @@
 
 <body>
 
-    <!-- =========================
-         LOADING
-    ========================== -->
+    <!-- LOADING -->
 
     <div id="loadingScreen" class="loading-screen">
         <div class="loader-ring">
@@ -25,36 +25,23 @@
     </div>
 
 
-    <!-- =========================
-         APP
-    ========================== -->
+    <!-- APP -->
 
     <main id="app" class="app hidden">
 
-        <!-- =========================
-             HEADER
-        ========================== -->
+
+        <!-- HEADER -->
 
         <header class="checkout-header">
 
             <button
                 id="backButton"
-                class="back-button"
+                class="header-button"
                 type="button"
                 aria-label="Go back"
             >
-                <svg
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2.4"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                >
-                    <path d="M15 18l-6-6 6-6"/>
-                </svg>
+                ←
             </button>
-
 
             <div class="header-title">
 
@@ -62,16 +49,13 @@
                     ZENOVA EDUCATONS
                 </div>
 
-                <h1>
-                    Checkout
-                </h1>
+                <h1>Checkout</h1>
 
             </div>
 
-
             <button
                 id="notificationButton"
-                class="notification-button"
+                class="header-button notification-button"
                 type="button"
                 aria-label="Notifications"
             >
@@ -80,7 +64,7 @@
                     viewBox="0 0 24 24"
                     fill="none"
                     stroke="currentColor"
-                    stroke-width="2"
+                    stroke-width="1.9"
                     stroke-linecap="round"
                     stroke-linejoin="round"
                 >
@@ -88,30 +72,29 @@
                     <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
                 </svg>
 
-                <span id="notificationDot" class="notification-dot"></span>
+                <span id="notificationDot"></span>
 
             </button>
 
         </header>
 
 
-        <!-- =========================
-             CONTENT
-        ========================== -->
+
+        <!-- CONTENT -->
 
         <section class="checkout-content">
 
 
             <!-- COURSE -->
+
             <section class="course-card">
 
-                <div class="course-thumbnail-wrapper">
+                <div class="course-image-wrapper">
 
                     <img
                         id="courseImage"
-                        class="course-thumbnail"
-                        src=""
-                        alt="Course thumbnail"
+                        class="course-image"
+                        alt="Course"
                     >
 
                     <div
@@ -126,9 +109,9 @@
 
                 <div class="course-info">
 
-                    <div class="course-badge">
+                    <span class="course-badge">
                         COURSE
-                    </div>
+                    </span>
 
                     <h2 id="courseName">
                         Loading...
@@ -138,69 +121,66 @@
                         Loading course details...
                     </p>
 
-                    <div
-                        id="courseCode"
-                        class="course-code"
-                    ></div>
+                    <span id="courseCode"></span>
 
                 </div>
 
             </section>
 
 
-            <!-- =========================
-                 LANGUAGE
-            ========================== -->
+
+            <!-- LANGUAGE SELECTION -->
 
             <section
                 id="languageSection"
-                class="section language-section hidden"
+                class="section hidden"
             >
 
                 <div class="section-heading">
 
-                    <div>
-                        <span class="section-label">
-                            COURSE PREFERENCE
-                        </span>
+                    <span class="section-label">
+                        COURSE LANGUAGE
+                    </span>
 
-                        <h2>
-                            Select Language
-                        </h2>
+                    <h2>
+                        Select Your Languages
+                    </h2>
 
-                        <p>
-                            Choose the language you want to study in.
-                        </p>
-                    </div>
+                    <p>
+                        Choose the language for each subject level.
+                    </p>
 
                 </div>
 
 
                 <div
-                    id="languageOptions"
-                    class="language-options"
+                    id="languageSelectors"
+                    class="language-selectors"
+                ></div>
+
+
+                <div
+                    id="languageError"
+                    class="language-error hidden"
                 ></div>
 
             </section>
 
 
-            <!-- =========================
-                 COURSE DETAILS
-            ========================== -->
+
+            <!-- COURSE DETAILS -->
 
             <section class="section">
 
                 <div class="section-heading">
 
-                    <div>
-                        <span class="section-label">
-                            YOUR COURSE
-                        </span>
+                    <span class="section-label">
+                        YOUR COURSE
+                    </span>
 
-                        <h2>
-                            Course Details
-                        </h2>
-                    </div>
+                    <h2>
+                        Course Details
+                    </h2>
 
                 </div>
 
@@ -209,9 +189,7 @@
 
                     <div class="detail-row">
 
-                        <span>
-                            Course
-                        </span>
+                        <span>Course</span>
 
                         <strong id="summaryCourseName">
                             —
@@ -222,9 +200,7 @@
 
                     <div class="detail-row">
 
-                        <span>
-                            Class
-                        </span>
+                        <span>Class</span>
 
                         <strong id="summaryClass">
                             —
@@ -234,15 +210,55 @@
 
 
                     <div
-                        id="summaryLanguageRow"
+                        id="summaryBoardRow"
                         class="detail-row hidden"
                     >
 
-                        <span>
-                            Language
-                        </span>
+                        <span>Board</span>
 
-                        <strong id="summaryLanguage">
+                        <strong id="summaryBoard">
+                            —
+                        </strong>
+
+                    </div>
+
+
+                    <div
+                        id="summaryFirstLanguageRow"
+                        class="detail-row hidden"
+                    >
+
+                        <span>First Language</span>
+
+                        <strong id="summaryFirstLanguage">
+                            —
+                        </strong>
+
+                    </div>
+
+
+                    <div
+                        id="summarySecondLanguageRow"
+                        class="detail-row hidden"
+                    >
+
+                        <span>Second Language</span>
+
+                        <strong id="summarySecondLanguage">
+                            —
+                        </strong>
+
+                    </div>
+
+
+                    <div
+                        id="summaryThirdLanguageRow"
+                        class="detail-row hidden"
+                    >
+
+                        <span>Third Language</span>
+
+                        <strong id="summaryThirdLanguage">
                             —
                         </strong>
 
@@ -253,23 +269,49 @@
             </section>
 
 
-            <!-- =========================
-                 PRICE
-            ========================== -->
+
+            <!-- SUBJECTS -->
+
+            <section
+                id="subjectsSection"
+                class="section hidden"
+            >
+
+                <div class="section-heading">
+
+                    <span class="section-label">
+                        INCLUDED
+                    </span>
+
+                    <h2>
+                        Subjects
+                    </h2>
+
+                </div>
+
+
+                <div
+                    id="subjectsList"
+                    class="subjects-list"
+                ></div>
+
+            </section>
+
+
+
+            <!-- ORDER SUMMARY -->
 
             <section class="section">
 
                 <div class="section-heading">
 
-                    <div>
-                        <span class="section-label">
-                            PAYMENT
-                        </span>
+                    <span class="section-label">
+                        PAYMENT
+                    </span>
 
-                        <h2>
-                            Order Summary
-                        </h2>
-                    </div>
+                    <h2>
+                        Order Summary
+                    </h2>
 
                 </div>
 
@@ -279,7 +321,7 @@
                     <div class="price-row">
 
                         <span>
-                            Course price
+                            Course Price
                         </span>
 
                         <strong id="originalPrice">
@@ -311,6 +353,7 @@
                     <div class="total-row">
 
                         <div>
+
                             <span>
                                 Total
                             </span>
@@ -318,6 +361,7 @@
                             <small>
                                 Complete course access
                             </small>
+
                         </div>
 
                         <strong id="finalPrice">
@@ -331,9 +375,8 @@
             </section>
 
 
-            <!-- =========================
-                 SECURE NOTE
-            ========================== -->
+
+            <!-- SECURE NOTE -->
 
             <div class="secure-note">
 
@@ -343,7 +386,7 @@
                         viewBox="0 0 24 24"
                         fill="none"
                         stroke="currentColor"
-                        stroke-width="2"
+                        stroke-width="1.8"
                         stroke-linecap="round"
                         stroke-linejoin="round"
                     >
@@ -354,10 +397,12 @@
                             height="11"
                             rx="2"
                         />
+
                         <path d="M8 10V7a4 4 0 0 1 8 0v3"/>
                     </svg>
 
                 </div>
+
 
                 <div>
 
@@ -366,7 +411,7 @@
                     </strong>
 
                     <p>
-                        Your payment and account information are protected.
+                        Your course and account information are securely processed.
                     </p>
 
                 </div>
@@ -374,9 +419,8 @@
             </div>
 
 
-            <!-- =========================
-                 ERROR
-            ========================== -->
+
+            <!-- ERROR -->
 
             <section
                 id="errorSection"
@@ -411,9 +455,8 @@
         </section>
 
 
-        <!-- =========================
-             PAY BAR
-        ========================== -->
+
+        <!-- FIXED PAYMENT BAR -->
 
         <div
             id="paymentBar"
@@ -445,9 +488,8 @@
         </div>
 
 
-        <!-- =========================
-             BOTTOM NAV
-        ========================== -->
+
+        <!-- BOTTOM NAV -->
 
         <nav class="bottom-navigation">
 
@@ -455,27 +497,8 @@
                 href="../"
                 class="nav-item"
             >
-
-                <div class="nav-icon">
-
-                    <svg
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="1.8"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                    >
-                        <path d="M3 11.5L12 4l9 7.5"/>
-                        <path d="M5 10.5V20h14v-9.5"/>
-                    </svg>
-
-                </div>
-
-                <span class="nav-label">
-                    Home
-                </span>
-
+                <span class="nav-icon">⌂</span>
+                <span>Home</span>
             </a>
 
 
@@ -483,37 +506,9 @@
                 href="../batches/"
                 class="nav-item active"
             >
-
-                <div class="nav-icon">
-
-                    <svg
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="1.8"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                    >
-                        <rect
-                            x="5"
-                            y="3"
-                            width="14"
-                            height="18"
-                            rx="2"
-                        />
-                        <path d="M8 8h8"/>
-                        <path d="M8 12h8"/>
-                        <path d="M8 16h5"/>
-                    </svg>
-
-                </div>
-
-                <span class="nav-label">
-                    Courses
-                </span>
-
-                <span class="nav-active-line"></span>
-
+                <span class="nav-icon">▣</span>
+                <span>Courses</span>
+                <i></i>
             </a>
 
 
@@ -521,29 +516,8 @@
                 href="../study/"
                 class="nav-item"
             >
-
-                <div class="nav-icon">
-
-                    <svg
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="1.8"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                    >
-                        <path d="M6 4v16"/>
-                        <path d="M18 4v16"/>
-                        <path d="M6 4c4-1 8-1 12 0"/>
-                        <path d="M6 20c4-1 8-1 12 0"/>
-                    </svg>
-
-                </div>
-
-                <span class="nav-label">
-                    Study Now
-                </span>
-
+                <span class="nav-icon">▤</span>
+                <span>Study Now</span>
             </a>
 
 
@@ -551,15 +525,8 @@
                 href="../ai/"
                 class="nav-item"
             >
-
-                <div class="nav-icon ai-icon">
-                    Z
-                </div>
-
-                <span class="nav-label">
-                    Zenova AI
-                </span>
-
+                <span class="nav-ai">Z</span>
+                <span>Zenova AI</span>
             </a>
 
 
@@ -567,31 +534,8 @@
                 href="../profile/"
                 class="nav-item"
             >
-
-                <div class="nav-icon">
-
-                    <svg
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="1.8"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                    >
-                        <circle
-                            cx="12"
-                            cy="8"
-                            r="3.5"
-                        />
-                        <path d="M5 21c.8-4 3-6 7-6s6.2 2 7 6"/>
-                    </svg>
-
-                </div>
-
-                <span class="nav-label">
-                    Profile
-                </span>
-
+                <span class="nav-icon">○</span>
+                <span>Profile</span>
             </a>
 
         </nav>
@@ -599,7 +543,11 @@
     </main>
 
 
-    <script type="module" src="./checkout.js"></script>
+    <script
+        type="module"
+        src="./checkout.js"
+    ></script>
 
 </body>
-  </html>
+
+</html>
