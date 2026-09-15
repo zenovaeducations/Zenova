@@ -1,19 +1,37 @@
 /* =========================================================
-   ZENOVA EDUCATONS
+   ZENOVA EDUCATIONS
    CHECKOUT
-   ========================================================= */
+   ---------------------------------------------------------
+   Flow:
+
+   Batch Details
+        ↓
+   Checkout
+        ↓
+   Select First / Second / Third Language
+        ↓
+   Save checkout data in sessionStorage
+        ↓
+   Payment page
+
+   Firebase:
+   crmCourses/{courseId}
+   students/{uid}
+
+   Checkout storage:
+   zenova_checkout
+========================================================= */
 
 import {
     auth,
     db
 } from "../../firebase/firebase-config.js";
 
-
 import {
     doc,
+    getDoc,
     onSnapshot
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
-
 
 import {
     onAuthStateChanged
@@ -25,38 +43,16 @@ import {
 ========================================================= */
 
 let currentUser = null;
-
+let currentStudent = null;
 let currentCourse = null;
 
-let unsubscribeCourse = null;
-
-let isPaying = false;
-
-
-/*
- * Stores selected languages:
- *
- * {
- *   first: "Kannada",
- *   second: "English",
- *   third: "Hindi"
- * }
- */
-
-const selectedLanguages = {
+let selectedLanguages = {
     first: "",
     second: "",
     third: ""
 };
 
-
-/* =========================================================
-   ELEMENT HELPER
-========================================================= */
-
-function el(id) {
-    return document.getElementById(id);
-}
+let courseUnsubscribe = null;
 
 
 /* =========================================================
@@ -64,97 +60,145 @@ function el(id) {
 ========================================================= */
 
 const loadingScreen =
-    el("loadingScreen");
+    document.getElementById("loadingScreen");
 
 const app =
-    el("app");
-
-
-const backButton =
-    el("backButton");
-
-const notificationButton =
-    el("notificationButton");
-
+    document.getElementById("app");
 
 const courseImage =
-    el("courseImage");
+    document.getElementById("courseImage");
 
 const courseImageFallback =
-    el("courseImageFallback");
+    document.getElementById("courseImageFallback");
 
 const courseName =
-    el("courseName");
+    document.getElementById("courseName");
 
-const courseClass =
-    el("courseClass");
+const courseMeta =
+    document.getElementById("courseMeta");
 
 const courseCode =
-    el("courseCode");
+    document.getElementById("courseCode");
 
-
-const languageSection =
-    el("languageSection");
-
-const languageSelectors =
-    el("languageSelectors");
-
-const languageError =
-    el("languageError");
-
-
-const subjectsList =
-    el("subjectsList");
-
-const noSubjects =
-    el("noSubjects");
-
-
-const summaryCourseName =
-    el("summaryCourseName");
+const summaryCourse =
+    document.getElementById("summaryCourse");
 
 const summaryClass =
-    el("summaryClass");
+    document.getElementById("summaryClass");
 
-const summaryLanguages =
-    el("summaryLanguages");
-
-const summaryLanguageList =
-    el("summaryLanguageList");
-
-
-const originalPrice =
-    el("originalPrice");
+const coursePrice =
+    document.getElementById("coursePrice");
 
 const discountRow =
-    el("discountRow");
+    document.getElementById("discountRow");
 
 const discountAmount =
-    el("discountAmount");
+    document.getElementById("discountAmount");
 
 const finalPrice =
-    el("finalPrice");
-
-
-const bottomPrice =
-    el("bottomPrice");
+    document.getElementById("finalPrice");
 
 const payNowButton =
-    el("payNowButton");
-
-
-const errorSection =
-    el("errorSection");
-
-const errorMessage =
-    el("errorMessage");
-
-const errorBackButton =
-    el("errorBackButton");
+    document.getElementById("payNowButton");
 
 
 /* =========================================================
-   URL
+   LANGUAGE UI
+   ---------------------------------------------------------
+   We support up to 3 languages.
+
+   If the HTML already contains:
+       #languageSection
+       #languageOptions
+
+   we use them.
+
+   If not, we create the language selector dynamically.
+========================================================= */
+
+let languageSection =
+    document.getElementById("languageSection");
+
+let languageOptions =
+    document.getElementById("languageOptions");
+
+let firstLanguageSelect = null;
+let secondLanguageSelect = null;
+let thirdLanguageSelect = null;
+
+
+/* =========================================================
+   START
+========================================================= */
+
+onAuthStateChanged(
+    auth,
+    async (user) => {
+
+        if (!user) {
+
+            window.location.href =
+                "../login/";
+
+            return;
+        }
+
+
+        currentUser = user;
+
+
+        const courseId =
+            getCourseId();
+
+
+        if (!courseId) {
+
+            showError(
+                "Your course information could not be found. Please return to Batch Details."
+            );
+
+            return;
+        }
+
+
+        try {
+
+            await loadStudent(
+                user.uid
+            );
+
+
+            await loadCourse(
+                courseId
+            );
+
+
+        } catch (error) {
+
+            console.error(
+                "CHECKOUT START ERROR:",
+                error
+            );
+
+            showError(
+                "Unable to load checkout details. Please try again."
+            );
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   GET COURSE ID
+   ---------------------------------------------------------
+   Supports both:
+       ?id=COURSE_ID
+       ?courseId=COURSE_ID
+
+   This prevents route mismatch between
+   Batch Details / Batches / Checkout.
 ========================================================= */
 
 function getCourseId() {
@@ -166,83 +210,68 @@ function getCourseId() {
 
 
     return (
-        params.get("id") ||
         params.get("courseId") ||
+        params.get("id") ||
         ""
     ).trim();
+
 }
 
 
 /* =========================================================
-   AUTH
+   LOAD STUDENT
 ========================================================= */
 
-onAuthStateChanged(
-    auth,
-    async user => {
+async function loadStudent(uid) {
 
-        try {
+    try {
 
-            if (!user) {
-
-                window.location.href =
-                    "../login/";
-
-                return;
-            }
-
-
-            currentUser = user;
-
-
-            const courseId =
-                getCourseId();
-
-
-            if (!courseId) {
-
-                showError(
-                    "Course information is missing."
-                );
-
-                return;
-            }
-
-
-            startCourseListener(
-                courseId
+        const studentRef =
+            doc(
+                db,
+                "students",
+                uid
             );
 
-        } catch (error) {
 
-            console.error(
-                "ZENOVA CHECKOUT AUTH ERROR:",
-                error
+        const snapshot =
+            await getDoc(
+                studentRef
             );
 
-            showError(
-                "Unable to open checkout."
-            );
+
+        if (snapshot.exists()) {
+
+            currentStudent =
+                snapshot.data();
+
+        } else {
+
+            currentStudent = {};
 
         }
 
+    } catch (error) {
+
+        console.error(
+            "STUDENT LOAD ERROR:",
+            error
+        );
+
+        currentStudent = {};
+
     }
-);
+
+}
 
 
 /* =========================================================
-   COURSE LISTENER
+   LOAD COURSE
+   ---------------------------------------------------------
+   CRM course is the single source of truth.
 ========================================================= */
 
-function startCourseListener(courseId) {
-
-    if (unsubscribeCourse) {
-
-        unsubscribeCourse();
-
-        unsubscribeCourse = null;
-    }
-
+async function loadCourse(courseId) {
 
     const courseRef =
         doc(
@@ -252,11 +281,12 @@ function startCourseListener(courseId) {
         );
 
 
-    unsubscribeCourse =
+    courseUnsubscribe =
         onSnapshot(
+
             courseRef,
 
-            snapshot => {
+            (snapshot) => {
 
                 if (!snapshot.exists()) {
 
@@ -269,29 +299,25 @@ function startCourseListener(courseId) {
 
 
                 currentCourse = {
-
-                    id:
-                        snapshot.id,
-
+                    id: snapshot.id,
                     ...snapshot.data()
-
                 };
 
 
-                renderCheckout(
+                console.log(
+                    "CHECKOUT COURSE:",
                     currentCourse
                 );
 
 
-                hideLoading();
+                renderCheckout();
 
             },
 
-
-            error => {
+            (error) => {
 
                 console.error(
-                    "CHECKOUT COURSE ERROR:",
+                    "COURSE LISTENER ERROR:",
                     error
                 );
 
@@ -300,7 +326,9 @@ function startCourseListener(courseId) {
                 );
 
             }
+
         );
+
 }
 
 
@@ -308,252 +336,415 @@ function startCourseListener(courseId) {
    RENDER CHECKOUT
 ========================================================= */
 
-function renderCheckout(course) {
+function renderCheckout() {
 
-    if (!course) {
+    if (!currentCourse) {
         return;
     }
 
 
-    /* =====================================================
-       COURSE DETAILS
-    ====================================================== */
-
     const name =
-        course.crmCourseName ||
-        course.name ||
-        course.title ||
+        currentCourse.crmCourseName ||
+        currentCourse.name ||
+        currentCourse.title ||
         "Zenova Course";
 
 
-    const className =
-        course.crmClass ||
-        course.className ||
-        course.class ||
-        course.standard ||
-        "";
-
-
     const code =
-        course.crmCourseCode ||
-        course.courseCode ||
-        course.code ||
+        currentCourse.crmCourseCode ||
         "";
 
 
-    courseName.textContent =
-        name;
+    const className =
+        formatClass(
+            currentCourse.crmClass ||
+            ""
+        );
 
 
-    courseClass.textContent =
-        formatClass(className);
+    const medium =
+        currentCourse.crmMedium ||
+        "";
 
 
-    courseCode.textContent =
-        code
-            ? `Course Code: ${code}`
-            : "";
+    const image =
+        currentCourse.crmImageUrl ||
+        currentCourse.imageUrl ||
+        currentCourse.courseImageUrl ||
+        "";
 
 
-    summaryCourseName.textContent =
-        name;
+    /* -----------------------------------------------------
+       COURSE
+    ----------------------------------------------------- */
+
+    if (courseName) {
+        courseName.textContent =
+            name;
+    }
 
 
-    summaryClass.textContent =
-        formatClass(className);
+    if (courseCode) {
+        courseCode.textContent =
+            code;
+    }
 
 
-    /* =====================================================
+    if (courseMeta) {
+
+        courseMeta.textContent =
+            [
+                className,
+                medium
+            ]
+                .filter(Boolean)
+                .join(" • ") ||
+            "Zenova Educations";
+
+    }
+
+
+    if (summaryCourse) {
+        summaryCourse.textContent =
+            name;
+    }
+
+
+    if (summaryClass) {
+        summaryClass.textContent =
+            className || "—";
+    }
+
+
+    /* -----------------------------------------------------
        IMAGE
-    ====================================================== */
+    ----------------------------------------------------- */
 
-    const imageUrl =
-        course.imageUrl ||
-        course.courseImageUrl ||
-        course.image ||
-        "";
+    renderCourseImage(
+        image
+    );
 
 
-    if (imageUrl) {
+    /* -----------------------------------------------------
+       PRICE
+    ----------------------------------------------------- */
 
-        courseImage.src =
-            imageUrl;
+    const pricing =
+        getCoursePricing();
 
-        courseImage.classList.remove(
-            "hidden"
-        );
 
-        courseImageFallback.classList.add(
-            "hidden"
-        );
+    if (coursePrice) {
 
-        courseImage.onerror =
-            () => {
+        coursePrice.textContent =
+            formatMoney(
+                pricing.price
+            );
 
-                courseImage.classList.add(
-                    "hidden"
-                );
+    }
 
-                courseImageFallback.classList.remove(
-                    "hidden"
-                );
 
-            };
+    if (discountRow && discountAmount) {
 
-    } else {
+        if (pricing.discount > 0) {
+
+            discountRow.classList.remove(
+                "hidden"
+            );
+
+            discountAmount.textContent =
+                `-${formatMoney(
+                    pricing.discount
+                )}`;
+
+        } else {
+
+            discountRow.classList.add(
+                "hidden"
+            );
+
+        }
+
+    }
+
+
+    if (finalPrice) {
+
+        finalPrice.textContent =
+            formatMoney(
+                pricing.finalPrice
+            );
+
+    }
+
+
+    /* -----------------------------------------------------
+       LANGUAGE SELECTION
+    ----------------------------------------------------- */
+
+    setupLanguageSelection();
+
+
+    /* -----------------------------------------------------
+       DISPLAY
+    ----------------------------------------------------- */
+
+    hideLoading();
+
+}
+
+
+/* =========================================================
+   COURSE IMAGE
+========================================================= */
+
+function renderCourseImage(imageUrl) {
+
+    if (!courseImage) {
+        return;
+    }
+
+
+    if (!imageUrl) {
 
         courseImage.classList.add(
             "hidden"
         );
 
-        courseImageFallback.classList.remove(
-            "hidden"
-        );
+        if (courseImageFallback) {
+
+            courseImageFallback.style.display =
+                "flex";
+
+        }
+
+        return;
+    }
+
+
+    courseImage.src =
+        imageUrl;
+
+
+    courseImage.classList.remove(
+        "hidden"
+    );
+
+
+    if (courseImageFallback) {
+
+        courseImageFallback.style.display =
+            "none";
 
     }
 
 
-    /* =====================================================
-       LANGUAGES
-    ====================================================== */
+    courseImage.onerror =
+        () => {
 
-    const languages =
-        getCourseLanguages(course);
+            courseImage.classList.add(
+                "hidden"
+            );
 
+            if (courseImageFallback) {
 
-    renderLanguageSelectors(
-        languages
-    );
+                courseImageFallback.style.display =
+                    "flex";
 
+            }
 
-    /* =====================================================
-       SUBJECTS
-    ====================================================== */
+        };
 
-    const subjects =
-        getCourseSubjects(course);
-
-
-    renderSubjects(
-        subjects
-    );
-
-
-    /* =====================================================
-       PRICE
-    ====================================================== */
-
-    renderPricing(
-        course
-    );
-
-
-    updatePayButton();
 }
 
 
 /* =========================================================
-   GET COURSE LANGUAGES
+   PRICING
 ========================================================= */
 
-function getCourseLanguages(course) {
+function getCoursePricing() {
 
-    let languages = [];
+    const price =
+        Number(
+            currentCourse?.crmPrice ??
+            0
+        );
 
 
-    /*
-     * PRIMARY CURRENT STRUCTURE
-     *
-     * mediums: [
-     *   "Kannada",
-     *   "English",
-     *   "Hindi"
-     * ]
-     */
+    const discount =
+        Number(
+            currentCourse?.crmDiscount ??
+            0
+        );
+
+
+    let finalPrice =
+        Number(
+            currentCourse?.crmFinalPrice
+        );
+
 
     if (
-        Array.isArray(
-            course.mediums
+        !Number.isFinite(
+            finalPrice
         )
     ) {
 
-        languages =
-            course.mediums;
+        finalPrice =
+            Math.max(
+                0,
+                price - discount
+            );
 
     }
 
 
-    /*
-     * Compatibility:
-     * crmMediums
-     */
+    return {
+
+        price:
+            Number.isFinite(price)
+                ? price
+                : 0,
+
+        discount:
+            Number.isFinite(discount)
+                ? discount
+                : 0,
+
+        finalPrice:
+            Math.max(
+                0,
+                finalPrice
+            )
+
+    };
+
+}
+
+
+/* =========================================================
+   LANGUAGE SOURCE
+   ---------------------------------------------------------
+   We check several possible CRM fields so the checkout
+   remains compatible with the course structure.
+
+   Priority:
+       languages
+       crmLanguages
+       mediums
+       crmMedium
+========================================================= */
+
+function getAvailableLanguages() {
+
+    if (!currentCourse) {
+        return [];
+    }
+
+
+    const candidates = [];
+
+
+    const fields = [
+
+        currentCourse.languages,
+
+        currentCourse.crmLanguages,
+
+        currentCourse.mediums
+
+    ];
+
+
+    fields.forEach(
+        value => {
+
+            if (
+                Array.isArray(value)
+            ) {
+
+                value.forEach(
+                    item => {
+
+                        if (
+                            typeof item === "string"
+                        ) {
+
+                            candidates.push(
+                                item
+                            );
+
+                        } else if (
+                            item &&
+                            typeof item === "object"
+                        ) {
+
+                            candidates.push(
+                                item.name ||
+                                item.language ||
+                                item.medium ||
+                                item.label ||
+                                ""
+                            );
+
+                        }
+
+                    }
+                );
+
+            }
+
+        }
+    );
+
+
+    /* -----------------------------------------------------
+       Fallback to crmMedium
+
+       Example:
+       "Kannada, English"
+    ----------------------------------------------------- */
 
     if (
-        languages.length === 0 &&
-        Array.isArray(
-            course.crmMediums
+        candidates.length === 0 &&
+        currentCourse.crmMedium
+    ) {
+
+        String(
+            currentCourse.crmMedium
         )
-    ) {
+            .split(",")
+            .forEach(
+                item => {
 
-        languages =
-            course.crmMediums;
+                    candidates.push(
+                        item
+                    );
 
-    }
-
-
-    /*
-     * Compatibility:
-     * availableLanguages
-     */
-
-    if (
-        languages.length === 0 &&
-        Array.isArray(
-            course.availableLanguages
-        )
-    ) {
-
-        languages =
-            course.availableLanguages;
+                }
+            );
 
     }
 
 
-    /*
-     * Compatibility:
-     * comma-separated crmMedium
-     */
-
-    if (
-        languages.length === 0 &&
-        typeof course.crmMedium === "string"
-    ) {
-
-        languages =
-            course.crmMedium
-                .split(",")
-                .map(
-                    value =>
-                        value.trim()
-                )
-                .filter(Boolean);
-
-    }
-
-
-    /*
-     * Normalize + remove duplicates
-     */
+    /* -----------------------------------------------------
+       CLEAN + REMOVE DUPLICATES
+    ----------------------------------------------------- */
 
     const unique =
-        new Map();
+        [];
 
 
-    languages.forEach(
-        language => {
+    const seen =
+        new Set();
+
+
+    candidates.forEach(
+        item => {
 
             const value =
-                String(language || "")
+                String(
+                    item || ""
+                )
                     .trim();
 
 
@@ -567,1149 +758,1309 @@ function getCourseLanguages(course) {
 
 
             if (
-                !unique.has(key)
-            ) {
-
-                unique.set(
-                    key,
-                    value
-                );
-
-            }
-
-        }
-    );
-
-
-    return [
-        ...unique.values()
-    ];
-}
-
-
-/* =========================================================
-   RENDER LANGUAGE SELECTORS
-========================================================= */
-
-function renderLanguageSelectors(
-    languages
-) {
-
-    languageSelectors.innerHTML =
-        "";
-
-
-    selectedLanguages.first =
-        "";
-
-    selectedLanguages.second =
-        "";
-
-    selectedLanguages.third =
-        "";
-
-
-    /*
-     * No languages created by Admin
-     */
-
-    if (
-        languages.length === 0
-    ) {
-
-        languageSection.classList.add(
-            "hidden"
-        );
-
-        updateSummaryLanguages();
-
-        return;
-    }
-
-
-    languageSection.classList.remove(
-        "hidden"
-    );
-
-
-    /*
-     * Maximum 3 language slots.
-     *
-     * If Admin created:
-     *
-     * 1 language → First
-     * 2 languages → First + Second
-     * 3 languages → First + Second + Third
-     *
-     * We never create a fourth slot.
-     */
-
-    const slotCount =
-        Math.min(
-            languages.length,
-            3
-        );
-
-
-    const slots = [
-        {
-            key: "first",
-            label: "First Language"
-        },
-        {
-            key: "second",
-            label: "Second Language"
-        },
-        {
-            key: "third",
-            label: "Third Language"
-        }
-    ];
-
-
-    slots
-        .slice(0, slotCount)
-        .forEach(
-            slot => {
-
-                const wrapper =
-                    document.createElement(
-                        "div"
-                    );
-
-
-                wrapper.className =
-                    "language-field";
-
-
-                const label =
-                    document.createElement(
-                        "label"
-                    );
-
-
-                label.className =
-                    "language-label";
-
-
-                label.textContent =
-                    slot.label;
-
-
-                label.htmlFor =
-                    `language-${slot.key}`;
-
-
-                const select =
-                    document.createElement(
-                        "select"
-                    );
-
-
-                select.className =
-                    "language-select";
-
-
-                select.id =
-                    `language-${slot.key}`;
-
-
-                select.dataset.slot =
-                    slot.key;
-
-
-                const placeholder =
-                    document.createElement(
-                        "option"
-                    );
-
-
-                placeholder.value =
-                    "";
-
-
-                placeholder.textContent =
-                    `Select ${slot.label}`;
-
-
-                placeholder.disabled =
-                    true;
-
-
-                placeholder.selected =
-                    true;
-
-
-                select.appendChild(
-                    placeholder
-                );
-
-
-                languages.forEach(
-                    language => {
-
-                        const option =
-                            document.createElement(
-                                "option"
-                            );
-
-
-                        option.value =
-                            language;
-
-
-                        option.textContent =
-                            language;
-
-
-                        select.appendChild(
-                            option
-                        );
-
-                    }
-                );
-
-
-                select.addEventListener(
-                    "change",
-                    () => {
-
-                        selectedLanguages[
-                            slot.key
-                        ] =
-                            select.value;
-
-
-                        validateLanguageSelections(
-                            languages
-                        );
-
-
-                        updateSummaryLanguages();
-
-                        updatePayButton();
-
-                    }
-                );
-
-
-                wrapper.appendChild(
-                    label
-                );
-
-                wrapper.appendChild(
-                    select
-                );
-
-
-                languageSelectors.appendChild(
-                    wrapper
-                );
-
-            }
-        );
-
-
-    validateLanguageSelections(
-        languages
-    );
-
-    updateSummaryLanguages();
-}
-
-
-/* =========================================================
-   VALIDATE LANGUAGES
-========================================================= */
-
-function validateLanguageSelections(
-    languages
-) {
-
-    const selects =
-        languageSelectors.querySelectorAll(
-            ".language-select"
-        );
-
-
-    const values =
-        [...selects]
-            .map(
-                select =>
-                    select.value
-            );
-
-
-    const allSelected =
-        values.every(
-            value =>
-                Boolean(value)
-        );
-
-
-    const uniqueSelected =
-        new Set(values)
-            .size === values.length;
-
-
-    selects.forEach(
-        select => {
-
-            select.classList.remove(
-                "invalid"
-            );
-
-        }
-    );
-
-
-    if (
-        values.some(
-            value => value
-        ) &&
-        !uniqueSelected
-    ) {
-
-        selects.forEach(
-            select => {
-
-                const duplicate =
-                    values.filter(
-                        value =>
-                            value &&
-                            value ===
-                            select.value
-                    ).length > 1;
-
-
-                if (
-                    duplicate
-                ) {
-
-                    select.classList.add(
-                        "invalid"
-                    );
-
-                }
-
-            }
-        );
-
-        languageError.textContent =
-            "Each language must be different.";
-
-        languageError.classList.remove(
-            "hidden"
-        );
-
-        return false;
-    }
-
-
-    if (
-        !allSelected
-    ) {
-
-        languageError.textContent =
-            "Please select all required languages.";
-
-        languageError.classList.add(
-            "hidden"
-        );
-
-        return false;
-    }
-
-
-    languageError.classList.add(
-        "hidden"
-    );
-
-
-    return true;
-}
-
-
-/* =========================================================
-   PREVENT DUPLICATE OPTIONS
-========================================================= */
-
-function updateLanguageOptionAvailability() {
-
-    const selects =
-        languageSelectors.querySelectorAll(
-            ".language-select"
-        );
-
-
-    const selectedValues =
-        [...selects]
-            .map(
-                select =>
-                    select.value
-            );
-
-
-    selects.forEach(
-        select => {
-
-            const ownValue =
-                select.value;
-
-
-            [...select.options]
-                .forEach(
-                    option => {
-
-                        if (
-                            !option.value
-                        ) {
-                            return;
-                        }
-
-
-                        const selectedElsewhere =
-                            selectedValues.includes(
-                                option.value
-                            ) &&
-                            option.value !==
-                                ownValue;
-
-
-                        option.disabled =
-                            selectedElsewhere;
-
-                    }
-                );
-
-        }
-    );
-}
-
-
-/* =========================================================
-   GET COURSE SUBJECTS
-========================================================= */
-
-function getCourseSubjects(course) {
-
-    let subjects = [];
-
-
-    /*
-     * Primary CRM course structure
-     */
-
-    if (
-        Array.isArray(
-            course.subjects
-        )
-    ) {
-
-        subjects =
-            course.subjects;
-
-    }
-
-
-    /*
-     * Compatibility
-     */
-
-    if (
-        subjects.length === 0 &&
-        Array.isArray(
-            course.courseSubjects
-        )
-    ) {
-
-        subjects =
-            course.courseSubjects;
-
-    }
-
-
-    /*
-     * Normalize different possible
-     * subject representations.
-     */
-
-    const normalized = [];
-
-
-    subjects.forEach(
-        subject => {
-
-            let name = "";
-
-
-            if (
-                typeof subject ===
-                "string"
-            ) {
-
-                name =
-                    subject.trim();
-
-            } else if (
-                subject &&
-                typeof subject ===
-                "object"
-            ) {
-
-                name =
-                    subject.name ||
-                    subject.subjectName ||
-                    subject.title ||
-                    subject.label ||
-                    "";
-
-                name =
-                    String(name)
-                        .trim();
-
-            }
-
-
-            if (name) {
-
-                normalized.push(
-                    name
-                );
-
-            }
-
-        }
-    );
-
-
-    /*
-     * Remove duplicate subjects.
-     */
-
-    const seen =
-        new Set();
-
-
-    return normalized.filter(
-        subject => {
-
-            const key =
-                subject.toLowerCase();
-
-
-            if (
                 seen.has(key)
             ) {
 
-                return false;
+                return;
 
             }
 
 
             seen.add(key);
 
-            return true;
+            unique.push(
+                value
+            );
 
         }
     );
+
+
+    return unique;
+
 }
 
 
 /* =========================================================
-   RENDER SUBJECTS
+   LANGUAGE UI SETUP
 ========================================================= */
 
-function renderSubjects(
-    subjects
+function setupLanguageSelection() {
+
+    const languages =
+        getAvailableLanguages();
+
+
+    console.log(
+        "AVAILABLE LANGUAGES:",
+        languages
+    );
+
+
+    ensureLanguageContainer();
+
+
+    if (
+        !languageOptions
+    ) {
+        return;
+    }
+
+
+    languageOptions.innerHTML =
+        "";
+
+
+    if (
+        languages.length === 0
+    ) {
+
+        if (languageSection) {
+
+            languageSection.classList.add(
+                "hidden"
+            );
+
+        }
+
+        return;
+    }
+
+
+    if (languageSection) {
+
+        languageSection.classList.remove(
+            "hidden"
+        );
+
+    }
+
+
+    /* -----------------------------------------------------
+       CREATE FIRST
+    ----------------------------------------------------- */
+
+    firstLanguageSelect =
+        createLanguageSelect(
+            "firstLanguage",
+            "First Language",
+            languages
+        );
+
+
+    languageOptions.appendChild(
+        firstLanguageSelect.wrapper
+    );
+
+
+    /* -----------------------------------------------------
+       SECOND
+    ----------------------------------------------------- */
+
+    secondLanguageSelect =
+        createLanguageSelect(
+            "secondLanguage",
+            "Second Language",
+            languages
+        );
+
+
+    languageOptions.appendChild(
+        secondLanguageSelect.wrapper
+    );
+
+
+    /* -----------------------------------------------------
+       THIRD
+    ----------------------------------------------------- */
+
+    thirdLanguageSelect =
+        createLanguageSelect(
+            "thirdLanguage",
+            "Third Language",
+            languages
+        );
+
+
+    languageOptions.appendChild(
+        thirdLanguageSelect.wrapper
+    );
+
+
+    /* -----------------------------------------------------
+       RESTORE PREVIOUS SELECTION
+    ----------------------------------------------------- */
+
+    restoreLanguageSelections();
+
+
+    /* -----------------------------------------------------
+       LISTEN
+    ----------------------------------------------------- */
+
+    firstLanguageSelect.select.addEventListener(
+        "change",
+        handleLanguageChange
+    );
+
+
+    secondLanguageSelect.select.addEventListener(
+        "change",
+        handleLanguageChange
+    );
+
+
+    thirdLanguageSelect.select.addEventListener(
+        "change",
+        handleLanguageChange
+    );
+
+
+    updateLanguageOptions();
+
+
+    updateLanguageSummary();
+
+}
+
+
+/* =========================================================
+   ENSURE LANGUAGE CONTAINER
+   ---------------------------------------------------------
+   This means you don't have to completely depend on
+   the old Checkout HTML.
+
+   If #languageSection / #languageOptions don't exist,
+   JS creates them.
+========================================================= */
+
+function ensureLanguageContainer() {
+
+    if (
+        languageSection &&
+        languageOptions
+    ) {
+
+        return;
+    }
+
+
+    const summaryCard =
+        document.querySelector(
+            ".summary-card"
+        );
+
+
+    if (!summaryCard) {
+        return;
+    }
+
+
+    languageSection =
+        document.createElement(
+            "section"
+        );
+
+
+    languageSection.id =
+        "languageSection";
+
+
+    languageSection.className =
+        "section language-section";
+
+
+    languageSection.innerHTML = `
+
+        <div class="section-heading">
+
+            <span>
+                LANGUAGE
+            </span>
+
+            <h2>
+                Select Languages
+            </h2>
+
+        </div>
+
+        <div
+            id="languageOptions"
+            class="language-options"
+        ></div>
+
+    `;
+
+
+    summaryCard
+        .closest(".section")
+        ?.after(
+            languageSection
+        );
+
+
+    languageOptions =
+        languageSection.querySelector(
+            "#languageOptions"
+        );
+
+}
+
+
+/* =========================================================
+   CREATE LANGUAGE SELECT
+========================================================= */
+
+function createLanguageSelect(
+    fieldName,
+    label,
+    languages
 ) {
 
-    subjectsList.innerHTML =
+    const wrapper =
+        document.createElement(
+            "div"
+        );
+
+
+    wrapper.className =
+        "language-select-wrapper";
+
+
+    const labelElement =
+        document.createElement(
+            "label"
+        );
+
+
+    labelElement.textContent =
+        label;
+
+
+    labelElement.setAttribute(
+        "for",
+        fieldName
+    );
+
+
+    const select =
+        document.createElement(
+            "select"
+        );
+
+
+    select.id =
+        fieldName;
+
+
+    select.name =
+        fieldName;
+
+
+    select.className =
+        "language-select";
+
+
+    const placeholder =
+        document.createElement(
+            "option"
+        );
+
+
+    placeholder.value =
         "";
 
 
-    if (
-        subjects.length === 0
-    ) {
-
-        noSubjects.classList.remove(
-            "hidden"
-        );
-
-        return;
-    }
+    placeholder.textContent =
+        `Select ${label}`;
 
 
-    noSubjects.classList.add(
-        "hidden"
+    placeholder.disabled =
+        true;
+
+
+    placeholder.selected =
+        true;
+
+
+    select.appendChild(
+        placeholder
     );
 
 
-    subjects.forEach(
-        subject => {
+    languages.forEach(
+        language => {
 
-            const item =
+            const option =
                 document.createElement(
-                    "div"
+                    "option"
                 );
 
 
-            item.className =
-                "subject-item";
+            option.value =
+                language;
 
 
-            item.innerHTML = `
-
-                <div class="subject-check">
-                    ✓
-                </div>
-
-                <div class="subject-name">
-                    ${escapeHtml(subject)}
-                </div>
-
-            `;
+            option.textContent =
+                language;
 
 
-            subjectsList.appendChild(
-                item
-            );
-
-        }
-    );
-}
-
-
-/* =========================================================
-   PRICING
-========================================================= */
-
-function renderPricing(course) {
-
-    const price =
-        getNumber(
-            course.crmPrice ??
-            course.price ??
-            0
-        );
-
-
-    const discount =
-        getNumber(
-            course.crmDiscount ??
-            course.discount ??
-            0
-        );
-
-
-    let final =
-        course.crmFinalPrice;
-
-
-    if (
-        final === undefined ||
-        final === null ||
-        final === ""
-    ) {
-
-        final =
-            price -
-            discount;
-
-    }
-
-
-    final =
-        Math.max(
-            0,
-            getNumber(final)
-        );
-
-
-    originalPrice.textContent =
-        formatCurrency(price);
-
-
-    if (
-        discount > 0
-    ) {
-
-        discountRow.classList.remove(
-            "hidden"
-        );
-
-
-        discountAmount.textContent =
-            `- ${formatCurrency(discount)}`;
-
-    } else {
-
-        discountRow.classList.add(
-            "hidden"
-        );
-
-    }
-
-
-    finalPrice.textContent =
-        formatCurrency(final);
-
-
-    bottomPrice.textContent =
-        formatCurrency(final);
-}
-
-
-/* =========================================================
-   UPDATE SUMMARY LANGUAGES
-========================================================= */
-
-function updateSummaryLanguages() {
-
-    const values = [
-        {
-            label: "First Language",
-            value: selectedLanguages.first
-        },
-        {
-            label: "Second Language",
-            value: selectedLanguages.second
-        },
-        {
-            label: "Third Language",
-            value: selectedLanguages.third
-        }
-    ].filter(
-        item =>
-            item.value
-    );
-
-
-    summaryLanguageList.innerHTML =
-        "";
-
-
-    if (
-        values.length === 0
-    ) {
-
-        summaryLanguages.classList.add(
-            "hidden"
-        );
-
-        return;
-    }
-
-
-    summaryLanguages.classList.remove(
-        "hidden"
-    );
-
-
-    values.forEach(
-        item => {
-
-            const row =
-                document.createElement(
-                    "div"
-                );
-
-
-            row.className =
-                "summary-language-item";
-
-
-            row.innerHTML = `
-
-                <span>
-                    ${escapeHtml(item.label)}
-                </span>
-
-                <strong>
-                    ${escapeHtml(item.value)}
-                </strong>
-
-            `;
-
-
-            summaryLanguageList.appendChild(
-                row
+            select.appendChild(
+                option
             );
 
         }
     );
 
 
-    updateLanguageOptionAvailability();
+    wrapper.appendChild(
+        labelElement
+    );
+
+
+    wrapper.appendChild(
+        select
+    );
+
+
+    return {
+
+        wrapper,
+        select
+
+    };
+
 }
 
 
 /* =========================================================
-   UPDATE PAY BUTTON
+   LANGUAGE CHANGE
 ========================================================= */
 
-function updatePayButton() {
+function handleLanguageChange() {
 
-    if (!currentCourse) {
+    selectedLanguages.first =
+        firstLanguageSelect?.select.value ||
+        "";
 
-        payNowButton.disabled =
-            true;
 
+    selectedLanguages.second =
+        secondLanguageSelect?.select.value ||
+        "";
+
+
+    selectedLanguages.third =
+        thirdLanguageSelect?.select.value ||
+        "";
+
+
+    updateLanguageOptions();
+
+
+    updateLanguageSummary();
+
+
+    saveTemporaryCheckoutData();
+
+}
+
+
+/* =========================================================
+   PREVENT DUPLICATE LANGUAGE
+   ---------------------------------------------------------
+   Same language cannot be selected 2 or 3 times.
+========================================================= */
+
+function updateLanguageOptions() {
+
+    const selected =
+        [
+
+            selectedLanguages.first,
+
+            selectedLanguages.second,
+
+            selectedLanguages.third
+
+        ]
+            .filter(Boolean);
+
+
+    const selects =
+        [
+
+            firstLanguageSelect?.select,
+
+            secondLanguageSelect?.select,
+
+            thirdLanguageSelect?.select
+
+        ]
+            .filter(Boolean);
+
+
+    selects.forEach(
+        select => {
+
+            Array.from(
+                select.options
+            )
+                .forEach(
+                    option => {
+
+                        if (
+                            !option.value
+                        ) {
+
+                            return;
+
+                        }
+
+
+                        const selectedByAnother =
+                            selected.includes(
+                                option.value
+                            ) &&
+                            select.value !==
+                                option.value;
+
+
+                        option.disabled =
+                            selectedByAnother;
+
+                    }
+                );
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   RESTORE LANGUAGE SELECTIONS
+========================================================= */
+
+function restoreLanguageSelections() {
+
+    let data = null;
+
+
+    try {
+
+        const raw =
+            sessionStorage.getItem(
+                "zenova_checkout"
+            );
+
+
+        if (raw) {
+
+            data =
+                JSON.parse(
+                    raw
+                );
+
+            }
+
+    } catch (error) {
+
+        console.warn(
+            "Unable to restore checkout:",
+            error
+        );
+
+    }
+
+
+    if (!data) {
         return;
     }
 
 
     const languages =
-        getCourseLanguages(
-            currentCourse
-        );
+        data.selectedLanguages || {};
 
 
-    let languagesValid =
-        true;
+    selectedLanguages.first =
+        data.firstLanguage ||
+        languages.first ||
+        "";
 
 
-    if (
-        languages.length > 0
-    ) {
-
-        const values = [
-            selectedLanguages.first,
-            selectedLanguages.second,
-            selectedLanguages.third
-        ].slice(
-            0,
-            Math.min(
-                languages.length,
-                3
-            )
-        );
+    selectedLanguages.second =
+        data.secondLanguage ||
+        languages.second ||
+        "";
 
 
-        languagesValid =
-            values.length ===
-                Math.min(
-                    languages.length,
-                    3
-                ) &&
+    selectedLanguages.third =
+        data.thirdLanguage ||
+        languages.third ||
+        "";
 
-            values.every(
-                Boolean
-            ) &&
 
-            new Set(values).size ===
-                values.length;
+    if (firstLanguageSelect) {
+
+        firstLanguageSelect.select.value =
+            selectedLanguages.first;
 
     }
 
 
-    payNowButton.disabled =
-        !languagesValid ||
-        isPaying;
+    if (secondLanguageSelect) {
+
+        secondLanguageSelect.select.value =
+            selectedLanguages.second;
+
+    }
+
+
+    if (thirdLanguageSelect) {
+
+        thirdLanguageSelect.select.value =
+            selectedLanguages.third;
+
+    }
+
 }
 
 
 /* =========================================================
-   PAYMENT
+   LANGUAGE SUMMARY
+   ---------------------------------------------------------
+   If old HTML has #languageRow and #summaryLanguage,
+   keep them updated.
+
+   We show all selected languages together:
+       Kannada • English • Hindi
 ========================================================= */
 
-payNowButton.addEventListener(
-    "click",
-    async () => {
+function updateLanguageSummary() {
 
-        if (
-            !currentCourse ||
-            isPaying
-        ) {
+    const values =
+        [
 
-            return;
+            selectedLanguages.first,
+
+            selectedLanguages.second,
+
+            selectedLanguages.third
+
+        ]
+            .filter(Boolean);
+
+
+    const languageText =
+        values.join(
+            " • "
+        );
+
+
+    const languageRow =
+        document.getElementById(
+            "languageRow"
+        );
+
+
+    const summaryLanguage =
+        document.getElementById(
+            "summaryLanguage"
+        );
+
+
+    if (
+        languageRow &&
+        summaryLanguage
+    ) {
+
+        if (languageText) {
+
+            languageRow.classList.remove(
+                "hidden"
+            );
+
+            summaryLanguage.textContent =
+                languageText;
+
+        } else {
+
+            languageRow.classList.add(
+                "hidden"
+            );
+
+            summaryLanguage.textContent =
+                "—";
+
         }
 
+    }
 
-        const languages =
-            getCourseLanguages(
-                currentCourse
-            );
+}
 
 
-        if (
-            languages.length > 0
-        ) {
+/* =========================================================
+   TEMPORARY CHECKOUT SAVE
+   ---------------------------------------------------------
+   Saves selections while user remains on Checkout.
+========================================================= */
 
-            const valid =
-                validateLanguageSelections(
-                    languages
-                );
+function saveTemporaryCheckoutData() {
 
-
-            if (!valid) {
-
-                return;
-            }
-
-        }
+    if (!currentCourse) {
+        return;
+    }
 
 
-        const selectedLanguageData =
-            getSelectedLanguageData();
+    const pricing =
+        getCoursePricing();
 
 
-        try {
+    const data = {
 
-            isPaying =
-                true;
+        courseId:
+            currentCourse.id,
 
+        courseName:
+            currentCourse.crmCourseName ||
+            "",
 
-            updatePayButton();
+        courseCode:
+            currentCourse.crmCourseCode ||
+            "",
 
+        className:
+            currentCourse.crmClass ||
+            "",
 
-            /*
-             * Save checkout selection temporarily.
-             *
-             * The final enrollment/payment
-             * should be created by the payment
-             * flow/backend after successful payment.
-             */
+        board:
+            currentCourse.crmBoard ||
+            "",
 
-            const checkoutData = {
+        medium:
+            currentCourse.crmMedium ||
+            "",
 
-                crmCourseId:
-                    currentCourse.id,
+        firstLanguage:
+            selectedLanguages.first,
 
-                courseName:
-                    currentCourse.crmCourseName ||
-                    "",
+        secondLanguage:
+            selectedLanguages.second,
 
-                firstLanguage:
-                    selectedLanguageData.first,
+        thirdLanguage:
+            selectedLanguages.third,
 
-                secondLanguage:
-                    selectedLanguageData.second,
+        selectedLanguages: {
 
-                thirdLanguage:
-                    selectedLanguageData.third,
+            first:
+                selectedLanguages.first,
 
-                subjects:
-                    getCourseSubjects(
-                        currentCourse
-                    ),
+            second:
+                selectedLanguages.second,
 
-                amount:
-                    getFinalPrice(
-                        currentCourse
-                    )
+            third:
+                selectedLanguages.third
 
-            };
+        },
 
+        selectedLanguageList:
+            [
 
-            sessionStorage.setItem(
-                "zenova_checkout",
-                JSON.stringify(
-                    checkoutData
-                )
-            );
+                selectedLanguages.first,
 
+                selectedLanguages.second,
 
-            /*
-             * IMPORTANT:
-             *
-             * Keep this destination connected
-             * to your actual payment page/backend.
-             *
-             * For now we send the complete
-             * checkout data through the URL.
-             */
+                selectedLanguages.third
 
-            const params =
-                new URLSearchParams();
+            ]
+                .filter(Boolean),
 
+        price:
+            pricing.price,
 
-            params.set(
-                "id",
-                currentCourse.id
-            );
+        discount:
+            pricing.discount,
 
+        finalPrice:
+            pricing.finalPrice,
 
-            if (
-                selectedLanguageData.first
-            ) {
+        studentUid:
+            currentUser?.uid ||
+            "",
 
-                params.set(
-                    "firstLanguage",
-                    selectedLanguageData.first
-                );
+        savedAt:
+            Date.now()
 
-            }
+    };
 
 
-            if (
-                selectedLanguageData.second
-            ) {
+    sessionStorage.setItem(
+        "zenova_checkout",
+        JSON.stringify(data)
+    );
 
-                params.set(
-                    "secondLanguage",
-                    selectedLanguageData.second
-                );
-
-            }
+}
 
 
-            if (
-                selectedLanguageData.third
-            ) {
+/* =========================================================
+   PAY NOW
+   ---------------------------------------------------------
+   IMPORTANT:
+   The Payment page you uploaded reads:
+       sessionStorage["zenova_checkout"]
 
-                params.set(
-                    "thirdLanguage",
-                    selectedLanguageData.third
-                );
+   Therefore we save EVERYTHING before navigation.
 
-            }
+   We ALSO send courseId in URL as a safety/fallback.
+========================================================= */
 
+if (payNowButton) {
 
-            /*
-             * Change this to your actual
-             * payment route when payment
-             * gateway is connected.
-             */
+    payNowButton.addEventListener(
+        "click",
+        goToPayment
+    );
 
-            window.location.href =
-                `../payment/?${params.toString()}`;
-
-
-        } catch (error) {
-
-            console.error(
-                "CHECKOUT PAYMENT ERROR:",
-                error
-            );
+}
 
 
-            isPaying =
-                false;
+/* Support older button IDs too */
+
+const alternatePayButtons =
+    document.querySelectorAll(
+        "#checkoutPayButton, #buyNowButton, #continuePaymentButton"
+    );
 
 
-            updatePayButton();
+alternatePayButtons.forEach(
+    button => {
 
-            alert(
-                "Unable to continue to payment."
-            );
-
-        }
+        button.addEventListener(
+            "click",
+            goToPayment
+        );
 
     }
 );
 
 
-/* =========================================================
-   SELECTED LANGUAGE DATA
-========================================================= */
+function goToPayment() {
 
-function getSelectedLanguageData() {
+    if (
+        !currentUser ||
+        !currentCourse
+    ) {
 
-    return {
+        alert(
+            "Course information is still loading. Please wait."
+        );
 
-        first:
-            selectedLanguages.first ||
-            "",
-
-        second:
-            selectedLanguages.second ||
-            "",
-
-        third:
-            selectedLanguages.third ||
-            ""
-
-    };
-}
+        return;
+    }
 
 
-/* =========================================================
-   FINAL PRICE
-========================================================= */
+    /* -----------------------------------------------------
+       VALIDATE LANGUAGES
+    ----------------------------------------------------- */
 
-function getFinalPrice(course) {
+    const availableLanguages =
+        getAvailableLanguages();
 
-    const price =
-        getNumber(
-            course.crmPrice ??
-            course.price ??
-            0
+
+    const selected =
+        [
+
+            selectedLanguages.first,
+
+            selectedLanguages.second,
+
+            selectedLanguages.third
+
+        ]
+            .filter(Boolean);
+
+
+    /*
+     * If the course has language options,
+     * require at least the first language.
+     */
+
+    if (
+        availableLanguages.length > 0 &&
+        !selectedLanguages.first
+    ) {
+
+        alert(
+            "Please select the First Language before continuing."
         );
 
 
-    const discount =
-        getNumber(
-            course.crmDiscount ??
-            course.discount ??
-            0
+        firstLanguageSelect?.select?.focus();
+
+        return;
+
+    }
+
+
+    /*
+     * Make absolutely sure the same language
+     * isn't selected twice.
+     */
+
+    const unique =
+        new Set(
+            selected.map(
+                value =>
+                    value.toLowerCase()
+            )
         );
 
 
     if (
-        course.crmFinalPrice !==
-            undefined &&
-        course.crmFinalPrice !==
-            null &&
-        course.crmFinalPrice !==
-            ""
+        unique.size !==
+        selected.length
     ) {
 
-        return Math.max(
-            0,
-            getNumber(
-                course.crmFinalPrice
-            )
+        alert(
+            "Please select different languages."
+        );
+
+        return;
+
+    }
+
+
+    /* -----------------------------------------------------
+       PRICING
+    ----------------------------------------------------- */
+
+    const pricing =
+        getCoursePricing();
+
+
+    /* -----------------------------------------------------
+       COMPLETE CHECKOUT DATA
+    ----------------------------------------------------- */
+
+    const data = {
+
+        /* COURSE */
+
+        courseId:
+            currentCourse.id,
+
+        courseName:
+            currentCourse.crmCourseName ||
+            currentCourse.name ||
+            currentCourse.title ||
+            "",
+
+        courseCode:
+            currentCourse.crmCourseCode ||
+            "",
+
+        className:
+            currentCourse.crmClass ||
+            "",
+
+        board:
+            currentCourse.crmBoard ||
+            "",
+
+        medium:
+            currentCourse.crmMedium ||
+            "",
+
+
+        /* LANGUAGES */
+
+        firstLanguage:
+            selectedLanguages.first,
+
+        secondLanguage:
+            selectedLanguages.second,
+
+        thirdLanguage:
+            selectedLanguages.third,
+
+        selectedLanguages: {
+
+            first:
+                selectedLanguages.first,
+
+            second:
+                selectedLanguages.second,
+
+            third:
+                selectedLanguages.third
+
+        },
+
+        selectedLanguageList:
+            selected,
+
+
+        /*
+         * Compatibility with your CURRENT
+         * Payment page.
+         *
+         * It currently reads:
+         * checkoutData.selectedLanguage
+         */
+
+        selectedLanguage:
+            selected.join(
+                " • "
+            ),
+
+
+        /* PRICE */
+
+        price:
+            pricing.price,
+
+        discount:
+            pricing.discount,
+
+        finalPrice:
+            pricing.finalPrice,
+
+
+        /* STUDENT */
+
+        studentUid:
+            currentUser.uid,
+
+        studentName:
+            currentStudent?.name ||
+            currentStudent?.fullName ||
+            currentUser.displayName ||
+            "",
+
+        phone:
+            currentStudent?.phone ||
+            currentStudent?.mobile ||
+            currentStudent?.phoneNumber ||
+            "",
+
+        email:
+            currentStudent?.email ||
+            currentUser.email ||
+            "",
+
+
+        /* TIMESTAMP */
+
+        savedAt:
+            Date.now()
+
+    };
+
+
+    console.log(
+        "FINAL CHECKOUT DATA:",
+        data
+    );
+
+
+    /* -----------------------------------------------------
+       SAVE
+    ----------------------------------------------------- */
+
+    try {
+
+        sessionStorage.setItem(
+            "zenova_checkout",
+            JSON.stringify(data)
+        );
+
+    } catch (error) {
+
+        console.error(
+            "CHECKOUT STORAGE ERROR:",
+            error
+        );
+
+        alert(
+            "Unable to save your checkout details. Please try again."
+        );
+
+        return;
+
+    }
+
+
+    /* -----------------------------------------------------
+       PAYMENT ROUTE
+       -----------------------------------------------------
+
+       Checkout:
+           /home/checkout/
+
+       Payment:
+           /home/payment/
+
+       Therefore:
+           ../payment/
+
+       Course ID is also included in URL as backup.
+    ----------------------------------------------------- */
+
+    const params =
+        new URLSearchParams();
+
+
+    params.set(
+        "courseId",
+        currentCourse.id
+    );
+
+
+    if (
+        selectedLanguages.first
+    ) {
+
+        params.set(
+            "firstLanguage",
+            selectedLanguages.first
         );
 
     }
 
 
-    return Math.max(
-        0,
-        price - discount
-    );
-}
+    if (
+        selectedLanguages.second
+    ) {
 
-
-/* =========================================================
-   NUMBER
-========================================================= */
-
-function getNumber(value) {
-
-    const number =
-        Number(
-            String(value)
-                .replace(
-                    /[^0-9.-]/g,
-                    ""
-                )
+        params.set(
+            "secondLanguage",
+            selectedLanguages.second
         );
 
+    }
 
-    return Number.isFinite(number)
-        ? number
-        : 0;
+
+    if (
+        selectedLanguages.third
+    ) {
+
+        params.set(
+            "thirdLanguage",
+            selectedLanguages.third
+        );
+
+    }
+
+
+    const paymentUrl =
+        `../payment/?${params.toString()}`;
+
+
+    console.log(
+        "GOING TO PAYMENT:",
+        paymentUrl
+    );
+
+
+    window.location.href =
+        paymentUrl;
+
 }
 
 
 /* =========================================================
-   CURRENCY
+   BACK BUTTON
 ========================================================= */
 
-function formatCurrency(value) {
-
-    return new Intl.NumberFormat(
-        "en-IN",
-        {
-            style: "currency",
-            currency: "INR",
-            maximumFractionDigits: 0
-        }
-    ).format(
-        Number(value) || 0
+const backButton =
+    document.getElementById(
+        "backButton"
     );
+
+
+if (backButton) {
+
+    backButton.addEventListener(
+        "click",
+        () => {
+
+            if (
+                window.history.length > 1
+            ) {
+
+                window.history.back();
+
+            } else {
+
+                window.location.href =
+                    "../batchdetails/";
+
+            }
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   NOTIFICATIONS
+========================================================= */
+
+const notificationButton =
+    document.getElementById(
+        "notificationButton"
+    );
+
+
+if (notificationButton) {
+
+    notificationButton.addEventListener(
+        "click",
+        () => {
+
+            window.location.href =
+                "../notifications/";
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   BOTTOM NAV
+========================================================= */
+
+document
+    .querySelectorAll(
+        "[data-nav]"
+    )
+    .forEach(
+        button => {
+
+            button.addEventListener(
+                "click",
+                () => {
+
+                    const destination =
+                        button.dataset.nav;
+
+
+                    const routes = {
+
+                        home:
+                            "../",
+
+                        courses:
+                            "../batches/",
+
+                        study:
+                            "../study/",
+
+                        ai:
+                            "../ai/",
+
+                        profile:
+                            "../profile/"
+
+                    };
+
+
+                    if (
+                        routes[destination]
+                    ) {
+
+                        window.location.href =
+                            routes[destination];
+
+                    }
+
+                }
+            );
+
+        }
+    );
+
+
+/* =========================================================
+   LOADING
+========================================================= */
+
+function hideLoading() {
+
+    if (loadingScreen) {
+
+        loadingScreen.classList.add(
+            "hidden"
+        );
+
+    }
+
+
+    if (app) {
+
+        app.classList.remove(
+            "hidden"
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   ERROR
+========================================================= */
+
+function showError(message) {
+
+    if (loadingScreen) {
+
+        loadingScreen.classList.add(
+            "hidden"
+        );
+
+    }
+
+
+    if (app) {
+
+        app.classList.remove(
+            "hidden"
+        );
+
+    }
+
+
+    console.error(
+        "CHECKOUT ERROR:",
+        message
+    );
+
+
+    alert(
+        message
+    );
+
+}
+
+
+/* =========================================================
+   MONEY
+========================================================= */
+
+function formatMoney(amount) {
+
+    return (
+        "₹" +
+        Number(
+            amount || 0
+        ).toLocaleString(
+            "en-IN"
+        )
+    );
+
 }
 
 
@@ -1719,24 +2070,19 @@ function formatCurrency(value) {
 
 function formatClass(value) {
 
-    if (!value) {
-        return "Course";
-    }
+    const classes = {
 
-
-    const map = {
-
-        "UNDER_8TH":
+        UNDER_8TH:
             "Under 8th",
 
         "8TH":
-            "8th Standard",
+            "8th",
 
         "9TH":
-            "9th Standard",
+            "9th",
 
         "10TH":
-            "10th Standard",
+            "10th",
 
         "1ST_PUC":
             "1st PUC",
@@ -1748,174 +2094,35 @@ function formatClass(value) {
 
 
     return (
-        map[
-            String(value)
-                .trim()
-                .toUpperCase()
-        ] ||
-        String(value)
+        classes[value] ||
+        String(
+            value || ""
+        )
+            .replace(
+                /_/g,
+                " "
+            )
     );
+
 }
 
 
 /* =========================================================
-   ESCAPE HTML
+   CLEANUP
 ========================================================= */
 
-function escapeHtml(value) {
-
-    return String(value ?? "")
-        .replace(
-            /&/g,
-            "&amp;"
-        )
-        .replace(
-            /</g,
-            "&lt;"
-        )
-        .replace(
-            />/g,
-            "&gt;"
-        )
-        .replace(
-            /"/g,
-            "&quot;"
-        )
-        .replace(
-            /'/g,
-            "&#039;"
-        );
-}
-
-
-/* =========================================================
-   BACK
-========================================================= */
-
-backButton.addEventListener(
-    "click",
+window.addEventListener(
+    "beforeunload",
     () => {
 
         if (
-            window.history.length > 1
+            typeof courseUnsubscribe ===
+            "function"
         ) {
 
-            window.history.back();
+            courseUnsubscribe();
 
-            return;
         }
 
-
-        window.location.href =
-            "../batches/";
-
     }
 );
-
-
-/* =========================================================
-   NOTIFICATIONS
-========================================================= */
-
-notificationButton.addEventListener(
-    "click",
-    () => {
-
-        window.location.href =
-            "../notifications/";
-
-    }
-);
-
-
-/* =========================================================
-   ERROR BACK
-========================================================= */
-
-errorBackButton.addEventListener(
-    "click",
-    () => {
-
-        window.location.href =
-            "../batches/";
-
-    }
-);
-
-
-/* =========================================================
-   LOADING
-========================================================= */
-
-function hideLoading() {
-
-    loadingScreen.classList.add(
-        "hidden"
-    );
-
-
-    app.classList.remove(
-        "hidden"
-    );
-}
-
-
-/* =========================================================
-   ERROR
-========================================================= */
-
-function showError(
-    message
-) {
-
-    console.error(
-        "ZENOVA CHECKOUT:",
-        message
-    );
-
-
-    loadingScreen.classList.add(
-        "hidden"
-    );
-
-
-    app.classList.remove(
-        "hidden"
-    );
-
-
-    document
-        .querySelector(
-            ".checkout-content"
-        )
-        ?.classList.add(
-            "hidden"
-        );
-
-
-    document
-        .querySelector(
-            ".payment-bar"
-        )
-        ?.classList.add(
-            "hidden"
-        );
-
-
-    document
-        .querySelector(
-            ".bottom-nav"
-        )
-        ?.classList.add(
-            "hidden"
-        );
-
-
-    errorMessage.textContent =
-        message;
-
-
-    errorSection.classList.remove(
-        "hidden"
-    );
-}
