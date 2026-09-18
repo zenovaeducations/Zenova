@@ -1398,7 +1398,7 @@ if (buyNowBtn) {
        */
 
       window.location.href =
-        `../checkout/?id=${encodeURIComponent(courseId)}`;
+        `../checkout/?courseId=${encodeURIComponent(courseId)}`;
 
     }
 
