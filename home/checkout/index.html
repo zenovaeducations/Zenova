@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    >
+
+    <title>Checkout | Zenova</title>
+
+    <link rel="stylesheet" href="./checkout.css">
+</head>
+
+<body>
+
+    <!-- =========================
+         LOADING
+    ========================== -->
+    <div id="loadingScreen" class="loading-screen">
+        <div class="loading-logo">Z</div>
+        <div class="loading-ring"></div>
+        <p>Preparing your checkout...</p>
+    </div>
+
+
+    <!-- =========================
+         ERROR
+    ========================== -->
+    <section id="errorScreen" class="error-screen hidden">
+
+        <div class="error-icon">!</div>
+
+        <h1>Something went wrong</h1>
+
+        <p id="errorMessage">
+            We couldn't load this checkout.
+        </p>
+
+        <button id="errorBackButton" class="primary-button">
+            Go Back
+        </button>
+
+    </section>
+
+
+    <!-- =========================
+         MAIN APP
+    ========================== -->
+    <main id="checkoutApp" class="checkout-app hidden">
+
+        <!-- HEADER -->
+        <header class="checkout-header">
+
+            <button id="backButton" class="icon-button" aria-label="Go back">
+                <span>←</span>
+            </button>
+
+            <div class="header-title">
+                <span>Checkout</span>
+                <small>Zenova Educations</small>
+            </div>
+
+            <div class="header-spacer"></div>
+
+        </header>
+
+
+        <!-- CONTENT -->
+        <div class="checkout-container">
+
+            <!-- =========================
+                 COURSE CARD
+            ========================== -->
+            <section class="course-card">
+
+                <div class="course-image-wrapper">
+
+                    <img
+                        id="courseImage"
+                        class="course-image"
+                        src=""
+                        alt="Course"
+                    >
+
+                    <div
+                        id="courseImageFallback"
+                        class="course-image-fallback"
+                    >
+                        Z
+                    </div>
+
+                </div>
+
+                <div class="course-information">
+
+                    <div class="course-label">
+                        SELECTED COURSE
+                    </div>
+
+                    <h1 id="courseName">
+                        —
+                    </h1>
+
+                    <div class="course-meta">
+
+                        <span id="courseClass">
+                            —
+                        </span>
+
+                        <span class="meta-dot">•</span>
+
+                        <span id="courseBoard">
+                            —
+                        </span>
+
+                    </div>
+
+                    <div
+                        id="courseCode"
+                        class="course-code hidden"
+                    >
+                        —
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =========================
+                 SUBJECTS
+            ========================== -->
+            <section
+                id="subjectsSection"
+                class="section-card"
+            >
+
+                <div class="section-heading">
+
+                    <div>
+                        <span class="section-eyebrow">
+                            INCLUDED
+                        </span>
+
+                        <h2>Subjects</h2>
+                    </div>
+
+                    <span
+                        id="subjectCount"
+                        class="count-badge"
+                    >
+                        0
+                    </span>
+
+                </div>
+
+                <div
+                    id="subjectsList"
+                    class="subjects-list"
+                ></div>
+
+                <div
+                    id="subjectsEmpty"
+                    class="empty-message hidden"
+                >
+                    No subject information is available for this course.
+                </div>
+
+            </section>
+
+
+            <!-- =========================
+                 LANGUAGE ORDER
+            ========================== -->
+            <section
+                id="languageSection"
+                class="section-card hidden"
+            >
+
+                <div class="section-heading">
+
+                    <div>
+                        <span class="section-eyebrow">
+                            STUDY PREFERENCE
+                        </span>
+
+                        <h2>Language order</h2>
+
+                        <p>
+                            Choose the order in which you want to study the
+                            available languages.
+                        </p>
+                    </div>
+
+                </div>
+
+
+                <div
+                    id="languageOptions"
+                    class="language-options"
+                ></div>
+
+
+                <div
+                    id="languageError"
+                    class="field-error hidden"
+                ></div>
+
+            </section>
+
+
+            <!-- =========================
+                 ORDER SUMMARY
+            ========================== -->
+            <section class="section-card">
+
+                <div class="section-heading">
+
+                    <div>
+                        <span class="section-eyebrow">
+                            ORDER
+                        </span>
+
+                        <h2>Summary</h2>
+                    </div>
+
+                </div>
+
+
+                <div class="summary-list">
+
+                    <div class="summary-row">
+                        <span>Course</span>
+                        <strong id="summaryCourseName">
+                            —
+                        </strong>
+                    </div>
+
+                    <div class="summary-row">
+                        <span>Class</span>
+                        <strong id="summaryClass">
+                            —
+                        </strong>
+                    </div>
+
+                    <div
+                        id="summaryLanguageFirstRow"
+                        class="summary-row hidden"
+                    >
+                        <span>1st Language</span>
+                        <strong id="summaryLanguageFirst">
+                            —
+                        </strong>
+                    </div>
+
+                    <div
+                        id="summaryLanguageSecondRow"
+                        class="summary-row hidden"
+                    >
+                        <span>2nd Language</span>
+                        <strong id="summaryLanguageSecond">
+                            —
+                        </strong>
+                    </div>
+
+                    <div
+                        id="summaryLanguageThirdRow"
+                        class="summary-row hidden"
+                    >
+                        <span>3rd Language</span>
+                        <strong id="summaryLanguageThird">
+                            —
+                        </strong>
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =========================
+                 PRICE
+            ========================== -->
+            <section class="price-card">
+
+                <div class="price-row">
+
+                    <span>Course price</span>
+
+                    <span id="originalPrice">
+                        ₹0
+                    </span>
+
+                </div>
+
+
+                <div
+                    id="discountRow"
+                    class="price-row discount-row hidden"
+                >
+
+                    <span>Discount</span>
+
+                    <span id="discountAmount">
+                        -₹0
+                    </span>
+
+                </div>
+
+
+                <div class="price-divider"></div>
+
+
+                <div class="price-total">
+
+                    <span>Total</span>
+
+                    <strong id="finalPrice">
+                        ₹0
+                    </strong>
+
+                </div>
+
+            </section>
+
+
+            <!-- BOTTOM SPACE -->
+            <div class="bottom-space"></div>
+
+        </div>
+
+
+        <!-- =========================
+             BOTTOM ACTION
+        ========================== -->
+        <div class="checkout-bottom-bar">
+
+            <div class="bottom-total">
+
+                <span>Total</span>
+
+                <strong id="bottomPrice">
+                    ₹0
+                </strong>
+
+            </div>
+
+
+            <button
+                id="continueButton"
+                class="continue-button"
+                type="button"
+            >
+
+                <span>Continue</span>
+
+                <span class="continue-arrow">
+                    →
+                </span>
+
+            </button>
+
+        </div>
+
+    </main>
+
+
+    <script type="module" src="./checkout.js"></script>
+
+</body>
+                          </html>
