@@ -937,7 +937,7 @@ function createLearningCard(
             () => {
 
                 const url =
-                    `../subject/?subjectId=${encodeURIComponent(
+                    `../chapters/?subjectId=${encodeURIComponent(
                         subjectId
                     )}&courseId=${encodeURIComponent(
                         currentCourseId
