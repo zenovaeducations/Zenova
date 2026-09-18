@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Chapters | Zenova</title>
+
+    <link
+        rel="stylesheet"
+        href="./chapters.css"
+    >
+
+</head>
+
+
+<body>
+
+<main class="page">
+
+
+    <!-- HEADER -->
+
+    <header class="topbar">
+
+        <button
+            id="backButton"
+            class="back-button"
+            type="button"
+        >
+            ←
+        </button>
+
+
+        <div class="header-title">
+
+            <div class="eyebrow">
+                STUDY NOW
+            </div>
+
+            <h1 id="subjectName">
+                Loading...
+            </h1>
+
+            <div
+                id="subjectMeta"
+                class="subject-meta"
+            >
+                Loading...
+            </div>
+
+        </div>
+
+    </header>
+
+
+
+    <!-- SUBJECT INFO -->
+
+    <section class="subject-card">
+
+        <div class="subject-icon">
+            Z
+        </div>
+
+
+        <div class="subject-info">
+
+            <div
+                id="courseName"
+                class="course-name"
+            >
+                Loading...
+            </div>
+
+
+            <div class="subject-details">
+
+                <span
+                    id="languageBadge"
+                    class="language-badge"
+                >
+                    —
+                </span>
+
+
+                <span
+                    id="chapterCount"
+                >
+                    —
+                </span>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- CHAPTER SECTION -->
+
+    <section class="chapters-section">
+
+
+        <div class="section-heading">
+
+            <div>
+
+                <div class="eyebrow">
+                    COURSE CONTENT
+                </div>
+
+                <h2>
+                    Chapters
+                </h2>
+
+                <p>
+                    Select a chapter to start learning.
+                </p>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- LOADING -->
+
+        <div
+            id="loadingState"
+            class="state-card"
+        >
+
+            <div class="loader"></div>
+
+            <p>
+                Loading chapters...
+            </p>
+
+        </div>
+
+
+
+        <!-- ERROR -->
+
+        <div
+            id="errorState"
+            class="state-card hidden"
+        >
+
+            <div class="state-icon">
+                !
+            </div>
+
+            <h3>
+                Unable to load chapters
+            </h3>
+
+            <p id="errorMessage">
+                Something went wrong.
+            </p>
+
+            <button
+                id="retryButton"
+                class="dark-button"
+                type="button"
+            >
+                TRY AGAIN
+            </button>
+
+        </div>
+
+
+
+        <!-- EMPTY -->
+
+        <div
+            id="emptyState"
+            class="state-card hidden"
+        >
+
+            <div class="state-icon">
+                +
+            </div>
+
+            <h3>
+                No chapters yet
+            </h3>
+
+            <p>
+                Chapters for this subject have not been
+                added yet.
+            </p>
+
+        </div>
+
+
+
+        <!-- CHAPTER LIST -->
+
+        <div
+            id="chaptersList"
+            class="chapters-list"
+        ></div>
+
+
+    </section>
+
+
+
+    <div class="bottom-space"></div>
+
+
+</main>
+
+
+
+<script
+    type="module"
+    src="./chapters.js"
+></script>
+
+</body>
+
+</html>
