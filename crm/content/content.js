@@ -399,99 +399,119 @@ subjectSelect.addEventListener(
    LOAD CHAPTERS
 ========================================================= */
 
-async function loadChapters() {
+async function loadSubjects(courseId) {
 
-  chaptersContainer.innerHTML =
-    `<div class="no-content">Loading chapters...</div>`;
+  subjectSelect.innerHTML =
+    `<option value="">Select a subject</option>`;
+
+  subjectSelect.disabled = true;
+
+  const subjectMap = new Map();
+
+  const queries = [
+
+    query(
+      collection(db, "hybridSubjects"),
+      where("courseId", "==", courseId)
+    ),
+
+    query(
+      collection(db, "hybridSubjects"),
+      where("crmCourseId", "==", courseId)
+    )
+
+  ];
+
+  for (const q of queries) {
+
+    try {
+
+      const snapshot = await getDocs(q);
+
+      snapshot.forEach(docSnap => {
+
+        const data = docSnap.data();
+
+        const subjectName =
+          data.subjectName ||
+          data.name ||
+          data.title ||
+          data.crmSubjectName ||
+          "";
+
+        const cleanName =
+          subjectName
+            .trim()
+            .replace(/\s+/g, " ")
+            .toLowerCase();
+
+        if (!cleanName) return;
+
+        /*
+         * IMPORTANT:
+         * Same subject name = same logical subject
+         */
+        if (!subjectMap.has(cleanName)) {
+
+          subjectMap.set(cleanName, {
+            id: docSnap.id,
+            ...data,
+            displayName: subjectName.trim()
+          });
+
+        }
+
+      });
+
+    } catch (error) {
+
+      console.warn(
+        "Subject query failed:",
+        error
+      );
+
+    }
+
+  }
 
 
-  try {
-
-    const q =
-      query(
-        collection(db, "hybridChapters"),
-
-        where(
-          "courseId",
-          "==",
-          selectedCourse.id
-        ),
-
-        where(
-          "subjectId",
-          "==",
-          selectedSubject.id
+  const subjects =
+    Array.from(subjectMap.values())
+      .sort((a, b) =>
+        a.displayName.localeCompare(
+          b.displayName
         )
       );
 
 
-    const snapshot =
-      await getDocs(q);
+  if (!subjects.length) {
 
+    subjectSelect.innerHTML =
+      `<option value="">No subjects found</option>`;
 
-    const chapters =
-      snapshot.docs.map(docSnap => ({
-        id: docSnap.id,
-        ...docSnap.data()
-      }));
-
-
-    chapters.sort(
-      (a, b) =>
-        Number(a.chapterNumber || 0) -
-        Number(b.chapterNumber || 0)
-    );
-
-
-    if (!chapters.length) {
-
-      chaptersContainer.innerHTML = `
-        <div class="empty-state">
-          <div class="empty-icon">＋</div>
-
-          <h2>No chapters yet</h2>
-
-          <p>
-            Add the first chapter for this subject.
-          </p>
-        </div>
-      `;
-
-      return;
-
-    }
-
-
-    chaptersContainer.innerHTML = "";
-
-
-    for (const chapter of chapters) {
-
-      const card =
-        await createChapterCard(chapter);
-
-      chaptersContainer.appendChild(card);
-
-    }
-
-
-  } catch (error) {
-
-    console.error(
-      "Error loading chapters:",
-      error
-    );
-
-    chaptersContainer.innerHTML =
-      `<div class="no-content">
-        Unable to load chapters.
-      </div>`;
+    return;
 
   }
 
+
+  subjects.forEach(subject => {
+
+    const option =
+      document.createElement("option");
+
+    option.value =
+      subject.id;
+
+    option.textContent =
+      subject.displayName;
+
+    subjectSelect.appendChild(option);
+
+  });
+
+
+  subjectSelect.disabled = false;
 }
-
-
 /* =========================================================
    CREATE CHAPTER CARD
 ========================================================= */
