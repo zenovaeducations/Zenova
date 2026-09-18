@@ -1,498 +1,381 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Study Now | Zenova</title>
 
-    <title>Zenova Educations | Study Now</title>
-
-    <link rel="stylesheet" href="study.css">
-
-    <link
-        href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
-        rel="stylesheet">
-
-    <link
-        href="https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.css"
-        rel="stylesheet">
+  <link rel="stylesheet" href="study.css" />
 </head>
 
 <body>
 
-<div class="app">
+  <!-- HEADER -->
+  <header class="top-header">
 
-    <!-- =====================================================
-         LOADER
-    ====================================================== -->
+    <button id="backButton" class="icon-button">
+      ←
+    </button>
 
-    <div id="loader" class="loader-screen">
-
-        <div class="loader-ring">
-            <div class="loader-z">Z</div>
-        </div>
-
-        <div class="loader-text">
-            Loading Study...
-        </div>
-
+    <div class="header-title">
+      <span>Study Now</span>
     </div>
 
+    <button id="notificationButton" class="icon-button">
+      🔔
+    </button>
 
-    <!-- =====================================================
-         APP
-    ====================================================== -->
+  </header>
 
-    <div id="app" class="hidden">
 
-        <!-- =================================================
-             HEADER
-        ================================================== -->
+  <!-- LOADING -->
+  <div id="loadingScreen" class="loading-screen">
 
-        <header class="top-header">
+    <div class="loading-ring"></div>
 
-            <button
-                class="back-button"
-                id="backButton"
-                aria-label="Go back">
+    <div>Loading your study space...</div>
 
-                <i class="ri-arrow-left-line"></i>
+  </div>
 
-            </button>
 
+  <!-- MAIN APP -->
+  <main id="app" class="app hidden">
 
-            <div class="brand">
+    <!-- ========================= -->
+    <!-- ENROLLED BATCH -->
+    <!-- ========================= -->
 
-                <div class="brand-name">
-                    ZENOVA
-                </div>
+    <section class="section">
 
-                <div class="brand-subtitle">
-                    EDUCATIONS
-                </div>
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">YOUR BATCH</p>
+          <h1 id="batchName">—</h1>
+        </div>
+      </div>
 
-            </div>
 
+      <div id="batchCard" class="batch-card">
 
-            <a
-                href="../notifications/"
-                class="notification-button">
+        <div class="batch-image-wrapper">
 
-                <i class="ri-notification-3-line"></i>
+          <img
+            id="batchImage"
+            class="batch-image"
+            src=""
+            alt="Batch"
+          />
 
-            </a>
+          <div
+            id="batchImageFallback"
+            class="batch-image-fallback"
+          >
+            Z
+          </div>
 
-        </header>
+        </div>
 
 
-        <!-- =================================================
-             MAIN
-        ================================================== -->
+        <div class="batch-info">
 
-        <main class="main-content">
+          <div class="enrolled-badge">
+            ✓ ENROLLED
+          </div>
 
-            <!-- PAGE TITLE -->
+          <h2 id="batchTitle">—</h2>
 
-            <section class="page-heading">
+          <p id="batchMeta">
+            —
+          </p>
 
-                <div>
+        </div>
 
-                    <span class="eyebrow">
-                        LEARNING
-                    </span>
+      </div>
 
-                    <h1>
-                        Study Now
-                    </h1>
+    </section>
 
-                    <p id="studentMeta">
-                        Loading...
-                    </p>
 
-                </div>
+    <!-- ========================= -->
+    <!-- LIVE CLASS -->
+    <!-- ========================= -->
 
-            </section>
+    <section
+      id="liveClassSection"
+      class="section hidden"
+    >
 
+      <div class="section-heading">
 
-            <!-- =================================================
-                 PURCHASED COURSE
-            ================================================== -->
+        <div>
+          <p class="eyebrow">LIVE CLASS</p>
+          <h2 id="liveHeading">
+            Live class
+          </h2>
+        </div>
 
-            <section
-                id="purchasedSection"
-                class="section hidden">
+        <span
+          id="liveStatus"
+          class="live-status"
+        >
+          LIVE
+        </span>
 
-                <div class="section-heading">
+      </div>
 
-                    <div>
 
-                        <span>
-                            YOUR BATCH
-                        </span>
+      <div id="liveClassCard" class="live-card">
 
-                        <h2 id="purchasedCourseName">
-                            My Course
-                        </h2>
+        <div class="live-thumbnail-wrapper">
 
-                    </div>
+          <img
+            id="liveThumbnail"
+            class="live-thumbnail"
+            src=""
+            alt="Live class"
+          />
 
-                    <i class="ri-book-open-line"></i>
+          <div
+            id="liveThumbnailFallback"
+            class="thumbnail-fallback"
+          >
+            ▶
+          </div>
 
-                </div>
+          <span class="live-pill">
+            ● LIVE
+          </span>
 
+        </div>
 
-                <article
-                    class="course-card"
-                    id="purchasedCourseCard">
 
-                    <div class="course-image-wrapper">
+        <div class="live-content">
 
-                        <img
-                            id="purchasedCourseImage"
-                            src=""
-                            alt="Course">
+          <p
+            id="liveSubject"
+            class="subject-label"
+          >
+            —
+          </p>
 
-                    </div>
+          <h3 id="liveTopic">
+            —
+          </h3>
 
+          <p id="liveTeacher">
+            Teacher: —
+          </p>
 
-                    <div class="course-card-content">
+          <p
+            id="liveTime"
+            class="live-time"
+          >
+            —
+          </p>
 
-                        <div class="course-badge">
-                            ENROLLED
-                        </div>
+          <button
+            id="joinLiveButton"
+            class="primary-button"
+          >
+            JOIN LIVE
+          </button>
 
-                        <h3 id="purchasedCourseTitle">
-                            Course
-                        </h3>
+        </div>
 
-                        <p id="purchasedCourseMeta">
-                            Course details
-                        </p>
+      </div>
 
+    </section>
 
-                        <div class="progress-area">
 
-                            <div class="progress-label">
+    <!-- ========================= -->
+    <!-- STUDY PLAN -->
+    <!-- ========================= -->
 
-                                <span>
-                                    Your Progress
-                                </span>
+    <section class="section">
 
-                                <strong id="courseProgress">
-                                    0%
-                                </strong>
+      <div class="section-heading">
 
-                            </div>
+        <div>
+          <p class="eyebrow">PLAN</p>
+          <h2>Study Plan</h2>
+        </div>
 
+      </div>
 
-                            <div class="progress-track">
 
-                                <div
-                                    id="courseProgressBar"
-                                    class="progress-bar">
-                                </div>
+      <!-- DATE SELECTOR -->
 
-                            </div>
+      <div
+        id="dateSelector"
+        class="date-selector"
+      ></div>
 
-                        </div>
 
-                    </div>
+      <!-- SELECTED DAY -->
 
-                </article>
+      <div
+        id="selectedDateLabel"
+        class="selected-date-label"
+      >
+        —
+      </div>
 
-            </section>
 
+      <div
+        id="studyPlanContainer"
+        class="study-plan-container"
+      >
 
-            <!-- =================================================
-                 FREE CONTENT
-            ================================================== -->
+        <div class="empty-state">
+          Select a date
+        </div>
 
-            <section
-                id="freeSection"
-                class="section">
+      </div>
 
-                <div class="section-heading">
+    </section>
 
-                    <div>
 
-                        <span>
-                            FREE LEARNING
-                        </span>
+    <!-- ========================= -->
+    <!-- START LEARNING -->
+    <!-- ========================= -->
 
-                        <h2>
-                            Learn for Free
-                        </h2>
+    <section class="section">
 
-                    </div>
+      <div class="section-heading">
 
-                    <i class="ri-play-circle-line"></i>
+        <div>
+          <p class="eyebrow">LEARNING</p>
+          <h2>Start Learning</h2>
+        </div>
 
-                </div>
+      </div>
 
 
-                <div id="freeContentList"
-                     class="free-content-list">
+      <div
+        id="subjectsContainer"
+        class="subjects-container"
+      ></div>
 
-                    <div class="section-loading">
-                        Loading free content...
-                    </div>
+    </section>
 
-                </div>
 
-            </section>
+    <!-- ========================= -->
+    <!-- MISSED CLASSES -->
+    <!-- ========================= -->
 
+    <section class="section recordings-section">
 
-            <!-- =================================================
-                 LIVE CLASSES
-            ================================================== -->
+      <div class="revision-card">
 
-            <section class="section">
+        <div class="revision-icon">
+          ▶
+        </div>
 
-                <div class="section-heading">
+        <div class="revision-content">
 
-                    <div>
+          <p class="eyebrow">
+            MISSED A CLASS?
+          </p>
 
-                        <span>
-                            LIVE
-                        </span>
+          <h2>
+            Want to revise the live classes?
+          </h2>
 
-                        <h2>
-                            Live Classes
-                        </h2>
+          <p>
+            Watch previously conducted live classes
+            subject-wise and date-wise.
+          </p>
 
-                    </div>
+          <button
+            id="recordingsButton"
+            class="secondary-button"
+          >
+            VIEW RECORDED CLASSES →
+          </button>
 
-                    <i class="ri-live-line"></i>
+        </div>
 
-                </div>
+      </div>
 
+    </section>
 
-                <div
-                    id="liveClassesList"
-                    class="live-list">
+  </main>
 
-                    <div class="section-loading">
-                        Loading classes...
-                    </div>
 
-                </div>
+  <!-- ERROR -->
+  <section
+    id="errorSection"
+    class="error-section hidden"
+  >
 
-            </section>
-
-
-            <!-- =================================================
-                 DATE SCHEDULE
-            ================================================== -->
-
-            <section class="section">
-
-                <div class="section-heading">
-
-                    <div>
-
-                        <span>
-                            SCHEDULE
-                        </span>
-
-                        <h2>
-                            Class Schedule
-                        </h2>
-
-                    </div>
-
-                    <i class="ri-calendar-schedule-line"></i>
-
-                </div>
-
-
-                <div class="date-selector">
-
-                    <button
-                        id="previousDate"
-                        class="date-arrow">
-
-                        <i class="ri-arrow-left-s-line"></i>
-
-                    </button>
-
-
-                    <div
-                        id="dateList"
-                        class="date-list">
-                    </div>
-
-
-                    <button
-                        id="nextDate"
-                        class="date-arrow">
-
-                        <i class="ri-arrow-right-s-line"></i>
-
-                    </button>
-
-                </div>
-
-
-                <div
-                    id="scheduleList"
-                    class="schedule-list">
-
-                    <div class="section-loading">
-                        Loading schedule...
-                    </div>
-
-                </div>
-
-            </section>
-
-
-            <!-- =================================================
-                 SUBJECTS
-            ================================================== -->
-
-            <section class="section subjects-section">
-
-                <div class="section-heading">
-
-                    <div>
-
-                        <span>
-                            COURSE CONTENT
-                        </span>
-
-                        <h2>
-                            Subjects
-                        </h2>
-
-                    </div>
-
-                    <i class="ri-book-2-line"></i>
-
-                </div>
-
-
-                <div
-                    id="subjectsList"
-                    class="subjects-list">
-
-                    <div class="section-loading">
-                        Loading subjects...
-                    </div>
-
-                </div>
-
-            </section>
-
-
-            <!-- =================================================
-                 ERROR
-            ================================================== -->
-
-            <section
-                id="errorState"
-                class="error-state hidden">
-
-                <div class="error-icon">
-                    <i class="ri-error-warning-line"></i>
-                </div>
-
-                <h3>
-                    Unable to load Study
-                </h3>
-
-                <p id="errorMessage">
-                    Something went wrong.
-                </p>
-
-                <button
-                    id="retryButton"
-                    class="primary-button">
-
-                    Try Again
-
-                </button>
-
-            </section>
-
-        </main>
-
-
-        <!-- =================================================
-             BOTTOM NAV
-        ================================================== -->
-
-        <nav class="bottom-nav">
-
-            <a href="../"
-               class="nav-item">
-
-                <i class="ri-home-5-line"></i>
-
-                <span>
-                    Home
-                </span>
-
-            </a>
-
-
-            <a href="../batches/"
-               class="nav-item">
-
-                <i class="ri-book-open-line"></i>
-
-                <span>
-                    Courses
-                </span>
-
-            </a>
-
-
-            <a href="./"
-               class="nav-item active">
-
-                <i class="ri-graduation-cap-line"></i>
-
-                <span>
-                    Study Now
-                </span>
-
-            </a>
-
-
-            <a href="../ai/"
-               class="nav-item">
-
-                <i class="ri-sparkling-2-line"></i>
-
-                <span>
-                    Zenova AI
-                </span>
-
-            </a>
-
-
-            <a href="../profile/"
-               class="nav-item">
-
-                <i class="ri-user-3-line"></i>
-
-                <span>
-                    Profile
-                </span>
-
-            </a>
-
-        </nav>
-
+    <div class="error-icon">
+      !
     </div>
 
-</div>
+    <h2>Unable to load Study Now</h2>
+
+    <p id="errorMessage">
+      Something went wrong.
+    </p>
+
+    <button
+      id="errorBackButton"
+      class="primary-button"
+    >
+      GO BACK
+    </button>
+
+  </section>
 
 
-<script type="module" src="study.js"></script>
+  <!-- BOTTOM NAV -->
+
+  <nav class="bottom-nav">
+
+    <a href="../" class="nav-item">
+      <span>⌂</span>
+      <small>Home</small>
+    </a>
+
+    <a
+      href="../batches/"
+      class="nav-item"
+    >
+      <span>▣</span>
+      <small>Courses</small>
+    </a>
+
+    <a
+      href="./"
+      class="nav-item active"
+    >
+      <span>▶</span>
+      <small>Study</small>
+    </a>
+
+    <a
+      href="../ai/"
+      class="nav-item"
+    >
+      <span>✦</span>
+      <small>AI</small>
+    </a>
+
+    <a
+      href="../profile/"
+      class="nav-item"
+    >
+      <span>◯</span>
+      <small>Profile</small>
+    </a>
+
+  </nav>
+
+
+  <script type="module" src="study.js"></script>
 
 </body>
 </html>
