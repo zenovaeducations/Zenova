@@ -1,2193 +1,1406 @@
-/* ============================================================
-   ZENOVA EDUCATIONS
-   STUDY NOW
-============================================================ */
+import { auth, db } from "../../firebase/firebase-config.js";
 
 import {
-    auth,
-    db
-} from "../../firebase/firebase-config.js";
-
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  onSnapshot,
+  query,
+  where
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
 import {
-    onAuthStateChanged
+  onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
 
 
-import {
-    collection,
-    doc,
-    getDoc,
-    getDocs,
-    onSnapshot,
-    query,
-    where
-} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+/* =========================================
+   DOM
+========================================= */
 
-
-/* ============================================================
-   ELEMENTS
-============================================================ */
-
-const loader =
-    document.getElementById("loader");
+const loadingScreen =
+  document.getElementById("loadingScreen");
 
 const app =
-    document.getElementById("app");
+  document.getElementById("app");
 
-const backButton =
-    document.getElementById("backButton");
-
-const studentMeta =
-    document.getElementById("studentMeta");
-
-const purchasedSection =
-    document.getElementById("purchasedSection");
-
-const purchasedCourseImage =
-    document.getElementById("purchasedCourseImage");
-
-const purchasedCourseTitle =
-    document.getElementById("purchasedCourseTitle");
-
-const purchasedCourseMeta =
-    document.getElementById("purchasedCourseMeta");
-
-const courseProgress =
-    document.getElementById("courseProgress");
-
-const courseProgressBar =
-    document.getElementById("courseProgressBar");
-
-const purchasedCourseCard =
-    document.getElementById("purchasedCourseCard");
-
-const freeContentList =
-    document.getElementById("freeContentList");
-
-const liveClassesList =
-    document.getElementById("liveClassesList");
-
-const dateList =
-    document.getElementById("dateList");
-
-const scheduleList =
-    document.getElementById("scheduleList");
-
-const subjectsList =
-    document.getElementById("subjectsList");
-
-const previousDate =
-    document.getElementById("previousDate");
-
-const nextDate =
-    document.getElementById("nextDate");
-
-const errorState =
-    document.getElementById("errorState");
+const errorSection =
+  document.getElementById("errorSection");
 
 const errorMessage =
-    document.getElementById("errorMessage");
+  document.getElementById("errorMessage");
 
-const retryButton =
-    document.getElementById("retryButton");
+const backButton =
+  document.getElementById("backButton");
+
+const errorBackButton =
+  document.getElementById("errorBackButton");
+
+const batchName =
+  document.getElementById("batchName");
+
+const batchTitle =
+  document.getElementById("batchTitle");
+
+const batchMeta =
+  document.getElementById("batchMeta");
+
+const batchImage =
+  document.getElementById("batchImage");
+
+const batchImageFallback =
+  document.getElementById("batchImageFallback");
+
+const liveClassSection =
+  document.getElementById("liveClassSection");
+
+const liveThumbnail =
+  document.getElementById("liveThumbnail");
+
+const liveThumbnailFallback =
+  document.getElementById("liveThumbnailFallback");
+
+const liveSubject =
+  document.getElementById("liveSubject");
+
+const liveTopic =
+  document.getElementById("liveTopic");
+
+const liveTeacher =
+  document.getElementById("liveTeacher");
+
+const liveTime =
+  document.getElementById("liveTime");
+
+const joinLiveButton =
+  document.getElementById("joinLiveButton");
+
+const dateSelector =
+  document.getElementById("dateSelector");
+
+const selectedDateLabel =
+  document.getElementById("selectedDateLabel");
+
+const studyPlanContainer =
+  document.getElementById("studyPlanContainer");
+
+const subjectsContainer =
+  document.getElementById("subjectsContainer");
+
+const recordingsButton =
+  document.getElementById("recordingsButton");
 
 
-/* ============================================================
-   URL
-============================================================ */
-
-const params =
-    new URLSearchParams(
-        window.location.search
-    );
-
-
-/*
- * Continue Learning / Home can send:
- *
- * ?courseId=COURSE_ID
- *
- * We also accept batchId.
- */
-
-const requestedCourseId =
-    params.get("courseId") ||
-    params.get("batchId") ||
-    params.get("id") ||
-    null;
-
-
-/* ============================================================
+/* =========================================
    STATE
-============================================================ */
+========================================= */
 
 let currentUser = null;
 
-let student = null;
+let enrollment = null;
 
-let purchasedCourse = null;
+let courseId = null;
 
-let purchasedEnrollment = null;
-
-let enrollments = [];
+let course = null;
 
 let subjects = [];
 
-let chapters = [];
+let studyPlans = [];
 
-let freeContent = [];
+let selectedDate = null;
 
-let liveClasses = [];
-
-let selectedDate = new Date();
-
-let dateOffset = 0;
-
-let unsubscribeEnrollments = null;
-
-let unsubscribeLiveClasses = null;
+let currentLiveClass = null;
 
 
-/* ============================================================
+/* =========================================
    HELPERS
-============================================================ */
-
-function $(id) {
-    return document.getElementById(id);
-}
-
-
-function escapeHtml(value) {
-
-    return String(value ?? "")
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
-
-}
-
-
-function formatDate(date) {
-
-    return date.toISOString()
-        .split("T")[0];
-
-}
-
-
-function formatDateReadable(date) {
-
-    return new Intl.DateTimeFormat(
-        "en-IN",
-        {
-            day: "numeric",
-            month: "short",
-            year: "numeric"
-        }
-    ).format(date);
-
-}
-
-
-function formatTime(value) {
-
-    if (!value) {
-        return "";
-    }
-
-    /*
-     * Handles:
-     *
-     * "18:00"
-     * "18:30"
-     * Firestore Timestamp
-     * JS Date
-     */
-
-    if (
-        value?.toDate
-    ) {
-        value =
-            value.toDate();
-    }
-
-    if (
-        value instanceof Date
-    ) {
-
-        return value.toLocaleTimeString(
-            "en-IN",
-            {
-                hour: "numeric",
-                minute: "2-digit"
-            }
-        );
-
-    }
-
-
-    const stringValue =
-        String(value);
-
-    if (
-        /^\d{1,2}:\d{2}$/.test(
-            stringValue
-        )
-    ) {
-
-        const [
-            hours,
-            minutes
-        ] =
-            stringValue
-                .split(":")
-                .map(Number);
-
-        const d =
-            new Date();
-
-        d.setHours(
-            hours,
-            minutes,
-            0,
-            0
-        );
-
-        return d.toLocaleTimeString(
-            "en-IN",
-            {
-                hour: "numeric",
-                minute: "2-digit"
-            }
-        );
-
-    }
-
-
-    return stringValue;
-
-}
-
-
-function getImage(value) {
-
-    return (
-        value?.crmImageUrl ||
-        value?.imageUrl ||
-        value?.courseImageUrl ||
-        value?.thumbnailUrl ||
-        value?.thumbnail ||
-        ""
-    );
-
-}
-
+========================================= */
 
 function showApp() {
 
-    loader.classList.add(
-        "hidden"
-    );
+  loadingScreen.classList.add("hidden");
 
-    app.classList.remove(
-        "hidden"
-    );
+  errorSection.classList.add("hidden");
+
+  app.classList.remove("hidden");
 
 }
 
 
 function showError(message) {
 
-    loader.classList.add(
-        "hidden"
-    );
+  loadingScreen.classList.add("hidden");
 
-    app.classList.remove(
-        "hidden"
-    );
+  app.classList.add("hidden");
 
-    errorState.classList.remove(
-        "hidden"
-    );
+  errorMessage.textContent = message;
 
-    errorMessage.textContent =
-        message ||
-        "Something went wrong.";
+  errorSection.classList.remove("hidden");
 
 }
 
 
-/* ============================================================
+function escapeHtml(value) {
+
+  if (value === null || value === undefined) {
+    return "";
+  }
+
+  return String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+
+function getCourseIdFromEnrollment(data) {
+
+  return (
+    data.courseId ||
+    data.crmCourseId ||
+    data.batchId ||
+    data.courseID ||
+    null
+  );
+
+}
+
+
+function normalizeDate(value) {
+
+  if (!value) {
+    return null;
+  }
+
+  if (typeof value === "string") {
+    return value.substring(0, 10);
+  }
+
+  if (
+    value &&
+    typeof value.toDate === "function"
+  ) {
+
+    return value
+      .toDate()
+      .toISOString()
+      .substring(0, 10);
+
+  }
+
+  return null;
+
+}
+
+
+function formatDate(dateString) {
+
+  if (!dateString) {
+    return "—";
+  }
+
+  const date =
+    new Date(`${dateString}T00:00:00`);
+
+  return date.toLocaleDateString(
+    "en-IN",
+    {
+      day: "numeric",
+      month: "short",
+      year: "numeric"
+    }
+  );
+
+}
+
+
+function formatDay(dateString) {
+
+  const date =
+    new Date(`${dateString}T00:00:00`);
+
+  return date.toLocaleDateString(
+    "en-IN",
+    {
+      weekday: "short"
+    }
+  );
+
+}
+
+
+/* =========================================
    AUTH
-============================================================ */
+========================================= */
 
 onAuthStateChanged(
-    auth,
-    async user => {
+  auth,
+  async (user) => {
 
-        if (!user) {
+    if (!user) {
 
-            window.location.href =
-                "../login/";
+      window.location.href =
+        "../login/";
 
-            return;
-
-        }
-
-
-        currentUser =
-            user;
-
-
-        try {
-
-            await initialize();
-
-        } catch (error) {
-
-            console.error(
-                "ZENOVA STUDY ERROR:",
-                error
-            );
-
-            showError(
-                error.message ||
-                "Unable to load Study."
-            );
-
-        }
+      return;
 
     }
+
+    currentUser = user;
+
+    try {
+
+      await initializeStudyNow();
+
+    } catch (error) {
+
+      console.error(
+        "[Study Now]",
+        error
+      );
+
+      showError(
+        "We couldn't load your learning space."
+      );
+
+    }
+
+  }
 );
 
 
-/* ============================================================
+/* =========================================
    INITIALIZE
-============================================================ */
+========================================= */
 
-async function initialize() {
+async function initializeStudyNow() {
 
-    await loadStudent();
+  /*
+   * Find the student's enrollment.
+   *
+   * We use the student's UID and then
+   * determine the course/batch ID.
+   */
 
-    await loadEnrollments();
+  const enrollmentQuery = query(
+    collection(db, "studentEnrollments"),
+    where("studentUid", "==", currentUser.uid)
+  );
 
-    await determinePurchasedCourse();
+  const enrollmentSnapshot =
+    await getDocs(enrollmentQuery);
 
-    await loadSubjects();
 
-    await loadFreeContent();
+  if (enrollmentSnapshot.empty) {
 
-    startLiveClassesListener();
-
-    renderDates();
-
-    await loadSchedule(
-        selectedDate
+    showError(
+      "You are not enrolled in any batch yet."
     );
 
-    renderStudentMeta();
+    return;
 
-    showApp();
+  }
 
-}
 
+  /*
+   * For now display the first enrollment.
+   *
+   * Later we can add a batch switcher if
+   * the student has multiple batches.
+   */
 
-/* ============================================================
-   STUDENT
-============================================================ */
+  const enrollmentDoc =
+    enrollmentSnapshot.docs[0];
 
-async function loadStudent() {
+  enrollment = {
+    id: enrollmentDoc.id,
+    ...enrollmentDoc.data()
+  };
 
-    const studentRef =
-        doc(
-            db,
-            "students",
-            currentUser.uid
-        );
 
+  courseId =
+    getCourseIdFromEnrollment(enrollment);
 
-    const snapshot =
-        await getDoc(
-            studentRef
-        );
 
+  if (!courseId) {
 
-    if (!snapshot.exists()) {
-
-        throw new Error(
-            "Student profile not found."
-        );
-
-    }
-
-
-    student = {
-        id: snapshot.id,
-        ...snapshot.data()
-    };
-
-}
-
-
-/* ============================================================
-   STUDENT META
-============================================================ */
-
-function renderStudentMeta() {
-
-    const details = [];
-
-
-    if (student?.className) {
-
-        details.push(
-            student.className
-        );
-
-    }
-
-
-    if (student?.combination) {
-
-        details.push(
-            student.combination
-        );
-
-    }
-
-
-    if (purchasedCourse?.crmCourseName) {
-
-        details.push(
-            purchasedCourse.crmCourseName
-        );
-
-    }
-
-
-    studentMeta.textContent =
-        details.length
-            ? details.join(" • ")
-            : "Your learning space";
-
-}
-
-
-/* ============================================================
-   LOAD ENROLLMENTS
-============================================================ */
-
-async function loadEnrollments() {
-
-    const enrollmentRef =
-        collection(
-            db,
-            "studentEnrollments"
-        );
-
-
-    /*
-     * Query only studentUid.
-     *
-     * We sort/filter locally to avoid
-     * unnecessary composite indexes.
-     */
-
-    const q =
-        query(
-            enrollmentRef,
-            where(
-                "studentUid",
-                "==",
-                currentUser.uid
-            )
-        );
-
-
-    const snapshot =
-        await getDocs(q);
-
-
-    enrollments =
-        snapshot.docs
-            .map(item => ({
-                id: item.id,
-                ...item.data()
-            }))
-            .filter(
-                enrollment =>
-                    enrollment.status !==
-                    "CANCELLED" &&
-                    enrollment.status !==
-                    "REJECTED"
-            );
-
-}
-
-
-/* ============================================================
-   DETERMINE PURCHASED COURSE
-============================================================ */
-
-async function determinePurchasedCourse() {
-
-    let enrollment = null;
-
-
-    /*
-     * If Study was opened from Continue Learning,
-     * prefer that course.
-     */
-
-    if (requestedCourseId) {
-
-        enrollment =
-            enrollments.find(
-                item =>
-                    (
-                        item.crmCourseId ||
-                        item.courseId
-                    ) ===
-                    requestedCourseId
-            );
-
-    }
-
-
-    /*
-     * Otherwise use first active enrollment.
-     */
-
-    if (!enrollment) {
-
-        enrollment =
-            enrollments.find(
-                item =>
-                    (
-                        item.status ===
-                        "ACTIVE" ||
-                        item.accessGranted === true
-                    )
-            );
-
-    }
-
-
-    if (!enrollment) {
-
-        purchasedCourse = null;
-
-        purchasedEnrollment = null;
-
-        purchasedSection.classList.add(
-            "hidden"
-        );
-
-        return;
-
-    }
-
-
-    purchasedEnrollment =
-        enrollment;
-
-
-    const courseId =
-        enrollment.crmCourseId ||
-        enrollment.courseId;
-
-
-    if (!courseId) {
-
-        purchasedSection.classList.add(
-            "hidden"
-        );
-
-        return;
-
-    }
-
-
-    const courseRef =
-        doc(
-            db,
-            "crmCourses",
-            courseId
-        );
-
-
-    const courseSnapshot =
-        await getDoc(
-            courseRef
-        );
-
-
-    if (!courseSnapshot.exists()) {
-
-        purchasedSection.classList.add(
-            "hidden"
-        );
-
-        return;
-
-    }
-
-
-    purchasedCourse = {
-        id: courseSnapshot.id,
-        ...courseSnapshot.data()
-    };
-
-
-    renderPurchasedCourse();
-
-}
-
-
-/* ============================================================
-   PURCHASED COURSE
-============================================================ */
-
-function renderPurchasedCourse() {
-
-    if (!purchasedCourse) {
-
-        purchasedSection.classList.add(
-            "hidden"
-        );
-
-        return;
-
-    }
-
-
-    purchasedSection.classList.remove(
-        "hidden"
+    showError(
+      "Your enrollment does not contain a batch ID."
     );
 
+    return;
 
-    const image =
-        getImage(
-            purchasedCourse
-        );
+  }
 
 
-    purchasedCourseImage.src =
-        image ||
-        "../assets/images/course-placeholder.png";
+  await loadCourse();
 
+  await loadSubjects();
 
-    purchasedCourseTitle.textContent =
-        purchasedCourse.crmCourseName ||
-        "My Course";
+  await loadStudyPlans();
 
+  renderBatch();
 
-    purchasedCourseMeta.textContent =
-        [
-            purchasedCourse.crmClass,
-            purchasedCourse.crmBoard,
-            purchasedCourse.crmMedium
-        ]
-            .filter(Boolean)
-            .join(" • ");
+  renderDates();
 
+  renderSubjects();
 
-    const progress =
-        Number(
-            purchasedEnrollment?.progress ||
-            0
-        );
+  await loadLiveClass();
 
-
-    const safeProgress =
-        Math.min(
-            100,
-            Math.max(
-                0,
-                progress
-            )
-        );
-
-
-    courseProgress.textContent =
-        `${safeProgress}%`;
-
-
-    courseProgressBar.style.width =
-        `${safeProgress}%`;
-
-
-    purchasedCourseCard.onclick =
-        () => {
-
-            openCurrentCourse();
-
-        };
+  showApp();
 
 }
 
 
-/* ============================================================
-   OPEN PURCHASED COURSE
-============================================================ */
+/* =========================================
+   COURSE / BATCH
+========================================= */
 
-function openCurrentCourse() {
+async function loadCourse() {
 
-    if (!purchasedCourse?.id) {
-        return;
-    }
+  const courseRef =
+    doc(
+      db,
+      "crmCourses",
+      courseId
+    );
+
+  const courseSnapshot =
+    await getDoc(courseRef);
 
 
-    /*
-     * Study page already represents
-     * the course.
-     *
-     * Clicking the course card does NOT
-     * go to Batch Details.
-     */
+  if (!courseSnapshot.exists()) {
 
-    window.scrollTo({
-        top: 0,
-        behavior: "smooth"
-    });
+    throw new Error(
+      "Course document not found."
+    );
+
+  }
+
+
+  course = {
+    id: courseSnapshot.id,
+    ...courseSnapshot.data()
+  };
 
 }
 
 
-/* ============================================================
-   LOAD SUBJECTS
-============================================================ */
+/* =========================================
+   RENDER BATCH
+========================================= */
+
+function renderBatch() {
+
+  const name =
+    course.crmCourseName ||
+    course.courseName ||
+    course.name ||
+    enrollment.courseName ||
+    "Your Batch";
+
+
+  const className =
+    course.crmClass ||
+    course.className ||
+    enrollment.className ||
+    "";
+
+
+  const board =
+    course.crmBoard ||
+    course.board ||
+    enrollment.board ||
+    "";
+
+
+  batchName.textContent =
+    name;
+
+  batchTitle.textContent =
+    name;
+
+
+  const metaParts =
+    [className, board]
+      .filter(Boolean);
+
+
+  batchMeta.textContent =
+    metaParts.join(" • ") ||
+    "Your enrolled batch";
+
+
+  const image =
+    course.crmImageUrl ||
+    course.imageUrl ||
+    course.thumbnail ||
+    course.image ||
+    enrollment.courseImage ||
+    "";
+
+
+  if (image) {
+
+    batchImage.src = image;
+
+    batchImage.classList.remove(
+      "hidden"
+    );
+
+    batchImageFallback.classList.add(
+      "hidden"
+    );
+
+  } else {
+
+    batchImage.classList.add(
+      "hidden"
+    );
+
+    batchImageFallback.classList.remove(
+      "hidden"
+    );
+
+  }
+
+}
+
+
+/* =========================================
+   SUBJECTS
+========================================= */
 
 async function loadSubjects() {
 
-    subjects = [];
+  /*
+   * Existing app uses hybridSubjects.
+   *
+   * Some old records may use courseId while
+   * others use crmCourseId, so we support both.
+   */
 
-
-    if (!purchasedCourse?.id) {
-
-        renderSubjects();
-
-        return;
-
-    }
-
-
-    const subjectSnapshot =
-        await getDocs(
-            collection(
-                db,
-                "hybridSubjects"
-            )
-        );
-
-
-    const rawSubjects =
-        subjectSnapshot.docs
-            .map(item => ({
-                id: item.id,
-                ...item.data()
-            }));
-
-
-    const courseId =
-        purchasedCourse.id;
-
-
-    /*
-     * Match the subject to the CRM course.
-     *
-     * Supports the structures already used
-     * by the existing CRM content manager.
-     */
-
-    subjects =
-        rawSubjects.filter(
-            subject => {
-
-                return (
-                    subject.courseId ===
-                    courseId ||
-
-                    subject.crmCourseId ===
-                    courseId ||
-
-                    subject.targetCourseId ===
-                    courseId ||
-
-                    subject.courseID ===
-                    courseId
-                );
-
-            }
-        );
-
-
-    /*
-     * If the course itself contains
-     * commonSubjects / subjects,
-     * use their names as fallback.
-     */
-
-    if (!subjects.length) {
-
-        const names =
-            new Set([
-                ...(purchasedCourse.commonSubjects || [])
-                    .map(
-                        item =>
-                            item?.name ||
-                            item
-                    ),
-
-                ...(purchasedCourse.subjects || [])
-                    .map(
-                        item =>
-                            typeof item === "string"
-                                ? item
-                                : item?.name
-                    )
-            ]);
-
-
-        if (names.size) {
-
-            subjects =
-                rawSubjects.filter(
-                    subject =>
-                        names.has(
-                            subject.name ||
-                            subject.subjectName
-                        )
-                );
-
-        }
-
-    }
-
-
-    /*
-     * Active only.
-     */
-
-    subjects =
-        subjects.filter(
-            subject =>
-                subject.active !== false
-        );
-
-
-    /*
-     * Sort by priority / order.
-     */
-
-    subjects.sort(
-        (a, b) => {
-
-            const orderA =
-                Number(
-                    a.priority ??
-                    a.order ??
-                    9999
-                );
-
-            const orderB =
-                Number(
-                    b.priority ??
-                    b.order ??
-                    9999
-                );
-
-            return orderA - orderB;
-
-        }
+  const subjectsRef =
+    collection(
+      db,
+      "hybridSubjects"
     );
 
 
-    await loadChapterCounts();
+  const queries = [
 
-    renderSubjects();
+    query(
+      subjectsRef,
+      where(
+        "courseId",
+        "==",
+        courseId
+      )
+    ),
+
+    query(
+      subjectsRef,
+      where(
+        "crmCourseId",
+        "==",
+        courseId
+      )
+    )
+
+  ];
+
+
+  const results =
+    await Promise.all(
+      queries.map(
+        q => getDocs(q)
+      )
+    );
+
+
+  const map =
+    new Map();
+
+
+  results.forEach(snapshot => {
+
+    snapshot.forEach(subjectDoc => {
+
+      const data =
+        subjectDoc.data();
+
+
+      const name =
+        data.subjectName ||
+        data.name ||
+        data.crmSubjectName ||
+        data.subject ||
+        "Subject";
+
+
+      const language =
+        data.language ||
+        data.medium ||
+        data.crmMedium ||
+        "Both";
+
+
+      /*
+       * Important:
+       *
+       * Prevent duplicate Mathematics /
+       * Science / Social Science records.
+       *
+       * But if the same subject exists in
+       * different languages, keep them separate.
+       */
+
+      const key =
+        `${name}`
+          .trim()
+          .toLowerCase()
+          .replace(/\s+/g, " ")
+        +
+        "__"
+        +
+        `${language}`
+          .trim()
+          .toLowerCase();
+
+
+      if (!map.has(key)) {
+
+        map.set(
+          key,
+          {
+            id: subjectDoc.id,
+            ...data,
+            displayName: name,
+            displayLanguage: language
+          }
+        );
+
+      }
+
+    });
+
+  });
+
+
+  subjects =
+    Array.from(map.values());
 
 }
 
 
-/* ============================================================
-   CHAPTER COUNTS
-============================================================ */
-
-async function loadChapterCounts() {
-
-    if (!subjects.length) {
-        return;
-    }
-
-
-    const chapterSnapshot =
-        await getDocs(
-            collection(
-                db,
-                "hybridChapters"
-            )
-        );
-
-
-    chapters =
-        chapterSnapshot.docs
-            .map(item => ({
-                id: item.id,
-                ...item.data()
-            }))
-            .filter(
-                chapter =>
-                    chapter.active !== false
-            );
-
-
-    subjects =
-        subjects.map(
-            subject => {
-
-                const subjectChapters =
-                    chapters.filter(
-                        chapter =>
-                            chapter.subjectId ===
-                            subject.id
-                    );
-
-
-                return {
-                    ...subject,
-                    chapterCount:
-                        subjectChapters.length
-                };
-
-            }
-        );
-
-}
-
-
-/* ============================================================
+/* =========================================
    RENDER SUBJECTS
-============================================================ */
+========================================= */
 
 function renderSubjects() {
 
-    subjectsList.innerHTML = "";
+  subjectsContainer.innerHTML = "";
 
 
-    if (!purchasedCourse) {
+  if (!subjects.length) {
 
-        subjectsList.innerHTML = `
-            <div class="empty-message">
-                Purchase a course to access its subjects.
-            </div>
-        `;
+    subjectsContainer.innerHTML = `
+      <div class="empty-state"
+           style="grid-column:1/-1;">
+        Subjects are not available yet.
+      </div>
+    `;
 
-        return;
+    return;
 
-    }
+  }
 
 
-    if (!subjects.length) {
-
-        subjectsList.innerHTML = `
-            <div class="empty-message">
-                No subjects are available yet.
-            </div>
-        `;
-
-        return;
-
-    }
-
-
-    subjects.forEach(
-        (subject, index) => {
-
-            const card =
-                document.createElement(
-                    "article"
-                );
-
-
-            card.className =
-                "subject-card";
-
-
-            card.innerHTML = `
-
-                <div class="subject-icon">
-
-                    <i class="ri-book-2-line"></i>
-
-                </div>
-
-
-                <div class="subject-info">
-
-                    <h3>
-                        ${escapeHtml(
-                            subject.name ||
-                            subject.subjectName ||
-                            "Subject"
-                        )}
-                    </h3>
-
-                    <p>
-                        ${
-                            subject.chapterCount || 0
-                        }
-                        ${
-                            (subject.chapterCount || 0) === 1
-                                ? "Chapter"
-                                : "Chapters"
-                        }
-                    </p>
-
-                </div>
-
-
-                <div class="subject-arrow">
-
-                    <i class="ri-arrow-right-s-line"></i>
-
-                </div>
-
-            `;
-
-
-            card.addEventListener(
-                "click",
-                () => {
-
-                    openSubject(
-                        subject
-                    );
-
-                }
-            );
-
-
-            subjectsList.appendChild(
-                card
-            );
-
-        }
-    );
-
-}
-
-
-/* ============================================================
-   OPEN SUBJECT
-============================================================ */
-
-function openSubject(subject) {
-
-    if (!subject?.id) {
-        return;
-    }
-
-
-    const params =
-        new URLSearchParams();
-
-
-    params.set(
-        "subjectId",
-        subject.id
-    );
-
-
-    if (purchasedCourse?.id) {
-
-        params.set(
-            "courseId",
-            purchasedCourse.id
-        );
-
-    }
-
-
-    window.location.href =
-        `../chapters/?${params.toString()}`;
-
-}
-
-
-/* ============================================================
-   FREE CONTENT
-============================================================ */
-
-async function loadFreeContent() {
-
-    freeContent = [];
-
-
-    /*
-     * For now free learning is represented by
-     * active chapters marked accessType FREE.
-     *
-     * This lets us build Study without creating
-     * another content collection.
-     */
-
-    const snapshot =
-        await getDocs(
-            collection(
-                db,
-                "hybridChapters"
-            )
-        );
-
-
-    freeContent =
-        snapshot.docs
-            .map(item => ({
-                id: item.id,
-                ...item.data()
-            }))
-            .filter(
-                chapter =>
-                    chapter.active !== false &&
-                    (
-                        chapter.accessType ===
-                        "FREE" ||
-
-                        chapter.isFree ===
-                        true ||
-
-                        chapter.free ===
-                        true
-                    )
-            );
-
-
-    freeContent.sort(
-        (a, b) => {
-
-            const numberA =
-                Number(
-                    a.chapterNumber ||
-                    9999
-                );
-
-            const numberB =
-                Number(
-                    b.chapterNumber ||
-                    9999
-                );
-
-            return numberA - numberB;
-
-        }
-    );
-
-
-    renderFreeContent();
-
-}
-
-
-/* ============================================================
-   FREE CONTENT RENDER
-============================================================ */
-
-function renderFreeContent() {
-
-    freeContentList.innerHTML = "";
-
-
-    if (!freeContent.length) {
-
-        freeContentList.innerHTML = `
-            <div class="empty-message">
-                Free learning content will appear here.
-            </div>
-        `;
-
-        return;
-
-    }
-
-
-    /*
-     * Show a reasonable number on Study page.
-     *
-     * We can later add "View All".
-     */
-
-    freeContent
-        .slice(0, 6)
-        .forEach(
-            chapter => {
-
-                const card =
-                    document.createElement(
-                        "article"
-                    );
-
-
-                card.className =
-                    "free-card";
-
-
-                const thumbnail =
-                    chapter.thumbnailUrl ||
-                    chapter.imageUrl ||
-                    "";
-
-
-                card.innerHTML = `
-
-                    <div class="free-thumbnail">
-
-                        ${
-                            thumbnail
-                                ? `
-                                    <img
-                                        src="${escapeHtml(thumbnail)}"
-                                        alt="">
-                                  `
-                                : `
-                                    <div
-                                        style="
-                                            width:100%;
-                                            height:100%;
-                                            display:flex;
-                                            align-items:center;
-                                            justify-content:center;
-                                            color:#6c35de;
-                                            font-size:28px;
-                                        ">
-
-                                        <i class="ri-play-circle-line"></i>
-
-                                    </div>
-                                  `
-                        }
-
-
-                        <div class="free-play">
-
-                            <i class="ri-play-fill"></i>
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="free-info">
-
-                        <div class="free-label">
-                            FREE
-                        </div>
-
-                        <h3>
-                            ${escapeHtml(
-                                chapter.title ||
-                                chapter.chapterName ||
-                                "Free Lesson"
-                            )}
-                        </h3>
-
-                        <p>
-                            Chapter
-                            ${
-                                chapter.chapterNumber ||
-                                ""
-                            }
-                        </p>
-
-                    </div>
-
-                `;
-
-
-                card.addEventListener(
-                    "click",
-                    () => {
-
-                        openChapter(
-                            chapter
-                        );
-
-                    }
-                );
-
-
-                freeContentList.appendChild(
-                    card
-                );
-
-            }
-        );
-
-}
-
-
-/* ============================================================
-   OPEN CHAPTER
-============================================================ */
-
-function openChapter(chapter) {
-
-    if (!chapter?.id) {
-        return;
-    }
-
-
-    /*
-     * We keep the actual video/chapter page
-     * for the next stage.
-     *
-     * If a dedicated chapter player exists,
-     * this can be changed to that route.
-     */
-
-    const params =
-        new URLSearchParams();
-
-
-    params.set(
-        "chapterId",
-        chapter.id
-    );
-
-
-    if (chapter.subjectId) {
-
-        params.set(
-            "subjectId",
-            chapter.subjectId
-        );
-
-    }
-
-
-    if (purchasedCourse?.id) {
-
-        params.set(
-            "courseId",
-            purchasedCourse.id
-        );
-
-    }
-
-
-    /*
-     * Temporary route:
-     *
-     * chapters/?chapterId=...
-     *
-     * Later we can make:
-     *
-     * player/?chapterId=...
-     */
-
-    window.location.href =
-        `../chapters/?${params.toString()}`;
-
-}
-
-
-/* ============================================================
-   LIVE CLASSES REALTIME
-============================================================ */
-
-function startLiveClassesListener() {
-
-    if (
-        unsubscribeLiveClasses
-    ) {
-
-        unsubscribeLiveClasses();
-
-    }
-
-
-    const liveRef =
-        collection(
-            db,
-            "liveClasses"
-        );
-
-
-    /*
-     * We intentionally query without
-     * multiple filters so this doesn't
-     * require a composite index.
-     */
-
-    unsubscribeLiveClasses =
-        onSnapshot(
-            liveRef,
-            snapshot => {
-
-                liveClasses =
-                    snapshot.docs
-                        .map(item => ({
-                            id: item.id,
-                            ...item.data()
-                        }))
-                        .filter(
-                            liveClass =>
-                                liveClass.active !== false
-                        );
-
-
-                /*
-                 * Show classes belonging to
-                 * the purchased course.
-                 */
-
-                if (
-                    purchasedCourse?.id
-                ) {
-
-                    liveClasses =
-                        liveClasses.filter(
-                            liveClass => {
-
-                                const courseId =
-                                    liveClass.courseId ||
-                                    liveClass.crmCourseId;
-
-
-                                return (
-                                    !courseId ||
-                                    courseId ===
-                                    purchasedCourse.id
-                                );
-
-                            }
-                        );
-
-                }
-
-
-                liveClasses.sort(
-                    sortByTime
-                );
-
-
-                renderLiveClasses();
-
-                loadSchedule(
-                    selectedDate
-                );
-
-            },
-            error => {
-
-                console.error(
-                    "Live class listener:",
-                    error
-                );
-
-                liveClassesList.innerHTML = `
-                    <div class="empty-message">
-                        Live classes are unavailable right now.
-                    </div>
-                `;
-
-            }
-        );
-
-}
-
-
-/* ============================================================
-   SORT TIME
-============================================================ */
-
-function sortByTime(a, b) {
-
-    const timeA =
-        String(
-            a.startTime ||
-            a.time ||
-            "23:59"
-        );
-
-    const timeB =
-        String(
-            b.startTime ||
-            b.time ||
-            "23:59"
-        );
-
-
-    return timeA.localeCompare(
-        timeB
-    );
-
-}
-
-
-/* ============================================================
-   RENDER LIVE CLASSES
-============================================================ */
-
-function renderLiveClasses() {
-
-    liveClassesList.innerHTML = "";
-
-
-    const today =
-        formatDate(
-            new Date()
-        );
-
-
-    const todayClasses =
-        liveClasses.filter(
-            liveClass => {
-
-                const date =
-                    getClassDate(
-                        liveClass
-                    );
-
-                return date ===
-                    today;
-
-            }
-        );
-
-
-    if (!todayClasses.length) {
-
-        liveClassesList.innerHTML = `
-            <div class="empty-message">
-                No live classes scheduled for today.
-            </div>
-        `;
-
-        return;
-
-    }
-
-
-    todayClasses.forEach(
-        liveClass => {
-
-            liveClassesList.appendChild(
-                createLiveCard(
-                    liveClass
-                )
-            );
-
-        }
-    );
-
-}
-
-
-/* ============================================================
-   CLASS DATE
-============================================================ */
-
-function getClassDate(liveClass) {
-
-    const value =
-        liveClass.date ||
-        liveClass.classDate ||
-        liveClass.startDate;
-
-
-    if (!value) {
-        return "";
-    }
-
-
-    if (
-        value?.toDate
-    ) {
-
-        return formatDate(
-            value.toDate()
-        );
-
-    }
-
-
-    if (
-        value instanceof Date
-    ) {
-
-        return formatDate(
-            value
-        );
-
-    }
-
-
-    return String(
-        value
-    ).split("T")[0];
-
-}
-
-
-/* ============================================================
-   LIVE CARD
-============================================================ */
-
-function createLiveCard(liveClass) {
+  subjects.forEach(subject => {
 
     const card =
-        document.createElement(
-            "article"
-        );
-
+      document.createElement("div");
 
     card.className =
-        "live-card";
-
-
-    const thumbnail =
-        liveClass.thumbnailUrl ||
-        liveClass.imageUrl ||
-        liveClass.thumbnail ||
-        "";
-
-
-    const isLive =
-        liveClass.status ===
-        "LIVE" ||
-        liveClass.isLive ===
-        true;
-
-
-    const title =
-        liveClass.title ||
-        liveClass.subjectName ||
-        liveClass.subject ||
-        "Live Class";
-
-
-    const subject =
-        liveClass.subjectName ||
-        liveClass.subject ||
-        "";
-
-
-    const time =
-        formatTime(
-            liveClass.startTime ||
-            liveClass.time
-        );
+      "subject-card";
 
 
     card.innerHTML = `
 
-        <div class="live-thumbnail">
+      <div>
 
-            ${
-                thumbnail
-                    ? `
-                        <img
-                            src="${escapeHtml(thumbnail)}"
-                            alt="">
-                      `
-                    : `
-                        <div
-                            style="
-                                width:100%;
-                                height:100%;
-                                display:flex;
-                                align-items:center;
-                                justify-content:center;
-                                color:#6c35de;
-                                font-size:25px;
-                            ">
-
-                            <i class="ri-live-line"></i>
-
-                        </div>
-                      `
-            }
-
+        <div class="subject-name">
+          ${escapeHtml(
+            subject.displayName
+          )}
         </div>
 
-
-        <div class="live-content">
-
-            <div class="live-status">
-
-                <span class="live-status-dot"></span>
-
-                ${
-                    isLive
-                        ? "LIVE NOW"
-                        : "SCHEDULED"
-                }
-
-            </div>
-
-
-            <h3>
-                ${escapeHtml(title)}
-            </h3>
-
-
-            <p>
-                ${
-                    escapeHtml(subject)
-                }
-
-                ${
-                    time
-                        ? ` • ${escapeHtml(time)}`
-                        : ""
-                }
-            </p>
-
+        <div class="subject-meta">
+          ${escapeHtml(
+            subject.displayLanguage
+          )}
         </div>
 
+      </div>
 
-        <button
-            class="
-                join-button
-                ${isLive ? "" : "disabled"}
-            "
-            ${isLive ? "" : "disabled"}>
-
-            ${
-                isLive
-                    ? "JOIN NOW"
-                    : "UPCOMING"
-            }
-
-        </button>
+      <div class="subject-open">
+        OPEN →
+      </div>
 
     `;
 
 
-    const button =
-        card.querySelector(
-            ".join-button"
-        );
+    card.addEventListener(
+      "click",
+      () => {
+
+        /*
+         * This is the future chapters page.
+         *
+         * We keep the subject ID and course ID
+         * in the URL.
+         */
+
+        window.location.href =
+          `../chapters/?courseId=${
+            encodeURIComponent(courseId)
+          }&subjectId=${
+            encodeURIComponent(subject.id)
+          }`;
+
+      }
+    );
 
 
-    if (isLive) {
+    subjectsContainer.appendChild(card);
 
-        button.addEventListener(
-            "click",
-            event => {
-
-                event.stopPropagation();
-
-                joinLiveClass(
-                    liveClass
-                );
-
-            }
-        );
-
-    }
-
-
-    return card;
-
-}
-
-
-/* ============================================================
-   JOIN LIVE CLASS
-============================================================ */
-
-function joinLiveClass(liveClass) {
-
-    const link =
-        liveClass.joinUrl ||
-        liveClass.meetingUrl ||
-        liveClass.liveUrl ||
-        liveClass.roomUrl;
-
-
-    if (!link) {
-
-        alert(
-            "The live class link is not available yet."
-        );
-
-        return;
-
-    }
-
-
-    window.location.href =
-        link;
+  });
 
 }
 
 
-/* ============================================================
-   DATES
-============================================================ */
+/* =========================================
+   STUDY PLAN
+========================================= */
+
+async function loadStudyPlans() {
+
+  const plansRef =
+    collection(
+      db,
+      "studyPlans"
+    );
+
+
+  const planQuery =
+    query(
+      plansRef,
+      where(
+        "courseId",
+        "==",
+        courseId
+      )
+    );
+
+
+  const snapshot =
+    await getDocs(planQuery);
+
+
+  studyPlans =
+    snapshot.docs.map(
+      planDoc => ({
+        id: planDoc.id,
+        ...planDoc.data()
+      })
+    );
+
+
+  studyPlans =
+    studyPlans.filter(
+      plan => {
+
+        return (
+          plan.date ||
+          plan.planDate ||
+          plan.scheduledDate
+        );
+
+      }
+    );
+
+
+  studyPlans.sort(
+    (a, b) => {
+
+      const dateA =
+        normalizeDate(
+          a.date ||
+          a.planDate ||
+          a.scheduledDate
+        );
+
+      const dateB =
+        normalizeDate(
+          b.date ||
+          b.planDate ||
+          b.scheduledDate
+        );
+
+      return String(dateA)
+        .localeCompare(
+          String(dateB)
+        );
+
+    }
+  );
+
+
+  /*
+   * Always show a useful date range.
+   *
+   * If admin has no plans yet, the dates
+   * still appear and show:
+   *
+   * "Not yet scheduled"
+   */
+
+  if (studyPlans.length) {
+
+    selectedDate =
+      normalizeDate(
+        studyPlans[0].date ||
+        studyPlans[0].planDate ||
+        studyPlans[0].scheduledDate
+      );
+
+  } else {
+
+    selectedDate =
+      new Date()
+        .toISOString()
+        .substring(0, 10);
+
+  }
+
+}
+
+
+/* =========================================
+   DATE RANGE
+========================================= */
+
+function getDateRange() {
+
+  const dates = [];
+
+  const today =
+    new Date();
+
+  /*
+   * Show 14 days.
+   *
+   * Later this can be changed to the
+   * complete academic calendar.
+   */
+
+  for (
+    let i = 0;
+    i < 14;
+    i++
+  ) {
+
+    const date =
+      new Date(today);
+
+    date.setDate(
+      today.getDate() + i
+    );
+
+
+    dates.push(
+      date
+        .toISOString()
+        .substring(0, 10)
+    );
+
+  }
+
+
+  return dates;
+
+}
+
+
+/* =========================================
+   RENDER DATES
+========================================= */
 
 function renderDates() {
 
-    dateList.innerHTML = "";
+  dateSelector.innerHTML = "";
 
 
-    /*
-     * Five dates around selectedDate.
-     */
+  const dates =
+    getDateRange();
 
-    for (
-        let i = 0;
-        i < 5;
-        i++
+
+  dates.forEach(date => {
+
+    const button =
+      document.createElement("button");
+
+    button.className =
+      "date-item";
+
+
+    if (
+      date === selectedDate
     ) {
 
-        const date =
-            new Date(
-                selectedDate
-            );
-
-
-        date.setDate(
-            date.getDate() +
-            i -
-            2
-        );
-
-
-        const item =
-            document.createElement(
-                "button"
-            );
-
-
-        item.className =
-            "date-item";
-
-
-        if (
-            formatDate(date) ===
-            formatDate(selectedDate)
-        ) {
-
-            item.classList.add(
-                "active"
-            );
-
-        }
-
-
-        const day =
-            new Intl.DateTimeFormat(
-                "en-IN",
-                {
-                    weekday: "short"
-                }
-            ).format(date);
-
-
-        item.innerHTML = `
-
-            <span class="day">
-                ${day}
-            </span>
-
-            <span class="number">
-                ${date.getDate()}
-            </span>
-
-        `;
-
-
-        item.addEventListener(
-            "click",
-            async () => {
-
-                selectedDate =
-                    date;
-
-
-                renderDates();
-
-                await loadSchedule(
-                    selectedDate
-                );
-
-            }
-        );
-
-
-        dateList.appendChild(
-            item
-        );
+      button.classList.add(
+        "active"
+      );
 
     }
 
-}
 
+    button.innerHTML = `
 
-/* ============================================================
-   DATE ARROWS
-============================================================ */
+      <span class="date-day">
+        ${formatDay(date)}
+      </span>
 
-previousDate.addEventListener(
-    "click",
-    async () => {
+      <span class="date-number">
+        ${new Date(
+          `${date}T00:00:00`
+        ).getDate()}
+      </span>
 
-        selectedDate =
-            new Date(
-                selectedDate
-            );
-
-
-        selectedDate.setDate(
-            selectedDate.getDate() -
-            1
-        );
-
-
-        renderDates();
-
-        await loadSchedule(
-            selectedDate
-        );
-
-    }
-);
-
-
-nextDate.addEventListener(
-    "click",
-    async () => {
-
-        selectedDate =
-            new Date(
-                selectedDate
-            );
-
-
-        selectedDate.setDate(
-            selectedDate.getDate() +
-            1
-        );
-
-
-        renderDates();
-
-        await loadSchedule(
-            selectedDate
-        );
-
-    }
-);
-
-
-/* ============================================================
-   LOAD SCHEDULE
-============================================================ */
-
-async function loadSchedule(date) {
-
-    scheduleList.innerHTML = `
-        <div class="section-loading">
-            Loading schedule...
-        </div>
     `;
 
 
-    const targetDate =
-        formatDate(date);
+    button.addEventListener(
+      "click",
+      () => {
 
+        selectedDate = date;
 
-    const classes =
-        liveClasses.filter(
-            liveClass =>
-                getClassDate(
-                    liveClass
-                ) ===
-                targetDate
-        );
+        renderDates();
 
+        renderSelectedStudyPlan();
 
-    renderSchedule(
-        classes
+      }
     );
+
+
+    dateSelector.appendChild(
+      button
+    );
+
+  });
+
+
+  renderSelectedStudyPlan();
 
 }
 
 
-/* ============================================================
-   RENDER SCHEDULE
-============================================================ */
+/* =========================================
+   SELECTED STUDY PLAN
+========================================= */
 
-function renderSchedule(classes) {
+function renderSelectedStudyPlan() {
 
-    scheduleList.innerHTML = "";
+  selectedDateLabel.textContent =
+    formatDate(selectedDate);
 
 
-    if (!classes.length) {
+  studyPlanContainer.innerHTML = "";
 
-        scheduleList.innerHTML = `
-            <div class="empty-message">
-                No classes scheduled for
-                ${formatDateReadable(selectedDate)}.
+
+  const plans =
+    studyPlans.filter(
+      plan => {
+
+        const date =
+          normalizeDate(
+            plan.date ||
+            plan.planDate ||
+            plan.scheduledDate
+          );
+
+        return date === selectedDate;
+
+      }
+    );
+
+
+  if (!plans.length) {
+
+    studyPlanContainer.innerHTML = `
+
+      <div class="empty-state">
+        Not yet scheduled
+      </div>
+
+    `;
+
+    return;
+
+  }
+
+
+  plans.forEach(plan => {
+
+    const subject =
+      plan.subjectName ||
+      plan.subject ||
+      "Subject";
+
+
+    const topic =
+      plan.topic ||
+      plan.chapterName ||
+      plan.title ||
+      "Study session";
+
+
+    const time =
+      plan.time ||
+      plan.startTime ||
+      "";
+
+
+    const item =
+      document.createElement("div");
+
+    item.className =
+      "plan-item";
+
+
+    item.innerHTML = `
+
+      <div>
+
+        <div class="plan-subject">
+          ${escapeHtml(subject)}
+        </div>
+
+        <div class="plan-topic">
+          ${escapeHtml(topic)}
+        </div>
+
+      </div>
+
+      ${
+        time
+          ? `
+            <div class="plan-time">
+              ${escapeHtml(time)}
             </div>
-        `;
+          `
+          : ""
+      }
+
+    `;
+
+
+    studyPlanContainer.appendChild(
+      item
+    );
+
+  });
+
+}
+
+
+/* =========================================
+   LIVE CLASS
+========================================= */
+
+async function loadLiveClass() {
+
+  /*
+   * We listen to the collection so the page
+   * can react when admin changes the class.
+   */
+
+  const liveRef =
+    collection(
+      db,
+      "liveClasses"
+    );
+
+
+  const liveQuery =
+    query(
+      liveRef,
+      where(
+        "courseId",
+        "==",
+        courseId
+      )
+    );
+
+
+  onSnapshot(
+    liveQuery,
+    snapshot => {
+
+      const classes =
+        snapshot.docs.map(
+          liveDoc => ({
+            id: liveDoc.id,
+            ...liveDoc.data()
+          })
+        );
+
+
+      renderLiveClass(
+        classes
+      );
+
+    },
+    error => {
+
+      console.error(
+        "[Live Classes]",
+        error
+      );
+
+      hideLiveClass();
+
+    }
+  );
+
+}
+
+
+/* =========================================
+   RENDER LIVE CLASS
+========================================= */
+
+function renderLiveClass(classes) {
+
+  const now =
+    new Date();
+
+
+  /*
+   * Find an active class first.
+   */
+
+  let live =
+    classes.find(
+      item => {
+
+        return (
+          item.status === "live" ||
+          item.status === "LIVE" ||
+          item.isLive === true
+        );
+
+      }
+    );
+
+
+  /*
+   * Otherwise find an upcoming class.
+   */
+
+  if (!live) {
+
+    live =
+      classes.find(
+        item => {
+
+          const start =
+            parseDateTime(
+              item.startDate ||
+              item.date ||
+              item.scheduledDate,
+
+              item.startTime ||
+              item.time
+            );
+
+
+          return (
+            start &&
+            start > now &&
+            item.status !== "completed"
+          );
+
+        }
+      );
+
+  }
+
+
+  if (!live) {
+
+    hideLiveClass();
+
+    return;
+
+  }
+
+
+  currentLiveClass =
+    live;
+
+
+  liveClassSection.classList.remove(
+    "hidden"
+  );
+
+
+  const subject =
+    live.subjectName ||
+    live.subject ||
+    "Subject";
+
+
+  const topic =
+    live.topic ||
+    live.title ||
+    live.chapterName ||
+    "Live Class";
+
+
+  const teacher =
+    live.teacherName ||
+    live.teacher ||
+    live.facultyName ||
+    "Zenova Faculty";
+
+
+  liveSubject.textContent =
+    subject;
+
+  liveTopic.textContent =
+    topic;
+
+  liveTeacher.textContent =
+    `Teacher: ${teacher}`;
+
+
+  const image =
+    live.thumbnailUrl ||
+    live.thumbnail ||
+    live.imageUrl ||
+    "";
+
+
+  if (image) {
+
+    liveThumbnail.src =
+      image;
+
+    liveThumbnail.classList.remove(
+      "hidden"
+    );
+
+    liveThumbnailFallback.classList.add(
+      "hidden"
+    );
+
+  } else {
+
+    liveThumbnail.classList.add(
+      "hidden"
+    );
+
+    liveThumbnailFallback.classList.remove(
+      "hidden"
+    );
+
+  }
+
+
+  const isLive =
+    live.status === "live" ||
+    live.status === "LIVE" ||
+    live.isLive === true;
+
+
+  if (isLive) {
+
+    liveTime.textContent =
+      "Live now";
+
+    joinLiveButton.textContent =
+      "JOIN LIVE";
+
+  } else {
+
+    const start =
+      parseDateTime(
+        live.startDate ||
+        live.date ||
+        live.scheduledDate,
+
+        live.startTime ||
+        live.time
+      );
+
+
+    liveTime.textContent =
+      start
+        ? `Starts ${start.toLocaleString(
+            "en-IN",
+            {
+              day: "numeric",
+              month: "short",
+              hour: "numeric",
+              minute: "2-digit"
+            }
+          )}`
+        : "Upcoming class";
+
+
+    joinLiveButton.textContent =
+      "VIEW CLASS";
+
+  }
+
+
+  joinLiveButton.onclick =
+    () => {
+
+      const link =
+        live.liveUrl ||
+        live.meetingUrl ||
+        live.joinUrl ||
+        live.url;
+
+
+      if (!link) {
+
+        alert(
+          "The live class link has not been added yet."
+        );
 
         return;
 
-    }
+      }
 
 
-    classes
-        .sort(sortByTime)
-        .forEach(
-            liveClass => {
+      window.location.href =
+        link;
 
-                const card =
-                    document.createElement(
-                        "article"
-                    );
-
-
-                card.className =
-                    "schedule-card";
-
-
-                const time =
-                    formatTime(
-                        liveClass.startTime ||
-                        liveClass.time
-                    );
-
-
-                const title =
-                    liveClass.title ||
-                    liveClass.subjectName ||
-                    liveClass.subject ||
-                    "Class";
-
-
-                const subject =
-                    liveClass.subjectName ||
-                    liveClass.subject ||
-                    "";
-
-
-                card.innerHTML = `
-
-                    <div class="schedule-time">
-
-                        ${escapeHtml(
-                            time || "--"
-                        )}
-
-                    </div>
-
-
-                    <div class="schedule-content">
-
-                        <h3>
-                            ${escapeHtml(title)}
-                        </h3>
-
-                        <p>
-                            ${escapeHtml(subject)}
-                        </p>
-
-                    </div>
-
-
-                    <div class="schedule-type">
-
-                        ${
-                            liveClass.type ||
-                            "LIVE"
-                        }
-
-                    </div>
-
-                `;
-
-
-                scheduleList.appendChild(
-                    card
-                );
-
-            }
-        );
+    };
 
 }
 
 
-/* ============================================================
-   BACK BUTTON
-============================================================ */
+/* =========================================
+   HIDE LIVE
+========================================= */
+
+function hideLiveClass() {
+
+  liveClassSection.classList.add(
+    "hidden"
+  );
+
+  currentLiveClass =
+    null;
+
+}
+
+
+/* =========================================
+   DATE + TIME
+========================================= */
+
+function parseDateTime(
+  dateValue,
+  timeValue
+) {
+
+  if (!dateValue) {
+    return null;
+  }
+
+
+  const date =
+    normalizeDate(
+      dateValue
+    );
+
+
+  if (!date) {
+    return null;
+  }
+
+
+  const time =
+    timeValue || "00:00";
+
+
+  const parsed =
+    new Date(
+      `${date}T${time}`
+    );
+
+
+  if (
+    Number.isNaN(
+      parsed.getTime()
+    )
+  ) {
+
+    return null;
+
+  }
+
+
+  return parsed;
+
+}
+
+
+/* =========================================
+   RECORDINGS
+========================================= */
+
+recordingsButton.addEventListener(
+  "click",
+  () => {
+
+    window.location.href =
+      `../live-recordings/?courseId=${
+        encodeURIComponent(courseId)
+      }`;
+
+  }
+);
+
+
+/* =========================================
+   BACK
+========================================= */
 
 backButton.addEventListener(
-    "click",
-    () => {
+  "click",
+  () => {
 
-        if (
-            window.history.length >
-            1
-        ) {
+    window.history.back();
 
-            window.history.back();
-
-        } else {
-
-            window.location.href =
-                "../";
-
-        }
-
-    }
+  }
 );
 
 
-/* ============================================================
-   RETRY
-============================================================ */
+errorBackButton.addEventListener(
+  "click",
+  () => {
 
-retryButton.addEventListener(
-    "click",
-    () => {
+    window.history.back();
 
-        window.location.reload();
-
-    }
-);
-
-
-/* ============================================================
-   CLEANUP
-============================================================ */
-
-window.addEventListener(
-    "beforeunload",
-    () => {
-
-        if (
-            unsubscribeEnrollments
-        ) {
-
-            unsubscribeEnrollments();
-
-        }
-
-
-        if (
-            unsubscribeLiveClasses
-        ) {
-
-            unsubscribeLiveClasses();
-
-        }
-
-    }
+  }
 );
