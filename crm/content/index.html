@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+
+  <title>Content Management | Zenova CRM</title>
+
+  <link rel="stylesheet" href="./content.css" />
+</head>
+
+<body>
+
+  <div class="page">
+
+    <!-- HEADER -->
+    <header class="topbar">
+      <div>
+        <h1>Content Management</h1>
+        <p>Manage chapters, videos and notes for your batches.</p>
+      </div>
+    </header>
+
+
+    <!-- COURSE / SUBJECT SELECTOR -->
+    <section class="selector-card">
+
+      <div class="field">
+        <label>Select Batch / Course</label>
+
+        <select id="courseSelect">
+          <option value="">Loading courses...</option>
+        </select>
+      </div>
+
+
+      <div class="field">
+        <label>Select Subject</label>
+
+        <select id="subjectSelect" disabled>
+          <option value="">Select a batch first</option>
+        </select>
+      </div>
+
+    </section>
+
+
+    <!-- EMPTY STATE -->
+    <section id="emptyState" class="empty-state">
+
+      <div class="empty-icon">＋</div>
+
+      <h2>Select a batch and subject</h2>
+
+      <p>
+        Choose the batch and subject above to manage chapters
+        and learning content.
+      </p>
+
+    </section>
+
+
+    <!-- CONTENT AREA -->
+    <main id="contentArea" class="content-area hidden">
+
+      <div class="section-header">
+
+        <div>
+          <span class="eyebrow">COURSE CONTENT</span>
+
+          <h2 id="selectedSubjectName">
+            Subject
+          </h2>
+
+          <p id="selectedCourseName">
+            Batch
+          </p>
+        </div>
+
+        <button
+          id="addChapterBtn"
+          class="primary-btn"
+        >
+          + Add Chapter
+        </button>
+
+      </div>
+
+
+      <!-- CHAPTER LIST -->
+      <section id="chaptersContainer">
+
+        <!-- Chapters inserted by JS -->
+
+      </section>
+
+    </main>
+
+  </div>
+
+
+  <!-- ADD CHAPTER MODAL -->
+  <div id="chapterModal" class="modal hidden">
+
+    <div class="modal-overlay"></div>
+
+    <div class="modal-box">
+
+      <div class="modal-header">
+
+        <div>
+          <span class="eyebrow">NEW CHAPTER</span>
+          <h2>Add Chapter</h2>
+        </div>
+
+        <button
+          id="closeChapterModal"
+          class="close-btn"
+        >
+          ×
+        </button>
+
+      </div>
+
+
+      <form id="chapterForm">
+
+        <div class="form-row">
+
+          <div class="field">
+
+            <label>Chapter Number</label>
+
+            <input
+              id="chapterNumber"
+              type="number"
+              min="1"
+              placeholder="1"
+              required
+            />
+
+          </div>
+
+
+          <div class="field">
+
+            <label>Chapter Name</label>
+
+            <input
+              id="chapterName"
+              type="text"
+              placeholder="Real Numbers"
+              required
+            />
+
+          </div>
+
+        </div>
+
+
+        <div class="field">
+
+          <label>Description</label>
+
+          <textarea
+            id="chapterDescription"
+            placeholder="Short description of this chapter..."
+          ></textarea>
+
+        </div>
+
+
+        <div class="modal-actions">
+
+          <button
+            type="button"
+            id="cancelChapter"
+            class="secondary-btn"
+          >
+            Cancel
+          </button>
+
+          <button
+            type="submit"
+            class="primary-btn"
+          >
+            Save Chapter
+          </button>
+
+        </div>
+
+      </form>
+
+    </div>
+
+  </div>
+
+
+  <!-- ADD CONTENT MODAL -->
+  <div id="contentModal" class="modal hidden">
+
+    <div class="modal-overlay"></div>
+
+    <div class="modal-box">
+
+      <div class="modal-header">
+
+        <div>
+          <span class="eyebrow">CHAPTER CONTENT</span>
+
+          <h2 id="contentModalTitle">
+            Add Content
+          </h2>
+        </div>
+
+        <button
+          id="closeContentModal"
+          class="close-btn"
+        >
+          ×
+        </button>
+
+      </div>
+
+
+      <form id="contentForm">
+
+        <div class="field">
+
+          <label>Content Type</label>
+
+          <select id="contentType">
+
+            <option value="VIDEO">
+              Video
+            </option>
+
+            <option value="NOTE">
+              Notes / PDF
+            </option>
+
+          </select>
+
+        </div>
+
+
+        <div class="field">
+
+          <label>Title</label>
+
+          <input
+            id="contentTitle"
+            type="text"
+            placeholder="Introduction to Real Numbers"
+            required
+          />
+
+        </div>
+
+
+        <!-- VIDEO -->
+        <div id="videoFields">
+
+          <div class="field">
+
+            <label>Video URL</label>
+
+            <input
+              id="videoUrl"
+              type="url"
+              placeholder="https://..."
+            />
+
+            <small>
+              YouTube, Firebase Storage, Cloudflare,
+              or another video URL.
+            </small>
+
+          </div>
+
+        </div>
+
+
+        <!-- PDF -->
+        <div id="noteFields" class="hidden">
+
+          <div class="field">
+
+            <label>Notes / PDF URL</label>
+
+            <input
+              id="pdfUrl"
+              type="url"
+              placeholder="https://..."
+            />
+
+          </div>
+
+        </div>
+
+
+        <div class="field">
+
+          <label>Description</label>
+
+          <textarea
+            id="contentDescription"
+            placeholder="Optional description..."
+          ></textarea>
+
+        </div>
+
+
+        <div class="field">
+
+          <label>Order</label>
+
+          <input
+            id="contentOrder"
+            type="number"
+            min="1"
+            value="1"
+          />
+
+        </div>
+
+
+        <div class="modal-actions">
+
+          <button
+            type="button"
+            id="cancelContent"
+            class="secondary-btn"
+          >
+            Cancel
+          </button>
+
+          <button
+            type="submit"
+            class="primary-btn"
+          >
+            Save Content
+          </button>
+
+        </div>
+
+      </form>
+
+    </div>
+
+  </div>
+
+
+  <div id="toast" class="toast"></div>
+
+
+  <script type="module" src="./content.js"></script>
+
+</body>
+</html>
