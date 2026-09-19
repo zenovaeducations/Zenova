@@ -121,7 +121,7 @@ async function loadStudent() {
     ) {
 
         window.location.replace(
-            "../onboarding/"
+            "../account/onboarding/"
         );
 
         return;
