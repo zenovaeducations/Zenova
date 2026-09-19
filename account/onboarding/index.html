@@ -1,75 +1,143 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
+
     <meta
         name="viewport"
         content="width=device-width, initial-scale=1.0, viewport-fit=cover"
     >
 
-    <title>Zenova — Onboarding</title>
+    <title>Zenova | Setup Your Profile</title>
 
-    <link rel="stylesheet" href="./onboarding.css">
+    <link
+        rel="stylesheet"
+        href="./onboarding.css"
+    >
 
-    <script type="module" src="./onboarding.js"></script>
 </head>
+
 
 <body>
 
-    <!-- Loading -->
-    <div id="zenovaLoader" class="loader-screen">
+
+    <!-- =====================================================
+         LOADER
+    ====================================================== -->
+
+    <div
+        id="zenovaLoader"
+        class="loader-screen"
+    >
+
         <div class="loader-ring">
-            <span>Z</span>
+
+            <span>
+                Z
+            </span>
+
         </div>
+
     </div>
 
 
-    <!-- Onboarding -->
-    <main id="onboardingApp" class="onboarding-app hidden">
+    <!-- =====================================================
+         APP
+    ====================================================== -->
+
+    <main
+        id="onboardingApp"
+        class="onboarding-app hidden"
+    >
 
         <div class="onboarding-container">
+
+
+            <!-- =================================================
+                 HEADER
+            ================================================== -->
 
             <header class="top-header">
 
                 <div class="brand">
-                    <div class="brand-mark">Z</div>
-                    <span>ZENOVA</span>
+
+                    <div class="brand-mark">
+                        Z
+                    </div>
+
+                    <span>
+                        ZENOVA
+                    </span>
+
                 </div>
 
+
                 <div class="step-indicator">
-                    <span id="stepText">1 of 3</span>
+
+                    <span id="stepText">
+                        1 of 3
+                    </span>
+
                 </div>
 
             </header>
 
 
-            <!-- Progress -->
+            <!-- =================================================
+                 PROGRESS
+            ================================================== -->
+
             <div class="progress-area">
+
                 <div class="progress-track">
-                    <div id="progressBar" class="progress-bar"></div>
+
+                    <div
+                        id="progressBar"
+                        class="progress-bar"
+                    ></div>
+
                 </div>
+
             </div>
 
 
-            <!-- STEP 1 -->
-            <section id="step1" class="step active">
+            <!-- =================================================
+                 STEP 1
+            ================================================== -->
+
+            <section
+                id="step1"
+                class="step active"
+            >
 
                 <div class="step-heading">
-                    <span class="eyebrow">WELCOME</span>
 
-                    <h1>Let's get to know you.</h1>
+                    <span class="eyebrow">
+                        WELCOME TO ZENOVA
+                    </span>
+
+                    <h1>
+                        Let's get to know you.
+                    </h1>
 
                     <p>
-                        Tell us a little about yourself to set up
-                        your Zenova student account.
+                        Just a few details to create your
+                        student profile.
                     </p>
+
                 </div>
 
 
                 <div class="form-grid">
 
+
                     <div class="field full">
-                        <label for="fullName">Full Name</label>
+
+                        <label for="fullName">
+                            Full Name
+                        </label>
 
                         <input
                             type="text"
@@ -77,221 +145,330 @@
                             placeholder="Enter your full name"
                             autocomplete="name"
                         >
+
                     </div>
 
 
                     <div class="field">
-                        <label for="dob">Date of Birth</label>
+
+                        <label for="dob">
+                            Date of Birth
+                        </label>
 
                         <input
                             type="date"
                             id="dob"
                         >
+
                     </div>
 
 
                     <div class="field">
-                        <label for="gender">Gender</label>
+
+                        <label for="gender">
+                            Gender
+                        </label>
 
                         <select id="gender">
-                            <option value="">Select gender</option>
-                            <option value="MALE">Male</option>
-                            <option value="FEMALE">Female</option>
-                            <option value="OTHER">Other</option>
+
+                            <option value="">
+                                Select gender
+                            </option>
+
+                            <option value="MALE">
+                                Male
+                            </option>
+
+                            <option value="FEMALE">
+                                Female
+                            </option>
+
+                            <option value="OTHER">
+                                Other
+                            </option>
+
                             <option value="PREFER_NOT_TO_SAY">
                                 Prefer not to say
                             </option>
+
                         </select>
+
                     </div>
 
+
                 </div>
+
+
+                <div
+                    id="step1Error"
+                    class="form-error"
+                ></div>
+
 
                 <button
                     type="button"
                     class="continue-btn"
                     id="step1Next"
                 >
+
                     Continue
-                    <span>→</span>
+
+                    <span>
+                        →
+                    </span>
+
                 </button>
+
 
             </section>
 
 
-            <!-- STEP 2 -->
-            <section id="step2" class="step">
+            <!-- =================================================
+                 STEP 2
+            ================================================== -->
+
+            <section
+                id="step2"
+                class="step"
+            >
 
                 <div class="step-heading">
-                    <span class="eyebrow">ACADEMIC</span>
 
-                    <h1>Tell us about your studies.</h1>
+                    <span class="eyebrow">
+                        YOUR STUDIES
+                    </span>
+
+                    <h1>
+                        Tell us about your studies.
+                    </h1>
 
                     <p>
-                        We'll use this information to personalize
-                        your learning experience.
+                        You're joining Zenova for
+                        10th Standard.
                     </p>
+
                 </div>
 
 
                 <div class="form-grid">
 
+
+                    <!-- CLASS -->
+
                     <div class="field full">
-                        <label for="className">
+
+                        <label>
                             Current Class
                         </label>
 
-                        <select id="className">
-                            <option value="">Select your class</option>
-                            <option value="Under 8th">Under 8th</option>
-                            <option value="8th">8th</option>
-                            <option value="9th">9th</option>
-                            <option value="10th">10th</option>
-                            <option value="1st PUC">1st PUC</option>
-                            <option value="2nd PUC">2nd PUC</option>
-                        </select>
-                    </div>
-
-
-                    <!-- 10th only -->
-                    <div
-                        class="conditional-fields"
-                        id="tenthFields"
-                    >
-
-                        <div class="field">
-                            <label for="board">Board</label>
-
-                            <select id="board">
-                                <option value="">
-                                    Select board
-                                </option>
-
-                                <option value="KSEAB">
-                                    Karnataka State Board
-                                </option>
-
-                                <option value="CBSE">
-                                    CBSE
-                                </option>
-
-                                <option value="ICSE">
-                                    ICSE
-                                </option>
-
-                                <option value="OTHER">
-                                    Other
-                                </option>
-                            </select>
+                        <div class="fixed-value">
+                            10th Standard
                         </div>
 
                     </div>
 
 
+                    <!-- BOARD -->
+
                     <div class="field full">
-                        <label for="medium">Medium</label>
+
+                        <label for="board">
+                            Board
+                        </label>
+
+                        <select id="board">
+
+                            <option value="">
+                                Select board
+                            </option>
+
+                            <option value="KSEAB">
+                                Karnataka State Board
+                            </option>
+
+                            <option value="CBSE">
+                                CBSE
+                            </option>
+
+                            <option value="ICSE">
+                                ICSE
+                            </option>
+
+                            <option value="OTHER">
+                                Other
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- MEDIUM -->
+
+                    <div class="field full">
+
+                        <label for="medium">
+                            Medium
+                        </label>
 
                         <select id="medium">
+
                             <option value="">
                                 Select medium
                             </option>
 
                             <option value="KANNADA">
-                                Kannada
+                                Kannada Medium
                             </option>
 
                             <option value="ENGLISH">
-                                English
+                                English Medium
                             </option>
+
                         </select>
+
                     </div>
 
 
-                    <!-- PUC only -->
-                    <div
-                        class="conditional-fields"
-                        id="pucFields"
-                    >
+                    <!-- TOUGH SUBJECTS -->
 
-                        <div class="field">
-                            <label for="combination">
-                                Combination
-                            </label>
+                    <div class="field full">
 
-                            <select id="combination">
+                        <div class="tough-heading">
 
-                                <option value="">
-                                    Select combination
-                                </option>
+                            <div>
 
-                                <option value="PCMB">
-                                    PCMB
-                                </option>
+                                <label>
+                                    Your Tough Subjects
+                                </label>
 
-                                <option value="PCMC">
-                                    PCMC
-                                </option>
+                                <p>
+                                    Select exactly 2 subjects.
+                                </p>
 
-                                <option value="PCMS">
-                                    PCMS
-                                </option>
+                            </div>
 
-                                <option value="CEBA">
-                                    CEBA
-                                </option>
+                            <span
+                                id="toughCount"
+                                class="tough-count"
+                            >
+                                0 / 2
+                            </span>
 
-                                <option value="SEBA">
-                                    SEBA
-                                </option>
-
-                                <option value="HEBA">
-                                    HEBA
-                                </option>
-
-                                <option value="OTHER">
-                                    Other
-                                </option>
-
-                            </select>
                         </div>
 
 
-                        <div class="field">
-                            <label for="target">
-                                Target
-                            </label>
+                        <div
+                            id="toughSubjects"
+                            class="subject-options"
+                        >
 
-                            <select id="target">
+                            <button
+                                type="button"
+                                class="subject-option"
+                                data-subject="Mathematics"
+                            >
+                                <span>
+                                    Mathematics
+                                </span>
 
-                                <option value="">
-                                    Select target
-                                </option>
+                                <span class="subject-check">
+                                    ✓
+                                </span>
 
-                                <option value="NEET">
-                                    NEET
-                                </option>
+                            </button>
 
-                                <option value="JEE">
-                                    JEE
-                                </option>
 
-                                <option value="CET">
-                                    KCET
-                                </option>
+                            <button
+                                type="button"
+                                class="subject-option"
+                                data-subject="Science"
+                            >
+                                <span>
+                                    Science
+                                </span>
 
-                                <option value="CA">
-                                    CA
-                                </option>
+                                <span class="subject-check">
+                                    ✓
+                                </span>
 
-                                <option value="OTHER">
-                                    Other
-                                </option>
+                            </button>
 
-                            </select>
+
+                            <button
+                                type="button"
+                                class="subject-option"
+                                data-subject="Social Science"
+                            >
+                                <span>
+                                    Social Science
+                                </span>
+
+                                <span class="subject-check">
+                                    ✓
+                                </span>
+
+                            </button>
+
+
+                            <button
+                                type="button"
+                                class="subject-option"
+                                data-subject="English"
+                            >
+                                <span>
+                                    English
+                                </span>
+
+                                <span class="subject-check">
+                                    ✓
+                                </span>
+
+                            </button>
+
+
+                            <button
+                                type="button"
+                                class="subject-option"
+                                data-subject="Kannada"
+                            >
+                                <span>
+                                    Kannada
+                                </span>
+
+                                <span class="subject-check">
+                                    ✓
+                                </span>
+
+                            </button>
+
+
+                            <button
+                                type="button"
+                                class="subject-option"
+                                data-subject="Hindi"
+                            >
+                                <span>
+                                    Hindi
+                                </span>
+
+                                <span class="subject-check">
+                                    ✓
+                                </span>
+
+                            </button>
+
                         </div>
 
                     </div>
 
                 </div>
+
+
+                <div
+                    id="step2Error"
+                    class="form-error"
+                ></div>
 
 
                 <div class="button-row">
@@ -304,63 +481,101 @@
                         ← Back
                     </button>
 
+
                     <button
                         type="button"
                         class="continue-btn"
                         id="step2Next"
                     >
+
                         Continue
-                        <span>→</span>
+
+                        <span>
+                            →
+                        </span>
+
                     </button>
 
                 </div>
 
+
             </section>
 
 
-            <!-- STEP 3 -->
-            <section id="step3" class="step">
+            <!-- =================================================
+                 STEP 3
+            ================================================== -->
+
+            <section
+                id="step3"
+                class="step"
+            >
 
                 <div class="step-heading">
-                    <span class="eyebrow">YOUR SCHOOL</span>
 
-                    <h1>Where do you study?</h1>
+                    <span class="eyebrow">
+                        YOUR SCHOOL
+                    </span>
+
+                    <h1>
+                        Where do you study?
+                    </h1>
 
                     <p>
                         Select your location and school.
                     </p>
+
                 </div>
 
 
                 <div class="form-grid">
 
+
+                    <!-- DISTRICT -->
+
                     <div class="field">
+
                         <label for="district">
                             District
                         </label>
 
                         <select id="district">
+
                             <option value="">
                                 Select district
                             </option>
+
                         </select>
+
                     </div>
 
 
+                    <!-- TALUK -->
+
                     <div class="field">
+
                         <label for="taluk">
                             Taluk
                         </label>
 
-                        <select id="taluk" disabled>
+                        <select
+                            id="taluk"
+                            disabled
+                        >
+
                             <option value="">
                                 Select taluk
                             </option>
+
                         </select>
+
                     </div>
 
 
+                    <!-- GP -->
+
                     <div class="field">
+
                         <label for="gramPanchayat">
                             Gram Panchayat
                         </label>
@@ -369,14 +584,20 @@
                             id="gramPanchayat"
                             disabled
                         >
+
                             <option value="">
                                 Select Gram Panchayat
                             </option>
+
                         </select>
+
                     </div>
 
 
+                    <!-- VILLAGE -->
+
                     <div class="field">
+
                         <label for="village">
                             Village
                         </label>
@@ -385,14 +606,20 @@
                             id="village"
                             disabled
                         >
+
                             <option value="">
                                 Select village
                             </option>
+
                         </select>
+
                     </div>
 
 
+                    <!-- SCHOOL -->
+
                     <div class="field full">
+
                         <label for="school">
                             School
                         </label>
@@ -401,17 +628,20 @@
                             id="school"
                             disabled
                         >
+
                             <option value="">
                                 Select your school
                             </option>
+
                         </select>
+
                     </div>
 
                 </div>
 
 
                 <div
-                    id="formError"
+                    id="step3Error"
                     class="form-error"
                 ></div>
 
@@ -423,25 +653,42 @@
                         class="back-btn"
                         id="step3Back"
                     >
+
                         ← Back
+
                     </button>
+
 
                     <button
                         type="button"
                         class="continue-btn"
                         id="finishBtn"
                     >
+
                         Finish
-                        <span>→</span>
+
+                        <span>
+                            →
+                        </span>
+
                     </button>
 
                 </div>
 
+
             </section>
+
 
         </div>
 
     </main>
 
+
+    <script
+        type="module"
+        src="./onboarding.js"
+    ></script>
+
 </body>
+
 </html>
