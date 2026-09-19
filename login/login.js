@@ -1,205 +1,323 @@
-import {
-  auth
-} from "../firebase/firebase-config.js";
+/* ============================================================
+   ZENOVA 2
+   STUDENT LOGIN
+
+   FLOW:
+
+   Google Login
+        ↓
+   Check zen2Students/{uid}
+        ↓
+   Onboarding complete?
+        ↓
+   YES → Home
+   NO  → Onboarding
+
+   IMPORTANT:
+   - Existing Firebase project
+   - Existing Google Authentication
+   - Student profile stored in zen2Students
+============================================================ */
+
 
 import {
-  GoogleAuthProvider,
-  signInWithPopup,
-  onAuthStateChanged
+    auth,
+    db
+} from "../firebase/firebase-config.js";
+
+
+import {
+    GoogleAuthProvider,
+    signInWithPopup,
+    onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
 
 
-// ------------------------------------
-// ELEMENTS
-// ------------------------------------
+import {
+    doc,
+    getDoc
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
+
+/* ============================================================
+   ELEMENTS
+============================================================ */
 
 const googleBtn =
-  document.getElementById("googleBtn");
+    document.getElementById("googleBtn");
+
+const googleBtnText =
+    document.getElementById("googleBtnText");
 
 const errorBox =
-  document.getElementById("errorBox");
+    document.getElementById("errorBox");
 
 
-// ------------------------------------
-// CHECK CURRENT SESSION
-// ------------------------------------
+/* ============================================================
+   CHECK EXISTING SESSION
+============================================================ */
 
 onAuthStateChanged(
-  auth,
-  (user) => {
+    auth,
+    async (user) => {
 
-    /*
-      The splash normally handles this.
+        if (!user) {
+            return;
+        }
 
-      This is an additional safety check so
-      someone cannot remain on the login page
-      after already being authenticated.
-    */
 
-    if (user) {
+        try {
 
-      window.location.replace(
-        "../home/"
-      );
+            await routeStudent(
+                user
+            );
+
+        } catch (error) {
+
+            console.error(
+                "Session check error:",
+                error
+            );
+
+        }
 
     }
-
-  }
 );
 
 
-// ------------------------------------
-// GOOGLE LOGIN
-// ------------------------------------
+/* ============================================================
+   GOOGLE LOGIN
+============================================================ */
 
 googleBtn.addEventListener(
-  "click",
-  async () => {
+    "click",
+    async () => {
 
-    errorBox.textContent = "";
+        clearError();
 
-    errorBox.classList.remove("show");
+        googleBtn.disabled = true;
 
-    googleBtn.disabled = true;
-
-    googleBtn.innerHTML =
-      "<span>Connecting...</span>";
+        googleBtnText.textContent =
+            "Connecting...";
 
 
-    try {
+        try {
 
-      const provider =
-        new GoogleAuthProvider();
-
-
-      /*
-        Ask Google to show the account
-        selection screen.
-
-        This is useful when a device has
-        multiple Google accounts.
-      */
-
-      provider.setCustomParameters({
-        prompt: "select_account"
-      });
+            const provider =
+                new GoogleAuthProvider();
 
 
-      const result =
-        await signInWithPopup(
-          auth,
-          provider
+            provider.setCustomParameters({
+                prompt: "select_account"
+            });
+
+
+            const result =
+                await signInWithPopup(
+                    auth,
+                    provider
+                );
+
+
+            const user =
+                result.user;
+
+
+            console.log(
+                "Zenova login successful:",
+                user.uid
+            );
+
+
+            await routeStudent(
+                user
+            );
+
+
+        } catch (error) {
+
+            console.error(
+                "Google login error:",
+                error
+            );
+
+
+            showError(
+                getFirebaseErrorMessage(
+                    error
+                )
+            );
+
+
+            googleBtn.disabled =
+                false;
+
+
+            googleBtnText.textContent =
+                "Continue with Google";
+
+        }
+
+    }
+);
+
+
+/* ============================================================
+   ROUTE STUDENT
+============================================================ */
+
+async function routeStudent(
+    user
+) {
+
+    /*
+     * New Zenova student collection.
+     */
+
+    const studentRef =
+        doc(
+            db,
+            "zen2Students",
+            user.uid
         );
 
 
-      const user =
-        result.user;
+    const studentSnapshot =
+        await getDoc(
+            studentRef
+        );
 
 
-      console.log(
-        "Google login successful:",
-        user.uid
-      );
+    /*
+     * Student profile exists.
+     */
+
+    if (
+        studentSnapshot.exists()
+    ) {
+
+        const studentData =
+            studentSnapshot.data();
 
 
-      /*
-        We now have a real Firebase
-        authenticated user.
+        /*
+         * Onboarding completed.
+         */
 
-        Next step:
-        onboarding.
-      */
+        if (
+            studentData.onboardingComplete === true
+        ) {
 
-      window.location.replace(
+            window.location.replace(
+                "../home/"
+            );
+
+            return;
+
+        }
+
+    }
+
+
+    /*
+     * New student or incomplete
+     * onboarding.
+     */
+
+    window.location.replace(
         "../account/onboarding/"
-      );
+    );
+
+}
 
 
-    } catch (error) {
+/* ============================================================
+   ERROR
+============================================================ */
 
-      console.error(
-        "Google login error:",
-        error
-      );
+function showError(
+    message
+) {
+
+    if (!errorBox) {
+        return;
+    }
 
 
-      let message =
-        "Unable to sign in with Google. Please try again.";
+    errorBox.textContent =
+        message;
+
+    errorBox.classList.add(
+        "show"
+    );
+
+}
 
 
-      switch (error.code) {
+function clearError() {
+
+    if (!errorBox) {
+        return;
+    }
+
+
+    errorBox.textContent =
+        "";
+
+    errorBox.classList.remove(
+        "show"
+    );
+
+}
+
+
+/* ============================================================
+   FIREBASE ERROR MESSAGE
+============================================================ */
+
+function getFirebaseErrorMessage(
+    error
+) {
+
+    switch (error?.code) {
 
         case "auth/popup-closed-by-user":
 
-          message =
-            "Google sign-in was cancelled.";
-
-          break;
+            return "Google sign-in was cancelled.";
 
 
         case "auth/popup-blocked":
 
-          message =
-            "Your browser blocked the Google sign-in popup. Please allow popups for Zenova.";
-
-          break;
+            return "Your browser blocked the Google sign-in popup. Please allow popups for Zenova.";
 
 
         case "auth/network-request-failed":
 
-          message =
-            "Network error. Please check your internet connection.";
-
-          break;
+            return "Network error. Please check your internet connection.";
 
 
         case "auth/unauthorized-domain":
 
-          message =
-            "This website is not authorized for Google sign-in in Firebase.";
-
-          break;
+            return "This website is not authorized for Google sign-in in Firebase.";
 
 
         case "auth/operation-not-allowed":
 
-          message =
-            "Google sign-in is not enabled in Firebase Authentication.";
-
-          break;
+            return "Google sign-in is not enabled in Firebase Authentication.";
 
 
         case "auth/account-exists-with-different-credential":
 
-          message =
-            "An account already exists with a different sign-in method.";
-
-          break;
+            return "An account already exists with a different sign-in method.";
 
 
         default:
 
-          if (error.message) {
-            console.error(error.message);
-          }
-
-      }
-
-
-      errorBox.textContent =
-        message;
-
-      errorBox.classList.add("show");
-
-
-      googleBtn.disabled = false;
-
-      googleBtn.innerHTML = `
-        <span class="google-icon">G</span>
-        <span>Continue with Google</span>
-      `;
+            return (
+                error?.message ||
+                "Unable to sign in. Please try again."
+            );
 
     }
 
-  }
-);
+}
