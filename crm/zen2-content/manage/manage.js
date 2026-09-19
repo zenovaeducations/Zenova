@@ -1,10 +1,6 @@
 /* =====================================================
-   ZENOVA ZEN2
-   CONTENT MANAGER
-
-   IMPORTANT:
-   This is a separate management page.
-   It does NOT modify the existing Content Studio code.
+   ZEN2 CRM CONTENT MANAGER
+   Batch → Subject → Chapter → Content
 ===================================================== */
 
 
@@ -24,7 +20,7 @@ import {
     where,
     updateDoc,
     deleteDoc,
-    setDoc,
+    addDoc,
     serverTimestamp
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
@@ -32,8 +28,8 @@ import {
 import {
     ref,
     uploadBytesResumable,
-    deleteObject,
-    getDownloadURL
+    getDownloadURL,
+    deleteObject
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-storage.js";
 
 
@@ -47,10 +43,17 @@ import {
    COLLECTIONS
 ===================================================== */
 
-const COURSES = "zen2Courses";
-const SUBJECTS = "zen2Subjects";
-const CHAPTERS = "zen2Chapters";
-const CONTENT = "zen2Content";
+const COURSES =
+    "zen2Courses";
+
+const SUBJECTS =
+    "zen2Subjects";
+
+const CHAPTERS =
+    "zen2Chapters";
+
+const CONTENT =
+    "zen2Content";
 
 
 
@@ -60,9 +63,7 @@ const CONTENT = "zen2Content";
 
 let currentUser = null;
 
-let selectedCourseId = "";
-
-let selectedCourse = null;
+let courses = [];
 
 let subjects = [];
 
@@ -70,7 +71,13 @@ let chapters = [];
 
 let contents = [];
 
-let pendingDelete = null;
+let selectedCourseId = "";
+
+let selectedSubjectId = "";
+
+let selectedChapterId = "";
+
+let deleteCallback = null;
 
 
 
@@ -83,52 +90,75 @@ const batchSelect =
         "batchSelect"
     );
 
-
-const batchSection =
+const subjectSelect =
     document.getElementById(
-        "batchSection"
+        "subjectSelect"
+    );
+
+const chapterSelect =
+    document.getElementById(
+        "chapterSelect"
     );
 
 
-const batchSummary =
+const editSubjectBtn =
     document.getElementById(
-        "batchSummary"
+        "editSubjectBtn"
+    );
+
+const deleteSubjectBtn =
+    document.getElementById(
+        "deleteSubjectBtn"
     );
 
 
-const subjectsSection =
+const editChapterBtn =
     document.getElementById(
-        "subjectsSection"
+        "editChapterBtn"
+    );
+
+const deleteChapterBtn =
+    document.getElementById(
+        "deleteChapterBtn"
     );
 
 
-const subjectsList =
+const contentPanel =
     document.getElementById(
-        "subjectsList"
+        "contentPanel"
+    );
+
+const emptyState =
+    document.getElementById(
+        "emptyState"
     );
 
 
-const subjectModal =
+const locationPanel =
     document.getElementById(
-        "subjectModal"
+        "locationPanel"
     );
 
 
-const chapterModal =
+const videoList =
     document.getElementById(
-        "chapterModal"
+        "videoList"
+    );
+
+const pdfList =
+    document.getElementById(
+        "pdfList"
     );
 
 
-const contentModal =
+const videoCount =
     document.getElementById(
-        "contentModal"
+        "videoCount"
     );
 
-
-const confirmModal =
+const pdfCount =
     document.getElementById(
-        "confirmModal"
+        "pdfCount"
     );
 
 
@@ -156,7 +186,7 @@ onAuthStateChanged(
             user;
 
 
-        await loadBatches();
+        await loadCourses();
 
     }
 );
@@ -164,18 +194,12 @@ onAuthStateChanged(
 
 
 /* =====================================================
-   LOAD BATCHES
+   LOAD COURSES
 ===================================================== */
 
-async function loadBatches() {
+async function loadCourses() {
 
     try {
-
-        batchSelect.innerHTML =
-            `<option value="">
-                Select a batch
-            </option>`;
-
 
         const snapshot =
             await getDocs(
@@ -186,26 +210,43 @@ async function loadBatches() {
             );
 
 
-        if (
-            snapshot.empty
-        ) {
-
-            batchSelect.innerHTML =
-                `<option value="">
-                    No batches found
-                </option>`;
-
-            return;
-
-        }
+        courses = [];
 
 
         snapshot.forEach(
-            snapshotDoc => {
+            item => {
 
-                const data =
-                    snapshotDoc.data();
+                courses.push({
 
+                    id:
+                        item.id,
+
+                    ...item.data()
+
+                });
+
+            }
+        );
+
+
+        courses.sort(
+            (a, b) =>
+
+                getCourseName(a)
+                    .localeCompare(
+                        getCourseName(b)
+                    )
+        );
+
+
+        batchSelect.innerHTML =
+            `<option value="">
+                Select Batch
+            </option>`;
+
+
+        courses.forEach(
+            course => {
 
                 const option =
                     document.createElement(
@@ -214,14 +255,13 @@ async function loadBatches() {
 
 
                 option.value =
-                    snapshotDoc.id;
+                    course.id;
 
 
                 option.textContent =
-                    data.name ||
-                    data.courseName ||
-                    data.title ||
-                    "Unnamed Batch";
+                    getCourseName(
+                        course
+                    );
 
 
                 batchSelect.appendChild(
@@ -231,23 +271,40 @@ async function loadBatches() {
             }
         );
 
-
     }
 
     catch (error) {
 
+        showToast(
+            "Error",
+            readableError(error)
+        );
+
         console.error(
-            "LOAD BATCHES ERROR:",
             error
         );
 
-
-        showToast(
-            "Error",
-            getErrorMessage(error)
-        );
-
     }
+
+}
+
+
+
+/* =====================================================
+   COURSE NAME
+===================================================== */
+
+function getCourseName(
+    course
+) {
+
+    return (
+        course.name ||
+        course.courseName ||
+        course.title ||
+        course.crmCourseName ||
+        "Unnamed Batch"
+    );
 
 }
 
@@ -266,140 +323,31 @@ batchSelect.addEventListener(
             batchSelect.value;
 
 
+        selectedSubjectId = "";
+
+        selectedChapterId = "";
+
+
+        resetSubject();
+
+        resetChapter();
+
+        hideContent();
+
+
         if (
             !selectedCourseId
         ) {
 
-            batchSection.classList.add(
-                "hidden"
-            );
-
-            subjectsSection.classList.add(
-                "hidden"
-            );
-
             return;
 
         }
-
-
-        await loadSelectedBatch();
-
-    }
-);
-
-
-
-/* =====================================================
-   LOAD SELECTED BATCH
-===================================================== */
-
-async function loadSelectedBatch() {
-
-    try {
-
-        const snapshot =
-            await getDoc(
-                doc(
-                    db,
-                    COURSES,
-                    selectedCourseId
-                )
-            );
-
-
-        if (
-            !snapshot.exists()
-        ) {
-
-            showToast(
-                "Error",
-                "Batch no longer exists."
-            );
-
-            return;
-
-        }
-
-
-        selectedCourse = {
-            id:
-                snapshot.id,
-
-            ...snapshot.data()
-        };
-
-
-        renderBatch();
 
 
         await loadSubjects();
 
-
     }
-
-    catch (error) {
-
-        console.error(
-            error
-        );
-
-
-        showToast(
-            "Error",
-            getErrorMessage(error)
-        );
-
-    }
-
-}
-
-
-
-/* =====================================================
-   RENDER BATCH
-===================================================== */
-
-function renderBatch() {
-
-    const name =
-        selectedCourse.name ||
-        selectedCourse.courseName ||
-        selectedCourse.title ||
-        "Unnamed Batch";
-
-
-    const code =
-        selectedCourse.code ||
-        selectedCourse.courseCode ||
-        "";
-
-
-    const year =
-        selectedCourse.academicYear ||
-        "";
-
-
-    const price =
-        selectedCourse.price ??
-        selectedCourse.coursePrice ??
-        "";
-
-
-    batchSummary.textContent =
-        `${name}${code ? ` • ${code}` : ""}${year ? ` • ${year}` : ""}${price !== "" ? ` • ₹${price}` : ""}`;
-
-
-    batchSection.classList.remove(
-        "hidden"
-    );
-
-
-    subjectsSection.classList.remove(
-        "hidden"
-    );
-
-}
+);
 
 
 
@@ -409,11 +357,19 @@ function renderBatch() {
 
 async function loadSubjects() {
 
-    subjects = [];
+    subjectSelect.disabled =
+        true;
+
+
+    subjectSelect.innerHTML =
+        `<option value="">
+            Loading subjects...
+        </option>`;
 
 
     const q =
         query(
+
             collection(
                 db,
                 SUBJECTS
@@ -424,6 +380,7 @@ async function loadSubjects() {
                 "==",
                 selectedCourseId
             )
+
         );
 
 
@@ -431,14 +388,19 @@ async function loadSubjects() {
         await getDocs(q);
 
 
+    subjects = [];
+
+
     snapshot.forEach(
         item => {
 
             subjects.push({
+
                 id:
                     item.id,
 
                 ...item.data()
+
             });
 
         }
@@ -447,254 +409,85 @@ async function loadSubjects() {
 
     subjects.sort(
         (a, b) =>
-            String(
-                a.name ||
-                ""
-            ).localeCompare(
-                String(
-                    b.name ||
-                    ""
+
+            getSubjectName(a)
+                .localeCompare(
+                    getSubjectName(b)
                 )
-            )
     );
 
 
-    await loadAllChaptersAndContent();
+    subjectSelect.innerHTML =
+        `<option value="">
+            Select Subject
+        </option>`;
 
 
-    renderSubjects();
+    subjects.forEach(
+        subject => {
 
-}
-
-
-
-/* =====================================================
-   LOAD ALL CHAPTERS + CONTENT
-===================================================== */
-
-async function loadAllChaptersAndContent() {
-
-    chapters = [];
-
-    contents = [];
+            const option =
+                document.createElement(
+                    "option"
+                );
 
 
-    const chapterQuery =
-        query(
-            collection(
-                db,
-                CHAPTERS
-            ),
-
-            where(
-                "courseId",
-                "==",
-                selectedCourseId
-            )
-        );
+            option.value =
+                subject.id;
 
 
-    const chapterSnapshot =
-        await getDocs(
-            chapterQuery
-        );
+            /*
+             * IMPORTANT:
+             * Support both `name`
+             * and `subjectName`
+             */
+
+            option.textContent =
+                getSubjectName(
+                    subject
+                );
 
 
-    chapterSnapshot.forEach(
-        item => {
-
-            chapters.push({
-                id:
-                    item.id,
-
-                ...item.data()
-            });
+            subjectSelect.appendChild(
+                option
+            );
 
         }
     );
 
 
-    const contentQuery =
-        query(
-            collection(
-                db,
-                CONTENT
-            ),
-
-            where(
-                "courseId",
-                "==",
-                selectedCourseId
-            )
-        );
-
-
-    const contentSnapshot =
-        await getDocs(
-            contentQuery
-        );
-
-
-    contentSnapshot.forEach(
-        item => {
-
-            contents.push({
-                id:
-                    item.id,
-
-                ...item.data()
-            });
-
-        }
-    );
-
-}
-
-
-
-/* =====================================================
-   RENDER SUBJECTS
-===================================================== */
-
-function renderSubjects() {
-
-    subjectsList.innerHTML = "";
+    subjectSelect.disabled =
+        subjects.length === 0;
 
 
     if (
         subjects.length === 0
     ) {
 
-        subjectsList.innerHTML =
-            `
-            <div class="empty">
-                No subjects found.
-                Click "+ Add Subject" to create one.
-            </div>
-            `;
-
-        return;
+        subjectSelect.innerHTML =
+            `<option value="">
+                No subjects found
+            </option>`;
 
     }
 
-
-    subjects.forEach(
-        subject => {
-
-            const card =
-                document.createElement(
-                    "div"
-                );
+}
 
 
-            card.className =
-                "subject-card";
 
+/* =====================================================
+   SUBJECT NAME
+===================================================== */
 
-            const subjectChapters =
-                chapters
-                    .filter(
-                        chapter =>
-                            chapter.subjectId ===
-                            subject.id
-                    )
-                    .sort(
-                        (a, b) =>
-                            Number(
-                                a.chapterNumber ||
-                                a.order ||
-                                0
-                            ) -
-                            Number(
-                                b.chapterNumber ||
-                                b.order ||
-                                0
-                            )
-                    );
+function getSubjectName(
+    subject
+) {
 
-
-            card.innerHTML =
-                `
-                <div class="subject-header">
-
-                    <div>
-
-                        <div class="subject-name">
-                            ${escapeHTML(
-                                subject.name ||
-                                "Unnamed Subject"
-                            )}
-                        </div>
-
-                        <div class="muted">
-                            ${subjectChapters.length}
-                            chapter${subjectChapters.length === 1 ? "" : "s"}
-                        </div>
-
-                    </div>
-
-
-                    <div class="subject-actions">
-
-                        <button
-                            class="button secondary small"
-                            data-action="edit-subject"
-                            data-id="${subject.id}"
-                        >
-                            ✎ Edit
-                        </button>
-
-                        <button
-                            class="button danger small"
-                            data-action="delete-subject"
-                            data-id="${subject.id}"
-                        >
-                            🗑 Delete
-                        </button>
-
-                        <button
-                            class="button primary small"
-                            data-action="add-chapter"
-                            data-id="${subject.id}"
-                        >
-                            + Chapter
-                        </button>
-
-                    </div>
-
-                </div>
-
-
-                <div class="chapters-container">
-
-                    ${
-                        subjectChapters.length
-                        ?
-                        subjectChapters
-                            .map(
-                                chapter =>
-                                    renderChapter(
-                                        chapter
-                                    )
-                            )
-                            .join("")
-                        :
-                        `
-                        <div class="empty">
-                            No chapters yet.
-                        </div>
-                        `
-                    }
-
-                </div>
-                `;
-
-
-            subjectsList.appendChild(
-                card
-            );
-
-        }
+    return (
+        subject.name ||
+        subject.subjectName ||
+        subject.title ||
+        "Unnamed Subject"
     );
 
 }
@@ -702,114 +495,302 @@ function renderSubjects() {
 
 
 /* =====================================================
-   RENDER CHAPTER
+   SUBJECT CHANGE
 ===================================================== */
 
-function renderChapter(
+subjectSelect.addEventListener(
+    "change",
+
+    async () => {
+
+        selectedSubjectId =
+            subjectSelect.value;
+
+
+        selectedChapterId = "";
+
+
+        resetChapter();
+
+        hideContent();
+
+
+        editSubjectBtn.disabled =
+            !selectedSubjectId;
+
+
+        deleteSubjectBtn.disabled =
+            !selectedSubjectId;
+
+
+        if (
+            !selectedSubjectId
+        ) {
+
+            return;
+
+        }
+
+
+        await loadChapters();
+
+    }
+);
+
+
+
+/* =====================================================
+   LOAD CHAPTERS
+===================================================== */
+
+async function loadChapters() {
+
+    chapterSelect.disabled =
+        true;
+
+
+    chapterSelect.innerHTML =
+        `<option value="">
+            Loading chapters...
+        </option>`;
+
+
+    const q =
+        query(
+
+            collection(
+                db,
+                CHAPTERS
+            ),
+
+            where(
+                "subjectId",
+                "==",
+                selectedSubjectId
+            )
+
+        );
+
+
+    const snapshot =
+        await getDocs(q);
+
+
+    chapters = [];
+
+
+    snapshot.forEach(
+        item => {
+
+            chapters.push({
+
+                id:
+                    item.id,
+
+                ...item.data()
+
+            });
+
+        }
+    );
+
+
+    chapters.sort(
+        (a, b) =>
+
+            Number(
+                getChapterNumber(a)
+            ) -
+
+            Number(
+                getChapterNumber(b)
+            )
+    );
+
+
+    chapterSelect.innerHTML =
+        `<option value="">
+            Select Chapter
+        </option>`;
+
+
+    chapters.forEach(
+        chapter => {
+
+            const option =
+                document.createElement(
+                    "option"
+                );
+
+
+            option.value =
+                chapter.id;
+
+
+            option.textContent =
+                `${getChapterNumber(chapter)} - ${getChapterName(chapter)}`;
+
+
+            chapterSelect.appendChild(
+                option
+            );
+
+        }
+    );
+
+
+    chapterSelect.disabled =
+        chapters.length === 0;
+
+
+    if (
+        chapters.length === 0
+    ) {
+
+        chapterSelect.innerHTML =
+            `<option value="">
+                No chapters found
+            </option>`;
+
+    }
+
+}
+
+
+
+/* =====================================================
+   CHAPTER HELPERS
+===================================================== */
+
+function getChapterNumber(
     chapter
 ) {
 
-    const chapterContents =
-        contents
-            .filter(
-                content =>
-                    content.chapterId ===
-                    chapter.id
-            )
-            .sort(
-                (a, b) =>
-                    Number(
-                        a.order ||
-                        0
-                    ) -
-                    Number(
-                        b.order ||
-                        0
-                    )
-            );
+    return (
+        chapter.chapterNumber ??
+        chapter.order ??
+        0
+    );
+
+}
 
 
-    const number =
-        chapter.chapterNumber ||
-        chapter.order ||
-        "";
+function getChapterName(
+    chapter
+) {
 
-
-    const name =
+    return (
         chapter.name ||
         chapter.chapterName ||
-        "Unnamed Chapter";
+        chapter.title ||
+        "Unnamed Chapter"
+    );
+
+}
 
 
-    return `
 
-        <div class="chapter">
+/* =====================================================
+   CHAPTER CHANGE
+===================================================== */
 
-            <div class="chapter-header">
+chapterSelect.addEventListener(
+    "change",
 
-                <div>
+    async () => {
 
-                    <span class="chapter-number">
-                        ${escapeHTML(number)}
-                    </span>
-
-                    <span class="chapter-title">
-                        ${escapeHTML(name)}
-                    </span>
-
-                </div>
+        selectedChapterId =
+            chapterSelect.value;
 
 
-                <div class="chapter-actions">
-
-                    <button
-                        class="button secondary small"
-                        data-action="edit-chapter"
-                        data-id="${chapter.id}"
-                    >
-                        ✎ Edit
-                    </button>
+        editChapterBtn.disabled =
+            !selectedChapterId;
 
 
-                    <button
-                        class="button danger small"
-                        data-action="delete-chapter"
-                        data-id="${chapter.id}"
-                    >
-                        🗑 Delete
-                    </button>
-
-                </div>
-
-            </div>
+        deleteChapterBtn.disabled =
+            !selectedChapterId;
 
 
-            <div class="content-list">
+        if (
+            !selectedChapterId
+        ) {
 
-                ${
-                    chapterContents.length
-                    ?
-                    chapterContents
-                        .map(
-                            content =>
-                                renderContent(
-                                    content
-                                )
-                        )
-                        .join("")
-                    :
-                    `
-                    <div class="empty">
-                        No videos or PDFs in this chapter.
-                    </div>
-                    `
-                }
+            hideContent();
 
-            </div>
+            return;
 
-        </div>
+        }
 
-    `;
+
+        await loadContent();
+
+    }
+);
+
+
+
+/* =====================================================
+   LOAD CONTENT
+===================================================== */
+
+async function loadContent() {
+
+    const q =
+        query(
+
+            collection(
+                db,
+                CONTENT
+            ),
+
+            where(
+                "chapterId",
+                "==",
+                selectedChapterId
+            )
+
+        );
+
+
+    const snapshot =
+        await getDocs(q);
+
+
+    contents = [];
+
+
+    snapshot.forEach(
+        item => {
+
+            contents.push({
+
+                id:
+                    item.id,
+
+                ...item.data()
+
+            });
+
+        }
+    );
+
+
+    contents.sort(
+        (a, b) =>
+
+            Number(
+                a.order ||
+                0
+            ) -
+
+            Number(
+                b.order ||
+                0
+            )
+    );
+
+
+    renderContent();
 
 }
 
@@ -819,101 +800,228 @@ function renderChapter(
    RENDER CONTENT
 ===================================================== */
 
-function renderContent(
-    content
-) {
+function renderContent() {
 
-    const isVideo =
-        content.contentType ===
-        "VIDEO";
-
-
-    const access =
-        content.accessType ===
-        "PAID"
-        ?
-        "PAID"
-        :
-        "FREE";
+    const videos =
+        contents.filter(
+            item =>
+                String(
+                    item.contentType ||
+                    ""
+                ).toUpperCase() ===
+                "VIDEO"
+        );
 
 
-    return `
-
-        <div class="content-row">
-
-            <div class="content-icon">
-                ${isVideo ? "▶" : "📄"}
-            </div>
-
-
-            <div class="content-info">
-
-                <div class="content-title">
-
-                    ${escapeHTML(
-                        content.title ||
-                        "Untitled"
-                    )}
-
-                </div>
+    const pdfs =
+        contents.filter(
+            item =>
+                String(
+                    item.contentType ||
+                    ""
+                ).toUpperCase() ===
+                "PDF"
+        );
 
 
-                <div class="content-meta">
-
-                    ${isVideo ? "Video" : "PDF"}
-
-                    • Order:
-                    ${escapeHTML(
-                        content.order ??
-                        0
-                    )}
-
-                </div>
-
-            </div>
+    videoCount.textContent =
+        videos.length;
 
 
-            <span
-                class="badge ${access === "PAID" ? "paid" : "free"}"
-            >
-                ${access}
-            </span>
+    pdfCount.textContent =
+        pdfs.length;
 
 
-            <div class="content-actions">
-
-                <button
-                    class="button secondary small"
-                    data-action="edit-content"
-                    data-id="${content.id}"
-                >
-                    ✎
-                </button>
+    videoList.innerHTML =
+        "";
 
 
-                <button
-                    class="button danger small"
-                    data-action="delete-content"
-                    data-id="${content.id}"
-                >
-                    🗑
-                </button>
+    pdfList.innerHTML =
+        "";
 
-            </div>
 
-        </div>
+    if (
+        videos.length === 0
+    ) {
 
-    `;
+        videoList.innerHTML =
+            emptyContent(
+                "No videos in this chapter."
+            );
+
+    }
+
+    else {
+
+        videos.forEach(
+            content => {
+
+                videoList.appendChild(
+                    createContentRow(
+                        content,
+                        "VIDEO"
+                    )
+                );
+
+            }
+        );
+
+    }
+
+
+    if (
+        pdfs.length === 0
+    ) {
+
+        pdfList.innerHTML =
+            emptyContent(
+                "No PDFs in this chapter."
+            );
+
+    }
+
+    else {
+
+        pdfs.forEach(
+            content => {
+
+                pdfList.appendChild(
+                    createContentRow(
+                        content,
+                        "PDF"
+                    )
+                );
+
+            }
+        );
+
+    }
+
+
+    updateLocation();
+
+
+    contentPanel.classList.remove(
+        "hidden"
+    );
+
+
+    emptyState.classList.add(
+        "hidden"
+    );
 
 }
 
 
 
 /* =====================================================
-   EVENT DELEGATION
+   CONTENT ROW
 ===================================================== */
 
-subjectsList.addEventListener(
+function createContentRow(
+    content,
+    type
+) {
+
+    const row =
+        document.createElement(
+            "div"
+        );
+
+
+    row.className =
+        "content-row";
+
+
+    const access =
+        String(
+            content.accessType ||
+            (
+                content.isFree
+                    ? "FREE"
+                    : "PAID"
+            )
+        ).toUpperCase();
+
+
+    row.innerHTML =
+        `
+
+        <div class="content-icon">
+            ${type === "VIDEO" ? "▶" : "📄"}
+        </div>
+
+
+        <div>
+
+            <div class="content-title">
+                ${escapeHTML(
+                    content.title ||
+                    "Untitled"
+                )}
+            </div>
+
+
+            <div class="content-meta">
+
+                Order:
+                ${escapeHTML(
+                    content.order ||
+                    0
+                )}
+
+                ${content.fileName
+                    ? ` • ${escapeHTML(content.fileName)}`
+                    : ""
+                }
+
+            </div>
+
+        </div>
+
+
+        <span
+            class="badge ${access === "PAID" ? "paid" : "free"}"
+        >
+            ${access}
+        </span>
+
+
+        <div class="content-actions">
+
+            <button
+                class="small-btn"
+                data-action="edit-content"
+                data-id="${content.id}"
+            >
+                Edit
+            </button>
+
+
+            <button
+                class="small-btn delete"
+                data-action="delete-content"
+                data-id="${content.id}"
+            >
+                Delete
+            </button>
+
+        </div>
+
+        `;
+
+
+    return row;
+
+}
+
+
+
+/* =====================================================
+   CONTENT BUTTONS
+===================================================== */
+
+document.addEventListener(
     "click",
 
     event => {
@@ -939,82 +1047,22 @@ subjectsList.addEventListener(
 
         if (
             action ===
-            "edit-subject"
-        ) {
-
-            openEditSubject(
-                id
-            );
-
-        }
-
-
-        else if (
-            action ===
-            "delete-subject"
-        ) {
-
-            confirmDeleteSubject(
-                id
-            );
-
-        }
-
-
-        else if (
-            action ===
-            "add-chapter"
-        ) {
-
-            openAddChapter(
-                id
-            );
-
-        }
-
-
-        else if (
-            action ===
-            "edit-chapter"
-        ) {
-
-            openEditChapter(
-                id
-            );
-
-        }
-
-
-        else if (
-            action ===
-            "delete-chapter"
-        ) {
-
-            confirmDeleteChapter(
-                id
-            );
-
-        }
-
-
-        else if (
-            action ===
             "edit-content"
         ) {
 
-            openEditContent(
+            openContentEdit(
                 id
             );
 
         }
 
 
-        else if (
+        if (
             action ===
             "delete-content"
         ) {
 
-            confirmDeleteContent(
+            confirmContentDelete(
                 id
             );
 
@@ -1026,99 +1074,43 @@ subjectsList.addEventListener(
 
 
 /* =====================================================
-   ADD SUBJECT
-===================================================== */
-
-document
-    .getElementById(
-        "addSubjectButton"
-    )
-    .addEventListener(
-        "click",
-
-        () => {
-
-            document
-                .getElementById(
-                    "subjectModalTitle"
-                )
-                .textContent =
-                "Add Subject";
-
-
-            document
-                .getElementById(
-                    "subjectId"
-                )
-                .value = "";
-
-
-            document
-                .getElementById(
-                    "subjectName"
-                )
-                .value = "";
-
-
-            openModal(
-                subjectModal
-            );
-
-        }
-    );
-
-
-
-/* =====================================================
    EDIT SUBJECT
 ===================================================== */
 
-function openEditSubject(
-    subjectId
-) {
+editSubjectBtn.addEventListener(
+    "click",
 
-    const subject =
-        subjects.find(
-            item =>
-                item.id ===
-                subjectId
+    () => {
+
+        const subject =
+            subjects.find(
+                item =>
+                    item.id ===
+                    selectedSubjectId
+            );
+
+
+        if (!subject) {
+            return;
+        }
+
+
+        document
+            .getElementById(
+                "subjectName"
+            )
+            .value =
+            getSubjectName(
+                subject
+            );
+
+
+        openModal(
+            "subjectModal"
         );
 
-
-    if (!subject) {
-        return;
     }
-
-
-    document
-        .getElementById(
-            "subjectModalTitle"
-        )
-        .textContent =
-        "Edit Subject";
-
-
-    document
-        .getElementById(
-            "subjectId"
-        )
-        .value =
-        subjectId;
-
-
-    document
-        .getElementById(
-            "subjectName"
-        )
-        .value =
-        subject.name || "";
-
-
-    openModal(
-        subjectModal
-    );
-
-}
+);
 
 
 
@@ -1131,19 +1123,12 @@ document
         "subjectForm"
     )
     .addEventListener(
+
         "submit",
 
         async event => {
 
             event.preventDefault();
-
-
-            const id =
-                document
-                    .getElementById(
-                        "subjectId"
-                    )
-                    .value;
 
 
             const name =
@@ -1162,165 +1147,190 @@ document
 
             try {
 
-                /* Duplicate protection */
+                await updateDoc(
 
-                const duplicate =
-                    subjects.find(
-                        subject =>
-                            subject.id !== id &&
-                            String(
-                                subject.name ||
-                                ""
-                            )
-                                .trim()
-                                .toLowerCase() ===
-                            name.toLowerCase()
-                    );
+                    doc(
+                        db,
+                        SUBJECTS,
+                        selectedSubjectId
+                    ),
 
+                    {
+                        name,
 
-                if (duplicate) {
-
-                    showToast(
-                        "Cannot save",
-                        "This subject already exists."
-                    );
-
-                    return;
-
-                }
-
-
-                if (id) {
-
-                    await updateDoc(
-                        doc(
-                            db,
-                            SUBJECTS,
-                            id
-                        ),
-
-                        {
-                            name,
-                            updatedAt:
-                                serverTimestamp()
-                        }
-                    );
-
-                }
-
-                else {
-
-                    await setDoc(
-                        doc(
-                            collection(
-                                db,
-                                SUBJECTS
-                            )
-                        ),
-
-                        {
-                            courseId:
-                                selectedCourseId,
-
+                        subjectName:
                             name,
 
-                            active:
-                                true,
+                        updatedAt:
+                            serverTimestamp()
+                    }
 
-                            createdBy:
-                                currentUser.uid,
-
-                            createdAt:
-                                serverTimestamp(),
-
-                            updatedAt:
-                                serverTimestamp()
-                        }
-                    );
-
-                }
-
-
-                closeModal(
-                    subjectModal
                 );
 
 
-                await loadSelectedBatch();
+                closeModal(
+                    "subjectModal"
+                );
+
+
+                await loadSubjects();
+
+
+                subjectSelect.value =
+                    selectedSubjectId;
+
+
+                await loadChapters();
 
 
                 showToast(
                     "Saved",
-                    "Subject updated successfully."
+                    "Subject name updated."
                 );
 
             }
 
             catch (error) {
 
-                console.error(
-                    error
-                );
-
                 showToast(
                     "Error",
-                    getErrorMessage(error)
+                    readableError(error)
                 );
 
             }
 
         }
+
     );
 
 
 
 /* =====================================================
-   ADD CHAPTER
+   DELETE SUBJECT
 ===================================================== */
 
-function openAddChapter(
+deleteSubjectBtn.addEventListener(
+    "click",
+
+    () => {
+
+        const subject =
+            subjects.find(
+                item =>
+                    item.id ===
+                    selectedSubjectId
+            );
+
+
+        if (!subject) {
+            return;
+        }
+
+
+        const subjectName =
+            getSubjectName(
+                subject
+            );
+
+
+        askDelete(
+
+            "Delete Subject?",
+
+            `
+            Delete <strong>
+            ${escapeHTML(subjectName)}
+            </strong>?
+
+            <br><br>
+
+            All chapters and their
+            videos/PDFs will also be deleted.
+            `,
+
+            async () => {
+
+                await deleteSubjectTree(
+                    selectedSubjectId
+                );
+
+            }
+
+        );
+
+    }
+);
+
+
+
+/* =====================================================
+   DELETE SUBJECT TREE
+===================================================== */
+
+async function deleteSubjectTree(
     subjectId
 ) {
 
-    document
-        .getElementById(
-            "chapterModalTitle"
+    const q =
+        query(
+
+            collection(
+                db,
+                CHAPTERS
+            ),
+
+            where(
+                "subjectId",
+                "==",
+                subjectId
+            )
+
+        );
+
+
+    const snapshot =
+        await getDocs(q);
+
+
+    for (
+        const chapterDoc
+        of snapshot.docs
+    ) {
+
+        await deleteChapterTree(
+            chapterDoc.id
+        );
+
+    }
+
+
+    await deleteDoc(
+        doc(
+            db,
+            SUBJECTS,
+            subjectId
         )
-        .textContent =
-        "Add Chapter";
+    );
 
 
-    document
-        .getElementById(
-            "chapterId"
-        )
-        .value = "";
+    selectedSubjectId = "";
+
+    selectedChapterId = "";
 
 
-    document
-        .getElementById(
-            "chapterNumber"
-        )
-        .value = "";
+    resetSubject();
+
+    resetChapter();
+
+    hideContent();
 
 
-    document
-        .getElementById(
-            "chapterName"
-        )
-        .value = "";
+    await loadSubjects();
 
 
-    document
-        .getElementById(
-            "chapterId"
-        )
-        .dataset.subjectId =
-        subjectId;
-
-
-    openModal(
-        chapterModal
+    showToast(
+        "Deleted",
+        "Subject deleted successfully."
     );
 
 }
@@ -1331,72 +1341,50 @@ function openAddChapter(
    EDIT CHAPTER
 ===================================================== */
 
-function openEditChapter(
-    chapterId
-) {
+editChapterBtn.addEventListener(
+    "click",
 
-    const chapter =
-        chapters.find(
-            item =>
-                item.id ===
-                chapterId
+    () => {
+
+        const chapter =
+            chapters.find(
+                item =>
+                    item.id ===
+                    selectedChapterId
+            );
+
+
+        if (!chapter) {
+            return;
+        }
+
+
+        document
+            .getElementById(
+                "chapterNumber"
+            )
+            .value =
+            getChapterNumber(
+                chapter
+            );
+
+
+        document
+            .getElementById(
+                "chapterName"
+            )
+            .value =
+            getChapterName(
+                chapter
+            );
+
+
+        openModal(
+            "chapterModal"
         );
 
-
-    if (!chapter) {
-        return;
     }
-
-
-    document
-        .getElementById(
-            "chapterModalTitle"
-        )
-        .textContent =
-        "Edit Chapter";
-
-
-    document
-        .getElementById(
-            "chapterId"
-        )
-        .value =
-        chapterId;
-
-
-    document
-        .getElementById(
-            "chapterNumber"
-        )
-        .value =
-        chapter.chapterNumber ??
-        chapter.order ??
-        1;
-
-
-    document
-        .getElementById(
-            "chapterName"
-        )
-        .value =
-        chapter.name ||
-        chapter.chapterName ||
-        "";
-
-
-    document
-        .getElementById(
-            "chapterId"
-        )
-        .dataset.subjectId =
-        chapter.subjectId;
-
-
-    openModal(
-        chapterModal
-    );
-
-}
+);
 
 
 
@@ -1409,6 +1397,7 @@ document
         "chapterForm"
     )
     .addEventListener(
+
         "submit",
 
         async event => {
@@ -1416,23 +1405,7 @@ document
             event.preventDefault();
 
 
-            const id =
-                document
-                    .getElementById(
-                        "chapterId"
-                    )
-                    .value;
-
-
-            const subjectId =
-                document
-                    .getElementById(
-                        "chapterId"
-                    )
-                    .dataset.subjectId;
-
-
-            const chapterNumber =
+            const number =
                 Number(
                     document
                         .getElementById(
@@ -1452,900 +1425,76 @@ document
 
 
             if (
-                !chapterNumber ||
+                !number ||
                 !name
             ) {
-
                 return;
-
             }
 
 
             try {
-
-                const duplicate =
-                    chapters.find(
-                        chapter =>
-
-                            chapter.id !== id &&
-
-                            chapter.subjectId ===
-                            subjectId &&
-
-                            (
-                                Number(
-                                    chapter.chapterNumber ??
-                                    chapter.order ??
-                                    0
-                                ) ===
-                                chapterNumber ||
-
-                                String(
-                                    chapter.name ||
-                                    chapter.chapterName ||
-                                    ""
-                                )
-                                    .trim()
-                                    .toLowerCase() ===
-                                name.toLowerCase()
-                            )
-                    );
-
-
-                if (duplicate) {
-
-                    showToast(
-                        "Cannot save",
-                        "Chapter number or name already exists."
-                    );
-
-                    return;
-
-                }
-
-
-                if (id) {
-
-                    await updateDoc(
-                        doc(
-                            db,
-                            CHAPTERS,
-                            id
-                        ),
-
-                        {
-                            chapterNumber,
-
-                            order:
-                                chapterNumber,
-
-                            name,
-
-                            chapterName:
-                                name,
-
-                            updatedAt:
-                                serverTimestamp()
-                        }
-                    );
-
-                }
-
-                else {
-
-                    await setDoc(
-                        doc(
-                            collection(
-                                db,
-                                CHAPTERS
-                            )
-                        ),
-
-                        {
-                            courseId:
-                                selectedCourseId,
-
-                            subjectId,
-
-                            chapterNumber,
-
-                            order:
-                                chapterNumber,
-
-                            name,
-
-                            chapterName:
-                                name,
-
-                            active:
-                                true,
-
-                            createdBy:
-                                currentUser.uid,
-
-                            createdAt:
-                                serverTimestamp(),
-
-                            updatedAt:
-                                serverTimestamp()
-                        }
-                    );
-
-                }
-
-
-                closeModal(
-                    chapterModal
-                );
-
-
-                await loadSelectedBatch();
-
-
-                showToast(
-                    "Saved",
-                    "Chapter saved successfully."
-                );
-
-            }
-
-            catch (error) {
-
-                console.error(
-                    error
-                );
-
-
-                showToast(
-                    "Error",
-                    getErrorMessage(error)
-                );
-
-            }
-
-        }
-    );
-
-
-
-/* =====================================================
-   EDIT CONTENT
-===================================================== */
-
-function openEditContent(
-    contentId
-) {
-
-    const content =
-        contents.find(
-            item =>
-                item.id ===
-                contentId
-        );
-
-
-    if (!content) {
-        return;
-    }
-
-
-    document
-        .getElementById(
-            "contentId"
-        )
-        .value =
-        contentId;
-
-
-    document
-        .getElementById(
-            "contentType"
-        )
-        .value =
-        content.contentType ||
-        "VIDEO";
-
-
-    document
-        .getElementById(
-            "accessType"
-        )
-        .value =
-        content.accessType ||
-        (
-            content.isFree
-                ? "FREE"
-                : "PAID"
-        );
-
-
-    document
-        .getElementById(
-            "contentTitle"
-        )
-        .value =
-        content.title ||
-        "";
-
-
-    document
-        .getElementById(
-            "contentOrder"
-        )
-        .value =
-        content.order ||
-        1;
-
-
-    document
-        .getElementById(
-            "contentThumbnail"
-        )
-        .value =
-        content.thumbnailUrl ||
-        "";
-
-
-    document
-        .getElementById(
-            "contentDescription"
-        )
-        .value =
-        content.description ||
-        "";
-
-
-    document
-        .getElementById(
-            "replacementFile"
-        )
-        .value = "";
-
-
-    document
-        .getElementById(
-            "replacementFile"
-        )
-        .accept =
-        content.contentType ===
-        "PDF"
-            ? ".pdf,application/pdf"
-            : "video/*";
-
-
-    document
-        .getElementById(
-            "contentModalTitle"
-        )
-        .textContent =
-        content.contentType ===
-        "PDF"
-            ? "Edit PDF"
-            : "Edit Video";
-
-
-    openModal(
-        contentModal
-    );
-
-}
-
-
-
-/* =====================================================
-   SAVE CONTENT
-===================================================== */
-
-document
-    .getElementById(
-        "contentForm"
-    )
-    .addEventListener(
-        "submit",
-
-        async event => {
-
-            event.preventDefault();
-
-
-            const contentId =
-                document
-                    .getElementById(
-                        "contentId"
-                    )
-                    .value;
-
-
-            const content =
-                contents.find(
-                    item =>
-                        item.id ===
-                        contentId
-                );
-
-
-            if (!content) {
-                return;
-            }
-
-
-            const accessType =
-                document
-                    .getElementById(
-                        "accessType"
-                    )
-                    .value;
-
-
-            const title =
-                document
-                    .getElementById(
-                        "contentTitle"
-                    )
-                    .value
-                    .trim();
-
-
-            const order =
-                Number(
-                    document
-                        .getElementById(
-                            "contentOrder"
-                        )
-                        .value
-                );
-
-
-            const thumbnailUrl =
-                document
-                    .getElementById(
-                        "contentThumbnail"
-                    )
-                    .value
-                    .trim();
-
-
-            const description =
-                document
-                    .getElementById(
-                        "contentDescription"
-                    )
-                    .value
-                    .trim();
-
-
-            const replacementFile =
-                document
-                    .getElementById(
-                        "replacementFile"
-                    )
-                    .files[0];
-
-
-            if (
-                !title ||
-                !order
-            ) {
-
-                return;
-
-            }
-
-
-            try {
-
-                let updateData = {
-
-                    title,
-
-                    order,
-
-                    accessType,
-
-                    isFree:
-                        accessType ===
-                        "FREE",
-
-                    requiresPurchase:
-                        accessType ===
-                        "PAID",
-
-                    thumbnailUrl,
-
-                    description,
-
-                    updatedAt:
-                        serverTimestamp()
-
-                };
-
-
-                /* -----------------------------------------
-                   REPLACE FILE
-                ----------------------------------------- */
-
-                if (
-                    replacementFile
-                ) {
-
-                    const valid =
-                        validateReplacementFile(
-                            content,
-                            replacementFile
-                        );
-
-
-                    if (!valid) {
-                        return;
-                    }
-
-
-                    await replaceContentFile(
-                        content,
-                        replacementFile,
-
-                        progress => {
-
-                            showReplaceProgress(
-                                progress
-                            );
-
-                        }
-                    );
-
-
-                    const oldStoragePath =
-                        content.storagePath;
-
-
-                    const storagePath =
-                        buildStoragePath(
-                            selectedCourseId,
-                            content.subjectId,
-                            content.chapterId,
-                            content.id,
-                            replacementFile.name
-                        );
-
-
-                    const newRef =
-                        ref(
-                            storage,
-                            storagePath
-                        );
-
-
-                    const uploadTask =
-                        uploadBytesResumable(
-                            newRef,
-                            replacementFile
-                        );
-
-
-                    await waitForUpload(
-                        uploadTask,
-
-                        progress => {
-
-                            showReplaceProgress(
-                                progress
-                            );
-
-                        }
-                    );
-
-
-                    const newUrl =
-                        await getDownloadURL(
-                            newRef
-                        );
-
-
-                    updateData =
-                        {
-
-                            ...updateData,
-
-                            fileName:
-                                replacementFile.name,
-
-                            fileSize:
-                                replacementFile.size,
-
-                            fileType:
-                                replacementFile.type,
-
-                            storagePath,
-
-                            fileUrl:
-                                newUrl
-
-                        };
-
-
-                    /* Delete old file AFTER
-                       successful new upload */
-
-                    if (
-                        oldStoragePath &&
-                        oldStoragePath !==
-                        storagePath
-                    ) {
-
-                        await deleteStorageFile(
-                            oldStoragePath
-                        );
-
-                    }
-
-                }
-
 
                 await updateDoc(
+
                     doc(
                         db,
-                        CONTENT,
-                        contentId
+                        CHAPTERS,
+                        selectedChapterId
                     ),
 
-                    updateData
+                    {
+                        chapterNumber:
+                            number,
+
+                        order:
+                            number,
+
+                        name,
+
+                        chapterName:
+                            name,
+
+                        updatedAt:
+                            serverTimestamp()
+                    }
+
                 );
-
-
-                hideReplaceProgress();
 
 
                 closeModal(
-                    contentModal
+                    "chapterModal"
                 );
 
 
-                await loadSelectedBatch();
+                await loadChapters();
+
+
+                chapterSelect.value =
+                    selectedChapterId;
+
+
+                await loadContent();
 
 
                 showToast(
                     "Saved",
-                    "Content updated successfully."
+                    "Chapter updated."
                 );
 
             }
 
             catch (error) {
 
-                console.error(
-                    "SAVE CONTENT ERROR:",
-                    error
-                );
-
-
-                hideReplaceProgress();
-
-
                 showToast(
                     "Error",
-                    getErrorMessage(error)
+                    readableError(error)
                 );
 
             }
 
         }
-    );
-
-
-
-/* =====================================================
-   REPLACE FILE
-===================================================== */
-
-async function replaceContentFile(
-    content,
-    file,
-    progressCallback
-) {
-
-    /*
-     * This function only validates the file.
-     * Actual upload is handled below.
-     */
-
-    if (
-        file.size <= 0
-    ) {
-
-        throw new Error(
-            "The selected file is empty."
-        );
-
-    }
-
-}
-
-
-
-/* =====================================================
-   UPLOAD HELPER
-===================================================== */
-
-function waitForUpload(
-    uploadTask,
-    progressCallback
-) {
-
-    return new Promise(
-        (
-            resolve,
-            reject
-        ) => {
-
-            uploadTask.on(
-
-                "state_changed",
-
-                snapshot => {
-
-                    const progress =
-                        Math.round(
-                            (
-                                snapshot.bytesTransferred /
-                                snapshot.totalBytes
-                            ) *
-                            100
-                        );
-
-
-                    progressCallback(
-                        progress
-                    );
-
-                },
-
-                error => {
-
-                    reject(
-                        error
-                    );
-
-                },
-
-                () => {
-
-                    resolve();
-
-                }
-
-            );
-
-        }
-    );
-
-}
-
-
-
-/* =====================================================
-   BUILD STORAGE PATH
-===================================================== */
-
-function buildStoragePath(
-    courseId,
-    subjectId,
-    chapterId,
-    contentId,
-    filename
-) {
-
-    return (
-        `zen2/` +
-        `${courseId}/` +
-        `${subjectId}/` +
-        `${chapterId}/` +
-        `${contentId}/` +
-        `${Date.now()}_${filename}`
-    );
-
-}
-
-
-
-/* =====================================================
-   VALIDATE REPLACEMENT
-===================================================== */
-
-function validateReplacementFile(
-    content,
-    file
-) {
-
-    if (
-        content.contentType ===
-        "PDF"
-    ) {
-
-        if (
-            file.type !==
-            "application/pdf"
-        ) {
-
-            showToast(
-                "Invalid file",
-                "Please select a PDF file."
-            );
-
-            return false;
-
-        }
-
-    }
-
-
-    if (
-        content.contentType ===
-        "VIDEO"
-    ) {
-
-        if (
-            !file.type.startsWith(
-                "video/"
-            )
-        ) {
-
-            showToast(
-                "Invalid file",
-                "Please select a video file."
-            );
-
-            return false;
-
-        }
-
-    }
-
-
-    return true;
-
-}
-
-
-
-/* =====================================================
-   DELETE SUBJECT
-===================================================== */
-
-function confirmDeleteSubject(
-    subjectId
-) {
-
-    const subject =
-        subjects.find(
-            item =>
-                item.id ===
-                subjectId
-        );
-
-
-    if (!subject) {
-        return;
-    }
-
-
-    const subjectChapters =
-        chapters.filter(
-            chapter =>
-                chapter.subjectId ===
-                subjectId
-        );
-
-
-    const chapterIds =
-        new Set(
-            subjectChapters.map(
-                chapter =>
-                    chapter.id
-            )
-        );
-
-
-    const subjectContents =
-        contents.filter(
-            content =>
-                chapterIds.has(
-                    content.chapterId
-                )
-        );
-
-
-    askConfirmation(
-
-        "Delete Subject?",
-
-        `
-        Delete
-        <strong>
-            ${escapeHTML(
-                subject.name ||
-                "this subject"
-            )}
-        </strong>?
-
-        <br><br>
-
-        This will also delete:
-
-        <br>
-
-        • ${subjectChapters.length}
-        chapter${subjectChapters.length === 1 ? "" : "s"}
-
-        <br>
-
-        • ${subjectContents.length}
-        video/PDF item${subjectContents.length === 1 ? "" : "s"}
-
-        <br><br>
-
-        This action cannot be undone.
-        `,
-
-        async () => {
-
-            await deleteSubjectTree(
-                subjectId
-            );
-
-        }
 
     );
-
-}
-
-
-
-/* =====================================================
-   DELETE SUBJECT TREE
-===================================================== */
-
-async function deleteSubjectTree(
-    subjectId
-) {
-
-    const subjectChapters =
-        chapters.filter(
-            chapter =>
-                chapter.subjectId ===
-                subjectId
-        );
-
-
-    for (
-        const chapter
-        of subjectChapters
-    ) {
-
-        await deleteChapterTree(
-            chapter.id
-        );
-
-    }
-
-
-    await deleteDoc(
-        doc(
-            db,
-            SUBJECTS,
-            subjectId
-        )
-    );
-
-
-    await loadSelectedBatch();
-
-
-    showToast(
-        "Deleted",
-        "Subject and all its content were deleted."
-    );
-
-}
 
 
 
@@ -2353,76 +1502,71 @@ async function deleteSubjectTree(
    DELETE CHAPTER
 ===================================================== */
 
-function confirmDeleteChapter(
-    chapterId
-) {
+deleteChapterBtn.addEventListener(
+    "click",
 
-    const chapter =
-        chapters.find(
-            item =>
-                item.id ===
-                chapterId
-        );
+    () => {
 
-
-    if (!chapter) {
-        return;
-    }
-
-
-    const chapterContents =
-        contents.filter(
-            content =>
-                content.chapterId ===
-                chapterId
-        );
-
-
-    askConfirmation(
-
-        "Delete Chapter?",
-
-        `
-        Delete
-        <strong>
-            ${escapeHTML(
-                chapter.name ||
-                chapter.chapterName ||
-                "this chapter"
-            )}
-        </strong>?
-
-        <br><br>
-
-        This will also delete
-        ${chapterContents.length}
-        video/PDF item${chapterContents.length === 1 ? "" : "s"}.
-
-        <br><br>
-
-        This action cannot be undone.
-        `,
-
-        async () => {
-
-            await deleteChapterTree(
-                chapterId
+        const chapter =
+            chapters.find(
+                item =>
+                    item.id ===
+                    selectedChapterId
             );
 
 
-            await loadSelectedBatch();
-
-
-            showToast(
-                "Deleted",
-                "Chapter and its content were deleted."
-            );
-
+        if (!chapter) {
+            return;
         }
 
-    );
 
-}
+        askDelete(
+
+            "Delete Chapter?",
+
+            `
+            Delete <strong>
+            ${escapeHTML(
+                getChapterName(chapter)
+            )}
+            </strong>?
+
+            <br><br>
+
+            All videos and PDFs inside
+            this chapter will also be deleted.
+            `,
+
+            async () => {
+
+                await deleteChapterTree(
+                    selectedChapterId
+                );
+
+
+                selectedChapterId =
+                    "";
+
+
+                resetChapter();
+
+                hideContent();
+
+
+                await loadChapters();
+
+
+                showToast(
+                    "Deleted",
+                    "Chapter deleted successfully."
+                );
+
+            }
+
+        );
+
+    }
+);
 
 
 
@@ -2434,21 +1578,39 @@ async function deleteChapterTree(
     chapterId
 ) {
 
-    const chapterContents =
-        contents.filter(
-            content =>
-                content.chapterId ===
+    const q =
+        query(
+
+            collection(
+                db,
+                CONTENT
+            ),
+
+            where(
+                "chapterId",
+                "==",
                 chapterId
+            )
+
         );
 
 
+    const snapshot =
+        await getDocs(q);
+
+
     for (
-        const content
-        of chapterContents
+        const contentDoc
+        of snapshot.docs
     ) {
 
-        await deleteContentDocument(
-            content
+        await deleteContent(
+            {
+                id:
+                    contentDoc.id,
+
+                ...contentDoc.data()
+            }
         );
 
     }
@@ -2467,10 +1629,10 @@ async function deleteChapterTree(
 
 
 /* =====================================================
-   DELETE CONTENT
+   EDIT CONTENT
 ===================================================== */
 
-function confirmDeleteContent(
+function openContentEdit(
     contentId
 ) {
 
@@ -2487,37 +1649,508 @@ function confirmDeleteContent(
     }
 
 
-    askConfirmation(
+    document
+        .getElementById(
+            "editingContentId"
+        )
+        .value =
+        contentId;
+
+
+    document
+        .getElementById(
+            "contentTitle"
+        )
+        .value =
+        content.title ||
+        "";
+
+
+    document
+        .getElementById(
+            "contentAccess"
+        )
+        .value =
+        content.accessType ||
+        (
+            content.isFree
+                ? "FREE"
+                : "PAID"
+        );
+
+
+    document
+        .getElementById(
+            "contentOrder"
+        )
+        .value =
+        content.order ||
+        1;
+
+
+    document
+        .getElementById(
+            "contentDescription"
+        )
+        .value =
+        content.description ||
+        "";
+
+
+    document
+        .getElementById(
+            "contentThumbnail"
+        )
+        .value =
+        content.thumbnailUrl ||
+        "";
+
+
+    const fileInput =
+        document
+            .getElementById(
+                "contentFile"
+            );
+
+
+    fileInput.value =
+        "";
+
+
+    fileInput.accept =
+        content.contentType ===
+        "PDF"
+            ? ".pdf,application/pdf"
+            : "video/*";
+
+
+    document
+        .getElementById(
+            "contentModalTitle"
+        )
+        .textContent =
+        content.contentType ===
+        "PDF"
+            ? "Edit PDF"
+            : "Edit Video";
+
+
+    openModal(
+        "contentModal"
+    );
+
+}
+
+
+
+/* =====================================================
+   SAVE CONTENT
+===================================================== */
+
+document
+    .getElementById(
+        "contentForm"
+    )
+    .addEventListener(
+
+        "submit",
+
+        async event => {
+
+            event.preventDefault();
+
+
+            const contentId =
+                document
+                    .getElementById(
+                        "editingContentId"
+                    )
+                    .value;
+
+
+            const content =
+                contents.find(
+                    item =>
+                        item.id ===
+                        contentId
+                );
+
+
+            if (!content) {
+                return;
+            }
+
+
+            const title =
+                document
+                    .getElementById(
+                        "contentTitle"
+                    )
+                    .value
+                    .trim();
+
+
+            const accessType =
+                document
+                    .getElementById(
+                        "contentAccess"
+                    )
+                    .value;
+
+
+            const order =
+                Number(
+                    document
+                        .getElementById(
+                            "contentOrder"
+                        )
+                        .value
+                );
+
+
+            const description =
+                document
+                    .getElementById(
+                        "contentDescription"
+                    )
+                    .value
+                    .trim();
+
+
+            const thumbnailUrl =
+                document
+                    .getElementById(
+                        "contentThumbnail"
+                    )
+                    .value
+                    .trim();
+
+
+            const file =
+                document
+                    .getElementById(
+                        "contentFile"
+                    )
+                    .files[0];
+
+
+            if (
+                !title ||
+                !order
+            ) {
+                return;
+            }
+
+
+            try {
+
+                const updateData = {
+
+                    title,
+
+                    accessType,
+
+                    isFree:
+                        accessType ===
+                        "FREE",
+
+                    requiresPurchase:
+                        accessType ===
+                        "PAID",
+
+                    order,
+
+                    description,
+
+                    thumbnailUrl,
+
+                    updatedAt:
+                        serverTimestamp()
+
+                };
+
+
+                /* -------------------------------------
+                   REPLACE FILE
+                -------------------------------------- */
+
+                if (file) {
+
+                    validateFile(
+                        content,
+                        file
+                    );
+
+
+                    const oldPath =
+                        content.storagePath;
+
+
+                    const newPath =
+                        buildStoragePath(
+                            selectedCourseId,
+                            content.subjectId,
+                            content.chapterId,
+                            content.id,
+                            file.name
+                        );
+
+
+                    const storageRef =
+                        ref(
+                            storage,
+                            newPath
+                        );
+
+
+                    const task =
+                        uploadBytesResumable(
+                            storageRef,
+                            file
+                        );
+
+
+                    showUploadProgress(
+                        0
+                    );
+
+
+                    await new Promise(
+                        (
+                            resolve,
+                            reject
+                        ) => {
+
+                            task.on(
+
+                                "state_changed",
+
+                                snapshot => {
+
+                                    const percentage =
+                                        Math.round(
+                                            (
+                                                snapshot.bytesTransferred /
+                                                snapshot.totalBytes
+                                            ) * 100
+                                        );
+
+
+                                    showUploadProgress(
+                                        percentage
+                                    );
+
+                                },
+
+                                reject,
+
+                                resolve
+
+                            );
+
+                        }
+                    );
+
+
+                    const url =
+                        await getDownloadURL(
+                            storageRef
+                        );
+
+
+                    updateData.fileName =
+                        file.name;
+
+
+                    updateData.fileSize =
+                        file.size;
+
+
+                    updateData.fileType =
+                        file.type;
+
+
+                    updateData.storagePath =
+                        newPath;
+
+
+                    updateData.fileUrl =
+                        url;
+
+
+                    if (
+                        oldPath &&
+                        oldPath !==
+                        newPath
+                    ) {
+
+                        await safeDeleteStorage(
+                            oldPath
+                        );
+
+                    }
+
+
+                    hideUploadProgress();
+
+                }
+
+
+                await updateDoc(
+
+                    doc(
+                        db,
+                        CONTENT,
+                        contentId
+                    ),
+
+                    updateData
+
+                );
+
+
+                closeModal(
+                    "contentModal"
+                );
+
+
+                await loadContent();
+
+
+                showToast(
+                    "Saved",
+                    "Content updated successfully."
+                );
+
+            }
+
+            catch (error) {
+
+                hideUploadProgress();
+
+
+                console.error(
+                    error
+                );
+
+
+                showToast(
+                    "Error",
+                    readableError(error)
+                );
+
+            }
+
+        }
+
+    );
+
+
+
+/* =====================================================
+   ADD VIDEO / PDF
+===================================================== */
+
+document
+    .getElementById(
+        "addVideoBtn"
+    )
+    .addEventListener(
+        "click",
+
+        () => {
+
+            /*
+             * We intentionally do not create a
+             * second upload system here.
+             *
+             * Existing Content Studio already
+             * handles creation.
+             */
+
+            window.location.href =
+                `../?courseId=${encodeURIComponent(
+                    selectedCourseId
+                )}&subjectId=${encodeURIComponent(
+                    selectedSubjectId
+                )}&chapterId=${encodeURIComponent(
+                    selectedChapterId
+                )}`;
+
+        }
+    );
+
+
+document
+    .getElementById(
+        "addPdfBtn"
+    )
+    .addEventListener(
+        "click",
+
+        () => {
+
+            window.location.href =
+                `../?courseId=${encodeURIComponent(
+                    selectedCourseId
+                )}&subjectId=${encodeURIComponent(
+                    selectedSubjectId
+                )}&chapterId=${encodeURIComponent(
+                    selectedChapterId
+                )}`;
+
+        }
+    );
+
+
+
+/* =====================================================
+   DELETE CONTENT CONFIRM
+===================================================== */
+
+function confirmContentDelete(
+    contentId
+) {
+
+    const content =
+        contents.find(
+            item =>
+                item.id ===
+                contentId
+        );
+
+
+    if (!content) {
+        return;
+    }
+
+
+    askDelete(
 
         "Delete Content?",
 
         `
-        Delete
-        <strong>
-            ${escapeHTML(
-                content.title ||
-                "this content"
-            )}
+        Delete <strong>
+        ${escapeHTML(
+            content.title ||
+            "this content"
+        )}
         </strong>?
 
         <br><br>
 
         The Firestore record and
-        uploaded Storage file will be deleted.
-
-        <br><br>
-
-        This action cannot be undone.
+        uploaded file will be deleted.
         `,
 
         async () => {
 
-            await deleteContentDocument(
+            await deleteContent(
                 content
             );
 
 
-            await loadSelectedBatch();
+            await loadContent();
 
 
             showToast(
@@ -2534,10 +2167,10 @@ function confirmDeleteContent(
 
 
 /* =====================================================
-   DELETE CONTENT DOCUMENT
+   DELETE CONTENT
 ===================================================== */
 
-async function deleteContentDocument(
+async function deleteContent(
     content
 ) {
 
@@ -2545,7 +2178,7 @@ async function deleteContentDocument(
         content.storagePath
     ) {
 
-        await deleteStorageFile(
+        await safeDeleteStorage(
             content.storagePath
         );
 
@@ -2565,40 +2198,25 @@ async function deleteContentDocument(
 
 
 /* =====================================================
-   DELETE STORAGE FILE
+   STORAGE DELETE
 ===================================================== */
 
-async function deleteStorageFile(
-    storagePath
+async function safeDeleteStorage(
+    path
 ) {
-
-    if (!storagePath) {
-        return;
-    }
-
 
     try {
 
-        const fileRef =
+        await deleteObject(
             ref(
                 storage,
-                storagePath
-            );
-
-
-        await deleteObject(
-            fileRef
+                path
+            )
         );
 
     }
 
     catch (error) {
-
-        /*
-         * If the Storage file has already
-         * been deleted, don't block the
-         * Firestore deletion.
-         */
 
         if (
             error.code ===
@@ -2619,116 +2237,74 @@ async function deleteStorageFile(
 
 
 /* =====================================================
-   EDIT BATCH
+   STORAGE PATH
 ===================================================== */
 
-document
-    .getElementById(
-        "editBatchButton"
-    )
-    .addEventListener(
-        "click",
+function buildStoragePath(
+    courseId,
+    subjectId,
+    chapterId,
+    contentId,
+    fileName
+) {
 
-        () => {
-
-            openBatchEdit();
-
-        }
+    return (
+        `zen2/` +
+        `${courseId}/` +
+        `${subjectId}/` +
+        `${chapterId}/` +
+        `${contentId}/` +
+        `${Date.now()}_${fileName}`
     );
 
+}
 
 
-/*
- * Batch editing uses a simple browser
- * prompt-based interface here so that
- * the existing creation page remains
- * completely untouched.
- */
 
-async function openBatchEdit() {
+/* =====================================================
+   VALIDATE FILE
+===================================================== */
 
-    if (!selectedCourse) {
-        return;
+function validateFile(
+    content,
+    file
+) {
+
+    if (
+        content.contentType ===
+        "PDF"
+    ) {
+
+        if (
+            file.type !==
+            "application/pdf"
+        ) {
+
+            throw new Error(
+                "Please select a PDF file."
+            );
+
+        }
+
     }
-
-
-    const currentName =
-        selectedCourse.name ||
-        selectedCourse.courseName ||
-        selectedCourse.title ||
-        "";
-
-
-    const name =
-        prompt(
-            "Batch Name",
-            currentName
-        );
 
 
     if (
-        name === null
+        content.contentType ===
+        "VIDEO"
     ) {
-        return;
-    }
 
+        if (
+            !file.type.startsWith(
+                "video/"
+            )
+        ) {
 
-    const trimmedName =
-        name.trim();
+            throw new Error(
+                "Please select a video file."
+            );
 
-
-    if (!trimmedName) {
-
-        showToast(
-            "Error",
-            "Batch name cannot be empty."
-        );
-
-        return;
-
-    }
-
-
-    try {
-
-        await updateDoc(
-            doc(
-                db,
-                COURSES,
-                selectedCourseId
-            ),
-
-            {
-                name:
-                    trimmedName,
-
-                updatedAt:
-                    serverTimestamp()
-            }
-        );
-
-
-        await loadSelectedBatch();
-
-
-        showToast(
-            "Saved",
-            "Batch name updated."
-        );
-
-    }
-
-    catch (error) {
-
-        console.error(
-            error
-        );
-
-
-        showToast(
-            "Error",
-            getErrorMessage(error)
-        );
+        }
 
     }
 
@@ -2737,10 +2313,240 @@ async function openBatchEdit() {
 
 
 /* =====================================================
-   CONFIRMATION SYSTEM
+   LOCATION
 ===================================================== */
 
-function askConfirmation(
+function updateLocation() {
+
+    const course =
+        courses.find(
+            item =>
+                item.id ===
+                selectedCourseId
+        );
+
+
+    const subject =
+        subjects.find(
+            item =>
+                item.id ===
+                selectedSubjectId
+        );
+
+
+    const chapter =
+        chapters.find(
+            item =>
+                item.id ===
+                selectedChapterId
+        );
+
+
+    document
+        .getElementById(
+            "selectedBatchText"
+        )
+        .textContent =
+        course
+            ? getCourseName(course)
+            : "Batch";
+
+
+    document
+        .getElementById(
+            "selectedSubjectText"
+        )
+        .textContent =
+        subject
+            ? getSubjectName(subject)
+            : "Subject";
+
+
+    document
+        .getElementById(
+            "selectedChapterText"
+        )
+        .textContent =
+        chapter
+            ? `${getChapterNumber(chapter)} - ${getChapterName(chapter)}`
+            : "Chapter";
+
+
+    document
+        .getElementById(
+            "chapterHeading"
+        )
+        .textContent =
+        chapter
+            ? getChapterName(chapter)
+            : "Chapter";
+
+
+    locationPanel.classList.remove(
+        "hidden"
+    );
+
+}
+
+
+
+/* =====================================================
+   RESET
+===================================================== */
+
+function resetSubject() {
+
+    subjectSelect.innerHTML =
+        `<option value="">
+            Select Subject
+        </option>`;
+
+
+    subjectSelect.disabled =
+        true;
+
+
+    editSubjectBtn.disabled =
+        true;
+
+
+    deleteSubjectBtn.disabled =
+        true;
+
+}
+
+
+function resetChapter() {
+
+    chapterSelect.innerHTML =
+        `<option value="">
+            Select Chapter
+        </option>`;
+
+
+    chapterSelect.disabled =
+        true;
+
+
+    editChapterBtn.disabled =
+        true;
+
+
+    deleteChapterBtn.disabled =
+        true;
+
+}
+
+
+function hideContent() {
+
+    contentPanel.classList.add(
+        "hidden"
+    );
+
+
+    locationPanel.classList.add(
+        "hidden"
+    );
+
+
+    emptyState.classList.remove(
+        "hidden"
+    );
+
+}
+
+
+
+/* =====================================================
+   EMPTY CONTENT
+===================================================== */
+
+function emptyContent(
+    text
+) {
+
+    return `
+        <div
+            style="
+                padding:25px;
+                text-align:center;
+                color:#888;
+                font-size:13px;
+            "
+        >
+            ${text}
+        </div>
+    `;
+
+}
+
+
+
+/* =====================================================
+   MODAL
+===================================================== */
+
+function openModal(
+    id
+) {
+
+    document
+        .getElementById(
+            id
+        )
+        .classList.remove(
+            "hidden"
+        );
+
+}
+
+
+function closeModal(
+    id
+) {
+
+    document
+        .getElementById(
+            id
+        )
+        .classList.add(
+            "hidden"
+        );
+
+}
+
+
+document
+    .querySelectorAll(
+        "[data-close]"
+    )
+    .forEach(
+        button => {
+
+            button.addEventListener(
+                "click",
+
+                () => {
+
+                    closeModal(
+                        button.dataset.close
+                    );
+
+                }
+
+            );
+
+        }
+    );
+
+
+
+/* =====================================================
+   DELETE CONFIRM
+===================================================== */
+
+function askDelete(
     title,
     message,
     callback
@@ -2756,21 +2562,41 @@ function askConfirmation(
 
     document
         .getElementById(
-            "confirmMessage"
+            "confirmText"
         )
         .innerHTML =
         message;
 
 
-    pendingDelete =
+    deleteCallback =
         callback;
 
 
     openModal(
-        confirmModal
+        "confirmModal"
     );
 
 }
+
+
+document
+    .getElementById(
+        "cancelDelete"
+    )
+    .addEventListener(
+        "click",
+
+        () => {
+
+            deleteCallback =
+                null;
+
+            closeModal(
+                "confirmModal"
+            );
+
+        }
+    );
 
 
 document
@@ -2783,22 +2609,22 @@ document
         async () => {
 
             if (
-                !pendingDelete
+                !deleteCallback
             ) {
                 return;
             }
 
 
             const callback =
-                pendingDelete;
+                deleteCallback;
 
 
-            pendingDelete =
+            deleteCallback =
                 null;
 
 
             closeModal(
-                confirmModal
+                "confirmModal"
             );
 
 
@@ -2817,7 +2643,7 @@ document
 
                 showToast(
                     "Delete failed",
-                    getErrorMessage(error)
+                    readableError(error)
                 );
 
             }
@@ -2826,146 +2652,51 @@ document
     );
 
 
-document
-    .getElementById(
-        "confirmCancel"
-    )
-    .addEventListener(
-        "click",
-
-        () => {
-
-            pendingDelete =
-                null;
-
-            closeModal(
-                confirmModal
-            );
-
-        }
-    );
-
-
 
 /* =====================================================
-   MODALS
+   UPLOAD PROGRESS
 ===================================================== */
 
-document
-    .querySelectorAll(
-        "[data-close]"
-    )
-    .forEach(
-        button => {
-
-            button.addEventListener(
-                "click",
-
-                () => {
-
-                    const id =
-                        button.dataset.close;
-
-
-                    const modal =
-                        document.getElementById(
-                            id
-                        );
-
-
-                    closeModal(
-                        modal
-                    );
-
-                }
-            );
-
-        }
-    );
-
-
-
-function openModal(
-    modal
-) {
-
-    modal.classList.remove(
-        "hidden"
-    );
-
-}
-
-
-function closeModal(
-    modal
-) {
-
-    modal.classList.add(
-        "hidden"
-    );
-
-}
-
-
-
-/* =====================================================
-   REPLACEMENT PROGRESS
-===================================================== */
-
-function showReplaceProgress(
+function showUploadProgress(
     percentage
 ) {
 
-    const wrapper =
-        document.getElementById(
-            "replaceProgress"
-        );
-
-
-    const bar =
-        document.getElementById(
-            "replaceProgressBar"
-        );
-
-
-    const text =
-        document.getElementById(
-            "replaceProgressText"
-        );
-
-
-    wrapper.classList.remove(
-        "hidden"
-    );
-
-
-    bar.style.width =
-        `${percentage}%`;
-
-
-    text.textContent =
-        `${percentage}%`;
-
-}
-
-
-function hideReplaceProgress() {
-
     document
         .getElementById(
-            "replaceProgress"
+            "uploadProgress"
         )
-        .classList.add(
+        .classList.remove(
             "hidden"
         );
 
 
     document
         .getElementById(
-            "replaceProgressBar"
+            "progressBar"
         )
         .style.width =
-        "0%";
+        `${percentage}%`;
+
+
+    document
+        .getElementById(
+            "progressText"
+        )
+        .textContent =
+        `${percentage}%`;
+
+}
+
+
+function hideUploadProgress() {
+
+    document
+        .getElementById(
+            "uploadProgress"
+        )
+        .classList.add(
+            "hidden"
+        );
 
 }
 
@@ -3034,15 +2765,14 @@ function showToast(
 
 
 /* =====================================================
-   ERROR MESSAGE
+   ERROR
 ===================================================== */
 
-function getErrorMessage(
+function readableError(
     error
 ) {
 
     console.error(
-        "Firebase error:",
         error
     );
 
@@ -3053,7 +2783,7 @@ function getErrorMessage(
     ) {
 
         return (
-            "Permission denied. Check your Firestore/Storage rules."
+            "Firebase permission denied. Check Firestore rules."
         );
 
     }
@@ -3065,19 +2795,7 @@ function getErrorMessage(
     ) {
 
         return (
-            "Storage permission denied. Check your Storage rules."
-        );
-
-    }
-
-
-    if (
-        error?.code ===
-        "storage/object-not-found"
-    ) {
-
-        return (
-            "The Storage file was not found."
+            "Storage permission denied. Check Storage rules."
         );
 
     }
@@ -3093,7 +2811,7 @@ function getErrorMessage(
 
 
 /* =====================================================
-   ESCAPE HTML
+   ESCAPE
 ===================================================== */
 
 function escapeHTML(
