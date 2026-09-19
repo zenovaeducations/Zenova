@@ -1,194 +1,205 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
+
     <meta
         name="viewport"
-        content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+        content="width=device-width, initial-scale=1.0"
     >
 
-    <title>Home | Zenova Educations</title>
+    <title>ZENOVA | Home</title>
 
-    <link rel="stylesheet" href="./home.css">
+    <meta
+        name="theme-color"
+        content="#111111"
+    >
+
+    <!-- Remix Icons -->
+    <link
+        href="https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.css"
+        rel="stylesheet"
+    >
+
+    <!-- Poppins -->
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+    <link
+        rel="stylesheet"
+        href="./home.css"
+    >
+
 </head>
+
 
 <body>
 
-<!-- ================= LOADING ================= -->
 
-<div id="loadingScreen" class="loading-screen">
-    <div class="loading-ring">
-        <span>Z</span>
+<!-- =========================================================
+     LOADER
+========================================================= -->
+
+<div
+    id="zenovaLoader"
+    class="loader"
+>
+
+    <div class="loader-logo">
+        ZENOVA
     </div>
+
+    <div class="loader-line"></div>
+
 </div>
 
 
-<!-- ================= APP ================= -->
+<!-- =========================================================
+     APP
+========================================================= -->
 
-<div id="app" class="app hidden">
+<div
+    id="zenovaApp"
+    class="app hidden"
+>
 
-    <!-- ================= HEADER ================= -->
 
-    <header class="top-header">
+    <!-- =====================================================
+         HEADER
+    ====================================================== -->
 
-        <div class="brand">
-            <div class="brand-z">Z</div>
+    <header class="home-header">
 
-            <div>
-                <div class="brand-name">
-                    ZENOVA
-                </div>
+        <div>
 
-                <div class="brand-subtitle">
-                    EDUCATIONS
-                </div>
-            </div>
+            <span class="welcome-small">
+                WELCOME BACK
+            </span>
+
+            <h1>
+                Good Morning,
+                <span id="studentName">
+                    Student
+                </span>
+                👋
+            </h1>
+
+            <p>
+                Let's make today productive.
+            </p>
+
         </div>
 
 
         <button
-            id="notificationButton"
-            class="notification-button"
-            aria-label="Notifications"
+            id="profileShortcut"
+            class="profile-button"
         >
-            <span class="bell-icon">♧</span>
 
-            <span
-                id="notificationDot"
-                class="notification-dot hidden"
-            ></span>
+            <span id="profileInitial">
+                S
+            </span>
+
         </button>
 
     </header>
 
 
-    <!-- ================= MAIN ================= -->
 
-    <main class="home-page">
+    <!-- =====================================================
+         MAIN
+    ====================================================== -->
 
-
-        <!-- ================= WELCOME ================= -->
-
-        <section class="welcome-section">
-
-            <div class="welcome-text">
-
-                <span id="welcomeTime">
-                    GOOD MORNING
-                </span>
-
-                <h1>
-                    Hello,
-                    <strong id="studentName">
-                        Student
-                    </strong>
-                    👋
-                </h1>
-
-                <p>
-                    Ready to learn something new today?
-                </p>
-
-            </div>
+    <main class="home-main">
 
 
-            <button
-                id="profileButton"
-                class="profile-avatar"
-            >
-                <span id="studentAvatar">
-                    Z
-                </span>
-            </button>
-
-        </section>
-
-
-
-        <!-- ================= HERO BANNERS ================= -->
+        <!-- =================================================
+             BANNER
+        ================================================== -->
 
         <section
-            id="bannerSection"
-            class="banner-section hidden"
+            id="heroSection"
+            class="hero-section hidden"
         >
 
             <div
-                id="bannerSlider"
-                class="banner-slider"
+                id="heroSlider"
+                class="hero-slider"
             ></div>
 
             <div
-                id="bannerDots"
-                class="banner-dots"
+                id="heroDots"
+                class="hero-dots"
             ></div>
 
         </section>
 
 
 
-        <!-- ================= QUICK CARDS ================= -->
+        <!-- =================================================
+             FOUR QUICK CARDS
+        ================================================== -->
 
         <section class="quick-section">
 
             <div class="quick-grid">
 
 
-                <!-- COURSES -->
+                <!-- REVISION -->
 
                 <button
                     class="quick-card"
-                    data-route="../batches/"
+                    data-route="revision"
                 >
 
-                    <div class="quick-icon purple">
-                        ◈
+                    <div class="quick-icon revision">
+                        <i class="ri-book-open-line"></i>
                     </div>
 
-                    <div class="quick-content">
+                    <strong>
+                        Revision Classes
+                    </strong>
 
-                        <strong>
-                            My Courses
-                        </strong>
-
-                        <span>
-                            Continue learning
-                        </span>
-
-                    </div>
-
-                    <span class="quick-arrow">
-                        ›
+                    <span>
+                        Revise important concepts
                     </span>
 
                 </button>
 
 
 
-                <!-- STUDY -->
+                <!-- LIVE -->
 
                 <button
                     class="quick-card"
-                    data-route="../study/"
+                    data-route="live"
                 >
 
-                    <div class="quick-icon blue">
-                        ▶
+                    <div class="quick-icon live">
+                        <i class="ri-live-line"></i>
                     </div>
 
-                    <div class="quick-content">
+                    <strong>
+                        Live
+                    </strong>
 
-                        <strong>
-                            Study Now
-                        </strong>
-
-                        <span>
-                            Start learning
-                        </span>
-
-                    </div>
-
-                    <span class="quick-arrow">
-                        ›
+                    <span>
+                        Join live classes
                     </span>
 
                 </button>
@@ -199,318 +210,11 @@
 
                 <button
                     class="quick-card"
-                    data-route="../tests/"
+                    data-route="tests"
                 >
 
-                    <div class="quick-icon orange">
-                        ✓
-                    </div>
-
-                    <div class="quick-content">
-
-                        <strong>
-                            Tests & Results
-                        </strong>
-
-                        <span>
-                            Check performance
-                        </span>
-
-                    </div>
-
-                    <span class="quick-arrow">
-                        ›
-                    </span>
-
-                </button>
-
-
-
-                <!-- ATTENDANCE -->
-
-                <button
-                    class="quick-card"
-                    data-route="../attendance/"
-                >
-
-                    <div class="quick-icon green">
-                        %
-                    </div>
-
-                    <div class="quick-content">
-
-                        <strong>
-                            Attendance
-                        </strong>
-
-                        <span>
-                            View attendance
-                        </span>
-
-                    </div>
-
-                    <span class="quick-arrow">
-                        ›
-                    </span>
-
-                </button>
-
-            </div>
-
-        </section>
-
-
-
-        <!-- ================= BATCHES FOR YOU ================= -->
-
-        <section class="content-section">
-
-            <div class="section-header">
-
-                <div>
-
-                    <span class="section-label">
-                        LEARNING
-                    </span>
-
-                    <h2>
-                        Batches for You
-                    </h2>
-
-                </div>
-
-                <button
-                    id="exploreBatches"
-                    class="explore-button"
-                >
-                    Explore
-                    <span>→</span>
-                </button>
-
-            </div>
-
-
-            <div
-                id="batchesContainer"
-                class="horizontal-scroll"
-            >
-
-                <div class="section-loading">
-                    Loading...
-                </div>
-
-            </div>
-
-        </section>
-
-
-
-        <!-- ================= LEARN WITH AI ================= -->
-
-        <section class="content-section">
-
-            <div class="section-header">
-
-                <div>
-
-                    <span class="section-label">
-                        SMART LEARNING
-                    </span>
-
-                    <h2>
-                        Learn with Zenova AI
-                    </h2>
-
-                </div>
-
-            </div>
-
-
-            <button
-                id="aiCard"
-                class="ai-card"
-            >
-
-                <div class="ai-left">
-
-                    <div class="ai-symbol">
-                        AI
-                    </div>
-
-                    <div>
-
-                        <strong>
-                            Your personal AI tutor
-                        </strong>
-
-                        <span>
-                            Ask questions, understand concepts
-                            and learn at your own pace.
-                        </span>
-
-                    </div>
-
-                </div>
-
-
-                <span class="ai-arrow">
-                    →
-                </span>
-
-            </button>
-
-        </section>
-
-
-
-        <!-- ================= RECOMMENDED VIDEOS ================= -->
-
-        <section class="content-section">
-
-            <div class="section-header">
-
-                <div>
-
-                    <span class="section-label">
-                        WATCH & LEARN
-                    </span>
-
-                    <h2>
-                        Recommended Videos
-                    </h2>
-
-                </div>
-
-                <button
-                    id="videosExplore"
-                    class="explore-button"
-                >
-                    Explore
-                    <span>→</span>
-                </button>
-
-            </div>
-
-
-            <div
-                id="videosContainer"
-                class="horizontal-scroll videos-scroll"
-            >
-
-                <article class="video-card">
-
-                    <div class="video-thumbnail placeholder">
-                        <span>▶</span>
-                    </div>
-
-                    <div class="video-info">
-
-                        <strong>
-                            Learning at Zenova
-                        </strong>
-
-                        <span>
-                            Discover better ways to learn
-                        </span>
-
-                    </div>
-
-                </article>
-
-
-                <article class="video-card">
-
-                    <div class="video-thumbnail placeholder">
-                        <span>▶</span>
-                    </div>
-
-                    <div class="video-info">
-
-                        <strong>
-                            Study Smarter
-                        </strong>
-
-                        <span>
-                            Tips for effective learning
-                        </span>
-
-                    </div>
-
-                </article>
-
-
-                <article class="video-card">
-
-                    <div class="video-thumbnail placeholder">
-                        <span>▶</span>
-                    </div>
-
-                    <div class="video-info">
-
-                        <strong>
-                            Learn with AI
-                        </strong>
-
-                        <span>
-                            Make AI your study partner
-                        </span>
-
-                    </div>
-
-                </article>
-
-            </div>
-
-        </section>
-
-
-
-        <!-- ================= FEATURES ================= -->
-
-        <section class="content-section features-section">
-
-            <div class="section-header">
-
-                <div>
-
-                    <span class="section-label">
-                        ZENOVA
-                    </span>
-
-                    <h2>
-                        Features of Zenova
-                    </h2>
-
-                </div>
-
-            </div>
-
-
-            <div class="features-grid">
-
-
-                <article class="feature-card">
-
-                    <div class="feature-icon purple">
-                        ▶
-                    </div>
-
-                    <strong>
-                        Live Classes
-                    </strong>
-
-                    <span>
-                        Learn directly with teachers.
-                    </span>
-
-                </article>
-
-
-
-                <article class="feature-card">
-
-                    <div class="feature-icon blue">
-                        ✓
+                    <div class="quick-icon tests">
+                        <i class="ri-file-list-3-line"></i>
                     </div>
 
                     <strong>
@@ -518,84 +222,236 @@
                     </strong>
 
                     <span>
-                        Practice and track your results.
+                        Practice & test yourself
                     </span>
 
-                </article>
+                </button>
 
 
 
-                <article class="feature-card">
+                <!-- DOUBTS -->
 
-                    <div class="feature-icon orange">
-                        ✦
+                <button
+                    class="quick-card"
+                    data-route="doubts"
+                >
+
+                    <div class="quick-icon doubts">
+                        <i class="ri-question-answer-line"></i>
                     </div>
 
                     <strong>
-                        AI Learning
+                        Ask Doubt
                     </strong>
 
                     <span>
-                        Learn with your personal AI tutor.
+                        Clear your doubts
                     </span>
 
-                </article>
-
-
-
-                <article class="feature-card">
-
-                    <div class="feature-icon green">
-                        ◈
-                    </div>
-
-                    <strong>
-                        Personalised Learning
-                    </strong>
-
-                    <span>
-                        Learning designed around you.
-                    </span>
-
-                </article>
-
-
-
-                <article class="feature-card">
-
-                    <div class="feature-icon purple">
-                        ▣
-                    </div>
-
-                    <strong>
-                        Study Resources
-                    </strong>
-
-                    <span>
-                        Notes and useful resources in one place.
-                    </span>
-
-                </article>
-
-
-
-                <article class="feature-card">
-
-                    <div class="feature-icon blue">
-                        %
-                    </div>
-
-                    <strong>
-                        Progress Tracking
-                    </strong>
-
-                    <span>
-                        See how far you've come.
-                    </span>
-
-                </article>
+                </button>
 
             </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             MY BATCHES
+        ================================================== -->
+
+        <section
+            id="myBatchesSection"
+            class="home-section"
+        >
+
+            <div class="section-heading">
+
+                <div>
+
+                    <span>
+                        YOUR LEARNING
+                    </span>
+
+                    <h2>
+                        My Batches
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <div
+                id="myBatchesList"
+                class="batch-list"
+            >
+
+                <div class="loading-card">
+                    Loading batches...
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             TODAY'S LIVE CLASS
+        ================================================== -->
+
+        <section
+            id="liveSection"
+            class="home-section"
+        >
+
+            <div class="section-heading">
+
+                <div>
+
+                    <span>
+                        LIVE & SCHEDULE
+                    </span>
+
+                    <h2>
+                        Today's Classes
+                    </h2>
+
+                </div>
+
+
+                <a href="../live/">
+                    View All →
+                </a>
+
+            </div>
+
+
+            <div
+                id="liveList"
+                class="live-list"
+            >
+
+                <div class="loading-card">
+                    Loading today's classes...
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             CONTINUE LEARNING
+        ================================================== -->
+
+        <section
+            id="continueSection"
+            class="home-section"
+        >
+
+            <div class="section-heading">
+
+                <div>
+
+                    <span>
+                        KEEP LEARNING
+                    </span>
+
+                    <h2>
+                        Continue Learning
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <div
+                id="continueCard"
+                class="continue-card"
+            ></div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             ZENOVA AI
+        ================================================== -->
+
+        <section class="home-section ai-section">
+
+            <button
+                id="aiButton"
+                class="ai-card"
+            >
+
+                <div class="ai-logo">
+                    Z
+                </div>
+
+
+                <div class="ai-content">
+
+                    <span>
+                        ZENOVA AI
+                    </span>
+
+                    <h2>
+                        Study with Zenova AI
+                    </h2>
+
+                    <p>
+                        Ask doubts, understand concepts,
+                        practice questions and more.
+                    </p>
+
+                </div>
+
+
+                <div class="ai-arrow">
+                    →
+                </div>
+
+            </button>
+
+        </section>
+
+
+
+        <!-- =================================================
+             ANNOUNCEMENTS
+        ================================================== -->
+
+        <section
+            id="announcementSection"
+            class="home-section hidden"
+        >
+
+            <div class="section-heading">
+
+                <div>
+
+                    <span>
+                        UPDATES
+                    </span>
+
+                    <h2>
+                        Announcements
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <div
+                id="announcementList"
+                class="announcement-list"
+            ></div>
 
         </section>
 
@@ -606,59 +462,75 @@
 
 
 
-    <!-- ================= BOTTOM NAV ================= -->
+    <!-- =====================================================
+         FIXED BOTTOM NAVIGATION
+    ====================================================== -->
 
-    <nav class="bottom-nav">
+    <nav class="bottom-navigation">
 
-        <button
-            data-nav="home"
-            class="active"
+
+        <a
+            href="../home/"
+            class="nav-item active"
         >
 
-            <span>⌂</span>
-            <small>Home</small>
+            <i class="ri-home-5-fill"></i>
 
-        </button>
+            <span>
+                Home
+            </span>
 
-
-        <button data-nav="courses">
-
-            <span>▣</span>
-            <small>Courses</small>
-
-        </button>
+        </a>
 
 
-        <button data-nav="study">
 
-            <span>▶</span>
-            <small>Study Now</small>
+        <a
+            href="../live/"
+            class="nav-item"
+        >
 
-        </button>
+            <i class="ri-live-line"></i>
+
+            <span>
+                Live
+            </span>
+
+        </a>
 
 
-        <button data-nav="ai">
 
-            <span>✦</span>
-            <small>Zenova AI</small>
+        <a
+            href="../revision/"
+            class="nav-item"
+        >
 
-        </button>
+            <i class="ri-book-open-line"></i>
+
+            <span>
+                Revision
+            </span>
+
+        </a>
 
 
-        <button data-nav="profile">
 
-            <span>○</span>
-            <small>Profile</small>
+        <a
+            href="../profile/"
+            class="nav-item"
+        >
 
-        </button>
+            <i class="ri-user-3-line"></i>
+
+            <span>
+                Profile
+            </span>
+
+        </a>
 
     </nav>
 
 </div>
 
-
-
-<!-- ================= SCRIPT ================= -->
 
 <script
     type="module"
@@ -666,4 +538,5 @@
 ></script>
 
 </body>
-                    </html>
+
+</html>
