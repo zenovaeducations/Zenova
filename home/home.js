@@ -3,17 +3,36 @@ import {
     db
 } from "../firebase/firebase-config.js";
 
-import {
-    collection,
-    doc,
-    onSnapshot,
-    query,
-    where
-} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
 import {
     onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+
+
+import {
+    doc,
+    getDoc,
+    collection,
+    query,
+    where,
+    getDocs,
+    limit
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
+
+/* =========================================================
+   ELEMENTS
+========================================================= */
+
+const loader =
+    document.getElementById(
+        "zenovaLoader"
+    );
+
+const app =
+    document.getElementById(
+        "zenovaApp"
+    );
 
 
 /* =========================================================
@@ -22,100 +41,9 @@ import {
 
 let currentUser = null;
 
-let studentData = null;
+let student = null;
 
-let banners = [];
-
-let currentBanner = 0;
-
-let bannerTimer = null;
-
-let enrolledCourses = [];
-
-let allCourses = [];
-
-let unsubscribeStudent = null;
-
-let unsubscribeBanners = null;
-
-let unsubscribeEnrollments = null;
-
-let unsubscribeCourses = null;
-
-
-/* =========================================================
-   ELEMENTS
-========================================================= */
-
-const loadingScreen =
-    document.getElementById(
-        "loadingScreen"
-    );
-
-const app =
-    document.getElementById(
-        "app"
-    );
-
-const studentName =
-    document.getElementById(
-        "studentName"
-    );
-
-const studentAvatar =
-    document.getElementById(
-        "studentAvatar"
-    );
-
-const welcomeTime =
-    document.getElementById(
-        "welcomeTime"
-    );
-
-const profileButton =
-    document.getElementById(
-        "profileButton"
-    );
-
-const notificationButton =
-    document.getElementById(
-        "notificationButton"
-    );
-
-const bannerSection =
-    document.getElementById(
-        "bannerSection"
-    );
-
-const bannerSlider =
-    document.getElementById(
-        "bannerSlider"
-    );
-
-const bannerDots =
-    document.getElementById(
-        "bannerDots"
-    );
-
-const batchesContainer =
-    document.getElementById(
-        "batchesContainer"
-    );
-
-const exploreBatches =
-    document.getElementById(
-        "exploreBatches"
-    );
-
-const aiCard =
-    document.getElementById(
-        "aiCard"
-    );
-
-const videosExplore =
-    document.getElementById(
-        "videosExplore"
-    );
+let purchasedBatches = [];
 
 
 /* =========================================================
@@ -124,12 +52,13 @@ const videosExplore =
 
 onAuthStateChanged(
     auth,
-    user => {
+    async user => {
 
         if (!user) {
 
-            window.location.href =
-                "../login/";
+            window.location.replace(
+                "../login/"
+            );
 
             return;
 
@@ -140,23 +69,28 @@ onAuthStateChanged(
             user;
 
 
-        updateGreeting();
+        try {
 
+            await loadStudent();
 
-        loadStudent(
-            user.uid
-        );
+            await loadHomeData();
 
+            setupNavigation();
 
-        loadBanners();
+            showApp();
 
+        }
 
-        loadEnrollments(
-            user.uid
-        );
+        catch (error) {
 
+            console.error(
+                "ZEN2 HOME ERROR:",
+                error
+            );
 
-        loadCourses();
+            showError();
+
+        }
 
     }
 );
@@ -166,450 +100,586 @@ onAuthStateChanged(
    STUDENT
 ========================================================= */
 
-function loadStudent(
-    uid
-) {
-
-    if (
-        unsubscribeStudent
-    ) {
-
-        unsubscribeStudent();
-
-    }
-
+async function loadStudent() {
 
     const studentRef =
         doc(
             db,
             "students",
-            uid
+            currentUser.uid
         );
 
 
-    unsubscribeStudent =
-        onSnapshot(
-
-            studentRef,
-
-            snapshot => {
-
-                if (
-                    !snapshot.exists()
-                ) {
-
-                    console.warn(
-                        "Student document not found."
-                    );
-
-                    setStudentName(
-                        currentUser?.displayName ||
-                        "Student"
-                    );
-
-                    hideLoading();
-
-                    return;
-
-                }
-
-
-                studentData =
-                    snapshot.data();
-
-
-                const name =
-                    studentData.name ||
-                    studentData.fullName ||
-                    currentUser?.displayName ||
-                    "Student";
-
-
-                setStudentName(
-                    name
-                );
-
-
-                hideLoading();
-
-            },
-
-            error => {
-
-                console.error(
-                    "Student loading error:",
-                    error
-                );
-
-
-                setStudentName(
-                    currentUser?.displayName ||
-                    "Student"
-                );
-
-
-                hideLoading();
-
-            }
-
+    const snapshot =
+        await getDoc(
+            studentRef
         );
-
-}
-
-
-/* =========================================================
-   STUDENT NAME
-========================================================= */
-
-function setStudentName(
-    name
-) {
-
-    studentName.textContent =
-        name;
-
-
-    const firstLetter =
-        String(name)
-            .trim()
-            .charAt(0)
-            .toUpperCase();
-
-
-    studentAvatar.textContent =
-        firstLetter || "Z";
-
-}
-
-
-/* =========================================================
-   GREETING
-========================================================= */
-
-function updateGreeting() {
-
-    const hour =
-        new Date().getHours();
-
-
-    let greeting =
-        "GOOD MORNING";
 
 
     if (
-        hour >= 12 &&
-        hour < 17
+        !snapshot.exists()
     ) {
 
-        greeting =
-            "GOOD AFTERNOON";
-
-    }
-
-
-    if (
-        hour >= 17
-    ) {
-
-        greeting =
-            "GOOD EVENING";
-
-    }
-
-
-    welcomeTime.textContent =
-        greeting;
-
-}
-
-
-/* =========================================================
-   HOME BANNERS
-========================================================= */
-
-function loadBanners() {
-
-    if (
-        unsubscribeBanners
-    ) {
-
-        unsubscribeBanners();
-
-    }
-
-
-    const bannersRef =
-        collection(
-            db,
-            "homeBanners"
+        window.location.replace(
+            "../onboarding/"
         );
-
-
-    unsubscribeBanners =
-        onSnapshot(
-
-            bannersRef,
-
-            snapshot => {
-
-                banners =
-                    snapshot.docs
-                        .map(
-                            item => ({
-                                id: item.id,
-                                ...item.data()
-                            })
-                        )
-                        .filter(
-                            banner =>
-                                banner.active === true
-                        )
-                        .sort(
-                            (a, b) =>
-                                Number(
-                                    a.priority ?? 999
-                                ) -
-                                Number(
-                                    b.priority ?? 999
-                                )
-                        );
-
-
-                renderBanners();
-
-            },
-
-            error => {
-
-                console.error(
-                    "Banner listener error:",
-                    error
-                );
-
-            }
-
-        );
-
-}
-
-
-/* =========================================================
-   RENDER BANNERS
-========================================================= */
-
-function renderBanners() {
-
-    clearBannerTimer();
-
-
-    if (
-        !banners.length
-    ) {
-
-        bannerSection.classList.add(
-            "hidden"
-        );
-
-        bannerSlider.innerHTML =
-            "";
-
-        bannerDots.innerHTML =
-            "";
 
         return;
 
     }
 
 
-    bannerSection.classList.remove(
+    student =
+        snapshot.data();
+
+
+    renderStudent();
+
+}
+
+
+/* =========================================================
+   RENDER STUDENT
+========================================================= */
+
+function renderStudent() {
+
+    const name =
+        student.name ||
+        currentUser.displayName ||
+        "Student";
+
+
+    const nameElement =
+        document.getElementById(
+            "studentName"
+        );
+
+
+    if (nameElement) {
+
+        nameElement.textContent =
+            name;
+
+    }
+
+
+    const initial =
+        document.getElementById(
+            "profileInitial"
+        );
+
+
+    if (initial) {
+
+        initial.textContent =
+            name
+                .charAt(0)
+                .toUpperCase();
+
+    }
+
+}
+
+
+/* =========================================================
+   LOAD HOME
+========================================================= */
+
+async function loadHomeData() {
+
+    const [
+        banners,
+        batches,
+        liveClasses,
+        announcements,
+        enrollments
+    ] =
+        await Promise.all([
+
+            safeQuery(
+                loadBanners
+            ),
+
+            safeQuery(
+                loadBatches
+            ),
+
+            safeQuery(
+                loadLiveClasses
+            ),
+
+            safeQuery(
+                loadAnnouncements
+            ),
+
+            safeQuery(
+                loadEnrollments
+            )
+
+        ]);
+
+
+    purchasedBatches =
+        enrollments || [];
+
+
+    renderBanners(
+        banners || []
+    );
+
+
+    renderBatches(
+        batches || []
+    );
+
+
+    renderLiveClasses(
+        liveClasses || []
+    );
+
+
+    renderAnnouncements(
+        announcements || []
+    );
+
+
+    renderContinueLearning();
+
+}
+
+
+/* =========================================================
+   SAFE QUERY
+========================================================= */
+
+async function safeQuery(
+    functionToRun
+) {
+
+    try {
+
+        return await functionToRun();
+
+    }
+
+    catch (error) {
+
+        console.warn(
+            "ZEN2 HOME SECTION:",
+            error
+        );
+
+        return [];
+
+    }
+
+}
+
+
+/* =========================================================
+   BANNERS
+========================================================= */
+
+async function loadBanners() {
+
+    const ref =
+        collection(
+            db,
+            "homeBanners"
+        );
+
+
+    const q =
+        query(
+            ref,
+
+            where(
+                "active",
+                "==",
+                true
+            ),
+
+            limit(10)
+        );
+
+
+    const snapshot =
+        await getDocs(q);
+
+
+    const banners =
+        snapshot.docs.map(
+            item => ({
+
+                id:
+                    item.id,
+
+                ...item.data()
+
+            })
+        );
+
+
+    banners.sort(
+        (a, b) =>
+            Number(
+                a.order || 999
+            ) -
+            Number(
+                b.order || 999
+            )
+    );
+
+
+    return banners;
+
+}
+
+
+/* =========================================================
+   BATCHES
+========================================================= */
+
+async function loadBatches() {
+
+    const ref =
+        collection(
+            db,
+            "zen2Courses"
+        );
+
+
+    const q =
+        query(
+            ref,
+
+            limit(30)
+        );
+
+
+    const snapshot =
+        await getDocs(q);
+
+
+    return snapshot.docs.map(
+        item => ({
+
+            id:
+                item.id,
+
+            ...item.data()
+
+        })
+    );
+
+}
+
+
+/* =========================================================
+   STUDENT ENROLLMENTS
+========================================================= */
+
+async function loadEnrollments() {
+
+    const ref =
+        collection(
+            db,
+            "studentEnrollments"
+        );
+
+
+    const q =
+        query(
+            ref,
+
+            where(
+                "studentUid",
+                "==",
+                currentUser.uid
+            ),
+
+            limit(30)
+        );
+
+
+    const snapshot =
+        await getDocs(q);
+
+
+    return snapshot.docs.map(
+        item => ({
+
+            id:
+                item.id,
+
+            ...item.data()
+
+        })
+    );
+
+}
+
+
+/* =========================================================
+   LIVE CLASSES
+========================================================= */
+
+async function loadLiveClasses() {
+
+    const ref =
+        collection(
+            db,
+            "liveClasses"
+        );
+
+
+    const q =
+        query(
+            ref,
+
+            where(
+                "active",
+                "==",
+                true
+            ),
+
+            limit(30)
+        );
+
+
+    const snapshot =
+        await getDocs(q);
+
+
+    return snapshot.docs.map(
+        item => ({
+
+            id:
+                item.id,
+
+            ...item.data()
+
+        })
+    );
+
+}
+
+
+/* =========================================================
+   ANNOUNCEMENTS
+========================================================= */
+
+async function loadAnnouncements() {
+
+    const ref =
+        collection(
+            db,
+            "announcements"
+        );
+
+
+    const q =
+        query(
+            ref,
+
+            where(
+                "active",
+                "==",
+                true
+            ),
+
+            limit(10)
+        );
+
+
+    const snapshot =
+        await getDocs(q);
+
+
+    return snapshot.docs.map(
+        item => ({
+
+            id:
+                item.id,
+
+            ...item.data()
+
+        })
+    );
+
+}
+
+
+/* =========================================================
+   BANNERS UI
+========================================================= */
+
+function renderBanners(
+    banners
+) {
+
+    const section =
+        document.getElementById(
+            "heroSection"
+        );
+
+    const slider =
+        document.getElementById(
+            "heroSlider"
+        );
+
+    const dots =
+        document.getElementById(
+            "heroDots"
+        );
+
+
+    if (
+        !section ||
+        !slider ||
+        !dots
+    ) {
+
+        return;
+
+    }
+
+
+    if (
+        !banners.length
+    ) {
+
+        section.classList.add(
+            "hidden"
+        );
+
+        return;
+
+    }
+
+
+    section.classList.remove(
         "hidden"
     );
 
 
-    currentBanner = 0;
+    slider.innerHTML =
+        banners.map(
+            (
+                banner,
+                index
+            ) => `
 
+                <div
+                    class="hero-slide ${
+                        index === 0
+                            ? "active"
+                            : ""
+                    }"
+                    data-link="${
+                        escapeAttr(
+                            banner.link || ""
+                        )
+                    }"
+                >
 
-    bannerSlider.innerHTML =
-        banners
-            .map(
-                (banner, index) => {
-
-                    const image =
-                        banner.imageUrl ||
-                        banner.crmImageUrl ||
-                        "";
-
-
-                    const title =
-                        escapeHtml(
-                            banner.title ||
-                            ""
-                        );
-
-
-                    const label =
-                        escapeHtml(
-                            banner.label ||
-                            ""
-                        );
-
-
-                    const description =
-                        escapeHtml(
-                            banner.description ||
-                            ""
-                        );
-
-
-                    const buttonText =
-                        escapeHtml(
-                            banner.buttonText ||
-                            ""
-                        );
-
-
-                    return `
-
-                        <article
-                            class="home-banner ${
-                                index === 0
-                                    ? "active"
-                                    : ""
-                            }"
-                            data-banner-id="${banner.id}"
-                        >
-
-                            ${
-                                image
-                                    ? `
-                                        <img
-                                            src="${escapeAttribute(image)}"
-                                            alt="${title}"
-                                        >
-                                    `
-                                    : ""
-                            }
-
-
-                            ${
-                                title ||
-                                description ||
-                                buttonText
-                                    ? `
-
-                                        <div
-                                            class="banner-overlay"
-                                        >
-
-                                            ${
-                                                label
-                                                    ? `
-                                                        <span class="banner-label">
-                                                            ${label}
-                                                        </span>
-                                                    `
-                                                    : ""
-                                            }
-
-
-                                            ${
-                                                title
-                                                    ? `
-                                                        <h3>
-                                                            ${title}
-                                                        </h3>
-                                                    `
-                                                    : ""
-                                            }
-
-
-                                            ${
-                                                description
-                                                    ? `
-                                                        <p>
-                                                            ${description}
-                                                        </p>
-                                                    `
-                                                    : ""
-                                            }
-
-
-                                            ${
-                                                buttonText
-                                                    ? `
-                                                        <span class="banner-button">
-                                                            ${buttonText}
-                                                        </span>
-                                                    `
-                                                    : ""
-                                            }
-
-                                        </div>
-
-                                    `
-                                    : ""
-                            }
-
-                        </article>
-
-                    `;
-
-                }
-            )
-            .join("");
-
-
-    bannerDots.innerHTML =
-        banners
-            .map(
-                (_, index) => `
-
-                    <span
-                        class="banner-dot ${
-                            index === 0
-                                ? "active"
-                                : ""
+                    <img
+                        src="${
+                            escapeAttr(
+                                banner.imageUrl || ""
+                            )
                         }"
-                        data-index="${index}"
-                    ></span>
+                        alt=""
+                    >
 
-                `
-            )
-            .join("");
+                    ${
+                        banner.title
+                            ? `
+
+                                <div class="banner-content">
+
+                                    <h2>
+                                        ${
+                                            escapeHtml(
+                                                banner.title
+                                            )
+                                        }
+                                    </h2>
+
+                                    ${
+                                        banner.buttonText
+                                            ? `
+
+                                                <button>
+                                                    ${
+                                                        escapeHtml(
+                                                            banner.buttonText
+                                                        )
+                                                    }
+                                                </button>
+
+                                            `
+                                            : ""
+                                    }
+
+                                </div>
+
+                            `
+                            : ""
+                    }
+
+                </div>
+
+            `
+        )
+        .join("");
 
 
-    /*
-     * Banner click
-     */
+    dots.innerHTML =
+        banners.map(
+            (
+                _,
+                index
+            ) => `
 
-    bannerSlider
+                <button
+                    class="hero-dot ${
+                        index === 0
+                            ? "active"
+                            : ""
+                    }"
+                    data-index="${index}"
+                ></button>
+
+            `
+        )
+        .join("");
+
+
+    startBannerSlider(
+        banners.length
+    );
+
+
+    slider
         .querySelectorAll(
-            ".home-banner"
+            ".hero-slide"
         )
         .forEach(
-            element => {
+            slide => {
 
-                element.addEventListener(
+                slide.addEventListener(
                     "click",
                     () => {
 
-                        const id =
-                            element.dataset.bannerId;
+                        const link =
+                            slide.dataset.link;
 
-
-                        const banner =
-                            banners.find(
-                                item =>
-                                    item.id === id
-                            );
-
-
-                        if (
-                            banner?.link
-                        ) {
+                        if (link) {
 
                             window.location.href =
-                                banner.link;
+                                link;
 
                         }
 
@@ -619,20 +689,19 @@ function renderBanners() {
             }
         );
 
-
-    startBannerTimer();
-
 }
 
 
 /* =========================================================
-   BANNER TIMER
+   BANNER SLIDER
 ========================================================= */
 
-function startBannerTimer() {
+function startBannerSlider(
+    count
+) {
 
     if (
-        banners.length <= 1
+        count <= 1
     ) {
 
         return;
@@ -640,445 +709,131 @@ function startBannerTimer() {
     }
 
 
-    bannerTimer =
-        setInterval(
-            () => {
-
-                currentBanner =
-                    (
-                        currentBanner + 1
-                    ) %
-                    banners.length;
-
-
-                showBanner(
-                    currentBanner
-                );
-
-            },
-            5000
+    const slides =
+        document.querySelectorAll(
+            ".hero-slide"
         );
 
-}
+
+    const dots =
+        document.querySelectorAll(
+            ".hero-dot"
+        );
 
 
-function clearBannerTimer() {
+    let current =
+        0;
 
-    if (
-        bannerTimer
+
+    function show(
+        index
     ) {
 
-        clearInterval(
-            bannerTimer
-        );
-
-        bannerTimer = null;
-
-    }
-
-}
+        current =
+            (
+                index +
+                count
+            ) %
+            count;
 
 
-function showBanner(
-    index
-) {
+        slides.forEach(
+            (
+                slide,
+                i
+            ) => {
 
-    bannerSlider
-        .querySelectorAll(
-            ".home-banner"
-        )
-        .forEach(
-            (banner, bannerIndex) => {
-
-                banner.classList.toggle(
+                slide.classList.toggle(
                     "active",
-                    bannerIndex === index
+                    i === current
                 );
 
             }
         );
 
 
-    bannerDots
-        .querySelectorAll(
-            ".banner-dot"
-        )
-        .forEach(
-            (dot, dotIndex) => {
+        dots.forEach(
+            (
+                dot,
+                i
+            ) => {
 
                 dot.classList.toggle(
                     "active",
-                    dotIndex === index
+                    i === current
                 );
 
             }
         );
 
+    }
+
+
+    dots.forEach(
+        dot => {
+
+            dot.addEventListener(
+                "click",
+                event => {
+
+                    event.stopPropagation();
+
+                    show(
+                        Number(
+                            dot.dataset.index
+                        )
+                    );
+
+                }
+            );
+
+        }
+    );
+
+
+    setInterval(
+        () => {
+
+            show(
+                current + 1
+            );
+
+        },
+        5000
+    );
+
 }
 
 
 /* =========================================================
-   ENROLLMENTS
+   MY BATCHES
 ========================================================= */
 
-function loadEnrollments(
-    uid
+function renderBatches(
+    batches
 ) {
 
-    if (
-        unsubscribeEnrollments
-    ) {
-
-        unsubscribeEnrollments();
-
-    }
-
-
-    const enrollmentRef =
-        collection(
-            db,
-            "studentEnrollments"
+    const container =
+        document.getElementById(
+            "myBatchesList"
         );
 
 
-    const enrollmentQuery =
-        query(
-            enrollmentRef,
-            where(
-                "studentUid",
-                "==",
-                uid
-            )
-        );
-
-
-    unsubscribeEnrollments =
-        onSnapshot(
-
-            enrollmentQuery,
-
-            snapshot => {
-
-                enrolledCourses =
-                    snapshot.docs
-                        .map(
-                            item => ({
-                                id: item.id,
-                                ...item.data()
-                            })
-                        )
-                        .filter(
-                            enrollment => {
-
-                                const status =
-                                    String(
-                                        enrollment.status ||
-                                        ""
-                                    ).toUpperCase();
-
-
-                                return (
-                                    status ===
-                                        "ACTIVE" ||
-                                    status ===
-                                        "ENROLLED" ||
-                                    status ===
-                                        "APPROVED" ||
-                                    !status
-                                );
-
-                            }
-                        );
-
-
-                renderBatches();
-
-            },
-
-            error => {
-
-                console.error(
-                    "Enrollment error:",
-                    error
-                );
-
-                enrolledCourses = [];
-
-                renderBatches();
-
-            }
-
-        );
-
-}
-
-
-/* =========================================================
-   CRM COURSES
-========================================================= */
-
-function loadCourses() {
-
-    if (
-        unsubscribeCourses
-    ) {
-
-        unsubscribeCourses();
-
-    }
-
-
-    const coursesRef =
-        collection(
-            db,
-            "crmCourses"
-        );
-
-
-    const coursesQuery =
-        query(
-            coursesRef,
-            where(
-                "crmActive",
-                "==",
-                true
-            )
-        );
-
-
-    unsubscribeCourses =
-        onSnapshot(
-
-            coursesQuery,
-
-            snapshot => {
-
-                allCourses =
-                    snapshot.docs
-                        .map(
-                            item => ({
-                                id: item.id,
-                                ...item.data()
-                            })
-                        )
-                        .sort(
-                            (a, b) =>
-                                Number(
-                                    a.priority ?? 999
-                                ) -
-                                Number(
-                                    b.priority ?? 999
-                                )
-                        );
-
-
-                renderBatches();
-
-            },
-
-            error => {
-
-                console.error(
-                    "Courses error:",
-                    error
-                );
-
-
-                /*
-                 * If the catalogue query fails,
-                 * don't break the complete Home page.
-                 */
-
-                allCourses = [];
-
-                renderBatches();
-
-            }
-
-        );
-
-}
-
-
-/* =========================================================
-   BATCHES FOR YOU
-========================================================= */
-
-function renderBatches() {
-
-    if (
-        !batchesContainer
-    ) {
+    if (!container) {
 
         return;
 
     }
 
 
-    const cards = [];
+    if (!batches.length) {
 
+        container.innerHTML = `
 
-    /*
-     * -----------------------------------------------------
-     * 1. ENROLLED COURSES FIRST
-     * -----------------------------------------------------
-     */
+            <div class="loading-card">
 
-    enrolledCourses.forEach(
-        enrollment => {
-
-            const courseId =
-                enrollment.crmCourseId ||
-                enrollment.courseId;
-
-
-            const course =
-                allCourses.find(
-                    item =>
-                        item.id === courseId
-                );
-
-
-            if (
-                course
-            ) {
-
-                cards.push({
-                    course,
-                    enrollment,
-                    enrolled: true
-                });
-
-            }
-
-        }
-    );
-
-
-    /*
-     * -----------------------------------------------------
-     * 2. SAME CLASS COURSES
-     * -----------------------------------------------------
-     */
-
-    const studentClass =
-        studentData?.className ||
-        studentData?.crmClass ||
-        studentData?.class ||
-        "";
-
-
-    const enrolledIds =
-        new Set(
-            enrolledCourses.map(
-                enrollment =>
-                    enrollment.crmCourseId ||
-                    enrollment.courseId
-            )
-        );
-
-
-    const sameClass =
-        allCourses
-            .filter(
-                course => {
-
-                    if (
-                        enrolledIds.has(
-                            course.id
-                        )
-                    ) {
-
-                        return false;
-
-                    }
-
-
-                    return sameClassMatch(
-                        course.crmClass,
-                        studentClass
-                    );
-
-                }
-            );
-
-
-    sameClass.forEach(
-        course => {
-
-            cards.push({
-                course,
-                enrollment: null,
-                enrolled: false
-            });
-
-        }
-    );
-
-
-    /*
-     * -----------------------------------------------------
-     * 3. OTHER PROGRAMS
-     * -----------------------------------------------------
-     */
-
-    const otherCourses =
-        allCourses
-            .filter(
-                course => {
-
-                    if (
-                        enrolledIds.has(
-                            course.id
-                        )
-                    ) {
-
-                        return false;
-
-                    }
-
-
-                    return !sameClassMatch(
-                        course.crmClass,
-                        studentClass
-                    );
-
-                }
-            );
-
-
-    otherCourses.forEach(
-        course => {
-
-            cards.push({
-                course,
-                enrollment: null,
-                enrolled: false
-            });
-
-        }
-    );
-
-
-    /*
-     * LIMIT HOME
-     */
-
-    const visible =
-        cards.slice(
-            0,
-            8
-        );
-
-
-    if (
-        !visible.length
-    ) {
-
-        batchesContainer.innerHTML = `
-
-            <div class="section-loading">
                 No batches available right now.
+
             </div>
 
         `;
@@ -1088,50 +843,267 @@ function renderBatches() {
     }
 
 
-    batchesContainer.innerHTML =
-        visible
-            .map(
-                item =>
-                    createBatchCard(
-                        item
-                    )
-            )
-            .join("");
+    container.innerHTML =
+        batches.map(
+            batch => {
+
+                const purchased =
+                    isBatchPurchased(
+                        batch.id
+                    );
 
 
-    batchesContainer
+                return `
+
+                    <article
+                        class="batch-card"
+                    >
+
+                        <div class="batch-image">
+
+                            ${
+                                batch.thumbnailUrl ||
+                                batch.imageUrl
+                                    ? `
+
+                                        <img
+                                            src="${
+                                                escapeAttr(
+                                                    batch.thumbnailUrl ||
+                                                    batch.imageUrl
+                                                )
+                                            }"
+                                            alt=""
+                                            loading="lazy"
+                                        >
+
+                                    `
+                                    : ""
+                            }
+
+                        </div>
+
+
+                        <div class="batch-details">
+
+                            <h3>
+                                ${
+                                    escapeHtml(
+                                        batch.name ||
+                                        batch.title ||
+                                        "Zenova Batch"
+                                    )
+                                }
+                            </h3>
+
+
+                            <p>
+                                ${
+                                    escapeHtml(
+                                        batch.description ||
+                                        batch.shortDescription ||
+                                        ""
+                                    )
+                                }
+                            </p>
+
+
+                            <div class="batch-actions">
+
+                                <button
+                                    class="batch-button explore-button"
+                                    data-explore-id="${
+                                        escapeAttr(
+                                            batch.id
+                                        )
+                                    }"
+                                >
+                                    EXPLORE BATCH
+                                </button>
+
+
+                                ${
+                                    purchased
+                                        ? `
+
+                                            <button
+                                                class="batch-button buy-button purchased"
+                                                data-open-batch="${
+                                                    escapeAttr(
+                                                        batch.id
+                                                    )
+                                                }"
+                                            >
+                                                OPEN BATCH
+                                            </button>
+
+                                        `
+                                        : `
+
+                                            <button
+                                                class="batch-button buy-button"
+                                                data-buy-id="${
+                                                    escapeAttr(
+                                                        batch.id
+                                                    )
+                                                }"
+                                            >
+                                                BUY NOW
+                                            </button>
+
+                                        `
+                                }
+
+                            </div>
+
+                        </div>
+
+                    </article>
+
+                `;
+
+            }
+        )
+        .join("");
+
+
+    setupBatchButtons();
+
+}
+
+
+/* =========================================================
+   PURCHASE CHECK
+========================================================= */
+
+function isBatchPurchased(
+    courseId
+) {
+
+    return purchasedBatches.some(
+        enrollment => {
+
+            const enrolledId =
+                enrollment.courseId ||
+                enrollment.zen2CourseId ||
+                enrollment.batchId ||
+                enrollment.crmCourseId;
+
+
+            const status =
+                String(
+                    enrollment.status ||
+                    ""
+                )
+                .toLowerCase();
+
+
+            return (
+                String(
+                    enrolledId
+                ) ===
+                String(
+                    courseId
+                )
+                &&
+                (
+                    status ===
+                        "active" ||
+                    status ===
+                        "enrolled" ||
+                    enrollment.accessGranted === true ||
+                    enrollment.active === true
+                )
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   BATCH BUTTONS
+========================================================= */
+
+function setupBatchButtons() {
+
+    document
         .querySelectorAll(
-            "[data-course-id]"
+            "[data-explore-id]"
         )
         .forEach(
-            card => {
+            button => {
 
-                card.addEventListener(
+                button.addEventListener(
                     "click",
                     () => {
 
                         const id =
-                            card.dataset.courseId;
+                            button.dataset.exploreId;
+
+                        window.location.href =
+                            `../batch-details/?courseId=${
+                                encodeURIComponent(
+                                    id
+                                )
+                            }`;
+
+                    }
+                );
+
+            }
+        );
 
 
-                        const enrolled =
-                            card.dataset.enrolled ===
-                            "true";
+    document
+        .querySelectorAll(
+            "[data-buy-id]"
+        )
+        .forEach(
+            button => {
+
+                button.addEventListener(
+                    "click",
+                    () => {
+
+                        const id =
+                            button.dataset.buyId;
+
+                        window.location.href =
+                            `../batch-details/?courseId=${
+                                encodeURIComponent(
+                                    id
+                                )
+                            }&buy=true`;
+
+                    }
+                );
+
+            }
+        );
 
 
-                        if (
-                            enrolled
-                        ) {
+    document
+        .querySelectorAll(
+            "[data-open-batch]"
+        )
+        .forEach(
+            button => {
 
-                            window.location.href =
-                                `../home/study/?courseId=${encodeURIComponent(id)}`;
+                button.addEventListener(
+                    "click",
+                    () => {
 
-                        } else {
+                        const id =
+                            button.dataset.openBatch;
 
-                            window.location.href =
-                                `../home/batchdetails/?id=${encodeURIComponent(id)}`;
-
-                        }
+                        window.location.href =
+                            `../study/?courseId=${
+                                encodeURIComponent(
+                                    id
+                                )
+                            }`;
 
                     }
                 );
@@ -1143,123 +1115,337 @@ function renderBatches() {
 
 
 /* =========================================================
-   CREATE BATCH CARD
+   LIVE CLASSES
 ========================================================= */
 
-function createBatchCard(
-    item
+function renderLiveClasses(
+    classes
 ) {
 
-    const course =
-        item.course;
-
-
-    const enrollment =
-        item.enrollment;
-
-
-    const image =
-        course.crmImageUrl ||
-        course.imageUrl ||
-        course.courseImageUrl ||
-        "";
-
-
-    const title =
-        escapeHtml(
-            course.crmCourseName ||
-            course.name ||
-            "Course"
+    const container =
+        document.getElementById(
+            "liveList"
         );
 
 
-    const className =
-        escapeHtml(
-            formatClass(
-                course.crmClass ||
-                ""
-            )
-        );
+    if (!container) {
+
+        return;
+
+    }
 
 
-    const enrolled =
-        item.enrolled;
+    const now =
+        new Date();
 
 
-    const progress =
-        Number(
-            enrollment?.progress ??
-            enrollment?.progressPercent ??
-            0
-        );
+    const today =
+        classes
+            .map(
+                item => {
+
+                    const start =
+                        getDate(
+                            item.scheduledAt
+                        );
 
 
-    return `
+                    const duration =
+                        Number(
+                            item.durationMinutes ||
+                            60
+                        );
 
-        <article
-            class="batch-card"
-            data-course-id="${escapeAttribute(course.id)}"
-            data-enrolled="${enrolled}"
-        >
 
-            <div class="batch-image">
+                    const end =
+                        new Date(
+                            start.getTime() +
+                            duration *
+                            60000
+                        );
 
-                ${
-                    image
-                        ? `
-                            <img
-                                src="${escapeAttribute(image)}"
-                                alt="${title}"
-                                loading="lazy"
-                            >
-                        `
-                        : ""
+
+                    return {
+
+                        ...item,
+
+                        start,
+
+                        end
+
+                    };
+
                 }
+            )
+            .filter(
+                item =>
+                    !Number.isNaN(
+                        item.start.getTime()
+                    )
+            )
+            .filter(
+                item =>
+                    isSameDay(
+                        item.start,
+                        now
+                    )
+            )
+            .sort(
+                (
+                    a,
+                    b
+                ) =>
+                    a.start -
+                    b.start
+            );
+
+
+    if (!today.length) {
+
+        container.innerHTML = `
+
+            <div class="no-live-class">
+
+                <strong>
+                    No class scheduled for today
+                </strong>
+
+                <span>
+                    Check again later for your next live class.
+                </span>
 
             </div>
 
+        `;
 
-            <div class="batch-body">
+        return;
 
-                <span class="batch-status">
+    }
+
+
+    const liveNow =
+        today.find(
+            item =>
+                now >= item.start &&
+                now <= item.end
+        );
+
+
+    const upcoming =
+        today.find(
+            item =>
+                item.start > now
+        );
+
+
+    const selected =
+        liveNow ||
+        upcoming;
+
+
+    if (!selected) {
+
+        container.innerHTML = `
+
+            <div class="no-live-class">
+
+                <strong>
+                    Today's classes are completed
+                </strong>
+
+                <span>
+                    No more live classes scheduled today.
+                </span>
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    const isLive =
+        Boolean(
+            liveNow
+        );
+
+
+    const title =
+        selected.isCasual
+            ? (
+                selected.topicName ||
+                "Live Class"
+            )
+            : (
+                selected.chapterName ||
+                selected.subjectName ||
+                "Live Class"
+            );
+
+
+    const subtitle =
+        selected.isCasual
+            ? "Casual Session"
+            : [
+                selected.subjectName,
+                selected.chapterName
+            ]
+            .filter(Boolean)
+            .join(
+                " • "
+            );
+
+
+    container.innerHTML = `
+
+        <article
+            class="live-home-card"
+        >
+
+            <div
+                class="live-thumbnail"
+            >
+
+                ${
+                    selected.thumbnailUrl
+                        ? `
+
+                            <img
+                                src="${
+                                    escapeAttr(
+                                        selected.thumbnailUrl
+                                    )
+                                }"
+                                alt=""
+                            >
+
+                        `
+                        : `
+
+                            <div
+                                class="live-thumbnail-placeholder"
+                            >
+                                LIVE
+                            </div>
+
+                        `
+                }
+
+
+                <span
+                    class="live-status ${
+                        isLive
+                            ? "live-now"
+                            : "upcoming"
+                    }"
+                >
 
                     ${
-                        enrolled
-                            ? "✓ ENROLLED"
-                            : "RECOMMENDED"
+                        isLive
+                            ? "● LIVE NOW"
+                            : "UPCOMING"
                     }
 
                 </span>
 
+            </div>
+
+
+            <div
+                class="live-home-content"
+            >
+
+                <div class="live-label">
+
+                    ${
+                        isLive
+                            ? "LIVE NOW"
+                            : "NEXT CLASS"
+                    }
+
+                </div>
+
 
                 <h3>
-                    ${title}
+                    ${
+                        escapeHtml(
+                            title
+                        )
+                    }
                 </h3>
 
 
                 <p>
-                    ${className}
+                    ${
+                        escapeHtml(
+                            subtitle
+                        )
+                    }
                 </p>
 
 
-                <div class="batch-action">
+                ${
+                    selected.facultyName
+                        ? `
 
-                    <span>
+                            <small>
+                                By ${
+                                    escapeHtml(
+                                        selected.facultyName
+                                    )
+                                }
+                            </small>
 
-                        ${
-                            enrolled
-                                ? `${progress}% completed`
-                                : "Explore course"
-                        }
-
-                    </span>
+                        `
+                        : ""
+                }
 
 
-                    <span>
-                        →
-                    </span>
+                <div class="live-time">
+
+                    ${
+                        isLive
+                            ? "Class is live now"
+                            : formatTime(
+                                selected.start
+                            )
+                    }
 
                 </div>
+
+
+                ${
+                    isLive
+                        ? `
+
+                            <button
+                                id="joinLiveButton"
+                                class="join-live-btn"
+                            >
+                                JOIN LIVE →
+                            </button>
+
+                        `
+                        : `
+
+                            <div class="countdown">
+
+                                Starts in
+
+                                <strong
+                                    id="liveCountdown"
+                                >
+                                    ${getCountdown(
+                                        selected.start
+                                    )}
+                                </strong>
+
+                            </div>
+
+                        `
+                }
 
             </div>
 
@@ -1267,54 +1453,367 @@ function createBatchCard(
 
     `;
 
+
+    if (isLive) {
+
+        document
+            .getElementById(
+                "joinLiveButton"
+            )
+            ?.addEventListener(
+                "click",
+                () => {
+
+                    if (
+                        selected.liveLink
+                    ) {
+
+                        window.location.href =
+                            selected.liveLink;
+
+                    }
+
+                }
+            );
+
+    }
+
+    else {
+
+        startCountdown(
+            selected.start
+        );
+
+    }
+
 }
 
 
 /* =========================================================
-   CLASS MATCH
+   COUNTDOWN
 ========================================================= */
 
-function sameClassMatch(
-    courseClass,
-    studentClass
+function startCountdown(
+    target
 ) {
 
-    if (
-        !courseClass ||
-        !studentClass
-    ) {
+    const element =
+        document.getElementById(
+            "liveCountdown"
+        );
 
-        return false;
+
+    if (!element) {
+
+        return;
 
     }
 
 
-    return normalizeClass(
-        courseClass
-    ) ===
-    normalizeClass(
-        studentClass
-    );
+    const timer =
+        setInterval(
+            () => {
+
+                const remaining =
+                    target.getTime() -
+                    Date.now();
+
+
+                if (
+                    remaining <= 0
+                ) {
+
+                    clearInterval(
+                        timer
+                    );
+
+                    loadHomeData();
+
+                    return;
+
+                }
+
+
+                element.textContent =
+                    getCountdown(
+                        target
+                    );
+
+            },
+            1000
+        );
 
 }
 
 
-function normalizeClass(
-    value
+/* =========================================================
+   CONTINUE LEARNING
+========================================================= */
+
+function renderContinueLearning() {
+
+    const card =
+        document.getElementById(
+            "continueCard"
+        );
+
+
+    if (!card) {
+
+        return;
+
+    }
+
+
+    if (
+        !purchasedBatches.length
+    ) {
+
+        card.innerHTML = `
+
+            <div
+                class="continue-content"
+            >
+
+                <span>
+                    START LEARNING
+                </span>
+
+                <h3>
+                    Your learning journey starts here.
+                </h3>
+
+                <p>
+                    Purchase a batch to start learning.
+                </p>
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    const enrollment =
+        purchasedBatches[0];
+
+
+    const progress =
+        Math.max(
+            0,
+            Math.min(
+                100,
+                Number(
+                    enrollment.progress ||
+                    0
+                )
+            )
+        );
+
+
+    card.innerHTML = `
+
+        <div class="continue-thumbnail">
+
+            ${
+                enrollment.batchImageUrl
+                    ? `
+
+                        <img
+                            src="${
+                                escapeAttr(
+                                    enrollment.batchImageUrl
+                                )
+                            }"
+                            alt=""
+                        >
+
+                    `
+                    : `
+
+                        <div>
+                            ZENOVA
+                        </div>
+
+                    `
+            }
+
+        </div>
+
+
+        <div class="continue-content">
+
+            <span>
+                CONTINUE LEARNING
+            </span>
+
+            <h3>
+                ${
+                    escapeHtml(
+                        enrollment.lastContentTitle ||
+                        enrollment.batchName ||
+                        "Continue Learning"
+                    )
+                }
+            </h3>
+
+
+            <p>
+                ${
+                    escapeHtml(
+                        enrollment.lastContentSubtitle ||
+                        ""
+                    )
+                }
+            </p>
+
+
+            <div class="continue-progress">
+
+                <div>
+
+                    <span
+                        style="width:${progress}%"
+                    ></span>
+
+                </div>
+
+                <strong>
+                    ${progress}%
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <button
+            id="continueButton"
+            class="continue-button"
+        >
+            CONTINUE
+        </button>
+
+    `;
+
+
+    document
+        .getElementById(
+            "continueButton"
+        )
+        ?.addEventListener(
+            "click",
+            () => {
+
+                window.location.href =
+                    "../study/";
+
+            }
+        );
+
+}
+
+
+/* =========================================================
+   ANNOUNCEMENTS
+========================================================= */
+
+function renderAnnouncements(
+    items
 ) {
 
-    return String(
-        value || ""
-    )
-        .toUpperCase()
-        .replace(
-            /\s+/g,
-            ""
-        )
-        .replace(
-            /_/g,
-            ""
+    const section =
+        document.getElementById(
+            "announcementSection"
         );
+
+    const list =
+        document.getElementById(
+            "announcementList"
+        );
+
+
+    if (
+        !section ||
+        !list
+    ) {
+
+        return;
+
+    }
+
+
+    if (!items.length) {
+
+        section.classList.add(
+            "hidden"
+        );
+
+        return;
+
+    }
+
+
+    section.classList.remove(
+        "hidden"
+    );
+
+
+    list.innerHTML =
+        items
+            .slice(
+                0,
+                3
+            )
+            .map(
+                item => `
+
+                    <article
+                        class="announcement-card"
+                    >
+
+                        <div
+                            class="announcement-icon"
+                        >
+                            📢
+                        </div>
+
+
+                        <div>
+
+                            <strong>
+                                ${
+                                    escapeHtml(
+                                        item.title ||
+                                        ""
+                                    )
+                                }
+                            </strong>
+
+
+                            <p>
+                                ${
+                                    escapeHtml(
+                                        item.description ||
+                                        ""
+                                    )
+                                }
+                            </p>
+
+                        </div>
+
+
+                        <span>
+                            →
+                        </span>
+
+                    </article>
+
+                `
+            )
+            .join("");
 
 }
 
@@ -1323,207 +1822,101 @@ function normalizeClass(
    NAVIGATION
 ========================================================= */
 
-document
-    .querySelectorAll(
-        "[data-route]"
-    )
-    .forEach(
-        button => {
+function setupNavigation() {
 
-            button.addEventListener(
-                "click",
-                () => {
+    document
+        .querySelectorAll(
+            "[data-route]"
+        )
+        .forEach(
+            element => {
 
-                    const route =
-                        button.dataset.route;
+                element.addEventListener(
+                    "click",
+                    () => {
 
-
-                    if (
-                        route
-                    ) {
-
-                        window.location.href =
-                            route;
+                        navigate(
+                            element.dataset.route
+                        );
 
                     }
+                );
 
-                }
-            );
-
-        }
-    );
-
-
-/* =========================================================
-   PROFILE
-========================================================= */
-
-profileButton.addEventListener(
-    "click",
-    () => {
-
-        window.location.href =
-            "./profile/";
-
-    }
-);
-
-
-/* =========================================================
-   NOTIFICATIONS
-========================================================= */
-
-notificationButton.addEventListener(
-    "click",
-    () => {
-
-        window.location.href =
-            "./notifications/";
-
-    }
-);
-
-
-/* =========================================================
-   EXPLORE BATCHES
-========================================================= */
-
-exploreBatches.addEventListener(
-    "click",
-    () => {
-
-        window.location.href =
-            "./batches/";
-
-    }
-);
-
-
-/* =========================================================
-   AI
-========================================================= */
-
-aiCard.addEventListener(
-    "click",
-    () => {
-
-        window.location.href =
-            "./ai/";
-
-    }
-);
-
-
-/* =========================================================
-   VIDEOS
-========================================================= */
-
-videosExplore.addEventListener(
-    "click",
-    () => {
-
-        /*
-         * Change this once the dedicated
-         * video library route is finalized.
-         */
-
-        window.location.href =
-            "./library/";
-
-    }
-);
-
-
-/* =========================================================
-   BOTTOM NAV
-========================================================= */
-
-document
-    .querySelectorAll(
-        "[data-nav]"
-    )
-    .forEach(
-        button => {
-
-            button.addEventListener(
-                "click",
-                () => {
-
-                    const route =
-                        button.dataset.nav;
-
-
-                    switch (route) {
-
-                        case "home":
-
-                            break;
-
-
-                        case "courses":
-
-                            window.location.href =
-                                "./batches/";
-
-                            break;
-
-
-                        case "study":
-
-                            window.location.href =
-                                "./study/";
-
-                            break;
-
-
-                        case "ai":
-
-                            window.location.href =
-                                "./ai/";
-
-                            break;
-
-
-                        case "profile":
-
-                            window.location.href =
-                                "./profile/";
-
-                            break;
-
-                    }
-
-                }
-            );
-
-        }
-    );
-
-
-/* =========================================================
-   LOADING
-========================================================= */
-
-function hideLoading() {
-
-    if (
-        loadingScreen
-    ) {
-
-        loadingScreen.classList.add(
-            "hidden"
+            }
         );
 
-    }
+
+    document
+        .getElementById(
+            "profileShortcut"
+        )
+        ?.addEventListener(
+            "click",
+            () => {
+
+                navigate(
+                    "profile"
+                );
+
+            }
+        );
+
+
+    document
+        .getElementById(
+            "aiButton"
+        )
+        ?.addEventListener(
+            "click",
+            () => {
+
+                navigate(
+                    "ai"
+                );
+
+            }
+        );
+
+}
+
+
+/* =========================================================
+   ROUTES
+========================================================= */
+
+function navigate(
+    route
+) {
+
+    const routes = {
+
+        revision:
+            "../revision/",
+
+        live:
+            "../live/",
+
+        tests:
+            "../tests/",
+
+        doubts:
+            "../doubts/",
+
+        profile:
+            "../profile/",
+
+        ai:
+            "../ai/"
+
+    };
 
 
     if (
-        app
+        routes[route]
     ) {
 
-        app.classList.remove(
-            "hidden"
-        );
+        window.location.href =
+            routes[route];
 
     }
 
@@ -1531,46 +1924,136 @@ function hideLoading() {
 
 
 /* =========================================================
-   FORMAT CLASS
+   DATE
 ========================================================= */
 
-function formatClass(
+function getDate(
     value
 ) {
 
-    const classes = {
+    if (!value) {
 
-        UNDER_8TH:
-            "Under 8th",
+        return new Date(
+            "invalid"
+        );
 
-        "8TH":
-            "8th",
+    }
 
-        "9TH":
-            "9th",
 
-        "10TH":
-            "10th",
+    if (
+        typeof value.toDate ===
+        "function"
+    ) {
 
-        "1ST_PUC":
-            "1st PUC",
+        return value.toDate();
 
-        "2ND_PUC":
-            "2nd PUC"
+    }
 
-    };
 
+    return new Date(
+        value
+    );
+
+}
+
+
+function isSameDay(
+    a,
+    b
+) {
 
     return (
-        classes[value] ||
-        String(
-            value || ""
-        )
-            .replace(
-                /_/g,
-                " "
-            )
+        a.getFullYear() ===
+            b.getFullYear() &&
+
+        a.getMonth() ===
+            b.getMonth() &&
+
+        a.getDate() ===
+            b.getDate()
     );
+
+}
+
+
+function formatTime(
+    date
+) {
+
+    return date.toLocaleTimeString(
+        "en-IN",
+        {
+            hour:
+                "numeric",
+
+            minute:
+                "2-digit"
+        }
+    );
+
+}
+
+
+function getCountdown(
+    target
+) {
+
+    const difference =
+        Math.max(
+            0,
+            target.getTime() -
+            Date.now()
+        );
+
+
+    const totalSeconds =
+        Math.floor(
+            difference /
+            1000
+        );
+
+
+    const hours =
+        Math.floor(
+            totalSeconds /
+            3600
+        );
+
+
+    const minutes =
+        Math.floor(
+            (
+                totalSeconds %
+                3600
+            ) /
+            60
+        );
+
+
+    const seconds =
+        totalSeconds %
+        60;
+
+
+    if (
+        hours > 0
+    ) {
+
+        return `${hours}h ${minutes}m`;
+
+    }
+
+
+    if (
+        minutes > 0
+    ) {
+
+        return `${minutes}m ${seconds}s`;
+
+    }
+
+
+    return `${seconds}s`;
 
 }
 
@@ -1586,31 +2069,36 @@ function escapeHtml(
     return String(
         value ?? ""
     )
-        .replace(
-            /&/g,
+
+        .replaceAll(
+            "&",
             "&amp;"
         )
-        .replace(
-            /</g,
+
+        .replaceAll(
+            "<",
             "&lt;"
         )
-        .replace(
-            />/g,
+
+        .replaceAll(
+            ">",
             "&gt;"
         )
-        .replace(
-            /"/g,
+
+        .replaceAll(
+            '"',
             "&quot;"
         )
-        .replace(
-            /'/g,
+
+        .replaceAll(
+            "'",
             "&#039;"
         );
 
 }
 
 
-function escapeAttribute(
+function escapeAttr(
     value
 ) {
 
@@ -1622,50 +2110,91 @@ function escapeAttribute(
 
 
 /* =========================================================
-   CLEANUP
+   SHOW APP
 ========================================================= */
 
-window.addEventListener(
-    "beforeunload",
-    () => {
+function showApp() {
 
-        clearBannerTimer();
-
-
-        if (
-            unsubscribeStudent
-        ) {
-
-            unsubscribeStudent();
-
-        }
+    app?.classList.remove(
+        "hidden"
+    );
 
 
-        if (
-            unsubscribeBanners
-        ) {
+    setTimeout(
+        () => {
 
-            unsubscribeBanners();
+            loader?.classList.add(
+                "fade-out"
+            );
 
-        }
+        },
+        100
+    );
 
-
-        if (
-            unsubscribeEnrollments
-        ) {
-
-            unsubscribeEnrollments();
-
-        }
+}
 
 
-        if (
-            unsubscribeCourses
-        ) {
+/* =========================================================
+   ERROR
+========================================================= */
 
-            unsubscribeCourses();
+function showError() {
 
-        }
+    if (!loader) {
+
+        return;
 
     }
-);
+
+
+    loader.innerHTML = `
+
+        <div
+            style="
+                text-align:center;
+                padding:30px;
+            "
+        >
+
+            <div
+                style="
+                    font-size:24px;
+                    font-weight:800;
+                    letter-spacing:3px;
+                "
+            >
+                ZENOVA
+            </div>
+
+
+            <p
+                style="
+                    margin-top:10px;
+                    color:#777;
+                    font-size:12px;
+                "
+            >
+                We couldn't load your
+                learning space.
+            </p>
+
+
+            <button
+                onclick="location.reload()"
+                style="
+                    margin-top:15px;
+                    border:0;
+                    padding:10px 18px;
+                    border-radius:8px;
+                    background:#111;
+                    color:#fff;
+                "
+            >
+                TRY AGAIN
+            </button>
+
+        </div>
+
+    `;
+
+                                        }
