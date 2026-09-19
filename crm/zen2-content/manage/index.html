@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>ZEN2 Content Manager</title>
+
+    <link
+        rel="stylesheet"
+        href="./manage.css"
+    >
+
+</head>
+
+
+<body>
+
+
+<!-- =====================================================
+     HEADER
+===================================================== -->
+
+<header class="topbar">
+
+    <div>
+
+        <div class="brand">
+            ZENOVA
+        </div>
+
+        <div class="brand-sub">
+            ZEN2 CONTENT MANAGER
+        </div>
+
+    </div>
+
+
+    <a
+        href="../"
+        class="back-button"
+    >
+        ← Content Studio
+    </a>
+
+</header>
+
+
+
+<!-- =====================================================
+     MAIN
+===================================================== -->
+
+<main class="container">
+
+
+    <!-- =================================================
+         PAGE TITLE
+    ================================================== -->
+
+    <section class="page-heading">
+
+        <div>
+
+            <div class="eyebrow">
+                ADMINISTRATION
+            </div>
+
+            <h1>
+                Manage Content
+            </h1>
+
+            <p>
+                Edit or delete batches, subjects, chapters,
+                videos and PDFs.
+            </p>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =================================================
+         BATCH SELECTOR
+    ================================================== -->
+
+    <section class="panel">
+
+        <div class="panel-title">
+            Select Batch
+        </div>
+
+        <select
+            id="batchSelect"
+            class="select"
+        >
+
+            <option value="">
+                Loading batches...
+            </option>
+
+        </select>
+
+    </section>
+
+
+
+    <!-- =================================================
+         BATCH DETAILS
+    ================================================== -->
+
+    <section
+        id="batchSection"
+        class="panel hidden"
+    >
+
+        <div class="section-header">
+
+            <div>
+
+                <div class="panel-title">
+                    Batch
+                </div>
+
+                <div
+                    id="batchSummary"
+                    class="muted"
+                ></div>
+
+            </div>
+
+
+            <button
+                id="editBatchButton"
+                class="button secondary"
+            >
+                Edit Batch
+            </button>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =================================================
+         SUBJECTS
+    ================================================== -->
+
+    <section
+        id="subjectsSection"
+        class="panel hidden"
+    >
+
+        <div class="section-header">
+
+            <div>
+
+                <div class="panel-title">
+                    Subjects
+                </div>
+
+                <div class="muted">
+                    Manage subjects, chapters and content.
+                </div>
+
+            </div>
+
+
+            <button
+                id="addSubjectButton"
+                class="button primary"
+            >
+                + Add Subject
+            </button>
+
+        </div>
+
+
+        <div id="subjectsList"></div>
+
+    </section>
+
+
+</main>
+
+
+
+<!-- =====================================================
+     SUBJECT MODAL
+===================================================== -->
+
+<div
+    id="subjectModal"
+    class="modal hidden"
+>
+
+    <div class="modal-card">
+
+        <div class="modal-header">
+
+            <h2 id="subjectModalTitle">
+                Edit Subject
+            </h2>
+
+            <button
+                class="modal-close"
+                data-close="subjectModal"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <form id="subjectForm">
+
+            <input
+                type="hidden"
+                id="subjectId"
+            >
+
+
+            <label>
+                Subject Name
+            </label>
+
+            <input
+                id="subjectName"
+                type="text"
+                required
+                placeholder="Mathematics"
+            >
+
+
+            <div class="modal-actions">
+
+                <button
+                    type="button"
+                    class="button secondary"
+                    data-close="subjectModal"
+                >
+                    Cancel
+                </button>
+
+                <button
+                    type="submit"
+                    class="button primary"
+                >
+                    Save Subject
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+
+<!-- =====================================================
+     CHAPTER MODAL
+===================================================== -->
+
+<div
+    id="chapterModal"
+    class="modal hidden"
+>
+
+    <div class="modal-card">
+
+        <div class="modal-header">
+
+            <h2 id="chapterModalTitle">
+                Edit Chapter
+            </h2>
+
+            <button
+                class="modal-close"
+                data-close="chapterModal"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <form id="chapterForm">
+
+            <input
+                type="hidden"
+                id="chapterId"
+            >
+
+
+            <label>
+                Chapter Number
+            </label>
+
+            <input
+                id="chapterNumber"
+                type="number"
+                min="1"
+                required
+            >
+
+
+            <label>
+                Chapter Name
+            </label>
+
+            <input
+                id="chapterName"
+                type="text"
+                required
+                placeholder="Real Numbers"
+            >
+
+
+            <div class="modal-actions">
+
+                <button
+                    type="button"
+                    class="button secondary"
+                    data-close="chapterModal"
+                >
+                    Cancel
+                </button>
+
+                <button
+                    type="submit"
+                    class="button primary"
+                >
+                    Save Chapter
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+
+<!-- =====================================================
+     CONTENT MODAL
+===================================================== -->
+
+<div
+    id="contentModal"
+    class="modal hidden"
+>
+
+    <div class="modal-card large">
+
+        <div class="modal-header">
+
+            <h2 id="contentModalTitle">
+                Edit Content
+            </h2>
+
+            <button
+                class="modal-close"
+                data-close="contentModal"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <form id="contentForm">
+
+            <input
+                type="hidden"
+                id="contentId"
+            >
+
+
+            <div class="form-grid">
+
+
+                <div>
+
+                    <label>
+                        Content Type
+                    </label>
+
+                    <select
+                        id="contentType"
+                        disabled
+                    >
+
+                        <option value="VIDEO">
+                            Video
+                        </option>
+
+                        <option value="PDF">
+                            PDF
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div>
+
+                    <label>
+                        Access
+                    </label>
+
+                    <select
+                        id="accessType"
+                        required
+                    >
+
+                        <option value="FREE">
+                            FREE
+                        </option>
+
+                        <option value="PAID">
+                            PAID
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="full">
+
+                    <label>
+                        Title
+                    </label>
+
+                    <input
+                        id="contentTitle"
+                        type="text"
+                        required
+                    >
+
+                </div>
+
+
+                <div>
+
+                    <label>
+                        Order
+                    </label>
+
+                    <input
+                        id="contentOrder"
+                        type="number"
+                        min="1"
+                        required
+                    >
+
+                </div>
+
+
+                <div>
+
+                    <label>
+                        Thumbnail URL
+                    </label>
+
+                    <input
+                        id="contentThumbnail"
+                        type="url"
+                        placeholder="Optional"
+                    >
+
+                </div>
+
+
+                <div class="full">
+
+                    <label>
+                        Description
+                    </label>
+
+                    <textarea
+                        id="contentDescription"
+                        rows="4"
+                    ></textarea>
+
+                </div>
+
+
+                <div class="full">
+
+                    <label>
+                        Replace File
+                    </label>
+
+                    <input
+                        id="replacementFile"
+                        type="file"
+                    >
+
+                    <div
+                        id="replacementHelp"
+                        class="file-help"
+                    >
+                        Leave empty if you do not want to
+                        replace the existing file.
+                    </div>
+
+                </div>
+
+
+                <div
+                    id="replaceProgress"
+                    class="progress-wrap full hidden"
+                >
+
+                    <div class="progress-track">
+
+                        <div
+                            id="replaceProgressBar"
+                            class="progress-bar"
+                        ></div>
+
+                    </div>
+
+                    <div
+                        id="replaceProgressText"
+                        class="progress-text"
+                    >
+                        0%
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="modal-actions">
+
+                <button
+                    type="button"
+                    class="button secondary"
+                    data-close="contentModal"
+                >
+                    Cancel
+                </button>
+
+                <button
+                    type="submit"
+                    class="button primary"
+                >
+                    Save Content
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+
+<!-- =====================================================
+     TOAST
+===================================================== -->
+
+<div
+    id="toast"
+    class="toast"
+>
+
+    <strong id="toastTitle">
+        Done
+    </strong>
+
+    <span id="toastMessage"></span>
+
+</div>
+
+
+
+<!-- =====================================================
+     CONFIRM MODAL
+===================================================== -->
+
+<div
+    id="confirmModal"
+    class="modal hidden"
+>
+
+    <div class="modal-card">
+
+        <div class="modal-header">
+
+            <h2 id="confirmTitle">
+                Confirm Delete
+            </h2>
+
+            <button
+                class="modal-close"
+                data-close="confirmModal"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <p
+            id="confirmMessage"
+            class="confirm-message"
+        ></p>
+
+
+        <div class="modal-actions">
+
+            <button
+                id="confirmCancel"
+                type="button"
+                class="button secondary"
+            >
+                Cancel
+            </button>
+
+            <button
+                id="confirmDelete"
+                type="button"
+                class="button danger"
+            >
+                Delete
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<script
+    type="module"
+    src="./manage.js"
+></script>
+
+
+</body>
+
+</html>
