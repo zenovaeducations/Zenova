@@ -420,3 +420,195 @@ body {
         flex: 1;
     }
 }
+/* ============================================================
+   ZEN2 FIXED COURSE
+============================================================ */
+
+.fixed-value {
+    width: 100%;
+    min-height: 52px;
+
+    display: flex;
+    align-items: center;
+
+    padding: 0 15px;
+
+    border: 1px solid #dedede;
+    border-radius: 12px;
+
+    background: #f8f8fa;
+
+    color: #333333;
+
+    font-size: 14px;
+    font-weight: 650;
+}
+
+
+/* ============================================================
+   TOUGH SUBJECTS
+============================================================ */
+
+.tough-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 15px;
+
+    margin-bottom: 10px;
+}
+
+.tough-heading label {
+    display: block;
+}
+
+.tough-heading p {
+    margin: 4px 0 0;
+
+    color: #888888;
+
+    font-size: 11px;
+}
+
+.tough-count {
+    flex: 0 0 auto;
+
+    padding: 6px 9px;
+
+    border-radius: 999px;
+
+    background: #f1edff;
+
+    color: #6c3cff;
+
+    font-size: 11px;
+    font-weight: 800;
+}
+
+
+/* ============================================================
+   SUBJECT OPTIONS
+============================================================ */
+
+.subject-options {
+    display: grid;
+
+    grid-template-columns:
+        1fr 1fr;
+
+    gap: 10px;
+}
+
+.subject-option {
+    min-height: 55px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 0 15px;
+
+    border: 1px solid #dedede;
+    border-radius: 12px;
+
+    background: #ffffff;
+
+    color: #222222;
+
+    font-size: 13px;
+    font-weight: 650;
+
+    text-align: left;
+
+    transition:
+        border-color 0.15s ease,
+        background 0.15s ease,
+        transform 0.1s ease;
+}
+
+.subject-option:hover {
+    border-color: #bcaaf0;
+
+    background: #fbfaff;
+}
+
+.subject-option:active {
+    transform: scale(0.99);
+}
+
+.subject-option.selected {
+    border-color: #6c3cff;
+
+    background: #f7f3ff;
+
+    color: #5d31c9;
+}
+
+.subject-check {
+    width: 22px;
+    height: 22px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 1px solid #d8d8dc;
+    border-radius: 50%;
+
+    color: transparent;
+
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.subject-option.selected .subject-check {
+    border-color: #6c3cff;
+
+    background: #6c3cff;
+
+    color: #ffffff;
+}
+
+
+/* ============================================================
+   FORM ERROR
+============================================================ */
+
+.form-error {
+    display: none;
+
+    margin-top: 18px;
+
+    padding: 11px 13px;
+
+    border-radius: 9px;
+
+    background: #fff3f3;
+
+    color: #c32929;
+
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.form-error.show {
+    display: block;
+}
+
+
+/* ============================================================
+   MOBILE
+============================================================ */
+
+@media (max-width: 600px) {
+
+    .subject-options {
+        grid-template-columns: 1fr;
+    }
+
+    .tough-heading {
+        align-items: flex-start;
+    }
+
+}
