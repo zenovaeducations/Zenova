@@ -3,102 +3,88 @@
 
 <head>
 
-  <meta charset="UTF-8">
+    <meta charset="UTF-8">
 
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  >
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-  <title>Login | Zenova Educations</title>
+    <title>Login | Zenova Educations</title>
 
-  <link
-    rel="stylesheet"
-    href="./login.css"
-  >
+    <link
+        rel="stylesheet"
+        href="./login.css"
+    >
 
 </head>
 
 
 <body>
 
+    <main class="page">
 
-  <main class="page">
+        <div class="login-card">
 
-    <div class="login-card">
-
-
-      <!-- LOGO -->
-
-      <img
-        src="../logo.png"
-        class="logo"
-        alt="Zenova Educations"
-      >
+            <img
+                src="../logo.png"
+                class="logo"
+                alt="Zenova Educations"
+            >
 
 
-      <!-- HEADING -->
-
-      <h1>
-        Welcome to Zenova
-      </h1>
+            <h1>
+                Welcome to Zenova
+            </h1>
 
 
-      <p class="subtitle">
-        Sign in to continue to your Zenova student portal.
-      </p>
+            <p class="subtitle">
+                Your 10th Standard learning journey starts here.
+            </p>
 
 
-      <!-- GOOGLE BUTTON -->
+            <button
+                type="button"
+                id="googleBtn"
+                class="google-btn"
+            >
 
-      <button
-        id="googleBtn"
-        class="google-btn"
-      >
+                <span class="google-icon">
+                    G
+                </span>
 
-        <span class="google-icon">
-          G
-        </span>
+                <span id="googleBtnText">
+                    Continue with Google
+                </span>
 
-        <span>
-          Continue with Google
-        </span>
-
-      </button>
-
-
-      <!-- ERROR -->
-
-      <div
-        id="errorBox"
-        class="error-box"
-      ></div>
+            </button>
 
 
-      <!-- PRIVACY TEXT -->
-
-      <p class="terms">
-        By continuing, you agree to use your Google account
-        to access Zenova Educations.
-      </p>
+            <div
+                id="errorBox"
+                class="error-box"
+            ></div>
 
 
-    </div>
+            <p class="terms">
+                By continuing, you agree to use your Google
+                account to access Zenova Educations.
+            </p>
+
+        </div>
 
 
-    <footer>
-      © Zenova Educations
-    </footer>
+        <footer>
+            © Zenova Educations
+        </footer>
+
+    </main>
 
 
-  </main>
-
-
-  <script
-    type="module"
-    src="./login.js"
-  ></script>
-
+    <script
+        type="module"
+        src="./login.js"
+    ></script>
 
 </body>
 
