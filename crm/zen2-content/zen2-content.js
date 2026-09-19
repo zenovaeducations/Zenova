@@ -87,8 +87,7 @@ const CHAPTERS =
 
 const CONTENT =
     "zen2Content";
-const thumbnailFile =
-    courseThumbnail.files[0];
+
 
 /* ============================================================
    STATE
@@ -177,20 +176,7 @@ const courseList =
         "courseList"
     );
 
-const courseThumbnail =
-    document.getElementById(
-        "courseThumbnail"
-    );
 
-const thumbnailPreview =
-    document.getElementById(
-        "thumbnailPreview"
-    );
-
-const thumbnailPreviewImage =
-    document.getElementById(
-        "thumbnailPreviewImage"
-    );
 /* SUBJECT */
 
 const subjectCourseLabel =
@@ -398,50 +384,7 @@ const uploadPercentage =
     document.getElementById(
         "uploadPercentage"
     );
-let thumbnailUrl = "";
 
-let thumbnailStoragePath = "";
-
-
-if (thumbnailFile) {
-
-    const thumbnailPath =
-        `zen2/${courseId}/thumbnail/${Date.now()}_${thumbnailFile.name}`;
-
-    const thumbnailRef =
-        ref(
-            storage,
-            thumbnailPath
-        );
-
-
-    const uploadTask =
-        uploadBytesResumable(
-            thumbnailRef,
-            thumbnailFile
-        );
-
-
-    await waitForUpload(
-        uploadTask,
-        progress => {
-
-            // Update your existing progress UI here
-
-        }
-    );
-
-
-    thumbnailUrl =
-        await getDownloadURL(
-            thumbnailRef
-        );
-
-
-    thumbnailStoragePath =
-        thumbnailPath;
-
-}
 
 /* ============================================================
    AUTH
@@ -601,62 +544,6 @@ function setStep(step) {
 
 }
 
-courseThumbnail.addEventListener(
-    "change",
-    () => {
-
-        const file =
-            courseThumbnail.files[0];
-
-        if (!file) {
-
-            thumbnailPreview.classList.add(
-                "hidden"
-            );
-
-            thumbnailPreviewImage.src =
-                "";
-
-            return;
-
-        }
-
-
-        if (
-            !file.type.startsWith(
-                "image/"
-            )
-        ) {
-
-            showToast(
-                "Invalid image",
-                "Please select JPG, PNG or WebP."
-            );
-
-            courseThumbnail.value =
-                "";
-
-            return;
-
-        }
-
-
-        const url =
-            URL.createObjectURL(
-                file
-            );
-
-
-        thumbnailPreviewImage.src =
-            url;
-
-
-        thumbnailPreview.classList.remove(
-            "hidden"
-        );
-
-    }
-);
 
 /* ============================================================
    BATCH
