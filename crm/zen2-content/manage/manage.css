@@ -7,14 +7,14 @@ body {
 
     margin: 0;
 
+    background: #f5f5f7;
+
+    color: #17171a;
+
     font-family:
         Inter,
         Arial,
         sans-serif;
-
-    background: #f6f6f8;
-
-    color: #17171a;
 
 }
 
@@ -25,12 +25,11 @@ body {
 
 .topbar {
 
-    height: 72px;
+    height: 70px;
 
-    background: #ffffff;
+    background: #fff;
 
-    border-bottom:
-        1px solid #e5e5e8;
+    border-bottom: 1px solid #e5e5e8;
 
     display: flex;
 
@@ -38,15 +37,14 @@ body {
 
     justify-content: space-between;
 
-    padding:
-        0 32px;
+    padding: 0 32px;
 
 }
 
 
 .brand {
 
-    font-size: 18px;
+    font-size: 19px;
 
     font-weight: 800;
 
@@ -57,30 +55,28 @@ body {
 
 .brand-sub {
 
-    font-size: 11px;
-
     color: #777;
 
-    margin-top: 3px;
+    font-size: 10px;
 
-    letter-spacing: 1.5px;
+    letter-spacing: 2px;
+
+    margin-top: 3px;
 
 }
 
 
-.back-button {
+.back-btn {
 
     text-decoration: none;
 
     color: #111;
 
-    border:
-        1px solid #ddd;
+    border: 1px solid #ddd;
 
-    padding:
-        10px 15px;
+    padding: 9px 14px;
 
-    border-radius: 9px;
+    border-radius: 8px;
 
     font-size: 13px;
 
@@ -90,22 +86,21 @@ body {
 
 
 /* =====================================================
-   CONTAINER
+   PAGE
 ===================================================== */
 
-.container {
+.page {
 
-    max-width: 1200px;
+    width: min(1100px, 100%);
 
     margin: auto;
 
-    padding:
-        36px 22px 80px;
+    padding: 35px 20px 80px;
 
 }
 
 
-.page-heading {
+.page-header {
 
     margin-bottom: 28px;
 
@@ -114,94 +109,109 @@ body {
 
 .eyebrow {
 
-    font-size: 11px;
+    font-size: 10px;
 
-    letter-spacing: 1.5px;
+    font-weight: 800;
+
+    letter-spacing: 1.6px;
 
     color: #777;
-
-    font-weight: 700;
 
 }
 
 
 h1 {
 
-    margin:
-        6px 0;
+    font-size: 30px;
 
-    font-size: 32px;
+    margin: 6px 0;
 
 }
 
 
-.page-heading p {
+.page-header p {
 
     color: #777;
 
     margin: 0;
 
+    font-size: 14px;
+
 }
 
 
 /* =====================================================
-   PANELS
+   SELECTOR
 ===================================================== */
 
-.panel {
+.selector-panel {
 
     background: #fff;
 
-    border:
-        1px solid #e5e5e8;
+    border: 1px solid #e2e2e6;
 
     border-radius: 14px;
 
-    padding: 22px;
+    overflow: hidden;
 
-    margin-bottom: 20px;
-
-}
-
-
-.panel-title {
-
-    font-size: 17px;
-
-    font-weight: 750;
+    margin-bottom: 15px;
 
 }
 
 
-.muted {
-
-    color: #777;
-
-    font-size: 13px;
-
-    margin-top: 5px;
-
-}
-
-
-.section-header {
+.selector-step {
 
     display: flex;
 
     align-items: center;
 
-    justify-content: space-between;
-
     gap: 15px;
 
-    margin-bottom: 20px;
+    padding: 17px 20px;
+
+    border-bottom: 1px solid #eee;
 
 }
 
 
-/* =====================================================
-   FORM
-===================================================== */
+.selector-step:last-child {
+
+    border-bottom: 0;
+
+}
+
+
+.step-number {
+
+    width: 38px;
+
+    height: 38px;
+
+    background: #111;
+
+    color: #fff;
+
+    border-radius: 9px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 10px;
+
+    font-weight: 800;
+
+}
+
+
+.selector-content {
+
+    flex: 1;
+
+}
+
 
 label {
 
@@ -211,47 +221,161 @@ label {
 
     font-weight: 700;
 
-    margin:
-        0 0 7px;
+    margin-bottom: 7px;
 
 }
 
 
-input,
 select,
+input,
 textarea {
 
     width: 100%;
 
-    border:
-        1px solid #dcdce2;
+    border: 1px solid #d9d9df;
 
-    border-radius: 9px;
-
-    padding:
-        11px 12px;
-
-    font-size: 14px;
+    border-radius: 8px;
 
     background: #fff;
+
+    padding: 11px;
+
+    font-size: 14px;
 
     outline: none;
 
 }
 
 
-input:focus,
 select:focus,
+input:focus,
 textarea:focus {
 
-    border-color: #7c3aed;
+    border-color: #111;
 
 }
 
 
-textarea {
+.icon-btn {
 
-    resize: vertical;
+    width: 38px;
+
+    height: 38px;
+
+    border: 1px solid #ddd;
+
+    background: #fff;
+
+    border-radius: 8px;
+
+    cursor: pointer;
+
+}
+
+
+.icon-btn:disabled {
+
+    opacity: .35;
+
+    cursor: not-allowed;
+
+}
+
+
+.danger-icon {
+
+    color: #b42318;
+
+}
+
+
+/* =====================================================
+   LOCATION
+===================================================== */
+
+.location-panel {
+
+    background: #fff;
+
+    border: 1px solid #e2e2e6;
+
+    border-radius: 10px;
+
+    padding: 13px 17px;
+
+    margin-bottom: 15px;
+
+    color: #666;
+
+    font-size: 13px;
+
+}
+
+
+.location-panel strong {
+
+    color: #111;
+
+}
+
+
+.separator {
+
+    margin: 0 7px;
+
+    color: #aaa;
+
+}
+
+
+/* =====================================================
+   CONTENT PANEL
+===================================================== */
+
+.content-panel {
+
+    background: #fff;
+
+    border: 1px solid #e2e2e6;
+
+    border-radius: 14px;
+
+    padding: 22px;
+
+}
+
+
+.content-header {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 20px;
+
+    padding-bottom: 20px;
+
+    border-bottom: 1px solid #eee;
+
+}
+
+
+.content-header h2 {
+
+    margin: 5px 0 0;
+
+    font-size: 21px;
+
+}
+
+
+.add-buttons {
+
+    display: flex;
+
+    gap: 8px;
 
 }
 
@@ -264,16 +388,15 @@ textarea {
 
     border: 0;
 
-    border-radius: 9px;
+    border-radius: 8px;
 
-    padding:
-        10px 15px;
-
-    cursor: pointer;
+    padding: 10px 14px;
 
     font-size: 13px;
 
     font-weight: 700;
+
+    cursor: pointer;
 
 }
 
@@ -289,7 +412,7 @@ textarea {
 
 .button.secondary {
 
-    background: #f2f2f4;
+    background: #f1f1f3;
 
     color: #222;
 
@@ -305,159 +428,60 @@ textarea {
 }
 
 
-.button.small {
-
-    padding:
-        7px 10px;
-
-    font-size: 12px;
-
-}
-
-
 /* =====================================================
-   SUBJECT
+   CONTENT SECTIONS
 ===================================================== */
 
-.subject-card {
+.content-section {
 
-    border:
-        1px solid #e3e3e7;
-
-    border-radius: 12px;
-
-    margin-bottom: 15px;
-
-    overflow: hidden;
+    margin-top: 25px;
 
 }
 
 
-.subject-header {
-
-    padding: 16px;
-
-    background: #fafafa;
-
-    display: flex;
-
-    justify-content: space-between;
-
-    align-items: center;
-
-    gap: 15px;
-
-}
-
-
-.subject-name {
-
-    font-weight: 750;
-
-    font-size: 16px;
-
-}
-
-
-.subject-actions {
-
-    display: flex;
-
-    gap: 7px;
-
-    flex-wrap: wrap;
-
-}
-
-
-/* =====================================================
-   CHAPTER
-===================================================== */
-
-.chapter {
-
-    margin:
-        14px;
-
-    border:
-        1px solid #e7e7eb;
-
-    border-radius: 10px;
-
-    overflow: hidden;
-
-}
-
-
-.chapter-header {
-
-    padding: 13px;
+.section-title {
 
     display: flex;
 
     align-items: center;
 
-    justify-content: space-between;
-
-    gap: 10px;
-
-}
-
-
-.chapter-title {
-
-    font-weight: 700;
+    gap: 9px;
 
     font-size: 14px;
 
-}
+    font-weight: 800;
 
-
-.chapter-number {
-
-    display: inline-flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    width: 28px;
-
-    height: 28px;
-
-    border-radius: 7px;
-
-    background: #111;
-
-    color: #fff;
-
-    font-size: 11px;
-
-    margin-right: 8px;
+    margin-bottom: 10px;
 
 }
 
 
-.chapter-actions {
+.count {
 
-    display: flex;
+    background: #eee;
 
-    gap: 6px;
+    color: #666;
+
+    border-radius: 999px;
+
+    padding: 3px 8px;
+
+    font-size: 10px;
 
 }
 
 
 /* =====================================================
-   CONTENT
+   CONTENT ROW
 ===================================================== */
 
 .content-list {
 
-    border-top:
-        1px solid #eee;
+    border: 1px solid #e7e7eb;
 
-    padding:
-        8px 12px 12px;
+    border-radius: 10px;
+
+    overflow: hidden;
 
 }
 
@@ -472,15 +496,13 @@ textarea {
         auto
         auto;
 
-    align-items: center;
-
     gap: 12px;
 
-    padding:
-        11px 4px;
+    align-items: center;
 
-    border-bottom:
-        1px solid #f0f0f2;
+    padding: 13px;
+
+    border-bottom: 1px solid #eee;
 
 }
 
@@ -498,24 +520,15 @@ textarea {
 
     height: 36px;
 
+    border-radius: 8px;
+
+    background: #f0f0f2;
+
     display: flex;
 
     align-items: center;
 
     justify-content: center;
-
-    border-radius: 8px;
-
-    background: #f1f1f4;
-
-    font-size: 16px;
-
-}
-
-
-.content-info {
-
-    min-width: 0;
 
 }
 
@@ -526,12 +539,6 @@ textarea {
 
     font-weight: 700;
 
-    overflow: hidden;
-
-    text-overflow: ellipsis;
-
-    white-space: nowrap;
-
 }
 
 
@@ -541,7 +548,7 @@ textarea {
 
     color: #888;
 
-    margin-top: 3px;
+    margin-top: 4px;
 
 }
 
@@ -552,19 +559,18 @@ textarea {
 
     font-weight: 800;
 
-    padding:
-        5px 8px;
+    padding: 5px 9px;
 
-    border-radius: 999px;
+    border-radius: 99px;
 
 }
 
 
 .badge.free {
 
-    background: #e9f8ef;
+    background: #e8f7ef;
 
-    color: #18794e;
+    color: #177245;
 
 }
 
@@ -578,15 +584,89 @@ textarea {
 }
 
 
+.content-actions {
+
+    display: flex;
+
+    gap: 5px;
+
+}
+
+
+.small-btn {
+
+    border: 1px solid #ddd;
+
+    background: #fff;
+
+    border-radius: 7px;
+
+    padding: 7px 9px;
+
+    cursor: pointer;
+
+    font-size: 12px;
+
+}
+
+
+.small-btn.delete {
+
+    color: #b42318;
+
+}
+
+
 /* =====================================================
    EMPTY
 ===================================================== */
 
-.empty {
+.empty-state {
 
-    padding: 30px;
+    background: #fff;
+
+    border: 1px dashed #d6d6db;
+
+    border-radius: 14px;
+
+    padding: 65px 20px;
 
     text-align: center;
+
+}
+
+
+.empty-icon {
+
+    width: 45px;
+
+    height: 45px;
+
+    border-radius: 50%;
+
+    background: #f0f0f2;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    margin: auto;
+
+}
+
+
+.empty-state h2 {
+
+    font-size: 18px;
+
+    margin: 15px 0 5px;
+
+}
+
+
+.empty-state p {
 
     color: #888;
 
@@ -605,8 +685,7 @@ textarea {
 
     inset: 0;
 
-    background:
-        rgba(0,0,0,.55);
+    background: rgba(0,0,0,.55);
 
     display: flex;
 
@@ -623,7 +702,7 @@ textarea {
 
 .modal-card {
 
-    width: min(500px, 100%);
+    width: min(480px, 100%);
 
     max-height: 90vh;
 
@@ -631,7 +710,7 @@ textarea {
 
     background: #fff;
 
-    border-radius: 15px;
+    border-radius: 14px;
 
     padding: 22px;
 
@@ -640,7 +719,7 @@ textarea {
 
 .modal-card.large {
 
-    width: min(700px, 100%);
+    width: min(650px, 100%);
 
 }
 
@@ -649,11 +728,11 @@ textarea {
 
     display: flex;
 
-    align-items: center;
-
     justify-content: space-between;
 
-    margin-bottom: 22px;
+    align-items: center;
+
+    margin-bottom: 20px;
 
 }
 
@@ -667,22 +746,22 @@ textarea {
 }
 
 
-.modal-close {
+.close-btn {
 
     border: 0;
 
-    background: transparent;
+    background: none;
 
     font-size: 25px;
 
-    cursor: pointer;
+    color: #777;
 
-    color: #666;
+    cursor: pointer;
 
 }
 
 
-.modal-card form > label {
+.modal-card form label {
 
     margin-top: 15px;
 
@@ -697,31 +776,23 @@ textarea {
 
     gap: 8px;
 
-    margin-top: 25px;
+    margin-top: 22px;
 
 }
 
 
-.form-grid {
+.two-columns {
 
     display: grid;
 
-    grid-template-columns:
-        1fr 1fr;
+    grid-template-columns: 1fr 1fr;
 
-    gap: 16px;
-
-}
-
-
-.form-grid .full {
-
-    grid-column: 1 / -1;
+    gap: 12px;
 
 }
 
 
-.file-help {
+.file-note {
 
     color: #888;
 
@@ -732,20 +803,31 @@ textarea {
 }
 
 
+.confirm-text {
+
+    font-size: 14px;
+
+    color: #555;
+
+    line-height: 1.6;
+
+}
+
+
 /* =====================================================
    PROGRESS
 ===================================================== */
 
-.progress-wrap {
+.upload-progress {
 
-    margin-top: 5px;
+    margin-top: 15px;
 
 }
 
 
 .progress-track {
 
-    height: 8px;
+    height: 7px;
 
     background: #eee;
 
@@ -758,7 +840,7 @@ textarea {
 
 .progress-bar {
 
-    width: 0%;
+    width: 0;
 
     height: 100%;
 
@@ -767,7 +849,9 @@ textarea {
 }
 
 
-.progress-text {
+#progressText {
+
+    display: block;
 
     font-size: 11px;
 
@@ -786,18 +870,17 @@ textarea {
 
     position: fixed;
 
-    right: 22px;
+    right: 20px;
 
-    bottom: 22px;
+    bottom: 20px;
 
     background: #111;
 
     color: #fff;
 
-    padding:
-        14px 17px;
+    padding: 13px 16px;
 
-    border-radius: 10px;
+    border-radius: 9px;
 
     display: none;
 
@@ -806,8 +889,6 @@ textarea {
     gap: 3px;
 
     z-index: 2000;
-
-    max-width: 350px;
 
 }
 
@@ -828,30 +909,15 @@ textarea {
 
 .toast span {
 
-    font-size: 12px;
+    font-size: 11px;
 
-    color: #ddd;
-
-}
-
-
-/* =====================================================
-   CONFIRM
-===================================================== */
-
-.confirm-message {
-
-    color: #555;
-
-    line-height: 1.6;
-
-    font-size: 14px;
+    color: #ccc;
 
 }
 
 
 /* =====================================================
-   UTIL
+   UTILITY
 ===================================================== */
 
 .hidden {
@@ -865,54 +931,63 @@ textarea {
    MOBILE
 ===================================================== */
 
-@media (max-width: 700px) {
+@media(max-width:700px) {
 
     .topbar {
 
-        padding:
-            0 16px;
+        padding: 0 15px;
 
     }
 
 
-    .container {
+    .page {
 
         padding:
-            25px 14px 60px;
+            25px 12px 60px;
 
     }
 
 
     h1 {
 
-        font-size: 26px;
+        font-size: 25px;
 
     }
 
 
-    .section-header {
+    .selector-step {
 
-        align-items: flex-start;
-
-        flex-direction: column;
+        flex-wrap: wrap;
 
     }
 
 
-    .subject-header {
+    .selector-content {
 
-        align-items: flex-start;
-
-        flex-direction: column;
+        min-width: 200px;
 
     }
 
 
-    .chapter-header {
+    .content-header {
+
+        flex-direction: column;
 
         align-items: flex-start;
 
-        flex-direction: column;
+    }
+
+
+    .add-buttons {
+
+        width: 100%;
+
+    }
+
+
+    .add-buttons .button {
+
+        flex: 1;
 
     }
 
@@ -920,30 +995,22 @@ textarea {
     .content-row {
 
         grid-template-columns:
-            40px
-            1fr;
+            40px 1fr;
 
     }
 
 
-    .content-row > .badge,
-    .content-row > .content-actions {
+    .content-row .badge,
+    .content-row .content-actions {
 
         grid-column: 2;
 
     }
 
 
-    .form-grid {
+    .two-columns {
 
         grid-template-columns: 1fr;
-
-    }
-
-
-    .form-grid .full {
-
-        grid-column: auto;
 
     }
 
