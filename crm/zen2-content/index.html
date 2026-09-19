@@ -1,0 +1,1098 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>ZEN2 Content Studio | Zenova</title>
+
+    <link
+        rel="stylesheet"
+        href="./zen2-content.css"
+    >
+
+</head>
+
+
+<body>
+
+
+    <!-- =====================================================
+         PAGE
+    ====================================================== -->
+
+    <main class="page">
+
+
+        <!-- =================================================
+             HEADER
+        ================================================== -->
+
+        <header class="topbar">
+
+            <div>
+
+                <div class="brand-line">
+
+                    <span class="brand-mark">
+                        Z
+                    </span>
+
+                    <span class="brand-name">
+                        ZENOVA
+                    </span>
+
+                    <span class="zen2-badge">
+                        ZEN2
+                    </span>
+
+                </div>
+
+
+                <h1>
+                    Content Studio
+                </h1>
+
+
+                <p>
+                    Create your 10th Standard course,
+                    subjects, chapters and learning content.
+                </p>
+
+            </div>
+
+
+            <div
+                id="userBadge"
+                class="user-badge"
+            >
+                Checking...
+            </div>
+
+        </header>
+
+
+
+        <!-- =================================================
+             STEP NAVIGATION
+        ================================================== -->
+
+        <nav class="step-nav">
+
+            <button
+                type="button"
+                class="step-tab active"
+                data-step="1"
+            >
+
+                <span class="step-number">
+                    1
+                </span>
+
+                <span>
+                    Batch
+                </span>
+
+            </button>
+
+
+            <div class="step-line"></div>
+
+
+            <button
+                type="button"
+                class="step-tab"
+                data-step="2"
+            >
+
+                <span class="step-number">
+                    2
+                </span>
+
+                <span>
+                    Subjects
+                </span>
+
+            </button>
+
+
+            <div class="step-line"></div>
+
+
+            <button
+                type="button"
+                class="step-tab"
+                data-step="3"
+            >
+
+                <span class="step-number">
+                    3
+                </span>
+
+                <span>
+                    Chapters
+                </span>
+
+            </button>
+
+
+            <div class="step-line"></div>
+
+
+            <button
+                type="button"
+                class="step-tab"
+                data-step="4"
+            >
+
+                <span class="step-number">
+                    4
+                </span>
+
+                <span>
+                    Content
+                </span>
+
+            </button>
+
+        </nav>
+
+
+
+        <!-- =================================================
+             STEP 1 — BATCH
+        ================================================== -->
+
+        <section
+            id="step1"
+            class="workspace active"
+        >
+
+            <div class="section-title">
+
+                <div>
+
+                    <span class="eyebrow">
+                        STEP 01
+                    </span>
+
+                    <h2>
+                        Create Batch
+                    </h2>
+
+                    <p>
+                        Create the single Zenova 10th Standard
+                        course students will access.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="form-card">
+
+                <div class="form-grid">
+
+
+                    <div class="field full">
+
+                        <label>
+                            Batch / Course Name
+                        </label>
+
+                        <input
+                            id="courseName"
+                            type="text"
+                            placeholder="Zenova 10th Standard"
+                        >
+
+                    </div>
+
+
+                    <div class="field">
+
+                        <label>
+                            Course Code
+                        </label>
+
+                        <input
+                            id="courseCode"
+                            type="text"
+                            placeholder="ZEN10-2026"
+                        >
+
+                    </div>
+
+
+                    <div class="field">
+
+                        <label>
+                            Academic Year
+                        </label>
+
+                        <input
+                            id="academicYear"
+                            type="text"
+                            placeholder="2026-27"
+                        >
+
+                    </div>
+
+
+                    <div class="field">
+
+                        <label>
+                            Board
+                        </label>
+
+                        <select id="board">
+
+                            <option value="">
+                                Select board
+                            </option>
+
+                            <option value="KSEAB">
+                                Karnataka State Board
+                            </option>
+
+                            <option value="CBSE">
+                                CBSE
+                            </option>
+
+                            <option value="ICSE">
+                                ICSE
+                            </option>
+
+                            <option value="OTHER">
+                                Other
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="field">
+
+                        <label>
+                            Class
+                        </label>
+
+                        <input
+                            type="text"
+                            value="10th Standard"
+                            disabled
+                        >
+
+                    </div>
+
+
+                    <div class="field">
+
+                        <label>
+                            Course Price
+                        </label>
+
+                        <div class="input-prefix">
+
+                            <span>
+                                ₹
+                            </span>
+
+                            <input
+                                id="coursePrice"
+                                type="number"
+                                min="0"
+                                placeholder="6600"
+                            >
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="field">
+
+                        <label>
+                            Status
+                        </label>
+
+                        <select id="courseStatus">
+
+                            <option value="ACTIVE">
+                                Active
+                            </option>
+
+                            <option value="DRAFT">
+                                Draft
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="field full">
+
+                        <label>
+                            Description
+                        </label>
+
+                        <textarea
+                            id="courseDescription"
+                            placeholder="Describe the Zenova 10th Standard program..."
+                        ></textarea>
+
+                    </div>
+
+
+                </div>
+
+
+                <div
+                    id="batchError"
+                    class="error-message"
+                ></div>
+
+
+                <button
+                    type="button"
+                    id="createBatchButton"
+                    class="primary-button"
+                >
+
+                    Create Batch
+
+                    <span>
+                        →
+                    </span>
+
+                </button>
+
+            </div>
+
+
+            <!-- EXISTING BATCHES -->
+
+            <div class="existing-section">
+
+                <div class="section-title small">
+
+                    <div>
+
+                        <span class="eyebrow">
+                            EXISTING
+                        </span>
+
+                        <h2>
+                            ZEN2 Batches
+                        </h2>
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    id="courseList"
+                    class="course-list"
+                >
+
+                    <div class="empty-state">
+                        Loading...
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             STEP 2 — SUBJECTS
+        ================================================== -->
+
+        <section
+            id="step2"
+            class="workspace"
+        >
+
+            <div class="section-title">
+
+                <div>
+
+                    <span class="eyebrow">
+                        STEP 02
+                    </span>
+
+                    <h2>
+                        Subjects
+                    </h2>
+
+                    <p id="subjectCourseLabel">
+                        Select a batch first.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="selected-course-card">
+
+                <span>
+                    CURRENT BATCH
+                </span>
+
+                <strong id="selectedCourseName">
+                    —
+                </strong>
+
+            </div>
+
+
+            <div class="add-row">
+
+                <input
+                    id="subjectName"
+                    type="text"
+                    placeholder="Example: Mathematics"
+                >
+
+                <button
+                    type="button"
+                    id="addSubjectButton"
+                    class="primary-button"
+                >
+                    + Add Subject
+                </button>
+
+            </div>
+
+
+            <div
+                id="subjectError"
+                class="error-message"
+            ></div>
+
+
+            <div
+                id="subjectList"
+                class="item-list"
+            >
+
+                <div class="empty-state">
+                    No subjects yet.
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             STEP 3 — CHAPTERS
+        ================================================== -->
+
+        <section
+            id="step3"
+            class="workspace"
+        >
+
+            <div class="section-title">
+
+                <div>
+
+                    <span class="eyebrow">
+                        STEP 03
+                    </span>
+
+                    <h2>
+                        Chapters
+                    </h2>
+
+                    <p>
+                        Select a subject and create its chapters.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="selector-card">
+
+                <div class="field">
+
+                    <label>
+                        Batch
+                    </label>
+
+                    <select
+                        id="chapterCourseSelect"
+                    >
+                        <option value="">
+                            Select batch
+                        </option>
+                    </select>
+
+                </div>
+
+
+                <div class="field">
+
+                    <label>
+                        Subject
+                    </label>
+
+                    <select
+                        id="chapterSubjectSelect"
+                        disabled
+                    >
+
+                        <option value="">
+                            Select subject
+                        </option>
+
+                    </select>
+
+                </div>
+
+            </div>
+
+
+            <div
+                id="chapterSelected"
+                class="selected-course-card hidden"
+            >
+
+                <span>
+                    MANAGING
+                </span>
+
+                <strong id="chapterSubjectName">
+                    —
+                </strong>
+
+            </div>
+
+
+            <div class="add-row">
+
+                <input
+                    id="chapterNumber"
+                    type="number"
+                    min="1"
+                    placeholder="Chapter No."
+                >
+
+                <input
+                    id="chapterName"
+                    type="text"
+                    placeholder="Chapter name"
+                >
+
+                <button
+                    type="button"
+                    id="addChapterButton"
+                    class="primary-button"
+                    disabled
+                >
+                    + Add Chapter
+                </button>
+
+            </div>
+
+
+            <div
+                id="chapterError"
+                class="error-message"
+            ></div>
+
+
+            <div
+                id="chapterList"
+                class="chapter-list"
+            >
+
+                <div class="empty-state">
+                    Select a subject.
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             STEP 4 — CONTENT
+        ================================================== -->
+
+        <section
+            id="step4"
+            class="workspace"
+        >
+
+            <div class="section-title">
+
+                <div>
+
+                    <span class="eyebrow">
+                        STEP 04
+                    </span>
+
+                    <h2>
+                        Videos & PDFs
+                    </h2>
+
+                    <p>
+                        Upload free or paid learning content.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="selector-card three-column">
+
+                <div class="field">
+
+                    <label>
+                        Batch
+                    </label>
+
+                    <select
+                        id="contentCourseSelect"
+                    >
+
+                        <option value="">
+                            Select batch
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="field">
+
+                    <label>
+                        Subject
+                    </label>
+
+                    <select
+                        id="contentSubjectSelect"
+                        disabled
+                    >
+
+                        <option value="">
+                            Select subject
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="field">
+
+                    <label>
+                        Chapter
+                    </label>
+
+                    <select
+                        id="contentChapterSelect"
+                        disabled
+                    >
+
+                        <option value="">
+                            Select chapter
+                        </option>
+
+                    </select>
+
+                </div>
+
+            </div>
+
+
+            <div
+                id="contentContext"
+                class="selected-course-card hidden"
+            >
+
+                <span>
+                    ADDING CONTENT TO
+                </span>
+
+                <strong id="contentContextName">
+                    —
+                </strong>
+
+            </div>
+
+
+            <!-- ADD CONTENT -->
+
+            <div class="content-upload-card">
+
+                <div class="upload-header">
+
+                    <div>
+
+                        <span class="eyebrow">
+                            NEW CONTENT
+                        </span>
+
+                        <h3>
+                            Add Video or PDF
+                        </h3>
+
+                    </div>
+
+                </div>
+
+
+                <div class="form-grid">
+
+
+                    <div class="field">
+
+                        <label>
+                            Content Type
+                        </label>
+
+                        <select id="contentType">
+
+                            <option value="VIDEO">
+                                Video
+                            </option>
+
+                            <option value="PDF">
+                                PDF / Notes
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="field">
+
+                        <label>
+                            Access
+                        </label>
+
+                        <select id="accessType">
+
+                            <option value="FREE">
+                                FREE — Everyone can access
+                            </option>
+
+                            <option value="PAID">
+                                PAID — Purchase required
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="field full">
+
+                        <label>
+                            Content Title
+                        </label>
+
+                        <input
+                            id="contentTitle"
+                            type="text"
+                            placeholder="Introduction to Real Numbers"
+                        >
+
+                    </div>
+
+
+                    <div class="field">
+
+                        <label>
+                            Order
+                        </label>
+
+                        <input
+                            id="contentOrder"
+                            type="number"
+                            min="1"
+                            value="1"
+                        >
+
+                    </div>
+
+
+                    <div class="field">
+
+                        <label>
+                            Thumbnail URL
+                            <span class="optional">
+                                Optional
+                            </span>
+                        </label>
+
+                        <input
+                            id="thumbnailUrl"
+                            type="url"
+                            placeholder="https://..."
+                        >
+
+                    </div>
+
+
+                    <div class="field full">
+
+                        <label>
+                            Description
+                            <span class="optional">
+                                Optional
+                            </span>
+                        </label>
+
+                        <textarea
+                            id="contentDescription"
+                            placeholder="Short description..."
+                        ></textarea>
+
+                    </div>
+
+
+                    <!-- FILE -->
+
+                    <div
+                        id="videoUploadField"
+                        class="field full"
+                    >
+
+                        <label>
+                            Video File
+                        </label>
+
+                        <div
+                            id="videoDropZone"
+                            class="drop-zone"
+                        >
+
+                            <input
+                                id="videoFile"
+                                type="file"
+                                accept="video/*"
+                                hidden
+                            >
+
+                            <div class="drop-icon">
+                                ▶
+                            </div>
+
+                            <strong>
+                                Select video
+                            </strong>
+
+                            <span>
+                                MP4, WebM and other supported video files
+                            </span>
+
+                            <button
+                                type="button"
+                                class="browse-button"
+                                id="videoBrowseButton"
+                            >
+                                Choose Video
+                            </button>
+
+                            <p
+                                id="videoFileName"
+                                class="selected-file"
+                            ></p>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- PDF -->
+
+                    <div
+                        id="pdfUploadField"
+                        class="field full hidden"
+                    >
+
+                        <label>
+                            PDF File
+                        </label>
+
+                        <div
+                            id="pdfDropZone"
+                            class="drop-zone"
+                        >
+
+                            <input
+                                id="pdfFile"
+                                type="file"
+                                accept="application/pdf,.pdf"
+                                hidden
+                            >
+
+                            <div class="drop-icon">
+                                PDF
+                            </div>
+
+                            <strong>
+                                Select PDF
+                            </strong>
+
+                            <span>
+                                PDF notes and study materials
+                            </span>
+
+                            <button
+                                type="button"
+                                class="browse-button"
+                                id="pdfBrowseButton"
+                            >
+                                Choose PDF
+                            </button>
+
+                            <p
+                                id="pdfFileName"
+                                class="selected-file"
+                            ></p>
+
+                        </div>
+
+                    </div>
+
+
+                </div>
+
+
+                <div
+                    id="uploadProgressContainer"
+                    class="upload-progress hidden"
+                >
+
+                    <div class="progress-info">
+
+                        <span id="uploadStatus">
+                            Uploading...
+                        </span>
+
+                        <strong id="uploadPercentage">
+                            0%
+                        </strong>
+
+                    </div>
+
+                    <div class="progress-track">
+
+                        <div
+                            id="uploadProgressBar"
+                            class="progress-bar"
+                        ></div>
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    id="contentError"
+                    class="error-message"
+                ></div>
+
+
+                <button
+                    type="button"
+                    id="uploadContentButton"
+                    class="primary-button wide"
+                    disabled
+                >
+
+                    Upload Content
+
+                    <span>
+                        ↑
+                    </span>
+
+                </button>
+
+            </div>
+
+
+            <!-- EXISTING CONTENT -->
+
+            <div class="existing-content">
+
+                <div class="section-title small">
+
+                    <div>
+
+                        <span class="eyebrow">
+                            CHAPTER CONTENT
+                        </span>
+
+                        <h2>
+                            Uploaded Content
+                        </h2>
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    id="contentList"
+                    class="content-list"
+                >
+
+                    <div class="empty-state">
+                        Select a chapter.
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             TOAST
+        ================================================== -->
+
+        <div
+            id="toast"
+            class="toast"
+        ></div>
+
+    </main>
+
+
+    <script
+        type="module"
+        src="./zen2-content.js"
+    ></script>
+
+</body>
+
+</html>
