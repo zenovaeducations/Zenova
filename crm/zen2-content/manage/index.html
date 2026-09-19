@@ -10,7 +10,7 @@
         content="width=device-width, initial-scale=1.0"
     >
 
-    <title>ZEN2 Content Manager</title>
+    <title>ZEN2 CRM - Content Manager</title>
 
     <link
         rel="stylesheet"
@@ -23,20 +23,16 @@
 <body>
 
 
-<!-- =====================================================
-     HEADER
-===================================================== -->
-
 <header class="topbar">
 
-    <div>
+    <div class="brand-area">
 
         <div class="brand">
             ZENOVA
         </div>
 
         <div class="brand-sub">
-            ZEN2 CONTENT MANAGER
+            ZEN2 CRM
         </div>
 
     </div>
@@ -44,7 +40,7 @@
 
     <a
         href="../"
-        class="back-button"
+        class="back-btn"
     >
         ← Content Studio
     </a>
@@ -53,32 +49,28 @@
 
 
 
-<!-- =====================================================
-     MAIN
-===================================================== -->
-
-<main class="container">
+<main class="page">
 
 
     <!-- =================================================
-         PAGE TITLE
+         PAGE HEADER
     ================================================== -->
 
-    <section class="page-heading">
+    <section class="page-header">
 
         <div>
 
             <div class="eyebrow">
-                ADMINISTRATION
+                CONTENT MANAGEMENT
             </div>
 
             <h1>
-                Manage Content
+                Manage Batch Content
             </h1>
 
             <p>
-                Edit or delete batches, subjects, chapters,
-                videos and PDFs.
+                Select a batch, subject and chapter to
+                manage videos and PDFs.
             </p>
 
         </div>
@@ -88,61 +80,169 @@
 
 
     <!-- =================================================
-         BATCH SELECTOR
+         STEP SELECTORS
     ================================================== -->
 
-    <section class="panel">
-
-        <div class="panel-title">
-            Select Batch
-        </div>
-
-        <select
-            id="batchSelect"
-            class="select"
-        >
-
-            <option value="">
-                Loading batches...
-            </option>
-
-        </select>
-
-    </section>
+    <section class="selector-panel">
 
 
+        <div class="selector-step">
 
-    <!-- =================================================
-         BATCH DETAILS
-    ================================================== -->
+            <div class="step-number">
+                01
+            </div>
 
-    <section
-        id="batchSection"
-        class="panel hidden"
-    >
+            <div class="selector-content">
 
-        <div class="section-header">
-
-            <div>
-
-                <div class="panel-title">
+                <label>
                     Batch
-                </div>
+                </label>
 
-                <div
-                    id="batchSummary"
-                    class="muted"
-                ></div>
+                <select id="batchSelect">
+
+                    <option value="">
+                        Select Batch
+                    </option>
+
+                </select>
+
+            </div>
+
+        </div>
+
+
+
+        <div class="selector-step">
+
+            <div class="step-number">
+                02
+            </div>
+
+            <div class="selector-content">
+
+                <label>
+                    Subject
+                </label>
+
+                <select
+                    id="subjectSelect"
+                    disabled
+                >
+
+                    <option value="">
+                        Select Subject
+                    </option>
+
+                </select>
 
             </div>
 
 
             <button
-                id="editBatchButton"
-                class="button secondary"
+                id="editSubjectBtn"
+                class="icon-btn"
+                disabled
+                title="Edit Subject"
             >
-                Edit Batch
+                ✎
             </button>
+
+
+            <button
+                id="deleteSubjectBtn"
+                class="icon-btn danger-icon"
+                disabled
+                title="Delete Subject"
+            >
+                🗑
+            </button>
+
+        </div>
+
+
+
+        <div class="selector-step">
+
+            <div class="step-number">
+                03
+            </div>
+
+            <div class="selector-content">
+
+                <label>
+                    Chapter
+                </label>
+
+                <select
+                    id="chapterSelect"
+                    disabled
+                >
+
+                    <option value="">
+                        Select Chapter
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <button
+                id="editChapterBtn"
+                class="icon-btn"
+                disabled
+                title="Edit Chapter"
+            >
+                ✎
+            </button>
+
+
+            <button
+                id="deleteChapterBtn"
+                class="icon-btn danger-icon"
+                disabled
+                title="Delete Chapter"
+            >
+                🗑
+            </button>
+
+        </div>
+
+
+    </section>
+
+
+
+    <!-- =================================================
+         SUBJECT / CHAPTER INFO
+    ================================================== -->
+
+    <section
+        id="locationPanel"
+        class="location-panel hidden"
+    >
+
+        <div>
+
+            <span id="selectedBatchText">
+                Batch
+            </span>
+
+            <span class="separator">
+                /
+            </span>
+
+            <strong id="selectedSubjectText">
+                Subject
+            </strong>
+
+            <span class="separator">
+                /
+            </span>
+
+            <strong id="selectedChapterText">
+                Chapter
+            </strong>
 
         </div>
 
@@ -151,40 +251,138 @@
 
 
     <!-- =================================================
-         SUBJECTS
+         CONTENT PANEL
     ================================================== -->
 
     <section
-        id="subjectsSection"
-        class="panel hidden"
+        id="contentPanel"
+        class="content-panel hidden"
     >
 
-        <div class="section-header">
+
+        <div class="content-header">
 
             <div>
 
-                <div class="panel-title">
-                    Subjects
+                <div class="eyebrow">
+                    CHAPTER CONTENT
                 </div>
 
-                <div class="muted">
-                    Manage subjects, chapters and content.
-                </div>
+                <h2 id="chapterHeading">
+                    Chapter
+                </h2>
 
             </div>
 
 
-            <button
-                id="addSubjectButton"
-                class="button primary"
-            >
-                + Add Subject
-            </button>
+            <div class="add-buttons">
+
+                <button
+                    id="addVideoBtn"
+                    class="button primary"
+                >
+                    + Add Video
+                </button>
+
+                <button
+                    id="addPdfBtn"
+                    class="button secondary"
+                >
+                    + Add PDF
+                </button>
+
+            </div>
 
         </div>
 
 
-        <div id="subjectsList"></div>
+
+        <!-- =================================================
+             VIDEOS
+        ================================================== -->
+
+        <div class="content-section">
+
+            <div class="section-title">
+
+                <span>
+                    Videos
+                </span>
+
+                <span
+                    id="videoCount"
+                    class="count"
+                >
+                    0
+                </span>
+
+            </div>
+
+
+            <div
+                id="videoList"
+                class="content-list"
+            ></div>
+
+        </div>
+
+
+
+        <!-- =================================================
+             PDF
+        ================================================== -->
+
+        <div class="content-section">
+
+            <div class="section-title">
+
+                <span>
+                    PDFs
+                </span>
+
+                <span
+                    id="pdfCount"
+                    class="count"
+                >
+                    0
+                </span>
+
+            </div>
+
+
+            <div
+                id="pdfList"
+                class="content-list"
+            ></div>
+
+        </div>
+
+
+    </section>
+
+
+
+    <!-- =================================================
+         EMPTY STATE
+    ================================================== -->
+
+    <section
+        id="emptyState"
+        class="empty-state"
+    >
+
+        <div class="empty-icon">
+            ↑
+        </div>
+
+        <h2>
+            Select a batch
+        </h2>
+
+        <p>
+            Select Batch → Subject → Chapter
+            to manage content.
+        </p>
 
     </section>
 
@@ -206,12 +404,12 @@
 
         <div class="modal-header">
 
-            <h2 id="subjectModalTitle">
+            <h2>
                 Edit Subject
             </h2>
 
             <button
-                class="modal-close"
+                class="close-btn"
                 data-close="subjectModal"
             >
                 ×
@@ -222,12 +420,6 @@
 
         <form id="subjectForm">
 
-            <input
-                type="hidden"
-                id="subjectId"
-            >
-
-
             <label>
                 Subject Name
             </label>
@@ -236,7 +428,6 @@
                 id="subjectName"
                 type="text"
                 required
-                placeholder="Mathematics"
             >
 
 
@@ -254,7 +445,7 @@
                     type="submit"
                     class="button primary"
                 >
-                    Save Subject
+                    Save
                 </button>
 
             </div>
@@ -280,12 +471,12 @@
 
         <div class="modal-header">
 
-            <h2 id="chapterModalTitle">
+            <h2>
                 Edit Chapter
             </h2>
 
             <button
-                class="modal-close"
+                class="close-btn"
                 data-close="chapterModal"
             >
                 ×
@@ -295,12 +486,6 @@
 
 
         <form id="chapterForm">
-
-            <input
-                type="hidden"
-                id="chapterId"
-            >
-
 
             <label>
                 Chapter Number
@@ -322,7 +507,6 @@
                 id="chapterName"
                 type="text"
                 required
-                placeholder="Real Numbers"
             >
 
 
@@ -340,7 +524,7 @@
                     type="submit"
                     class="button primary"
                 >
-                    Save Chapter
+                    Save
                 </button>
 
             </div>
@@ -371,7 +555,7 @@
             </h2>
 
             <button
-                class="modal-close"
+                class="close-btn"
                 data-close="contentModal"
             >
                 ×
@@ -384,36 +568,22 @@
 
             <input
                 type="hidden"
-                id="contentId"
+                id="editingContentId"
             >
 
 
-            <div class="form-grid">
+            <label>
+                Title
+            </label>
+
+            <input
+                id="contentTitle"
+                type="text"
+                required
+            >
 
 
-                <div>
-
-                    <label>
-                        Content Type
-                    </label>
-
-                    <select
-                        id="contentType"
-                        disabled
-                    >
-
-                        <option value="VIDEO">
-                            Video
-                        </option>
-
-                        <option value="PDF">
-                            PDF
-                        </option>
-
-                    </select>
-
-                </div>
-
+            <div class="two-columns">
 
                 <div>
 
@@ -421,10 +591,7 @@
                         Access
                     </label>
 
-                    <select
-                        id="accessType"
-                        required
-                    >
+                    <select id="contentAccess">
 
                         <option value="FREE">
                             FREE
@@ -435,21 +602,6 @@
                         </option>
 
                     </select>
-
-                </div>
-
-
-                <div class="full">
-
-                    <label>
-                        Title
-                    </label>
-
-                    <input
-                        id="contentTitle"
-                        type="text"
-                        required
-                    >
 
                 </div>
 
@@ -469,80 +621,62 @@
 
                 </div>
 
-
-                <div>
-
-                    <label>
-                        Thumbnail URL
-                    </label>
-
-                    <input
-                        id="contentThumbnail"
-                        type="url"
-                        placeholder="Optional"
-                    >
-
-                </div>
+            </div>
 
 
-                <div class="full">
+            <label>
+                Description
+            </label>
 
-                    <label>
-                        Description
-                    </label>
-
-                    <textarea
-                        id="contentDescription"
-                        rows="4"
-                    ></textarea>
-
-                </div>
+            <textarea
+                id="contentDescription"
+                rows="4"
+            ></textarea>
 
 
-                <div class="full">
+            <label>
+                Thumbnail URL
+            </label>
 
-                    <label>
-                        Replace File
-                    </label>
-
-                    <input
-                        id="replacementFile"
-                        type="file"
-                    >
-
-                    <div
-                        id="replacementHelp"
-                        class="file-help"
-                    >
-                        Leave empty if you do not want to
-                        replace the existing file.
-                    </div>
-
-                </div>
+            <input
+                id="contentThumbnail"
+                type="url"
+                placeholder="Optional"
+            >
 
 
-                <div
-                    id="replaceProgress"
-                    class="progress-wrap full hidden"
-                >
+            <label>
+                Replace File
+            </label>
 
-                    <div class="progress-track">
+            <input
+                id="contentFile"
+                type="file"
+            >
 
-                        <div
-                            id="replaceProgressBar"
-                            class="progress-bar"
-                        ></div>
 
-                    </div>
+            <div class="file-note">
+                Leave empty to keep the existing file.
+            </div>
+
+
+            <div
+                id="uploadProgress"
+                class="upload-progress hidden"
+            >
+
+                <div class="progress-track">
 
                     <div
-                        id="replaceProgressText"
-                        class="progress-text"
-                    >
-                        0%
-                    </div>
+                        id="progressBar"
+                        class="progress-bar"
+                    ></div>
 
                 </div>
+
+                <span id="progressText">
+                    0%
+                </span>
 
             </div>
 
@@ -575,25 +709,6 @@
 
 
 <!-- =====================================================
-     TOAST
-===================================================== -->
-
-<div
-    id="toast"
-    class="toast"
->
-
-    <strong id="toastTitle">
-        Done
-    </strong>
-
-    <span id="toastMessage"></span>
-
-</div>
-
-
-
-<!-- =====================================================
      CONFIRM MODAL
 ===================================================== -->
 
@@ -611,7 +726,7 @@
             </h2>
 
             <button
-                class="modal-close"
+                class="close-btn"
                 data-close="confirmModal"
             >
                 ×
@@ -620,17 +735,16 @@
         </div>
 
 
-        <p
-            id="confirmMessage"
-            class="confirm-message"
-        ></p>
+        <div
+            id="confirmText"
+            class="confirm-text"
+        ></div>
 
 
         <div class="modal-actions">
 
             <button
-                id="confirmCancel"
-                type="button"
+                id="cancelDelete"
                 class="button secondary"
             >
                 Cancel
@@ -638,7 +752,6 @@
 
             <button
                 id="confirmDelete"
-                type="button"
                 class="button danger"
             >
                 Delete
@@ -647,6 +760,22 @@
         </div>
 
     </div>
+
+</div>
+
+
+
+<div
+    id="toast"
+    class="toast"
+>
+
+    <strong id="toastTitle">
+        Done
+    </strong>
+
+    <span id="toastMessage">
+    </span>
 
 </div>
 
