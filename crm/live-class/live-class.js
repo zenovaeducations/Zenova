@@ -133,10 +133,12 @@ async function loadCourses() {
                     item.id;
 
 
-                option.textContent =
-                    data.name ||
-                    data.title ||
-                    "Course";
+        option.textContent =
+    data.name ||
+    data.title ||
+    data.courseName ||
+    data.crmCourseName ||
+    "Course";
 
 
                 option.dataset.name =
@@ -245,10 +247,12 @@ course.addEventListener(
                         item.id;
 
 
-                    option.textContent =
-                        data.name ||
-                        data.title ||
-                        "Subject";
+                 option.textContent =
+    data.name ||
+    data.title ||
+    data.subjectName ||
+    data.subject ||
+    "Subject";
 
 
                     option.dataset.name =
@@ -346,12 +350,12 @@ subject.addEventListener(
                         item.id;
 
 
-                    option.textContent =
-                        data.name ||
-                        data.title ||
-                        "Chapter";
-
-
+               option.textContent =
+    data.name ||
+    data.title ||
+    data.chapterName ||
+    data.chapterTitle ||
+    "Chapter";
                     option.dataset.name =
                         data.name ||
                         data.title ||
