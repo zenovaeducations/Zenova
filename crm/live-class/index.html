@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>ZENOVA - Live Class</title>
+
+    <link
+        rel="stylesheet"
+        href="./live-class.css"
+    >
+
+</head>
+
+<body>
+
+    <header class="header">
+
+        <div class="brand">
+            ZENOVA
+        </div>
+
+        <div class="header-subtitle">
+            LIVE CLASS SCHEDULING
+        </div>
+
+    </header>
+
+
+    <main class="container">
+
+        <section class="heading">
+
+            <h1>
+                Schedule Live Class
+            </h1>
+
+            <p>
+                Create a live class for students.
+            </p>
+
+        </section>
+
+
+        <section class="card">
+
+            <form id="liveForm">
+
+
+                <label>
+                    Class Title
+                </label>
+
+                <input
+                    id="title"
+                    type="text"
+                    placeholder="Enter class title"
+                    required
+                >
+
+
+                <label>
+                    Teacher Name
+                </label>
+
+                <input
+                    id="teacher"
+                    type="text"
+                    placeholder="Enter teacher name"
+                    required
+                >
+
+
+                <label>
+                    Course
+                </label>
+
+                <select
+                    id="course"
+                    required
+                >
+
+                    <option value="">
+                        Select Course
+                    </option>
+
+                </select>
+
+
+                <label>
+                    Subject
+                </label>
+
+                <select
+                    id="subject"
+                    required
+                    disabled
+                >
+
+                    <option value="">
+                        Select Subject
+                    </option>
+
+                </select>
+
+
+                <label>
+                    Chapter
+                </label>
+
+                <select
+                    id="chapter"
+                    disabled
+                >
+
+                    <option value="">
+                        Select Chapter
+                    </option>
+
+                </select>
+
+
+                <label>
+                    Thumbnail URL
+                </label>
+
+                <input
+                    id="thumbnail"
+                    type="url"
+                    placeholder="https://..."
+                >
+
+
+                <div class="row">
+
+                    <div>
+
+                        <label>
+                            Date
+                        </label>
+
+                        <input
+                            id="date"
+                            type="date"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div>
+
+                        <label>
+                            Time
+                        </label>
+
+                        <input
+                            id="time"
+                            type="time"
+                            required
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    id="message"
+                    class="message"
+                ></div>
+
+
+                <button
+                    id="saveButton"
+                    type="submit"
+                >
+                    SCHEDULE LIVE CLASS
+                </button>
+
+
+            </form>
+
+        </section>
+
+
+        <section class="upcoming">
+
+            <div class="section-top">
+
+                <div>
+
+                    <h2>
+                        Scheduled Classes
+                    </h2>
+
+                    <p>
+                        Upcoming live classes
+                    </p>
+
+                </div>
+
+
+                <button
+                    id="refresh"
+                    class="refresh"
+                >
+                    Refresh
+                </button>
+
+            </div>
+
+
+            <div
+                id="classes"
+                class="classes"
+            >
+
+                Loading...
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <script
+        type="module"
+        src="./live-class.js"
+    ></script>
+
+</body>
+
+</html>
