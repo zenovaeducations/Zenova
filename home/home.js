@@ -3,11 +3,9 @@ import {
     db
 } from "../firebase/firebase-config.js";
 
-
 import {
     onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
-
 
 import {
     doc,
@@ -25,14 +23,10 @@ import {
 ========================================================= */
 
 const loader =
-    document.getElementById(
-        "zenovaLoader"
-    );
+    document.getElementById("zenovaLoader");
 
 const app =
-    document.getElementById(
-        "zenovaApp"
-    );
+    document.getElementById("zenovaApp");
 
 
 /* =========================================================
@@ -54,10 +48,15 @@ onAuthStateChanged(
     auth,
     async user => {
 
+        /*
+         * USER NOT LOGGED IN
+         * Go to the actual account login page.
+         */
+
         if (!user) {
 
             window.location.replace(
-                "../login/"
+                "../account/login/"
             );
 
             return;
@@ -65,13 +64,35 @@ onAuthStateChanged(
         }
 
 
-        currentUser =
-            user;
+        currentUser = user;
 
 
         try {
 
-            await loadStudent();
+            /*
+             * Load the ZEN2 student profile.
+             */
+
+            const validStudent =
+                await loadStudent();
+
+
+            /*
+             * If the student is not onboarded,
+             * loadStudent() already redirected.
+             */
+
+            if (!validStudent) {
+
+                return;
+
+            }
+
+
+            /*
+             * Student is valid.
+             * Now load Home.
+             */
 
             await loadHomeData();
 
@@ -102,10 +123,22 @@ onAuthStateChanged(
 
 async function loadStudent() {
 
+    /*
+     * IMPORTANT:
+     *
+     * ZEN2 uses:
+     *
+     * zen2Students/{uid}
+     *
+     * NOT:
+     *
+     * students/{uid}
+     */
+
     const studentRef =
         doc(
             db,
-            "students",
+            "zen2Students",
             currentUser.uid
         );
 
@@ -116,15 +149,26 @@ async function loadStudent() {
         );
 
 
-    if (
-        !snapshot.exists()
-    ) {
+    /*
+     * No student profile.
+     *
+     * This means onboarding has not
+     * been completed yet.
+     */
+
+    if (!snapshot.exists()) {
+
+        console.log(
+            "ZEN2: Student profile not found. Opening onboarding."
+        );
+
 
         window.location.replace(
             "../account/onboarding/"
         );
 
-        return;
+
+        return false;
 
     }
 
@@ -133,7 +177,44 @@ async function loadStudent() {
         snapshot.data();
 
 
+    /*
+     * Check the exact field used by
+     * the ZEN2 onboarding system.
+     */
+
+    if (
+        student.onboardingComplete !== true
+    ) {
+
+        console.log(
+            "ZEN2: Onboarding is not complete."
+        );
+
+
+        window.location.replace(
+            "../account/onboarding/"
+        );
+
+
+        return false;
+
+    }
+
+
+    /*
+     * Student is completely valid.
+     */
+
+    console.log(
+        "ZEN2: Student authenticated:",
+        student.name
+    );
+
+
     renderStudent();
+
+
+    return true;
 
 }
 
@@ -266,7 +347,7 @@ async function safeQuery(
     catch (error) {
 
         console.warn(
-            "ZEN2 HOME SECTION:",
+            "ZEN2 HOME SECTION ERROR:",
             error
         );
 
@@ -721,8 +802,7 @@ function startBannerSlider(
         );
 
 
-    let current =
-        0;
+    let current = 0;
 
 
     function show(
@@ -1007,10 +1087,8 @@ function isBatchPurchased(
                 )
                 &&
                 (
-                    status ===
-                        "active" ||
-                    status ===
-                        "enrolled" ||
+                    status === "active" ||
+                    status === "enrolled" ||
                     enrollment.accessGranted === true ||
                     enrollment.active === true
                 )
@@ -1042,6 +1120,7 @@ function setupBatchButtons() {
                         const id =
                             button.dataset.exploreId;
 
+
                         window.location.href =
                             `../batch-details/?courseId=${
                                 encodeURIComponent(
@@ -1070,6 +1149,7 @@ function setupBatchButtons() {
                         const id =
                             button.dataset.buyId;
 
+
                         window.location.href =
                             `../batch-details/?courseId=${
                                 encodeURIComponent(
@@ -1097,6 +1177,7 @@ function setupBatchButtons() {
 
                         const id =
                             button.dataset.openBatch;
+
 
                         window.location.href =
                             `../study/?courseId=${
@@ -1526,6 +1607,7 @@ function startCountdown(
                     clearInterval(
                         timer
                     );
+
 
                     loadHomeData();
 
@@ -1957,6 +2039,10 @@ function getDate(
 }
 
 
+/* =========================================================
+   SAME DAY
+========================================================= */
+
 function isSameDay(
     a,
     b
@@ -1976,6 +2062,10 @@ function isSameDay(
 }
 
 
+/* =========================================================
+   FORMAT TIME
+========================================================= */
+
 function formatTime(
     date
 ) {
@@ -1993,6 +2083,10 @@ function formatTime(
 
 }
 
+
+/* =========================================================
+   COUNTDOWN TEXT
+========================================================= */
 
 function getCountdown(
     target
@@ -2197,4 +2291,4 @@ function showError() {
 
     `;
 
-                                        }
+}
