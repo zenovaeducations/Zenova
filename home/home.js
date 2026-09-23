@@ -888,170 +888,122 @@ function startBannerSlider(
 /* =========================================================
    MY BATCHES
 ========================================================= */
-
-function renderBatches(
-    batches
-) {
+function renderBatches(batches) {
 
     const container =
-        document.getElementById(
-            "myBatchesList"
-        );
-
+        document.getElementById("myBatchesList");
 
     if (!container) {
-
         return;
-
     }
-
 
     if (!batches.length) {
 
         container.innerHTML = `
-
             <div class="loading-card">
-
                 No batches available right now.
-
             </div>
-
         `;
 
         return;
-
     }
 
-
     container.innerHTML =
-        batches.map(
-            batch => {
+        batches.map(batch => {
 
-                const purchased =
-                    isBatchPurchased(
-                        batch.id
-                    );
+            const purchased =
+                isBatchPurchased(batch.id);
+
+            return `
+
+                <article class="batch-card">
+
+                    <div class="batch-image">
+
+                        ${
+                            batch.thumbnailUrl ||
+                            batch.imageUrl
+                                ? `
+                                    <img
+                                        src="${escapeAttr(
+                                            batch.thumbnailUrl ||
+                                            batch.imageUrl
+                                        )}"
+                                        alt=""
+                                        loading="lazy"
+                                    >
+                                `
+                                : `
+                                    <div class="batch-image-placeholder">
+                                        ZENOVA
+                                    </div>
+                                `
+                        }
+
+                    </div>
 
 
-                return `
+                    <div class="batch-details">
 
-                    <article
-                        class="batch-card"
-                    >
+                        <h3>
+                            ${escapeHtml(
+                                batch.name ||
+                                batch.title ||
+                                "Zenova Batch"
+                            )}
+                        </h3>
 
-                        <div class="batch-image">
+
+                        <div class="batch-actions">
+
+                            <button
+                                class="batch-button explore-button"
+                                data-explore-id="${escapeAttr(
+                                    batch.id
+                                )}"
+                            >
+                                EXPLORE BATCH
+                            </button>
+
 
                             ${
-                                batch.thumbnailUrl ||
-                                batch.imageUrl
+                                purchased
                                     ? `
-
-                                        <img
-                                            src="${
-                                                escapeAttr(
-                                                    batch.thumbnailUrl ||
-                                                    batch.imageUrl
-                                                )
-                                            }"
-                                            alt=""
-                                            loading="lazy"
+                                        <button
+                                            class="batch-button buy-button purchased"
+                                            data-open-batch="${escapeAttr(
+                                                batch.id
+                                            )}"
                                         >
-
+                                            OPEN BATCH
+                                        </button>
                                     `
-                                    : ""
+                                    : `
+                                        <button
+                                            class="batch-button buy-button"
+                                            data-buy-id="${escapeAttr(
+                                                batch.id
+                                            )}"
+                                        >
+                                            BUY NOW
+                                        </button>
+                                    `
                             }
 
                         </div>
 
+                    </div>
 
-                        <div class="batch-details">
+                </article>
 
-                            <h3>
-                                ${
-                                    escapeHtml(
-                                        batch.name ||
-                                        batch.title ||
-                                        "Zenova Batch"
-                                    )
-                                }
-                            </h3>
+            `;
 
-
-                            <p>
-                                ${
-                                    escapeHtml(
-                                        batch.description ||
-                                        batch.shortDescription ||
-                                        ""
-                                    )
-                                }
-                            </p>
-
-
-                            <div class="batch-actions">
-
-                                <button
-                                    class="batch-button explore-button"
-                                    data-explore-id="${
-                                        escapeAttr(
-                                            batch.id
-                                        )
-                                    }"
-                                >
-                                    EXPLORE BATCH
-                                </button>
-
-
-                                ${
-                                    purchased
-                                        ? `
-
-                                            <button
-                                                class="batch-button buy-button purchased"
-                                                data-open-batch="${
-                                                    escapeAttr(
-                                                        batch.id
-                                                    )
-                                                }"
-                                            >
-                                                OPEN BATCH
-                                            </button>
-
-                                        `
-                                        : `
-
-                                            <button
-                                                class="batch-button buy-button"
-                                                data-buy-id="${
-                                                    escapeAttr(
-                                                        batch.id
-                                                    )
-                                                }"
-                                            >
-                                                BUY NOW
-                                            </button>
-
-                                        `
-                                }
-
-                            </div>
-
-                        </div>
-
-                    </article>
-
-                `;
-
-            }
-        )
-        .join("");
+        }).join("");
 
 
     setupBatchButtons();
 
 }
-
-
 /* =========================================================
    PURCHASE CHECK
 ========================================================= */
