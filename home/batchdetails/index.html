@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Batch Details - ZENOVA</title>
+
+    <link
+        rel="stylesheet"
+        href="./batch-details.css"
+    >
+
+</head>
+
+
+<body>
+
+
+    <!-- LOADING -->
+
+    <div
+        id="loading"
+        class="loading"
+    >
+
+        <div class="loading-logo">
+            ZENOVA
+        </div>
+
+        <p>
+            Loading batch...
+        </p>
+
+    </div>
+
+
+
+    <!-- APP -->
+
+    <main
+        id="app"
+        class="app hidden"
+    >
+
+
+        <!-- TOP BAR -->
+
+        <header class="topbar">
+
+            <button
+                id="backButton"
+                class="back-button"
+                type="button"
+            >
+                ←
+            </button>
+
+
+            <div class="topbar-title">
+                Batch Details
+            </div>
+
+        </header>
+
+
+
+        <!-- BATCH HERO -->
+
+        <section class="batch-hero">
+
+
+            <div class="hero-image-wrapper">
+
+                <img
+                    id="batchImage"
+                    class="hero-image"
+                    src=""
+                    alt="Batch"
+                >
+
+            </div>
+
+
+            <div class="hero-content">
+
+                <div
+                    id="batchTag"
+                    class="batch-tag hidden"
+                >
+                </div>
+
+
+                <h1 id="batchName">
+                    -
+                </h1>
+
+
+                <p
+                    id="batchShortDescription"
+                    class="short-description"
+                >
+                </p>
+
+
+                <div
+                    id="batchPrice"
+                    class="price"
+                >
+                </div>
+
+
+                <button
+                    id="buyButton"
+                    class="buy-button"
+                    type="button"
+                >
+                    BUY NOW
+                </button>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- DESCRIPTION -->
+
+        <section class="section">
+
+
+            <h2>
+                About This Batch
+            </h2>
+
+
+            <div
+                id="batchDescription"
+                class="description"
+            >
+                Loading...
+            </div>
+
+        </section>
+
+
+
+        <!-- DETAILS -->
+
+        <section class="section">
+
+
+            <h2>
+                Batch Details
+            </h2>
+
+
+            <div
+                id="detailsGrid"
+                class="details-grid"
+            >
+            </div>
+
+        </section>
+
+
+
+        <!-- FEATURES -->
+
+        <section
+            id="featuresSection"
+            class="section hidden"
+        >
+
+            <h2>
+                What You Get
+            </h2>
+
+
+            <div
+                id="featuresList"
+                class="features-list"
+            >
+            </div>
+
+        </section>
+
+
+
+        <!-- SUBJECTS -->
+
+        <section
+            id="subjectsSection"
+            class="section hidden"
+        >
+
+            <div class="section-heading">
+
+                <div>
+
+                    <h2>
+                        Subjects
+                    </h2>
+
+                    <p>
+                        Subjects included in this batch
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div
+                id="subjectsList"
+                class="subjects-list"
+            >
+            </div>
+
+        </section>
+
+
+
+        <!-- BOTTOM BUY -->
+
+        <section class="bottom-buy">
+
+            <div>
+
+                <span>
+                    Ready to start learning?
+                </span>
+
+                <strong id="bottomBatchName">
+                    -
+                </strong>
+
+            </div>
+
+
+            <button
+                id="bottomBuyButton"
+                type="button"
+            >
+                BUY NOW
+            </button>
+
+        </section>
+
+
+
+    </main>
+
+
+    <div
+        id="error"
+        class="error-screen hidden"
+    >
+
+        <div class="error-logo">
+            ZENOVA
+        </div>
+
+        <h2>
+            Batch not found
+        </h2>
+
+        <p id="errorMessage">
+            This batch could not be loaded.
+        </p>
+
+        <button
+            id="errorBack"
+            type="button"
+        >
+            GO BACK
+        </button>
+
+    </div>
+
+
+
+    <script
+        type="module"
+        src="./batch-details.js"
+    ></script>
+
+
+</body>
+
+</html>
