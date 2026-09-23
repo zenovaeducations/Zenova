@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Revision Classes - ZENOVA</title>
+
+    <link
+        rel="stylesheet"
+        href="./revision.css"
+    >
+
+</head>
+
+
+<body>
+
+
+    <!-- =========================================
+         APP
+    ========================================== -->
+
+    <main
+        id="app"
+        class="app"
+    >
+
+
+        <!-- HEADER -->
+
+        <header class="top-header">
+
+            <div>
+
+                <div class="brand">
+                    ZENOVA
+                </div>
+
+                <div class="page-label">
+                    REVISION CLASSES
+                </div>
+
+            </div>
+
+
+            <button
+                id="profileButton"
+                class="profile-button"
+                type="button"
+            >
+
+                <span id="profileInitial">
+                    S
+                </span>
+
+            </button>
+
+        </header>
+
+
+
+        <!-- CONTENT -->
+
+        <div class="page-content">
+
+
+            <!-- =================================
+                 TITLE
+            ================================== -->
+
+            <section class="welcome-section">
+
+                <span class="small-label">
+                    YOUR REVISION SPACE
+                </span>
+
+                <h1>
+                    Revise smarter.
+                </h1>
+
+                <p>
+                    Continue learning or choose a subject to start revising.
+                </p>
+
+            </section>
+
+
+
+            <!-- =================================
+                 CONTINUE LEARNING
+            ================================== -->
+
+            <section
+                id="continueSection"
+                class="section"
+            >
+
+                <div class="section-header">
+
+                    <div>
+
+                        <span class="section-label">
+                            PICK UP WHERE YOU LEFT
+                        </span>
+
+                        <h2>
+                            Continue Learning
+                        </h2>
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    id="continueCard"
+                    class="continue-card"
+                >
+
+                    <div class="skeleton"></div>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- =================================
+                 RECOMMENDED VIDEOS
+            ================================== -->
+
+            <section
+                id="recommendedSection"
+                class="section"
+            >
+
+                <div class="section-header">
+
+                    <div>
+
+                        <span class="section-label">
+                            FOR YOUR PREPARATION
+                        </span>
+
+                        <h2>
+                            Recommended Videos
+                        </h2>
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    id="recommendedList"
+                    class="video-list"
+                >
+
+                    <div class="loading-text">
+                        Loading videos...
+                    </div>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- =================================
+                 SUBJECTS
+            ================================== -->
+
+            <section
+                id="subjectsSection"
+                class="section"
+            >
+
+                <div class="section-header">
+
+                    <div>
+
+                        <span class="section-label">
+                            YOUR COURSE
+                        </span>
+
+                        <h2>
+                            All Subjects
+                        </h2>
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    id="subjectsList"
+                    class="subjects-list"
+                >
+
+                    <div class="loading-text">
+                        Loading subjects...
+                    </div>
+
+                </div>
+
+            </section>
+
+
+        </div>
+
+
+
+        <!-- =====================================
+             BOTTOM NAVIGATION
+        ====================================== -->
+
+        <nav class="bottom-nav">
+
+
+            <button
+                class="nav-item"
+                data-route="home"
+                type="button"
+            >
+
+                <span class="nav-icon">
+                    ⌂
+                </span>
+
+                <span class="nav-text">
+                    HOME
+                </span>
+
+            </button>
+
+
+            <button
+                class="nav-item"
+                data-route="live"
+                type="button"
+            >
+
+                <span class="nav-icon live-icon">
+                    ●
+                </span>
+
+                <span class="nav-text">
+                    LIVE
+                </span>
+
+            </button>
+
+
+            <button
+                class="nav-item active"
+                data-route="revision"
+                type="button"
+            >
+
+                <span class="nav-icon">
+                    ▤
+                </span>
+
+                <span class="nav-text">
+                    REVISION
+                </span>
+
+            </button>
+
+
+            <button
+                class="nav-item"
+                data-route="profile"
+                type="button"
+            >
+
+                <span class="nav-icon">
+                    ○
+                </span>
+
+                <span class="nav-text">
+                    PROFILE
+                </span>
+
+            </button>
+
+
+        </nav>
+
+
+    </main>
+
+
+
+    <!-- ERROR -->
+
+    <div
+        id="errorScreen"
+        class="error-screen hidden"
+    >
+
+        <div class="error-logo">
+            ZENOVA
+        </div>
+
+        <h2>
+            Something went wrong
+        </h2>
+
+        <p id="errorText">
+            Unable to load Revision Classes.
+        </p>
+
+        <button
+            onclick="location.reload()"
+            type="button"
+        >
+            TRY AGAIN
+        </button>
+
+    </div>
+
+
+
+    <script
+        type="module"
+        src="./revision.js"
+    ></script>
+
+
+</body>
+
+</html>
