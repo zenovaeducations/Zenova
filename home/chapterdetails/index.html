@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Chapter Details | Zenova</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="./chapterdetails.css">
+</head>
+
+<body>
+
+    <!-- HEADER -->
+    <header class="top-header">
+
+        <button class="back-btn" id="backBtn">
+            <span>←</span>
+        </button>
+
+        <div class="header-title">
+            <span>Chapter Details</span>
+        </div>
+
+        <div class="profile-mini" id="profileInitial">
+            S
+        </div>
+
+    </header>
+
+
+    <!-- MAIN -->
+    <main class="main-content">
+
+        <!-- LOADER -->
+        <div class="loader-screen" id="loaderScreen">
+            <div class="loader"></div>
+            <p>Loading chapter...</p>
+        </div>
+
+
+        <!-- CONTENT -->
+        <div id="chapterPage" class="hidden">
+
+            <!-- CHAPTER HERO -->
+            <section class="chapter-hero">
+
+                <div class="chapter-label">
+                    CHAPTER
+                </div>
+
+                <h1 id="chapterTitle">
+                    Chapter Name
+                </h1>
+
+                <p id="subjectTitle">
+                    Subject
+                </p>
+
+            </section>
+
+
+            <!-- VIDEOS -->
+            <section class="content-section">
+
+                <div class="section-heading">
+                    <div>
+                        <h2>Videos</h2>
+                        <p>Learn the concepts from your chapter</p>
+                    </div>
+
+                    <span class="count-badge" id="videoCount">
+                        0
+                    </span>
+                </div>
+
+                <div id="videoList" class="content-list"></div>
+
+                <div id="noVideos" class="empty-state hidden">
+                    <div class="empty-icon">▶</div>
+                    <h3>No videos yet</h3>
+                    <p>Videos for this chapter will appear here.</p>
+                </div>
+
+            </section>
+
+
+            <!-- PDFs -->
+            <section class="content-section">
+
+                <div class="section-heading">
+                    <div>
+                        <h2>Study Materials</h2>
+                        <p>Notes and PDFs for this chapter</p>
+                    </div>
+
+                    <span class="count-badge" id="pdfCount">
+                        0
+                    </span>
+                </div>
+
+                <div id="pdfList" class="content-list"></div>
+
+                <div id="noPdfs" class="empty-state hidden">
+                    <div class="empty-icon">PDF</div>
+                    <h3>No study materials yet</h3>
+                    <p>PDFs for this chapter will appear here.</p>
+                </div>
+
+            </section>
+
+        </div>
+
+
+        <!-- ERROR -->
+        <div id="errorScreen" class="error-screen hidden">
+
+            <div class="error-icon">
+                !
+            </div>
+
+            <h2>Something went wrong</h2>
+
+            <p id="errorMessage">
+                We couldn't load this chapter.
+            </p>
+
+            <button id="errorBackBtn">
+                Back to Subject
+            </button>
+
+        </div>
+
+    </main>
+
+
+    <!-- BOTTOM NAV -->
+    <nav class="bottom-nav">
+
+        <a href="../" class="nav-item">
+            <span class="nav-icon">⌂</span>
+            <span>Home</span>
+        </a>
+
+        <a href="../live/" class="nav-item">
+            <span class="nav-icon">▶</span>
+            <span>Live</span>
+        </a>
+
+        <a href="../revision/" class="nav-item active">
+            <span class="nav-icon">▣</span>
+            <span>Revision</span>
+        </a>
+
+        <a href="../profile/" class="nav-item">
+            <span class="nav-icon">●</span>
+            <span>Profile</span>
+        </a>
+
+    </nav>
+
+
+    <script type="module" src="./chapterdetails.js"></script>
+
+</body>
+</html>
