@@ -1,7 +1,7 @@
 import {
     auth,
     db
-} from "../firebase/firebase-config.js";
+} from "../../firebase/firebase-config.js";
 
 
 import {
@@ -15,78 +15,53 @@ import {
     getDoc,
     getDocs,
     query,
-    where,
-    limit
+    where
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
 
-
-/* =========================================
+/* =========================================================
    ELEMENTS
-========================================= */
+========================================================= */
 
 const continueCard =
-    document.getElementById(
-        "continueCard"
-    );
-
+    document.getElementById("continueCard");
 
 const recommendedList =
-    document.getElementById(
-        "recommendedList"
-    );
-
+    document.getElementById("recommendedList");
 
 const subjectsList =
-    document.getElementById(
-        "subjectsList"
-    );
-
+    document.getElementById("subjectsList");
 
 const profileInitial =
-    document.getElementById(
-        "profileInitial"
-    );
-
+    document.getElementById("profileInitial");
 
 const errorScreen =
-    document.getElementById(
-        "errorScreen"
-    );
-
+    document.getElementById("errorScreen");
 
 const errorText =
-    document.getElementById(
-        "errorText"
-    );
+    document.getElementById("errorText");
 
 
-
-/* =========================================
+/* =========================================================
    STATE
-========================================= */
+========================================================= */
 
 let currentUser = null;
 
 let student = null;
 
-let courseId = null;
-
-let course = null;
+let currentCourse = null;
 
 let subjects = [];
 
 let chapters = [];
 
-let content = [];
-
-let enrollments = [];
+let videos = [];
 
 
-
-/* =========================================
+/* =========================================================
    AUTH
-========================================= */
+========================================================= */
 
 onAuthStateChanged(
     auth,
@@ -95,7 +70,7 @@ onAuthStateChanged(
         if (!user) {
 
             window.location.replace(
-                "../account/login/"
+                "../../account/login/"
             );
 
             return;
@@ -103,19 +78,20 @@ onAuthStateChanged(
         }
 
 
-        currentUser =
-            user;
+        currentUser = user;
 
 
         try {
 
             await loadStudent();
 
-            await determineCourse();
+            await loadStudentCourse();
 
             await loadSubjects();
 
-            await loadContent();
+            await loadChapters();
+
+            await loadVideos();
 
             renderContinueLearning();
 
@@ -130,12 +106,12 @@ onAuthStateChanged(
         catch (error) {
 
             console.error(
-                "REVISION ERROR:",
+                "REVISION LOAD ERROR:",
                 error
             );
 
-
             showError(
+                error.message ||
                 "Unable to load Revision Classes."
             );
 
@@ -145,31 +121,30 @@ onAuthStateChanged(
 );
 
 
-
-/* =========================================
-   STUDENT
-========================================= */
+/* =========================================================
+   LOAD STUDENT
+========================================================= */
 
 async function loadStudent() {
 
-    const ref =
+    const studentRef =
         doc(
             db,
-            "zen2Students",
+            "students",
             currentUser.uid
         );
 
 
     const snapshot =
         await getDoc(
-            ref
+            studentRef
         );
 
 
     if (!snapshot.exists()) {
 
         window.location.replace(
-            "../account/onboarding/"
+            "../../account/onboarding/"
         );
 
         return;
@@ -181,12 +156,17 @@ async function loadStudent() {
         snapshot.data();
 
 
+    /*
+     * Your existing onboarding field.
+     */
+
     if (
-        student.onboardingComplete !== true
+        student.onboardingComplete !== true &&
+        student.onboardingCompleted !== true
     ) {
 
         window.location.replace(
-            "../account/onboarding/"
+            "../../account/onboarding/"
         );
 
         return;
@@ -194,223 +174,393 @@ async function loadStudent() {
     }
 
 
-    const name =
+    const studentName =
         student.name ||
+        student.fullName ||
         currentUser.displayName ||
         "Student";
 
 
     profileInitial.textContent =
-        name
+        studentName
             .charAt(0)
             .toUpperCase();
 
 }
 
 
+/* =========================================================
+   NORMALIZE CLASS
+========================================================= */
 
-/* =========================================
-   DETERMINE COURSE
-========================================= */
+function normalizeClass(
+    value
+) {
 
-async function determineCourse() {
+    if (
+        value === undefined ||
+        value === null
+    ) {
 
-    /*
-     * First preference:
-     * student's active/enrolled ZEN2 course.
-     */
-
-    try {
-
-        const enrollmentQuery =
-            query(
-                collection(
-                    db,
-                    "studentEnrollments"
-                ),
-
-                where(
-                    "studentUid",
-                    "==",
-                    currentUser.uid
-                ),
-
-                limit(20)
-            );
-
-
-        const snapshot =
-            await getDocs(
-                enrollmentQuery
-            );
-
-
-        enrollments =
-            snapshot.docs.map(
-                item => ({
-
-                    id:
-                        item.id,
-
-                    ...item.data()
-
-                })
-            );
-
-
-        const active =
-            enrollments.find(
-                item => {
-
-                    const status =
-                        String(
-                            item.status ||
-                            ""
-                        )
-                        .toLowerCase();
-
-
-                    return (
-                        status === "active" ||
-                        status === "enrolled" ||
-                        item.accessGranted === true ||
-                        item.active === true
-                    );
-
-                }
-            );
-
-
-        if (active) {
-
-            courseId =
-                active.courseId ||
-                active.zen2CourseId ||
-                active.batchId;
-
-
-            if (courseId) {
-
-                await loadCourse();
-
-                return;
-
-            }
-
-        }
+        return "";
 
     }
 
-    catch (error) {
 
-        console.warn(
-            "Enrollment lookup failed:",
-            error
+    const v =
+        String(value)
+            .trim()
+            .toUpperCase()
+            .replace(
+                /[-_]/g,
+                " "
+            );
+
+
+    if (
+        [
+            "10",
+            "10TH",
+            "10TH STANDARD",
+            "10 STANDARD",
+            "SSLC"
+        ].includes(v)
+    ) {
+
+        return "10TH";
+
+    }
+
+
+    if (
+        [
+            "9",
+            "9TH",
+            "9TH STANDARD",
+            "9 STANDARD"
+        ].includes(v)
+    ) {
+
+        return "9TH";
+
+    }
+
+
+    if (
+        [
+            "8",
+            "8TH",
+            "8TH STANDARD",
+            "8 STANDARD"
+        ].includes(v)
+    ) {
+
+        return "8TH";
+
+    }
+
+
+    if (
+        [
+            "1ST PUC",
+            "1 PUC",
+            "PUC 1",
+            "FIRST PUC",
+            "1STPUC"
+        ].includes(v)
+    ) {
+
+        return "1ST_PUC";
+
+    }
+
+
+    if (
+        [
+            "2ND PUC",
+            "2 PUC",
+            "PUC 2",
+            "SECOND PUC",
+            "2NDPUC"
+        ].includes(v)
+    ) {
+
+        return "2ND_PUC";
+
+    }
+
+
+    return v.replace(
+        /\s+/g,
+        "_"
+    );
+
+}
+
+
+/* =========================================================
+   STUDENT CLASS
+========================================================= */
+
+function getStudentClass() {
+
+    return normalizeClass(
+
+        student.className ||
+
+        student.class ||
+
+        student.crmClass ||
+
+        student.standard ||
+
+        student.classLevel
+
+    );
+
+}
+
+
+/* =========================================================
+   COURSE CLASS
+========================================================= */
+
+function getCourseClass(
+    course
+) {
+
+    return normalizeClass(
+
+        course.className ||
+
+        course.class ||
+
+        course.standard ||
+
+        course.classLevel ||
+
+        course.crmClass ||
+
+        course.targetClass
+
+    );
+
+}
+
+
+/* =========================================================
+   COURSE NAME
+========================================================= */
+
+function getCourseName(
+    course
+) {
+
+    return (
+
+        course.name ||
+
+        course.title ||
+
+        course.courseName ||
+
+        course.batchName ||
+
+        course.courseTitle ||
+
+        "Zenova Course"
+
+    );
+
+}
+
+
+/* =========================================================
+   LOAD CORRECT ZEN2 COURSE
+========================================================= */
+
+async function loadStudentCourse() {
+
+    const studentClass =
+        getStudentClass();
+
+
+    console.log(
+        "Student class:",
+        studentClass
+    );
+
+
+    if (!studentClass) {
+
+        throw new Error(
+            "Student class is not available."
         );
 
     }
 
 
     /*
-     * Fallback:
-     * If there is no enrollment yet,
-     * use the first ZEN2 course.
+     * IMPORTANT:
      *
-     * This keeps Revision usable while
-     * the purchase system is being built.
+     * We are intentionally loading
+     * zen2Courses.
+     *
+     * NOT crmCourses.
+     *
+     * NOT hybrid courses.
      */
 
-    const coursesSnapshot =
+    const snapshot =
         await getDocs(
-            query(
-                collection(
-                    db,
-                    "zen2Courses"
-                ),
-
-                limit(1)
+            collection(
+                db,
+                "zen2Courses"
             )
         );
 
 
+    const allCourses =
+        snapshot.docs.map(
+            item => ({
+
+                id:
+                    item.id,
+
+                ...item.data()
+
+            })
+        );
+
+
+    console.log(
+        "ZEN2 courses:",
+        allCourses
+    );
+
+
+    /*
+     * Only courses for student's class.
+     */
+
+    const matchingCourses =
+        allCourses.filter(
+            course => {
+
+                const courseClass =
+                    getCourseClass(
+                        course
+                    );
+
+
+                return (
+                    courseClass ===
+                    studentClass
+                );
+
+            }
+        );
+
+
+    console.log(
+        "Matching courses:",
+        matchingCourses
+    );
+
+
     if (
-        coursesSnapshot.empty
+        matchingCourses.length === 0
     ) {
 
         throw new Error(
-            "No ZEN2 course available."
+            `No ZEN2 course found for ${displayClass(studentClass)}.`
         );
 
     }
 
 
-    const first =
-        coursesSnapshot.docs[0];
+    /*
+     * Prefer active course.
+     */
+
+    const activeCourses =
+        matchingCourses.filter(
+            course =>
+                course.active !== false &&
+                course.isActive !== false &&
+                course.crmActive !== false
+        );
 
 
-    courseId =
-        first.id;
+    const available =
+        activeCourses.length
+            ? activeCourses
+            : matchingCourses;
 
 
-    course = {
+    /*
+     * Lower priority first.
+     */
 
-        id:
-            first.id,
+    available.sort(
+        (
+            a,
+            b
+        ) => {
 
-        ...first.data()
+            const priorityA =
+                Number(
+                    a.priority ??
+                    a.order ??
+                    9999
+                );
 
-    };
+
+            const priorityB =
+                Number(
+                    b.priority ??
+                    b.order ??
+                    9999
+                );
+
+
+            return (
+                priorityA -
+                priorityB
+            );
+
+        }
+    );
+
+
+    currentCourse =
+        available[0];
+
+
+    console.log(
+        "Selected ZEN2 course:",
+        currentCourse
+    );
 
 }
 
 
-
-/* =========================================
-   LOAD COURSE
-========================================= */
-
-async function loadCourse() {
-
-    const ref =
-        doc(
-            db,
-            "zen2Courses",
-            courseId
-        );
-
-
-    const snapshot =
-        await getDoc(
-            ref
-        );
-
-
-    if (
-        snapshot.exists()
-    ) {
-
-        course = {
-
-            id:
-                snapshot.id,
-
-            ...snapshot.data()
-
-        };
-
-    }
-
-}
-
-
-
-/* =========================================
+/* =========================================================
    LOAD SUBJECTS
-========================================= */
+========================================================= */
 
 async function loadSubjects() {
 
-    const q =
+    if (
+        !currentCourse
+    ) {
+
+        return;
+
+    }
+
+
+    const subjectQuery =
         query(
             collection(
                 db,
@@ -420,14 +570,14 @@ async function loadSubjects() {
             where(
                 "courseId",
                 "==",
-                courseId
+                currentCourse.id
             )
         );
 
 
     const snapshot =
         await getDocs(
-            q
+            subjectQuery
         );
 
 
@@ -444,24 +594,85 @@ async function loadSubjects() {
         );
 
 
+    /*
+     * Active only.
+     */
+
+    subjects =
+        subjects.filter(
+            subject =>
+                subject.active !== false &&
+                subject.isActive !== false
+        );
+
+
+    /*
+     * Sort by admin order.
+     */
+
     subjects.sort(
-        sortByOrder
+        (
+            a,
+            b
+        ) => {
+
+            return (
+                Number(
+                    a.order ??
+                    a.position ??
+                    9999
+                ) -
+                Number(
+                    b.order ??
+                    b.position ??
+                    9999
+                )
+            );
+
+        }
+    );
+
+
+    console.log(
+        "ZEN2 subjects:",
+        subjects
     );
 
 }
 
 
+/* =========================================================
+   SUBJECT NAME
+========================================================= */
 
-/* =========================================
-   LOAD CONTENT
-========================================= */
+function getSubjectName(
+    subject
+) {
 
-async function loadContent() {
+    return (
 
-    /*
-     * Get chapters belonging to
-     * the selected course.
-     */
+        subject.name ||
+
+        subject.title ||
+
+        subject.subjectName ||
+
+        subject.subject ||
+
+        subject.displayName ||
+
+        "Subject"
+
+    );
+
+}
+
+
+/* =========================================================
+   LOAD CHAPTERS
+========================================================= */
+
+async function loadChapters() {
 
     chapters = [];
 
@@ -486,13 +697,13 @@ async function loadContent() {
             );
 
 
-        const chapterSnapshot =
+        const snapshot =
             await getDocs(
                 chapterQuery
             );
 
 
-        chapterSnapshot.docs.forEach(
+        snapshot.docs.forEach(
             item => {
 
                 chapters.push({
@@ -518,16 +729,54 @@ async function loadContent() {
     }
 
 
+    chapters =
+        chapters.filter(
+            chapter =>
+                chapter.active !== false &&
+                chapter.isActive !== false
+        );
+
+
     chapters.sort(
-        sortByOrder
+        (
+            a,
+            b
+        ) => {
+
+            return (
+                Number(
+                    a.order ??
+                    a.chapterNumber ??
+                    a.position ??
+                    9999
+                ) -
+                Number(
+                    b.order ??
+                    b.chapterNumber ??
+                    b.position ??
+                    9999
+                )
+            );
+
+        }
     );
 
 
-    /*
-     * Load all chapter content.
-     */
+    console.log(
+        "ZEN2 chapters:",
+        chapters
+    );
 
-    content = [];
+}
+
+
+/* =========================================================
+   LOAD VIDEOS
+========================================================= */
+
+async function loadVideos() {
+
+    videos = [];
 
 
     for (
@@ -550,36 +799,33 @@ async function loadContent() {
             );
 
 
-        const contentSnapshot =
+        const snapshot =
             await getDocs(
                 contentQuery
             );
 
 
-        contentSnapshot.docs.forEach(
+        snapshot.docs.forEach(
             item => {
 
                 const data =
                     item.data();
 
 
-                /*
-                 * Only videos are used
-                 * for Recommended Videos.
-                 */
-
-                const type =
+                const contentType =
                     String(
                         data.type ||
                         data.contentType ||
                         data.kind ||
                         ""
                     )
-                    .toLowerCase();
+                    .toUpperCase();
 
 
                 const isVideo =
-                    type === "video" ||
+                    contentType ===
+                    "VIDEO"
+                    ||
                     Boolean(
                         data.videoUrl ||
                         data.videoURL ||
@@ -591,7 +837,7 @@ async function loadContent() {
                     isVideo
                 ) {
 
-                    content.push({
+                    videos.push({
 
                         id:
                             item.id,
@@ -622,30 +868,78 @@ async function loadContent() {
     }
 
 
-    content.sort(
-        sortByOrder
+    videos =
+        videos.filter(
+            video =>
+                video.active !== false &&
+                video.isActive !== false
+        );
+
+
+    videos.sort(
+        (
+            a,
+            b
+        ) => {
+
+            return (
+                Number(
+                    a.order ??
+                    a.position ??
+                    9999
+                ) -
+                Number(
+                    b.order ??
+                    b.position ??
+                    9999
+                )
+            );
+
+        }
+    );
+
+
+    console.log(
+        "ZEN2 videos:",
+        videos
     );
 
 }
 
 
+/* =========================================================
+   CHAPTER NAME
+========================================================= */
 
-/* =========================================
+function getChapterName(
+    chapter
+) {
+
+    return (
+
+        chapter.name ||
+
+        chapter.title ||
+
+        chapter.chapterName ||
+
+        chapter.chapterTitle ||
+
+        "Chapter"
+
+    );
+
+}
+
+
+/* =========================================================
    CONTINUE LEARNING
-========================================= */
+========================================================= */
 
 function renderContinueLearning() {
 
-    /*
-     * We use the saved last-watched
-     * content if available.
-     *
-     * Later the video player can save:
-     *
-     * zen2LastWatched
-     */
-
-    let lastWatched = null;
+    let lastWatched =
+        null;
 
 
     try {
@@ -663,11 +957,13 @@ function renderContinueLearning() {
                     saved
                 );
 
-        }
+            }
 
     }
 
-    catch (error) {
+    catch (
+        error
+    ) {
 
         console.warn(
             error
@@ -676,7 +972,8 @@ function renderContinueLearning() {
     }
 
 
-    let video = null;
+    let video =
+        null;
 
 
     if (
@@ -684,7 +981,7 @@ function renderContinueLearning() {
     ) {
 
         video =
-            content.find(
+            videos.find(
                 item =>
                     item.id ===
                     lastWatched.contentId
@@ -694,14 +991,15 @@ function renderContinueLearning() {
 
 
     /*
-     * If there is no previous video,
-     * choose the first ordered video.
+     * If student has never watched anything,
+     * show the first video as the starting
+     * learning video.
      */
 
     if (!video) {
 
         video =
-            content[0] ||
+            videos[0] ||
             null;
 
     }
@@ -724,6 +1022,19 @@ function renderContinueLearning() {
     }
 
 
+    const thumbnail =
+        video.thumbnailUrl ||
+        video.thumbnail ||
+        video.imageUrl ||
+        "";
+
+
+    const title =
+        getVideoTitle(
+            video
+        );
+
+
     const progress =
         Number(
             lastWatched?.progress ||
@@ -741,25 +1052,13 @@ function renderContinueLearning() {
         );
 
 
-    const thumbnail =
-        video.thumbnailUrl ||
-        video.thumbnail ||
-        video.imageUrl ||
-        "";
-
-
-    const title =
-        getContentTitle(
-            video
-        );
-
-
     continueCard.innerHTML = `
 
         <div class="continue-image">
 
             ${
                 thumbnail
+
                     ? `
 
                         <img
@@ -770,6 +1069,7 @@ function renderContinueLearning() {
                         >
 
                     `
+
                     : `
 
                         <div
@@ -787,7 +1087,11 @@ function renderContinueLearning() {
         <div class="continue-info">
 
             <span class="continue-badge">
-                CONTINUE LEARNING
+                ${
+                    lastWatched?.contentId
+                        ? "CONTINUE LEARNING"
+                        : "START LEARNING"
+                }
             </span>
 
 
@@ -803,16 +1107,13 @@ function renderContinueLearning() {
                     video.subjectName ||
                     ""
                 )}
-                ${
-                    video.chapterName
-                        ? `
-                            •
-                            ${escapeHtml(
-                                video.chapterName
-                            )}
-                        `
-                        : ""
-                }
+
+                •
+                
+                ${escapeHtml(
+                    video.chapterName ||
+                    ""
+                )}
             </p>
 
 
@@ -839,13 +1140,15 @@ function renderContinueLearning() {
 
 
         <button
-            class="continue-button"
             id="continueButton"
+            class="continue-button"
             type="button"
         >
-
-            CONTINUE
-
+            ${
+                lastWatched?.contentId
+                    ? "CONTINUE"
+                    : "START"
+            }
         </button>
 
     `;
@@ -859,7 +1162,7 @@ function renderContinueLearning() {
             "click",
             () => {
 
-                openContent(
+                openVideo(
                     video
                 );
 
@@ -869,15 +1172,14 @@ function renderContinueLearning() {
 }
 
 
-
-/* =========================================
+/* =========================================================
    RECOMMENDED VIDEOS
-========================================= */
+========================================================= */
 
 function renderRecommendedVideos() {
 
     if (
-        !content.length
+        !videos.length
     ) {
 
         recommendedList.innerHTML = `
@@ -895,17 +1197,8 @@ function renderRecommendedVideos() {
     }
 
 
-    /*
-     * Priority:
-     *
-     * 1. Last watched
-     * 2. First ordered videos
-     *
-     * We don't repeat the Continue
-     * video in the recommended list.
-     */
-
-    let lastWatchedId = null;
+    let lastWatchedId =
+        null;
 
 
     try {
@@ -927,7 +1220,9 @@ function renderRecommendedVideos() {
 
     }
 
-    catch (error) {
+    catch (
+        error
+    ) {
 
         console.warn(
             error
@@ -936,27 +1231,23 @@ function renderRecommendedVideos() {
     }
 
 
-    let videos =
-        content.filter(
-            item =>
-                item.id !==
+    let recommended =
+        videos.filter(
+            video =>
+                video.id !==
                 lastWatchedId
         );
 
 
-    /*
-     * Take the first 6 ordered videos.
-     */
-
-    videos =
-        videos.slice(
+    recommended =
+        recommended.slice(
             0,
             6
         );
 
 
     if (
-        !videos.length
+        !recommended.length
     ) {
 
         recommendedList.innerHTML = `
@@ -975,25 +1266,52 @@ function renderRecommendedVideos() {
 
 
     recommendedList.innerHTML =
-        videos
+        recommended
             .map(
-                video =>
-                    createVideoCard(
-                        video
-                    )
+                createVideoCard
             )
             .join("");
 
 
-    attachVideoEvents();
+    document
+        .querySelectorAll(
+            ".video-card"
+        )
+        .forEach(
+            card => {
+
+                card.addEventListener(
+                    "click",
+                    () => {
+
+                        const video =
+                            videos.find(
+                                item =>
+                                    item.id ===
+                                    card.dataset.contentId
+                            );
+
+
+                        if (video) {
+
+                            openVideo(
+                                video
+                            );
+
+                        }
+
+                    }
+                );
+
+            }
+        );
 
 }
 
 
-
-/* =========================================
+/* =========================================================
    VIDEO CARD
-========================================= */
+========================================================= */
 
 function createVideoCard(
     video
@@ -1007,12 +1325,12 @@ function createVideoCard(
 
 
     const title =
-        getContentTitle(
+        getVideoTitle(
             video
         );
 
 
-    const access =
+    const accessType =
         String(
             video.accessType ||
             (
@@ -1033,12 +1351,11 @@ function createVideoCard(
             )}"
         >
 
-            <div
-                class="video-thumbnail"
-            >
+            <div class="video-thumbnail">
 
                 ${
                     thumbnail
+
                         ? `
 
                             <img
@@ -1050,6 +1367,7 @@ function createVideoCard(
                             >
 
                         `
+
                         : ""
                 }
 
@@ -1060,7 +1378,8 @@ function createVideoCard(
 
 
                 ${
-                    access === "FREE"
+                    accessType === "FREE"
+
                         ? `
 
                             <span class="free-badge">
@@ -1068,6 +1387,7 @@ function createVideoCard(
                             </span>
 
                         `
+
                         : `
 
                             <span class="paid-badge">
@@ -1096,16 +1416,12 @@ function createVideoCard(
                         ""
                     )}
 
-                    ${
-                        video.chapterName
-                            ? `
-                                •
-                                ${escapeHtml(
-                                    video.chapterName
-                                )}
-                            `
-                            : ""
-                    }
+                    •
+
+                    ${escapeHtml(
+                        video.chapterName ||
+                        ""
+                    )}
 
                 </p>
 
@@ -1134,68 +1450,40 @@ function createVideoCard(
 }
 
 
+/* =========================================================
+   VIDEO TITLE
+========================================================= */
 
-/* =========================================
-   VIDEO EVENTS
-========================================= */
+function getVideoTitle(
+    video
+) {
 
-function attachVideoEvents() {
+    return (
 
-    document
-        .querySelectorAll(
-            ".video-card"
-        )
-        .forEach(
-            card => {
+        video.title ||
 
-                card.addEventListener(
-                    "click",
-                    () => {
+        video.name ||
 
-                        const id =
-                            card.dataset.contentId;
+        video.contentName ||
 
+        video.videoTitle ||
 
-                        const video =
-                            content.find(
-                                item =>
-                                    item.id ===
-                                    id
-                            );
+        "Learning Video"
 
-
-                        if (video) {
-
-                            openContent(
-                                video
-                            );
-
-                        }
-
-                    }
-                );
-
-            }
-        );
+    );
 
 }
 
 
+/* =========================================================
+   OPEN VIDEO
+========================================================= */
 
-/* =========================================
-   OPEN CONTENT
-========================================= */
-
-function openContent(
+function openVideo(
     video
 ) {
 
-    /*
-     * Chapter Details will contain
-     * the actual video/PDF player.
-     */
-
-    const url =
+    window.location.href =
         `../chapter-details/?chapterId=${
             encodeURIComponent(
                 video.chapterId
@@ -1204,19 +1492,22 @@ function openContent(
             encodeURIComponent(
                 video.id
             )
+        }&subjectId=${
+            encodeURIComponent(
+                video.subjectId
+            )
+        }&courseId=${
+            encodeURIComponent(
+                currentCourse.id
+            )
         }`;
-
-
-    window.location.href =
-        url;
 
 }
 
 
-
-/* =========================================
-   SUBJECTS
-========================================= */
+/* =========================================================
+   RENDER SUBJECTS
+========================================================= */
 
 function renderSubjects() {
 
@@ -1228,7 +1519,12 @@ function renderSubjects() {
 
             <div class="loading-text">
 
-                No subjects available.
+                No subjects found for
+                ${escapeHtml(
+                    getCourseName(
+                        currentCourse
+                    )
+                )}.
 
             </div>
 
@@ -1272,9 +1568,9 @@ function renderSubjects() {
                             >
 
                                 ${escapeHtml(
-                                    getInitial(
-                                        name
-                                    )
+                                    name
+                                        .charAt(0)
+                                        .toUpperCase()
                                 )}
 
                             </div>
@@ -1332,18 +1628,18 @@ function renderSubjects() {
                     "click",
                     () => {
 
-                        const id =
+                        const subjectId =
                             card.dataset.subjectId;
 
 
                         window.location.href =
                             `../subject-details/?subjectId=${
                                 encodeURIComponent(
-                                    id
+                                    subjectId
                                 )
                             }&courseId=${
                                 encodeURIComponent(
-                                    courseId
+                                    currentCourse.id
                                 )
                             }`;
 
@@ -1356,10 +1652,9 @@ function renderSubjects() {
 }
 
 
-
-/* =========================================
+/* =========================================================
    NAVIGATION
-========================================= */
+========================================================= */
 
 function setupNavigation() {
 
@@ -1383,7 +1678,9 @@ function setupNavigation() {
                         ) {
 
                             window.location.href =
-                                "../home/";
+                                "../";
+
+                            return;
 
                         }
 
@@ -1395,6 +1692,8 @@ function setupNavigation() {
                             window.location.href =
                                 "../live/";
 
+                            return;
+
                         }
 
 
@@ -1404,6 +1703,8 @@ function setupNavigation() {
 
                             window.location.href =
                                 "./";
+
+                            return;
 
                         }
 
@@ -1415,6 +1716,8 @@ function setupNavigation() {
                             window.location.href =
                                 "../profile/";
 
+                            return;
+
                         }
 
                     }
@@ -1424,10 +1727,7 @@ function setupNavigation() {
         );
 
 
-    document
-        .getElementById(
-            "profileButton"
-        )
+    profileInitial.parentElement
         ?.addEventListener(
             "click",
             () => {
@@ -1441,90 +1741,88 @@ function setupNavigation() {
 }
 
 
+/* =========================================================
+   DISPLAY CLASS
+========================================================= */
 
-/* =========================================
-   HELPERS
-========================================= */
-
-function getSubjectName(
-    subject
+function displayClass(
+    value
 ) {
 
+    const normalized =
+        normalizeClass(
+            value
+        );
+
+
+    const names = {
+
+        "10TH":
+            "10th",
+
+        "9TH":
+            "9th",
+
+        "8TH":
+            "8th",
+
+        "1ST_PUC":
+            "1st PUC",
+
+        "2ND_PUC":
+            "2nd PUC"
+
+    };
+
+
     return (
-        subject.name ||
-        subject.title ||
-        subject.subjectName ||
-        subject.subject ||
-        "Subject"
+        names[normalized] ||
+        value ||
+        "class"
     );
 
 }
 
 
-function getChapterName(
-    chapter
+/* =========================================================
+   ERROR
+========================================================= */
+
+function showError(
+    message
 ) {
 
-    return (
-        chapter.name ||
-        chapter.title ||
-        chapter.chapterName ||
-        chapter.chapterTitle ||
-        "Chapter"
+    console.error(
+        message
     );
 
-}
+
+    if (
+        errorText
+    ) {
+
+        errorText.textContent =
+            message;
+
+    }
 
 
-function getContentTitle(
-    item
-) {
+    if (
+        errorScreen
+    ) {
 
-    return (
-        item.title ||
-        item.name ||
-        item.contentName ||
-        item.videoTitle ||
-        "Learning Video"
-    );
+        errorScreen.classList.remove(
+            "hidden"
+        );
 
-}
-
-
-function getInitial(
-    text
-) {
-
-    return String(
-        text ||
-        "S"
-    )
-        .charAt(0)
-        .toUpperCase();
+    }
 
 }
 
 
-function sortByOrder(
-    a,
-    b
-) {
-
-    return (
-        Number(
-            a.order ??
-            a.position ??
-            9999
-        ) -
-        Number(
-            b.order ??
-            b.position ??
-            9999
-        )
-    );
-
-}
-
+/* =========================================================
+   ESCAPE HTML
+========================================================= */
 
 function escapeHtml(
     value
@@ -1558,19 +1856,5 @@ function escapeHtml(
             "'",
             "&#039;"
         );
-
-}
-
-
-function showError(
-    message
-) {
-
-    errorText.textContent =
-        message;
-
-    errorScreen.classList.remove(
-        "hidden"
-    );
 
 }
