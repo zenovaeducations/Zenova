@@ -1,7 +1,7 @@
 /* ============================================================
    ZEN2 CONTENT STUDIO
 
-   NEW SIMPLE ZENOVA STRUCTURE
+   STRUCTURE
 
    zen2Courses
        ↓
@@ -11,30 +11,15 @@
        ↓
    zen2Content
 
-   CONTENT ACCESS:
+   CONTENT
 
-   FREE
+   VIDEO
       ↓
-   Everyone can access
+   External Video URL
 
-   PAID
+   PDF
       ↓
-   Visible to everyone
-      ↓
-   Locked for students without purchase
-      ↓
-   "Kindly purchase the batch to access this video / PDF."
-
-   FILES:
-
    Firebase Storage
-
-   zen2/
-      courseId/
-         subjectId/
-            chapterId/
-               contentId/
-                  filename
 
 ============================================================ */
 
@@ -58,9 +43,9 @@ import {
     setDoc,
     getDoc,
     getDocs,
+    deleteDoc,
     query,
     where,
-    orderBy,
     serverTimestamp
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
@@ -68,7 +53,8 @@ import {
 import {
     ref,
     uploadBytesResumable,
-    getDownloadURL
+    getDownloadURL,
+    deleteObject
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-storage.js";
 
 
@@ -116,7 +102,9 @@ const userBadge =
     );
 
 
-/* STEPS */
+/* ============================================================
+   STEPS
+============================================================ */
 
 const stepTabs =
     document.querySelectorAll(
@@ -129,7 +117,9 @@ const workspaces =
     );
 
 
-/* BATCH */
+/* ============================================================
+   BATCH
+============================================================ */
 
 const courseName =
     document.getElementById(
@@ -177,7 +167,9 @@ const courseList =
     );
 
 
-/* SUBJECT */
+/* ============================================================
+   SUBJECT
+============================================================ */
 
 const subjectCourseLabel =
     document.getElementById(
@@ -205,7 +197,9 @@ const subjectList =
     );
 
 
-/* CHAPTER */
+/* ============================================================
+   CHAPTER
+============================================================ */
 
 const chapterCourseSelect =
     document.getElementById(
@@ -248,7 +242,9 @@ const chapterList =
     );
 
 
-/* CONTENT */
+/* ============================================================
+   CONTENT
+============================================================ */
 
 const contentCourseSelect =
     document.getElementById(
@@ -315,19 +311,28 @@ const pdfUploadField =
         "pdfUploadField"
     );
 
-const videoFile =
+
+/*
+ * NEW VIDEO URL FIELD
+ *
+ * HTML:
+ *
+ * <input id="videoUrl">
+ */
+
+const videoUrl =
     document.getElementById(
-        "videoFile"
+        "videoUrl"
     );
+
+
+/*
+ * PDF
+ */
 
 const pdfFile =
     document.getElementById(
         "pdfFile"
-    );
-
-const videoBrowseButton =
-    document.getElementById(
-        "videoBrowseButton"
     );
 
 const pdfBrowseButton =
@@ -335,25 +340,16 @@ const pdfBrowseButton =
         "pdfBrowseButton"
     );
 
-const videoDropZone =
-    document.getElementById(
-        "videoDropZone"
-    );
-
 const pdfDropZone =
     document.getElementById(
         "pdfDropZone"
-    );
-
-const videoFileName =
-    document.getElementById(
-        "videoFileName"
     );
 
 const pdfFileName =
     document.getElementById(
         "pdfFileName"
     );
+
 
 const uploadContentButton =
     document.getElementById(
@@ -439,11 +435,6 @@ stepTabs.forEach(
                     );
 
 
-                /*
-                 * Steps 2–4 require
-                 * a selected course.
-                 */
-
                 if (
                     step > 1 &&
                     !selectedCourseId
@@ -511,6 +502,7 @@ function setStep(step) {
 
         populateChapterCourses();
 
+
         if (selectedCourseId) {
 
             chapterCourseSelect.value =
@@ -529,6 +521,7 @@ function setStep(step) {
 
         populateContentCourses();
 
+
         if (selectedCourseId) {
 
             contentCourseSelect.value =
@@ -546,7 +539,7 @@ function setStep(step) {
 
 
 /* ============================================================
-   BATCH
+   CREATE BATCH
 ============================================================ */
 
 createBatchButton.addEventListener(
@@ -659,7 +652,6 @@ async function createCourse() {
                     db,
                     COURSES
                 ),
-
                 {
 
                     courseName:
@@ -883,12 +875,10 @@ function renderCourses() {
                     </div>
 
                     <span class="course-status">
-                        ${
-                            escapeHtml(
-                                course.status ||
-                                "ACTIVE"
-                            )
-                        }
+                        ${escapeHtml(
+                            course.status ||
+                            "ACTIVE"
+                        )}
                     </span>
 
                 </div>
@@ -908,14 +898,35 @@ function renderCourses() {
 
                 </div>
 
-                <button
-                    type="button"
-                    class="item-action"
-                    data-select-course="${course.id}"
-                    style="margin-top:12px;"
-                >
-                    Manage Content →
-                </button>
+
+                <div class="management-actions">
+
+                    <button
+                        type="button"
+                        class="item-action"
+                        data-select-course="${course.id}"
+                    >
+                        Manage Content →
+                    </button>
+
+                    <button
+                        type="button"
+                        class="edit-button"
+                        data-edit-course="${course.id}"
+                    >
+                        Edit
+                    </button>
+
+                    <button
+                        type="button"
+                        class="delete-button"
+                        data-delete-course="${course.id}"
+                    >
+                        Delete
+                    </button>
+
+                </div>
+
             `;
 
 
@@ -940,6 +951,50 @@ function renderCourses() {
 
                         selectCourse(
                             button.dataset.selectCourse
+                        );
+
+                    }
+                );
+
+            }
+        );
+
+
+    courseList
+        .querySelectorAll(
+            "[data-edit-course]"
+        )
+        .forEach(
+            (button) => {
+
+                button.addEventListener(
+                    "click",
+                    () => {
+
+                        editCourse(
+                            button.dataset.editCourse
+                        );
+
+                    }
+                );
+
+            }
+        );
+
+
+    courseList
+        .querySelectorAll(
+            "[data-delete-course]"
+        )
+        .forEach(
+            (button) => {
+
+                button.addEventListener(
+                    "click",
+                    () => {
+
+                        deleteCourse(
+                            button.dataset.deleteCourse
                         );
 
                     }
@@ -989,6 +1044,277 @@ function selectCourse(
 
 
     setStep(2);
+
+}
+
+
+/* ============================================================
+   EDIT COURSE
+============================================================ */
+
+async function editCourse(
+    courseId
+) {
+
+    const course =
+        await getDocument(
+            COURSES,
+            courseId
+        );
+
+
+    if (!course) {
+
+        showToast(
+            "Batch not found."
+        );
+
+        return;
+
+    }
+
+
+    const newName =
+        prompt(
+            "Batch name:",
+            course.courseName || ""
+        );
+
+
+    if (newName === null) {
+        return;
+    }
+
+
+    const newCode =
+        prompt(
+            "Course code:",
+            course.courseCode || ""
+        );
+
+
+    if (newCode === null) {
+        return;
+    }
+
+
+    const newPrice =
+        prompt(
+            "Price:",
+            course.price ?? 0
+        );
+
+
+    if (newPrice === null) {
+        return;
+    }
+
+
+    const newDescription =
+        prompt(
+            "Description:",
+            course.description || ""
+        );
+
+
+    if (newDescription === null) {
+        return;
+    }
+
+
+    const newStatus =
+        prompt(
+            "Status (ACTIVE / INACTIVE):",
+            course.status || "ACTIVE"
+        );
+
+
+    if (newStatus === null) {
+        return;
+    }
+
+
+    try {
+
+        await setDoc(
+            doc(
+                db,
+                COURSES,
+                courseId
+            ),
+            {
+
+                courseName:
+                    newName.trim(),
+
+                courseCode:
+                    newCode.trim(),
+
+                price:
+                    Number(newPrice) || 0,
+
+                description:
+                    newDescription.trim(),
+
+                status:
+                    newStatus
+                        .trim()
+                        .toUpperCase(),
+
+                active:
+                    newStatus
+                        .trim()
+                        .toUpperCase() ===
+                    "ACTIVE",
+
+                updatedAt:
+                    serverTimestamp()
+
+            },
+            {
+                merge: true
+            }
+        );
+
+
+        showToast(
+            "Batch updated successfully."
+        );
+
+
+        await loadCourses();
+
+
+    } catch (error) {
+
+        console.error(
+            "Edit course error:",
+            error
+        );
+
+
+        showToast(
+            error.message ||
+            "Unable to update batch."
+        );
+
+    }
+
+}
+
+
+/* ============================================================
+   DELETE COURSE
+============================================================ */
+
+async function deleteCourse(
+    courseId
+) {
+
+    const course =
+        await getDocument(
+            COURSES,
+            courseId
+        );
+
+
+    if (!course) {
+        return;
+    }
+
+
+    const confirmed =
+        confirm(
+            `Delete "${course.courseName}"?\n\nThis will also delete all subjects, chapters and content inside this batch.`
+        );
+
+
+    if (!confirmed) {
+        return;
+    }
+
+
+    try {
+
+        const subjectsSnapshot =
+            await getDocs(
+                query(
+                    collection(
+                        db,
+                        SUBJECTS
+                    ),
+                    where(
+                        "courseId",
+                        "==",
+                        courseId
+                    )
+                )
+            );
+
+
+        for (
+            const subjectDoc
+            of subjectsSnapshot.docs
+        ) {
+
+            await deleteSubjectData(
+                subjectDoc.id
+            );
+
+        }
+
+
+        await deleteDoc(
+            doc(
+                db,
+                COURSES,
+                courseId
+            )
+        );
+
+
+        if (
+            selectedCourseId ===
+            courseId
+        ) {
+
+            selectedCourseId =
+                null;
+
+            selectedSubjectId =
+                null;
+
+            selectedChapterId =
+                null;
+
+        }
+
+
+        showToast(
+            "Batch deleted successfully."
+        );
+
+
+        await loadCourses();
+
+
+        setStep(1);
+
+
+    } catch (error) {
+
+        console.error(
+            "Delete course error:",
+            error
+        );
+
+
+        showToast(
+            error.message ||
+            "Unable to delete batch."
+        );
+
+    }
 
 }
 
@@ -1054,29 +1380,19 @@ async function addSubject() {
     }
 
 
-    /*
-     * Prevent duplicate subject names
-     * inside the same course.
-     */
-
-    const existingQuery =
-        query(
-            collection(
-                db,
-                SUBJECTS
-            ),
-
-            where(
-                "courseId",
-                "==",
-                selectedCourseId
-            )
-        );
-
-
     const existingSnapshot =
         await getDocs(
-            existingQuery
+            query(
+                collection(
+                    db,
+                    SUBJECTS
+                ),
+                where(
+                    "courseId",
+                    "==",
+                    selectedCourseId
+                )
+            )
         );
 
 
@@ -1116,7 +1432,6 @@ async function addSubject() {
                 db,
                 SUBJECTS
             ),
-
             {
 
                 courseId:
@@ -1216,7 +1531,6 @@ async function loadSubjects(
                         db,
                         SUBJECTS
                     ),
-
                     where(
                         "courseId",
                         "==",
@@ -1256,6 +1570,7 @@ async function loadSubjects(
             "Load subjects error:",
             error
         );
+
 
         subjectList.innerHTML =
             `<div class="empty-state">
@@ -1329,13 +1644,35 @@ function renderSubjects(
 
                 </div>
 
-                <button
-                    type="button"
-                    class="item-action"
-                    data-manage-subject="${subject.id}"
-                >
-                    Manage Chapters →
-                </button>
+
+                <div class="management-actions">
+
+                    <button
+                        type="button"
+                        class="item-action"
+                        data-manage-subject="${subject.id}"
+                    >
+                        Manage Chapters →
+                    </button>
+
+                    <button
+                        type="button"
+                        class="edit-button"
+                        data-edit-subject="${subject.id}"
+                    >
+                        Edit
+                    </button>
+
+                    <button
+                        type="button"
+                        class="delete-button"
+                        data-delete-subject="${subject.id}"
+                    >
+                        Delete
+                    </button>
+
+                </div>
+
             `;
 
 
@@ -1369,6 +1706,50 @@ function renderSubjects(
             }
         );
 
+
+    subjectList
+        .querySelectorAll(
+            "[data-edit-subject]"
+        )
+        .forEach(
+            (button) => {
+
+                button.addEventListener(
+                    "click",
+                    () => {
+
+                        editSubject(
+                            button.dataset.editSubject
+                        );
+
+                    }
+                );
+
+            }
+        );
+
+
+    subjectList
+        .querySelectorAll(
+            "[data-delete-subject]"
+        )
+        .forEach(
+            (button) => {
+
+                button.addEventListener(
+                    "click",
+                    () => {
+
+                        deleteSubject(
+                            button.dataset.deleteSubject
+                        );
+
+                    }
+                );
+
+            }
+        );
+
 }
 
 
@@ -1387,7 +1768,6 @@ async function getNextSubjectOrder(
                     db,
                     SUBJECTS
                 ),
-
                 where(
                     "courseId",
                     "==",
@@ -1403,10 +1783,243 @@ async function getNextSubjectOrder(
 
 
 /* ============================================================
+   EDIT SUBJECT
+============================================================ */
+
+async function editSubject(
+    subjectId
+) {
+
+    const subject =
+        await getDocument(
+            SUBJECTS,
+            subjectId
+        );
+
+
+    if (!subject) {
+        return;
+    }
+
+
+    const newName =
+        prompt(
+            "Subject name:",
+            subject.subjectName || ""
+        );
+
+
+    if (newName === null) {
+        return;
+    }
+
+
+    const newOrder =
+        prompt(
+            "Subject order:",
+            subject.order ?? 1
+        );
+
+
+    if (newOrder === null) {
+        return;
+    }
+
+
+    try {
+
+        await setDoc(
+            doc(
+                db,
+                SUBJECTS,
+                subjectId
+            ),
+            {
+
+                subjectName:
+                    newName.trim(),
+
+                displayName:
+                    newName.trim(),
+
+                order:
+                    Number(newOrder) || 1,
+
+                updatedAt:
+                    serverTimestamp()
+
+            },
+            {
+                merge: true
+            }
+        );
+
+
+        showToast(
+            "Subject updated successfully."
+        );
+
+
+        await loadSubjects(
+            selectedCourseId
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "Edit subject error:",
+            error
+        );
+
+
+        showToast(
+            error.message ||
+            "Unable to update subject."
+        );
+
+    }
+
+}
+
+
+/* ============================================================
+   DELETE SUBJECT
+============================================================ */
+
+async function deleteSubject(
+    subjectId
+) {
+
+    const subject =
+        await getDocument(
+            SUBJECTS,
+            subjectId
+        );
+
+
+    if (!subject) {
+        return;
+    }
+
+
+    const confirmed =
+        confirm(
+            `Delete "${subject.subjectName}"?\n\nThis will also delete all chapters and content inside this subject.`
+        );
+
+
+    if (!confirmed) {
+        return;
+    }
+
+
+    try {
+
+        await deleteSubjectData(
+            subjectId
+        );
+
+
+        if (
+            selectedSubjectId ===
+            subjectId
+        ) {
+
+            selectedSubjectId =
+                null;
+
+            selectedChapterId =
+                null;
+
+        }
+
+
+        showToast(
+            "Subject deleted successfully."
+        );
+
+
+        await loadSubjects(
+            selectedCourseId
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "Delete subject error:",
+            error
+        );
+
+
+        showToast(
+            error.message ||
+            "Unable to delete subject."
+        );
+
+    }
+
+}
+
+
+/* ============================================================
+   DELETE SUBJECT DATA
+============================================================ */
+
+async function deleteSubjectData(
+    subjectId
+) {
+
+    const chaptersSnapshot =
+        await getDocs(
+            query(
+                collection(
+                    db,
+                    CHAPTERS
+                ),
+                where(
+                    "subjectId",
+                    "==",
+                    subjectId
+                )
+            )
+        );
+
+
+    for (
+        const chapterDoc
+        of chaptersSnapshot.docs
+    ) {
+
+        await deleteChapterData(
+            chapterDoc.id
+        );
+
+    }
+
+
+    await deleteDoc(
+        doc(
+            db,
+            SUBJECTS,
+            subjectId
+        )
+    );
+
+}
+
+
+/* ============================================================
    CHAPTER COURSE SELECT
 ============================================================ */
 
 function populateChapterCourses() {
+
+    if (!chapterCourseSelect) {
+        return;
+    }
+
 
     chapterCourseSelect.innerHTML =
         `<option value="">
@@ -1452,6 +2065,10 @@ chapterCourseSelect.addEventListener(
         selectedSubjectId =
             null;
 
+        selectedChapterId =
+            null;
+
+
         chapterSubjectSelect.innerHTML =
             `<option value="">
                 Loading subjects...
@@ -1496,7 +2113,6 @@ async function loadChapterSubjects(
                     db,
                     SUBJECTS
                 ),
-
                 where(
                     "courseId",
                     "==",
@@ -1732,10 +2348,6 @@ async function addChapter() {
 
     try {
 
-        /*
-         * Check duplicate chapter number/name.
-         */
-
         const existingSnapshot =
             await getDocs(
                 query(
@@ -1743,13 +2355,11 @@ async function addChapter() {
                         db,
                         CHAPTERS
                     ),
-
                     where(
                         "courseId",
                         "==",
                         selectedCourseId
                     ),
-
                     where(
                         "subjectId",
                         "==",
@@ -1799,7 +2409,6 @@ async function addChapter() {
                 db,
                 CHAPTERS
             ),
-
             {
 
                 courseId:
@@ -1881,7 +2490,10 @@ async function loadChapters(
     subjectId
 ) {
 
-    if (!courseId || !subjectId) {
+    if (
+        !courseId ||
+        !subjectId
+    ) {
 
         return;
 
@@ -1897,13 +2509,11 @@ async function loadChapters(
                         db,
                         CHAPTERS
                     ),
-
                     where(
                         "courseId",
                         "==",
                         courseId
                     ),
-
                     where(
                         "subjectId",
                         "==",
@@ -2024,13 +2634,33 @@ function renderChapters(
                     </div>
 
 
-                    <button
-                        type="button"
-                        class="item-action"
-                        data-manage-chapter="${chapter.id}"
-                    >
-                        Add Content →
-                    </button>
+                    <div class="management-actions">
+
+                        <button
+                            type="button"
+                            class="item-action"
+                            data-manage-chapter="${chapter.id}"
+                        >
+                            Add Content →
+                        </button>
+
+                        <button
+                            type="button"
+                            class="edit-button"
+                            data-edit-chapter="${chapter.id}"
+                        >
+                            Edit
+                        </button>
+
+                        <button
+                            type="button"
+                            class="delete-button"
+                            data-delete-chapter="${chapter.id}"
+                        >
+                            Delete
+                        </button>
+
+                    </div>
 
                 </div>
 
@@ -2067,6 +2697,287 @@ function renderChapters(
             }
         );
 
+
+    chapterList
+        .querySelectorAll(
+            "[data-edit-chapter]"
+        )
+        .forEach(
+            (button) => {
+
+                button.addEventListener(
+                    "click",
+                    () => {
+
+                        editChapter(
+                            button.dataset.editChapter
+                        );
+
+                    }
+                );
+
+            }
+        );
+
+
+    chapterList
+        .querySelectorAll(
+            "[data-delete-chapter]"
+        )
+        .forEach(
+            (button) => {
+
+                button.addEventListener(
+                    "click",
+                    () => {
+
+                        deleteChapter(
+                            button.dataset.deleteChapter
+                        );
+
+                    }
+                );
+
+            }
+        );
+
+}
+
+
+/* ============================================================
+   EDIT CHAPTER
+============================================================ */
+
+async function editChapter(
+    chapterId
+) {
+
+    const chapter =
+        await getDocument(
+            CHAPTERS,
+            chapterId
+        );
+
+
+    if (!chapter) {
+        return;
+    }
+
+
+    const newNumber =
+        prompt(
+            "Chapter number:",
+            chapter.chapterNumber ?? 1
+        );
+
+
+    if (newNumber === null) {
+        return;
+    }
+
+
+    const newName =
+        prompt(
+            "Chapter name:",
+            chapter.chapterName || ""
+        );
+
+
+    if (newName === null) {
+        return;
+    }
+
+
+    try {
+
+        await setDoc(
+            doc(
+                db,
+                CHAPTERS,
+                chapterId
+            ),
+            {
+
+                chapterNumber:
+                    Number(newNumber) || 1,
+
+                chapterName:
+                    newName.trim(),
+
+                updatedAt:
+                    serverTimestamp()
+
+            },
+            {
+                merge: true
+            }
+        );
+
+
+        showToast(
+            "Chapter updated successfully."
+        );
+
+
+        await loadChapters(
+            selectedCourseId,
+            selectedSubjectId
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "Edit chapter error:",
+            error
+        );
+
+
+        showToast(
+            error.message ||
+            "Unable to update chapter."
+        );
+
+    }
+
+}
+
+
+/* ============================================================
+   DELETE CHAPTER
+============================================================ */
+
+async function deleteChapter(
+    chapterId
+) {
+
+    const chapter =
+        await getDocument(
+            CHAPTERS,
+            chapterId
+        );
+
+
+    if (!chapter) {
+        return;
+    }
+
+
+    const confirmed =
+        confirm(
+            `Delete "Chapter ${chapter.chapterNumber}: ${chapter.chapterName}"?\n\nAll videos and PDFs inside this chapter will also be deleted.`
+        );
+
+
+    if (!confirmed) {
+        return;
+    }
+
+
+    try {
+
+        await deleteChapterData(
+            chapterId
+        );
+
+
+        if (
+            selectedChapterId ===
+            chapterId
+        ) {
+
+            selectedChapterId =
+                null;
+
+        }
+
+
+        showToast(
+            "Chapter deleted successfully."
+        );
+
+
+        await loadChapters(
+            selectedCourseId,
+            selectedSubjectId
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "Delete chapter error:",
+            error
+        );
+
+
+        showToast(
+            error.message ||
+            "Unable to delete chapter."
+        );
+
+    }
+
+}
+
+
+/* ============================================================
+   DELETE CHAPTER DATA
+============================================================ */
+
+async function deleteChapterData(
+    chapterId
+) {
+
+    const contentSnapshot =
+        await getDocs(
+            query(
+                collection(
+                    db,
+                    CONTENT
+                ),
+                where(
+                    "chapterId",
+                    "==",
+                    chapterId
+                )
+            )
+        );
+
+
+    for (
+        const contentDoc
+        of contentSnapshot.docs
+    ) {
+
+        const content =
+            contentDoc.data();
+
+
+        await deleteStorageFile(
+            content.storagePath
+        );
+
+
+        await deleteDoc(
+            doc(
+                db,
+                CONTENT,
+                contentDoc.id
+            )
+        );
+
+    }
+
+
+    await deleteDoc(
+        doc(
+            db,
+            CHAPTERS,
+            chapterId
+        )
+    );
+
 }
 
 
@@ -2075,6 +2986,11 @@ function renderChapters(
 ============================================================ */
 
 function populateContentCourses() {
+
+    if (!contentCourseSelect) {
+        return;
+    }
+
 
     contentCourseSelect.innerHTML =
         `<option value="">
@@ -2170,7 +3086,6 @@ async function loadContentSubjects(
                     db,
                     SUBJECTS
                 ),
-
                 where(
                     "courseId",
                     "==",
@@ -2302,13 +3217,11 @@ async function loadContentChapters(
                     db,
                     CHAPTERS
                 ),
-
                 where(
                     "courseId",
                     "==",
                     courseId
                 ),
-
                 where(
                     "subjectId",
                     "==",
@@ -2517,82 +3430,64 @@ function updateContentTypeUI() {
 
 
 /* ============================================================
-   FILE BUTTONS
+   PDF BUTTON
 ============================================================ */
 
-videoBrowseButton.addEventListener(
-    "click",
-    () => {
+if (pdfBrowseButton) {
 
-        videoFile.click();
+    pdfBrowseButton.addEventListener(
+        "click",
+        () => {
 
-    }
-);
+            pdfFile.click();
 
+        }
+    );
 
-pdfBrowseButton.addEventListener(
-    "click",
-    () => {
-
-        pdfFile.click();
-
-    }
-);
+}
 
 
 /* ============================================================
-   FILE CHANGE
+   PDF CHANGE
 ============================================================ */
 
-videoFile.addEventListener(
-    "change",
-    () => {
+if (pdfFile) {
 
-        if (
-            videoFile.files &&
-            videoFile.files[0]
-        ) {
+    pdfFile.addEventListener(
+        "change",
+        () => {
 
-            videoFileName.textContent =
-                videoFile.files[0].name;
+            if (
+                pdfFile.files &&
+                pdfFile.files[0]
+            ) {
 
-        }
+                pdfFileName.textContent =
+                    pdfFile.files[0].name;
 
-    }
-);
-
-
-pdfFile.addEventListener(
-    "change",
-    () => {
-
-        if (
-            pdfFile.files &&
-            pdfFile.files[0]
-        ) {
-
-            pdfFileName.textContent =
-                pdfFile.files[0].name;
+            }
 
         }
+    );
 
-    }
-);
+}
 
 
 /* ============================================================
-   DRAG AND DROP
+   PDF DRAG AND DROP
 ============================================================ */
 
-setupDropZone(
-    videoDropZone,
-    videoFile
-);
-
-setupDropZone(
-    pdfDropZone,
+if (
+    pdfDropZone &&
     pdfFile
-);
+) {
+
+    setupDropZone(
+        pdfDropZone,
+        pdfFile
+    );
+
+}
 
 
 function setupDropZone(
@@ -2678,7 +3573,7 @@ function setupDropZone(
 
 
 /* ============================================================
-   UPLOAD CONTENT
+   SAVE CONTENT
 ============================================================ */
 
 uploadContentButton.addEventListener(
@@ -2732,21 +3627,20 @@ async function uploadContent() {
         accessType.value;
 
 
-    const file =
-        type === "VIDEO"
-            ? videoFile.files[0]
-            : pdfFile.files[0];
+    const order =
+        Number(
+            contentOrder.value || 1
+        );
 
 
-    if (!file) {
+    if (
+        !Number.isFinite(order) ||
+        order < 1
+    ) {
 
         showError(
             "contentError",
-            `Please select a ${
-                type === "VIDEO"
-                    ? "video"
-                    : "PDF"
-            } file.`
+            "Enter a valid content order."
         );
 
         return;
@@ -2754,38 +3648,105 @@ async function uploadContent() {
     }
 
 
-    /*
-     * Validate file.
-     */
+    /* ========================================================
+       VIDEO URL
+    ======================================================== */
 
-    if (
-        type === "PDF" &&
-        file.type !== "application/pdf"
-    ) {
+    let enteredVideoUrl =
+        "";
 
-        showError(
-            "contentError",
-            "Please select a valid PDF file."
-        );
 
-        return;
+    if (type === "VIDEO") {
+
+        if (!videoUrl) {
+
+            showError(
+                "contentError",
+                "Video URL field not found."
+            );
+
+            return;
+
+        }
+
+
+        enteredVideoUrl =
+            videoUrl.value.trim();
+
+
+        if (!enteredVideoUrl) {
+
+            showError(
+                "contentError",
+                "Please enter the video URL."
+            );
+
+            return;
+
+        }
+
+
+        try {
+
+            new URL(
+                enteredVideoUrl
+            );
+
+        } catch {
+
+            showError(
+                "contentError",
+                "Please enter a valid video URL."
+            );
+
+            return;
+
+        }
 
     }
 
 
-    if (
-        type === "VIDEO" &&
-        !file.type.startsWith(
-            "video/"
-        )
-    ) {
+    /* ========================================================
+       PDF
+    ======================================================== */
 
-        showError(
-            "contentError",
-            "Please select a valid video file."
-        );
+    let pdf =
+        null;
 
-        return;
+
+    if (type === "PDF") {
+
+        pdf =
+            pdfFile &&
+            pdfFile.files &&
+            pdfFile.files[0];
+
+
+        if (!pdf) {
+
+            showError(
+                "contentError",
+                "Please select a PDF file."
+            );
+
+            return;
+
+        }
+
+
+        if (
+            pdf.type !==
+            "application/pdf"
+        ) {
+
+            showError(
+                "contentError",
+                "Please select a valid PDF file."
+            );
+
+            return;
+
+        }
 
     }
 
@@ -2799,7 +3760,7 @@ async function uploadContent() {
 
 
     uploadContentButton.innerHTML =
-        "Uploading...";
+        "Saving...";
 
 
     uploadProgressContainer.classList.remove(
@@ -2809,16 +3770,11 @@ async function uploadContent() {
 
     updateUploadProgress(
         0,
-        "Preparing upload..."
+        "Preparing..."
     );
 
 
     try {
-
-        /*
-         * Generate Firestore content ID
-         * before uploading the file.
-         */
 
         const contentRef =
             doc(
@@ -2829,42 +3785,90 @@ async function uploadContent() {
             );
 
 
-        const safeFileName =
-            sanitizeFileName(
-                file.name
+        let fileUrl =
+            "";
+
+        let storagePath =
+            "";
+
+        let fileName =
+            "";
+
+        let fileSize =
+            0;
+
+        let fileType =
+            "";
+
+
+        /* ====================================================
+           VIDEO URL
+        ==================================================== */
+
+        if (type === "VIDEO") {
+
+            updateUploadProgress(
+                60,
+                "Saving video URL..."
             );
 
 
-        const storagePath =
-            `zen2/${selectedCourseId}/${selectedSubjectId}/${selectedChapterId}/${contentRef.id}/${safeFileName}`;
+            fileUrl =
+                enteredVideoUrl;
+
+        }
 
 
-        const storageReference =
-            ref(
-                storage,
-                storagePath
-            );
+        /* ====================================================
+           PDF UPLOAD
+        ==================================================== */
+
+        if (type === "PDF") {
+
+            const safeFileName =
+                sanitizeFileName(
+                    pdf.name
+                );
 
 
-        /*
-         * Upload to Firebase Storage.
-         */
-
-        const uploadTask =
-            uploadBytesResumable(
-                storageReference,
-                file,
-                {
-                    contentType:
-                        file.type
-                }
-            );
+            storagePath =
+                `zen2/${selectedCourseId}/${selectedSubjectId}/${selectedChapterId}/${contentRef.id}/${safeFileName}`;
 
 
-        const downloadURL =
-            await waitForUpload(
-                uploadTask
-            );
+            const storageReference =
+                ref(
+                    storage,
+                    storagePath
+                );
+
+
+            const uploadTask =
+                uploadBytesResumable(
+                    storageReference,
+                    pdf,
+                    {
+                        contentType:
+                            pdf.type
+                    }
+                );
+
+
+            fileUrl =
+                await waitForUpload(
+                    uploadTask
+                );
+
+
+            fileName =
+                pdf.name;
+
+            fileSize =
+                pdf.size;
+
+            fileType =
+                pdf.type;
+
+        }
 
 
         updateUploadProgress(
@@ -2873,13 +3877,8 @@ async function uploadContent() {
         );
 
 
-        /*
-         * Save metadata in Firestore.
-         */
-
         await setDoc(
             contentRef,
-
             {
 
                 courseId:
@@ -2891,7 +3890,6 @@ async function uploadContent() {
                 chapterId:
                     selectedChapterId,
 
-
                 title:
                     title,
 
@@ -2901,60 +3899,52 @@ async function uploadContent() {
                 accessType:
                     access,
 
-
-                /*
-                 * FREE or PAID
-                 *
-                 * Student app will use
-                 * this field to decide
-                 * whether the item is locked.
-                 */
-
                 isFree:
                     access === "FREE",
 
                 requiresPurchase:
                     access === "PAID",
 
-
                 order:
-                    Number(
-                        contentOrder.value ||
-                        1
-                    ),
-
+                    order,
 
                 description:
-                    contentDescription
-                        .value
-                        .trim(),
-
+                    contentDescription.value.trim(),
 
                 thumbnailUrl:
-                    thumbnailUrl
-                        .value
-                        .trim(),
+                    thumbnailUrl.value.trim(),
 
+                /*
+                 * VIDEO
+                 */
+                videoUrl:
+                    type === "VIDEO"
+                        ? enteredVideoUrl
+                        : "",
 
+                /*
+                 * Both VIDEO and PDF
+                 */
+                fileUrl:
+                    fileUrl,
+
+                /*
+                 * PDF only
+                 */
                 fileName:
-                    file.name,
+                    fileName,
 
                 fileSize:
-                    file.size,
+                    fileSize,
 
                 fileType:
-                    file.type,
+                    fileType,
 
                 storagePath:
                     storagePath,
 
-                fileUrl:
-                    downloadURL,
-
-
                 active:
                     true,
-
 
                 createdBy:
                     currentUser.uid,
@@ -2971,12 +3961,12 @@ async function uploadContent() {
 
         updateUploadProgress(
             100,
-            "Upload complete."
+            "Saved successfully."
         );
 
 
         showToast(
-            `${type === "VIDEO" ? "Video" : "PDF"} uploaded successfully.`
+            `${type === "VIDEO" ? "Video" : "PDF"} saved successfully.`
         );
 
 
@@ -2991,7 +3981,7 @@ async function uploadContent() {
     } catch (error) {
 
         console.error(
-            "Upload content error:",
+            "Save content error:",
             error
         );
 
@@ -2999,20 +3989,21 @@ async function uploadContent() {
         showError(
             "contentError",
             error.message ||
-            "Unable to upload content."
+            "Unable to save content."
         );
-
 
     } finally {
 
         contentUploading =
             false;
 
+
         uploadContentButton.disabled =
             false;
 
+
         uploadContentButton.innerHTML =
-            `Upload Content <span>↑</span>`;
+            `Save Content <span>↑</span>`;
 
     }
 
@@ -3020,7 +4011,7 @@ async function uploadContent() {
 
 
 /* ============================================================
-   WAIT FOR UPLOAD
+   WAIT FOR PDF UPLOAD
 ============================================================ */
 
 function waitForUpload(
@@ -3050,7 +4041,7 @@ function waitForUpload(
 
                     updateUploadProgress(
                         percentage,
-                        "Uploading file..."
+                        "Uploading PDF..."
                     );
 
                 },
@@ -3071,6 +4062,7 @@ function waitForUpload(
                             await getDownloadURL(
                                 uploadTask.snapshot.ref
                             );
+
 
                         resolve(
                             url
@@ -3103,9 +4095,7 @@ async function loadContent(
 ) {
 
     if (!chapterId) {
-
         return;
-
     }
 
 
@@ -3118,7 +4108,6 @@ async function loadContent(
                         db,
                         CONTENT
                     ),
-
                     where(
                         "chapterId",
                         "==",
@@ -3182,7 +4171,7 @@ function renderContent(
 
         contentList.innerHTML =
             `<div class="empty-state">
-                No videos or PDFs uploaded yet.
+                No videos or PDFs added yet.
             </div>`;
 
         return;
@@ -3224,6 +4213,29 @@ function renderContent(
                     : "PAID";
 
 
+            let sourceText =
+                "";
+
+
+            if (
+                item.contentType ===
+                "VIDEO"
+            ) {
+
+                sourceText =
+                    item.videoUrl ||
+                    item.fileUrl ||
+                    "No video URL";
+
+            } else {
+
+                sourceText =
+                    item.fileName ||
+                    "PDF";
+
+            }
+
+
             card.innerHTML = `
 
                 <div class="content-main">
@@ -3243,21 +4255,46 @@ function renderContent(
 
                         <span>
                             ${escapeHtml(
-                                item.fileName ||
-                                ""
+                                sourceText
                             )}
                         </span>
+
+                        <small>
+                            Order: ${Number(
+                                item.order || 0
+                            )}
+                        </small>
 
                     </div>
 
                 </div>
 
 
-                <span
-                    class="access-badge ${accessClass}"
-                >
-                    ${accessLabel}
-                </span>
+                <div class="content-actions">
+
+                    <span
+                        class="access-badge ${accessClass}"
+                    >
+                        ${accessLabel}
+                    </span>
+
+                    <button
+                        type="button"
+                        class="edit-button"
+                        data-edit-content="${item.id}"
+                    >
+                        Edit
+                    </button>
+
+                    <button
+                        type="button"
+                        class="delete-button"
+                        data-delete-content="${item.id}"
+                    >
+                        Delete
+                    </button>
+
+                </div>
 
             `;
 
@@ -3268,6 +4305,432 @@ function renderContent(
 
         }
     );
+
+
+    contentList
+        .querySelectorAll(
+            "[data-edit-content]"
+        )
+        .forEach(
+            (button) => {
+
+                button.addEventListener(
+                    "click",
+                    () => {
+
+                        editContent(
+                            button.dataset.editContent
+                        );
+
+                    }
+                );
+
+            }
+        );
+
+
+    contentList
+        .querySelectorAll(
+            "[data-delete-content]"
+        )
+        .forEach(
+            (button) => {
+
+                button.addEventListener(
+                    "click",
+                    () => {
+
+                        deleteContent(
+                            button.dataset.deleteContent
+                        );
+
+                    }
+                );
+
+            }
+        );
+
+}
+
+
+/* ============================================================
+   EDIT CONTENT
+============================================================ */
+
+async function editContent(
+    contentId
+) {
+
+    const content =
+        await getDocument(
+            CONTENT,
+            contentId
+        );
+
+
+    if (!content) {
+
+        showToast(
+            "Content not found."
+        );
+
+        return;
+
+    }
+
+
+    const newTitle =
+        prompt(
+            "Content title:",
+            content.title || ""
+        );
+
+
+    if (newTitle === null) {
+        return;
+    }
+
+
+    const newAccess =
+        prompt(
+            "Access type (FREE / PAID):",
+            content.accessType ||
+            (
+                content.isFree
+                    ? "FREE"
+                    : "PAID"
+            )
+        );
+
+
+    if (newAccess === null) {
+        return;
+    }
+
+
+    const normalizedAccess =
+        newAccess
+            .trim()
+            .toUpperCase();
+
+
+    if (
+        normalizedAccess !==
+            "FREE" &&
+        normalizedAccess !==
+            "PAID"
+    ) {
+
+        showToast(
+            "Access type must be FREE or PAID."
+        );
+
+        return;
+
+    }
+
+
+    const newOrder =
+        prompt(
+            "Content order:",
+            content.order ?? 1
+        );
+
+
+    if (newOrder === null) {
+        return;
+    }
+
+
+    const newDescription =
+        prompt(
+            "Description:",
+            content.description || ""
+        );
+
+
+    if (newDescription === null) {
+        return;
+    }
+
+
+    const newThumbnail =
+        prompt(
+            "Thumbnail URL:",
+            content.thumbnailUrl || ""
+        );
+
+
+    if (newThumbnail === null) {
+        return;
+    }
+
+
+    let newVideoUrl =
+        content.videoUrl ||
+        content.fileUrl ||
+        "";
+
+
+    if (
+        content.contentType ===
+        "VIDEO"
+    ) {
+
+        newVideoUrl =
+            prompt(
+                "Video URL:",
+                newVideoUrl
+            );
+
+
+        if (
+            newVideoUrl ===
+            null
+        ) {
+
+            return;
+
+        }
+
+
+        newVideoUrl =
+            newVideoUrl.trim();
+
+
+        if (!newVideoUrl) {
+
+            showToast(
+                "Video URL cannot be empty."
+            );
+
+            return;
+
+        }
+
+
+        try {
+
+            new URL(
+                newVideoUrl
+            );
+
+        } catch {
+
+            showToast(
+                "Please enter a valid video URL."
+            );
+
+            return;
+
+        }
+
+    }
+
+
+    try {
+
+        const updateData = {
+
+            title:
+                newTitle.trim(),
+
+            accessType:
+                normalizedAccess,
+
+            isFree:
+                normalizedAccess ===
+                "FREE",
+
+            requiresPurchase:
+                normalizedAccess ===
+                "PAID",
+
+            order:
+                Number(newOrder) || 1,
+
+            description:
+                newDescription.trim(),
+
+            thumbnailUrl:
+                newThumbnail.trim(),
+
+            updatedAt:
+                serverTimestamp()
+
+        };
+
+
+        if (
+            content.contentType ===
+            "VIDEO"
+        ) {
+
+            updateData.videoUrl =
+                newVideoUrl;
+
+            updateData.fileUrl =
+                newVideoUrl;
+
+        }
+
+
+        await setDoc(
+            doc(
+                db,
+                CONTENT,
+                contentId
+            ),
+            updateData,
+            {
+                merge: true
+            }
+        );
+
+
+        showToast(
+            "Content updated successfully."
+        );
+
+
+        await loadContent(
+            selectedChapterId
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "Edit content error:",
+            error
+        );
+
+
+        showToast(
+            error.message ||
+            "Unable to update content."
+        );
+
+    }
+
+}
+
+
+/* ============================================================
+   DELETE CONTENT
+============================================================ */
+
+async function deleteContent(
+    contentId
+) {
+
+    const content =
+        await getDocument(
+            CONTENT,
+            contentId
+        );
+
+
+    if (!content) {
+        return;
+    }
+
+
+    const confirmed =
+        confirm(
+            `Delete "${content.title || "this content"}"?`
+        );
+
+
+    if (!confirmed) {
+        return;
+    }
+
+
+    try {
+
+        await deleteStorageFile(
+            content.storagePath
+        );
+
+
+        await deleteDoc(
+            doc(
+                db,
+                CONTENT,
+                contentId
+            )
+        );
+
+
+        showToast(
+            "Content deleted successfully."
+        );
+
+
+        await loadContent(
+            selectedChapterId
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "Delete content error:",
+            error
+        );
+
+
+        showToast(
+            error.message ||
+            "Unable to delete content."
+        );
+
+    }
+
+}
+
+
+/* ============================================================
+   DELETE STORAGE FILE
+============================================================ */
+
+async function deleteStorageFile(
+    storagePath
+) {
+
+    if (!storagePath) {
+        return;
+    }
+
+
+    try {
+
+        const storageReference =
+            ref(
+                storage,
+                storagePath
+            );
+
+
+        await deleteObject(
+            storageReference
+        );
+
+
+    } catch (error) {
+
+        /*
+         * If file does not exist,
+         * continue deleting Firestore data.
+         */
+
+        console.warn(
+            "Storage delete warning:",
+            error
+        );
+
+    }
 
 }
 
@@ -3323,9 +4786,16 @@ function resetContentForm() {
     contentOrder.value =
         "1";
 
-
     accessType.value =
         "FREE";
+
+
+    if (videoUrl) {
+
+        videoUrl.value =
+            "";
+
+    }
 
 
     resetSelectedFiles();
@@ -3344,25 +4814,40 @@ function resetContentForm() {
 }
 
 
+/* ============================================================
+   RESET FILES
+============================================================ */
+
 function resetSelectedFiles() {
 
-    videoFile.value =
-        "";
+    if (pdfFile) {
 
-    pdfFile.value =
-        "";
+        pdfFile.value =
+            "";
 
-    videoFileName.textContent =
-        "";
+    }
 
-    pdfFileName.textContent =
-        "";
+
+    if (videoUrl) {
+
+        videoUrl.value =
+            "";
+
+    }
+
+
+    if (pdfFileName) {
+
+        pdfFileName.textContent =
+            "";
+
+    }
 
 }
 
 
 /* ============================================================
-   BATCH FORM RESET
+   RESET BATCH FORM
 ============================================================ */
 
 function resetBatchForm() {
@@ -3416,15 +4901,19 @@ async function getDocument(
 
 
     return {
-        id: snapshot.id,
+
+        id:
+            snapshot.id,
+
         ...snapshot.data()
+
     };
 
 }
 
 
 /* ============================================================
-   ERROR HELPERS
+   ERROR
 ============================================================ */
 
 function showError(
@@ -3446,12 +4935,17 @@ function showError(
     element.textContent =
         message;
 
+
     element.classList.add(
         "show"
     );
 
 }
 
+
+/* ============================================================
+   CLEAR ERRORS
+============================================================ */
 
 function clearErrors() {
 
@@ -3479,7 +4973,8 @@ function clearErrors() {
    TOAST
 ============================================================ */
 
-let toastTimer = null;
+let toastTimer =
+    null;
 
 
 function showToast(
@@ -3490,6 +4985,11 @@ function showToast(
         document.getElementById(
             "toast"
         );
+
+
+    if (!toast) {
+        return;
+    }
 
 
     toast.textContent =
