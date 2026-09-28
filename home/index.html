@@ -17,13 +17,11 @@
         content="#111111"
     >
 
-    <!-- Remix Icons -->
     <link
         href="https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.css"
         rel="stylesheet"
     >
 
-    <!-- Poppins -->
     <link
         rel="preconnect"
         href="https://fonts.googleapis.com"
@@ -31,7 +29,7 @@
 
     <link
         rel="preconnect"
-        href="https://fonts.gstatic.com"
+        href="https://fonts.googleapis.com"
         crossorigin
     >
 
@@ -51,9 +49,9 @@
 <body>
 
 
-<!-- =========================================================
+<!-- =====================================================
      LOADER
-========================================================= -->
+====================================================== -->
 
 <div
     id="zenovaLoader"
@@ -69,9 +67,10 @@
 </div>
 
 
-<!-- =========================================================
+
+<!-- =====================================================
      APP
-========================================================= -->
+====================================================== -->
 
 <div
     id="zenovaApp"
@@ -79,24 +78,30 @@
 >
 
 
-    <!-- =====================================================
+    <!-- =================================================
          HEADER
-    ====================================================== -->
+    ================================================== -->
 
     <header class="home-header">
 
-        <div>
+        <div class="header-left">
 
             <span class="welcome-small">
                 WELCOME BACK
             </span>
 
             <h1>
-                Good Morning,
+
+                <span id="greeting">
+                    Good Morning,
+                </span>
+
                 <span id="studentName">
                     Student
                 </span>
+
                 👋
+
             </h1>
 
             <p>
@@ -109,6 +114,7 @@
         <button
             id="profileShortcut"
             class="profile-button"
+            type="button"
         >
 
             <span id="profileInitial">
@@ -121,15 +127,15 @@
 
 
 
-    <!-- =====================================================
+    <!-- =================================================
          MAIN
-    ====================================================== -->
+    ================================================== -->
 
     <main class="home-main">
 
 
         <!-- =================================================
-             BANNER
+             BANNERS
         ================================================== -->
 
         <section
@@ -142,6 +148,7 @@
                 class="hero-slider"
             ></div>
 
+
             <div
                 id="heroDots"
                 class="hero-dots"
@@ -152,7 +159,7 @@
 
 
         <!-- =================================================
-             FOUR QUICK CARDS
+             QUICK ACTIONS
         ================================================== -->
 
         <section class="quick-section">
@@ -165,6 +172,7 @@
                 <button
                     class="quick-card"
                     data-route="revision"
+                    type="button"
                 >
 
                     <div class="quick-icon revision">
@@ -188,6 +196,7 @@
                 <button
                     class="quick-card"
                     data-route="live"
+                    type="button"
                 >
 
                     <div class="quick-icon live">
@@ -211,6 +220,7 @@
                 <button
                     class="quick-card"
                     data-route="tests"
+                    type="button"
                 >
 
                     <div class="quick-icon tests">
@@ -234,6 +244,7 @@
                 <button
                     class="quick-card"
                     data-route="doubts"
+                    type="button"
                 >
 
                     <div class="quick-icon doubts">
@@ -270,7 +281,7 @@
                 <div>
 
                     <span>
-                        YOUR LEARNING
+                        YOUR COURSE
                     </span>
 
                     <h2>
@@ -288,7 +299,7 @@
             >
 
                 <div class="loading-card">
-                    Loading batches...
+                    Loading your course...
                 </div>
 
             </div>
@@ -311,17 +322,19 @@
                 <div>
 
                     <span>
-                        LIVE & SCHEDULE
+                        TODAY
                     </span>
 
                     <h2>
-                        Today's Classes
+                        Today's Live Class
                     </h2>
 
                 </div>
 
 
-                <a href="../live/">
+                <a
+                    href="../live/"
+                >
                     View All →
                 </a>
 
@@ -334,7 +347,7 @@
             >
 
                 <div class="loading-card">
-                    Loading today's classes...
+                    Checking today's classes...
                 </div>
 
             </div>
@@ -372,7 +385,13 @@
             <div
                 id="continueCard"
                 class="continue-card"
-            ></div>
+            >
+
+                <div class="loading-card">
+                    Loading...
+                </div>
+
+            </div>
 
         </section>
 
@@ -382,11 +401,12 @@
              ZENOVA AI
         ================================================== -->
 
-        <section class="home-section ai-section">
+        <section class="home-section">
 
             <button
                 id="aiButton"
                 class="ai-card"
+                type="button"
             >
 
                 <div class="ai-logo">
@@ -422,55 +442,21 @@
 
 
 
-        <!-- =================================================
-             ANNOUNCEMENTS
-        ================================================== -->
-
-        <section
-            id="announcementSection"
-            class="home-section hidden"
-        >
-
-            <div class="section-heading">
-
-                <div>
-
-                    <span>
-                        UPDATES
-                    </span>
-
-                    <h2>
-                        Announcements
-                    </h2>
-
-                </div>
-
-            </div>
-
-
-            <div
-                id="announcementList"
-                class="announcement-list"
-            ></div>
-
-        </section>
-
-
         <div class="bottom-space"></div>
 
     </main>
 
 
 
-    <!-- =====================================================
-         FIXED BOTTOM NAVIGATION
-    ====================================================== -->
+    <!-- =================================================
+         BOTTOM NAVIGATION
+    ================================================== -->
 
     <nav class="bottom-navigation">
 
 
         <a
-            href="../home/"
+            href="./"
             class="nav-item active"
         >
 
@@ -481,7 +467,6 @@
             </span>
 
         </a>
-
 
 
         <a
@@ -498,7 +483,6 @@
         </a>
 
 
-
         <a
             href="../revision/"
             class="nav-item"
@@ -511,7 +495,6 @@
             </span>
 
         </a>
-
 
 
         <a
@@ -530,6 +513,39 @@
     </nav>
 
 </div>
+
+
+
+<!-- =====================================================
+     ERROR
+====================================================== -->
+
+<div
+    id="errorScreen"
+    class="error-screen hidden"
+>
+
+    <div class="error-logo">
+        ZENOVA
+    </div>
+
+    <h2>
+        Something went wrong
+    </h2>
+
+    <p id="errorMessage">
+        We couldn't load your Home.
+    </p>
+
+    <button
+        id="retryButton"
+        type="button"
+    >
+        TRY AGAIN
+    </button>
+
+</div>
+
 
 
 <script
