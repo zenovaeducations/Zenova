@@ -3,11 +3,9 @@ import {
     db
 } from "../../firebase/firebase-config.js";
 
-
 import {
     onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
-
 
 import {
     collection,
@@ -24,13 +22,9 @@ import {
 ===================================================== */
 
 let currentUser = null;
-
 let student = null;
-
 let currentCourse = null;
-
 let subjects = [];
-
 let contents = [];
 
 
@@ -39,27 +33,16 @@ let contents = [];
 ===================================================== */
 
 const loader =
-    document.getElementById(
-        "loader"
-    );
-
+    document.getElementById("loader");
 
 const app =
-    document.getElementById(
-        "app"
-    );
-
+    document.getElementById("app");
 
 const errorScreen =
-    document.getElementById(
-        "errorScreen"
-    );
-
+    document.getElementById("errorScreen");
 
 const errorMessage =
-    document.getElementById(
-        "errorMessage"
-    );
+    document.getElementById("errorMessage");
 
 
 /* =====================================================
@@ -68,7 +51,17 @@ const errorMessage =
 
 onAuthStateChanged(
     auth,
-    async user => {
+    async (user) => {
+
+        console.log(
+            "REVISION AUTH:",
+            user
+        );
+
+
+        /* ---------------------------------------------
+           NOT LOGGED IN
+        --------------------------------------------- */
 
         if (!user) {
 
@@ -81,19 +74,45 @@ onAuthStateChanged(
         }
 
 
-        currentUser =
-            user;
+        currentUser = user;
 
 
         try {
 
+            /*
+             * IMPORTANT:
+             * Use the REAL student collection.
+             *
+             * students/{uid}
+             */
+
             await loadStudent();
+
+
+            /*
+             * Find course for student's class.
+             */
 
             await loadCourse();
 
+
+            /*
+             * Load subjects belonging
+             * to that course.
+             */
+
             await loadSubjects();
 
+
+            /*
+             * Load content for
+             * recommendations.
+             */
+
             await loadContent();
+
+
+            renderStudent();
 
             renderCourseName();
 
@@ -112,10 +131,9 @@ onAuthStateChanged(
         catch (error) {
 
             console.error(
-                "REVISION ERROR:",
+                "REVISION PAGE ERROR:",
                 error
             );
-
 
             showError(
                 error?.message ||
@@ -135,13 +153,21 @@ onAuthStateChanged(
 async function loadStudent() {
 
     /*
-     * ACTUAL ZEN2 STUDENT COLLECTION
+     * THIS IS THE IMPORTANT FIX.
+     *
+     * Actual collection:
+     *
+     * students
+     *
+     * Document:
+     *
+     * students/{uid}
      */
 
     const studentRef =
         doc(
             db,
-            "zen2Students",
+            "students",
             currentUser.uid
         );
 
@@ -152,15 +178,26 @@ async function loadStudent() {
         );
 
 
-    if (
-        !snapshot.exists()
-    ) {
+    console.log(
+        "STUDENT EXISTS:",
+        snapshot.exists()
+    );
 
-        window.location.replace(
-            "../../account/onboarding/"
+
+    /*
+     * DO NOT REDIRECT TO ONBOARDING HERE.
+     *
+     * Home already handles authentication/onboarding.
+     *
+     * If something is wrong, show an error instead
+     * of creating a redirect loop.
+     */
+
+    if (!snapshot.exists()) {
+
+        throw new Error(
+            "Student profile was not found."
         );
-
-        return;
 
     }
 
@@ -169,37 +206,85 @@ async function loadStudent() {
         snapshot.data();
 
 
+    console.log(
+        "REVISION STUDENT DATA:",
+        student
+    );
+
+
+    /*
+     * Actual field from onboarding:
+     *
+     * onboardingComplete
+     */
+
     if (
         student.onboardingComplete !== true
     ) {
 
-        window.location.replace(
-            "../../account/onboarding/"
+        throw new Error(
+            "Student onboarding is not completed."
         );
 
-        return;
-
     }
-
-
-    console.log(
-        "REVISION STUDENT:",
-        student
-    );
 
 }
 
 
 /* =====================================================
-   LOAD CORRECT COURSE
+   STUDENT UI
+===================================================== */
+
+function renderStudent() {
+
+    const name =
+        student.name ||
+        student.fullName ||
+        currentUser.displayName ||
+        "Student";
+
+
+    const initial =
+        document.getElementById(
+            "profileInitial"
+        );
+
+
+    if (initial) {
+
+        initial.textContent =
+            name
+                .trim()
+                .charAt(0)
+                .toUpperCase();
+
+    }
+
+}
+
+
+/* =====================================================
+   LOAD COURSE
 ===================================================== */
 
 async function loadCourse() {
+
+    /*
+     * Actual onboarding field:
+     *
+     * className
+     */
 
     const studentClass =
         normalizeClass(
             student.className
         );
+
+
+    console.log(
+        "STUDENT CLASS:",
+        studentClass
+    );
 
 
     if (!studentClass) {
@@ -211,6 +296,10 @@ async function loadCourse() {
     }
 
 
+    /*
+     * Load ZEN2 courses.
+     */
+
     const snapshot =
         await getDocs(
             collection(
@@ -220,7 +309,7 @@ async function loadCourse() {
         );
 
 
-    const courses =
+    const allCourses =
         snapshot.docs.map(
             item => ({
 
@@ -233,8 +322,24 @@ async function loadCourse() {
         );
 
 
+    console.log(
+        "ALL ZEN2 COURSES:",
+        allCourses
+    );
+
+
+    /*
+     * Find course matching student's class.
+     *
+     * Example:
+     *
+     * student.className = "10th"
+     *
+     * course.className = "10th"
+     */
+
     const matchingCourses =
-        courses.filter(
+        allCourses.filter(
             course => {
 
                 const courseClass =
@@ -243,7 +348,7 @@ async function loadCourse() {
                     );
 
 
-                const isActive =
+                const active =
                     course.active !== false &&
                     course.status !== "INACTIVE";
 
@@ -251,12 +356,78 @@ async function loadCourse() {
                 return (
                     courseClass ===
                     studentClass
-                ) &&
-                isActive;
+                ) && active;
 
             }
         );
 
+
+    console.log(
+        "MATCHING COURSES:",
+        matchingCourses
+    );
+
+
+    /*
+     * If no class-specific course,
+     * try classDisplayName as fallback.
+     */
+
+    if (
+        !matchingCourses.length
+    ) {
+
+        const displayClass =
+            normalizeClass(
+                student.classDisplayName
+            );
+
+
+        if (displayClass) {
+
+            const fallback =
+                allCourses.filter(
+                    course => {
+
+                        return (
+                            normalizeClass(
+                                course.className
+                            ) === displayClass
+                        ) &&
+                        course.active !== false &&
+                        course.status !== "INACTIVE";
+
+                    }
+                );
+
+
+            if (fallback.length) {
+
+                matchingCourses.push(
+                    ...fallback
+                );
+
+            }
+
+        }
+
+    }
+
+
+    if (
+        !matchingCourses.length
+    ) {
+
+        throw new Error(
+            `No ZEN2 course found for ${student.className}.`
+        );
+
+    }
+
+
+    /*
+     * Respect admin order.
+     */
 
     matchingCourses.sort(
         (a, b) => {
@@ -278,26 +449,12 @@ async function loadCourse() {
     );
 
 
-    if (
-        !matchingCourses.length
-    ) {
-
-        throw new Error(
-            `No ZEN2 course found for ${
-                student.classDisplayName ||
-                student.className
-            }.`
-        );
-
-    }
-
-
     currentCourse =
         matchingCourses[0];
 
 
     console.log(
-        "REVISION COURSE:",
+        "SELECTED ZEN2 COURSE:",
         currentCourse
     );
 
@@ -309,6 +466,15 @@ async function loadCourse() {
 ===================================================== */
 
 async function loadSubjects() {
+
+    if (!currentCourse) {
+
+        throw new Error(
+            "Course not selected."
+        );
+
+    }
+
 
     const subjectQuery =
         query(
@@ -344,6 +510,10 @@ async function loadSubjects() {
         );
 
 
+    /*
+     * Ignore disabled subjects.
+     */
+
     subjects =
         subjects.filter(
             subject =>
@@ -351,16 +521,22 @@ async function loadSubjects() {
         );
 
 
+    /*
+     * Admin order.
+     */
+
     subjects.sort(
         (a, b) => {
 
             return (
                 Number(
                     a.order ??
+                    a.priority ??
                     9999
                 ) -
                 Number(
                     b.order ??
+                    b.priority ??
                     9999
                 )
             );
@@ -370,7 +546,7 @@ async function loadSubjects() {
 
 
     console.log(
-        "REVISION SUBJECTS:",
+        "ZEN2 SUBJECTS:",
         subjects
     );
 
@@ -382,6 +558,11 @@ async function loadSubjects() {
 ===================================================== */
 
 async function loadContent() {
+
+    if (!currentCourse) {
+        return;
+    }
+
 
     const contentQuery =
         query(
@@ -443,7 +624,7 @@ async function loadContent() {
 
 
     console.log(
-        "REVISION CONTENT:",
+        "ZEN2 CONTENT:",
         contents
     );
 
@@ -462,12 +643,15 @@ function renderCourseName() {
         );
 
 
-    if (!element) return;
+    if (!element) {
+        return;
+    }
 
 
     element.textContent =
         currentCourse.courseName ||
-        currentCourse.classDisplayName ||
+        currentCourse.name ||
+        currentCourse.className ||
         "Your Course";
 
 }
@@ -485,7 +669,9 @@ function renderSubjects() {
         );
 
 
-    if (!container) return;
+    if (!container) {
+        return;
+    }
 
 
     if (!subjects.length) {
@@ -494,14 +680,8 @@ function renderSubjects() {
 
             <div class="loading-box">
 
-                No subjects available for
-                ${
-                    escapeHtml(
-                        currentCourse.courseName ||
-                        currentCourse.classDisplayName ||
-                        "your course"
-                    )
-                }.
+                No subjects available
+                for this course.
 
             </div>
 
@@ -517,14 +697,15 @@ function renderSubjects() {
             .map(
                 subject => {
 
-                    const subjectName =
+                    const name =
                         subject.subjectName ||
+                        subject.name ||
                         subject.displayName ||
                         "Subject";
 
 
                     const firstLetter =
-                        subjectName
+                        name
                             .trim()
                             .charAt(0)
                             .toUpperCase();
@@ -542,11 +723,9 @@ function renderSubjects() {
                             <div
                                 class="subject-icon"
                             >
-
                                 ${escapeHtml(
                                     firstLetter
                                 )}
-
                             </div>
 
 
@@ -556,13 +735,13 @@ function renderSubjects() {
 
                                 <h3>
                                     ${escapeHtml(
-                                        subjectName
+                                        name
                                     )}
                                 </h3>
 
 
                                 <p>
-                                    Open subject →
+                                    View Chapters →
                                 </p>
 
                             </div>
@@ -582,6 +761,14 @@ function renderSubjects() {
             )
             .join("");
 
+
+    /*
+     * SUBJECT CLICK
+     *
+     * Revision
+     * ↓
+     * Subject Details
+     */
 
     document
         .querySelectorAll(
@@ -630,11 +817,12 @@ function renderContinueLearning() {
         );
 
 
-    if (!container) return;
+    if (!container) {
+        return;
+    }
 
 
-    let lastWatched =
-        null;
+    let lastWatched = null;
 
 
     const saved =
@@ -664,20 +852,19 @@ function renderContinueLearning() {
     }
 
 
-    let content =
-        null;
+    let video = null;
 
 
     /*
-     * First priority:
-     * student's last watched content.
+     * First:
+     * last watched video
      */
 
     if (
         lastWatched?.contentId
     ) {
 
-        content =
+        video =
             contents.find(
                 item =>
                     item.id ===
@@ -688,32 +875,44 @@ function renderContinueLearning() {
 
 
     /*
-     * If no previous content:
-     * first VIDEO by admin order.
+     * Otherwise:
+     * first uploaded video
      */
 
-    if (!content) {
+    if (!video) {
 
-        content =
+        video =
             contents.find(
-                item =>
-                    String(
-                        item.contentType ||
-                        ""
-                    )
-                    .toUpperCase() ===
-                    "VIDEO"
+                item => {
+
+                    const type =
+                        String(
+                            item.contentType ||
+                            item.type ||
+                            ""
+                        )
+                        .toUpperCase();
+
+
+                    return (
+                        type === "VIDEO"
+                    );
+
+                }
             );
 
     }
 
 
-    if (!content) {
+    if (!video) {
 
         container.innerHTML = `
 
             <div class="loading-box">
-                No learning videos available yet.
+
+                No learning videos
+                available yet.
+
             </div>
 
         `;
@@ -727,12 +926,13 @@ function renderContinueLearning() {
         subjects.find(
             item =>
                 item.id ===
-                content.subjectId
+                video.subjectId
         );
 
 
     const subjectName =
         subject?.subjectName ||
+        subject?.name ||
         subject?.displayName ||
         "Subject";
 
@@ -742,13 +942,13 @@ function renderContinueLearning() {
         <div class="continue-thumbnail">
 
             ${
-                content.thumbnailUrl
+                video.thumbnailUrl
 
                     ? `
 
                         <img
                             src="${escapeHtml(
-                                content.thumbnailUrl
+                                video.thumbnailUrl
                             )}"
                             alt=""
                         >
@@ -774,19 +974,18 @@ function renderContinueLearning() {
             <span
                 class="continue-label"
             >
-
                 ${
                     lastWatched
                         ? "CONTINUE LEARNING"
                         : "START LEARNING"
                 }
-
             </span>
 
 
             <h3>
                 ${escapeHtml(
-                    content.title ||
+                    video.title ||
+                    video.contentTitle ||
                     "Learning Video"
                 )}
             </h3>
@@ -806,13 +1005,11 @@ function renderContinueLearning() {
             class="continue-button"
             type="button"
         >
-
             ${
                 lastWatched
                     ? "CONTINUE"
                     : "START"
             }
-
         </button>
 
     `;
@@ -827,7 +1024,7 @@ function renderContinueLearning() {
             () => {
 
                 openContent(
-                    content
+                    video
                 );
 
             }
@@ -848,23 +1045,27 @@ function renderRecommendedVideos() {
         );
 
 
-    if (!container) return;
+    if (!container) {
+        return;
+    }
 
-
-    /*
-     * Only VIDEO content.
-     */
 
     const videos =
         contents.filter(
             content => {
 
-                return String(
-                    content.contentType ||
-                    ""
-                )
-                .toUpperCase() ===
-                "VIDEO";
+                const type =
+                    String(
+                        content.contentType ||
+                        content.type ||
+                        ""
+                    )
+                    .toUpperCase();
+
+
+                return (
+                    type === "VIDEO"
+                );
 
             }
         );
@@ -875,7 +1076,10 @@ function renderRecommendedVideos() {
         container.innerHTML = `
 
             <div class="loading-box">
-                No recommended videos available yet.
+
+                No recommended videos
+                available yet.
+
             </div>
 
         `;
@@ -911,11 +1115,12 @@ function renderRecommendedVideos() {
 
                     const subjectName =
                         subject?.subjectName ||
+                        subject?.name ||
                         subject?.displayName ||
                         "";
 
 
-                    const access =
+                    const accessType =
                         String(
                             video.accessType ||
                             ""
@@ -971,7 +1176,7 @@ function renderRecommendedVideos() {
 
 
                                 ${
-                                    access
+                                    accessType
 
                                         ? `
 
@@ -979,7 +1184,7 @@ function renderRecommendedVideos() {
                                                 class="access-badge"
                                             >
                                                 ${escapeHtml(
-                                                    access
+                                                    accessType
                                                 )}
                                             </span>
 
@@ -998,6 +1203,7 @@ function renderRecommendedVideos() {
                                 <h3>
                                     ${escapeHtml(
                                         video.title ||
+                                        video.contentTitle ||
                                         "Learning Video"
                                     )}
                                 </h3>
@@ -1031,24 +1237,21 @@ function renderRecommendedVideos() {
                     "click",
                     () => {
 
-                        const contentId =
+                        const id =
                             card.dataset.contentId;
 
 
-                        const content =
+                        const video =
                             contents.find(
                                 item =>
-                                    item.id ===
-                                    contentId
+                                    item.id === id
                             );
 
 
-                        if (
-                            content
-                        ) {
+                        if (video) {
 
                             openContent(
-                                content
+                                video
                             );
 
                         }
@@ -1070,10 +1273,19 @@ function openContent(
     content
 ) {
 
-    /*
-     * Chapter details page will receive
-     * the chapter, subject and content IDs.
-     */
+    if (
+        !content.chapterId
+    ) {
+
+        console.warn(
+            "Chapter ID missing:",
+            content
+        );
+
+        return;
+
+    }
+
 
     window.location.href =
         `../chapterdetails/?courseId=${
@@ -1086,7 +1298,7 @@ function openContent(
             )
         }&chapterId=${
             encodeURIComponent(
-                content.chapterId || ""
+                content.chapterId
             )
         }&contentId=${
             encodeURIComponent(
@@ -1119,35 +1331,19 @@ function setupNavigation() {
         }
     );
 
-
-    /*
-     * Bottom navigation is already
-     * handled by normal <a> links.
-     */
-
 }
 
 
 /* =====================================================
-   NORMALIZE CLASS
+   CLASS NORMALIZATION
 ===================================================== */
 
 function normalizeClass(
     value
 ) {
 
-    if (
-        value === undefined ||
-        value === null
-    ) {
-
-        return "";
-
-    }
-
-
     return String(
-        value
+        value || ""
     )
         .trim()
         .toUpperCase()
@@ -1165,15 +1361,19 @@ function normalizeClass(
 
 function showApp() {
 
-    app.classList.remove(
-        "hidden"
-    );
+    if (app) {
+
+        app.classList.remove(
+            "hidden"
+        );
+
+    }
 
 
     setTimeout(
         () => {
 
-            loader.classList.add(
+            loader?.classList.add(
                 "fade"
             );
 
@@ -1193,14 +1393,11 @@ function showError(
 ) {
 
     console.error(
-        "REVISION:",
         message
     );
 
 
-    if (
-        errorMessage
-    ) {
+    if (errorMessage) {
 
         errorMessage.textContent =
             message;
@@ -1208,12 +1405,12 @@ function showError(
     }
 
 
-    loader.classList.add(
+    loader?.classList.add(
         "fade"
     );
 
 
-    errorScreen.classList.remove(
+    errorScreen?.classList.remove(
         "hidden"
     );
 
