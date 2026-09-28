@@ -1,170 +1,444 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Chapter Details | Zenova</title>
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>Chapter | Zenova</title>
 
-    <link rel="stylesheet" href="./chapterdetails.css">
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
+        rel="stylesheet"
+    >
+
+    <link
+        rel="stylesheet"
+        href="./chapterdetails.css"
+    >
+
 </head>
+
 
 <body>
 
-    <!-- HEADER -->
-    <header class="top-header">
 
-        <button class="back-btn" id="backBtn">
+    <!-- =====================================================
+         TOP BAR
+    ====================================================== -->
+
+    <header class="topbar">
+
+        <button
+            id="backButton"
+            class="back-button"
+            type="button"
+        >
             <span>←</span>
+            <span>Back</span>
         </button>
 
-        <div class="header-title">
-            <span>Chapter Details</span>
-        </div>
 
-        <div class="profile-mini" id="profileInitial">
-            S
+        <div class="brand">
+
+            <div class="brand-logo">
+                Z
+            </div>
+
+            <div class="brand-text">
+
+                <strong>
+                    ZENOVA
+                </strong>
+
+                <span>
+                    EDUCATIONS
+                </span>
+
+            </div>
+
         </div>
 
     </header>
 
 
-    <!-- MAIN -->
-    <main class="main-content">
 
-        <!-- LOADER -->
-        <div class="loader-screen" id="loaderScreen">
-            <div class="loader"></div>
-            <p>Loading chapter...</p>
+    <!-- =====================================================
+         LOADER
+    ====================================================== -->
+
+    <section
+        id="loader"
+        class="loader"
+    >
+
+        <div class="spinner"></div>
+
+        <p>
+            Loading chapter...
+        </p>
+
+    </section>
+
+
+
+    <!-- =====================================================
+         ERROR
+    ====================================================== -->
+
+    <section
+        id="errorState"
+        class="error-state hidden"
+    >
+
+        <div class="error-icon">
+            !
+        </div>
+
+        <h2>
+            Unable to load chapter
+        </h2>
+
+        <p id="errorMessage">
+            Something went wrong.
+        </p>
+
+        <button
+            id="retryButton"
+            type="button"
+        >
+            Try Again
+        </button>
+
+    </section>
+
+
+
+    <!-- =====================================================
+         MAIN
+    ====================================================== -->
+
+    <main
+        id="app"
+        class="app hidden"
+    >
+
+
+        <!-- =================================================
+             BREADCRUMB
+        ================================================== -->
+
+        <div class="breadcrumb">
+
+            <span id="batchName">
+                Batch
+            </span>
+
+            <span>
+                /
+            </span>
+
+            <span id="subjectName">
+                Subject
+            </span>
+
+            <span>
+                /
+            </span>
+
+            <strong id="chapterName">
+                Chapter
+            </strong>
+
         </div>
 
 
-        <!-- CONTENT -->
-        <div id="chapterPage" class="hidden">
 
-            <!-- CHAPTER HERO -->
-            <section class="chapter-hero">
+        <!-- =================================================
+             HERO VIDEO
+        ================================================== -->
 
-                <div class="chapter-label">
-                    CHAPTER
-                </div>
+        <section
+            id="heroSection"
+            class="hero-section"
+        >
 
-                <h1 id="chapterTitle">
-                    Chapter Name
-                </h1>
+            <div
+                id="heroThumbnail"
+                class="hero-thumbnail"
+            >
 
-                <p id="subjectTitle">
-                    Subject
-                </p>
+                <img
+                    id="heroImage"
+                    src=""
+                    alt="Video thumbnail"
+                >
 
-            </section>
+
+                <div class="hero-overlay"></div>
 
 
-            <!-- VIDEOS -->
-            <section class="content-section">
+                <button
+                    id="heroPlayButton"
+                    class="hero-play-button"
+                    type="button"
+                    aria-label="Play video"
+                >
+                    ▶
+                </button>
 
-                <div class="section-heading">
-                    <div>
-                        <h2>Videos</h2>
-                        <p>Learn the concepts from your chapter</p>
-                    </div>
 
-                    <span class="count-badge" id="videoCount">
-                        0
+                <div class="hero-bottom">
+
+                    <span
+                        id="heroDuration"
+                        class="hero-duration"
+                    >
+                        VIDEO
                     </span>
+
                 </div>
 
-                <div id="videoList" class="content-list"></div>
-
-                <div id="noVideos" class="empty-state hidden">
-                    <div class="empty-icon">▶</div>
-                    <h3>No videos yet</h3>
-                    <p>Videos for this chapter will appear here.</p>
-                </div>
-
-            </section>
-
-
-            <!-- PDFs -->
-            <section class="content-section">
-
-                <div class="section-heading">
-                    <div>
-                        <h2>Study Materials</h2>
-                        <p>Notes and PDFs for this chapter</p>
-                    </div>
-
-                    <span class="count-badge" id="pdfCount">
-                        0
-                    </span>
-                </div>
-
-                <div id="pdfList" class="content-list"></div>
-
-                <div id="noPdfs" class="empty-state hidden">
-                    <div class="empty-icon">PDF</div>
-                    <h3>No study materials yet</h3>
-                    <p>PDFs for this chapter will appear here.</p>
-                </div>
-
-            </section>
-
-        </div>
-
-
-        <!-- ERROR -->
-        <div id="errorScreen" class="error-screen hidden">
-
-            <div class="error-icon">
-                !
             </div>
 
-            <h2>Something went wrong</h2>
 
-            <p id="errorMessage">
-                We couldn't load this chapter.
-            </p>
+            <div class="hero-info">
 
-            <button id="errorBackBtn">
-                Back to Subject
-            </button>
+                <div class="hero-label">
+                    NOW AVAILABLE
+                </div>
 
-        </div>
+                <h1 id="heroTitle">
+                    Video Title
+                </h1>
+
+                <p id="heroDescription">
+                    Recorded class
+                </p>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             CHAPTER INFO
+        ================================================== -->
+
+        <section class="chapter-header">
+
+            <div>
+
+                <span class="eyebrow">
+                    CHAPTER
+                </span>
+
+                <h2 id="chapterTitle">
+                    Chapter Name
+                </h2>
+
+                <p id="chapterDescription">
+                    Chapter description
+                </p>
+
+            </div>
+
+
+            <div class="chapter-count">
+
+                <strong id="videoCount">
+                    0
+                </strong>
+
+                <span>
+                    VIDEOS
+                </span>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             VIDEOS
+        ================================================== -->
+
+        <section class="content-section">
+
+            <div class="section-heading">
+
+                <div>
+
+                    <span class="eyebrow">
+                        RECORDED CLASSES
+                    </span>
+
+                    <h2>
+                        Videos
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <div
+                id="videoList"
+                class="video-list"
+            ></div>
+
+
+            <div
+                id="emptyVideos"
+                class="empty-state hidden"
+            >
+
+                <div class="empty-icon">
+                    ▶
+                </div>
+
+                <h3>
+                    No videos yet
+                </h3>
+
+                <p>
+                    Videos for this chapter will appear here.
+                </p>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             PDFs
+        ================================================== -->
+
+        <section
+            id="pdfSection"
+            class="content-section pdf-section"
+        >
+
+            <div class="section-heading">
+
+                <div>
+
+                    <span class="eyebrow">
+                        STUDY MATERIAL
+                    </span>
+
+                    <h2>
+                        Notes & PDFs
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <div
+                id="pdfList"
+                class="pdf-list"
+            ></div>
+
+
+            <div
+                id="emptyPdfs"
+                class="empty-state hidden"
+            >
+
+                <div class="empty-icon">
+                    PDF
+                </div>
+
+                <h3>
+                    No notes available
+                </h3>
+
+                <p>
+                    Study material will appear here.
+                </p>
+
+            </div>
+
+        </section>
+
+
 
     </main>
 
 
-    <!-- BOTTOM NAV -->
+
+    <!-- =====================================================
+         BOTTOM NAV
+    ====================================================== -->
+
     <nav class="bottom-nav">
 
-        <a href="../" class="nav-item">
-            <span class="nav-icon">⌂</span>
-            <span>Home</span>
-        </a>
+        <button
+            type="button"
+            data-nav="home"
+        >
+            <span>⌂</span>
+            <small>HOME</small>
+        </button>
 
-        <a href="../live/" class="nav-item">
-            <span class="nav-icon">▶</span>
-            <span>Live</span>
-        </a>
 
-        <a href="../revision/" class="nav-item active">
-            <span class="nav-icon">▣</span>
-            <span>Revision</span>
-        </a>
+        <button
+            type="button"
+            data-nav="live"
+        >
+            <span>●</span>
+            <small>LIVE</small>
+        </button>
 
-        <a href="../profile/" class="nav-item">
-            <span class="nav-icon">●</span>
-            <span>Profile</span>
-        </a>
+
+        <button
+            type="button"
+            data-nav="revision"
+            class="active"
+        >
+            <span>▤</span>
+            <small>REVISION</small>
+        </button>
+
+
+        <button
+            type="button"
+            data-nav="profile"
+        >
+            <span>○</span>
+            <small>PROFILE</small>
+        </button>
 
     </nav>
 
 
-    <script type="module" src="./chapterdetails.js"></script>
+
+    <script
+        type="module"
+        src="./chapterdetails.js"
+    ></script>
 
 </body>
+
 </html>
