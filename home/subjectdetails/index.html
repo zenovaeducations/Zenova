@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>ZENOVA | Subject</title>
+
+    <meta
+        name="theme-color"
+        content="#111111"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.css"
+        rel="stylesheet"
+    >
+
+    <link
+        rel="stylesheet"
+        href="./subjectdetails.css"
+    >
+
+</head>
+
+
+<body>
+
+
+<!-- =====================================================
+     LOADER
+===================================================== -->
+
+<div
+    id="loader"
+    class="loader"
+>
+
+    <div class="loader-logo">
+        ZENOVA
+    </div>
+
+    <div class="loader-line"></div>
+
+</div>
+
+
+
+<!-- =====================================================
+     APP
+===================================================== -->
+
+<div
+    id="app"
+    class="app hidden"
+>
+
+
+    <!-- =================================================
+         HEADER
+    ================================================== -->
+
+    <header class="top-header">
+
+        <div class="header-content">
+
+
+            <button
+                id="backButton"
+                class="back-button"
+                type="button"
+            >
+
+                <i class="ri-arrow-left-line"></i>
+
+            </button>
+
+
+            <div class="header-text">
+
+                <span>
+                    REVISION
+                </span>
+
+                <h1 id="subjectTitle">
+                    Subject
+                </h1>
+
+                <p id="courseTitle">
+                    Loading course...
+                </p>
+
+            </div>
+
+
+            <button
+                id="profileButton"
+                class="profile-button"
+                type="button"
+            >
+
+                <span id="profileInitial">
+                    S
+                </span>
+
+            </button>
+
+        </div>
+
+    </header>
+
+
+
+    <!-- =================================================
+         MAIN
+    ================================================== -->
+
+    <main class="main-content">
+
+
+        <!-- =================================================
+             SUBJECT INTRO
+        ================================================== -->
+
+        <section class="subject-intro">
+
+            <div class="subject-icon">
+
+                <span id="subjectLetter">
+                    S
+                </span>
+
+            </div>
+
+
+            <div>
+
+                <span class="small-label">
+                    YOUR SUBJECT
+                </span>
+
+                <h2 id="subjectName">
+                    Loading...
+                </h2>
+
+                <p id="subjectDescription">
+                    Start learning chapter by chapter.
+                </p>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             CHAPTERS
+        ================================================== -->
+
+        <section class="chapters-section">
+
+
+            <div class="section-heading">
+
+                <div>
+
+                    <span>
+                        COURSE CONTENT
+                    </span>
+
+                    <h2>
+                        Chapters
+                    </h2>
+
+                </div>
+
+                <span
+                    id="chapterCount"
+                    class="chapter-count"
+                >
+                    0
+                </span>
+
+            </div>
+
+
+            <div
+                id="chaptersList"
+                class="chapters-list"
+            >
+
+                <div class="loading-box">
+
+                    Loading chapters...
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <div class="bottom-space"></div>
+
+    </main>
+
+
+
+    <!-- =================================================
+         BOTTOM NAVIGATION
+    ================================================== -->
+
+    <nav class="bottom-nav">
+
+
+        <a
+            href="../"
+            class="nav-item"
+        >
+
+            <i class="ri-home-5-line"></i>
+
+            <span>
+                Home
+            </span>
+
+        </a>
+
+
+        <a
+            href="../live/"
+            class="nav-item"
+        >
+
+            <i class="ri-live-line"></i>
+
+            <span>
+                Live
+            </span>
+
+        </a>
+
+
+        <a
+            href="../revision/"
+            class="nav-item active"
+        >
+
+            <i class="ri-book-open-fill"></i>
+
+            <span>
+                Revision
+            </span>
+
+        </a>
+
+
+        <a
+            href="../profile/"
+            class="nav-item"
+        >
+
+            <i class="ri-user-3-line"></i>
+
+            <span>
+                Profile
+            </span>
+
+        </a>
+
+
+    </nav>
+
+</div>
+
+
+
+<!-- =====================================================
+     ERROR
+===================================================== -->
+
+<div
+    id="errorScreen"
+    class="error-screen hidden"
+>
+
+    <div class="error-logo">
+        ZENOVA
+    </div>
+
+    <h2>
+        Unable to load subject
+    </h2>
+
+    <p id="errorMessage">
+        Something went wrong.
+    </p>
+
+
+    <button
+        id="backErrorButton"
+        type="button"
+    >
+
+        BACK TO REVISION
+
+    </button>
+
+</div>
+
+
+
+<script
+    type="module"
+    src="./subjectdetails.js"
+></script>
+
+</body>
+
+</html>
