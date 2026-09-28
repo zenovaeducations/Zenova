@@ -3,55 +3,79 @@ import {
     db
 } from "../firebase/firebase-config.js";
 
+
 import {
     onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
 
+
 import {
+    collection,
     doc,
     getDoc,
-    collection,
+    getDocs,
     query,
     where,
-    getDocs,
     limit
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
 
-/* =========================================================
+/* =====================================================
    ELEMENTS
-========================================================= */
+===================================================== */
 
 const loader =
-    document.getElementById("zenovaLoader");
+    document.getElementById(
+        "zenovaLoader"
+    );
+
 
 const app =
-    document.getElementById("zenovaApp");
+    document.getElementById(
+        "zenovaApp"
+    );
 
 
-/* =========================================================
+const errorScreen =
+    document.getElementById(
+        "errorScreen"
+    );
+
+
+const errorMessage =
+    document.getElementById(
+        "errorMessage"
+    );
+
+
+/* =====================================================
    STATE
-========================================================= */
+===================================================== */
 
 let currentUser = null;
 
 let student = null;
 
-let purchasedBatches = [];
+let studentCourses = [];
+
+let selectedCourse = null;
+
+let subjects = [];
+
+let chapters = [];
+
+let contents = [];
+
+let enrollments = [];
 
 
-/* =========================================================
+/* =====================================================
    AUTH
-========================================================= */
+===================================================== */
 
 onAuthStateChanged(
     auth,
     async user => {
-
-        /*
-         * USER NOT LOGGED IN
-         * Go to the actual account login page.
-         */
 
         if (!user) {
 
@@ -64,37 +88,25 @@ onAuthStateChanged(
         }
 
 
-        currentUser = user;
+        currentUser =
+            user;
 
 
         try {
 
-            /*
-             * Load the ZEN2 student profile.
-             */
+            await loadStudent();
 
-            const validStudent =
-                await loadStudent();
+            await loadCourses();
 
+            await loadCourseStructure();
 
-            /*
-             * If the student is not onboarded,
-             * loadStudent() already redirected.
-             */
+            await loadBanners();
 
-            if (!validStudent) {
+            await loadLiveClasses();
 
-                return;
+            await loadContinueLearning();
 
-            }
-
-
-            /*
-             * Student is valid.
-             * Now load Home.
-             */
-
-            await loadHomeData();
+            renderStudent();
 
             setupNavigation();
 
@@ -105,11 +117,15 @@ onAuthStateChanged(
         catch (error) {
 
             console.error(
-                "ZEN2 HOME ERROR:",
+                "ZENOVA HOME ERROR:",
                 error
             );
 
-            showError();
+
+            showError(
+                error.message ||
+                "Unable to load Home."
+            );
 
         }
 
@@ -117,22 +133,14 @@ onAuthStateChanged(
 );
 
 
-/* =========================================================
-   STUDENT
-========================================================= */
+/* =====================================================
+   LOAD STUDENT
+===================================================== */
 
 async function loadStudent() {
 
     /*
-     * IMPORTANT:
-     *
-     * ZEN2 uses:
-     *
-     * zen2Students/{uid}
-     *
-     * NOT:
-     *
-     * students/{uid}
+     * ACTUAL ZEN2 STUDENT COLLECTION
      */
 
     const studentRef =
@@ -149,26 +157,15 @@ async function loadStudent() {
         );
 
 
-    /*
-     * No student profile.
-     *
-     * This means onboarding has not
-     * been completed yet.
-     */
-
-    if (!snapshot.exists()) {
-
-        console.log(
-            "ZEN2: Student profile not found. Opening onboarding."
-        );
-
+    if (
+        !snapshot.exists()
+    ) {
 
         window.location.replace(
             "../account/onboarding/"
         );
 
-
-        return false;
+        return;
 
     }
 
@@ -178,50 +175,35 @@ async function loadStudent() {
 
 
     /*
-     * Check the exact field used by
-     * the ZEN2 onboarding system.
+     * ACTUAL FIELD:
+     *
+     * onboardingComplete
      */
 
     if (
         student.onboardingComplete !== true
     ) {
 
-        console.log(
-            "ZEN2: Onboarding is not complete."
-        );
-
-
         window.location.replace(
             "../account/onboarding/"
         );
 
-
-        return false;
+        return;
 
     }
 
 
-    /*
-     * Student is completely valid.
-     */
-
     console.log(
-        "ZEN2: Student authenticated:",
-        student.name
+        "ZEN2 STUDENT:",
+        student
     );
-
-
-    renderStudent();
-
-
-    return true;
 
 }
 
 
-/* =========================================================
+/* =====================================================
    RENDER STUDENT
-========================================================= */
+===================================================== */
 
 function renderStudent() {
 
@@ -237,7 +219,9 @@ function renderStudent() {
         );
 
 
-    if (nameElement) {
+    if (
+        nameElement
+    ) {
 
         nameElement.textContent =
             name;
@@ -251,145 +235,142 @@ function renderStudent() {
         );
 
 
-    if (initial) {
+    if (
+        initial
+    ) {
 
         initial.textContent =
             name
+                .trim()
                 .charAt(0)
                 .toUpperCase();
 
     }
 
-}
+
+    const hour =
+        new Date().getHours();
 
 
-/* =========================================================
-   LOAD HOME
-========================================================= */
-
-async function loadHomeData() {
-
-    const [
-        banners,
-        batches,
-        liveClasses,
-        announcements,
-        enrollments
-    ] =
-        await Promise.all([
-
-            safeQuery(
-                loadBanners
-            ),
-
-            safeQuery(
-                loadBatches
-            ),
-
-            safeQuery(
-                loadLiveClasses
-            ),
-
-            safeQuery(
-                loadAnnouncements
-            ),
-
-            safeQuery(
-                loadEnrollments
-            )
-
-        ]);
+    const greeting =
+        document.getElementById(
+            "greeting"
+        );
 
 
-    purchasedBatches =
-        enrollments || [];
+    if (
+        greeting
+    ) {
 
+        if (
+            hour < 12
+        ) {
 
-    renderBanners(
-        banners || []
-    );
+            greeting.textContent =
+                "Good Morning,";
 
+        }
 
-    renderBatches(
-        batches || []
-    );
+        else if (
+            hour < 17
+        ) {
 
+            greeting.textContent =
+                "Good Afternoon,";
 
-    renderLiveClasses(
-        liveClasses || []
-    );
+        }
 
+        else {
 
-    renderAnnouncements(
-        announcements || []
-    );
+            greeting.textContent =
+                "Good Evening,";
 
+        }
 
-    renderContinueLearning();
+    }
 
 }
 
 
-/* =========================================================
-   SAFE QUERY
-========================================================= */
+/* =====================================================
+   GET STUDENT CLASS
+===================================================== */
 
-async function safeQuery(
-    functionToRun
+function getStudentClass() {
+
+    return normalizeClass(
+        student.className
+    );
+
+}
+
+
+/* =====================================================
+   NORMALIZE CLASS
+===================================================== */
+
+function normalizeClass(
+    value
 ) {
 
-    try {
+    if (
+        value === undefined ||
+        value === null
+    ) {
 
-        return await functionToRun();
+        return "";
 
     }
 
-    catch (error) {
 
-        console.warn(
-            "ZEN2 HOME SECTION ERROR:",
-            error
+    return String(
+        value
+    )
+        .trim()
+        .toUpperCase()
+        .replace(
+            /\s+/g,
+            " "
         );
-
-        return [];
-
-    }
 
 }
 
 
-/* =========================================================
-   BANNERS
-========================================================= */
+/* =====================================================
+   LOAD COURSES
+===================================================== */
 
-async function loadBanners() {
+async function loadCourses() {
 
-    const ref =
-        collection(
-            db,
-            "homeBanners"
+    const studentClass =
+        getStudentClass();
+
+
+    if (
+        !studentClass
+    ) {
+
+        throw new Error(
+            "Student class is not available."
         );
 
+    }
 
-    const q =
-        query(
-            ref,
 
-            where(
-                "active",
-                "==",
-                true
-            ),
-
-            limit(10)
-        );
-
+    /*
+     * ACTUAL ZEN2 COURSE COLLECTION
+     */
 
     const snapshot =
-        await getDocs(q);
+        await getDocs(
+            collection(
+                db,
+                "zen2Courses"
+            )
+        );
 
 
-    const banners =
+    const allCourses =
         snapshot.docs.map(
             item => ({
 
@@ -402,661 +383,314 @@ async function loadBanners() {
         );
 
 
-    banners.sort(
-        (a, b) =>
-            Number(
-                a.order || 999
-            ) -
-            Number(
-                b.order || 999
-            )
+    /*
+     * Match the student's class.
+     *
+     * Example:
+     *
+     * student = 10th
+     *
+     * course.className = 10th
+     */
+
+    studentCourses =
+        allCourses.filter(
+            course => {
+
+                const courseClass =
+                    normalizeClass(
+                        course.className
+                    );
+
+
+                const active =
+                    course.active !== false &&
+                    course.status !== "INACTIVE";
+
+
+                return (
+                    courseClass ===
+                    studentClass
+                ) && active;
+
+            }
+        );
+
+
+    /*
+     * Sort courses.
+     */
+
+    studentCourses.sort(
+        (
+            a,
+            b
+        ) => {
+
+            const orderA =
+                Number(
+                    a.order ??
+                    a.priority ??
+                    9999
+                );
+
+
+            const orderB =
+                Number(
+                    b.order ??
+                    b.priority ??
+                    9999
+                );
+
+
+            return (
+                orderA -
+                orderB
+            );
+
+        }
     );
 
 
-    return banners;
+    console.log(
+        "STUDENT CLASS:",
+        studentClass
+    );
+
+
+    console.log(
+        "MATCHING ZEN2 COURSES:",
+        studentCourses
+    );
+
+
+    if (
+        !studentCourses.length
+    ) {
+
+        throw new Error(
+            `No ZEN2 course found for ${student.classDisplayName || student.className}.`
+        );
+
+    }
+
+
+    /*
+     * First course is the primary
+     * course used for learning content.
+     */
+
+    selectedCourse =
+        studentCourses[0];
+
+
+    renderCourses();
 
 }
 
 
-/* =========================================================
-   BATCHES
-========================================================= */
-
-async function loadBatches() {
-
-    const ref =
-        collection(
-            db,
-            "zen2Courses"
-        );
-
-
-    const q =
-        query(
-            ref,
-
-            limit(30)
-        );
-
-
-    const snapshot =
-        await getDocs(q);
-
-
-    return snapshot.docs.map(
-        item => ({
-
-            id:
-                item.id,
-
-            ...item.data()
-
-        })
-    );
-
-}
-
-
-/* =========================================================
-   STUDENT ENROLLMENTS
-========================================================= */
-
-async function loadEnrollments() {
-
-    const ref =
-        collection(
-            db,
-            "studentEnrollments"
-        );
-
-
-    const q =
-        query(
-            ref,
-
-            where(
-                "studentUid",
-                "==",
-                currentUser.uid
-            ),
-
-            limit(30)
-        );
-
-
-    const snapshot =
-        await getDocs(q);
-
-
-    return snapshot.docs.map(
-        item => ({
-
-            id:
-                item.id,
-
-            ...item.data()
-
-        })
-    );
-
-}
-
-
-/* =========================================================
-   LIVE CLASSES
-========================================================= */
-
-async function loadLiveClasses() {
-
-    const ref =
-        collection(
-            db,
-            "liveClasses"
-        );
-
-
-    const q =
-        query(
-            ref,
-
-            where(
-                "active",
-                "==",
-                true
-            ),
-
-            limit(30)
-        );
-
-
-    const snapshot =
-        await getDocs(q);
-
-
-    return snapshot.docs.map(
-        item => ({
-
-            id:
-                item.id,
-
-            ...item.data()
-
-        })
-    );
-
-}
-
-
-/* =========================================================
-   ANNOUNCEMENTS
-========================================================= */
-
-async function loadAnnouncements() {
-
-    const ref =
-        collection(
-            db,
-            "announcements"
-        );
-
-
-    const q =
-        query(
-            ref,
-
-            where(
-                "active",
-                "==",
-                true
-            ),
-
-            limit(10)
-        );
-
-
-    const snapshot =
-        await getDocs(q);
-
-
-    return snapshot.docs.map(
-        item => ({
-
-            id:
-                item.id,
-
-            ...item.data()
-
-        })
-    );
-
-}
-
-
-/* =========================================================
-   BANNERS UI
-========================================================= */
-
-function renderBanners(
-    banners
+/* =====================================================
+   COURSE NAME
+===================================================== */
+
+function getCourseName(
+    course
 ) {
 
-    const section =
-        document.getElementById(
-            "heroSection"
-        );
-
-    const slider =
-        document.getElementById(
-            "heroSlider"
-        );
-
-    const dots =
-        document.getElementById(
-            "heroDots"
-        );
-
-
-    if (
-        !section ||
-        !slider ||
-        !dots
-    ) {
-
-        return;
-
-    }
-
-
-    if (
-        !banners.length
-    ) {
-
-        section.classList.add(
-            "hidden"
-        );
-
-        return;
-
-    }
-
-
-    section.classList.remove(
-        "hidden"
+    return (
+        course.courseName ||
+        "Zenova Course"
     );
 
+}
 
-    slider.innerHTML =
-        banners.map(
-            (
-                banner,
-                index
-            ) => `
 
-                <div
-                    class="hero-slide ${
-                        index === 0
-                            ? "active"
-                            : ""
-                    }"
-                    data-link="${
-                        escapeAttr(
-                            banner.link || ""
-                        )
-                    }"
-                >
+/* =====================================================
+   RENDER COURSES
+===================================================== */
 
-                    <img
-                        src="${
-                            escapeAttr(
-                                banner.imageUrl || ""
-                            )
-                        }"
-                        alt=""
-                    >
+function renderCourses() {
 
-                    ${
-                        banner.title
-                            ? `
+    const container =
+        document.getElementById(
+            "myBatchesList"
+        );
 
-                                <div class="banner-content">
 
-                                    <h2>
-                                        ${
-                                            escapeHtml(
-                                                banner.title
-                                            )
-                                        }
-                                    </h2>
+    if (
+        !container
+    ) {
+
+        return;
+
+    }
+
+
+    if (
+        !studentCourses.length
+    ) {
+
+        container.innerHTML = `
+
+            <div class="loading-card">
+                No course available.
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    container.innerHTML =
+        studentCourses
+            .map(
+                course => {
+
+                    const name =
+                        getCourseName(
+                            course
+                        );
+
+
+                    const className =
+                        course.classDisplayName ||
+                        course.className ||
+                        "";
+
+
+                    const year =
+                        course.academicYear ||
+                        "";
+
+
+                    const board =
+                        course.board ||
+                        "";
+
+
+                    return `
+
+                        <article
+                            class="batch-card"
+                        >
+
+                            <div
+                                class="batch-cover"
+                            >
+
+                                <span
+                                    class="batch-cover-label"
+                                >
+                                    ZENOVA ZEN2
+                                </span>
+
+
+                                <h3>
+                                    ${escapeHtml(
+                                        name
+                                    )}
+                                </h3>
+
+                            </div>
+
+
+                            <div
+                                class="batch-info"
+                            >
+
+                                <div
+                                    class="batch-name"
+                                >
+                                    ${escapeHtml(
+                                        name
+                                    )}
+                                </div>
+
+
+                                <div
+                                    class="batch-meta"
+                                >
 
                                     ${
-                                        banner.buttonText
+                                        className
                                             ? `
+                                                <span>
+                                                    ${escapeHtml(
+                                                        className
+                                                    )}
+                                                </span>
+                                            `
+                                            : ""
+                                    }
 
-                                                <button>
-                                                    ${
-                                                        escapeHtml(
-                                                            banner.buttonText
-                                                        )
-                                                    }
-                                                </button>
 
+                                    ${
+                                        board
+                                            ? `
+                                                <span>
+                                                    ${escapeHtml(
+                                                        board
+                                                    )}
+                                                </span>
+                                            `
+                                            : ""
+                                    }
+
+
+                                    ${
+                                        year
+                                            ? `
+                                                <span>
+                                                    ${escapeHtml(
+                                                        year
+                                                    )}
+                                                </span>
                                             `
                                             : ""
                                     }
 
                                 </div>
 
-                            `
-                            : ""
-                    }
 
-                </div>
+                                <div
+                                    class="batch-actions"
+                                >
 
-            `
-        )
-        .join("");
-
-
-    dots.innerHTML =
-        banners.map(
-            (
-                _,
-                index
-            ) => `
-
-                <button
-                    class="hero-dot ${
-                        index === 0
-                            ? "active"
-                            : ""
-                    }"
-                    data-index="${index}"
-                ></button>
-
-            `
-        )
-        .join("");
+                                    <button
+                                        class="batch-button explore-button"
+                                        data-explore-id="${escapeHtml(
+                                            course.id
+                                        )}"
+                                        type="button"
+                                    >
+                                        EXPLORE BATCH
+                                    </button>
 
 
-    startBannerSlider(
-        banners.length
-    );
+                                    <button
+                                        class="batch-button buy-button"
+                                        data-buy-id="${escapeHtml(
+                                            course.id
+                                        )}"
+                                        type="button"
+                                    >
+                                        BUY NOW
+                                    </button>
 
+                                </div>
 
-    slider
-        .querySelectorAll(
-            ".hero-slide"
-        )
-        .forEach(
-            slide => {
+                            </div>
 
-                slide.addEventListener(
-                    "click",
-                    () => {
+                        </article>
 
-                        const link =
-                            slide.dataset.link;
-
-                        if (link) {
-
-                            window.location.href =
-                                link;
-
-                        }
-
-                    }
-                );
-
-            }
-        );
-
-}
-
-
-/* =========================================================
-   BANNER SLIDER
-========================================================= */
-
-function startBannerSlider(
-    count
-) {
-
-    if (
-        count <= 1
-    ) {
-
-        return;
-
-    }
-
-
-    const slides =
-        document.querySelectorAll(
-            ".hero-slide"
-        );
-
-
-    const dots =
-        document.querySelectorAll(
-            ".hero-dot"
-        );
-
-
-    let current = 0;
-
-
-    function show(
-        index
-    ) {
-
-        current =
-            (
-                index +
-                count
-            ) %
-            count;
-
-
-        slides.forEach(
-            (
-                slide,
-                i
-            ) => {
-
-                slide.classList.toggle(
-                    "active",
-                    i === current
-                );
-
-            }
-        );
-
-
-        dots.forEach(
-            (
-                dot,
-                i
-            ) => {
-
-                dot.classList.toggle(
-                    "active",
-                    i === current
-                );
-
-            }
-        );
-
-    }
-
-
-    dots.forEach(
-        dot => {
-
-            dot.addEventListener(
-                "click",
-                event => {
-
-                    event.stopPropagation();
-
-                    show(
-                        Number(
-                            dot.dataset.index
-                        )
-                    );
+                    `;
 
                 }
-            );
+            )
+            .join("");
 
-        }
-    );
-
-
-    setInterval(
-        () => {
-
-            show(
-                current + 1
-            );
-
-        },
-        5000
-    );
-
-}
-
-
-/* =========================================================
-   MY BATCHES
-========================================================= */
-function renderBatches(batches) {
-
-    const container =
-        document.getElementById("myBatchesList");
-
-    if (!container) {
-        return;
-    }
-
-    if (!batches.length) {
-
-        container.innerHTML = `
-            <div class="loading-card">
-                No batches available right now.
-            </div>
-        `;
-
-        return;
-    }
-
-    container.innerHTML =
-        batches.map(batch => {
-
-            const purchased =
-                isBatchPurchased(batch.id);
-
-            return `
-
-                <article class="batch-card">
-
-                    <div class="batch-image">
-
-                        ${
-                            batch.thumbnailUrl ||
-                            batch.imageUrl
-                                ? `
-                                    <img
-                                        src="${escapeAttr(
-                                            batch.thumbnailUrl ||
-                                            batch.imageUrl
-                                        )}"
-                                        alt=""
-                                        loading="lazy"
-                                    >
-                                `
-                                : `
-                                    <div class="batch-image-placeholder">
-                                        ZENOVA
-                                    </div>
-                                `
-                        }
-
-                    </div>
-
-
-                    <div class="batch-details">
-
-                        <h3>
-                            ${escapeHtml(
-                                batch.name ||
-                                batch.title ||
-                                "Zenova Batch"
-                            )}
-                        </h3>
-
-
-                        <div class="batch-actions">
-
-                            <button
-                                class="batch-button explore-button"
-                                data-explore-id="${escapeAttr(
-                                    batch.id
-                                )}"
-                            >
-                                EXPLORE BATCH
-                            </button>
-
-
-                            ${
-                                purchased
-                                    ? `
-                                        <button
-                                            class="batch-button buy-button purchased"
-                                            data-open-batch="${escapeAttr(
-                                                batch.id
-                                            )}"
-                                        >
-                                            OPEN BATCH
-                                        </button>
-                                    `
-                                    : `
-                                        <button
-                                            class="batch-button buy-button"
-                                            data-buy-id="${escapeAttr(
-                                                batch.id
-                                            )}"
-                                        >
-                                            BUY NOW
-                                        </button>
-                                    `
-                            }
-
-                        </div>
-
-                    </div>
-
-                </article>
-
-            `;
-
-        }).join("");
-
-
-    setupBatchButtons();
-
-}
-/* =========================================================
-   PURCHASE CHECK
-========================================================= */
-
-function isBatchPurchased(
-    courseId
-) {
-
-    return purchasedBatches.some(
-        enrollment => {
-
-            const enrolledId =
-                enrollment.courseId ||
-                enrollment.zen2CourseId ||
-                enrollment.batchId ||
-                enrollment.crmCourseId;
-
-
-            const status =
-                String(
-                    enrollment.status ||
-                    ""
-                )
-                .toLowerCase();
-
-
-            return (
-                String(
-                    enrolledId
-                ) ===
-                String(
-                    courseId
-                )
-                &&
-                (
-                    status === "active" ||
-                    status === "enrolled" ||
-                    enrollment.accessGranted === true ||
-                    enrollment.active === true
-                )
-            );
-
-        }
-    );
-
-}
-
-
-/* =========================================================
-   BATCH BUTTONS
-========================================================= */
-
-function setupBatchButtons() {
 
     document
         .querySelectorAll(
@@ -1069,14 +703,14 @@ function setupBatchButtons() {
                     "click",
                     () => {
 
-                        const id =
+                        const courseId =
                             button.dataset.exploreId;
 
 
                         window.location.href =
-                            `../batch-details/?courseId=${
+                            `./batchdetails/?courseId=${
                                 encodeURIComponent(
-                                    id
+                                    courseId
                                 )
                             }`;
 
@@ -1098,45 +732,16 @@ function setupBatchButtons() {
                     "click",
                     () => {
 
-                        const id =
+                        const courseId =
                             button.dataset.buyId;
 
 
                         window.location.href =
-                            `../batch-details/?courseId=${
+                            `./batchdetails/?courseId=${
                                 encodeURIComponent(
-                                    id
+                                    courseId
                                 )
                             }&buy=true`;
-
-                    }
-                );
-
-            }
-        );
-
-
-    document
-        .querySelectorAll(
-            "[data-open-batch]"
-        )
-        .forEach(
-            button => {
-
-                button.addEventListener(
-                    "click",
-                    () => {
-
-                        const id =
-                            button.dataset.openBatch;
-
-
-                        window.location.href =
-                            `../study/?courseId=${
-                                encodeURIComponent(
-                                    id
-                                )
-                            }`;
 
                     }
                 );
@@ -1147,9 +752,736 @@ function setupBatchButtons() {
 }
 
 
-/* =========================================================
+/* =====================================================
+   LOAD COURSE STRUCTURE
+===================================================== */
+
+async function loadCourseStructure() {
+
+    if (
+        !selectedCourse
+    ) {
+
+        return;
+
+    }
+
+
+    /*
+     * SUBJECTS
+     */
+
+    const subjectQuery =
+        query(
+            collection(
+                db,
+                "zen2Subjects"
+            ),
+
+            where(
+                "courseId",
+                "==",
+                selectedCourse.id
+            )
+        );
+
+
+    const subjectSnapshot =
+        await getDocs(
+            subjectQuery
+        );
+
+
+    subjects =
+        subjectSnapshot.docs.map(
+            item => ({
+
+                id:
+                    item.id,
+
+                ...item.data()
+
+            })
+        );
+
+
+    subjects.sort(
+        sortByOrder
+    );
+
+
+    /*
+     * CHAPTERS
+     */
+
+    chapters = [];
+
+
+    for (
+        const subject
+        of subjects
+    ) {
+
+        const chapterQuery =
+            query(
+                collection(
+                    db,
+                    "zen2Chapters"
+                ),
+
+                where(
+                    "courseId",
+                    "==",
+                    selectedCourse.id
+                ),
+
+                where(
+                    "subjectId",
+                    "==",
+                    subject.id
+                )
+            );
+
+
+        const chapterSnapshot =
+            await getDocs(
+                chapterQuery
+            );
+
+
+        chapterSnapshot.docs.forEach(
+            item => {
+
+                chapters.push({
+
+                    id:
+                        item.id,
+
+                    ...item.data()
+
+                });
+
+            }
+        );
+
+    }
+
+
+    chapters.sort(
+        sortByOrder
+    );
+
+
+    /*
+     * CONTENT
+     */
+
+    contents = [];
+
+
+    for (
+        const chapter
+        of chapters
+    ) {
+
+        const contentQuery =
+            query(
+                collection(
+                    db,
+                    "zen2Content"
+                ),
+
+                where(
+                    "courseId",
+                    "==",
+                    selectedCourse.id
+                ),
+
+                where(
+                    "chapterId",
+                    "==",
+                    chapter.id
+                )
+            );
+
+
+        const contentSnapshot =
+            await getDocs(
+                contentQuery
+            );
+
+
+        contentSnapshot.docs.forEach(
+            item => {
+
+                contents.push({
+
+                    id:
+                        item.id,
+
+                    ...item.data()
+
+                });
+
+            }
+        );
+
+    }
+
+
+    contents.sort(
+        sortByOrder
+    );
+
+
+    console.log(
+        "ZEN2 SUBJECTS:",
+        subjects
+    );
+
+
+    console.log(
+        "ZEN2 CHAPTERS:",
+        chapters
+    );
+
+
+    console.log(
+        "ZEN2 CONTENT:",
+        contents
+    );
+
+}
+
+
+/* =====================================================
+   BANNERS
+===================================================== */
+
+async function loadBanners() {
+
+    const container =
+        document.getElementById(
+            "heroSlider"
+        );
+
+
+    const dots =
+        document.getElementById(
+            "heroDots"
+        );
+
+
+    const section =
+        document.getElementById(
+            "heroSection"
+        );
+
+
+    try {
+
+        const bannerQuery =
+            query(
+                collection(
+                    db,
+                    "homeBanners"
+                ),
+
+                where(
+                    "active",
+                    "==",
+                    true
+                ),
+
+                limit(20)
+            );
+
+
+        const snapshot =
+            await getDocs(
+                bannerQuery
+            );
+
+
+        const banners =
+            snapshot.docs.map(
+                item => ({
+
+                    id:
+                        item.id,
+
+                    ...item.data()
+
+                })
+            );
+
+
+        banners.sort(
+            (
+                a,
+                b
+            ) => {
+
+                return (
+                    Number(
+                        a.priority ??
+                        9999
+                    ) -
+                    Number(
+                        b.priority ??
+                        9999
+                    )
+                );
+
+            }
+        );
+
+
+        if (
+            !banners.length
+        ) {
+
+            section.classList.add(
+                "hidden"
+            );
+
+            return;
+
+        }
+
+
+        section.classList.remove(
+            "hidden"
+        );
+
+
+        container.innerHTML =
+            banners
+                .map(
+                    (
+                        banner,
+                        index
+                    ) => {
+
+                        return `
+
+                            <div
+                                class="hero-slide ${
+                                    index === 0
+                                        ? "active"
+                                        : ""
+                                }"
+                                data-link="${escapeHtml(
+                                    banner.link || ""
+                                )}"
+                            >
+
+                                <img
+                                    src="${escapeHtml(
+                                        banner.imageUrl || ""
+                                    )}"
+                                    alt=""
+                                >
+
+
+                                ${
+                                    banner.title ||
+                                    banner.description ||
+                                    banner.buttonText
+
+                                        ? `
+
+                                            <div
+                                                class="hero-overlay"
+                                            >
+
+                                                ${
+                                                    banner.label
+                                                        ? `
+                                                            <span
+                                                                class="hero-label"
+                                                            >
+                                                                ${escapeHtml(
+                                                                    banner.label
+                                                                )}
+                                                            </span>
+                                                        `
+                                                        : ""
+                                                }
+
+
+                                                ${
+                                                    banner.title
+                                                        ? `
+                                                            <h2>
+                                                                ${escapeHtml(
+                                                                    banner.title
+                                                                )}
+                                                            </h2>
+                                                        `
+                                                        : ""
+                                                }
+
+
+                                                ${
+                                                    banner.description
+                                                        ? `
+                                                            <p>
+                                                                ${escapeHtml(
+                                                                    banner.description
+                                                                )}
+                                                            </p>
+                                                        `
+                                                        : ""
+                                                }
+
+
+                                                ${
+                                                    banner.buttonText
+                                                        ? `
+                                                            <span
+                                                                class="hero-button"
+                                                            >
+                                                                ${escapeHtml(
+                                                                    banner.buttonText
+                                                                )}
+                                                            </span>
+                                                        `
+                                                        : ""
+                                                }
+
+                                            </div>
+
+                                        `
+
+                                        : ""
+                                }
+
+                            </div>
+
+                        `;
+
+                    }
+                )
+                .join("");
+
+
+        dots.innerHTML =
+            banners
+                .map(
+                    (
+                        _,
+                        index
+                    ) => `
+
+                        <button
+                            class="hero-dot ${
+                                index === 0
+                                    ? "active"
+                                    : ""
+                            }"
+                            data-index="${index}"
+                            type="button"
+                        ></button>
+
+                    `
+                )
+                .join("");
+
+
+        setupBannerSlider(
+            banners.length
+        );
+
+
+        container
+            .querySelectorAll(
+                ".hero-slide"
+            )
+            .forEach(
+                slide => {
+
+                    slide.addEventListener(
+                        "click",
+                        () => {
+
+                            const link =
+                                slide.dataset.link;
+
+
+                            if (
+                                link
+                            ) {
+
+                                window.location.href =
+                                    link;
+
+                            }
+
+                        }
+                    );
+
+                }
+            );
+
+    }
+
+    catch (
+        error
+    ) {
+
+        console.warn(
+            "Banner loading failed:",
+            error
+        );
+
+
+        section.classList.add(
+            "hidden"
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   BANNER SLIDER
+===================================================== */
+
+function setupBannerSlider(
+    total
+) {
+
+    if (
+        total <= 1
+    ) {
+
+        return;
+
+    }
+
+
+    let current =
+        0;
+
+
+    const slides =
+        document.querySelectorAll(
+            ".hero-slide"
+        );
+
+
+    const dots =
+        document.querySelectorAll(
+            ".hero-dot"
+        );
+
+
+    function show(
+        index
+    ) {
+
+        slides.forEach(
+            slide =>
+                slide.classList.remove(
+                    "active"
+                )
+        );
+
+
+        dots.forEach(
+            dot =>
+                dot.classList.remove(
+                    "active"
+                )
+        );
+
+
+        slides[index]
+            ?.classList.add(
+                "active"
+            );
+
+
+        dots[index]
+            ?.classList.add(
+                "active"
+            );
+
+    }
+
+
+    setInterval(
+        () => {
+
+            current =
+                (
+                    current + 1
+                ) %
+                total;
+
+
+            show(
+                current
+            );
+
+        },
+        5000
+    );
+
+
+    dots.forEach(
+        dot => {
+
+            dot.addEventListener(
+                "click",
+                event => {
+
+                    event.stopPropagation();
+
+
+                    current =
+                        Number(
+                            dot.dataset.index
+                        );
+
+
+                    show(
+                        current
+                    );
+
+                }
+            );
+
+        }
+    );
+
+}
+
+
+/* =====================================================
    LIVE CLASSES
-========================================================= */
+===================================================== */
+
+async function loadLiveClasses() {
+
+    const container =
+        document.getElementById(
+            "liveList"
+        );
+
+
+    try {
+
+        const liveQuery =
+            query(
+                collection(
+                    db,
+                    "liveClasses"
+                ),
+
+                where(
+                    "active",
+                    "==",
+                    true
+                ),
+
+                limit(50)
+            );
+
+
+        const snapshot =
+            await getDocs(
+                liveQuery
+            );
+
+
+        const classes =
+            snapshot.docs.map(
+                item => ({
+
+                    id:
+                        item.id,
+
+                    ...item.data()
+
+                })
+            );
+
+
+        /*
+         * IMPORTANT:
+         *
+         * CRM saves:
+         *
+         * scheduledDate = YYYY-MM-DD
+         * scheduledTime = HH:MM
+         */
+
+        const today =
+            getTodayString();
+
+
+        const todayClasses =
+            classes
+                .filter(
+                    item =>
+                        item.scheduledDate ===
+                        today
+                )
+                .sort(
+                    (
+                        a,
+                        b
+                    ) => {
+
+                        return String(
+                            a.scheduledTime ||
+                            ""
+                        ).localeCompare(
+                            String(
+                                b.scheduledTime ||
+                                ""
+                            )
+                        );
+
+                    }
+                );
+
+
+        renderLiveClasses(
+            todayClasses
+        );
+
+    }
+
+    catch (
+        error
+    ) {
+
+        console.warn(
+            "Live class loading failed:",
+            error
+        );
+
+
+        container.innerHTML = `
+
+            <div class="loading-card">
+                Unable to load today's classes.
+            </div>
+
+        `;
+
+    }
+
+}
+
+
+/* =====================================================
+   RENDER LIVE CLASSES
+===================================================== */
 
 function renderLiveClasses(
     classes
@@ -1161,7 +1493,19 @@ function renderLiveClasses(
         );
 
 
-    if (!container) {
+    if (
+        !classes.length
+    ) {
+
+        container.innerHTML = `
+
+            <div class="loading-card">
+
+                No live class scheduled for today.
+
+            </div>
+
+        `;
 
         return;
 
@@ -1172,455 +1516,218 @@ function renderLiveClasses(
         new Date();
 
 
-    const today =
+    container.innerHTML =
         classes
             .map(
-                item => {
+                liveClass => {
 
                     const start =
-                        getDate(
-                            item.scheduledAt
+                        parseLiveDate(
+                            liveClass
                         );
 
 
-                    const duration =
-                        Number(
-                            item.durationMinutes ||
-                            60
-                        );
+                    const isStarted =
+                        start &&
+                        now >= start;
 
 
-                    const end =
-                        new Date(
-                            start.getTime() +
-                            duration *
-                            60000
-                        );
+                    const thumbnail =
+                        liveClass.thumbnailUrl ||
+                        "";
 
 
-                    return {
-
-                        ...item,
-
-                        start,
-
-                        end
-
-                    };
-
-                }
-            )
-            .filter(
-                item =>
-                    !Number.isNaN(
-                        item.start.getTime()
-                    )
-            )
-            .filter(
-                item =>
-                    isSameDay(
-                        item.start,
-                        now
-                    )
-            )
-            .sort(
-                (
-                    a,
-                    b
-                ) =>
-                    a.start -
-                    b.start
-            );
+                    const topic =
+                        liveClass.chapterName ||
+                        liveClass.subjectName ||
+                        liveClass.title ||
+                        "Live Class";
 
 
-    if (!today.length) {
+                    return `
 
-        container.innerHTML = `
-
-            <div class="no-live-class">
-
-                <strong>
-                    No class scheduled for today
-                </strong>
-
-                <span>
-                    Check again later for your next live class.
-                </span>
-
-            </div>
-
-        `;
-
-        return;
-
-    }
-
-
-    const liveNow =
-        today.find(
-            item =>
-                now >= item.start &&
-                now <= item.end
-        );
-
-
-    const upcoming =
-        today.find(
-            item =>
-                item.start > now
-        );
-
-
-    const selected =
-        liveNow ||
-        upcoming;
-
-
-    if (!selected) {
-
-        container.innerHTML = `
-
-            <div class="no-live-class">
-
-                <strong>
-                    Today's classes are completed
-                </strong>
-
-                <span>
-                    No more live classes scheduled today.
-                </span>
-
-            </div>
-
-        `;
-
-        return;
-
-    }
-
-
-    const isLive =
-        Boolean(
-            liveNow
-        );
-
-
-    const title =
-        selected.isCasual
-            ? (
-                selected.topicName ||
-                "Live Class"
-            )
-            : (
-                selected.chapterName ||
-                selected.subjectName ||
-                "Live Class"
-            );
-
-
-    const subtitle =
-        selected.isCasual
-            ? "Casual Session"
-            : [
-                selected.subjectName,
-                selected.chapterName
-            ]
-            .filter(Boolean)
-            .join(
-                " • "
-            );
-
-
-    container.innerHTML = `
-
-        <article
-            class="live-home-card"
-        >
-
-            <div
-                class="live-thumbnail"
-            >
-
-                ${
-                    selected.thumbnailUrl
-                        ? `
-
-                            <img
-                                src="${
-                                    escapeAttr(
-                                        selected.thumbnailUrl
-                                    )
-                                }"
-                                alt=""
-                            >
-
-                        `
-                        : `
+                        <article
+                            class="live-card"
+                        >
 
                             <div
-                                class="live-thumbnail-placeholder"
+                                class="live-thumbnail"
                             >
-                                LIVE
+
+                                ${
+                                    thumbnail
+
+                                        ? `
+
+                                            <img
+                                                src="${escapeHtml(
+                                                    thumbnail
+                                                )}"
+                                                alt=""
+                                            >
+
+                                        `
+
+                                        : `
+
+                                            <div
+                                                class="live-placeholder"
+                                            >
+                                                LIVE CLASS
+                                            </div>
+
+                                        `
+                                }
+
                             </div>
 
-                        `
-                }
+
+                            <div
+                                class="live-info"
+                            >
+
+                                <span
+                                    class="live-status ${
+                                        isStarted
+                                            ? "now"
+                                            : ""
+                                    }"
+                                >
+
+                                    ${
+                                        isStarted
+                                            ? "TODAY"
+                                            : "UPCOMING"
+                                    }
+
+                                </span>
 
 
-                <span
-                    class="live-status ${
-                        isLive
-                            ? "live-now"
-                            : "upcoming"
-                    }"
-                >
-
-                    ${
-                        isLive
-                            ? "● LIVE NOW"
-                            : "UPCOMING"
-                    }
-
-                </span>
-
-            </div>
+                                <h3>
+                                    ${escapeHtml(
+                                        liveClass.title ||
+                                        topic
+                                    )}
+                                </h3>
 
 
-            <div
-                class="live-home-content"
-            >
+                                <p>
 
-                <div class="live-label">
+                                    ${
+                                        liveClass.teacherName
+                                            ? escapeHtml(
+                                                liveClass.teacherName
+                                            )
+                                            : ""
+                                    }
 
-                    ${
-                        isLive
-                            ? "LIVE NOW"
-                            : "NEXT CLASS"
-                    }
+                                    ${
+                                        liveClass.subjectName
+                                            ? ` • ${escapeHtml(
+                                                liveClass.subjectName
+                                            )}`
+                                            : ""
+                                    }
 
-                </div>
-
-
-                <h3>
-                    ${
-                        escapeHtml(
-                            title
-                        )
-                    }
-                </h3>
+                                </p>
 
 
-                <p>
-                    ${
-                        escapeHtml(
-                            subtitle
-                        )
-                    }
-                </p>
+                                ${
+                                    liveClass.chapterName
 
+                                        ? `
 
-                ${
-                    selected.facultyName
-                        ? `
+                                            <p>
+                                                ${escapeHtml(
+                                                    liveClass.chapterName
+                                                )}
+                                            </p>
 
-                            <small>
-                                By ${
-                                    escapeHtml(
-                                        selected.facultyName
-                                    )
+                                        `
+
+                                        : ""
                                 }
-                            </small>
-
-                        `
-                        : ""
-                }
 
 
-                <div class="live-time">
+                                <div
+                                    class="live-time"
+                                >
 
-                    ${
-                        isLive
-                            ? "Class is live now"
-                            : formatTime(
-                                selected.start
-                            )
-                    }
+                                    ${
+                                        formatTime(
+                                            liveClass.scheduledTime
+                                        )
+                                    }
 
-                </div>
+                                </div>
 
+                            </div>
 
-                ${
-                    isLive
-                        ? `
 
                             <button
-                                id="joinLiveButton"
-                                class="join-live-btn"
+                                class="live-open"
+                                data-live-id="${escapeHtml(
+                                    liveClass.id
+                                )}"
+                                type="button"
                             >
-                                JOIN LIVE →
+
+                                VIEW
+
                             </button>
 
-                        `
-                        : `
+                        </article>
 
-                            <div class="countdown">
+                    `;
 
-                                Starts in
-
-                                <strong
-                                    id="liveCountdown"
-                                >
-                                    ${getCountdown(
-                                        selected.start
-                                    )}
-                                </strong>
-
-                            </div>
-
-                        `
                 }
-
-            </div>
-
-        </article>
-
-    `;
-
-
-    if (isLive) {
-
-        document
-            .getElementById(
-                "joinLiveButton"
             )
-            ?.addEventListener(
-                "click",
-                () => {
+            .join("");
 
-                    if (
-                        selected.liveLink
-                    ) {
+
+    document
+        .querySelectorAll(
+            "[data-live-id]"
+        )
+        .forEach(
+            button => {
+
+                button.addEventListener(
+                    "click",
+                    () => {
 
                         window.location.href =
-                            selected.liveLink;
+                            "../live/";
 
                     }
+                );
 
-                }
-            );
-
-    }
-
-    else {
-
-        startCountdown(
-            selected.start
-        );
-
-    }
-
-}
-
-
-/* =========================================================
-   COUNTDOWN
-========================================================= */
-
-function startCountdown(
-    target
-) {
-
-    const element =
-        document.getElementById(
-            "liveCountdown"
-        );
-
-
-    if (!element) {
-
-        return;
-
-    }
-
-
-    const timer =
-        setInterval(
-            () => {
-
-                const remaining =
-                    target.getTime() -
-                    Date.now();
-
-
-                if (
-                    remaining <= 0
-                ) {
-
-                    clearInterval(
-                        timer
-                    );
-
-
-                    loadHomeData();
-
-                    return;
-
-                }
-
-
-                element.textContent =
-                    getCountdown(
-                        target
-                    );
-
-            },
-            1000
+            }
         );
 
 }
 
 
-/* =========================================================
+/* =====================================================
    CONTINUE LEARNING
-========================================================= */
+===================================================== */
 
-function renderContinueLearning() {
+async function loadContinueLearning() {
 
-    const card =
+    const container =
         document.getElementById(
             "continueCard"
         );
 
 
-    if (!card) {
-
-        return;
-
-    }
-
-
     if (
-        !purchasedBatches.length
+        !contents.length
     ) {
 
-        card.innerHTML = `
+        container.innerHTML = `
 
-            <div
-                class="continue-content"
-            >
-
-                <span>
-                    START LEARNING
-                </span>
-
-                <h3>
-                    Your learning journey starts here.
-                </h3>
-
-                <p>
-                    Purchase a batch to start learning.
-                </p>
-
+            <div class="loading-card">
+                No learning content available yet.
             </div>
 
         `;
@@ -1630,44 +1737,178 @@ function renderContinueLearning() {
     }
 
 
-    const enrollment =
-        purchasedBatches[0];
+    let lastWatched =
+        null;
 
 
-    const progress =
-        Math.max(
-            0,
-            Math.min(
-                100,
-                Number(
-                    enrollment.progress ||
-                    0
-                )
-            )
+    try {
+
+        const saved =
+            localStorage.getItem(
+                "zen2LastWatched"
+            );
+
+
+        if (
+            saved
+        ) {
+
+            lastWatched =
+                JSON.parse(
+                    saved
+                );
+
+            }
+
+        }
+
+    }
+
+    catch (
+        error
+    ) {
+
+        console.warn(
+            error
+        );
+
+    }
+
+
+    let selectedContent =
+        null;
+
+
+    /*
+     * First priority:
+     * previously watched content.
+     */
+
+    if (
+        lastWatched?.contentId
+    ) {
+
+        selectedContent =
+            contents.find(
+                content =>
+                    content.id ===
+                    lastWatched.contentId
+            );
+
+    }
+
+
+    /*
+     * If nothing was watched,
+     * use the first ordered video.
+     */
+
+    if (
+        !selectedContent
+    ) {
+
+        selectedContent =
+            contents.find(
+                content =>
+                    String(
+                        content.contentType ||
+                        ""
+                    )
+                    .toUpperCase() ===
+                    "VIDEO"
+            );
+
+    }
+
+
+    /*
+     * If still nothing,
+     * use first content.
+     */
+
+    if (
+        !selectedContent
+    ) {
+
+        selectedContent =
+            contents[0];
+
+    }
+
+
+    if (
+        !selectedContent
+    ) {
+
+        container.innerHTML = `
+
+            <div class="loading-card">
+                No learning content available yet.
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    const title =
+        selectedContent.title ||
+        "Learning Content";
+
+
+    const thumbnail =
+        selectedContent.thumbnailUrl ||
+        "";
+
+
+    const subject =
+        findSubjectName(
+            selectedContent.subjectId
         );
 
 
-    card.innerHTML = `
+    const chapter =
+        findChapterName(
+            selectedContent.chapterId
+        );
 
-        <div class="continue-thumbnail">
+
+    const isVideo =
+        String(
+            selectedContent.contentType ||
+            ""
+        )
+        .toUpperCase() ===
+        "VIDEO";
+
+
+    container.innerHTML = `
+
+        <div
+            class="continue-thumbnail"
+        >
 
             ${
-                enrollment.batchImageUrl
+                thumbnail
+
                     ? `
 
                         <img
-                            src="${
-                                escapeAttr(
-                                    enrollment.batchImageUrl
-                                )
-                            }"
+                            src="${escapeHtml(
+                                thumbnail
+                            )}"
                             alt=""
                         >
 
                     `
+
                     : `
 
-                        <div>
+                        <div
+                            class="continue-placeholder"
+                        >
                             ZENOVA
                         </div>
 
@@ -1677,57 +1918,65 @@ function renderContinueLearning() {
         </div>
 
 
-        <div class="continue-content">
+        <div
+            class="continue-info"
+        >
 
-            <span>
-                CONTINUE LEARNING
+            <span
+                class="continue-label"
+            >
+
+                ${
+                    lastWatched?.contentId
+                        ? "CONTINUE LEARNING"
+                        : "START LEARNING"
+                }
+
             </span>
 
+
             <h3>
-                ${
-                    escapeHtml(
-                        enrollment.lastContentTitle ||
-                        enrollment.batchName ||
-                        "Continue Learning"
-                    )
-                }
+                ${escapeHtml(
+                    title
+                )}
             </h3>
 
 
             <p>
+
+                ${escapeHtml(
+                    subject
+                )}
+
                 ${
-                    escapeHtml(
-                        enrollment.lastContentSubtitle ||
-                        ""
-                    )
+                    chapter
+                        ? ` • ${escapeHtml(
+                            chapter
+                        )}`
+                        : ""
                 }
+
             </p>
-
-
-            <div class="continue-progress">
-
-                <div>
-
-                    <span
-                        style="width:${progress}%"
-                    ></span>
-
-                </div>
-
-                <strong>
-                    ${progress}%
-                </strong>
-
-            </div>
 
         </div>
 
 
         <button
-            id="continueButton"
             class="continue-button"
+            id="continueLearningButton"
+            type="button"
         >
-            CONTINUE
+
+            ${
+                lastWatched?.contentId
+                    ? "CONTINUE"
+                    : (
+                        isVideo
+                            ? "START"
+                            : "OPEN"
+                    )
+            }
+
         </button>
 
     `;
@@ -1735,14 +1984,15 @@ function renderContinueLearning() {
 
     document
         .getElementById(
-            "continueButton"
+            "continueLearningButton"
         )
         ?.addEventListener(
             "click",
             () => {
 
-                window.location.href =
-                    "../study/";
+                openContent(
+                    selectedContent
+                );
 
             }
         );
@@ -1750,28 +2000,24 @@ function renderContinueLearning() {
 }
 
 
-/* =========================================================
-   ANNOUNCEMENTS
-========================================================= */
+/* =====================================================
+   OPEN CONTENT
+===================================================== */
 
-function renderAnnouncements(
-    items
+function openContent(
+    content
 ) {
 
-    const section =
-        document.getElementById(
-            "announcementSection"
-        );
+    const chapterId =
+        content.chapterId;
 
-    const list =
-        document.getElementById(
-            "announcementList"
-        );
+
+    const subjectId =
+        content.subjectId;
 
 
     if (
-        !section ||
-        !list
+        !chapterId
     ) {
 
         return;
@@ -1779,82 +2025,80 @@ function renderAnnouncements(
     }
 
 
-    if (!items.length) {
-
-        section.classList.add(
-            "hidden"
-        );
-
-        return;
-
-    }
-
-
-    section.classList.remove(
-        "hidden"
-    );
-
-
-    list.innerHTML =
-        items
-            .slice(
-                0,
-                3
+    window.location.href =
+        `./chapters/?chapterId=${
+            encodeURIComponent(
+                chapterId
             )
-            .map(
-                item => `
-
-                    <article
-                        class="announcement-card"
-                    >
-
-                        <div
-                            class="announcement-icon"
-                        >
-                            📢
-                        </div>
-
-
-                        <div>
-
-                            <strong>
-                                ${
-                                    escapeHtml(
-                                        item.title ||
-                                        ""
-                                    )
-                                }
-                            </strong>
-
-
-                            <p>
-                                ${
-                                    escapeHtml(
-                                        item.description ||
-                                        ""
-                                    )
-                                }
-                            </p>
-
-                        </div>
-
-
-                        <span>
-                            →
-                        </span>
-
-                    </article>
-
-                `
+        }&subjectId=${
+            encodeURIComponent(
+                subjectId || ""
             )
-            .join("");
+        }&courseId=${
+            encodeURIComponent(
+                selectedCourse.id
+            )
+        }&contentId=${
+            encodeURIComponent(
+                content.id
+            )
+        }`;
 
 }
 
 
-/* =========================================================
+/* =====================================================
+   SUBJECT NAME
+===================================================== */
+
+function findSubjectName(
+    subjectId
+) {
+
+    const subject =
+        subjects.find(
+            item =>
+                item.id ===
+                subjectId
+        );
+
+
+    return (
+        subject?.subjectName ||
+        subject?.displayName ||
+        "Subject"
+    );
+
+}
+
+
+/* =====================================================
+   CHAPTER NAME
+===================================================== */
+
+function findChapterName(
+    chapterId
+) {
+
+    const chapter =
+        chapters.find(
+            item =>
+                item.id ===
+                chapterId
+        );
+
+
+    return (
+        chapter?.chapterName ||
+        "Chapter"
+    );
+
+}
+
+
+/* =====================================================
    NAVIGATION
-========================================================= */
+===================================================== */
 
 function setupNavigation() {
 
@@ -1869,9 +2113,66 @@ function setupNavigation() {
                     "click",
                     () => {
 
-                        navigate(
-                            element.dataset.route
-                        );
+                        const route =
+                            element.dataset.route;
+
+
+                        if (
+                            route ===
+                            "revision"
+                        ) {
+
+                            window.location.href =
+                                "./revision/";
+
+                            return;
+
+                        }
+
+
+                        if (
+                            route ===
+                            "live"
+                        ) {
+
+                            window.location.href =
+                                "../live/";
+
+                            return;
+
+                        }
+
+
+                        if (
+                            route ===
+                            "tests"
+                        ) {
+
+                            /*
+                             * Keep this route
+                             * ready for the Tests
+                             * page.
+                             */
+
+                            window.location.href =
+                                "./tests/";
+
+                            return;
+
+                        }
+
+
+                        if (
+                            route ===
+                            "doubts"
+                        ) {
+
+                            window.location.href =
+                                "./doubts/";
+
+                            return;
+
+                        }
 
                     }
                 );
@@ -1888,9 +2189,8 @@ function setupNavigation() {
             "click",
             () => {
 
-                navigate(
-                    "profile"
-                );
+                window.location.href =
+                    "./profile/";
 
             }
         );
@@ -1904,9 +2204,8 @@ function setupNavigation() {
             "click",
             () => {
 
-                navigate(
-                    "ai"
-                );
+                window.location.href =
+                    "./ai/";
 
             }
         );
@@ -1914,199 +2213,252 @@ function setupNavigation() {
 }
 
 
-/* =========================================================
-   ROUTES
-========================================================= */
-
-function navigate(
-    route
-) {
-
-    const routes = {
-
-        revision:
-            "../revision/",
-
-        live:
-            "../live/",
-
-        tests:
-            "../tests/",
-
-        doubts:
-            "../doubts/",
-
-        profile:
-            "../profile/",
-
-        ai:
-            "../ai/"
-
-    };
-
-
-    if (
-        routes[route]
-    ) {
-
-        window.location.href =
-            routes[route];
-
-    }
-
-}
-
-
-/* =========================================================
+/* =====================================================
    DATE
-========================================================= */
+===================================================== */
 
-function getDate(
-    value
-) {
+function getTodayString() {
 
-    if (!value) {
+    const date =
+        new Date();
 
-        return new Date(
-            "invalid"
+
+    const year =
+        date.getFullYear();
+
+
+    const month =
+        String(
+            date.getMonth() + 1
+        )
+        .padStart(
+            2,
+            "0"
         );
 
-    }
+
+    const day =
+        String(
+            date.getDate()
+        )
+        .padStart(
+            2,
+            "0"
+        );
 
 
-    if (
-        typeof value.toDate ===
-        "function"
-    ) {
-
-        return value.toDate();
-
-    }
-
-
-    return new Date(
-        value
-    );
+    return `${year}-${month}-${day}`;
 
 }
 
 
-/* =========================================================
-   SAME DAY
-========================================================= */
+/* =====================================================
+   LIVE DATE
+===================================================== */
 
-function isSameDay(
+function parseLiveDate(
+    liveClass
+) {
+
+    if (
+        !liveClass.scheduledDate
+    ) {
+
+        return null;
+
+    }
+
+
+    const time =
+        liveClass.scheduledTime ||
+        "00:00";
+
+
+    const date =
+        new Date(
+            `${liveClass.scheduledDate}T${time}:00`
+        );
+
+
+    if (
+        Number.isNaN(
+            date.getTime()
+        )
+    ) {
+
+        return null;
+
+    }
+
+
+    return date;
+
+}
+
+
+/* =====================================================
+   FORMAT TIME
+===================================================== */
+
+function formatTime(
+    time
+) {
+
+    if (
+        !time
+    ) {
+
+        return "";
+
+    }
+
+
+    const parts =
+        String(
+            time
+        )
+        .split(":");
+
+
+    if (
+        parts.length < 2
+    ) {
+
+        return time;
+
+    }
+
+
+    let hour =
+        Number(
+            parts[0]
+        );
+
+
+    const minute =
+        parts[1];
+
+
+    const suffix =
+        hour >= 12
+            ? "PM"
+            : "AM";
+
+
+    hour =
+        hour % 12 ||
+        12;
+
+
+    return `${hour}:${minute} ${suffix}`;
+
+}
+
+
+/* =====================================================
+   SORT
+===================================================== */
+
+function sortByOrder(
     a,
     b
 ) {
 
     return (
-        a.getFullYear() ===
-            b.getFullYear() &&
-
-        a.getMonth() ===
-            b.getMonth() &&
-
-        a.getDate() ===
-            b.getDate()
+        Number(
+            a.order ??
+            a.chapterNumber ??
+            a.position ??
+            9999
+        ) -
+        Number(
+            b.order ??
+            b.chapterNumber ??
+            b.position ??
+            9999
+        )
     );
 
 }
 
 
-/* =========================================================
-   FORMAT TIME
-========================================================= */
+/* =====================================================
+   SHOW APP
+===================================================== */
 
-function formatTime(
-    date
-) {
+function showApp() {
 
-    return date.toLocaleTimeString(
-        "en-IN",
-        {
-            hour:
-                "numeric",
+    app?.classList.remove(
+        "hidden"
+    );
 
-            minute:
-                "2-digit"
-        }
+
+    setTimeout(
+        () => {
+
+            loader?.classList.add(
+                "fade-out"
+            );
+
+        },
+        100
     );
 
 }
 
 
-/* =========================================================
-   COUNTDOWN TEXT
-========================================================= */
+/* =====================================================
+   ERROR
+===================================================== */
 
-function getCountdown(
-    target
+function showError(
+    message
 ) {
 
-    const difference =
-        Math.max(
-            0,
-            target.getTime() -
-            Date.now()
-        );
-
-
-    const totalSeconds =
-        Math.floor(
-            difference /
-            1000
-        );
-
-
-    const hours =
-        Math.floor(
-            totalSeconds /
-            3600
-        );
-
-
-    const minutes =
-        Math.floor(
-            (
-                totalSeconds %
-                3600
-            ) /
-            60
-        );
-
-
-    const seconds =
-        totalSeconds %
-        60;
+    console.error(
+        message
+    );
 
 
     if (
-        hours > 0
+        errorMessage
     ) {
 
-        return `${hours}h ${minutes}m`;
+        errorMessage.textContent =
+            message;
 
     }
 
 
-    if (
-        minutes > 0
-    ) {
-
-        return `${minutes}m ${seconds}s`;
-
-    }
+    loader?.classList.add(
+        "fade-out"
+    );
 
 
-    return `${seconds}s`;
+    errorScreen?.classList.remove(
+        "hidden"
+    );
+
+
+    document
+        .getElementById(
+            "retryButton"
+        )
+        ?.addEventListener(
+            "click",
+            () => {
+
+                window.location.reload();
+
+            }
+        );
 
 }
 
 
-/* =========================================================
-   HTML SAFETY
-========================================================= */
+/* =====================================================
+   ESCAPE HTML
+===================================================== */
 
 function escapeHtml(
     value
@@ -2140,107 +2492,5 @@ function escapeHtml(
             "'",
             "&#039;"
         );
-
-}
-
-
-function escapeAttr(
-    value
-) {
-
-    return escapeHtml(
-        value
-    );
-
-}
-
-
-/* =========================================================
-   SHOW APP
-========================================================= */
-
-function showApp() {
-
-    app?.classList.remove(
-        "hidden"
-    );
-
-
-    setTimeout(
-        () => {
-
-            loader?.classList.add(
-                "fade-out"
-            );
-
-        },
-        100
-    );
-
-}
-
-
-/* =========================================================
-   ERROR
-========================================================= */
-
-function showError() {
-
-    if (!loader) {
-
-        return;
-
-    }
-
-
-    loader.innerHTML = `
-
-        <div
-            style="
-                text-align:center;
-                padding:30px;
-            "
-        >
-
-            <div
-                style="
-                    font-size:24px;
-                    font-weight:800;
-                    letter-spacing:3px;
-                "
-            >
-                ZENOVA
-            </div>
-
-
-            <p
-                style="
-                    margin-top:10px;
-                    color:#777;
-                    font-size:12px;
-                "
-            >
-                We couldn't load your
-                learning space.
-            </p>
-
-
-            <button
-                onclick="location.reload()"
-                style="
-                    margin-top:15px;
-                    border:0;
-                    padding:10px 18px;
-                    border-radius:8px;
-                    background:#111;
-                    color:#fff;
-                "
-            >
-                TRY AGAIN
-            </button>
-
-        </div>
-
-    `;
 
 }
