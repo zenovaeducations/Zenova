@@ -8,9 +8,9 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
 
 import {
-    collection,
     doc,
     getDoc,
+    collection,
     getDocs,
     query,
     where
@@ -18,14 +18,13 @@ import {
 
 
 /* =====================================================
-   STATE
+   ZEN2 REVISION
 ===================================================== */
 
 let currentUser = null;
-let student = null;
+let zen2Student = null;
 let currentCourse = null;
 let subjects = [];
-let contents = [];
 
 
 /* =====================================================
@@ -44,9 +43,24 @@ const errorScreen =
 const errorMessage =
     document.getElementById("errorMessage");
 
+const subjectsList =
+    document.getElementById("subjectsList");
+
+const courseName =
+    document.getElementById("courseName");
+
+const continueCard =
+    document.getElementById("continueCard");
+
+const recommendedVideos =
+    document.getElementById("recommendedVideos");
+
+const profileInitial =
+    document.getElementById("profileInitial");
+
 
 /* =====================================================
-   AUTH
+   START
 ===================================================== */
 
 onAuthStateChanged(
@@ -54,14 +68,14 @@ onAuthStateChanged(
     async (user) => {
 
         console.log(
-            "REVISION AUTH:",
+            "ZEN2 REVISION AUTH:",
             user
         );
 
 
-        /* ---------------------------------------------
-           NOT LOGGED IN
-        --------------------------------------------- */
+        /*
+         * NOT LOGGED IN
+         */
 
         if (!user) {
 
@@ -80,41 +94,35 @@ onAuthStateChanged(
         try {
 
             /*
-             * IMPORTANT:
-             * Use the REAL student collection.
-             *
-             * students/{uid}
+             * 1. GET ZEN2 STUDENT
              */
 
-            await loadStudent();
+            await loadZen2Student();
 
 
             /*
-             * Find course for student's class.
+             * 2. FIND COURSE
+             *    ACCORDING TO STUDENT CLASS
              */
 
-            await loadCourse();
+            await loadCorrectCourse();
 
 
             /*
-             * Load subjects belonging
-             * to that course.
+             * 3. GET SUBJECTS
+             *    OF THAT COURSE
              */
 
-            await loadSubjects();
+            await loadCourseSubjects();
 
 
             /*
-             * Load content for
-             * recommendations.
+             * 4. DISPLAY
              */
-
-            await loadContent();
-
 
             renderStudent();
 
-            renderCourseName();
+            renderCourse();
 
             renderSubjects();
 
@@ -122,7 +130,10 @@ onAuthStateChanged(
 
             renderRecommendedVideos();
 
-            setupNavigation();
+
+            /*
+             * 5. SHOW APP
+             */
 
             showApp();
 
@@ -131,13 +142,13 @@ onAuthStateChanged(
         catch (error) {
 
             console.error(
-                "REVISION PAGE ERROR:",
+                "ZEN2 REVISION ERROR:",
                 error
             );
 
             showError(
-                error?.message ||
-                "Unable to load Revision Classes."
+                error.message ||
+                "Unable to load Revision."
             );
 
         }
@@ -147,27 +158,23 @@ onAuthStateChanged(
 
 
 /* =====================================================
-   LOAD STUDENT
+   LOAD ZEN2 STUDENT
 ===================================================== */
 
-async function loadStudent() {
+async function loadZen2Student() {
 
     /*
-     * THIS IS THE IMPORTANT FIX.
+     * IMPORTANT
      *
-     * Actual collection:
+     * ONLY ZEN2 STUDENTS
      *
-     * students
-     *
-     * Document:
-     *
-     * students/{uid}
+     * zen2Students/{uid}
      */
 
     const studentRef =
         doc(
             db,
-            "students",
+            "zen2Students",
             currentUser.uid
         );
 
@@ -179,80 +186,44 @@ async function loadStudent() {
 
 
     console.log(
-        "STUDENT EXISTS:",
+        "ZEN2 STUDENT EXISTS:",
         snapshot.exists()
     );
 
 
-    /*
-     * DO NOT REDIRECT TO ONBOARDING HERE.
-     *
-     * Home already handles authentication/onboarding.
-     *
-     * If something is wrong, show an error instead
-     * of creating a redirect loop.
-     */
-
     if (!snapshot.exists()) {
 
         throw new Error(
-            "Student profile was not found."
+            "ZEN2 student profile not found."
         );
 
     }
 
 
-    student =
+    zen2Student =
         snapshot.data();
 
 
     console.log(
-        "REVISION STUDENT DATA:",
-        student
+        "ZEN2 STUDENT DATA:",
+        zen2Student
     );
 
 
     /*
-     * Actual field from onboarding:
-     *
-     * onboardingComplete
+     * Student name
      */
 
-    if (
-        student.onboardingComplete !== true
-    ) {
+    if (profileInitial) {
 
-        throw new Error(
-            "Student onboarding is not completed."
-        );
-
-    }
-
-}
+        const name =
+            zen2Student.name ||
+            zen2Student.fullName ||
+            currentUser.displayName ||
+            "S";
 
 
-/* =====================================================
-   STUDENT UI
-===================================================== */
-
-function renderStudent() {
-
-    const name =
-        student.name ||
-        student.fullName ||
-        currentUser.displayName ||
-        "Student";
-
-
-    const initial =
-        document.getElementById(
-            "profileInitial"
-        );
-
-
-    if (initial) {
-
-        initial.textContent =
+        profileInitial.textContent =
             name
                 .trim()
                 .charAt(0)
@@ -264,25 +235,21 @@ function renderStudent() {
 
 
 /* =====================================================
-   LOAD COURSE
+   LOAD CORRECT COURSE
 ===================================================== */
 
-async function loadCourse() {
+async function loadCorrectCourse() {
 
     /*
-     * Actual onboarding field:
-     *
-     * className
+     * Student class from ZEN2
      */
 
     const studentClass =
-        normalizeClass(
-            student.className
-        );
+        getStudentClass();
 
 
     console.log(
-        "STUDENT CLASS:",
+        "ZEN2 STUDENT CLASS:",
         studentClass
     );
 
@@ -290,14 +257,14 @@ async function loadCourse() {
     if (!studentClass) {
 
         throw new Error(
-            "Student class is missing."
+            "Class is not available in your ZEN2 student profile."
         );
 
     }
 
 
     /*
-     * Load ZEN2 courses.
+     * Get ALL ZEN2 courses.
      */
 
     const snapshot =
@@ -309,7 +276,7 @@ async function loadCourse() {
         );
 
 
-    const allCourses =
+    const courses =
         snapshot.docs.map(
             item => ({
 
@@ -323,95 +290,43 @@ async function loadCourse() {
 
 
     console.log(
-        "ALL ZEN2 COURSES:",
-        allCourses
+        "ZEN2 COURSES:",
+        courses
     );
 
 
     /*
-     * Find course matching student's class.
-     *
-     * Example:
-     *
-     * student.className = "10th"
-     *
-     * course.className = "10th"
+     * Find course whose class matches
+     * student's class.
      */
 
     const matchingCourses =
-        allCourses.filter(
+        courses.filter(
             course => {
 
                 const courseClass =
-                    normalizeClass(
-                        course.className
+                    getCourseClass(
+                        course
                     );
 
 
-                const active =
-                    course.active !== false &&
-                    course.status !== "INACTIVE";
-
-
                 return (
-                    courseClass ===
-                    studentClass
-                ) && active;
+                    normalizeClass(
+                        courseClass
+                    ) ===
+                    normalizeClass(
+                        studentClass
+                    )
+                );
 
             }
         );
 
 
     console.log(
-        "MATCHING COURSES:",
+        "MATCHING ZEN2 COURSES:",
         matchingCourses
     );
-
-
-    /*
-     * If no class-specific course,
-     * try classDisplayName as fallback.
-     */
-
-    if (
-        !matchingCourses.length
-    ) {
-
-        const displayClass =
-            normalizeClass(
-                student.classDisplayName
-            );
-
-
-        if (displayClass) {
-
-            const fallback =
-                allCourses.filter(
-                    course => {
-
-                        return (
-                            normalizeClass(
-                                course.className
-                            ) === displayClass
-                        ) &&
-                        course.active !== false &&
-                        course.status !== "INACTIVE";
-
-                    }
-                );
-
-
-            if (fallback.length) {
-
-                matchingCourses.push(
-                    ...fallback
-                );
-
-            }
-
-        }
-
-    }
 
 
     if (
@@ -419,37 +334,26 @@ async function loadCourse() {
     ) {
 
         throw new Error(
-            `No ZEN2 course found for ${student.className}.`
+            `No ZEN2 course found for class ${studentClass}.`
         );
 
     }
 
 
     /*
-     * Respect admin order.
+     * If there are multiple courses
+     * for same class, use first active one.
      */
 
-    matchingCourses.sort(
-        (a, b) => {
-
-            return (
-                Number(
-                    a.order ??
-                    a.priority ??
-                    9999
-                ) -
-                Number(
-                    b.order ??
-                    b.priority ??
-                    9999
-                )
-            );
-
-        }
-    );
+    const activeCourse =
+        matchingCourses.find(
+            course =>
+                course.active !== false
+        );
 
 
     currentCourse =
+        activeCourse ||
         matchingCourses[0];
 
 
@@ -462,21 +366,84 @@ async function loadCourse() {
 
 
 /* =====================================================
+   GET STUDENT CLASS
+===================================================== */
+
+function getStudentClass() {
+
+    /*
+     * Main field:
+     *
+     * className
+     *
+     * Other fallbacks are only to make this
+     * compatible with the existing ZEN2
+     * onboarding data if the field name differs.
+     */
+
+    return (
+        zen2Student.className ||
+        zen2Student.class ||
+        zen2Student.standard ||
+        zen2Student.grade ||
+        zen2Student.targetClass ||
+        ""
+    );
+
+}
+
+
+/* =====================================================
+   GET COURSE CLASS
+===================================================== */
+
+function getCourseClass(
+    course
+) {
+
+    /*
+     * Main ZEN2 field:
+     *
+     * className
+     *
+     * Fallbacks supported.
+     */
+
+    return (
+        course.className ||
+        course.courseClass ||
+        course.targetClass ||
+        course.standard ||
+        course.grade ||
+        course.crmClass ||
+        ""
+    );
+
+}
+
+
+/* =====================================================
    LOAD SUBJECTS
 ===================================================== */
 
-async function loadSubjects() {
+async function loadCourseSubjects() {
 
     if (!currentCourse) {
 
         throw new Error(
-            "Course not selected."
+            "ZEN2 course not selected."
         );
 
     }
 
 
-    const subjectQuery =
+    /*
+     * Subjects are connected through:
+     *
+     * courseId
+     */
+
+    const subjectsQuery =
         query(
             collection(
                 db,
@@ -493,7 +460,7 @@ async function loadSubjects() {
 
     const snapshot =
         await getDocs(
-            subjectQuery
+            subjectsQuery
         );
 
 
@@ -511,7 +478,7 @@ async function loadSubjects() {
 
 
     /*
-     * Ignore disabled subjects.
+     * Remove disabled subjects
      */
 
     subjects =
@@ -522,7 +489,7 @@ async function loadSubjects() {
 
 
     /*
-     * Admin order.
+     * Sort according to admin order.
      */
 
     subjects.sort(
@@ -531,13 +498,11 @@ async function loadSubjects() {
             return (
                 Number(
                     a.order ??
-                    a.priority ??
-                    9999
+                    999999
                 ) -
                 Number(
                     b.order ??
-                    b.priority ??
-                    9999
+                    999999
                 )
             );
 
@@ -554,104 +519,50 @@ async function loadSubjects() {
 
 
 /* =====================================================
-   LOAD CONTENT
+   RENDER STUDENT
 ===================================================== */
 
-async function loadContent() {
+function renderStudent() {
 
-    if (!currentCourse) {
-        return;
+    const name =
+        zen2Student.name ||
+        zen2Student.fullName ||
+        currentUser.displayName ||
+        "Student";
+
+
+    if (profileInitial) {
+
+        profileInitial.textContent =
+            name
+                .trim()
+                .charAt(0)
+                .toUpperCase();
+
     }
-
-
-    const contentQuery =
-        query(
-            collection(
-                db,
-                "zen2Content"
-            ),
-
-            where(
-                "courseId",
-                "==",
-                currentCourse.id
-            )
-        );
-
-
-    const snapshot =
-        await getDocs(
-            contentQuery
-        );
-
-
-    contents =
-        snapshot.docs.map(
-            item => ({
-
-                id:
-                    item.id,
-
-                ...item.data()
-
-            })
-        );
-
-
-    contents =
-        contents.filter(
-            content =>
-                content.active !== false
-        );
-
-
-    contents.sort(
-        (a, b) => {
-
-            return (
-                Number(
-                    a.order ??
-                    9999
-                ) -
-                Number(
-                    b.order ??
-                    9999
-                )
-            );
-
-        }
-    );
-
-
-    console.log(
-        "ZEN2 CONTENT:",
-        contents
-    );
 
 }
 
 
 /* =====================================================
-   COURSE NAME
+   RENDER COURSE
 ===================================================== */
 
-function renderCourseName() {
+function renderCourse() {
 
-    const element =
-        document.getElementById(
-            "courseName"
-        );
-
-
-    if (!element) {
+    if (!courseName) {
         return;
     }
 
 
-    element.textContent =
+    courseName.textContent =
         currentCourse.courseName ||
         currentCourse.name ||
-        currentCourse.className ||
+        currentCourse.title ||
+        currentCourse.batchName ||
+        getCourseClass(
+            currentCourse
+        ) ||
         "Your Course";
 
 }
@@ -663,25 +574,19 @@ function renderCourseName() {
 
 function renderSubjects() {
 
-    const container =
-        document.getElementById(
-            "subjectsList"
-        );
-
-
-    if (!container) {
+    if (!subjectsList) {
         return;
     }
 
 
     if (!subjects.length) {
 
-        container.innerHTML = `
+        subjectsList.innerHTML = `
 
             <div class="loading-box">
 
-                No subjects available
-                for this course.
+                No subjects have been added
+                to this course yet.
 
             </div>
 
@@ -692,7 +597,7 @@ function renderSubjects() {
     }
 
 
-    container.innerHTML =
+    subjectsList.innerHTML =
         subjects
             .map(
                 subject => {
@@ -700,6 +605,7 @@ function renderSubjects() {
                     const name =
                         subject.subjectName ||
                         subject.name ||
+                        subject.title ||
                         subject.displayName ||
                         "Subject";
 
@@ -723,9 +629,11 @@ function renderSubjects() {
                             <div
                                 class="subject-icon"
                             >
+
                                 ${escapeHtml(
                                     firstLetter
                                 )}
+
                             </div>
 
 
@@ -747,11 +655,11 @@ function renderSubjects() {
                             </div>
 
 
-                            <span
+                            <div
                                 class="subject-arrow"
                             >
                                 →
-                            </span>
+                            </div>
 
                         </article>
 
@@ -811,78 +719,203 @@ function renderSubjects() {
 
 function renderContinueLearning() {
 
-    const container =
-        document.getElementById(
-            "continueCard"
-        );
-
-
-    if (!container) {
+    if (!continueCard) {
         return;
     }
 
 
-    let lastWatched = null;
+    /*
+     * We are not creating a new progress
+     * system now.
+     *
+     * Just show the first video if available.
+     */
+
+    loadFirstVideo()
+        .then(
+            video => {
+
+                if (!video) {
+
+                    continueCard.innerHTML = `
+
+                        <div class="loading-box">
+
+                            No learning video
+                            available yet.
+
+                        </div>
+
+                    `;
+
+                    return;
+
+                }
 
 
-    const saved =
-        localStorage.getItem(
-            "zen2LastWatched"
+                const subject =
+                    subjects.find(
+                        subject =>
+                            subject.id ===
+                            video.subjectId
+                    );
+
+
+                const subjectName =
+                    subject?.subjectName ||
+                    subject?.name ||
+                    "Subject";
+
+
+                continueCard.innerHTML = `
+
+                    <div
+                        class="continue-thumbnail"
+                    >
+
+                        ${
+                            video.thumbnailUrl
+
+                                ? `
+
+                                    <img
+                                        src="${escapeHtml(
+                                            video.thumbnailUrl
+                                        )}"
+                                        alt=""
+                                    >
+
+                                `
+
+                                : `
+
+                                    <div
+                                        class="thumbnail-placeholder"
+                                    >
+                                        ZENOVA
+                                    </div>
+
+                                `
+                        }
+
+                    </div>
+
+
+                    <div
+                        class="continue-info"
+                    >
+
+                        <span
+                            class="continue-label"
+                        >
+                            START LEARNING
+                        </span>
+
+
+                        <h3>
+                            ${escapeHtml(
+                                video.title ||
+                                "Learning Video"
+                            )}
+                        </h3>
+
+
+                        <p>
+                            ${escapeHtml(
+                                subjectName
+                            )}
+                        </p>
+
+                    </div>
+
+
+                    <button
+                        class="continue-button"
+                        id="continueButton"
+                        type="button"
+                    >
+                        START
+                    </button>
+
+                `;
+
+
+                document
+                    .getElementById(
+                        "continueButton"
+                    )
+                    ?.addEventListener(
+                        "click",
+                        () => {
+
+                            openContent(
+                                video
+                            );
+
+                        }
+                    );
+
+            }
+        )
+        .catch(
+            error => {
+
+                console.error(
+                    "CONTINUE VIDEO:",
+                    error
+                );
+
+            }
+        );
+
+}
+
+
+/* =====================================================
+   LOAD FIRST VIDEO
+===================================================== */
+
+async function loadFirstVideo() {
+
+    if (!currentCourse) {
+        return null;
+    }
+
+
+    const contentQuery =
+        query(
+            collection(
+                db,
+                "zen2Content"
+            ),
+
+            where(
+                "courseId",
+                "==",
+                currentCourse.id
+            )
         );
 
 
-    if (saved) {
-
-        try {
-
-            lastWatched =
-                JSON.parse(
-                    saved
-                );
-
-        }
-
-        catch {
-
-            lastWatched =
-                null;
-
-        }
-
-    }
+    const snapshot =
+        await getDocs(
+            contentQuery
+        );
 
 
-    let video = null;
+    const videos =
+        snapshot.docs
+            .map(
+                item => ({
 
+                    id:
+                        item.id,
 
-    /*
-     * First:
-     * last watched video
-     */
+                    ...item.data()
 
-    if (
-        lastWatched?.contentId
-    ) {
-
-        video =
-            contents.find(
-                item =>
-                    item.id ===
-                    lastWatched.contentId
-            );
-
-    }
-
-
-    /*
-     * Otherwise:
-     * first uploaded video
-     */
-
-    if (!video) {
-
-        video =
-            contents.find(
+                })
+            )
+            .filter(
                 item => {
 
                     const type =
@@ -895,140 +928,36 @@ function renderContinueLearning() {
 
 
                     return (
-                        type === "VIDEO"
+                        type === "VIDEO" &&
+                        item.active !== false
                     );
 
                 }
             );
 
-    }
+
+    videos.sort(
+        (a, b) => {
+
+            return (
+                Number(
+                    a.order ??
+                    999999
+                ) -
+                Number(
+                    b.order ??
+                    999999
+                )
+            );
+
+        }
+    );
 
 
-    if (!video) {
-
-        container.innerHTML = `
-
-            <div class="loading-box">
-
-                No learning videos
-                available yet.
-
-            </div>
-
-        `;
-
-        return;
-
-    }
-
-
-    const subject =
-        subjects.find(
-            item =>
-                item.id ===
-                video.subjectId
-        );
-
-
-    const subjectName =
-        subject?.subjectName ||
-        subject?.name ||
-        subject?.displayName ||
-        "Subject";
-
-
-    container.innerHTML = `
-
-        <div class="continue-thumbnail">
-
-            ${
-                video.thumbnailUrl
-
-                    ? `
-
-                        <img
-                            src="${escapeHtml(
-                                video.thumbnailUrl
-                            )}"
-                            alt=""
-                        >
-
-                    `
-
-                    : `
-
-                        <div
-                            class="thumbnail-placeholder"
-                        >
-                            ZENOVA
-                        </div>
-
-                    `
-            }
-
-        </div>
-
-
-        <div class="continue-info">
-
-            <span
-                class="continue-label"
-            >
-                ${
-                    lastWatched
-                        ? "CONTINUE LEARNING"
-                        : "START LEARNING"
-                }
-            </span>
-
-
-            <h3>
-                ${escapeHtml(
-                    video.title ||
-                    video.contentTitle ||
-                    "Learning Video"
-                )}
-            </h3>
-
-
-            <p>
-                ${escapeHtml(
-                    subjectName
-                )}
-            </p>
-
-        </div>
-
-
-        <button
-            id="continueButton"
-            class="continue-button"
-            type="button"
-        >
-            ${
-                lastWatched
-                    ? "CONTINUE"
-                    : "START"
-            }
-        </button>
-
-    `;
-
-
-    document
-        .getElementById(
-            "continueButton"
-        )
-        ?.addEventListener(
-            "click",
-            () => {
-
-                openContent(
-                    video
-                );
-
-            }
-        );
+    return (
+        videos[0] ||
+        null
+    );
 
 }
 
@@ -1037,230 +966,277 @@ function renderContinueLearning() {
    RECOMMENDED VIDEOS
 ===================================================== */
 
-function renderRecommendedVideos() {
+async function renderRecommendedVideos() {
 
-    const container =
-        document.getElementById(
-            "recommendedVideos"
-        );
-
-
-    if (!container) {
+    if (!recommendedVideos) {
         return;
     }
 
 
-    const videos =
-        contents.filter(
-            content => {
+    try {
 
-                const type =
-                    String(
-                        content.contentType ||
-                        content.type ||
-                        ""
-                    )
-                    .toUpperCase();
+        const firstVideos =
+            await loadRecommendedVideos();
 
 
-                return (
-                    type === "VIDEO"
-                );
+        if (!firstVideos.length) {
 
-            }
+            recommendedVideos.innerHTML = `
+
+                <div class="loading-box">
+
+                    No recommended videos
+                    available yet.
+
+                </div>
+
+            `;
+
+            return;
+
+        }
+
+
+        recommendedVideos.innerHTML =
+            firstVideos
+                .map(
+                    video => {
+
+                        const subject =
+                            subjects.find(
+                                item =>
+                                    item.id ===
+                                    video.subjectId
+                            );
+
+
+                        const subjectName =
+                            subject?.subjectName ||
+                            subject?.name ||
+                            "";
+
+
+                        return `
+
+                            <article
+                                class="video-card"
+                                data-content-id="${escapeHtml(
+                                    video.id
+                                )}"
+                            >
+
+                                <div
+                                    class="video-thumbnail"
+                                >
+
+                                    ${
+                                        video.thumbnailUrl
+
+                                            ? `
+
+                                                <img
+                                                    src="${escapeHtml(
+                                                        video.thumbnailUrl
+                                                    )}"
+                                                    alt=""
+                                                    loading="lazy"
+                                                >
+
+                                            `
+
+                                            : `
+
+                                                <div
+                                                    class="video-placeholder"
+                                                >
+                                                    ZENOVA
+                                                </div>
+
+                                            `
+                                    }
+
+
+                                    <span
+                                        class="play-icon"
+                                    >
+                                        ▶
+                                    </span>
+
+                                </div>
+
+
+                                <div
+                                    class="video-info"
+                                >
+
+                                    <h3>
+                                        ${escapeHtml(
+                                            video.title ||
+                                            "Learning Video"
+                                        )}
+                                    </h3>
+
+
+                                    <p>
+                                        ${escapeHtml(
+                                            subjectName
+                                        )}
+                                    </p>
+
+                                </div>
+
+                            </article>
+
+                        `;
+
+                    }
+                )
+                .join("");
+
+
+        document
+            .querySelectorAll(
+                ".video-card"
+            )
+            .forEach(
+                card => {
+
+                    card.addEventListener(
+                        "click",
+                        async () => {
+
+                            const id =
+                                card.dataset.contentId;
+
+
+                            const video =
+                                firstVideos.find(
+                                    item =>
+                                        item.id ===
+                                        id
+                                );
+
+
+                            if (video) {
+
+                                openContent(
+                                    video
+                                );
+
+                            }
+
+                        }
+                    );
+
+                }
+            );
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "RECOMMENDED VIDEOS:",
+            error
         );
 
-
-    if (!videos.length) {
-
-        container.innerHTML = `
+        recommendedVideos.innerHTML = `
 
             <div class="loading-box">
 
-                No recommended videos
-                available yet.
+                Unable to load videos.
 
             </div>
 
         `;
 
-        return;
-
     }
 
+}
 
-    /*
-     * First ordered videos.
-     */
 
-    const recommended =
-        videos.slice(
-            0,
-            6
+/* =====================================================
+   LOAD RECOMMENDED VIDEOS
+===================================================== */
+
+async function loadRecommendedVideos() {
+
+    const contentQuery =
+        query(
+            collection(
+                db,
+                "zen2Content"
+            ),
+
+            where(
+                "courseId",
+                "==",
+                currentCourse.id
+            )
         );
 
 
-    container.innerHTML =
-        recommended
+    const snapshot =
+        await getDocs(
+            contentQuery
+        );
+
+
+    const videos =
+        snapshot.docs
             .map(
-                video => {
+                item => ({
 
-                    const subject =
-                        subjects.find(
-                            item =>
-                                item.id ===
-                                video.subjectId
-                        );
+                    id:
+                        item.id,
 
+                    ...item.data()
 
-                    const subjectName =
-                        subject?.subjectName ||
-                        subject?.name ||
-                        subject?.displayName ||
-                        "";
+                })
+            )
+            .filter(
+                item => {
 
-
-                    const accessType =
+                    const type =
                         String(
-                            video.accessType ||
+                            item.contentType ||
+                            item.type ||
                             ""
                         )
                         .toUpperCase();
 
 
-                    return `
-
-                        <article
-                            class="video-card"
-                            data-content-id="${escapeHtml(
-                                video.id
-                            )}"
-                        >
-
-                            <div
-                                class="video-thumbnail"
-                            >
-
-                                ${
-                                    video.thumbnailUrl
-
-                                        ? `
-
-                                            <img
-                                                src="${escapeHtml(
-                                                    video.thumbnailUrl
-                                                )}"
-                                                alt=""
-                                                loading="lazy"
-                                            >
-
-                                        `
-
-                                        : `
-
-                                            <div
-                                                class="video-placeholder"
-                                            >
-                                                ZENOVA
-                                            </div>
-
-                                        `
-                                }
-
-
-                                <span
-                                    class="play-icon"
-                                >
-                                    ▶
-                                </span>
-
-
-                                ${
-                                    accessType
-
-                                        ? `
-
-                                            <span
-                                                class="access-badge"
-                                            >
-                                                ${escapeHtml(
-                                                    accessType
-                                                )}
-                                            </span>
-
-                                        `
-
-                                        : ""
-                                }
-
-                            </div>
-
-
-                            <div
-                                class="video-info"
-                            >
-
-                                <h3>
-                                    ${escapeHtml(
-                                        video.title ||
-                                        video.contentTitle ||
-                                        "Learning Video"
-                                    )}
-                                </h3>
-
-
-                                <p>
-                                    ${escapeHtml(
-                                        subjectName
-                                    )}
-                                </p>
-
-                            </div>
-
-                        </article>
-
-                    `;
+                    return (
+                        type === "VIDEO" &&
+                        item.active !== false
+                    );
 
                 }
-            )
-            .join("");
+            );
 
 
-    document
-        .querySelectorAll(
-            ".video-card"
-        )
-        .forEach(
-            card => {
+    videos.sort(
+        (a, b) => {
 
-                card.addEventListener(
-                    "click",
-                    () => {
+            return (
+                Number(
+                    a.order ??
+                    999999
+                ) -
+                Number(
+                    b.order ??
+                    999999
+                )
+            );
 
-                        const id =
-                            card.dataset.contentId;
-
-
-                        const video =
-                            contents.find(
-                                item =>
-                                    item.id === id
-                            );
+        }
+    );
 
 
-                        if (video) {
-
-                            openContent(
-                                video
-                            );
-
-                        }
-
-                    }
-                );
-
-            }
-        );
+    return videos.slice(
+        0,
+        6
+    );
 
 }
 
@@ -1310,52 +1286,6 @@ function openContent(
 
 
 /* =====================================================
-   NAVIGATION
-===================================================== */
-
-function setupNavigation() {
-
-    const profileButton =
-        document.getElementById(
-            "profileButton"
-        );
-
-
-    profileButton?.addEventListener(
-        "click",
-        () => {
-
-            window.location.href =
-                "../profile/";
-
-        }
-    );
-
-}
-
-
-/* =====================================================
-   CLASS NORMALIZATION
-===================================================== */
-
-function normalizeClass(
-    value
-) {
-
-    return String(
-        value || ""
-    )
-        .trim()
-        .toUpperCase()
-        .replace(
-            /\s+/g,
-            " "
-        );
-
-}
-
-
-/* =====================================================
    SHOW APP
 ===================================================== */
 
@@ -1378,7 +1308,7 @@ function showApp() {
             );
 
         },
-        100
+        150
     );
 
 }
@@ -1393,6 +1323,7 @@ function showError(
 ) {
 
     console.error(
+        "ZEN2 REVISION:",
         message
     );
 
@@ -1414,19 +1345,125 @@ function showError(
         "hidden"
     );
 
+}
 
-    document
-        .getElementById(
-            "retryButton"
+
+/* =====================================================
+   NORMALIZE CLASS
+===================================================== */
+
+function normalizeClass(
+    value
+) {
+
+    let text =
+        String(
+            value || ""
         )
-        ?.addEventListener(
-            "click",
-            () => {
+        .trim()
+        .toLowerCase();
 
-                window.location.reload();
 
-            }
-        );
+    /*
+     * Convert common variations:
+     *
+     * 10th
+     * 10th standard
+     * class 10
+     * class 10th
+     * 10
+     */
+
+    text =
+        text
+            .replace(
+                /^class\s*/,
+                ""
+            )
+            .replace(
+                /\s*standard$/,
+                ""
+            )
+            .trim();
+
+
+    if (
+        text === "10"
+    ) {
+
+        return "10th";
+
+    }
+
+
+    if (
+        text === "10th"
+    ) {
+
+        return "10th";
+
+    }
+
+
+    if (
+        text === "9"
+    ) {
+
+        return "9th";
+
+    }
+
+
+    if (
+        text === "9th"
+    ) {
+
+        return "9th";
+
+    }
+
+
+    if (
+        text === "8"
+    ) {
+
+        return "8th";
+
+    }
+
+
+    if (
+        text === "8th"
+    ) {
+
+        return "8th";
+
+    }
+
+
+    if (
+        text === "1 puc" ||
+        text === "1st puc" ||
+        text === "1st pu"
+    ) {
+
+        return "1st puc";
+
+    }
+
+
+    if (
+        text === "2 puc" ||
+        text === "2nd puc" ||
+        text === "2nd pu"
+    ) {
+
+        return "2nd puc";
+
+    }
+
+
+    return text;
 
 }
 
