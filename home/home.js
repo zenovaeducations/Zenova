@@ -1,13 +1,8 @@
-import {
-    auth,
-    db
-} from "../firebase/firebase-config.js";
-
+import { auth, db } from "../firebase/firebase-config.js";
 
 import {
     onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
-
 
 import {
     collection,
@@ -15,37 +10,8 @@ import {
     getDoc,
     getDocs,
     query,
-    where,
-    limit
+    where
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
-
-
-/* =====================================================
-   ELEMENTS
-===================================================== */
-
-const loader =
-    document.getElementById(
-        "zenovaLoader"
-    );
-
-
-const app =
-    document.getElementById(
-        "zenovaApp"
-    );
-
-
-const errorScreen =
-    document.getElementById(
-        "errorScreen"
-    );
-
-
-const errorMessage =
-    document.getElementById(
-        "errorMessage"
-    );
 
 
 /* =====================================================
@@ -53,113 +19,90 @@ const errorMessage =
 ===================================================== */
 
 let currentUser = null;
-
 let student = null;
-
-let studentCourses = [];
-
 let selectedCourse = null;
-
+let courses = [];
 let subjects = [];
-
 let chapters = [];
-
 let contents = [];
 
-let enrollments = [];
+
+/* =====================================================
+   ELEMENTS
+===================================================== */
+
+const loader = document.getElementById("zenovaLoader");
+const app = document.getElementById("zenovaApp");
+const errorScreen = document.getElementById("errorScreen");
+const errorMessage = document.getElementById("errorMessage");
 
 
 /* =====================================================
    AUTH
 ===================================================== */
 
-onAuthStateChanged(
-    auth,
-    async user => {
+onAuthStateChanged(auth, async (user) => {
 
-        if (!user) {
+    if (!user) {
 
-            window.location.replace(
-                "../account/login/"
-            );
-
-            return;
-
-        }
-
-
-        currentUser =
-            user;
-
-
-        try {
-
-            await loadStudent();
-
-            await loadCourses();
-
-            await loadCourseStructure();
-
-            await loadBanners();
-
-            await loadLiveClasses();
-
-            await loadContinueLearning();
-
-            renderStudent();
-
-            setupNavigation();
-
-            showApp();
-
-        }
-
-        catch (error) {
-
-            console.error(
-                "ZENOVA HOME ERROR:",
-                error
-            );
-
-
-            showError(
-                error.message ||
-                "Unable to load Home."
-            );
-
-        }
+        window.location.replace("../account/login/");
+        return;
 
     }
-);
+
+    currentUser = user;
+
+    try {
+
+        await loadStudent();
+
+        await loadCourses();
+
+        await loadCourseData();
+
+        await loadBanners();
+
+        await loadLiveClasses();
+
+        await loadContinueLearning();
+
+        renderStudent();
+
+        setupNavigation();
+
+        showApp();
+
+    } catch (error) {
+
+        console.error("HOME ERROR:", error);
+
+        showError(
+            error?.message ||
+            "Unable to load Home."
+        );
+
+    }
+
+});
 
 
 /* =====================================================
-   LOAD STUDENT
+   STUDENT
 ===================================================== */
 
 async function loadStudent() {
 
-    /*
-     * ACTUAL ZEN2 STUDENT COLLECTION
-     */
+    const studentRef = doc(
+        db,
+        "zen2Students",
+        currentUser.uid
+    );
 
-    const studentRef =
-        doc(
-            db,
-            "zen2Students",
-            currentUser.uid
-        );
+    const snapshot = await getDoc(
+        studentRef
+    );
 
-
-    const snapshot =
-        await getDoc(
-            studentRef
-        );
-
-
-    if (
-        !snapshot.exists()
-    ) {
+    if (!snapshot.exists()) {
 
         window.location.replace(
             "../account/onboarding/"
@@ -169,16 +112,7 @@ async function loadStudent() {
 
     }
 
-
-    student =
-        snapshot.data();
-
-
-    /*
-     * ACTUAL FIELD:
-     *
-     * onboardingComplete
-     */
+    student = snapshot.data();
 
     if (
         student.onboardingComplete !== true
@@ -192,17 +126,11 @@ async function loadStudent() {
 
     }
 
-
-    console.log(
-        "ZEN2 STUDENT:",
-        student
-    );
-
 }
 
 
 /* =====================================================
-   RENDER STUDENT
+   STUDENT UI
 ===================================================== */
 
 function renderStudent() {
@@ -212,20 +140,13 @@ function renderStudent() {
         currentUser.displayName ||
         "Student";
 
-
     const nameElement =
         document.getElementById(
             "studentName"
         );
 
-
-    if (
-        nameElement
-    ) {
-
-        nameElement.textContent =
-            name;
-
+    if (nameElement) {
+        nameElement.textContent = name;
     }
 
 
@@ -234,10 +155,7 @@ function renderStudent() {
             "profileInitial"
         );
 
-
-    if (
-        initial
-    ) {
+    if (initial) {
 
         initial.textContent =
             name
@@ -248,90 +166,34 @@ function renderStudent() {
     }
 
 
-    const hour =
-        new Date().getHours();
-
-
     const greeting =
         document.getElementById(
             "greeting"
         );
 
+    if (!greeting) return;
 
-    if (
-        greeting
-    ) {
 
-        if (
-            hour < 12
-        ) {
+    const hour =
+        new Date().getHours();
 
-            greeting.textContent =
-                "Good Morning,";
 
-        }
+    if (hour < 12) {
 
-        else if (
-            hour < 17
-        ) {
+        greeting.textContent =
+            "Good Morning,";
 
-            greeting.textContent =
-                "Good Afternoon,";
+    } else if (hour < 17) {
 
-        }
+        greeting.textContent =
+            "Good Afternoon,";
 
-        else {
+    } else {
 
-            greeting.textContent =
-                "Good Evening,";
-
-        }
+        greeting.textContent =
+            "Good Evening,";
 
     }
-
-}
-
-
-/* =====================================================
-   GET STUDENT CLASS
-===================================================== */
-
-function getStudentClass() {
-
-    return normalizeClass(
-        student.className
-    );
-
-}
-
-
-/* =====================================================
-   NORMALIZE CLASS
-===================================================== */
-
-function normalizeClass(
-    value
-) {
-
-    if (
-        value === undefined ||
-        value === null
-    ) {
-
-        return "";
-
-    }
-
-
-    return String(
-        value
-    )
-        .trim()
-        .toUpperCase()
-        .replace(
-            /\s+/g,
-            " "
-        );
 
 }
 
@@ -343,23 +205,19 @@ function normalizeClass(
 async function loadCourses() {
 
     const studentClass =
-        getStudentClass();
+        normalizeClass(
+            student.className
+        );
 
 
-    if (
-        !studentClass
-    ) {
+    if (!studentClass) {
 
         throw new Error(
-            "Student class is not available."
+            "Student class is missing."
         );
 
     }
 
-
-    /*
-     * ACTUAL ZEN2 COURSE COLLECTION
-     */
 
     const snapshot =
         await getDocs(
@@ -370,31 +228,17 @@ async function loadCourses() {
         );
 
 
-    const allCourses =
+    courses =
         snapshot.docs.map(
             item => ({
-
-                id:
-                    item.id,
-
+                id: item.id,
                 ...item.data()
-
             })
         );
 
 
-    /*
-     * Match the student's class.
-     *
-     * Example:
-     *
-     * student = 10th
-     *
-     * course.className = 10th
-     */
-
-    studentCourses =
-        allCourses.filter(
+    courses =
+        courses.filter(
             course => {
 
                 const courseClass =
@@ -409,79 +253,48 @@ async function loadCourses() {
 
 
                 return (
-                    courseClass ===
-                    studentClass
-                ) && active;
+                    courseClass === studentClass &&
+                    active
+                );
 
             }
         );
 
 
-    /*
-     * Sort courses.
-     */
+    courses.sort(
+        (a, b) => {
 
-    studentCourses.sort(
-        (
-            a,
-            b
-        ) => {
-
-            const orderA =
+            return (
                 Number(
                     a.order ??
                     a.priority ??
                     9999
-                );
-
-
-            const orderB =
+                ) -
                 Number(
                     b.order ??
                     b.priority ??
                     9999
-                );
-
-
-            return (
-                orderA -
-                orderB
+                )
             );
 
         }
     );
 
 
-    console.log(
-        "STUDENT CLASS:",
-        studentClass
-    );
-
-
-    console.log(
-        "MATCHING ZEN2 COURSES:",
-        studentCourses
-    );
-
-
-    if (
-        !studentCourses.length
-    ) {
+    if (!courses.length) {
 
         throw new Error(
-            `No ZEN2 course found for ${student.classDisplayName || student.className}.`
+            `No ZEN2 course found for ${
+                student.classDisplayName ||
+                student.className
+            }.`
         );
 
     }
 
 
-    /*
-     * First course is the primary
-     * course used for learning content.
-     */
-
     selectedCourse =
-        studentCourses[0];
+        courses[0];
 
 
     renderCourses();
@@ -490,23 +303,7 @@ async function loadCourses() {
 
 
 /* =====================================================
-   COURSE NAME
-===================================================== */
-
-function getCourseName(
-    course
-) {
-
-    return (
-        course.courseName ||
-        "Zenova Course"
-    );
-
-}
-
-
-/* =====================================================
-   RENDER COURSES
+   COURSE CARD
 ===================================================== */
 
 function renderCourses() {
@@ -517,25 +314,15 @@ function renderCourses() {
         );
 
 
-    if (
-        !container
-    ) {
-
-        return;
-
-    }
+    if (!container) return;
 
 
-    if (
-        !studentCourses.length
-    ) {
+    if (!courses.length) {
 
         container.innerHTML = `
-
             <div class="loading-card">
                 No course available.
             </div>
-
         `;
 
         return;
@@ -544,232 +331,202 @@ function renderCourses() {
 
 
     container.innerHTML =
-        studentCourses
-            .map(
-                course => {
+        courses
+            .map(course => {
 
-                    const name =
-                        getCourseName(
-                            course
-                        );
+                const courseName =
+                    course.courseName ||
+                    "Zenova Course";
 
 
-                    const className =
-                        course.classDisplayName ||
-                        course.className ||
-                        "";
+                const className =
+                    course.classDisplayName ||
+                    course.className ||
+                    "";
 
 
-                    const year =
-                        course.academicYear ||
-                        "";
+                const board =
+                    course.board ||
+                    "";
 
 
-                    const board =
-                        course.board ||
-                        "";
+                const academicYear =
+                    course.academicYear ||
+                    "";
 
 
-                    return `
+                return `
 
-                        <article
-                            class="batch-card"
-                        >
+                    <article class="batch-card">
 
-                            <div
-                                class="batch-cover"
-                            >
+                        <div class="batch-cover">
 
-                                <span
-                                    class="batch-cover-label"
-                                >
-                                    ZENOVA ZEN2
-                                </span>
+                            <span class="batch-cover-label">
+                                ZENOVA ZEN2
+                            </span>
+
+                            <h3>
+                                ${escapeHtml(
+                                    courseName
+                                )}
+                            </h3>
+
+                        </div>
 
 
-                                <h3>
-                                    ${escapeHtml(
-                                        name
-                                    )}
-                                </h3>
+                        <div class="batch-info">
+
+                            <div class="batch-name">
+                                ${escapeHtml(
+                                    courseName
+                                )}
+                            </div>
+
+
+                            <div class="batch-meta">
+
+                                ${
+                                    className
+                                        ? `
+                                            <span>
+                                                ${escapeHtml(
+                                                    className
+                                                )}
+                                            </span>
+                                        `
+                                        : ""
+                                }
+
+
+                                ${
+                                    board
+                                        ? `
+                                            <span>
+                                                ${escapeHtml(
+                                                    board
+                                                )}
+                                            </span>
+                                        `
+                                        : ""
+                                }
+
+
+                                ${
+                                    academicYear
+                                        ? `
+                                            <span>
+                                                ${escapeHtml(
+                                                    academicYear
+                                                )}
+                                            </span>
+                                        `
+                                        : ""
+                                }
 
                             </div>
 
 
-                            <div
-                                class="batch-info"
-                            >
+                            <div class="batch-actions">
 
-                                <div
-                                    class="batch-name"
+                                <button
+                                    type="button"
+                                    class="batch-button explore-button"
+                                    data-explore="${escapeHtml(
+                                        course.id
+                                    )}"
                                 >
-                                    ${escapeHtml(
-                                        name
-                                    )}
-                                </div>
+                                    EXPLORE BATCH
+                                </button>
 
 
-                                <div
-                                    class="batch-meta"
+                                <button
+                                    type="button"
+                                    class="batch-button buy-button"
+                                    data-buy="${escapeHtml(
+                                        course.id
+                                    )}"
                                 >
-
-                                    ${
-                                        className
-                                            ? `
-                                                <span>
-                                                    ${escapeHtml(
-                                                        className
-                                                    )}
-                                                </span>
-                                            `
-                                            : ""
-                                    }
-
-
-                                    ${
-                                        board
-                                            ? `
-                                                <span>
-                                                    ${escapeHtml(
-                                                        board
-                                                    )}
-                                                </span>
-                                            `
-                                            : ""
-                                    }
-
-
-                                    ${
-                                        year
-                                            ? `
-                                                <span>
-                                                    ${escapeHtml(
-                                                        year
-                                                    )}
-                                                </span>
-                                            `
-                                            : ""
-                                    }
-
-                                </div>
-
-
-                                <div
-                                    class="batch-actions"
-                                >
-
-                                    <button
-                                        class="batch-button explore-button"
-                                        data-explore-id="${escapeHtml(
-                                            course.id
-                                        )}"
-                                        type="button"
-                                    >
-                                        EXPLORE BATCH
-                                    </button>
-
-
-                                    <button
-                                        class="batch-button buy-button"
-                                        data-buy-id="${escapeHtml(
-                                            course.id
-                                        )}"
-                                        type="button"
-                                    >
-                                        BUY NOW
-                                    </button>
-
-                                </div>
+                                    BUY NOW
+                                </button>
 
                             </div>
 
-                        </article>
+                        </div>
 
-                    `;
+                    </article>
 
-                }
-            )
+                `;
+
+            })
             .join("");
 
 
     document
         .querySelectorAll(
-            "[data-explore-id]"
+            "[data-explore]"
         )
-        .forEach(
-            button => {
+        .forEach(button => {
 
-                button.addEventListener(
-                    "click",
-                    () => {
+            button.addEventListener(
+                "click",
+                () => {
 
-                        const courseId =
-                            button.dataset.exploreId;
+                    const courseId =
+                        button.dataset.explore;
 
 
-                        window.location.href =
-                            `./batchdetails/?courseId=${
-                                encodeURIComponent(
-                                    courseId
-                                )
-                            }`;
+                    window.location.href =
+                        `./batchdetails/?courseId=${
+                            encodeURIComponent(
+                                courseId
+                            )
+                        }`;
 
-                    }
-                );
+                }
+            );
 
-            }
-        );
+        });
 
 
     document
         .querySelectorAll(
-            "[data-buy-id]"
+            "[data-buy]"
         )
-        .forEach(
-            button => {
+        .forEach(button => {
 
-                button.addEventListener(
-                    "click",
-                    () => {
+            button.addEventListener(
+                "click",
+                () => {
 
-                        const courseId =
-                            button.dataset.buyId;
+                    const courseId =
+                        button.dataset.buy;
 
 
-                        window.location.href =
-                            `./batchdetails/?courseId=${
-                                encodeURIComponent(
-                                    courseId
-                                )
-                            }&buy=true`;
+                    window.location.href =
+                        `./batchdetails/?courseId=${
+                            encodeURIComponent(
+                                courseId
+                            )
+                        }&buy=true`;
 
-                    }
-                );
+                }
+            );
 
-            }
-        );
+        });
 
 }
 
 
 /* =====================================================
-   LOAD COURSE STRUCTURE
+   COURSE STRUCTURE
 ===================================================== */
 
-async function loadCourseStructure() {
+async function loadCourseData() {
 
-    if (
-        !selectedCourse
-    ) {
-
-        return;
-
-    }
+    if (!selectedCourse) return;
 
 
-    /*
-     * SUBJECTS
-     */
+    /* SUBJECTS */
 
     const subjectQuery =
         query(
@@ -777,7 +534,6 @@ async function loadCourseStructure() {
                 db,
                 "zen2Subjects"
             ),
-
             where(
                 "courseId",
                 "==",
@@ -795,13 +551,16 @@ async function loadCourseStructure() {
     subjects =
         subjectSnapshot.docs.map(
             item => ({
-
-                id:
-                    item.id,
-
+                id: item.id,
                 ...item.data()
-
             })
+        );
+
+
+    subjects =
+        subjects.filter(
+            item =>
+                item.active !== false
         );
 
 
@@ -810,16 +569,13 @@ async function loadCourseStructure() {
     );
 
 
-    /*
-     * CHAPTERS
-     */
+    /* CHAPTERS */
 
     chapters = [];
 
 
     for (
-        const subject
-        of subjects
+        const subject of subjects
     ) {
 
         const chapterQuery =
@@ -828,13 +584,11 @@ async function loadCourseStructure() {
                     db,
                     "zen2Chapters"
                 ),
-
                 where(
                     "courseId",
                     "==",
                     selectedCourse.id
                 ),
-
                 where(
                     "subjectId",
                     "==",
@@ -853,12 +607,8 @@ async function loadCourseStructure() {
             item => {
 
                 chapters.push({
-
-                    id:
-                        item.id,
-
+                    id: item.id,
                     ...item.data()
-
                 });
 
             }
@@ -867,21 +617,25 @@ async function loadCourseStructure() {
     }
 
 
+    chapters =
+        chapters.filter(
+            item =>
+                item.active !== false
+        );
+
+
     chapters.sort(
         sortByOrder
     );
 
 
-    /*
-     * CONTENT
-     */
+    /* CONTENT */
 
     contents = [];
 
 
     for (
-        const chapter
-        of chapters
+        const chapter of chapters
     ) {
 
         const contentQuery =
@@ -890,13 +644,11 @@ async function loadCourseStructure() {
                     db,
                     "zen2Content"
                 ),
-
                 where(
                     "courseId",
                     "==",
                     selectedCourse.id
                 ),
-
                 where(
                     "chapterId",
                     "==",
@@ -915,12 +667,8 @@ async function loadCourseStructure() {
             item => {
 
                 contents.push({
-
-                    id:
-                        item.id,
-
+                    id: item.id,
                     ...item.data()
-
                 });
 
             }
@@ -929,26 +677,15 @@ async function loadCourseStructure() {
     }
 
 
+    contents =
+        contents.filter(
+            item =>
+                item.active !== false
+        );
+
+
     contents.sort(
         sortByOrder
-    );
-
-
-    console.log(
-        "ZEN2 SUBJECTS:",
-        subjects
-    );
-
-
-    console.log(
-        "ZEN2 CHAPTERS:",
-        chapters
-    );
-
-
-    console.log(
-        "ZEN2 CONTENT:",
-        contents
     );
 
 }
@@ -960,7 +697,13 @@ async function loadCourseStructure() {
 
 async function loadBanners() {
 
-    const container =
+    const section =
+        document.getElementById(
+            "heroSection"
+        );
+
+
+    const slider =
         document.getElementById(
             "heroSlider"
         );
@@ -972,275 +715,229 @@ async function loadBanners() {
         );
 
 
-    const section =
-        document.getElementById(
-            "heroSection"
+    if (
+        !section ||
+        !slider ||
+        !dots
+    ) return;
+
+
+    const bannerQuery =
+        query(
+            collection(
+                db,
+                "homeBanners"
+            ),
+            where(
+                "active",
+                "==",
+                true
+            )
         );
 
 
-    try {
-
-        const bannerQuery =
-            query(
-                collection(
-                    db,
-                    "homeBanners"
-                ),
-
-                where(
-                    "active",
-                    "==",
-                    true
-                ),
-
-                limit(20)
-            );
-
-
-        const snapshot =
-            await getDocs(
-                bannerQuery
-            );
-
-
-        const banners =
-            snapshot.docs.map(
-                item => ({
-
-                    id:
-                        item.id,
-
-                    ...item.data()
-
-                })
-            );
-
-
-        banners.sort(
-            (
-                a,
-                b
-            ) => {
-
-                return (
-                    Number(
-                        a.priority ??
-                        9999
-                    ) -
-                    Number(
-                        b.priority ??
-                        9999
-                    )
-                );
-
-            }
+    const snapshot =
+        await getDocs(
+            bannerQuery
         );
 
 
-        if (
-            !banners.length
-        ) {
+    const banners =
+        snapshot.docs.map(
+            item => ({
+                id: item.id,
+                ...item.data()
+            })
+        );
 
-            section.classList.add(
-                "hidden"
+
+    banners.sort(
+        (a, b) => {
+
+            return (
+                Number(
+                    a.priority ??
+                    9999
+                ) -
+                Number(
+                    b.priority ??
+                    9999
+                )
             );
-
-            return;
 
         }
+    );
 
 
-        section.classList.remove(
+    if (!banners.length) {
+
+        section.classList.add(
             "hidden"
         );
 
+        return;
 
-        container.innerHTML =
-            banners
-                .map(
-                    (
-                        banner,
-                        index
-                    ) => {
+    }
 
-                        return `
 
-                            <div
-                                class="hero-slide ${
-                                    index === 0
-                                        ? "active"
-                                        : ""
-                                }"
-                                data-link="${escapeHtml(
-                                    banner.link || ""
+    section.classList.remove(
+        "hidden"
+    );
+
+
+    slider.innerHTML =
+        banners
+            .map(
+                (banner, index) => {
+
+                    return `
+
+                        <div
+                            class="hero-slide ${
+                                index === 0
+                                    ? "active"
+                                    : ""
+                            }"
+                            data-link="${escapeHtml(
+                                banner.link || ""
+                            )}"
+                        >
+
+                            <img
+                                src="${escapeHtml(
+                                    banner.imageUrl || ""
                                 )}"
+                                alt=""
                             >
 
-                                <img
-                                    src="${escapeHtml(
-                                        banner.imageUrl || ""
-                                    )}"
-                                    alt=""
-                                >
+
+                            ${
+                                banner.title ||
+                                banner.description ||
+                                banner.buttonText
+
+                                    ? `
+
+                                        <div class="hero-overlay">
+
+                                            ${
+                                                banner.label
+                                                    ? `
+                                                        <span class="hero-label">
+                                                            ${escapeHtml(
+                                                                banner.label
+                                                            )}
+                                                        </span>
+                                                    `
+                                                    : ""
+                                            }
 
 
-                                ${
-                                    banner.title ||
-                                    banner.description ||
-                                    banner.buttonText
-
-                                        ? `
-
-                                            <div
-                                                class="hero-overlay"
-                                            >
-
-                                                ${
-                                                    banner.label
-                                                        ? `
-                                                            <span
-                                                                class="hero-label"
-                                                            >
-                                                                ${escapeHtml(
-                                                                    banner.label
-                                                                )}
-                                                            </span>
-                                                        `
-                                                        : ""
-                                                }
+                                            ${
+                                                banner.title
+                                                    ? `
+                                                        <h2>
+                                                            ${escapeHtml(
+                                                                banner.title
+                                                            )}
+                                                        </h2>
+                                                    `
+                                                    : ""
+                                            }
 
 
-                                                ${
-                                                    banner.title
-                                                        ? `
-                                                            <h2>
-                                                                ${escapeHtml(
-                                                                    banner.title
-                                                                )}
-                                                            </h2>
-                                                        `
-                                                        : ""
-                                                }
+                                            ${
+                                                banner.description
+                                                    ? `
+                                                        <p>
+                                                            ${escapeHtml(
+                                                                banner.description
+                                                            )}
+                                                        </p>
+                                                    `
+                                                    : ""
+                                            }
 
 
-                                                ${
-                                                    banner.description
-                                                        ? `
-                                                            <p>
-                                                                ${escapeHtml(
-                                                                    banner.description
-                                                                )}
-                                                            </p>
-                                                        `
-                                                        : ""
-                                                }
+                                            ${
+                                                banner.buttonText
+                                                    ? `
+                                                        <span class="hero-button">
+                                                            ${escapeHtml(
+                                                                banner.buttonText
+                                                            )}
+                                                        </span>
+                                                    `
+                                                    : ""
+                                            }
+
+                                        </div>
+
+                                    `
+                                    : ""
+                            }
+
+                        </div>
+
+                    `;
+
+                }
+            )
+            .join("");
 
 
-                                                ${
-                                                    banner.buttonText
-                                                        ? `
-                                                            <span
-                                                                class="hero-button"
-                                                            >
-                                                                ${escapeHtml(
-                                                                    banner.buttonText
-                                                                )}
-                                                            </span>
-                                                        `
-                                                        : ""
-                                                }
+    dots.innerHTML =
+        banners
+            .map(
+                (_, index) => {
 
-                                            </div>
-
-                                        `
-
-                                        : ""
-                                }
-
-                            </div>
-
-                        `;
-
-                    }
-                )
-                .join("");
-
-
-        dots.innerHTML =
-            banners
-                .map(
-                    (
-                        _,
-                        index
-                    ) => `
+                    return `
 
                         <button
+                            type="button"
                             class="hero-dot ${
                                 index === 0
                                     ? "active"
                                     : ""
                             }"
                             data-index="${index}"
-                            type="button"
                         ></button>
 
-                    `
-                )
-                .join("");
+                    `;
 
-
-        setupBannerSlider(
-            banners.length
-        );
-
-
-        container
-            .querySelectorAll(
-                ".hero-slide"
+                }
             )
-            .forEach(
-                slide => {
-
-                    slide.addEventListener(
-                        "click",
-                        () => {
-
-                            const link =
-                                slide.dataset.link;
+            .join("");
 
 
-                            if (
-                                link
-                            ) {
+    startBannerSlider();
 
-                                window.location.href =
-                                    link;
 
-                            }
+    document
+        .querySelectorAll(
+            ".hero-slide"
+        )
+        .forEach(slide => {
 
-                        }
-                    );
+            slide.addEventListener(
+                "click",
+                () => {
+
+                    const link =
+                        slide.dataset.link;
+
+
+                    if (link) {
+
+                        window.location.href =
+                            link;
+
+                    }
 
                 }
             );
 
-    }
-
-    catch (
-        error
-    ) {
-
-        console.warn(
-            "Banner loading failed:",
-            error
-        );
-
-
-        section.classList.add(
-            "hidden"
-        );
-
-    }
+        });
 
 }
 
@@ -1249,22 +946,7 @@ async function loadBanners() {
    BANNER SLIDER
 ===================================================== */
 
-function setupBannerSlider(
-    total
-) {
-
-    if (
-        total <= 1
-    ) {
-
-        return;
-
-    }
-
-
-    let current =
-        0;
-
+function startBannerSlider() {
 
     const slides =
         document.querySelectorAll(
@@ -1278,84 +960,90 @@ function setupBannerSlider(
         );
 
 
-    function show(
-        index
-    ) {
-
-        slides.forEach(
-            slide =>
-                slide.classList.remove(
-                    "active"
-                )
-        );
-
-
-        dots.forEach(
-            dot =>
-                dot.classList.remove(
-                    "active"
-                )
-        );
-
-
-        slides[index]
-            ?.classList.add(
-                "active"
-            );
-
-
-        dots[index]
-            ?.classList.add(
-                "active"
-            );
-
+    if (slides.length <= 1) {
+        return;
     }
+
+
+    let index = 0;
 
 
     setInterval(
         () => {
 
-            current =
+            slides[index]
+                ?.classList.remove(
+                    "active"
+                );
+
+            dots[index]
+                ?.classList.remove(
+                    "active"
+                );
+
+
+            index =
                 (
-                    current + 1
+                    index + 1
                 ) %
-                total;
+                slides.length;
 
 
-            show(
-                current
-            );
+            slides[index]
+                ?.classList.add(
+                    "active"
+                );
+
+            dots[index]
+                ?.classList.add(
+                    "active"
+                );
 
         },
         5000
     );
 
 
-    dots.forEach(
-        dot => {
+    dots.forEach(dot => {
 
-            dot.addEventListener(
-                "click",
-                event => {
+        dot.addEventListener(
+            "click",
+            event => {
 
-                    event.stopPropagation();
-
-
-                    current =
-                        Number(
-                            dot.dataset.index
-                        );
+                event.stopPropagation();
 
 
-                    show(
-                        current
+                slides[index]
+                    ?.classList.remove(
+                        "active"
                     );
 
-                }
-            );
+                dots[index]
+                    ?.classList.remove(
+                        "active"
+                    );
 
-        }
-    );
+
+                index =
+                    Number(
+                        dot.dataset.index
+                    );
+
+
+                slides[index]
+                    ?.classList.add(
+                        "active"
+                    );
+
+                dots[index]
+                    ?.classList.add(
+                        "active"
+                    );
+
+            }
+        );
+
+    });
 
 }
 
@@ -1372,115 +1060,66 @@ async function loadLiveClasses() {
         );
 
 
-    try {
+    if (!container) return;
 
-        const liveQuery =
+
+    const snapshot =
+        await getDocs(
             query(
                 collection(
                     db,
                     "liveClasses"
                 ),
-
                 where(
                     "active",
                     "==",
                     true
-                ),
-
-                limit(50)
-            );
-
-
-        const snapshot =
-            await getDocs(
-                liveQuery
-            );
-
-
-        const classes =
-            snapshot.docs.map(
-                item => ({
-
-                    id:
-                        item.id,
-
-                    ...item.data()
-
-                })
-            );
-
-
-        /*
-         * IMPORTANT:
-         *
-         * CRM saves:
-         *
-         * scheduledDate = YYYY-MM-DD
-         * scheduledTime = HH:MM
-         */
-
-        const today =
-            getTodayString();
-
-
-        const todayClasses =
-            classes
-                .filter(
-                    item =>
-                        item.scheduledDate ===
-                        today
                 )
-                .sort(
-                    (
-                        a,
-                        b
-                    ) => {
-
-                        return String(
-                            a.scheduledTime ||
-                            ""
-                        ).localeCompare(
-                            String(
-                                b.scheduledTime ||
-                                ""
-                            )
-                        );
-
-                    }
-                );
-
-
-        renderLiveClasses(
-            todayClasses
-        );
-
-    }
-
-    catch (
-        error
-    ) {
-
-        console.warn(
-            "Live class loading failed:",
-            error
+            )
         );
 
 
-        container.innerHTML = `
+    const today =
+        getToday();
 
-            <div class="loading-card">
-                Unable to load today's classes.
-            </div>
 
-        `;
+    const classes =
+        snapshot.docs
+            .map(
+                item => ({
+                    id: item.id,
+                    ...item.data()
+                })
+            )
+            .filter(
+                item =>
+                    item.scheduledDate ===
+                    today
+            );
 
-    }
+
+    classes.sort(
+        (a, b) =>
+            String(
+                a.scheduledTime || ""
+            )
+            .localeCompare(
+                String(
+                    b.scheduledTime || ""
+                )
+            )
+    );
+
+
+    renderLiveClasses(
+        classes
+    );
 
 }
 
 
 /* =====================================================
-   RENDER LIVE CLASSES
+   RENDER LIVE
 ===================================================== */
 
 function renderLiveClasses(
@@ -1493,16 +1132,12 @@ function renderLiveClasses(
         );
 
 
-    if (
-        !classes.length
-    ) {
+    if (!classes.length) {
 
         container.innerHTML = `
 
             <div class="loading-card">
-
                 No live class scheduled for today.
-
             </div>
 
         `;
@@ -1512,101 +1147,53 @@ function renderLiveClasses(
     }
 
 
-    const now =
-        new Date();
-
-
     container.innerHTML =
         classes
             .map(
                 liveClass => {
-
-                    const start =
-                        parseLiveDate(
-                            liveClass
-                        );
-
-
-                    const isStarted =
-                        start &&
-                        now >= start;
-
 
                     const thumbnail =
                         liveClass.thumbnailUrl ||
                         "";
 
 
-                    const topic =
-                        liveClass.chapterName ||
-                        liveClass.subjectName ||
-                        liveClass.title ||
-                        "Live Class";
-
-
                     return `
 
-                        <article
-                            class="live-card"
-                        >
+                        <article class="live-card">
 
-                            <div
-                                class="live-thumbnail"
-                            >
+                            <div class="live-thumbnail">
 
                                 ${
                                     thumbnail
-
                                         ? `
-
                                             <img
                                                 src="${escapeHtml(
                                                     thumbnail
                                                 )}"
                                                 alt=""
                                             >
-
                                         `
-
                                         : `
-
-                                            <div
-                                                class="live-placeholder"
-                                            >
+                                            <div class="live-placeholder">
                                                 LIVE CLASS
                                             </div>
-
                                         `
                                 }
 
                             </div>
 
 
-                            <div
-                                class="live-info"
-                            >
+                            <div class="live-info">
 
-                                <span
-                                    class="live-status ${
-                                        isStarted
-                                            ? "now"
-                                            : ""
-                                    }"
-                                >
-
-                                    ${
-                                        isStarted
-                                            ? "TODAY"
-                                            : "UPCOMING"
-                                    }
-
+                                <span class="live-status">
+                                    TODAY
                                 </span>
 
 
                                 <h3>
                                     ${escapeHtml(
                                         liveClass.title ||
-                                        topic
+                                        "Live Class"
                                     )}
                                 </h3>
 
@@ -1621,10 +1208,23 @@ function renderLiveClasses(
                                             : ""
                                     }
 
+                                </p>
+
+
+                                <p>
+
                                     ${
                                         liveClass.subjectName
-                                            ? ` • ${escapeHtml(
+                                            ? escapeHtml(
                                                 liveClass.subjectName
+                                            )
+                                            : ""
+                                    }
+
+                                    ${
+                                        liveClass.chapterName
+                                            ? ` • ${escapeHtml(
+                                                liveClass.chapterName
                                             )}`
                                             : ""
                                     }
@@ -1632,32 +1232,11 @@ function renderLiveClasses(
                                 </p>
 
 
-                                ${
-                                    liveClass.chapterName
+                                <div class="live-time">
 
-                                        ? `
-
-                                            <p>
-                                                ${escapeHtml(
-                                                    liveClass.chapterName
-                                                )}
-                                            </p>
-
-                                        `
-
-                                        : ""
-                                }
-
-
-                                <div
-                                    class="live-time"
-                                >
-
-                                    ${
-                                        formatTime(
-                                            liveClass.scheduledTime
-                                        )
-                                    }
+                                    ${formatTime(
+                                        liveClass.scheduledTime
+                                    )}
 
                                 </div>
 
@@ -1666,14 +1245,10 @@ function renderLiveClasses(
 
                             <button
                                 class="live-open"
-                                data-live-id="${escapeHtml(
-                                    liveClass.id
-                                )}"
                                 type="button"
+                                data-live-open
                             >
-
                                 VIEW
-
                             </button>
 
                         </article>
@@ -1687,7 +1262,7 @@ function renderLiveClasses(
 
     document
         .querySelectorAll(
-            "[data-live-id]"
+            "[data-live-open]"
         )
         .forEach(
             button => {
@@ -1720,9 +1295,10 @@ async function loadContinueLearning() {
         );
 
 
-    if (
-        !contents.length
-    ) {
+    if (!container) return;
+
+
+    if (!contents.length) {
 
         container.innerHTML = `
 
@@ -1737,197 +1313,120 @@ async function loadContinueLearning() {
     }
 
 
-    let lastWatched =
-        null;
+    let lastWatched = null;
 
 
-    try {
-
-        const saved =
-            localStorage.getItem(
-                "zen2LastWatched"
-            );
+    const saved =
+        localStorage.getItem(
+            "zen2LastWatched"
+        );
 
 
-        if (
-            saved
-        ) {
+    if (saved) {
+
+        try {
 
             lastWatched =
                 JSON.parse(
                     saved
                 );
 
-            }
+        } catch {
+
+            lastWatched = null;
 
         }
 
     }
 
-    catch (
-        error
-    ) {
 
-        console.warn(
-            error
-        );
+    let content = null;
 
-    }
-
-
-    let selectedContent =
-        null;
-
-
-    /*
-     * First priority:
-     * previously watched content.
-     */
 
     if (
-        lastWatched?.contentId
+        lastWatched &&
+        lastWatched.contentId
     ) {
 
-        selectedContent =
+        content =
             contents.find(
-                content =>
-                    content.id ===
+                item =>
+                    item.id ===
                     lastWatched.contentId
             );
 
     }
 
 
-    /*
-     * If nothing was watched,
-     * use the first ordered video.
-     */
+    if (!content) {
 
-    if (
-        !selectedContent
-    ) {
-
-        selectedContent =
+        content =
             contents.find(
-                content =>
+                item =>
                     String(
-                        content.contentType ||
+                        item.contentType ||
                         ""
-                    )
-                    .toUpperCase() ===
+                    ).toUpperCase() ===
                     "VIDEO"
             );
 
     }
 
 
-    /*
-     * If still nothing,
-     * use first content.
-     */
+    if (!content) {
 
-    if (
-        !selectedContent
-    ) {
-
-        selectedContent =
+        content =
             contents[0];
 
     }
 
 
-    if (
-        !selectedContent
-    ) {
-
-        container.innerHTML = `
-
-            <div class="loading-card">
-                No learning content available yet.
-            </div>
-
-        `;
-
-        return;
-
-    }
-
-
-    const title =
-        selectedContent.title ||
-        "Learning Content";
-
-
-    const thumbnail =
-        selectedContent.thumbnailUrl ||
-        "";
-
-
     const subject =
-        findSubjectName(
-            selectedContent.subjectId
+        subjects.find(
+            item =>
+                item.id ===
+                content.subjectId
         );
 
 
     const chapter =
-        findChapterName(
-            selectedContent.chapterId
+        chapters.find(
+            item =>
+                item.id ===
+                content.chapterId
         );
-
-
-    const isVideo =
-        String(
-            selectedContent.contentType ||
-            ""
-        )
-        .toUpperCase() ===
-        "VIDEO";
 
 
     container.innerHTML = `
 
-        <div
-            class="continue-thumbnail"
-        >
+        <div class="continue-thumbnail">
 
             ${
-                thumbnail
-
+                content.thumbnailUrl
                     ? `
-
                         <img
                             src="${escapeHtml(
-                                thumbnail
+                                content.thumbnailUrl
                             )}"
                             alt=""
                         >
-
                     `
-
                     : `
-
-                        <div
-                            class="continue-placeholder"
-                        >
+                        <div class="continue-placeholder">
                             ZENOVA
                         </div>
-
                     `
             }
 
         </div>
 
 
-        <div
-            class="continue-info"
-        >
+        <div class="continue-info">
 
-            <span
-                class="continue-label"
-            >
+            <span class="continue-label">
 
                 ${
-                    lastWatched?.contentId
+                    lastWatched
                         ? "CONTINUE LEARNING"
                         : "START LEARNING"
                 }
@@ -1937,7 +1436,8 @@ async function loadContinueLearning() {
 
             <h3>
                 ${escapeHtml(
-                    title
+                    content.title ||
+                    "Learning Video"
                 )}
             </h3>
 
@@ -1945,13 +1445,15 @@ async function loadContinueLearning() {
             <p>
 
                 ${escapeHtml(
-                    subject
+                    subject?.subjectName ||
+                    subject?.displayName ||
+                    ""
                 )}
 
                 ${
-                    chapter
+                    chapter?.chapterName
                         ? ` • ${escapeHtml(
-                            chapter
+                            chapter.chapterName
                         )}`
                         : ""
                 }
@@ -1962,19 +1464,15 @@ async function loadContinueLearning() {
 
 
         <button
+            id="continueButton"
             class="continue-button"
-            id="continueLearningButton"
             type="button"
         >
 
             ${
-                lastWatched?.contentId
+                lastWatched
                     ? "CONTINUE"
-                    : (
-                        isVideo
-                            ? "START"
-                            : "OPEN"
-                    )
+                    : "START"
             }
 
         </button>
@@ -1984,114 +1482,33 @@ async function loadContinueLearning() {
 
     document
         .getElementById(
-            "continueLearningButton"
+            "continueButton"
         )
         ?.addEventListener(
             "click",
             () => {
 
-                openContent(
-                    selectedContent
-                );
+                window.location.href =
+                    `./revision/chapter-details/?chapterId=${
+                        encodeURIComponent(
+                            content.chapterId
+                        )
+                    }&subjectId=${
+                        encodeURIComponent(
+                            content.subjectId
+                        )
+                    }&courseId=${
+                        encodeURIComponent(
+                            selectedCourse.id
+                        )
+                    }&contentId=${
+                        encodeURIComponent(
+                            content.id
+                        )
+                    }`;
 
             }
         );
-
-}
-
-
-/* =====================================================
-   OPEN CONTENT
-===================================================== */
-
-function openContent(
-    content
-) {
-
-    const chapterId =
-        content.chapterId;
-
-
-    const subjectId =
-        content.subjectId;
-
-
-    if (
-        !chapterId
-    ) {
-
-        return;
-
-    }
-
-
-    window.location.href =
-        `./chapters/?chapterId=${
-            encodeURIComponent(
-                chapterId
-            )
-        }&subjectId=${
-            encodeURIComponent(
-                subjectId || ""
-            )
-        }&courseId=${
-            encodeURIComponent(
-                selectedCourse.id
-            )
-        }&contentId=${
-            encodeURIComponent(
-                content.id
-            )
-        }`;
-
-}
-
-
-/* =====================================================
-   SUBJECT NAME
-===================================================== */
-
-function findSubjectName(
-    subjectId
-) {
-
-    const subject =
-        subjects.find(
-            item =>
-                item.id ===
-                subjectId
-        );
-
-
-    return (
-        subject?.subjectName ||
-        subject?.displayName ||
-        "Subject"
-    );
-
-}
-
-
-/* =====================================================
-   CHAPTER NAME
-===================================================== */
-
-function findChapterName(
-    chapterId
-) {
-
-    const chapter =
-        chapters.find(
-            item =>
-                item.id ===
-                chapterId
-        );
-
-
-    return (
-        chapter?.chapterName ||
-        "Chapter"
-    );
 
 }
 
@@ -2107,14 +1524,14 @@ function setupNavigation() {
             "[data-route]"
         )
         .forEach(
-            element => {
+            button => {
 
-                element.addEventListener(
+                button.addEventListener(
                     "click",
                     () => {
 
                         const route =
-                            element.dataset.route;
+                            button.dataset.route;
 
 
                         if (
@@ -2124,8 +1541,6 @@ function setupNavigation() {
 
                             window.location.href =
                                 "./revision/";
-
-                            return;
 
                         }
 
@@ -2138,8 +1553,6 @@ function setupNavigation() {
                             window.location.href =
                                 "../live/";
 
-                            return;
-
                         }
 
 
@@ -2148,16 +1561,8 @@ function setupNavigation() {
                             "tests"
                         ) {
 
-                            /*
-                             * Keep this route
-                             * ready for the Tests
-                             * page.
-                             */
-
                             window.location.href =
                                 "./tests/";
-
-                            return;
 
                         }
 
@@ -2169,8 +1574,6 @@ function setupNavigation() {
 
                             window.location.href =
                                 "./doubts/";
-
-                            return;
 
                         }
 
@@ -2214,10 +1617,48 @@ function setupNavigation() {
 
 
 /* =====================================================
-   DATE
+   HELPERS
 ===================================================== */
 
-function getTodayString() {
+function normalizeClass(
+    value
+) {
+
+    return String(
+        value || ""
+    )
+        .trim()
+        .toUpperCase()
+        .replace(
+            /\s+/g,
+            " "
+        );
+
+}
+
+
+function sortByOrder(
+    a,
+    b
+) {
+
+    return (
+        Number(
+            a.order ??
+            a.chapterNumber ??
+            9999
+        ) -
+        Number(
+            b.order ??
+            b.chapterNumber ??
+            9999
+        )
+    );
+
+}
+
+
+function getToday() {
 
     const date =
         new Date();
@@ -2252,80 +1693,23 @@ function getTodayString() {
 }
 
 
-/* =====================================================
-   LIVE DATE
-===================================================== */
-
-function parseLiveDate(
-    liveClass
-) {
-
-    if (
-        !liveClass.scheduledDate
-    ) {
-
-        return null;
-
-    }
-
-
-    const time =
-        liveClass.scheduledTime ||
-        "00:00";
-
-
-    const date =
-        new Date(
-            `${liveClass.scheduledDate}T${time}:00`
-        );
-
-
-    if (
-        Number.isNaN(
-            date.getTime()
-        )
-    ) {
-
-        return null;
-
-    }
-
-
-    return date;
-
-}
-
-
-/* =====================================================
-   FORMAT TIME
-===================================================== */
-
 function formatTime(
-    time
+    value
 ) {
 
-    if (
-        !time
-    ) {
-
+    if (!value) {
         return "";
-
     }
 
 
     const parts =
         String(
-            time
-        )
-        .split(":");
+            value
+        ).split(":");
 
 
-    if (
-        parts.length < 2
-    ) {
-
-        return time;
-
+    if (parts.length < 2) {
+        return value;
     }
 
 
@@ -2355,37 +1739,6 @@ function formatTime(
 }
 
 
-/* =====================================================
-   SORT
-===================================================== */
-
-function sortByOrder(
-    a,
-    b
-) {
-
-    return (
-        Number(
-            a.order ??
-            a.chapterNumber ??
-            a.position ??
-            9999
-        ) -
-        Number(
-            b.order ??
-            b.chapterNumber ??
-            b.position ??
-            9999
-        )
-    );
-
-}
-
-
-/* =====================================================
-   SHOW APP
-===================================================== */
-
 function showApp() {
 
     app?.classList.remove(
@@ -2407,22 +1760,11 @@ function showApp() {
 }
 
 
-/* =====================================================
-   ERROR
-===================================================== */
-
 function showError(
     message
 ) {
 
-    console.error(
-        message
-    );
-
-
-    if (
-        errorMessage
-    ) {
+    if (errorMessage) {
 
         errorMessage.textContent =
             message;
@@ -2439,26 +1781,8 @@ function showError(
         "hidden"
     );
 
-
-    document
-        .getElementById(
-            "retryButton"
-        )
-        ?.addEventListener(
-            "click",
-            () => {
-
-                window.location.reload();
-
-            }
-        );
-
 }
 
-
-/* =====================================================
-   ESCAPE HTML
-===================================================== */
 
 function escapeHtml(
     value
@@ -2467,27 +1791,22 @@ function escapeHtml(
     return String(
         value ?? ""
     )
-
         .replaceAll(
             "&",
             "&amp;"
         )
-
         .replaceAll(
             "<",
             "&lt;"
         )
-
         .replaceAll(
             ">",
             "&gt;"
         )
-
         .replaceAll(
             '"',
             "&quot;"
         )
-
         .replaceAll(
             "'",
             "&#039;"
