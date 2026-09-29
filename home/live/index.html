@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Live Classes | Zenova</title>
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
+        rel="stylesheet"
+    >
+
+    <link
+        rel="stylesheet"
+        href="./live.css"
+    >
+
+</head>
+
+
+<body>
+
+
+    <!-- =====================================================
+         PAGE
+    ====================================================== -->
+
+    <div class="page">
+
+
+        <!-- =================================================
+             TOP BAR
+        ================================================== -->
+
+        <header class="topbar">
+
+            <button
+                id="backButton"
+                class="back-button"
+                type="button"
+                aria-label="Go back"
+            >
+                ←
+            </button>
+
+
+            <div class="topbar-title">
+
+                <span class="topbar-eyebrow">
+                    ZENOVA
+                </span>
+
+                <h1>
+                    Live Classes
+                </h1>
+
+            </div>
+
+
+            <div class="live-dot-wrap">
+
+                <span class="live-dot"></span>
+
+                <span>
+                    LIVE
+                </span>
+
+            </div>
+
+        </header>
+
+
+
+        <!-- =================================================
+             LOADING
+        ================================================== -->
+
+        <section
+            id="loadingScreen"
+            class="loading-screen"
+        >
+
+            <div class="loader"></div>
+
+            <p>
+                Loading live classes...
+            </p>
+
+        </section>
+
+
+
+        <!-- =================================================
+             ERROR
+        ================================================== -->
+
+        <section
+            id="errorSection"
+            class="error-section hidden"
+        >
+
+            <div class="error-icon">
+                !
+            </div>
+
+            <h2>
+                Something went wrong
+            </h2>
+
+            <p id="errorMessage">
+                We couldn't load your live classes.
+            </p>
+
+            <button
+                id="errorBackButton"
+                type="button"
+                class="dark-button"
+            >
+                GO BACK
+            </button>
+
+        </section>
+
+
+
+        <!-- =================================================
+             APP
+        ================================================== -->
+
+        <main
+            id="app"
+            class="app hidden"
+        >
+
+
+            <!-- =================================================
+                 WELCOME
+            ================================================== -->
+
+            <section class="welcome-section">
+
+                <span class="section-eyebrow">
+                    YOUR CLASSROOM
+                </span>
+
+                <h2>
+                    Live learning,
+                    <span>right now.</span>
+                </h2>
+
+                <p id="batchSubtitle">
+                    Join your scheduled classes or revise previous live sessions.
+                </p>
+
+            </section>
+
+
+
+            <!-- =================================================
+                 TODAY'S LIVE
+            ================================================== -->
+
+            <section
+                id="todaySection"
+                class="section"
+            >
+
+                <div class="section-header">
+
+                    <div>
+
+                        <span class="small-label">
+                            TODAY
+                        </span>
+
+                        <h2>
+                            Today's Live Classes
+                        </h2>
+
+                    </div>
+
+                    <span
+                        id="todayCount"
+                        class="count-pill"
+                    >
+                        0
+                    </span>
+
+                </div>
+
+
+                <div
+                    id="todayList"
+                    class="live-list"
+                ></div>
+
+
+                <div
+                    id="todayEmpty"
+                    class="empty-card hidden"
+                >
+
+                    <div class="empty-icon">
+                        ◷
+                    </div>
+
+                    <h3>
+                        No live class today
+                    </h3>
+
+                    <p>
+                        There are no live classes scheduled for your batch today.
+                    </p>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- =================================================
+                 MISSED CLASS
+            ================================================== -->
+
+            <section
+                id="missedSection"
+                class="missed-section"
+            >
+
+                <div class="missed-content">
+
+                    <div class="missed-icon">
+                        ▶
+                    </div>
+
+                    <div>
+
+                        <span>
+                            MISSED A LIVE CLASS?
+                        </span>
+
+                        <h3>
+                            Watch previous live classes
+                        </h3>
+
+                        <p>
+                            Select a date or subject below to revise classes you missed.
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <button
+                    id="scrollRecordingsButton"
+                    type="button"
+                    class="outline-button"
+                >
+                    VIEW RECORDINGS
+                </button>
+
+            </section>
+
+
+
+            <!-- =================================================
+                 DATE SELECTOR
+            ================================================== -->
+
+            <section
+                id="dateSection"
+                class="section date-section"
+            >
+
+                <div class="section-header">
+
+                    <div>
+
+                        <span class="small-label">
+                            RECORDINGS
+                        </span>
+
+                        <h2>
+                            Select a Date
+                        </h2>
+
+                    </div>
+
+                </div>
+
+
+                <div class="date-picker-card">
+
+                    <button
+                        id="previousDate"
+                        class="date-arrow"
+                        type="button"
+                        aria-label="Previous date"
+                    >
+                        ‹
+                    </button>
+
+
+                    <div class="selected-date">
+
+                        <span
+                            id="selectedDateDay"
+                            class="selected-date-day"
+                        >
+                            Tuesday
+                        </span>
+
+                        <strong id="selectedDateLabel">
+                            29 September 2026
+                        </strong>
+
+                    </div>
+
+
+                    <button
+                        id="nextDate"
+                        class="date-arrow"
+                        type="button"
+                        aria-label="Next date"
+                    >
+                        ›
+                    </button>
+
+                </div>
+
+
+                <div
+                    id="selectedDateList"
+                    class="date-class-list"
+                ></div>
+
+
+                <div
+                    id="selectedDateEmpty"
+                    class="empty-card hidden"
+                >
+
+                    <div class="empty-icon">
+                        —
+                    </div>
+
+                    <h3>
+                        No live class on this date
+                    </h3>
+
+                    <p>
+                        No live class was taken or scheduled on the selected date.
+                    </p>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- =================================================
+                 SUBJECTS
+            ================================================== -->
+
+            <section
+                id="subjectsSection"
+                class="section subjects-section"
+            >
+
+                <div class="section-header">
+
+                    <div>
+
+                        <span class="small-label">
+                            REVISION
+                        </span>
+
+                        <h2>
+                            Live Classes by Subject
+                        </h2>
+
+                    </div>
+
+                </div>
+
+
+                <p class="section-description">
+                    Select a subject to see all previous live classes.
+                </p>
+
+
+                <div
+                    id="subjectList"
+                    class="subject-grid"
+                ></div>
+
+
+                <div
+                    id="subjectsEmpty"
+                    class="empty-card hidden"
+                >
+
+                    <div class="empty-icon">
+                        ◫
+                    </div>
+
+                    <h3>
+                        No subjects available
+                    </h3>
+
+                    <p>
+                        Subjects for your batch will appear here.
+                    </p>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- =================================================
+                 SUBJECT RECORDINGS
+            ================================================== -->
+
+            <section
+                id="subjectClassesSection"
+                class="section subject-classes-section hidden"
+            >
+
+                <div class="section-header">
+
+                    <div>
+
+                        <span class="small-label">
+                            SUBJECT RECORDINGS
+                        </span>
+
+                        <h2 id="selectedSubjectTitle">
+                            Mathematics
+                        </h2>
+
+                    </div>
+
+                    <button
+                        id="closeSubjectButton"
+                        type="button"
+                        class="close-button"
+                    >
+                        ×
+                    </button>
+
+                </div>
+
+
+                <div
+                    id="subjectClassesList"
+                    class="subject-class-list"
+                ></div>
+
+
+                <div
+                    id="subjectClassesEmpty"
+                    class="empty-card hidden"
+                >
+
+                    <div class="empty-icon">
+                        ▶
+                    </div>
+
+                    <h3>
+                        No recorded classes
+                    </h3>
+
+                    <p>
+                        No previous live classes are available for this subject.
+                    </p>
+
+                </div>
+
+            </section>
+
+
+        </main>
+
+
+
+        <!-- =================================================
+             BOTTOM NAVIGATION
+        ================================================== -->
+
+        <nav class="bottom-nav">
+
+            <button
+                type="button"
+                data-route="../"
+                class="nav-item"
+            >
+
+                <span class="nav-icon">
+                    ⌂
+                </span>
+
+                <span>
+                    Home
+                </span>
+
+            </button>
+
+
+            <button
+                type="button"
+                class="nav-item active"
+            >
+
+                <span class="nav-icon">
+                    ◉
+                </span>
+
+                <span>
+                    Live
+                </span>
+
+            </button>
+
+
+            <button
+                type="button"
+                data-route="../revision/"
+                class="nav-item"
+            >
+
+                <span class="nav-icon">
+                    ▣
+                </span>
+
+                <span>
+                    Revision
+                </span>
+
+            </button>
+
+
+            <button
+                type="button"
+                data-route="../profile/"
+                class="nav-item"
+            >
+
+                <span class="nav-icon">
+                    ○
+                </span>
+
+                <span>
+                    Profile
+                </span>
+
+            </button>
+
+        </nav>
+
+
+    </div>
+
+
+
+    <script
+        type="module"
+        src="./live.js"
+    ></script>
+
+
+</body>
+
+</html>
