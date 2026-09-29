@@ -1540,7 +1540,7 @@ function setupNavigation() {
                         ) {
 
                             window.location.href =
-                                "./revision/";
+                                "./home/revision/";
 
                         }
 
@@ -1551,7 +1551,7 @@ function setupNavigation() {
                         ) {
 
                             window.location.href =
-                                "../live/";
+                                "../home/live/";
 
                         }
 
@@ -1562,7 +1562,7 @@ function setupNavigation() {
                         ) {
 
                             window.location.href =
-                                "./tests/";
+                                "./home/tests/";
 
                         }
 
@@ -1573,7 +1573,7 @@ function setupNavigation() {
                         ) {
 
                             window.location.href =
-                                "./doubts/";
+                                "./home/doubts/";
 
                         }
 
@@ -1593,7 +1593,7 @@ function setupNavigation() {
             () => {
 
                 window.location.href =
-                    "./profile/";
+                    "./home/profile/";
 
             }
         );
@@ -1608,7 +1608,7 @@ function setupNavigation() {
             () => {
 
                 window.location.href =
-                    "./ai/";
+                    "./home/ai/";
 
             }
         );
