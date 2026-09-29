@@ -1,503 +1,561 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
     <meta charset="UTF-8">
 
     <meta
         name="viewport"
-        content="width=device-width, initial-scale=1.0"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
     >
 
-    <title>Video Player | Zenova</title>
+    <title>Zenova Educations | Video</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
     <link
-        rel="preconnect"
-        href="https://fonts.googleapis.com"
-    >
-
-    <link
-        rel="preconnect"
-        href="https://fonts.gstatic.com"
-        crossorigin
-    >
-
-    <link
-        href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700&display=swap"
         rel="stylesheet"
     >
 
-    <link
-        rel="stylesheet"
-        href="./videoplayer.css"
-    >
-
+    <link rel="stylesheet" href="./videoplayer.css">
 </head>
-
 
 <body>
 
-
     <!-- =====================================================
-         PAGE
+         TOP BAR
     ====================================================== -->
 
-    <main class="player-page">
+    <header class="topbar">
+
+        <button
+            id="backButton"
+            class="back-button"
+            type="button"
+            aria-label="Go back"
+        >
+            <span class="back-icon">‹</span>
+            <span>Back</span>
+        </button>
+
+        <div class="top-brand">
+
+            <div class="zenova-wordmark">
+                ZENOVA
+            </div>
+
+            <div class="top-brand-subtitle">
+                EDUCATIONS
+            </div>
+
+        </div>
+
+        <div class="top-spacer"></div>
+
+    </header>
+
+
+    <!-- =====================================================
+         LOADING
+    ====================================================== -->
+
+    <section id="loadingState" class="state-screen">
+
+        <div class="loader"></div>
+
+        <p>Loading video...</p>
+
+    </section>
+
+
+    <!-- =====================================================
+         ERROR
+    ====================================================== -->
+
+    <section
+        id="errorState"
+        class="state-screen error-screen hidden"
+    >
+
+        <div class="error-icon">
+            !
+        </div>
+
+        <h2>Unable to load video</h2>
+
+        <p id="errorMessage">
+            Something went wrong.
+        </p>
+
+        <button
+            id="errorBackButton"
+            class="dark-button"
+            type="button"
+        >
+            Go Back
+        </button>
+
+    </section>
+
+
+    <!-- =====================================================
+         MAIN PLAYER APP
+    ====================================================== -->
+
+    <main id="playerApp" class="player-app hidden">
+
+        <!-- =================================================
+             VIDEO PLAYER
+        ================================================== -->
+
+        <section class="video-section">
+
+            <div
+                id="videoPlayer"
+                class="video-player"
+            >
+
+                <!-- Actual video area -->
+
+                <div
+                    id="videoStage"
+                    class="video-stage"
+                >
+
+                    <!-- HTML5 video -->
+
+                    <video
+                        id="htmlVideo"
+                        class="html-video hidden"
+                        playsinline
+                        preload="metadata"
+                    ></video>
+
+
+                    <!-- YouTube iframe -->
+
+                    <div
+                        id="youtubeContainer"
+                        class="youtube-container hidden"
+                    ></div>
+
+
+                    <!-- Loading inside player -->
+
+                    <div
+                        id="playerLoading"
+                        class="player-loading"
+                    >
+
+                        <div class="player-spinner"></div>
+
+                    </div>
+
+
+                    <!-- Center play -->
+
+                    <button
+                        id="centerPlayButton"
+                        class="center-play-button"
+                        type="button"
+                        aria-label="Play"
+                    >
+                        <span class="center-play-icon">
+                            ▶
+                        </span>
+                    </button>
+
+
+                    <!-- Zenova round logo -->
+
+                    <div class="video-logo">
+
+                        <div class="video-logo-circle">
+                            Z
+                        </div>
+
+                        <div class="video-logo-text">
+                            ZENOVA
+                        </div>
+
+                    </div>
+
+
+                    <!-- Video type badge -->
+
+                    <div
+                        id="videoTypeBadge"
+                        class="video-type-badge hidden"
+                    >
+                        RECORDED LIVE
+                    </div>
+
+
+                    <!-- Watermark -->
+
+                    <div
+                        id="studentWatermark"
+                        class="student-watermark hidden"
+                    >
+                        <strong id="watermarkName">
+                            Student
+                        </strong>
+
+                        <span id="watermarkPhone">
+                            XXXXX
+                        </span>
+
+                        <small>
+                            ZENOVA • EDUCATIONS
+                        </small>
+                    </div>
+
+
+                    <!-- Controls -->
+
+                    <div
+                        id="videoControls"
+                        class="video-controls"
+                    >
+
+                        <!-- Progress -->
+
+                        <div
+                            id="progressContainer"
+                            class="progress-container"
+                        >
+
+                            <input
+                                id="progressBar"
+                                class="progress-bar"
+                                type="range"
+                                min="0"
+                                max="100"
+                                value="0"
+                                step="0.1"
+                                aria-label="Video progress"
+                            >
+
+                        </div>
+
+
+                        <div class="controls-row">
+
+                            <!-- Left controls -->
+
+                            <div class="controls-left">
+
+                                <button
+                                    id="playPauseButton"
+                                    class="control-button"
+                                    type="button"
+                                    aria-label="Play"
+                                >
+                                    ▶
+                                </button>
+
+
+                                <button
+                                    id="back10Button"
+                                    class="control-button"
+                                    type="button"
+                                    aria-label="Back 10 seconds"
+                                >
+                                    <span class="skip-icon">↶</span>
+                                    <span class="skip-number">10</span>
+                                </button>
+
+
+                                <button
+                                    id="forward10Button"
+                                    class="control-button"
+                                    type="button"
+                                    aria-label="Forward 10 seconds"
+                                >
+                                    <span class="skip-icon">↷</span>
+                                    <span class="skip-number">10</span>
+                                </button>
+
+
+                                <button
+                                    id="muteButton"
+                                    class="control-button"
+                                    type="button"
+                                    aria-label="Mute"
+                                >
+                                    🔊
+                                </button>
+
+
+                                <div
+                                    id="timeDisplay"
+                                    class="time-display"
+                                >
+                                    00:00 / 00:00
+                                </div>
+
+                            </div>
+
+
+                            <!-- Right controls -->
+
+                            <div class="controls-right">
+
+                                <div
+                                    id="speedWrapper"
+                                    class="speed-wrapper"
+                                >
+
+                                    <button
+                                        id="speedButton"
+                                        class="speed-button"
+                                        type="button"
+                                    >
+                                        1x
+                                    </button>
+
+                                    <div
+                                        id="speedMenu"
+                                        class="speed-menu hidden"
+                                    >
+
+                                        <button
+                                            type="button"
+                                            data-speed="0.75"
+                                        >
+                                            0.75x
+                                        </button>
+
+                                        <button
+                                            type="button"
+                                            data-speed="1"
+                                        >
+                                            1x
+                                        </button>
+
+                                        <button
+                                            type="button"
+                                            data-speed="1.25"
+                                        >
+                                            1.25x
+                                        </button>
+
+                                        <button
+                                            type="button"
+                                            data-speed="1.5"
+                                        >
+                                            1.5x
+                                        </button>
+
+                                        <button
+                                            type="button"
+                                            data-speed="2"
+                                        >
+                                            2x
+                                        </button>
+
+                                    </div>
+
+                                </div>
+
+
+                                <button
+                                    id="fullscreenButton"
+                                    class="control-button fullscreen-button"
+                                    type="button"
+                                    aria-label="Fullscreen"
+                                >
+                                    ⛶
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
 
 
         <!-- =================================================
-             TOP BAR
+             VIDEO INFORMATION
         ================================================== -->
 
-        <header class="topbar">
+        <section class="video-information">
 
-            <button
-                id="backButton"
-                class="back-button"
-                type="button"
+            <!-- Status -->
+
+            <div
+                id="videoStatus"
+                class="video-status hidden"
             >
-                <span>←</span>
-                <span>Back</span>
-            </button>
+                <span class="status-dot"></span>
+
+                <span id="videoStatusText">
+                    RECORDED LIVE
+                </span>
+
+                <span
+                    id="liveDateTime"
+                    class="live-date-time"
+                ></span>
+
+            </div>
 
 
-            <div class="brand">
+            <!-- Title -->
 
-                <div class="brand-logo">
+            <h1 id="videoTitle">
+                Video Title
+            </h1>
+
+
+            <!-- Hierarchy -->
+
+            <div
+                id="videoHierarchy"
+                class="video-hierarchy"
+            >
+                Batch • Subject • Chapter
+            </div>
+
+
+            <!-- Faculty -->
+
+            <div class="faculty-section">
+
+                <div
+                    id="facultyAvatar"
+                    class="faculty-avatar"
+                >
                     Z
                 </div>
 
-                <div>
-
-                    <strong>
-                        ZENOVA
-                    </strong>
+                <div class="faculty-information">
 
                     <span>
-                        LEARNING
+                        Faculty
                     </span>
+
+                    <strong id="facultyName">
+                        Faculty Name
+                    </strong>
 
                 </div>
 
             </div>
 
-        </header>
 
+            <!-- Description -->
 
+            <div
+                id="descriptionSection"
+                class="description-section hidden"
+            >
 
-        <!-- =================================================
-             LOADER
-        ================================================== -->
+                <h2>
+                    About this class
+                </h2>
 
-        <section
-            id="loader"
-            class="loader-screen"
-        >
+                <p id="videoDescription"></p>
 
-            <div class="spinner"></div>
-
-            <p>
-                Loading video...
-            </p>
+            </div>
 
         </section>
 
 
-
         <!-- =================================================
-             ERROR
+             RELATED VIDEOS
         ================================================== -->
 
         <section
-            id="errorScreen"
-            class="error-screen hidden"
+            id="relatedSection"
+            class="related-section"
         >
 
-            <div class="error-icon">
-                !
+            <div class="section-heading">
+
+                <div>
+
+                    <span class="section-eyebrow">
+                        CONTINUE LEARNING
+                    </span>
+
+                    <h2>
+                        More videos from this chapter
+                    </h2>
+
+                </div>
+
             </div>
 
-            <h2>
-                Unable to load video
-            </h2>
 
-            <p id="errorMessage">
-                Something went wrong.
-            </p>
+            <div
+                id="relatedVideos"
+                class="related-videos"
+            ></div>
 
-            <button
-                id="retryButton"
-                type="button"
+
+            <div
+                id="relatedEmpty"
+                class="related-empty hidden"
             >
-                Try Again
-            </button>
+                No more videos in this chapter.
+            </div>
 
         </section>
 
 
-
         <!-- =================================================
-             PLAYER APP
+             FUTURE QUESTIONS PLACEHOLDER
         ================================================== -->
 
         <section
-            id="playerApp"
-            class="player-app hidden"
+            id="questionsSection"
+            class="questions-section hidden"
         >
 
+            <div class="questions-placeholder">
 
-            <!-- =============================================
-                 VIDEO INFORMATION
-            ============================================== -->
+                <span>
+                    QUESTIONS
+                </span>
 
-            <div class="video-heading">
+                <h2>
+                    Test your understanding
+                </h2>
 
-
-                <div class="breadcrumb">
-
-                    <span id="batchName">
-                        Batch
-                    </span>
-
-                    <span class="separator">
-                        /
-                    </span>
-
-                    <span id="subjectName">
-                        Subject
-                    </span>
-
-                    <span class="separator">
-                        /
-                    </span>
-
-                    <span id="chapterName">
-                        Chapter
-                    </span>
-
-                </div>
-
-
-                <h1 id="videoTitle">
-                    Video Title
-                </h1>
-
-
-                <div class="video-meta">
-
-                    <span id="accessBadge">
-                        VIDEO
-                    </span>
-
-                    <span id="videoTypeBadge">
-                        RECORDED CLASS
-                    </span>
-
-                </div>
+                <p>
+                    Questions connected to this video will appear here.
+                </p>
 
             </div>
-
-
-
-            <!-- =============================================
-                 PLAYER
-            ============================================== -->
-
-            <div
-                id="videoPlayerWrapper"
-                class="video-player-wrapper"
-            >
-
-
-                <!-- DIRECT VIDEO -->
-
-                <video
-                    id="videoElement"
-                    class="video-element"
-                    playsinline
-                    preload="metadata"
-                ></video>
-
-
-                <!-- YOUTUBE -->
-
-                <div
-                    id="youtubeContainer"
-                    class="youtube-container hidden"
-                >
-
-                    <div
-                        id="youtubePlayer"
-                        class="youtube-player"
-                    ></div>
-
-                </div>
-
-
-                <!-- LOADING OVERLAY -->
-
-                <div
-                    id="playerLoading"
-                    class="player-loading"
-                >
-
-                    <div class="spinner"></div>
-
-                </div>
-
-
-                <!-- CENTER PLAY -->
-
-                <button
-                    id="centerPlayButton"
-                    class="center-play-button"
-                    type="button"
-                    aria-label="Play"
-                >
-                    ▶
-                </button>
-
-
-                <!-- CUSTOM CONTROLS -->
-
-                <div
-                    id="controls"
-                    class="controls"
-                >
-
-
-                    <!-- PROGRESS -->
-
-                    <div class="progress-container">
-
-                        <input
-                            id="progressBar"
-                            class="progress-bar"
-                            type="range"
-                            min="0"
-                            max="100"
-                            value="0"
-                            step="0.1"
-                        >
-
-                    </div>
-
-
-                    <div class="control-row">
-
-
-                        <!-- LEFT -->
-
-                        <div class="control-left">
-
-                            <button
-                                id="playButton"
-                                class="control-button"
-                                type="button"
-                                aria-label="Play"
-                            >
-                                ▶
-                            </button>
-
-
-                            <button
-                                id="muteButton"
-                                class="control-button"
-                                type="button"
-                                aria-label="Mute"
-                            >
-                                🔊
-                            </button>
-
-
-                            <input
-                                id="volumeBar"
-                                class="volume-bar"
-                                type="range"
-                                min="0"
-                                max="1"
-                                step="0.01"
-                                value="1"
-                            >
-
-
-                            <span
-                                id="currentTime"
-                                class="time"
-                            >
-                                00:00
-                            </span>
-
-                            <span class="time-separator">
-                                /
-                            </span>
-
-                            <span
-                                id="duration"
-                                class="time"
-                            >
-                                00:00
-                            </span>
-
-                        </div>
-
-
-
-                        <!-- RIGHT -->
-
-                        <div class="control-right">
-
-
-                            <button
-                                id="speedButton"
-                                class="control-button speed-button"
-                                type="button"
-                            >
-                                1x
-                            </button>
-
-
-                            <button
-                                id="fullscreenButton"
-                                class="control-button"
-                                type="button"
-                                aria-label="Fullscreen"
-                            >
-                                ⛶
-                            </button>
-
-                        </div>
-
-
-                    </div>
-
-                </div>
-
-            </div>
-
-
-
-            <!-- =============================================
-                 VIDEO INFORMATION CARD
-            ============================================== -->
-
-            <section class="information-card">
-
-
-                <div class="info-heading">
-
-                    <div class="info-icon">
-                        ▶
-                    </div>
-
-                    <div>
-
-                        <span>
-                            NOW WATCHING
-                        </span>
-
-                        <h2 id="infoTitle">
-                            Video Title
-                        </h2>
-
-                    </div>
-
-                </div>
-
-
-                <div class="hierarchy-grid">
-
-
-                    <div class="hierarchy-item">
-
-                        <small>
-                            BATCH
-                        </small>
-
-                        <strong id="infoBatch">
-                            —
-                        </strong>
-
-                    </div>
-
-
-                    <div class="hierarchy-item">
-
-                        <small>
-                            SUBJECT
-                        </small>
-
-                        <strong id="infoSubject">
-                            —
-                        </strong>
-
-                    </div>
-
-
-                    <div class="hierarchy-item">
-
-                        <small>
-                            CHAPTER
-                        </small>
-
-                        <strong id="infoChapter">
-                            —
-                        </strong>
-
-                    </div>
-
-
-                    <div class="hierarchy-item">
-
-                        <small>
-                            CONTENT
-                        </small>
-
-                        <strong id="infoContent">
-                            —
-                        </strong>
-
-                    </div>
-
-
-                </div>
-
-
-                <p
-                    id="videoDescription"
-                    class="video-description"
-                ></p>
-
-
-            </section>
-
-
-
-            <!-- =============================================
-                 CONTINUE
-            ============================================== -->
-
-            <div
-                id="resumeMessage"
-                class="resume-message hidden"
-            >
-                Your previous position has been saved.
-            </div>
-
 
         </section>
 
     </main>
 
 
+    <!-- =====================================================
+         TOAST
+    ====================================================== -->
 
-    <!-- YOUTUBE API -->
+    <div
+        id="toast"
+        class="toast hidden"
+    ></div>
 
-    <script
-        src="https://www.youtube.com/iframe_api"
-    ></script>
 
+    <!-- =====================================================
+         YOUTUBE API
+    ====================================================== -->
+
+    <script src="https://www.youtube.com/iframe_api"></script>
 
     <script
         type="module"
@@ -505,5 +563,4 @@
     ></script>
 
 </body>
-
-</html>
+                            </html>
