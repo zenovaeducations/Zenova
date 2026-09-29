@@ -384,6 +384,16 @@ async function loadLiveClass() {
     }
 }
 
+function getInitial(value) {
+
+    return String(
+        value || "Z"
+    )
+        .trim()
+        .charAt(0)
+        .toUpperCase() || "Z";
+
+}
 /* =========================================================
    HIERARCHY
 ========================================================= */
