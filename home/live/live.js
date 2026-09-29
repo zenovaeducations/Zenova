@@ -1,2016 +1,3574 @@
 /* ============================================================
-   ZENOVA LIVE
+   ZENOVA ZEN2
+   LIVE CLASSES — STUDENT PAGE
 ============================================================ */
 
-:root {
 
-    --black: #111111;
-    --dark: #181818;
+import {
 
-    --text: #171717;
-    --muted: #777777;
-    --light-muted: #9a9a9a;
+    auth,
+    db
 
-    --border: #e8e8e8;
-
-    --background: #f7f7f8;
-    --white: #ffffff;
-
-    --purple: #6c4df6;
-    --purple-dark: #5940d8;
-    --purple-light: #f0edff;
-
-    --green: #20a464;
-    --green-light: #eaf8f0;
-
-    --red: #e53935;
-    --red-light: #fff0f0;
-
-    --orange: #f39b27;
-    --orange-light: #fff6e8;
-
-    --shadow:
-        0 8px 30px rgba(0, 0, 0, 0.05);
-
-}
+} from "../../firebase/firebase-config.js";
 
 
-* {
+import {
 
-    box-sizing: border-box;
+    onAuthStateChanged
 
-    margin: 0;
-
-    padding: 0;
-
-}
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
 
 
-html {
+import {
 
-    scroll-behavior: smooth;
+    collection,
+    doc,
+    getDoc,
+    getDocs,
+    query,
+    where
 
-}
-
-
-body {
-
-    font-family:
-        "Poppins",
-        sans-serif;
-
-    background:
-        var(--background);
-
-    color:
-        var(--text);
-
-    min-height: 100vh;
-
-    padding-bottom: 90px;
-
-}
-
-
-button {
-
-    font-family:
-        inherit;
-
-}
-
-
-.hidden {
-
-    display: none !important;
-
-}
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
 
 
 /* ============================================================
-   PAGE
+   STATE
 ============================================================ */
 
-.page {
+let currentUser = null;
 
-    width: 100%;
+let student = null;
 
-    max-width: 1180px;
+let currentCourse = null;
 
-    margin: 0 auto;
+let liveClasses = [];
 
-}
+let subjects = [];
+
+let selectedDate = new Date();
+
+let selectedSubject = null;
 
 
 
 /* ============================================================
-   TOP BAR
+   DOM
 ============================================================ */
 
-.topbar {
+const loadingScreen =
+    document.getElementById(
+        "loadingScreen"
+    );
 
-    height: 76px;
 
-    background:
-        rgba(247, 247, 248, 0.94);
+const app =
+    document.getElementById(
+        "app"
+    );
 
-    backdrop-filter:
-        blur(15px);
 
-    display: flex;
+const errorSection =
+    document.getElementById(
+        "errorSection"
+    );
 
-    align-items: center;
 
-    gap: 15px;
+const errorMessage =
+    document.getElementById(
+        "errorMessage"
+    );
 
-    padding:
-        0 24px;
 
-    position: sticky;
+const errorBackButton =
+    document.getElementById(
+        "errorBackButton"
+    );
 
-    top: 0;
 
-    z-index: 50;
+const backButton =
+    document.getElementById(
+        "backButton"
+    );
 
-    border-bottom:
-        1px solid rgba(0, 0, 0, 0.04);
 
-}
+const batchSubtitle =
+    document.getElementById(
+        "batchSubtitle"
+    );
 
 
-.back-button {
+const todayList =
+    document.getElementById(
+        "todayList"
+    );
 
-    width: 42px;
 
-    height: 42px;
+const todayEmpty =
+    document.getElementById(
+        "todayEmpty"
+    );
 
-    border-radius: 13px;
 
-    border:
-        1px solid var(--border);
+const todayCount =
+    document.getElementById(
+        "todayCount"
+    );
 
-    background:
-        var(--white);
 
-    font-size: 23px;
+const selectedDateLabel =
+    document.getElementById(
+        "selectedDateLabel"
+    );
 
-    cursor: pointer;
 
-    display: flex;
+const selectedDateDay =
+    document.getElementById(
+        "selectedDateDay"
+    );
 
-    align-items: center;
 
-    justify-content: center;
+const selectedDateList =
+    document.getElementById(
+        "selectedDateList"
+    );
 
-    transition:
-        0.2s ease;
 
-}
+const selectedDateEmpty =
+    document.getElementById(
+        "selectedDateEmpty"
+    );
 
 
-.back-button:hover {
+const subjectList =
+    document.getElementById(
+        "subjectList"
+    );
 
-    transform:
-        translateX(-2px);
 
-}
+const subjectsEmpty =
+    document.getElementById(
+        "subjectsEmpty"
+    );
 
 
-.topbar-title {
+const subjectClassesSection =
+    document.getElementById(
+        "subjectClassesSection"
+    );
 
-    flex: 1;
 
-}
+const selectedSubjectTitle =
+    document.getElementById(
+        "selectedSubjectTitle"
+    );
 
 
-.topbar-eyebrow {
+const subjectClassesList =
+    document.getElementById(
+        "subjectClassesList"
+    );
 
-    display: block;
 
-    font-size: 9px;
+const subjectClassesEmpty =
+    document.getElementById(
+        "subjectClassesEmpty"
+    );
 
-    font-weight: 700;
 
-    letter-spacing: 1.7px;
+const closeSubjectButton =
+    document.getElementById(
+        "closeSubjectButton"
+    );
 
-    color:
-        var(--purple);
 
-}
+const previousDate =
+    document.getElementById(
+        "previousDate"
+    );
 
 
-.topbar-title h1 {
+const nextDate =
+    document.getElementById(
+        "nextDate"
+    );
 
-    font-size: 19px;
 
-    font-weight: 700;
+const scrollRecordingsButton =
+    document.getElementById(
+        "scrollRecordingsButton"
+    );
 
-    line-height: 1.25;
 
-}
 
+/* ============================================================
+   AUTH
+============================================================ */
 
-.live-dot-wrap {
+onAuthStateChanged(
+    auth,
+    async user => {
 
-    display: flex;
+        if (!user) {
 
-    align-items: center;
+            window.location.href =
+                "../../account/login/";
 
-    gap: 7px;
+            return;
 
-    font-size: 10px;
+        }
 
-    font-weight: 700;
 
-    color:
-        var(--red);
+        currentUser =
+            user;
 
-    letter-spacing: 0.7px;
 
-}
+        try {
 
+            await initializePage();
 
-.live-dot {
+        } catch (error) {
 
-    width: 8px;
+            console.error(
+                "Zenova Live:",
+                error
+            );
 
-    height: 8px;
+            showError(
+                error.message ||
+                "Unable to load live classes."
+            );
 
-    border-radius: 50%;
-
-    background:
-        var(--red);
-
-    animation:
-        pulse 1.5s infinite;
-
-}
-
-
-@keyframes pulse {
-
-    0% {
-
-        opacity: 1;
-
-        transform: scale(1);
+        }
 
     }
+);
 
-    50% {
 
-        opacity: 0.45;
 
-        transform: scale(0.75);
+/* ============================================================
+   INITIALIZE
+============================================================ */
 
-    }
+async function initializePage() {
 
-    100% {
+    showLoading();
 
-        opacity: 1;
 
-        transform: scale(1);
+    await loadStudent();
 
-    }
+
+    await loadCourse();
+
+
+    await loadLiveClasses();
+
+
+    await loadSubjects();
+
+
+    renderBatchInfo();
+
+
+    renderToday();
+
+
+    renderSelectedDate();
+
+
+    renderSubjects();
+
+
+    hideLoading();
 
 }
 
 
 
 /* ============================================================
-   LOADING
+   LOAD STUDENT
 ============================================================ */
 
-.loading-screen {
-
-    min-height:
-        calc(100vh - 76px);
-
-    display: flex;
-
-    flex-direction: column;
-
-    align-items: center;
-
-    justify-content: center;
-
-    gap: 15px;
-
-    color:
-        var(--muted);
-
-    font-size: 13px;
-
-}
-
-
-.loader {
-
-    width: 36px;
-
-    height: 36px;
-
-    border:
-        3px solid #e5e5e5;
-
-    border-top-color:
-        var(--purple);
-
-    border-radius: 50%;
-
-    animation:
-        spin 0.8s linear infinite;
-
-}
-
-
-@keyframes spin {
-
-    to {
-
-        transform:
-            rotate(360deg);
-
-    }
-
-}
-
-
-
-/* ============================================================
-   ERROR
-============================================================ */
-
-.error-section {
-
-    min-height:
-        calc(100vh - 160px);
-
-    display: flex;
-
-    flex-direction: column;
-
-    align-items: center;
-
-    justify-content: center;
-
-    text-align: center;
-
-    padding: 30px;
-
-}
-
-
-.error-icon {
-
-    width: 56px;
-
-    height: 56px;
-
-    border-radius: 50%;
-
-    background:
-        var(--red-light);
-
-    color:
-        var(--red);
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    font-weight: 700;
-
-    font-size: 25px;
-
-    margin-bottom: 18px;
-
-}
-
-
-.error-section h2 {
-
-    font-size: 20px;
-
-    margin-bottom: 7px;
-
-}
-
-
-.error-section p {
-
-    color:
-        var(--muted);
-
-    font-size: 13px;
-
-    max-width: 400px;
-
-    margin-bottom: 22px;
-
-}
-
-
-
-/* ============================================================
-   APP
-============================================================ */
-
-.app {
-
-    padding:
-        28px 24px 50px;
-
-}
-
-
-
-/* ============================================================
-   WELCOME
-============================================================ */
-
-.welcome-section {
-
-    padding:
-        8px 0 30px;
-
-}
-
-
-.section-eyebrow {
-
-    display: inline-block;
-
-    font-size: 10px;
-
-    font-weight: 700;
-
-    letter-spacing: 1.5px;
-
-    color:
-        var(--purple);
-
-    margin-bottom: 7px;
-
-}
-
-
-.welcome-section h2 {
-
-    font-size:
-        clamp(26px, 4vw, 38px);
-
-    line-height: 1.2;
-
-    letter-spacing: -1px;
-
-    max-width: 600px;
-
-}
-
-
-.welcome-section h2 span {
-
-    color:
-        var(--purple);
-
-}
-
-
-.welcome-section p {
-
-    color:
-        var(--muted);
-
-    font-size: 13px;
-
-    margin-top: 10px;
-
-    max-width: 600px;
-
-}
-
-
-
-/* ============================================================
-   SECTION
-============================================================ */
-
-.section {
-
-    margin-top: 34px;
-
-}
-
-
-.section-header {
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: space-between;
-
-    gap: 20px;
-
-    margin-bottom: 16px;
-
-}
-
-
-.small-label {
-
-    display: block;
-
-    font-size: 9px;
-
-    font-weight: 700;
-
-    letter-spacing: 1.4px;
-
-    color:
-        var(--purple);
-
-    margin-bottom: 4px;
-
-}
-
-
-.section-header h2 {
-
-    font-size: 21px;
-
-    line-height: 1.25;
-
-}
-
-
-.count-pill {
-
-    min-width: 31px;
-
-    height: 28px;
-
-    padding:
-        0 9px;
-
-    border-radius: 20px;
-
-    background:
-        var(--purple-light);
-
-    color:
-        var(--purple);
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    font-size: 11px;
-
-    font-weight: 700;
-
-}
-
-
-.section-description {
-
-    color:
-        var(--muted);
-
-    font-size: 12px;
-
-    margin:
-        -5px 0 16px;
-
-}
-
-
-
-/* ============================================================
-   LIVE LIST
-============================================================ */
-
-.live-list {
-
-    display: grid;
-
-    grid-template-columns:
-        repeat(2, minmax(0, 1fr));
-
-    gap: 15px;
-
-}
-
-
-.live-card {
-
-    background:
-        var(--white);
-
-    border:
-        1px solid var(--border);
-
-    border-radius: 18px;
-
-    padding: 18px;
-
-    box-shadow:
-        var(--shadow);
-
-    transition:
-        transform 0.2s ease,
-        box-shadow 0.2s ease;
-
-}
-
-
-.live-card:hover {
-
-    transform:
-        translateY(-2px);
-
-    box-shadow:
-        0 12px 35px rgba(0, 0, 0, 0.07);
-
-}
-
-
-.live-card-top {
-
-    display: flex;
-
-    align-items: flex-start;
-
-    justify-content: space-between;
-
-    gap: 12px;
-
-}
-
-
-.live-subject {
-
-    font-size: 10px;
-
-    font-weight: 700;
-
-    color:
-        var(--purple);
-
-    text-transform: uppercase;
-
-    letter-spacing: 0.7px;
-
-}
-
-
-.live-status {
-
-    padding:
-        5px 9px;
-
-    border-radius: 20px;
-
-    font-size: 8px;
-
-    font-weight: 700;
-
-    letter-spacing: 0.5px;
-
-    white-space: nowrap;
-
-}
-
-
-.live-status.now {
-
-    background:
-        var(--red-light);
-
-    color:
-        var(--red);
-
-}
-
-
-.live-status.upcoming {
-
-    background:
-        var(--orange-light);
-
-    color:
-        #b66a00;
-
-}
-
-
-.live-status.ended {
-
-    background:
-        #f0f0f0;
-
-    color:
-        #777;
-
-}
-
-
-.live-card h3 {
-
-    font-size: 17px;
-
-    line-height: 1.35;
-
-    margin:
-        10px 0 5px;
-
-}
-
-
-.live-topic {
-
-    color:
-        var(--muted);
-
-    font-size: 11px;
-
-    line-height: 1.5;
-
-}
-
-
-.live-meta {
-
-    display: flex;
-
-    flex-wrap: wrap;
-
-    gap: 9px;
-
-    margin-top: 15px;
-
-}
-
-
-.meta-item {
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 5px;
-
-    color:
-        #666;
-
-    font-size: 10px;
-
-}
-
-
-.meta-icon {
-
-    color:
-        var(--purple);
-
-    font-weight: 700;
-
-}
-
-
-.live-card-bottom {
-
-    border-top:
-        1px solid #f0f0f0;
-
-    margin-top: 15px;
-
-    padding-top: 14px;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: space-between;
-
-    gap: 12px;
-
-}
-
-
-.time-block strong {
-
-    display: block;
-
-    font-size: 15px;
-
-}
-
-
-.time-block span {
-
-    color:
-        var(--muted);
-
-    font-size: 9px;
-
-}
-
-
-.join-button {
-
-    border: none;
-
-    border-radius: 11px;
-
-    padding:
-        10px 15px;
-
-    background:
-        var(--black);
-
-    color:
-        var(--white);
-
-    font-size: 10px;
-
-    font-weight: 700;
-
-    cursor: pointer;
-
-    transition:
-        0.2s ease;
-
-}
-
-
-.join-button:hover {
-
-    background:
-        var(--purple);
-
-}
-
-
-.join-button.live {
-
-    background:
-        var(--red);
-
-}
-
-
-.join-button.watch {
-
-    background:
-        var(--purple);
-
-}
-
-
-.join-button:disabled {
-
-    background:
-        #e9e9e9;
-
-    color:
-        #999;
-
-    cursor:
-        default;
-
-}
-
-
-
-/* ============================================================
-   MISSED
-============================================================ */
-
-.missed-section {
-
-    margin-top: 34px;
-
-    background:
-        var(--black);
-
-    color:
-        var(--white);
-
-    border-radius: 20px;
-
-    padding:
-        22px;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: space-between;
-
-    gap: 20px;
-
-}
-
-
-.missed-content {
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 15px;
-
-}
-
-
-.missed-icon {
-
-    width: 45px;
-
-    height: 45px;
-
-    flex:
-        0 0 45px;
-
-    border-radius: 14px;
-
-    background:
-        rgba(255,255,255,0.1);
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    font-size: 16px;
-
-}
-
-
-.missed-content > div > span {
-
-    color:
-        #bdbdbd;
-
-    font-size: 8px;
-
-    letter-spacing: 1.2px;
-
-    font-weight: 700;
-
-}
-
-
-.missed-content h3 {
-
-    font-size: 15px;
-
-    margin-top: 3px;
-
-}
-
-
-.missed-content p {
-
-    color:
-        #999;
-
-    font-size: 10px;
-
-    margin-top: 3px;
-
-}
-
-
-.outline-button {
-
-    flex-shrink: 0;
-
-    border:
-        1px solid #555;
-
-    background:
-        transparent;
-
-    color:
-        white;
-
-    border-radius: 10px;
-
-    padding:
-        10px 14px;
-
-    font-size: 9px;
-
-    font-weight: 700;
-
-    cursor: pointer;
-
-}
-
-
-
-/* ============================================================
-   DATE SELECTOR
-============================================================ */
-
-.date-picker-card {
-
-    background:
-        var(--white);
-
-    border:
-        1px solid var(--border);
-
-    border-radius: 18px;
-
-    min-height: 76px;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: space-between;
-
-    padding:
-        10px 14px;
-
-    box-shadow:
-        var(--shadow);
-
-}
-
-
-.date-arrow {
-
-    width: 43px;
-
-    height: 43px;
-
-    border:
-        1px solid var(--border);
-
-    border-radius: 12px;
-
-    background:
-        #fafafa;
-
-    font-size: 28px;
-
-    line-height: 1;
-
-    cursor: pointer;
-
-    color:
-        var(--text);
-
-}
-
-
-.date-arrow:hover {
-
-    border-color:
-        var(--purple);
-
-    color:
-        var(--purple);
-
-}
-
-
-.selected-date {
-
-    text-align: center;
-
-}
-
-
-.selected-date-day {
-
-    display: block;
-
-    font-size: 9px;
-
-    text-transform: uppercase;
-
-    letter-spacing: 1px;
-
-    color:
-        var(--purple);
-
-    font-weight: 700;
-
-    margin-bottom: 2px;
-
-}
-
-
-.selected-date strong {
-
-    display: block;
-
-    font-size: 15px;
-
-}
-
-
-
-/* ============================================================
-   DATE CLASSES
-============================================================ */
-
-.date-class-list {
-
-    display: flex;
-
-    flex-direction: column;
-
-    gap: 10px;
-
-    margin-top: 14px;
-
-}
-
-
-.date-class-card {
-
-    background:
-        var(--white);
-
-    border:
-        1px solid var(--border);
-
-    border-radius: 15px;
-
-    padding:
-        15px;
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 15px;
-
-}
-
-
-.date-class-time {
-
-    min-width: 70px;
-
-    text-align: center;
-
-}
-
-
-.date-class-time strong {
-
-    display: block;
-
-    font-size: 13px;
-
-}
-
-
-.date-class-time span {
-
-    display: block;
-
-    font-size: 8px;
-
-    color:
-        var(--muted);
-
-    margin-top: 2px;
-
-}
-
-
-.date-class-divider {
-
-    width: 1px;
-
-    height: 40px;
-
-    background:
-        var(--border);
-
-}
-
-
-.date-class-info {
-
-    flex: 1;
-
-    min-width: 0;
-
-}
-
-
-.date-class-info .subject {
-
-    font-size: 9px;
-
-    color:
-        var(--purple);
-
-    font-weight: 700;
-
-    text-transform: uppercase;
-
-}
-
-
-.date-class-info h3 {
-
-    font-size: 13px;
-
-    margin-top: 2px;
-
-}
-
-
-.date-class-info p {
-
-    color:
-        var(--muted);
-
-    font-size: 9px;
-
-    margin-top: 2px;
-
-}
-
-
-.small-watch-button {
-
-    border: none;
-
-    background:
-        var(--purple-light);
-
-    color:
-        var(--purple);
-
-    border-radius: 9px;
-
-    padding:
-        9px 12px;
-
-    font-size: 9px;
-
-    font-weight: 700;
-
-    cursor: pointer;
-
-}
-
-
-
-/* ============================================================
-   SUBJECT GRID
-============================================================ */
-
-.subject-grid {
-
-    display: grid;
-
-    grid-template-columns:
-        repeat(4, minmax(0, 1fr));
-
-    gap: 12px;
-
-}
-
-
-.subject-card {
-
-    background:
-        var(--white);
-
-    border:
-        1px solid var(--border);
-
-    border-radius: 17px;
-
-    padding:
-        18px;
-
-    cursor: pointer;
-
-    transition:
-        0.2s ease;
-
-}
-
-
-.subject-card:hover {
-
-    transform:
-        translateY(-2px);
-
-    border-color:
-        #dcd7ff;
-
-    box-shadow:
-        var(--shadow);
-
-}
-
-
-.subject-icon {
-
-    width: 38px;
-
-    height: 38px;
-
-    border-radius: 12px;
-
-    background:
-        var(--purple-light);
-
-    color:
-        var(--purple);
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    font-size: 15px;
-
-    font-weight: 700;
-
-    margin-bottom: 12px;
-
-}
-
-
-.subject-card h3 {
-
-    font-size: 13px;
-
-    line-height: 1.3;
-
-}
-
-
-.subject-card p {
-
-    color:
-        var(--muted);
-
-    font-size: 9px;
-
-    margin-top: 4px;
-
-}
-
-
-.subject-arrow {
-
-    margin-top: 13px;
-
-    color:
-        var(--purple);
-
-    font-size: 10px;
-
-    font-weight: 700;
-
-}
-
-
-
-/* ============================================================
-   SUBJECT RECORDINGS
-============================================================ */
-
-.subject-classes-section {
-
-    scroll-margin-top:
-        90px;
-
-}
-
-
-.close-button {
-
-    width: 32px;
-
-    height: 32px;
-
-    border:
-        1px solid var(--border);
-
-    border-radius: 10px;
-
-    background:
-        var(--white);
-
-    color:
-        #777;
-
-    font-size: 20px;
-
-    cursor: pointer;
-
-}
-
-
-.subject-class-list {
-
-    display: flex;
-
-    flex-direction: column;
-
-    gap: 10px;
-
-}
-
-
-.subject-class-card {
-
-    background:
-        var(--white);
-
-    border:
-        1px solid var(--border);
-
-    border-radius: 16px;
-
-    padding:
-        16px;
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 15px;
-
-}
-
-
-.subject-class-thumbnail {
-
-    width: 105px;
-
-    height: 65px;
-
-    border-radius: 11px;
-
-    overflow: hidden;
-
-    flex-shrink: 0;
-
-    background:
-        linear-gradient(
-            135deg,
-            #191919,
-            #373737
+async function loadStudent() {
+
+    const studentRef =
+        doc(
+            db,
+            "zen2Students",
+            currentUser.uid
         );
 
-    display: flex;
 
-    align-items: center;
+    const snapshot =
+        await getDoc(
+            studentRef
+        );
 
-    justify-content: center;
 
-    color:
-        white;
+    if (!snapshot.exists()) {
 
-    position: relative;
+        throw new Error(
+            "Your student profile could not be found."
+        );
 
-}
+    }
 
 
-.subject-class-thumbnail img {
+    student = {
 
-    width: 100%;
+        id:
+            snapshot.id,
 
-    height: 100%;
+        ...snapshot.data()
 
-    object-fit: cover;
-
-}
-
-
-.thumbnail-play {
-
-    position: absolute;
-
-    width: 28px;
-
-    height: 28px;
-
-    border-radius: 50%;
-
-    background:
-        rgba(255,255,255,0.94);
-
-    color:
-        var(--black);
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    font-size: 10px;
-
-}
-
-
-.subject-class-info {
-
-    flex: 1;
-
-    min-width: 0;
-
-}
-
-
-.subject-class-info .subject-label {
-
-    font-size: 8px;
-
-    color:
-        var(--purple);
-
-    text-transform: uppercase;
-
-    font-weight: 700;
-
-    letter-spacing: 0.7px;
-
-}
-
-
-.subject-class-info h3 {
-
-    font-size: 14px;
-
-    margin-top: 3px;
-
-    white-space: nowrap;
-
-    overflow: hidden;
-
-    text-overflow: ellipsis;
-
-}
-
-
-.subject-class-info p {
-
-    color:
-        var(--muted);
-
-    font-size: 9px;
-
-    margin-top: 4px;
-
-}
-
-
-.watch-button {
-
-    border: none;
-
-    background:
-        var(--black);
-
-    color:
-        white;
-
-    border-radius: 10px;
-
-    padding:
-        10px 14px;
-
-    font-size: 9px;
-
-    font-weight: 700;
-
-    cursor: pointer;
-
-    flex-shrink: 0;
-
-}
-
-
-.watch-button:hover {
-
-    background:
-        var(--purple);
+    };
 
 }
 
 
 
 /* ============================================================
-   EMPTY
+   LOAD COURSE
 ============================================================ */
 
-.empty-card {
+async function loadCourse() {
 
-    background:
-        var(--white);
-
-    border:
-        1px dashed #dcdcdc;
-
-    border-radius: 18px;
-
-    padding:
-        30px 20px;
-
-    text-align: center;
-
-}
+    const coursesSnapshot =
+        await getDocs(
+            collection(
+                db,
+                "zen2Courses"
+            )
+        );
 
 
-.empty-icon {
+    const courses =
+        coursesSnapshot.docs.map(
+            item => ({
 
-    width: 42px;
+                id:
+                    item.id,
 
-    height: 42px;
+                ...item.data()
 
-    border-radius: 13px;
-
-    background:
-        #f3f3f3;
-
-    color:
-        #888;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    margin:
-        0 auto 12px;
-
-    font-size: 17px;
-
-}
+            })
+        );
 
 
-.empty-card h3 {
+    const studentCourseId =
+        firstValue(
 
-    font-size: 14px;
+            student.courseId,
 
-}
+            student.batchId,
+
+            student.zen2CourseId,
+
+            student.courseID
+
+        );
 
 
-.empty-card p {
+    if (studentCourseId) {
 
-    color:
-        var(--muted);
+        const direct =
+            courses.find(
+                course =>
+                    course.id ===
+                    studentCourseId
+            );
 
-    font-size: 10px;
 
-    margin-top: 5px;
+        if (direct) {
+
+            currentCourse =
+                direct;
+
+            return;
+
+        }
+
+    }
+
+
+    const studentClass =
+        normalizeClass(
+            firstValue(
+
+                student.className,
+
+                student.class,
+
+                student.standard,
+
+                student.grade,
+
+                student.targetClass
+
+            )
+        );
+
+
+    if (studentClass) {
+
+        const matches =
+            courses.filter(
+                course => {
+
+                    const courseClass =
+                        normalizeClass(
+
+                            firstValue(
+
+                                course.className,
+
+                                course.class,
+
+                                course.standard,
+
+                                course.grade,
+
+                                course.targetClass,
+
+                                course.courseClass
+
+                            )
+
+                        );
+
+
+                    return (
+                        courseClass &&
+                        courseClass ===
+                        studentClass
+                    );
+
+                }
+            );
+
+
+        if (matches.length) {
+
+            currentCourse =
+                matches[0];
+
+            return;
+
+        }
+
+    }
+
+
+    /*
+     * If no course can be resolved,
+     * we still allow live classes to load
+     * using student-level identifiers.
+     */
+
+    currentCourse = null;
 
 }
 
 
 
 /* ============================================================
-   BUTTON
+   LOAD LIVE CLASSES
 ============================================================ */
 
-.dark-button {
+async function loadLiveClasses() {
 
-    border: none;
+    const snapshot =
+        await getDocs(
+            collection(
+                db,
+                "liveClasses"
+            )
+        );
 
-    background:
-        var(--black);
 
-    color:
-        white;
+    liveClasses =
+        snapshot.docs.map(
+            item => ({
 
-    padding:
-        11px 17px;
+                id:
+                    item.id,
 
-    border-radius: 10px;
+                ...item.data()
 
-    font-size: 9px;
+            })
+        );
 
-    font-weight: 700;
 
-    cursor: pointer;
+    /*
+     * Only active classes should normally
+     * be visible.
+     *
+     * If active does not exist, keep
+     * the class visible for compatibility.
+     */
+
+    liveClasses =
+        liveClasses.filter(
+            item =>
+                item.active !== false
+        );
+
+
+    /*
+     * Filter by student's course/batch
+     * whenever a course ID is available.
+     */
+
+    if (currentCourse) {
+
+        const courseId =
+            currentCourse.id;
+
+
+        const matching =
+            liveClasses.filter(
+                item =>
+                    getCourseId(item) ===
+                    courseId
+            );
+
+
+        if (matching.length) {
+
+            liveClasses =
+                matching;
+
+        } else {
+
+            /*
+             * If no live class contains a
+             * course ID, don't accidentally
+             * hide everything.
+             *
+             * This keeps compatibility with
+             * existing scheduler records.
+             */
+
+            const hasCourseAssignments =
+                liveClasses.some(
+                    item =>
+                        Boolean(
+                            getCourseId(item)
+                        )
+                );
+
+
+            if (hasCourseAssignments) {
+
+                liveClasses = [];
+
+            }
+
+        }
+
+    }
+
+
+    liveClasses.sort(
+        compareLiveClasses
+    );
 
 }
 
 
 
 /* ============================================================
-   BOTTOM NAV
+   LOAD SUBJECTS
 ============================================================ */
 
-.bottom-nav {
+async function loadSubjects() {
 
-    position: fixed;
+    if (!currentCourse) {
 
-    bottom: 0;
+        /*
+         * Fallback:
+         * derive unique subjects directly
+         * from liveClasses.
+         */
 
-    left: 50%;
+        subjects =
+            uniqueSubjectsFromLive();
 
-    transform:
-        translateX(-50%);
+        return;
 
-    width:
-        min(100%, 1180px);
-
-    height: 72px;
-
-    background:
-        rgba(255,255,255,0.96);
-
-    backdrop-filter:
-        blur(18px);
-
-    border-top:
-        1px solid var(--border);
-
-    display: grid;
-
-    grid-template-columns:
-        repeat(4, 1fr);
-
-    z-index: 100;
-
-    padding:
-        7px 10px;
-
-}
+    }
 
 
-.nav-item {
-
-    border: none;
-
-    background: transparent;
-
-    color:
-        #8b8b8b;
-
-    display: flex;
-
-    flex-direction: column;
-
-    align-items: center;
-
-    justify-content: center;
-
-    gap: 3px;
-
-    font-size: 9px;
-
-    font-weight: 600;
-
-    cursor: pointer;
-
-}
+    const snapshot =
+        await getDocs(
+            collection(
+                db,
+                "zen2Subjects"
+            )
+        );
 
 
-.nav-icon {
+    const allSubjects =
+        snapshot.docs.map(
+            item => ({
 
-    font-size: 18px;
+                id:
+                    item.id,
 
-    line-height: 1;
+                ...item.data()
 
-}
+            })
+        );
 
 
-.nav-item.active {
+    const courseId =
+        currentCourse.id;
 
-    color:
-        var(--purple);
+
+    subjects =
+        allSubjects.filter(
+            subject => {
+
+                if (
+                    subject.active === false
+                ) {
+
+                    return false;
+
+                }
+
+
+                const subjectCourseId =
+                    firstValue(
+
+                        subject.courseId,
+
+                        subject.zen2CourseId,
+
+                        subject.courseID
+
+                    );
+
+
+                return (
+                    subjectCourseId ===
+                    courseId
+                );
+
+            }
+        );
+
+
+    /*
+     * If there are no zen2Subjects,
+     * fall back to subjects appearing
+     * in liveClasses.
+     */
+
+    if (!subjects.length) {
+
+        subjects =
+            uniqueSubjectsFromLive();
+
+    }
+
+
+    subjects =
+        deduplicateSubjects(
+            subjects
+        );
+
+
+    subjects.sort(
+        (a, b) =>
+            Number(
+                a.order || 999
+            ) -
+            Number(
+                b.order || 999
+            )
+    );
 
 }
 
 
 
 /* ============================================================
-   RESPONSIVE
+   SUBJECT FALLBACK
 ============================================================ */
 
-@media (max-width: 850px) {
+function uniqueSubjectsFromLive() {
 
-    .live-list {
+    const map =
+        new Map();
 
-        grid-template-columns:
-            1fr;
+
+    liveClasses.forEach(
+        item => {
+
+            const name =
+                getSubjectName(
+                    item
+                );
+
+
+            if (!name) {
+
+                return;
+
+            }
+
+
+            const key =
+                normalizeText(
+                    name
+                );
+
+
+            if (
+                !map.has(key)
+            ) {
+
+                map.set(
+                    key,
+                    {
+
+                        id:
+                            firstValue(
+
+                                item.subjectId,
+
+                                item.subjectID
+
+                            ) ||
+                            key,
+
+                        subjectName:
+                            name,
+
+                        name:
+                            name,
+
+                        order:
+                            999
+
+                    }
+                );
+
+            }
+
+        }
+    );
+
+
+    return Array.from(
+        map.values()
+    );
+
+}
+
+
+
+/* ============================================================
+   DEDUPLICATE SUBJECTS
+============================================================ */
+
+function deduplicateSubjects(
+    items
+) {
+
+    const map =
+        new Map();
+
+
+    items.forEach(
+        item => {
+
+            const name =
+                firstValue(
+
+                    item.subjectName,
+
+                    item.name,
+
+                    item.title
+
+                );
+
+
+            if (!name) {
+
+                return;
+
+            }
+
+
+            const key =
+                normalizeText(
+                    name
+                );
+
+
+            if (!map.has(key)) {
+
+                map.set(
+                    key,
+                    item
+                );
+
+            }
+
+        }
+    );
+
+
+    return Array.from(
+        map.values()
+    );
+
+}
+
+
+
+/* ============================================================
+   BATCH INFO
+============================================================ */
+
+function renderBatchInfo() {
+
+    if (!currentCourse) {
+
+        batchSubtitle.textContent =
+            "Join your scheduled classes or revise previous live sessions.";
+
+        return;
 
     }
 
 
-    .subject-grid {
+    const name =
+        firstValue(
 
-        grid-template-columns:
-            repeat(2, minmax(0, 1fr));
+            currentCourse.name,
+
+            currentCourse.courseName,
+
+            currentCourse.batchName,
+
+            currentCourse.title,
+
+            currentCourse.crmCourseName
+
+        );
+
+
+    if (name) {
+
+        batchSubtitle.textContent =
+            `${name} • Join your scheduled classes or revise previous live sessions.`;
 
     }
 
 }
 
 
-@media (max-width: 600px) {
 
-    body {
+/* ============================================================
+   TODAY
+============================================================ */
 
-        padding-bottom: 78px;
+function renderToday() {
 
-    }
-
-
-    .topbar {
-
-        height: 66px;
-
-        padding:
-            0 15px;
-
-    }
+    const today =
+        new Date();
 
 
-    .app {
-
-        padding:
-            20px 15px 35px;
-
-    }
+    const items =
+        getClassesForDate(
+            today
+        );
 
 
-    .back-button {
-
-        width: 38px;
-
-        height: 38px;
-
-        border-radius: 11px;
-
-    }
+    todayCount.textContent =
+        String(
+            items.length
+        );
 
 
-    .topbar-title h1 {
+    if (!items.length) {
 
-        font-size: 17px;
+        todayList.innerHTML =
+            "";
+
+        todayEmpty.classList.remove(
+            "hidden"
+        );
+
+        return;
 
     }
 
 
-    .welcome-section {
-
-        padding-top: 5px;
-
-    }
-
-
-    .welcome-section h2 {
-
-        font-size: 27px;
-
-    }
-
-
-    .section-header h2 {
-
-        font-size: 18px;
-
-    }
-
-
-    .missed-section {
-
-        flex-direction: column;
-
-        align-items: stretch;
-
-    }
-
-
-    .missed-content {
-
-        align-items: flex-start;
-
-    }
-
-
-    .outline-button {
-
-        width: 100%;
-
-    }
-
-
-    .subject-grid {
-
-        grid-template-columns:
-            repeat(2, minmax(0, 1fr));
-
-    }
-
-
-    .date-class-card {
-
-        padding: 12px;
-
-        gap: 10px;
-
-    }
-
-
-    .date-class-time {
-
-        min-width: 55px;
-
-    }
-
-
-    .date-class-info h3 {
-
-        font-size: 12px;
-
-    }
-
-
-    .small-watch-button {
-
-        padding:
-            8px 9px;
-
-    }
-
-
-    .subject-class-card {
-
-        align-items: flex-start;
-
-    }
-
-
-    .subject-class-thumbnail {
-
-        width: 88px;
-
-        height: 58px;
-
-    }
-
-
-    .subject-class-info h3 {
-
-        white-space: normal;
-
-    }
-
-
-    .watch-button {
-
-        padding:
-            8px 10px;
-
-    }
-
-
-    .bottom-nav {
-
-        height: 66px;
-
-    }
+    todayEmpty.classList.add(
+        "hidden"
+    );
+
+
+    todayList.innerHTML =
+        items
+            .map(
+                item =>
+                    createLiveCard(
+                        item,
+                        true
+                    )
+            )
+            .join("");
 
 }
 
 
-@media (max-width: 400px) {
 
-    .subject-grid {
+/* ============================================================
+   DATE RENDER
+============================================================ */
 
-        grid-template-columns:
-            1fr;
+function renderSelectedDate() {
+
+    selectedDateLabel.textContent =
+        formatLongDate(
+            selectedDate
+        );
+
+
+    selectedDateDay.textContent =
+        selectedDate.toLocaleDateString(
+            "en-IN",
+            {
+                weekday:
+                    "long"
+            }
+        );
+
+
+    const items =
+        getClassesForDate(
+            selectedDate
+        );
+
+
+    if (!items.length) {
+
+        selectedDateList.innerHTML =
+            "";
+
+        selectedDateEmpty.classList.remove(
+            "hidden"
+        );
+
+        return;
 
     }
 
 
-    .subject-class-thumbnail {
+    selectedDateEmpty.classList.add(
+        "hidden"
+    );
 
-        width: 76px;
 
-    }
+    selectedDateList.innerHTML =
+        items
+            .map(
+                createDateClassCard
+            )
+            .join("");
 
 }
+
+
+
+/* ============================================================
+   SUBJECTS
+============================================================ */
+
+function renderSubjects() {
+
+    if (!subjects.length) {
+
+        subjectList.innerHTML =
+            "";
+
+        subjectsEmpty.classList.remove(
+            "hidden"
+        );
+
+        return;
+
+    }
+
+
+    subjectsEmpty.classList.add(
+        "hidden"
+    );
+
+
+    subjectList.innerHTML =
+        subjects
+            .map(
+                (
+                    subject,
+                    index
+                ) => {
+
+                    const name =
+                        firstValue(
+
+                            subject.subjectName,
+
+                            subject.name,
+
+                            subject.title
+
+                        ) ||
+                        "Subject";
+
+
+                    const count =
+                        getSubjectClassCount(
+                            name,
+                            subject.id
+                        );
+
+
+                    return `
+
+                        <button
+                            type="button"
+                            class="subject-card"
+                            data-subject-index="${index}"
+                        >
+
+                            <div
+                                class="subject-icon"
+                            >
+                                ${getSubjectInitial(
+                                    name
+                                )}
+                            </div>
+
+                            <h3>
+                                ${escapeHtml(
+                                    name
+                                )}
+                            </h3>
+
+                            <p>
+                                ${count}
+                                ${
+                                    count === 1
+                                        ? "live class"
+                                        : "live classes"
+                                }
+                            </p>
+
+                            <div
+                                class="subject-arrow"
+                            >
+                                VIEW CLASSES →
+                            </div>
+
+                        </button>
+
+                    `;
+
+                }
+            )
+            .join("");
+
+
+    subjectList
+        .querySelectorAll(
+            "[data-subject-index]"
+        )
+        .forEach(
+            button => {
+
+                button.addEventListener(
+                    "click",
+                    () => {
+
+                        const index =
+                            Number(
+                                button.dataset
+                                    .subjectIndex
+                            );
+
+
+                        openSubject(
+                            subjects[index]
+                        );
+
+                    }
+                );
+
+            }
+        );
+
+}
+
+
+
+/* ============================================================
+   OPEN SUBJECT
+============================================================ */
+
+function openSubject(
+    subject
+) {
+
+    selectedSubject =
+        subject;
+
+
+    const name =
+        firstValue(
+
+            subject.subjectName,
+
+            subject.name,
+
+            subject.title
+
+        ) ||
+        "Subject";
+
+
+    selectedSubjectTitle.textContent =
+        name;
+
+
+    const subjectId =
+        subject.id;
+
+
+    const items =
+        liveClasses.filter(
+            item => {
+
+                const itemSubjectId =
+                    firstValue(
+
+                        item.subjectId,
+
+                        item.subjectID
+
+                    );
+
+
+                if (
+                    subjectId &&
+                    itemSubjectId
+                ) {
+
+                    return (
+                        itemSubjectId ===
+                        subjectId
+                    );
+
+                }
+
+
+                return (
+                    normalizeText(
+                        getSubjectName(
+                            item
+                        )
+                    ) ===
+                    normalizeText(
+                        name
+                    )
+                );
+
+            }
+        );
+
+
+    renderSubjectClasses(
+        items
+    );
+
+
+    subjectClassesSection.classList.remove(
+        "hidden"
+    );
+
+
+    setTimeout(
+        () => {
+
+            subjectClassesSection.scrollIntoView(
+                {
+                    behavior:
+                        "smooth",
+
+                    block:
+                        "start"
+                }
+            );
+
+        },
+        50
+    );
+
+}
+
+
+
+/* ============================================================
+   SUBJECT CLASSES
+============================================================ */
+
+function renderSubjectClasses(
+    items
+) {
+
+    const sorted =
+        [...items].sort(
+            compareLiveClasses
+        );
+
+
+    if (!sorted.length) {
+
+        subjectClassesList.innerHTML =
+            "";
+
+        subjectClassesEmpty.classList.remove(
+            "hidden"
+        );
+
+        return;
+
+    }
+
+
+    subjectClassesEmpty.classList.add(
+        "hidden"
+    );
+
+
+    subjectClassesList.innerHTML =
+        sorted
+            .map(
+                createSubjectClassCard
+            )
+            .join("");
+
+}
+
+
+
+/* ============================================================
+   CLOSE SUBJECT
+============================================================ */
+
+closeSubjectButton.addEventListener(
+    "click",
+    () => {
+
+        selectedSubject =
+            null;
+
+        subjectClassesSection.classList.add(
+            "hidden"
+        );
+
+    }
+);
+
+
+
+/* ============================================================
+   DATE NAVIGATION
+============================================================ */
+
+previousDate.addEventListener(
+    "click",
+    () => {
+
+        selectedDate =
+            addDays(
+                selectedDate,
+                -1
+            );
+
+
+        renderSelectedDate();
+
+    }
+);
+
+
+nextDate.addEventListener(
+    "click",
+    () => {
+
+        selectedDate =
+            addDays(
+                selectedDate,
+                1
+            );
+
+
+        renderSelectedDate();
+
+    }
+);
+
+
+
+/* ============================================================
+   RECORDINGS SCROLL
+============================================================ */
+
+scrollRecordingsButton.addEventListener(
+    "click",
+    () => {
+
+        document
+            .getElementById(
+                "dateSection"
+            )
+            .scrollIntoView(
+                {
+                    behavior:
+                        "smooth"
+                }
+            );
+
+    }
+);
+
+
+
+/* ============================================================
+   LIVE CARD
+============================================================ */
+
+function createLiveCard(
+    item,
+    isToday = false
+) {
+
+    const status =
+        getClassStatus(
+            item
+        );
+
+
+    const subject =
+        getSubjectName(
+            item
+        ) ||
+        "Live Class";
+
+
+    const title =
+        getClassTitle(
+            item
+        );
+
+
+    const topic =
+        getTopic(
+            item
+        );
+
+
+    const faculty =
+        getFaculty(
+            item
+        );
+
+
+    const time =
+        getStartDate(
+            item
+        );
+
+
+    const button =
+        getActionButton(
+            item,
+            status
+        );
+
+
+    return `
+
+        <article
+            class="live-card"
+        >
+
+            <div
+                class="live-card-top"
+            >
+
+                <div>
+
+                    <div
+                        class="live-subject"
+                    >
+                        ${escapeHtml(
+                            subject
+                        )}
+                    </div>
+
+                </div>
+
+
+                <span
+                    class="live-status ${status.className}"
+                >
+                    ${status.label}
+                </span>
+
+            </div>
+
+
+            <h3>
+                ${escapeHtml(
+                    title
+                )}
+            </h3>
+
+
+            ${
+                topic
+                    ? `
+                        <p
+                            class="live-topic"
+                        >
+                            ${escapeHtml(
+                                topic
+                            )}
+                        </p>
+                    `
+                    : ""
+            }
+
+
+            <div
+                class="live-meta"
+            >
+
+                ${
+                    faculty
+                        ? `
+                            <div
+                                class="meta-item"
+                            >
+                                <span
+                                    class="meta-icon"
+                                >
+                                    ●
+                                </span>
+
+                                ${escapeHtml(
+                                    faculty
+                                )}
+                            </div>
+                        `
+                        : ""
+                }
+
+
+                ${
+                    item.chapterName ||
+                    item.chapter
+                        ? `
+                            <div
+                                class="meta-item"
+                            >
+                                <span
+                                    class="meta-icon"
+                                >
+                                    #
+                                </span>
+
+                                ${escapeHtml(
+                                    firstValue(
+                                        item.chapterName,
+                                        item.chapter
+                                    )
+                                )}
+                            </div>
+                        `
+                        : ""
+                }
+
+            </div>
+
+
+            <div
+                class="live-card-bottom"
+            >
+
+                <div
+                    class="time-block"
+                >
+
+                    <strong>
+                        ${formatTime(
+                            time
+                        )}
+                    </strong>
+
+                    <span>
+                        ${isToday
+                            ? "Today"
+                            : formatShortDate(
+                                time
+                            )}
+                    </span>
+
+                </div>
+
+
+                ${button}
+
+            </div>
+
+        </article>
+
+    `;
+
+}
+
+
+
+/* ============================================================
+   DATE CLASS CARD
+============================================================ */
+
+function createDateClassCard(
+    item
+) {
+
+    const date =
+        getStartDate(
+            item
+        );
+
+
+    const subject =
+        getSubjectName(
+            item
+        ) ||
+        "Live Class";
+
+
+    const title =
+        getClassTitle(
+            item
+        );
+
+
+    const faculty =
+        getFaculty(
+            item
+        );
+
+
+    const status =
+        getClassStatus(
+            item
+        );
+
+
+    return `
+
+        <article
+            class="date-class-card"
+        >
+
+            <div
+                class="date-class-time"
+            >
+
+                <strong>
+                    ${formatTime(
+                        date
+                    )}
+                </strong>
+
+                <span>
+                    ${formatPeriod(
+                        date
+                    )}
+                </span>
+
+            </div>
+
+
+            <div
+                class="date-class-divider"
+            ></div>
+
+
+            <div
+                class="date-class-info"
+            >
+
+                <div
+                    class="subject"
+                >
+                    ${escapeHtml(
+                        subject
+                    )}
+                </div>
+
+                <h3>
+                    ${escapeHtml(
+                        title
+                    )}
+                </h3>
+
+                <p>
+                    ${
+                        faculty
+                            ? escapeHtml(
+                                faculty
+                            ) + " • "
+                            : ""
+                    }
+
+                    ${escapeHtml(
+                        formatLongDate(
+                            date
+                        )
+                    )}
+                </p>
+
+            </div>
+
+
+            ${
+                status.canWatch
+                    ? `
+                        <button
+                            type="button"
+                            class="small-watch-button"
+                            data-watch-id="${escapeAttr(
+                                item.id
+                            )}"
+                        >
+                            WATCH
+                        </button>
+                    `
+                    : `
+                        <button
+                            type="button"
+                            class="small-watch-button"
+                            disabled
+                        >
+                            ${status.label}
+                        </button>
+                    `
+            }
+
+        </article>
+
+    `;
+
+}
+
+
+
+/* ============================================================
+   SUBJECT CLASS CARD
+============================================================ */
+
+function createSubjectClassCard(
+    item
+) {
+
+    const date =
+        getStartDate(
+            item
+        );
+
+
+    const subject =
+        getSubjectName(
+            item
+        );
+
+
+    const title =
+        getClassTitle(
+            item
+        );
+
+
+    const faculty =
+        getFaculty(
+            item
+        );
+
+
+    const thumbnail =
+        getThumbnail(
+            item
+        );
+
+
+    return `
+
+        <article
+            class="subject-class-card"
+        >
+
+            <div
+                class="subject-class-thumbnail"
+            >
+
+                ${
+                    thumbnail
+                        ? `
+                            <img
+                                src="${escapeAttr(
+                                    thumbnail
+                                )}"
+                                alt=""
+                            >
+                        `
+                        : ""
+                }
+
+
+                <span
+                    class="thumbnail-play"
+                >
+                    ▶
+                </span>
+
+            </div>
+
+
+            <div
+                class="subject-class-info"
+            >
+
+                <div
+                    class="subject-label"
+                >
+                    ${escapeHtml(
+                        subject
+                    )}
+                </div>
+
+
+                <h3>
+                    ${escapeHtml(
+                        title
+                    )}
+                </h3>
+
+
+                <p>
+                    ${
+                        faculty
+                            ? escapeHtml(
+                                faculty
+                            ) + " • "
+                            : ""
+                    }
+
+                    ${escapeHtml(
+                        formatLongDate(
+                            date
+                        )
+                    )}
+
+                    •
+
+                    ${escapeHtml(
+                        formatWeekday(
+                            date
+                        )
+                    )}
+                </p>
+
+            </div>
+
+
+            <button
+                type="button"
+                class="watch-button"
+                data-watch-id="${escapeAttr(
+                    item.id
+                )}"
+            >
+                WATCH
+            </button>
+
+        </article>
+
+    `;
+
+}
+
+
+
+/* ============================================================
+   EVENT DELEGATION
+============================================================ */
+
+document.addEventListener(
+    "click",
+    event => {
+
+        const button =
+            event.target.closest(
+                "[data-watch-id]"
+            );
+
+
+        if (!button) {
+
+            return;
+
+        }
+
+
+        const id =
+            button.dataset.watchId;
+
+
+        if (!id) {
+
+            return;
+
+        }
+
+
+        openLivePlayer(
+            id
+        );
+
+    }
+);
+
+
+
+/* ============================================================
+   ACTION BUTTON
+============================================================ */
+
+function getActionButton(
+    item,
+    status
+) {
+
+    if (
+        status.canJoin
+    ) {
+
+        return `
+
+            <button
+                type="button"
+                class="join-button live"
+                data-watch-id="${escapeAttr(
+                    item.id
+                )}"
+            >
+                JOIN LIVE
+            </button>
+
+        `;
+
+    }
+
+
+    if (
+        status.canWatch
+    ) {
+
+        return `
+
+            <button
+                type="button"
+                class="join-button watch"
+                data-watch-id="${escapeAttr(
+                    item.id
+                )}"
+            >
+                WATCH
+            </button>
+
+        `;
+
+    }
+
+
+    return `
+
+        <button
+            type="button"
+            class="join-button"
+            disabled
+        >
+            ${status.label}
+        </button>
+
+    `;
+
+}
+
+
+
+/* ============================================================
+   OPEN LIVE PLAYER
+============================================================ */
+
+function openLivePlayer(
+    liveClassId
+) {
+
+    const url =
+        new URL(
+            "../livevideoplayer/",
+            window.location.href
+        );
+
+
+    url.searchParams.set(
+        "liveClassId",
+        liveClassId
+    );
+
+
+    window.location.href =
+        url.toString();
+
+}
+
+
+
+/* ============================================================
+   CLASS STATUS
+============================================================ */
+
+function getClassStatus(
+    item
+) {
+
+    const now =
+        new Date();
+
+
+    const start =
+        getStartDate(
+            item
+        );
+
+
+    const end =
+        getEndDate(
+            item,
+            start
+        );
+
+
+    /*
+     * Explicit status from scheduler.
+     */
+
+    const rawStatus =
+        String(
+            firstValue(
+
+                item.status,
+
+                item.liveStatus,
+
+                item.classStatus
+
+            ) || ""
+        )
+        .trim()
+        .toLowerCase();
+
+
+    if (
+        rawStatus === "live" ||
+        rawStatus === "live_now" ||
+        rawStatus === "started"
+    ) {
+
+        return {
+
+            label:
+                "LIVE NOW",
+
+            className:
+                "now",
+
+            canJoin:
+                true,
+
+            canWatch:
+                true
+
+        };
+
+    }
+
+
+    /*
+     * Time-based status.
+     */
+
+    if (
+        start &&
+        now < start
+    ) {
+
+        return {
+
+            label:
+                "UPCOMING",
+
+            className:
+                "upcoming",
+
+            canJoin:
+                false,
+
+            canWatch:
+                false
+
+        };
+
+    }
+
+
+    if (
+        start &&
+        end &&
+        now >= start &&
+        now <= end
+    ) {
+
+        return {
+
+            label:
+                "LIVE NOW",
+
+            className:
+                "now",
+
+            canJoin:
+                true,
+
+            canWatch:
+                true
+
+        };
+
+    }
+
+
+    /*
+     * If the class has a recorded
+     * stream/player URL or recording
+     * flag, allow WATCH.
+     */
+
+    if (
+        hasRecording(
+            item
+        )
+    ) {
+
+        return {
+
+            label:
+                "RECORDED",
+
+            className:
+                "ended",
+
+            canJoin:
+                false,
+
+            canWatch:
+                true
+
+        };
+
+    }
+
+
+    /*
+     * A class in the past is considered
+     * watchable. The live player can
+     * decide whether a recording exists.
+     */
+
+    if (
+        start &&
+        now > start
+    ) {
+
+        return {
+
+            label:
+                "ENDED",
+
+            className:
+                "ended",
+
+            canJoin:
+                false,
+
+            canWatch:
+                true
+
+        };
+
+    }
+
+
+    return {
+
+        label:
+            "SCHEDULED",
+
+        className:
+            "upcoming",
+
+        canJoin:
+            false,
+
+        canWatch:
+            false
+
+    };
+
+}
+
+
+
+/* ============================================================
+   GET CLASSES FOR DATE
+============================================================ */
+
+function getClassesForDate(
+    date
+) {
+
+    return liveClasses
+        .filter(
+            item => {
+
+                const start =
+                    getStartDate(
+                        item
+                    );
+
+
+                if (!start) {
+
+                    return false;
+
+                }
+
+
+                return isSameDate(
+                    start,
+                    date
+                );
+
+            }
+        )
+        .sort(
+            compareLiveClasses
+        );
+
+}
+
+
+
+/* ============================================================
+   COURSE ID
+============================================================ */
+
+function getCourseId(
+    item
+) {
+
+    return firstValue(
+
+        item.courseId,
+
+        item.courseID,
+
+        item.zen2CourseId,
+
+        item.batchId,
+
+        item.batchID,
+
+        item.crmCourseId,
+
+        item.crmCourseID
+
+    );
+
+}
+
+
+
+/* ============================================================
+   SUBJECT NAME
+============================================================ */
+
+function getSubjectName(
+    item
+) {
+
+    return firstValue(
+
+        item.subjectName,
+
+        item.subject,
+
+        item.subjectTitle
+
+    ) || "";
+
+}
+
+
+
+/* ============================================================
+   CLASS TITLE
+============================================================ */
+
+function getClassTitle(
+    item
+) {
+
+    return firstValue(
+
+        item.title,
+
+        item.classTitle,
+
+        item.liveTitle,
+
+        item.topic,
+
+        item.name
+
+    ) || "Live Class";
+
+}
+
+
+
+/* ============================================================
+   TOPIC
+============================================================ */
+
+function getTopic(
+    item
+) {
+
+    return firstValue(
+
+        item.topic,
+
+        item.chapterName,
+
+        item.chapter,
+
+        item.description
+
+    ) || "";
+
+}
+
+
+
+/* ============================================================
+   FACULTY
+============================================================ */
+
+function getFaculty(
+    item
+) {
+
+    return firstValue(
+
+        item.facultyName,
+
+        item.teacherName,
+
+        item.teacher,
+
+        item.faculty,
+
+        item.mentorName,
+
+        item.instructorName,
+
+        item.instructor
+
+    ) || "";
+
+}
+
+
+
+/* ============================================================
+   START DATE
+============================================================ */
+
+function getStartDate(
+    item
+) {
+
+    /*
+     * Timestamp fields.
+     */
+
+    const timestampValue =
+        firstValue(
+
+            item.startAt,
+
+            item.startTime,
+
+            item.scheduledAt,
+
+            item.scheduledDateTime,
+
+            item.dateTime,
+
+            item.liveStart
+
+        );
+
+
+    const parsedTimestamp =
+        parseDateValue(
+            timestampValue
+        );
+
+
+    if (
+        parsedTimestamp
+    ) {
+
+        return parsedTimestamp;
+
+    }
+
+
+    /*
+     * Date + time fields.
+     */
+
+    const dateValue =
+        firstValue(
+
+            item.date,
+
+            item.classDate,
+
+            item.liveDate,
+
+            item.scheduledDate,
+
+            item.startDate
+
+        );
+
+
+    const timeValue =
+        firstValue(
+
+            item.time,
+
+            item.classTime,
+
+            item.startClockTime,
+
+            item.scheduledTime
+
+        );
+
+
+    if (
+        dateValue
+    ) {
+
+        const combined =
+            combineDateAndTime(
+                dateValue,
+                timeValue
+            );
+
+
+        if (
+            combined
+        ) {
+
+            return combined;
+
+        }
+
+    }
+
+
+    return null;
+
+}
+
+
+
+/* ============================================================
+   END DATE
+============================================================ */
+
+function getEndDate(
+    item,
+    startDate
+) {
+
+    const explicit =
+        firstValue(
+
+            item.endAt,
+
+            item.endTime,
+
+            item.endedAt,
+
+            item.liveEnd,
+
+            item.scheduledEnd
+
+        );
+
+
+    const parsed =
+        parseDateValue(
+            explicit
+        );
+
+
+    if (
+        parsed
+    ) {
+
+        return parsed;
+
+    }
+
+
+    const duration =
+        Number(
+            firstValue(
+
+                item.durationMinutes,
+
+                item.duration,
+
+                item.classDuration
+
+            ) || 0
+        );
+
+
+    if (
+        startDate &&
+        duration > 0
+    ) {
+
+        return new Date(
+            startDate.getTime() +
+            duration * 60000
+        );
+
+    }
+
+
+    /*
+     * Default live duration:
+     * 2 hours.
+     */
+
+    if (
+        startDate
+    ) {
+
+        return new Date(
+            startDate.getTime() +
+            2 * 60 * 60 * 1000
+        );
+
+    }
+
+
+    return null;
+
+}
+
+
+
+/* ============================================================
+   RECORDING
+============================================================ */
+
+function hasRecording(
+    item
+) {
+
+    return Boolean(
+
+        firstValue(
+
+            item.recordingUrl,
+
+            item.recordedUrl,
+
+            item.replayUrl,
+
+            item.videoUrl,
+
+            item.recording,
+
+            item.hasRecording
+
+        )
+
+    );
+
+}
+
+
+
+/* ============================================================
+   THUMBNAIL
+============================================================ */
+
+function getThumbnail(
+    item
+) {
+
+    const direct =
+        firstValue(
+
+            item.thumbnailUrl,
+
+            item.thumbnail,
+
+            item.imageUrl,
+
+            item.image
+
+        );
+
+
+    if (direct) {
+
+        return direct;
+
+    }
+
+
+    const videoUrl =
+        firstValue(
+
+            item.recordingUrl,
+
+            item.recordedUrl,
+
+            item.videoUrl,
+
+            item.youtubeUrl,
+
+            item.streamUrl
+
+        );
+
+
+    const youtubeId =
+        extractYouTubeId(
+            videoUrl
+        );
+
+
+    if (
+        youtubeId
+    ) {
+
+        return (
+            "https://img.youtube.com/vi/" +
+            youtubeId +
+            "/hqdefault.jpg"
+        );
+
+    }
+
+
+    return "";
+
+}
+
+
+
+/* ============================================================
+   YOUTUBE ID
+============================================================ */
+
+function extractYouTubeId(
+    url
+) {
+
+    if (!url) {
+
+        return "";
+
+    }
+
+
+    const value =
+        String(
+            url
+        ).trim();
+
+
+    const patterns = [
+
+        /youtu\.be\/([^?&/]+)/i,
+
+        /youtube\.com\/watch\?v=([^?&/]+)/i,
+
+        /youtube\.com\/embed\/([^?&/]+)/i,
+
+        /youtube\.com\/shorts\/([^?&/]+)/i,
+
+        /youtube\.com\/live\/([^?&/]+)/i
+
+    ];
+
+
+    for (
+        const pattern of patterns
+    ) {
+
+        const match =
+            value.match(
+                pattern
+            );
+
+
+        if (
+            match &&
+            match[1]
+        ) {
+
+            return match[1];
+
+        }
+
+    }
+
+
+    return "";
+
+}
+
+
+
+/* ============================================================
+   DATE PARSING
+============================================================ */
+
+function parseDateValue(
+    value
+) {
+
+    if (!value) {
+
+        return null;
+
+    }
+
+
+    if (
+        value instanceof Date
+    ) {
+
+        return isNaN(
+            value.getTime()
+        )
+            ? null
+            : value;
+
+    }
+
+
+    /*
+     * Firestore Timestamp
+     */
+
+    if (
+        typeof value.toDate ===
+        "function"
+    ) {
+
+        const date =
+            value.toDate();
+
+
+        return isNaN(
+            date.getTime()
+        )
+            ? null
+            : date;
+
+    }
+
+
+    /*
+     * Firestore timestamp-like object
+     */
+
+    if (
+        typeof value ===
+        "object" &&
+        value.seconds
+    ) {
+
+        const date =
+            new Date(
+                Number(
+                    value.seconds
+                ) * 1000
+            );
+
+
+        return isNaN(
+            date.getTime()
+        )
+            ? null
+            : date;
+
+    }
+
+
+    if (
+        typeof value ===
+        "number"
+    ) {
+
+        const date =
+            new Date(
+                value > 100000000000
+                    ? value
+                    : value * 1000
+            );
+
+
+        return isNaN(
+            date.getTime()
+        )
+            ? null
+            : date;
+
+    }
+
+
+    if (
+        typeof value ===
+        "string"
+    ) {
+
+        const parsed =
+            new Date(
+                value
+            );
+
+
+        if (
+            !isNaN(
+                parsed.getTime()
+            )
+        ) {
+
+            return parsed;
+
+        }
+
+    }
+
+
+    return null;
+
+}
+
+
+
+/* ============================================================
+   COMBINE DATE + TIME
+============================================================ */
+
+function combineDateAndTime(
+    dateValue,
+    timeValue
+) {
+
+    let baseDate =
+        parseDateValue(
+            dateValue
+        );
+
+
+    /*
+     * Date-only strings such as
+     * 2026-09-29.
+     */
+
+    if (
+        !baseDate &&
+        typeof dateValue === "string"
+    ) {
+
+        const match =
+            dateValue.match(
+                /^(\d{4})-(\d{1,2})-(\d{1,2})$/
+            );
+
+
+        if (match) {
+
+            baseDate =
+                new Date(
+
+                    Number(
+                        match[1]
+                    ),
+
+                    Number(
+                        match[2]
+                    ) - 1,
+
+                    Number(
+                        match[3]
+                    ),
+
+                    0,
+                    0,
+                    0,
+                    0
+
+                );
+
+        }
+
+    }
+
+
+    if (!baseDate) {
+
+        return null;
+
+    }
+
+
+    const result =
+        new Date(
+            baseDate
+        );
+
+
+    if (
+        !timeValue
+    ) {
+
+        return result;
+
+    }
+
+
+    const text =
+        String(
+            timeValue
+        )
+        .trim()
+        .toUpperCase();
+
+
+    const match =
+        text.match(
+            /^(\d{1,2})(?::(\d{2}))?\s*(AM|PM)?$/
+        );
+
+
+    if (
+        !match
+    ) {
+
+        return result;
+
+    }
+
+
+    let hours =
+        Number(
+            match[1]
+        );
+
+
+    const minutes =
+        Number(
+            match[2] || 0
+        );
+
+
+    const period =
+        match[3];
+
+
+    if (
+        period === "PM" &&
+        hours < 12
+    ) {
+
+        hours += 12;
+
+    }
+
+
+    if (
+        period === "AM" &&
+        hours === 12
+    ) {
+
+        hours = 0;
+
+    }
+
+
+    result.setHours(
+        hours,
+        minutes,
+        0,
+        0
+    );
+
+
+    return result;
+
+}
+
+
+
+/* ============================================================
+   SORT
+============================================================ */
+
+function compareLiveClasses(
+    a,
+    b
+) {
+
+    const aDate =
+        getStartDate(
+            a
+        );
+
+
+    const bDate =
+        getStartDate(
+            b
+        );
+
+
+    if (
+        !aDate &&
+        !bDate
+    ) {
+
+        return 0;
+
+    }
+
+
+    if (!aDate) {
+
+        return 1;
+
+    }
+
+
+    if (!bDate) {
+
+        return -1;
+
+    }
+
+
+    return (
+        bDate.getTime() -
+        aDate.getTime()
+    );
+
+}
+
+
+
+/* ============================================================
+   SUBJECT CLASS COUNT
+============================================================ */
+
+function getSubjectClassCount(
+    subjectName,
+    subjectId
+) {
+
+    return liveClasses.filter(
+        item => {
+
+            const itemSubjectId =
+                firstValue(
+
+                    item.subjectId,
+
+                    item.subjectID
+
+                );
+
+
+            if (
+                subjectId &&
+                itemSubjectId
+            ) {
+
+                return (
+                    subjectId ===
+                    itemSubjectId
+                );
+
+            }
+
+
+            return (
+                normalizeText(
+                    getSubjectName(
+                        item
+                    )
+                ) ===
+                normalizeText(
+                    subjectName
+                )
+            );
+
+        }
+    ).length;
+
+}
+
+
+
+/* ============================================================
+   HELPERS
+============================================================ */
+
+function firstValue(
+    ...values
+) {
+
+    return values.find(
+        value =>
+
+            value !==
+            undefined &&
+
+            value !==
+            null &&
+
+            String(
+                value
+            ).trim() !== ""
+
+    );
+
+}
+
+
+
+function normalizeText(
+    value
+) {
+
+    return String(
+        value || ""
+    )
+        .trim()
+        .toLowerCase();
+
+}
+
+
+
+function normalizeClass(
+    value
+) {
+
+    const text =
+        normalizeText(
+            value
+        )
+        .replace(
+            /\s+/g,
+            " "
+        );
+
+
+    if (
+        text === "10" ||
+        text === "10th" ||
+        text === "class 10" ||
+        text === "class 10th" ||
+        text.includes("10th")
+    ) {
+
+        return "10th";
+
+    }
+
+
+    if (
+        text === "9" ||
+        text === "9th" ||
+        text === "class 9"
+    ) {
+
+        return "9th";
+
+    }
+
+
+    if (
+        text === "8" ||
+        text === "8th" ||
+        text === "class 8"
+    ) {
+
+        return "8th";
+
+    }
+
+
+    return text;
+
+}
+
+
+
+function getSubjectInitial(
+    name
+) {
+
+    const clean =
+        String(
+            name || "S"
+        )
+        .trim();
+
+
+    return clean
+        .charAt(0)
+        .toUpperCase();
+
+}
+
+
+
+function addDays(
+    date,
+    amount
+) {
+
+    const result =
+        new Date(
+            date
+        );
+
+
+    result.setDate(
+        result.getDate() +
+        amount
+    );
+
+
+    return result;
+
+}
+
+
+
+function isSameDate(
+    first,
+    second
+) {
+
+    return (
+
+        first.getFullYear() ===
+        second.getFullYear()
+
+        &&
+
+        first.getMonth() ===
+        second.getMonth()
+
+        &&
+
+        first.getDate() ===
+        second.getDate()
+
+    );
+
+}
+
+
+
+function formatLongDate(
+    date
+) {
+
+    if (!date) {
+
+        return "Date unavailable";
+
+    }
+
+
+    return date.toLocaleDateString(
+        "en-IN",
+        {
+
+            day:
+                "numeric",
+
+            month:
+                "long",
+
+            year:
+                "numeric"
+
+        }
+    );
+
+}
+
+
+
+function formatShortDate(
+    date
+) {
+
+    if (!date) {
+
+        return "";
+
+    }
+
+
+    return date.toLocaleDateString(
+        "en-IN",
+        {
+
+            day:
+                "numeric",
+
+            month:
+                "short"
+
+        }
+    );
+
+}
+
+
+
+function formatWeekday(
+    date
+) {
+
+    if (!date) {
+
+        return "";
+
+    }
+
+
+    return date.toLocaleDateString(
+        "en-IN",
+        {
+
+            weekday:
+                "long"
+
+        }
+    );
+
+}
+
+
+
+function formatTime(
+    date
+) {
+
+    if (!date) {
+
+        return "--:--";
+
+    }
+
+
+    return date.toLocaleTimeString(
+        "en-IN",
+        {
+
+            hour:
+                "numeric",
+
+            minute:
+                "2-digit",
+
+            hour12:
+                true
+
+        }
+    );
+
+}
+
+
+
+function formatPeriod(
+    date
+) {
+
+    if (!date) {
+
+        return "";
+
+    }
+
+
+    return date.toLocaleTimeString(
+        "en-IN",
+        {
+
+            hour:
+                "numeric",
+
+            hour12:
+                true
+
+        }
+    )
+    .split(" ")
+    .pop();
+
+}
+
+
+
+function escapeHtml(
+    value
+) {
+
+    return String(
+        value ?? ""
+    )
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+        .replace(
+            /</g,
+            "&lt;"
+        )
+        .replace(
+            />/g,
+            "&gt;"
+        )
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+        .replace(
+            /'/g,
+            "&#039;"
+        );
+
+}
+
+
+
+function escapeAttr(
+    value
+) {
+
+    return escapeHtml(
+        value
+    );
+
+}
+
+
+
+/* ============================================================
+   LOADING / ERROR
+============================================================ */
+
+function showLoading() {
+
+    loadingScreen.classList.remove(
+        "hidden"
+    );
+
+    app.classList.add(
+        "hidden"
+    );
+
+    errorSection.classList.add(
+        "hidden"
+    );
+
+}
+
+
+
+function hideLoading() {
+
+    loadingScreen.classList.add(
+        "hidden"
+    );
+
+    errorSection.classList.add(
+        "hidden"
+    );
+
+    app.classList.remove(
+        "hidden"
+    );
+
+}
+
+
+
+function showError(
+    message
+) {
+
+    loadingScreen.classList.add(
+        "hidden"
+    );
+
+    app.classList.add(
+        "hidden"
+    );
+
+    errorSection.classList.remove(
+        "hidden"
+    );
+
+
+    errorMessage.textContent =
+        message;
+
+}
+
+
+
+/* ============================================================
+   NAVIGATION
+============================================================ */
+
+backButton.addEventListener(
+    "click",
+    () => {
+
+        if (
+            document.referrer
+        ) {
+
+            window.history.back();
+
+            return;
+
+        }
+
+
+        window.location.href =
+            "../";
+
+    }
+);
+
+
+errorBackButton.addEventListener(
+    "click",
+    () => {
+
+        window.location.href =
+            "../";
+
+    }
+);
+
+
+
+document
+    .querySelectorAll(
+        ".nav-item[data-route]"
+    )
+    .forEach(
+        button => {
+
+            button.addEventListener(
+                "click",
+                () => {
+
+                    const route =
+                        button.dataset.route;
+
+
+                    if (
+                        route
+                    ) {
+
+                        window.location.href =
+                            route;
+
+                    }
+
+                }
+            );
+
+        }
+    );
