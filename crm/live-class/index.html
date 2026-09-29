@@ -1,11 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
     <meta charset="UTF-8">
 
-    
     <meta
         name="viewport"
         content="width=device-width, initial-scale=1.0"
@@ -13,138 +10,511 @@
 
     <title>ZENOVA - Live Class</title>
 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
     <link
         rel="stylesheet"
         href="./live-class.css"
     >
-
 </head>
 
 <body>
 
-    <header class="header">
+<header class="header">
 
-        <div class="brand">
-            ZENOVA
-        </div>
+    <div>
+        <div class="brand">ZENOVA</div>
 
         <div class="header-subtitle">
-            LIVE CLASS SCHEDULING
+            LIVE CLASS MANAGEMENT
         </div>
+    </div>
 
-    </header>
+    <div class="header-right">
+        ADMIN
+    </div>
+
+</header>
 
 
-    <main class="container">
+<main class="container">
 
-        <section class="heading">
+    <!-- PAGE TITLE -->
+
+    <section class="heading">
+
+        <div>
+
+            <div class="eyebrow">
+                LIVE CONTROL CENTER
+            </div>
 
             <h1>
-                Schedule Live Class
+                Create Live Class
             </h1>
 
             <p>
-                Create a live class for students.
+                Schedule recorded videos, YouTube Live or external video classes.
             </p>
 
-        </section>
+        </div>
+
+    </section>
 
 
-        <section class="card">
+    <!-- CREATE CARD -->
 
-            <form id="liveForm">
+    <section class="card">
 
+        <form id="liveForm">
 
-                <label>
-                    Class Title
-                </label>
+            <!-- BASIC INFORMATION -->
 
-                <input
-                    id="title"
-                    type="text"
-                    placeholder="Enter class title"
-                    required
-                >
+            <div class="form-section">
 
+                <div class="section-title">
+                    Class Information
+                </div>
 
-                <label>
-                    Teacher Name
-                </label>
-
-                <input
-                    id="teacher"
-                    type="text"
-                    placeholder="Enter teacher name"
-                    required
-                >
+                <div class="section-subtitle">
+                    Basic details of the live class
+                </div>
 
 
-                <label>
-                    Course
-                </label>
+                <div class="field">
 
-                <select
-                    id="course"
-                    required
-                >
+                    <label for="title">
+                        Class Title
+                    </label>
 
-                    <option value="">
-                        Select Course
-                    </option>
+                    <input
+                        id="title"
+                        type="text"
+                        placeholder="Example: Real Numbers - Day 1"
+                        required
+                    >
 
-                </select>
-
-
-                <label>
-                    Subject
-                </label>
-
-                <select
-                    id="subject"
-                    required
-                    disabled
-                >
-
-                    <option value="">
-                        Select Subject
-                    </option>
-
-                </select>
+                </div>
 
 
-                <label>
-                    Chapter
-                </label>
+                <div class="field">
 
-                <select
-                    id="chapter"
-                    disabled
-                >
+                    <label for="teacher">
+                        Faculty / Teacher
+                    </label>
 
-                    <option value="">
-                        Select Chapter
-                    </option>
+                    <input
+                        id="teacher"
+                        type="text"
+                        placeholder="Enter faculty name"
+                        required
+                    >
 
-                </select>
-
-
-                <label>
-                    Thumbnail URL
-                </label>
-
-                <input
-                    id="thumbnail"
-                    type="url"
-                    placeholder="https://..."
-                >
+                </div>
 
 
-                <div class="row">
+                <div class="grid-3">
+
+                    <div class="field">
+
+                        <label for="course">
+                            Course / Batch
+                        </label>
+
+                        <select
+                            id="course"
+                            required
+                        >
+
+                            <option value="">
+                                Select Course
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="field">
+
+                        <label for="subject">
+                            Subject
+                        </label>
+
+                        <select
+                            id="subject"
+                            required
+                            disabled
+                        >
+
+                            <option value="">
+                                Select Subject
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="field">
+
+                        <label for="chapter">
+                            Chapter
+                        </label>
+
+                        <select
+                            id="chapter"
+                            disabled
+                        >
+
+                            <option value="">
+                                Select Chapter
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+
+                <div class="field">
+
+                    <label for="thumbnail">
+                        Thumbnail URL
+                    </label>
+
+                    <input
+                        id="thumbnail"
+                        type="url"
+                        placeholder="https://..."
+                    >
+
+                    <div class="field-help">
+                        Optional. Used on the Live Classes page.
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- LIVE TYPE -->
+
+            <div class="form-section">
+
+                <div class="section-title">
+                    Live Type
+                </div>
+
+                <div class="section-subtitle">
+                    Choose how students will receive this class.
+                </div>
+
+
+                <div class="live-type-grid">
+
+                    <label class="type-option">
+
+                        <input
+                            type="radio"
+                            name="liveType"
+                            value="RECORDED_VIDEO"
+                            checked
+                        >
+
+                        <span class="type-box">
+
+                            <span class="type-icon">
+                                ▶
+                            </span>
+
+                            <span class="type-content">
+
+                                <strong>
+                                    Recorded Video
+                                </strong>
+
+                                <small>
+                                    Play a prerecorded video as LIVE
+                                </small>
+
+                            </span>
+
+                        </span>
+
+                    </label>
+
+
+                    <label class="type-option">
+
+                        <input
+                            type="radio"
+                            name="liveType"
+                            value="YOUTUBE"
+                        >
+
+                        <span class="type-box">
+
+                            <span class="type-icon youtube">
+                                ▶
+                            </span>
+
+                            <span class="type-content">
+
+                                <strong>
+                                    YouTube Live
+                                </strong>
+
+                                <small>
+                                    Show a YouTube Live inside Zenova
+                                </small>
+
+                            </span>
+
+                        </span>
+
+                    </label>
+
+
+                    <label class="type-option">
+
+                        <input
+                            type="radio"
+                            name="liveType"
+                            value="EXTERNAL_URL"
+                        >
+
+                        <span class="type-box">
+
+                            <span class="type-icon external">
+                                ↗
+                            </span>
+
+                            <span class="type-content">
+
+                                <strong>
+                                    External Video URL
+                                </strong>
+
+                                <small>
+                                    Use an external video source
+                                </small>
+
+                            </span>
+
+                        </span>
+
+                    </label>
+
+                </div>
+
+            </div>
+
+
+            <!-- RECORDED VIDEO -->
+
+            <div
+                id="recordedSection"
+                class="source-section"
+            >
+
+                <div class="source-header">
 
                     <div>
 
-                        <label>
-                            Date
+                        <h3>
+                            Select Recorded Video
+                        </h3>
+
+                        <p>
+                            Select a video already uploaded to ZENOVA.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="field">
+
+                    <label for="content">
+                        ZENOVA Video
+                    </label>
+
+                    <select
+                        id="content"
+                        disabled
+                    >
+
+                        <option value="">
+                            Select course, subject and chapter first
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div
+                    id="contentPreview"
+                    class="content-preview hidden"
+                >
+
+                    <div class="preview-icon">
+                        ▶
+                    </div>
+
+                    <div>
+
+                        <strong id="contentPreviewTitle">
+                            --
+                        </strong>
+
+                        <span id="contentPreviewMeta">
+                            --
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- YOUTUBE -->
+
+            <div
+                id="youtubeSection"
+                class="source-section hidden"
+            >
+
+                <div class="source-header">
+
+                    <div>
+
+                        <h3>
+                            YouTube Live
+                        </h3>
+
+                        <p>
+                            Connect the YouTube Live stream that students should watch.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="field">
+
+                    <label for="youtubeUrl">
+                        YouTube Live URL / Video ID
+                    </label>
+
+                    <input
+                        id="youtubeUrl"
+                        type="text"
+                        placeholder="https://youtube.com/watch?v=..."
+                    >
+
+                </div>
+
+
+                <div class="youtube-note">
+
+                    <strong>
+                        Important
+                    </strong>
+
+                    <span>
+                        The YouTube stream must be active/available for students when the class starts.
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- EXTERNAL -->
+
+            <div
+                id="externalSection"
+                class="source-section hidden"
+            >
+
+                <div class="source-header">
+
+                    <div>
+
+                        <h3>
+                            External Video
+                        </h3>
+
+                        <p>
+                            Add the playback URL for the class.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="field">
+
+                    <label for="externalUrl">
+                        Video URL
+                    </label>
+
+                    <input
+                        id="externalUrl"
+                        type="url"
+                        placeholder="https://..."
+                    >
+
+                </div>
+
+
+                <div class="youtube-note">
+
+                    <strong>
+                        Note
+                    </strong>
+
+                    <span>
+                        The URL must be playable by the Zenova player.
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- SCHEDULE -->
+
+            <div class="form-section">
+
+                <div class="section-title">
+                    Schedule
+                </div>
+
+                <div class="section-subtitle">
+                    Set exactly when the class becomes available.
+                </div>
+
+
+                <div class="grid-2">
+
+                    <div class="field">
+
+                        <label for="date">
+                            Start Date
                         </label>
 
                         <input
@@ -156,14 +526,14 @@
                     </div>
 
 
-                    <div>
+                    <div class="field">
 
-                        <label>
-                            Time
+                        <label for="startTime">
+                            Start Time
                         </label>
 
                         <input
-                            id="time"
+                            id="startTime"
                             type="time"
                             required
                         >
@@ -173,71 +543,463 @@
                 </div>
 
 
-                <div
-                    id="message"
-                    class="message"
-                ></div>
+                <div class="grid-2">
+
+                    <div class="field">
+
+                        <label for="endDate">
+                            End Date
+                        </label>
+
+                        <input
+                            id="endDate"
+                            type="date"
+                        >
+
+                    </div>
 
 
-                <button
-                    id="saveButton"
-                    type="submit"
-                >
-                    SCHEDULE LIVE CLASS
-                </button>
+                    <div class="field">
+
+                        <label for="endTime">
+                            End Time
+                        </label>
+
+                        <input
+                            id="endTime"
+                            type="time"
+                            required
+                        >
+
+                    </div>
+
+                </div>
+
+            </div>
 
 
-            </form>
+            <!-- ACCESS -->
 
-        </section>
+            <div class="form-section">
+
+                <div class="section-title">
+                    Access & Controls
+                </div>
+
+                <div class="section-subtitle">
+                    Decide who can access this class.
+                </div>
 
 
-        <section class="upcoming">
+                <div class="access-grid">
 
-            <div class="section-top">
+                    <label class="access-option">
 
-                <div>
+                        <input
+                            type="radio"
+                            name="accessType"
+                            value="PAID"
+                            checked
+                        >
 
-                    <h2>
-                        Scheduled Classes
-                    </h2>
+                        <span>
 
-                    <p>
-                        Upcoming live classes
-                    </p>
+                            <strong>
+                                Paid Batch
+                            </strong>
+
+                            <small>
+                                Only students with access to the batch
+                            </small>
+
+                        </span>
+
+                    </label>
+
+
+                    <label class="access-option">
+
+                        <input
+                            type="radio"
+                            name="accessType"
+                            value="FREE"
+                        >
+
+                        <span>
+
+                            <strong>
+                                Free
+                            </strong>
+
+                            <small>
+                                Available to eligible students
+                            </small>
+
+                        </span>
+
+                    </label>
 
                 </div>
 
 
-                <button
-                    id="refresh"
-                    class="refresh"
-                >
-                    Refresh
-                </button>
+                <div class="toggle-row">
+
+                    <div>
+
+                        <strong>
+                            Active Class
+                        </strong>
+
+                        <span>
+                            Students can see and join this class.
+                        </span>
+
+                    </div>
+
+                    <label class="switch">
+
+                        <input
+                            id="active"
+                            type="checkbox"
+                            checked
+                        >
+
+                        <span class="slider"></span>
+
+                    </label>
+
+                </div>
+
+            </div>
+
+
+            <!-- DESCRIPTION -->
+
+            <div class="form-section">
+
+                <div class="field">
+
+                    <label for="description">
+                        Class Description
+                    </label>
+
+                    <textarea
+                        id="description"
+                        rows="4"
+                        placeholder="Optional description..."
+                    ></textarea>
+
+                </div>
 
             </div>
 
 
             <div
-                id="classes"
-                class="classes"
+                id="message"
+                class="message"
+            ></div>
+
+
+            <button
+                id="saveButton"
+                type="submit"
+                class="save-button"
             >
 
-                Loading...
+                <span>
+                    SCHEDULE LIVE CLASS
+                </span>
+
+            </button>
+
+        </form>
+
+    </section>
+
+
+    <!-- SCHEDULED CLASSES -->
+
+    <section class="scheduled-section">
+
+        <div class="section-top">
+
+            <div>
+
+                <div class="eyebrow">
+                    MANAGEMENT
+                </div>
+
+                <h2>
+                    Scheduled Live Classes
+                </h2>
+
+                <p>
+                    Manage upcoming, live and completed classes.
+                </p>
 
             </div>
 
-        </section>
 
-    </main>
+            <button
+                id="refresh"
+                class="refresh-button"
+                type="button"
+            >
+                ↻ Refresh
+            </button>
+
+        </div>
 
 
-    <script
-        type="module"
-        src="./live-class.js"
-    ></script>
+        <div class="filter-bar">
+
+            <button
+                class="filter-button active"
+                data-filter="ALL"
+                type="button"
+            >
+                All
+            </button>
+
+            <button
+                class="filter-button"
+                data-filter="SCHEDULED"
+                type="button"
+            >
+                Upcoming
+            </button>
+
+            <button
+                class="filter-button"
+                data-filter="LIVE"
+                type="button"
+            >
+                Live
+            </button>
+
+            <button
+                class="filter-button"
+                data-filter="ENDED"
+                type="button"
+            >
+                Ended
+            </button>
+
+            <button
+                class="filter-button"
+                data-filter="CANCELLED"
+                type="button"
+            >
+                Cancelled
+            </button>
+
+        </div>
+
+
+        <div
+            id="classes"
+            class="classes"
+        >
+
+            <div class="loading-card">
+                Loading classes...
+            </div>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<!-- EDIT MODAL -->
+
+<div
+    id="editModal"
+    class="modal hidden"
+>
+
+    <div class="modal-backdrop"></div>
+
+    <div class="modal-card">
+
+        <div class="modal-header">
+
+            <div>
+
+                <div class="eyebrow">
+                    LIVE CLASS
+                </div>
+
+                <h2>
+                    Edit Class
+                </h2>
+
+            </div>
+
+            <button
+                id="closeModal"
+                class="close-modal"
+                type="button"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <div class="modal-body">
+
+            <input
+                id="editId"
+                type="hidden"
+            >
+
+
+            <div class="field">
+
+                <label>
+                    Class Title
+                </label>
+
+                <input
+                    id="editTitle"
+                    type="text"
+                >
+
+            </div>
+
+
+            <div class="grid-2">
+
+                <div class="field">
+
+                    <label>
+                        Start Date
+                    </label>
+
+                    <input
+                        id="editDate"
+                        type="date"
+                    >
+
+                </div>
+
+
+                <div class="field">
+
+                    <label>
+                        Start Time
+                    </label>
+
+                    <input
+                        id="editStartTime"
+                        type="time"
+                    >
+
+                </div>
+
+            </div>
+
+
+            <div class="grid-2">
+
+                <div class="field">
+
+                    <label>
+                        End Date
+                    </label>
+
+                    <input
+                        id="editEndDate"
+                        type="date"
+                    >
+
+                </div>
+
+
+                <div class="field">
+
+                    <label>
+                        End Time
+                    </label>
+
+                    <input
+                        id="editEndTime"
+                        type="time"
+                    >
+
+                </div>
+
+            </div>
+
+
+            <div class="field">
+
+                <label>
+                    Faculty
+                </label>
+
+                <input
+                    id="editTeacher"
+                    type="text"
+                >
+
+            </div>
+
+
+            <div class="field">
+
+                <label>
+                    Status
+                </label>
+
+                <select id="editStatus">
+
+                    <option value="SCHEDULED">
+                        Scheduled
+                    </option>
+
+                    <option value="CANCELLED">
+                        Cancelled
+                    </option>
+
+                </select>
+
+            </div>
+
+        </div>
+
+
+        <div class="modal-footer">
+
+            <button
+                id="cancelEdit"
+                class="secondary-button"
+                type="button"
+            >
+                Cancel
+            </button>
+
+            <button
+                id="saveEdit"
+                class="primary-button"
+                type="button"
+            >
+                Save Changes
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script
+    type="module"
+    src="./live-class.js"
+></script>
 
 </body>
-
 </html>
