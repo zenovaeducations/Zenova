@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    >
+
+    <title>ZENOVA | Live Class</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700&display=swap"
+        rel="stylesheet"
+    >
+
+    <link rel="stylesheet" href="./livevideoplayer.css">
+</head>
+
+<body>
+
+<header class="topbar">
+
+    <button
+        id="backButton"
+        class="back-button"
+        type="button"
+    >
+        <span class="back-icon">‹</span>
+        <span>Back</span>
+    </button>
+
+    <div class="brand">
+
+        <div class="brand-title">
+            ZENOVA
+        </div>
+
+        <div class="brand-live">
+            <span></span>
+            LIVE CLASS
+        </div>
+
+    </div>
+
+    <div class="top-space"></div>
+
+</header>
+
+<main>
+
+    <!-- LOADING -->
+
+    <section
+        id="loading"
+        class="loading-screen"
+    >
+
+        <div class="loader"></div>
+
+        <p>
+            Connecting to live class...
+        </p>
+
+    </section>
+
+    <!-- ERROR -->
+
+    <section
+        id="error"
+        class="error-screen hidden"
+    >
+
+        <div class="error-icon">
+            !
+        </div>
+
+        <h2>
+            Unable to join live class
+        </h2>
+
+        <p id="errorText">
+            Something went wrong.
+        </p>
+
+        <button
+            id="errorBack"
+            class="dark-button"
+            type="button"
+        >
+            Go Back
+        </button>
+
+    </section>
+
+    <!-- LIVE APP -->
+
+    <section
+        id="liveApp"
+        class="live-app hidden"
+    >
+
+        <!-- =================================================
+             PLAYER
+        ================================================== -->
+
+        <div
+            id="player"
+            class="player"
+        >
+
+            <div
+                id="stage"
+                class="stage"
+            >
+
+                <!-- HTML VIDEO -->
+
+                <video
+                    id="liveVideo"
+                    class="live-video hidden"
+                    playsinline
+                    autoplay
+                    muted
+                    preload="none"
+                ></video>
+
+                <!-- YOUTUBE -->
+
+                <div
+                    id="youtubeContainer"
+                    class="youtube-container hidden"
+                ></div>
+
+                <!-- PLAYER LOADING -->
+
+                <div
+                    id="playerLoading"
+                    class="player-loading"
+                >
+
+                    <div class="player-spinner"></div>
+
+                    <span>
+                        Connecting...
+                    </span>
+
+                </div>
+
+                <!-- CENTER PLAY -->
+
+                <button
+                    id="centerPlay"
+                    class="center-play hidden"
+                    type="button"
+                >
+                    ▶
+                </button>
+
+                <!-- ZENOVA LOGO -->
+
+                <div class="video-logo">
+
+                    <div class="logo-circle">
+                        Z
+                    </div>
+
+                    <span>
+                        ZENOVA
+                    </span>
+
+                </div>
+
+                <!-- LIVE BADGE -->
+
+                <div
+                    id="liveBadge"
+                    class="live-badge"
+                >
+
+                    <span class="live-dot"></span>
+
+                    LIVE
+
+                </div>
+
+                <!-- STUDENT WATERMARK -->
+
+                <div
+                    id="watermark"
+                    class="watermark"
+                >
+
+                    <strong id="studentName">
+                        Student
+                    </strong>
+
+                    <span id="studentPhone">
+                        XXXXX
+                    </span>
+
+                    <small>
+                        ZENOVA • LIVE
+                    </small>
+
+                </div>
+
+                <!-- CONTROLS -->
+
+                <div
+                    id="controls"
+                    class="controls"
+                >
+
+                    <div class="controls-row">
+
+                        <div class="controls-left">
+
+                            <button
+                                id="playButton"
+                                class="control"
+                                type="button"
+                            >
+                                ▶
+                            </button>
+
+                            <button
+                                id="muteButton"
+                                class="control"
+                                type="button"
+                            >
+                                🔊
+                            </button>
+
+                            <span
+                                id="liveTime"
+                                class="live-time"
+                            >
+                                LIVE
+                            </span>
+
+                        </div>
+
+                        <div class="controls-right">
+
+                            <button
+                                id="fullscreenButton"
+                                class="control fullscreen"
+                                type="button"
+                            >
+                                ⛶
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- =================================================
+             INFORMATION
+        ================================================== -->
+
+        <section class="class-information">
+
+            <div class="live-status">
+
+                <span class="status-pill">
+                    <span></span>
+                    LIVE NOW
+                </span>
+
+                <span
+                    id="classTime"
+                    class="class-time"
+                ></span>
+
+            </div>
+
+            <h1 id="classTitle">
+                Live Class
+            </h1>
+
+            <div
+                id="classHierarchy"
+                class="hierarchy"
+            >
+                Batch • Subject • Chapter
+            </div>
+
+            <div class="faculty">
+
+                <div
+                    id="facultyAvatar"
+                    class="faculty-avatar"
+                >
+                    Z
+                </div>
+
+                <div>
+
+                    <span>
+                        Faculty
+                    </span>
+
+                    <strong id="facultyName">
+                        Faculty
+                    </strong>
+
+                </div>
+
+            </div>
+
+            <div
+                id="descriptionBox"
+                class="description hidden"
+            >
+
+                <h2>
+                    About this class
+                </h2>
+
+                <p id="description"></p>
+
+            </div>
+
+        </section>
+
+        <!-- =================================================
+             LIVE CLASS INFORMATION
+        ================================================== -->
+
+        <section class="session-info">
+
+            <div class="session-item">
+
+                <span class="session-label">
+                    CLASS
+                </span>
+
+                <strong id="sessionTitle">
+                    Live Class
+                </strong>
+
+            </div>
+
+            <div class="session-item">
+
+                <span class="session-label">
+                    DATE
+                </span>
+
+                <strong id="sessionDate">
+                    —
+                </strong>
+
+            </div>
+
+            <div class="session-item">
+
+                <span class="session-label">
+                    TIME
+                </span>
+
+                <strong id="sessionTime">
+                    —
+                </strong>
+
+            </div>
+
+        </section>
+
+        <!-- =================================================
+             LIVE NOTICE
+        ================================================== -->
+
+        <section class="live-notice">
+
+            <div class="notice-icon">
+                ●
+            </div>
+
+            <div>
+
+                <strong>
+                    You are watching a live class
+                </strong>
+
+                <p>
+                    This class is currently being streamed live.
+                    The seek controls are disabled during the live session.
+                </p>
+
+            </div>
+
+        </section>
+
+    </section>
+
+</main>
+
+<div
+    id="toast"
+    class="toast hidden"
+></div>
+
+<script src="https://www.youtube.com/iframe_api"></script>
+
+<script
+    type="module"
+    src="./livevideoplayer.js"
+></script>
+
+</body>
+</html>
