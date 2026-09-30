@@ -1,681 +1,280 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Classes | Zenova CRM</title>
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+    <link rel="stylesheet" href="./live-class.css">
 
-    <title>ZENOVA — Live Classes</title>
-
-    <link
-        rel="preconnect"
-        href="https://fonts.googleapis.com"
-    >
-
-    <link
-        rel="preconnect"
-        href="https://fonts.gstatic.com"
-        crossorigin
-    >
-
-    <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700;800&display=swap"
-        rel="stylesheet"
-    >
-
-    <link
-        rel="stylesheet"
-        href="./live-class.css"
-    >
+    <script type="module" src="./live-class.js"></script>
 </head>
 
 <body>
 
-<header class="topbar">
+<div class="app">
 
-    <div class="brand-area">
-
-        <div class="brand">
-            ZENOVA
-        </div>
-
-        <div class="divider"></div>
-
-        <div class="page-label">
-            LIVE CLASSES
-        </div>
-
-    </div>
-
-    <button
-        id="refreshButton"
-        class="top-refresh"
-        type="button"
-    >
-        Refresh
-    </button>
-
-</header>
-
-
-<main class="page">
-
-    <section class="page-heading">
-
+    <header class="topbar">
         <div>
-
-            <span class="eyebrow">
-                LIVE MANAGEMENT
-            </span>
-
-            <h1>
-                Live Classes
-            </h1>
-
-            <p>
-                Create and manage Zenova live classrooms.
-            </p>
-
+            <div class="eyebrow">ZENOVA CRM</div>
+            <h1>Live Classes</h1>
+            <p>Schedule and manage live classes</p>
         </div>
 
-    </section>
+        <button id="newClassBtn" class="primary-btn">
+            + New Live Class
+        </button>
+    </header>
 
+    <main>
 
-    <!-- CREATE -->
-
-    <section class="card create-card">
-
-        <div class="section-heading">
-
-            <div>
-
-                <h2>
-                    Create Live Class
-                </h2>
-
-                <p>
-                    Schedule a live or recorded class for students.
-                </p>
-
+        <section class="stats">
+            <div class="stat-card">
+                <span>Upcoming</span>
+                <strong id="upcomingCount">0</strong>
             </div>
 
-        </div>
+            <div class="stat-card live-stat">
+                <span>Live Now</span>
+                <strong id="liveCount">0</strong>
+            </div>
+
+            <div class="stat-card">
+                <span>Completed</span>
+                <strong id="completedCount">0</strong>
+            </div>
+        </section>
 
 
-        <form id="liveForm">
+        <section class="panel" id="formPanel">
 
-            <div class="form-grid">
-
-
-                <!-- TITLE -->
-
-                <div class="field full">
-
-                    <label for="title">
-                        Class Title
-                    </label>
-
-                    <input
-                        id="title"
-                        type="text"
-                        placeholder="Example: Trigonometry — Introduction"
-                        required
-                    >
-
+            <div class="panel-header">
+                <div>
+                    <h2 id="formTitle">Create Live Class</h2>
+                    <p>Schedule a new class for students.</p>
                 </div>
 
-
-                <!-- TEACHER -->
-
-                <div class="field">
-
-                    <label for="teacherName">
-                        Teacher / Faculty
-                    </label>
-
-                    <input
-                        id="teacherName"
-                        type="text"
-                        placeholder="Teacher name"
-                        required
-                    >
-
-                </div>
-
-
-                <!-- LIVE TYPE -->
-
-                <div class="field">
-
-                    <label for="liveType">
-                        Class Type
-                    </label>
-
-                    <select
-                        id="liveType"
-                        required
-                    >
-
-                        <option value="ZOOM">
-                            Zoom Classroom
-                        </option>
-
-                        <option value="YOUTUBE_LIVE">
-                            YouTube Live
-                        </option>
-
-                        <option value="RECORDED_VIDEO">
-                            Recorded Video
-                        </option>
-
-                        <option value="EXTERNAL_VIDEO">
-                            External Video
-                        </option>
-
-                    </select>
-
-                </div>
-
-
-                <!-- COURSE -->
-
-                <div class="field">
-
-                    <label for="course">
-                        Batch / Course
-                    </label>
-
-                    <select
-                        id="course"
-                        required
-                    >
-
-                        <option value="">
-                            Select Batch
-                        </option>
-
-                    </select>
-
-                </div>
-
-
-                <!-- SUBJECT -->
-
-                <div class="field">
-
-                    <label for="subject">
-                        Subject
-                    </label>
-
-                    <select
-                        id="subject"
-                        disabled
-                        required
-                    >
-
-                        <option value="">
-                            Select Subject
-                        </option>
-
-                    </select>
-
-                </div>
-
-
-                <!-- CHAPTER -->
-
-                <div class="field">
-
-                    <label for="chapter">
-                        Chapter
-                    </label>
-
-                    <select
-                        id="chapter"
-                        disabled
-                    >
-
-                        <option value="">
-                            Select Chapter
-                        </option>
-
-                    </select>
-
-                </div>
-
-
-                <!-- THUMBNAIL -->
-
-                <div class="field">
-
-                    <label for="thumbnailUrl">
-                        Thumbnail URL
-                    </label>
-
-                    <input
-                        id="thumbnailUrl"
-                        type="url"
-                        placeholder="https://..."
-                    >
-
-                </div>
-
-
-                <!-- START DATE -->
-
-                <div class="field">
-
-                    <label for="startDate">
-                        Start Date
-                    </label>
-
-                    <input
-                        id="startDate"
-                        type="date"
-                        required
-                    >
-
-                </div>
-
-
-                <!-- START TIME -->
-
-                <div class="field">
-
-                    <label for="startTime">
-                        Start Time
-                    </label>
-
-                    <input
-                        id="startTime"
-                        type="time"
-                        required
-                    >
-
-                </div>
-
-
-                <!-- END DATE -->
-
-                <div class="field">
-
-                    <label for="endDate">
-                        End Date
-                    </label>
-
-                    <input
-                        id="endDate"
-                        type="date"
-                        required
-                    >
-
-                </div>
-
-
-                <!-- END TIME -->
-
-                <div class="field">
-
-                    <label for="endTime">
-                        End Time
-                    </label>
-
-                    <input
-                        id="endTime"
-                        type="time"
-                        required
-                    >
-
-                </div>
-
-
-                <!-- ACCESS -->
-
-                <div class="field">
-
-                    <label for="accessType">
-                        Access
-                    </label>
-
-                    <select id="accessType">
-
-                        <option value="FREE">
-                            Free
-                        </option>
-
-                        <option value="PAID">
-                            Paid
-                        </option>
-
-                    </select>
-
-                </div>
-
-
-                <!-- DESCRIPTION -->
-
-                <div class="field full">
-
-                    <label for="description">
-                        Description
-                    </label>
-
-                    <textarea
-                        id="description"
-                        placeholder="Optional class description"
-                    ></textarea>
-
-                </div>
-
+                <button id="closeFormBtn" class="icon-btn">×</button>
             </div>
 
 
-            <!-- ZOOM -->
+            <form id="liveForm">
 
-            <div
-                id="zoomFields"
-                class="provider-box zoom-box"
-            >
+                <div class="section-title">Class Details</div>
 
-                <div class="provider-heading">
+                <div class="grid">
 
-                    <div class="provider-icon">
-                        Z
-                    </div>
-
-                    <div>
-
-                        <strong>
-                            Zoom Classroom
-                        </strong>
-
-                        <span>
-                            Students will join the Zoom classroom inside Zenova.
-                        </span>
-
-                    </div>
-
-                </div>
-
-
-                <div class="form-grid zoom-grid">
-
-                    <div class="field">
-
-                        <label for="zoomMeetingNumber">
-                            Zoom Meeting ID
-                        </label>
-
+                    <div class="field full">
+                        <label>Class Title *</label>
                         <input
-                            id="zoomMeetingNumber"
+                            id="title"
                             type="text"
-                            placeholder="123456789"
+                            placeholder="Example: Trigonometry - Concept 1"
+                            required
                         >
-
                     </div>
 
 
                     <div class="field">
-
-                        <label for="zoomPassword">
-                            Meeting Passcode
-                        </label>
-
+                        <label>Faculty *</label>
                         <input
-                            id="zoomPassword"
+                            id="teacherName"
                             type="text"
-                            placeholder="Meeting passcode"
+                            placeholder="Teacher name"
+                            required
                         >
+                    </div>
 
+
+                    <div class="field">
+                        <label>Live Type *</label>
+
+                        <select id="liveType" required>
+                            <option value="ZOOM">Zoom Live Class</option>
+                            <option value="YOUTUBE_LIVE">YouTube Live</option>
+                            <option value="RECORDED_VIDEO">Recorded Video</option>
+                            <option value="EXTERNAL_VIDEO">External Video</option>
+                        </select>
+                    </div>
+
+
+                    <div class="field">
+                        <label>Course *</label>
+                        <select id="course" required>
+                            <option value="">Select Course</option>
+                        </select>
+                    </div>
+
+
+                    <div class="field">
+                        <label>Subject *</label>
+                        <select id="subject" required disabled>
+                            <option value="">Select Subject</option>
+                        </select>
+                    </div>
+
+
+                    <div class="field">
+                        <label>Chapter</label>
+                        <select id="chapter" disabled>
+                            <option value="">Select Chapter</option>
+                        </select>
+                    </div>
+
+
+                    <div class="field">
+                        <label>Thumbnail URL</label>
+                        <input
+                            id="thumbnailUrl"
+                            type="url"
+                            placeholder="https://..."
+                        >
                     </div>
 
                 </div>
 
 
-                <div class="provider-note">
+                <div class="section-title">Schedule</div>
 
-                    <strong>
-                        Automatic Zoom creation
-                    </strong>
+                <div class="grid">
 
-                    <span>
-                        will be connected through the secure Firebase backend.
-                    </span>
+                    <div class="field">
+                        <label>Start Date *</label>
+                        <input id="dateStart" type="date" required>
+                    </div>
+
+                    <div class="field">
+                        <label>Start Time *</label>
+                        <input id="timeStart" type="time" required>
+                    </div>
+
+                    <div class="field">
+                        <label>End Date *</label>
+                        <input id="dateEnd" type="date" required>
+                    </div>
+
+                    <div class="field">
+                        <label>End Time *</label>
+                        <input id="timeEnd" type="time" required>
+                    </div>
+
+                    <div class="field">
+                        <label>Duration (minutes)</label>
+                        <input
+                            id="duration"
+                            type="number"
+                            min="1"
+                            value="60"
+                        >
+                    </div>
 
                 </div>
 
-            </div>
 
+                <div class="section-title">Access</div>
 
-            <!-- YOUTUBE -->
+                <div class="grid">
 
-            <div
-                id="youtubeFields"
-                class="provider-box hidden"
-            >
+                    <div class="field">
+                        <label>Access</label>
 
-                <div class="provider-heading">
-
-                    <div class="provider-icon youtube">
-                        ▶
+                        <select id="accessType">
+                            <option value="PAID">Paid</option>
+                            <option value="FREE">Free</option>
+                        </select>
                     </div>
+
+
+                    <div class="field full">
+                        <label>Description</label>
+
+                        <textarea
+                            id="description"
+                            rows="4"
+                            placeholder="Class description..."
+                        ></textarea>
+                    </div>
+
+                </div>
+
+
+                <div id="zoomInfo" class="zoom-box">
+
+                    <div class="zoom-icon">Z</div>
 
                     <div>
-
-                        <strong>
-                            YouTube Live
-                        </strong>
-
-                        <span>
-                            The live stream will be displayed inside Zenova.
-                        </span>
-
+                        <strong>Automatic Zoom Meeting</strong>
+                        <p>
+                            A Zoom meeting will be created automatically
+                            when you schedule this class.
+                        </p>
                     </div>
 
                 </div>
 
 
-                <div class="field">
+                <div id="providerFields"></div>
 
-                    <label for="youtubeLiveUrl">
-                        YouTube Live URL
-                    </label>
 
-                    <input
-                        id="youtubeLiveUrl"
-                        type="url"
-                        placeholder="https://www.youtube.com/live/..."
+                <div class="form-actions">
+
+                    <button
+                        type="button"
+                        id="cancelBtn"
+                        class="secondary-btn"
                     >
+                        Cancel
+                    </button>
 
-                </div>
-
-            </div>
-
-
-            <!-- RECORDED -->
-
-            <div
-                id="recordedFields"
-                class="provider-box hidden"
-            >
-
-                <div class="provider-heading">
-
-                    <div class="provider-icon">
-                        ▶
-                    </div>
-
-                    <div>
-
-                        <strong>
-                            Recorded Video
-                        </strong>
-
-                        <span>
-                            Students will watch this through Zenova Video Player.
-                        </span>
-
-                    </div>
-
-                </div>
-
-
-                <div class="field">
-
-                    <label for="videoUrl">
-                        Video URL
-                    </label>
-
-                    <input
-                        id="videoUrl"
-                        type="url"
-                        placeholder="https://..."
+                    <button
+                        type="submit"
+                        id="saveButton"
+                        class="primary-btn"
                     >
+                        Schedule Live Class
+                    </button>
 
                 </div>
 
-            </div>
+            </form>
+
+        </section>
 
 
-            <!-- EXTERNAL -->
+        <section class="panel">
 
-            <div
-                id="externalFields"
-                class="provider-box hidden"
-            >
-
-                <div class="provider-heading">
-
-                    <div class="provider-icon">
-                        ↗
-                    </div>
-
-                    <div>
-
-                        <strong>
-                            External Video
-                        </strong>
-
-                        <span>
-                            Use an external video source.
-                        </span>
-
-                    </div>
-
+            <div class="panel-header">
+                <div>
+                    <h2>Scheduled Classes</h2>
+                    <p>Manage your live-class schedule.</p>
                 </div>
 
-
-                <div class="field">
-
-                    <label for="externalVideoUrl">
-                        External Video URL
-                    </label>
-
-                    <input
-                        id="externalVideoUrl"
-                        type="url"
-                        placeholder="https://..."
-                    >
-
-                </div>
-
-            </div>
-
-
-            <div
-                id="formMessage"
-                class="form-message"
-            ></div>
-
-
-            <div class="form-actions">
-
-                <button
-                    type="button"
-                    id="cancelEditButton"
-                    class="secondary-button hidden"
-                >
-                    Cancel Edit
+                <button id="refreshBtn" class="secondary-btn">
+                    Refresh
                 </button>
-
-                <button
-                    type="submit"
-                    id="saveButton"
-                    class="primary-button"
-                >
-                    Schedule Live Class
-                </button>
-
             </div>
 
-        </form>
 
-    </section>
-
-
-    <!-- CLASSES -->
-
-    <section class="classes-section">
-
-        <div class="section-heading list-heading">
-
-            <div>
-
-                <span class="eyebrow">
-                    SCHEDULE
-                </span>
-
-                <h2>
-                    Scheduled Classes
-                </h2>
-
-                <p>
-                    Manage all Zenova live classes.
-                </p>
-
-            </div>
-
-            <div
-                id="classCount"
-                class="count-badge"
-            >
-                0
-            </div>
-
-        </div>
-
-
-        <div
-            id="classes"
-            class="classes"
-        >
-
-            <div class="loading">
+            <div id="loading" class="loading">
                 Loading classes...
             </div>
 
-        </div>
+            <div id="emptyState" class="empty hidden">
+                <div>📅</div>
+                <strong>No live classes</strong>
+                <p>Create your first live class.</p>
+            </div>
 
-    </section>
+            <div id="classesList" class="classes-list"></div>
 
-</main>
+        </section>
 
+    </main>
 
-<div
-    id="toast"
-    class="toast"
-></div>
+</div>
 
 
-<script
-    type="module"
-    src="./live-class.js"
-></script>
+<div id="toast" class="toast"></div>
 
 </body>
-
 </html>
