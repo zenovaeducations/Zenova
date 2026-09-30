@@ -1,0 +1,1029 @@
+/* =========================================================
+   ZENOVA LIVE CLASS
+========================================================= */
+
+* {
+    box-sizing: border-box;
+}
+
+
+html {
+    scroll-behavior: smooth;
+}
+
+
+body {
+    margin: 0;
+
+    background: #f6f6f6;
+
+    color: #111;
+
+    font-family: "Inter", sans-serif;
+
+    -webkit-font-smoothing: antialiased;
+}
+
+
+button {
+    font-family: inherit;
+}
+
+
+.hidden {
+    display: none !important;
+}
+
+
+/* =========================================================
+   TOP BAR
+========================================================= */
+
+.topbar {
+    position: sticky;
+
+    top: 0;
+
+    z-index: 100;
+
+    height: 68px;
+
+    display: flex;
+
+    align-items: center;
+
+    padding: 0 24px;
+
+    background: rgba(255, 255, 255, 0.94);
+
+    backdrop-filter: blur(16px);
+
+    border-bottom: 1px solid #e9e9e9;
+}
+
+
+.back-button {
+    width: 42px;
+
+    height: 42px;
+
+    border: 1px solid #e3e3e3;
+
+    border-radius: 12px;
+
+    background: white;
+
+    color: #111;
+
+    font-size: 22px;
+
+    cursor: pointer;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    transition: .2s ease;
+}
+
+
+.back-button:hover {
+    background: #f3f3f3;
+}
+
+
+.brand {
+    margin-left: 14px;
+}
+
+
+.brand-name {
+    font-family: "Poppins", sans-serif;
+
+    font-size: 17px;
+
+    font-weight: 700;
+
+    letter-spacing: .5px;
+}
+
+
+.brand-subtitle {
+    margin-top: 1px;
+
+    color: #888;
+
+    font-size: 10px;
+
+    font-weight: 600;
+
+    letter-spacing: 1.2px;
+}
+
+
+.live-status {
+    margin-left: auto;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 7px;
+
+    padding: 8px 12px;
+
+    border-radius: 999px;
+
+    background: #fff0f0;
+
+    color: #d60000;
+
+    font-size: 11px;
+
+    font-weight: 800;
+
+    letter-spacing: .5px;
+}
+
+
+.live-dot {
+    width: 7px;
+
+    height: 7px;
+
+    background: #e00000;
+
+    border-radius: 50%;
+
+    display: inline-block;
+
+    animation: pulse 1.5s infinite;
+}
+
+
+@keyframes pulse {
+
+    0% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: .4;
+        transform: scale(.75);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+}
+
+
+/* =========================================================
+   STATE
+========================================================= */
+
+.state-screen {
+    min-height: calc(100vh - 68px);
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 30px;
+
+    text-align: center;
+}
+
+
+.state-screen p {
+    color: #777;
+
+    font-size: 14px;
+}
+
+
+.state-icon {
+    width: 56px;
+
+    height: 56px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #fff0f0;
+
+    color: #d00000;
+
+    font-size: 24px;
+
+    font-weight: 800;
+}
+
+
+.state-screen h2 {
+    margin: 18px 0 5px;
+
+    font-family: "Poppins", sans-serif;
+
+    font-size: 22px;
+}
+
+
+.spinner {
+    width: 34px;
+
+    height: 34px;
+
+    border: 3px solid #ddd;
+
+    border-top-color: #111;
+
+    border-radius: 50%;
+
+    animation: spin .8s linear infinite;
+}
+
+
+@keyframes spin {
+
+    to {
+        transform: rotate(360deg);
+    }
+
+}
+
+
+.primary-button {
+    margin-top: 18px;
+
+    border: 0;
+
+    border-radius: 11px;
+
+    padding: 13px 18px;
+
+    background: #111;
+
+    color: white;
+
+    font-weight: 700;
+
+    cursor: pointer;
+}
+
+
+/* =========================================================
+   APP
+========================================================= */
+
+.app {
+    width: min(100%, 1100px);
+
+    margin: 0 auto;
+
+    padding-bottom: 50px;
+}
+
+
+/* =========================================================
+   PLAYER
+========================================================= */
+
+.player-section {
+    width: 100%;
+
+    background: #000;
+}
+
+
+.player-container {
+    position: relative;
+
+    width: 100%;
+
+    aspect-ratio: 16 / 9;
+
+    background: #050505;
+
+    overflow: hidden;
+}
+
+
+.youtube-player,
+.youtube-player iframe {
+    width: 100%;
+
+    height: 100%;
+
+    border: 0;
+}
+
+
+.video-player {
+    width: 100%;
+
+    height: 100%;
+
+    display: block;
+
+    background: #000;
+
+    object-fit: contain;
+}
+
+
+.external-player {
+    width: 100%;
+
+    height: 100%;
+}
+
+
+.external-player iframe {
+    width: 100%;
+
+    height: 100%;
+
+    border: 0;
+}
+
+
+.waiting-player {
+    position: absolute;
+
+    inset: 0;
+
+    z-index: 3;
+
+    background: #101010;
+
+    color: white;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    text-align: center;
+}
+
+
+.waiting-icon {
+    padding: 8px 13px;
+
+    border-radius: 7px;
+
+    background: #e00000;
+
+    font-size: 11px;
+
+    font-weight: 800;
+
+    letter-spacing: .7px;
+}
+
+
+.waiting-player h3 {
+    margin: 18px 0 5px;
+
+    font-family: "Poppins", sans-serif;
+
+    font-size: 20px;
+}
+
+
+.waiting-player p {
+    margin: 0;
+
+    color: #aaa;
+
+    font-size: 13px;
+}
+
+
+/* =========================================================
+   PLAYER OVERLAY
+========================================================= */
+
+.player-overlay {
+    position: absolute;
+
+    inset: 0;
+
+    z-index: 10;
+
+    pointer-events: none;
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: space-between;
+
+    background: linear-gradient(
+        to bottom,
+        rgba(0, 0, 0, .55),
+        transparent 25%,
+        transparent 65%,
+        rgba(0, 0, 0, .75)
+    );
+}
+
+
+.overlay-top {
+    padding: 16px;
+}
+
+
+.overlay-live {
+    width: max-content;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 7px;
+
+    padding: 7px 10px;
+
+    border-radius: 6px;
+
+    background: rgba(0, 0, 0, .65);
+
+    color: white;
+
+    font-size: 10px;
+
+    font-weight: 800;
+
+    letter-spacing: .7px;
+}
+
+
+.overlay-bottom {
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    padding: 14px;
+}
+
+
+.control-button {
+    width: 38px;
+
+    height: 38px;
+
+    border: 0;
+
+    border-radius: 9px;
+
+    background: rgba(0, 0, 0, .68);
+
+    color: white;
+
+    cursor: pointer;
+
+    pointer-events: auto;
+
+    font-size: 15px;
+}
+
+
+.overlay-spacer {
+    flex: 1;
+}
+
+
+/* =========================================================
+   WATERMARK
+========================================================= */
+
+.watermark {
+    position: absolute;
+
+    right: 20px;
+
+    bottom: 58px;
+
+    z-index: 12;
+
+    max-width: 45%;
+
+    color: rgba(255, 255, 255, .48);
+
+    font-size: 10px;
+
+    line-height: 1.4;
+
+    text-align: right;
+
+    pointer-events: none;
+
+    user-select: none;
+
+    text-shadow:
+        0 1px 2px #000,
+        0 0 3px #000;
+}
+
+
+/* =========================================================
+   CLASS INFO
+========================================================= */
+
+.class-info-section {
+    padding: 25px 25px 5px;
+
+    background: white;
+}
+
+
+.class-header-row {
+    display: flex;
+
+    align-items: flex-start;
+
+    justify-content: space-between;
+
+    gap: 20px;
+}
+
+
+.subject-badge {
+    display: inline-flex;
+
+    padding: 6px 10px;
+
+    border-radius: 7px;
+
+    background: #f1f1f1;
+
+    color: #555;
+
+    font-size: 10px;
+
+    font-weight: 800;
+
+    text-transform: uppercase;
+
+    letter-spacing: .5px;
+}
+
+
+.class-heading h1 {
+    margin: 9px 0 0;
+
+    font-family: "Poppins", sans-serif;
+
+    font-size: clamp(21px, 3vw, 29px);
+
+    line-height: 1.25;
+}
+
+
+.class-status {
+    flex-shrink: 0;
+
+    padding: 8px 12px;
+
+    border-radius: 8px;
+
+    background: #fff0f0;
+
+    color: #d00000;
+
+    font-size: 10px;
+
+    font-weight: 800;
+
+    letter-spacing: .5px;
+}
+
+
+.hierarchy {
+    display: flex;
+
+    flex-wrap: wrap;
+
+    align-items: center;
+
+    gap: 7px;
+
+    margin-top: 10px;
+
+    color: #777;
+
+    font-size: 12px;
+}
+
+
+.separator {
+    color: #bbb;
+}
+
+
+.teacher-row {
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    margin-top: 22px;
+
+    padding-top: 18px;
+
+    border-top: 1px solid #eeeeee;
+}
+
+
+.teacher-avatar {
+    width: 43px;
+
+    height: 43px;
+
+    flex-shrink: 0;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #111;
+
+    color: white;
+
+    font-family: "Poppins", sans-serif;
+
+    font-weight: 700;
+}
+
+
+.teacher-details {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 3px;
+}
+
+
+.teacher-label {
+    color: #999;
+
+    font-size: 10px;
+
+    font-weight: 600;
+
+    text-transform: uppercase;
+
+    letter-spacing: .5px;
+}
+
+
+.teacher-details strong {
+    font-size: 14px;
+}
+
+
+.description {
+    margin-top: 18px;
+
+    padding-top: 18px;
+
+    border-top: 1px solid #eeeeee;
+
+    color: #666;
+
+    font-size: 13px;
+
+    line-height: 1.7;
+}
+
+
+/* =========================================================
+   NOTICE
+========================================================= */
+
+.notice-card {
+    margin: 16px 25px 0;
+
+    padding: 15px;
+
+    display: flex;
+
+    gap: 12px;
+
+    align-items: flex-start;
+
+    border: 1px solid #e7e7e7;
+
+    border-radius: 13px;
+
+    background: #fafafa;
+}
+
+
+.notice-icon {
+    width: 32px;
+
+    height: 32px;
+
+    flex-shrink: 0;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 9px;
+
+    background: #111;
+
+    color: white;
+
+    font-size: 10px;
+}
+
+
+.notice-card strong {
+    font-size: 13px;
+}
+
+
+.notice-card p {
+    margin: 4px 0 0;
+
+    color: #888;
+
+    font-size: 11px;
+}
+
+
+/* =========================================================
+   STUDENT CARD
+========================================================= */
+
+.student-card {
+    margin: 12px 25px 0;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 11px;
+
+    padding: 13px 15px;
+
+    border: 1px solid #ededed;
+
+    border-radius: 12px;
+
+    background: white;
+}
+
+
+.student-card-icon {
+    width: 30px;
+
+    height: 30px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #f1f1f1;
+
+    color: #111;
+
+    font-size: 12px;
+
+    font-weight: 800;
+}
+
+
+.student-card div:last-child {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 2px;
+}
+
+
+.student-card span {
+    color: #999;
+
+    font-size: 10px;
+}
+
+
+.student-card strong {
+    font-size: 13px;
+}
+
+
+/* =========================================================
+   LEAVE
+========================================================= */
+
+.leave-button {
+    display: block;
+
+    width: calc(100% - 50px);
+
+    margin: 18px 25px 0;
+
+    height: 48px;
+
+    border: 1px solid #e2e2e2;
+
+    border-radius: 11px;
+
+    background: white;
+
+    color: #555;
+
+    font-size: 11px;
+
+    font-weight: 800;
+
+    letter-spacing: .5px;
+
+    cursor: pointer;
+}
+
+
+.leave-button:hover {
+    background: #f5f5f5;
+}
+
+
+/* =========================================================
+   TOAST
+========================================================= */
+
+.toast {
+    position: fixed;
+
+    left: 50%;
+
+    bottom: 25px;
+
+    z-index: 999;
+
+    transform: translate(-50%, 20px);
+
+    padding: 11px 16px;
+
+    border-radius: 9px;
+
+    background: #111;
+
+    color: white;
+
+    font-size: 12px;
+
+    opacity: 0;
+
+    pointer-events: none;
+
+    transition: .25s ease;
+}
+
+
+.toast.show {
+    opacity: 1;
+
+    transform: translate(-50%, 0);
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 650px) {
+
+    .topbar {
+        height: 60px;
+
+        padding: 0 14px;
+    }
+
+
+    .back-button {
+        width: 38px;
+
+        height: 38px;
+
+        border-radius: 10px;
+    }
+
+
+    .brand {
+        margin-left: 10px;
+    }
+
+
+    .brand-name {
+        font-size: 15px;
+    }
+
+
+    .brand-subtitle {
+        font-size: 8px;
+    }
+
+
+    .live-status {
+        padding: 7px 9px;
+
+        font-size: 9px;
+    }
+
+
+    .class-info-section {
+        padding: 20px 16px 5px;
+    }
+
+
+    .notice-card {
+        margin-left: 16px;
+
+        margin-right: 16px;
+    }
+
+
+    .student-card {
+        margin-left: 16px;
+
+        margin-right: 16px;
+    }
+
+
+    .leave-button {
+        width: calc(100% - 32px);
+
+        margin-left: 16px;
+
+        margin-right: 16px;
+    }
+
+
+    .watermark {
+        right: 10px;
+
+        bottom: 52px;
+
+        font-size: 8px;
+    }
+
+
+    .overlay-top {
+        padding: 10px;
+    }
+
+
+    .overlay-bottom {
+        padding: 9px;
+    }
+
+
+    .control-button {
+        width: 34px;
+
+        height: 34px;
+
+        font-size: 13px;
+    }
+
+}
