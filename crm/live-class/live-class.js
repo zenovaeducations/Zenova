@@ -1,8 +1,16 @@
-import { auth, db } from "../../firebase/firebase-config.js";
+import {
+    auth,
+    db
+} from "../../firebase/firebase-config.js";
 
 import {
     onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+
+import {
+    getFunctions,
+    httpsCallable
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-functions.js";
 
 import {
     collection,
@@ -11,9 +19,22 @@ import {
     updateDoc,
     deleteDoc,
     doc,
-    serverTimestamp,
-    Timestamp
+    serverTimestamp
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
+
+/* =========================================================
+   FIREBASE FUNCTIONS
+========================================================= */
+
+const functions =
+    getFunctions(undefined, "asia-south1");
+
+const createZoomMeeting =
+    httpsCallable(
+        functions,
+        "createZoomMeeting"
+    );
 
 
 /* =========================================================
@@ -22,6 +43,24 @@ import {
 
 const form =
     document.getElementById("liveForm");
+
+const formPanel =
+    document.getElementById("formPanel");
+
+const newClassBtn =
+    document.getElementById("newClassBtn");
+
+const closeFormBtn =
+    document.getElementById("closeFormBtn");
+
+const cancelBtn =
+    document.getElementById("cancelBtn");
+
+const refreshBtn =
+    document.getElementById("refreshBtn");
+
+const saveButton =
+    document.getElementById("saveButton");
 
 const titleInput =
     document.getElementById("title");
@@ -44,17 +83,20 @@ const chapter =
 const thumbnailInput =
     document.getElementById("thumbnailUrl");
 
-const startDate =
-    document.getElementById("startDate");
+const dateStart =
+    document.getElementById("dateStart");
 
-const startTime =
-    document.getElementById("startTime");
+const timeStart =
+    document.getElementById("timeStart");
 
-const endDate =
-    document.getElementById("endDate");
+const dateEnd =
+    document.getElementById("dateEnd");
 
-const endTime =
-    document.getElementById("endTime");
+const timeEnd =
+    document.getElementById("timeEnd");
+
+const duration =
+    document.getElementById("duration");
 
 const accessType =
     document.getElementById("accessType");
@@ -62,64 +104,40 @@ const accessType =
 const description =
     document.getElementById("description");
 
-const zoomFields =
-    document.getElementById("zoomFields");
+const classesList =
+    document.getElementById("classesList");
 
-const youtubeFields =
-    document.getElementById("youtubeFields");
+const loading =
+    document.getElementById("loading");
 
-const recordedFields =
-    document.getElementById("recordedFields");
+const emptyState =
+    document.getElementById("emptyState");
 
-const externalFields =
-    document.getElementById("externalFields");
+const upcomingCount =
+    document.getElementById("upcomingCount");
 
-const zoomMeetingNumber =
-    document.getElementById("zoomMeetingNumber");
+const liveCount =
+    document.getElementById("liveCount");
 
-const zoomPassword =
-    document.getElementById("zoomPassword");
+const completedCount =
+    document.getElementById("completedCount");
 
-const youtubeLiveUrl =
-    document.getElementById("youtubeLiveUrl");
+const zoomInfo =
+    document.getElementById("zoomInfo");
 
-const videoUrl =
-    document.getElementById("videoUrl");
-
-const externalVideoUrl =
-    document.getElementById("externalVideoUrl");
-
-const saveButton =
-    document.getElementById("saveButton");
-
-const cancelEditButton =
-    document.getElementById("cancelEditButton");
-
-const refreshButton =
-    document.getElementById("refreshButton");
-
-const classes =
-    document.getElementById("classes");
-
-const classCount =
-    document.getElementById("classCount");
-
-const formMessage =
-    document.getElementById("formMessage");
+const providerFields =
+    document.getElementById("providerFields");
 
 const toast =
     document.getElementById("toast");
 
 
-/* =========================================================
-   STATE
-========================================================= */
+let courses = [];
+let subjects = [];
+let chapters = [];
+let liveClasses = [];
 
 let editingId = null;
-
-let currentUser = null;
-
-let courseData = [];
 
 
 /* =========================================================
@@ -136,76 +154,82 @@ onAuthStateChanged(
                 "../../account/login/";
 
             return;
-
         }
 
-        currentUser = user;
-
-        await loadCourses();
-
-        await loadClasses();
+        await loadAll();
 
     }
 );
 
 
 /* =========================================================
-   LIVE TYPE UI
+   TOAST
 ========================================================= */
 
-liveType.addEventListener(
-    "change",
-    updateProviderFields
-);
+function showToast(message) {
+
+    toast.textContent = message;
+
+    toast.classList.add("show");
+
+    setTimeout(() => {
+
+        toast.classList.remove("show");
+
+    }, 3500);
+}
 
 
-function updateProviderFields() {
+/* =========================================================
+   DATE / TIME
+========================================================= */
 
-    const type =
-        liveType.value;
+function createDateTime(date, time) {
 
-    zoomFields.classList.add("hidden");
+    return `${date}T${time}:00+05:30`;
 
-    youtubeFields.classList.add("hidden");
-
-    recordedFields.classList.add("hidden");
-
-    externalFields.classList.add("hidden");
+}
 
 
-    if (type === "ZOOM") {
+function getStatus(item) {
 
-        zoomFields.classList.remove("hidden");
+    const now =
+        new Date();
 
-        return;
+    const start =
+        item.startDateTime
+            ? new Date(
+                item.startDateTime
+            )
+            : null;
 
+    const end =
+        item.endDateTime
+            ? new Date(
+                item.endDateTime
+            )
+            : null;
+
+    if (!start) {
+        return "UPCOMING";
     }
 
-
-    if (type === "YOUTUBE_LIVE") {
-
-        youtubeFields.classList.remove("hidden");
-
-        return;
-
+    if (
+        start <= now &&
+        end &&
+        now <= end
+    ) {
+        return "LIVE";
     }
 
-
-    if (type === "RECORDED_VIDEO") {
-
-        recordedFields.classList.remove("hidden");
-
-        return;
-
+    if (
+        end &&
+        now > end
+    ) {
+        return "COMPLETED";
     }
 
-
-    if (type === "EXTERNAL_VIDEO") {
-
-        externalFields.classList.remove("hidden");
-
-    }
-
+    return "UPCOMING";
 }
 
 
@@ -215,83 +239,57 @@ function updateProviderFields() {
 
 async function loadCourses() {
 
-    course.innerHTML = `
-        <option value="">
-            Select Batch
-        </option>
-    `;
-
-    try {
-
-        const snapshot =
-            await getDocs(
-                collection(
-                    db,
-                    "zen2Courses"
-                )
-            );
-
-
-        courseData =
-            snapshot.docs.map(
-                item => ({
-
-                    id: item.id,
-
-                    ...item.data()
-
-                })
-            );
-
-
-        courseData
-            .sort(
-                (a, b) =>
-                    Number(a.order || 9999) -
-                    Number(b.order || 9999)
+    const snap =
+        await getDocs(
+            collection(
+                db,
+                "zen2Courses"
             )
-            .forEach(
-                data => {
-
-                    const option =
-                        document.createElement(
-                            "option"
-                        );
-
-                    option.value =
-                        data.id;
-
-                    option.textContent =
-                        data.name ||
-                        data.title ||
-                        data.courseName ||
-                        "Batch";
-
-                    option.dataset.name =
-                        data.name ||
-                        data.title ||
-                        data.courseName ||
-                        "";
-
-                    course.appendChild(
-                        option
-                    );
-
-                }
-            );
-
-    }
-
-    catch (error) {
-
-        console.error(error);
-
-        showFormMessage(
-            "Unable to load batches.",
-            "error"
         );
 
-    }
+    courses =
+        snap.docs.map(
+            d => ({
+                id: d.id,
+                ...d.data()
+            })
+        );
+
+    courses.sort(
+        (a, b) =>
+            Number(a.order || 0) -
+            Number(b.order || 0)
+    );
+
+
+    course.innerHTML =
+        `<option value="">Select Course</option>`;
+
+
+    courses.forEach(
+        item => {
+
+            const option =
+                document.createElement(
+                    "option"
+                );
+
+            option.value =
+                item.id;
+
+            option.textContent =
+                item.name ||
+                item.title ||
+                item.courseName ||
+                item.className ||
+                "Course";
+
+            course.appendChild(
+                option
+            );
+
+        }
+    );
 
 }
 
@@ -300,113 +298,262 @@ async function loadCourses() {
    LOAD SUBJECTS
 ========================================================= */
 
+async function loadSubjects(courseId) {
+
+    subject.innerHTML =
+        `<option value="">Select Subject</option>`;
+
+    chapter.innerHTML =
+        `<option value="">Select Chapter</option>`;
+
+    subject.disabled = true;
+    chapter.disabled = true;
+
+    if (!courseId) {
+        return;
+    }
+
+    const snap =
+        await getDocs(
+            collection(
+                db,
+                "zen2Subjects"
+            )
+        );
+
+    subjects =
+        snap.docs
+            .map(
+                d => ({
+                    id: d.id,
+                    ...d.data()
+                })
+            )
+            .filter(
+                item =>
+                    item.courseId ===
+                    courseId &&
+                    item.active !== false
+            );
+
+    subjects.sort(
+        (a, b) =>
+            Number(a.order || 0) -
+            Number(b.order || 0)
+    );
+
+
+    subjects.forEach(
+        item => {
+
+            const option =
+                document.createElement(
+                    "option"
+                );
+
+            option.value =
+                item.id;
+
+            option.textContent =
+                item.name ||
+                item.title ||
+                item.subjectName ||
+                "Subject";
+
+            subject.appendChild(
+                option
+            );
+
+        }
+    );
+
+    subject.disabled =
+        subjects.length === 0;
+
+}
+
+
+/* =========================================================
+   LOAD CHAPTERS
+========================================================= */
+
+async function loadChapters(subjectId) {
+
+    chapter.innerHTML =
+        `<option value="">Select Chapter</option>`;
+
+    chapter.disabled = true;
+
+    if (!subjectId) {
+        return;
+    }
+
+    const snap =
+        await getDocs(
+            collection(
+                db,
+                "zen2Chapters"
+            )
+        );
+
+    chapters =
+        snap.docs
+            .map(
+                d => ({
+                    id: d.id,
+                    ...d.data()
+                })
+            )
+            .filter(
+                item =>
+                    item.subjectId ===
+                    subjectId &&
+                    item.active !== false
+            );
+
+    chapters.sort(
+        (a, b) =>
+            Number(
+                a.chapterNumber ||
+                a.order ||
+                0
+            ) -
+            Number(
+                b.chapterNumber ||
+                b.order ||
+                0
+            )
+    );
+
+
+    chapters.forEach(
+        item => {
+
+            const option =
+                document.createElement(
+                    "option"
+                );
+
+            option.value =
+                item.id;
+
+            option.textContent =
+                item.name ||
+                item.title ||
+                item.chapterName ||
+                "Chapter";
+
+            chapter.appendChild(
+                option
+            );
+
+        }
+    );
+
+    chapter.disabled =
+        chapters.length === 0;
+
+}
+
+
+/* =========================================================
+   COURSE / SUBJECT EVENTS
+========================================================= */
+
 course.addEventListener(
     "change",
     async () => {
 
-        resetSelect(
-            subject,
-            "Select Subject"
+        await loadSubjects(
+            course.value
         );
 
-        resetSelect(
-            chapter,
-            "Select Chapter"
+    }
+);
+
+
+subject.addEventListener(
+    "change",
+    async () => {
+
+        await loadChapters(
+            subject.value
         );
 
-        subject.disabled = true;
+    }
+);
 
-        chapter.disabled = true;
 
+/* =========================================================
+   LIVE TYPE
+========================================================= */
 
-        if (!course.value) {
+liveType.addEventListener(
+    "change",
+    () => {
+
+        const type =
+            liveType.value;
+
+        if (type === "ZOOM") {
+
+            zoomInfo.style.display =
+                "flex";
+
+            providerFields.innerHTML =
+                "";
 
             return;
-
         }
 
-
-        try {
-
-            const snapshot =
-                await getDocs(
-                    collection(
-                        db,
-                        "zen2Subjects"
-                    )
-                );
+        zoomInfo.style.display =
+            "none";
 
 
-            const list =
-                snapshot.docs
-                    .map(
-                        item => ({
+        if (
+            type ===
+            "YOUTUBE_LIVE"
+        ) {
 
-                            id: item.id,
+            providerFields.innerHTML = `
+                <div class="field">
+                    <label>YouTube Live URL</label>
+                    <input
+                        id="providerUrl"
+                        type="url"
+                        placeholder="https://youtube.com/live/..."
+                    >
+                </div>
+            `;
 
-                            ...item.data()
+        } else if (
+            type ===
+            "RECORDED_VIDEO"
+        ) {
 
-                        })
-                    )
-                    .filter(
-                        item =>
-                            item.courseId ===
-                            course.value &&
-                            item.active !== false
-                    )
-                    .sort(
-                        (a, b) =>
-                            Number(a.order || 9999) -
-                            Number(b.order || 9999)
-                    );
+            providerFields.innerHTML = `
+                <div class="field">
+                    <label>Recorded Video URL</label>
+                    <input
+                        id="providerUrl"
+                        type="url"
+                        placeholder="Video URL"
+                    >
+                </div>
+            `;
 
+        } else {
 
-            list.forEach(
-                data => {
-
-                    const option =
-                        document.createElement(
-                            "option"
-                        );
-
-                    option.value =
-                        data.id;
-
-                    option.textContent =
-                        data.name ||
-                        data.title ||
-                        data.subjectName ||
-                        data.subject ||
-                        "Subject";
-
-                    option.dataset.name =
-                        data.name ||
-                        data.title ||
-                        data.subjectName ||
-                        data.subject ||
-                        "";
-
-                    subject.appendChild(
-                        option
-                    );
-
-                }
-            );
-
-
-            subject.disabled =
-                list.length === 0;
-
-        }
-
-        catch (error) {
-
-            console.error(error);
-
-            showFormMessage(
-                "Unable to load subjects.",
-                "error"
-            );
+            providerFields.innerHTML = `
+                <div class="field">
+                    <label>External Video URL</label>
+                    <input
+                        id="providerUrl"
+                        type="url"
+                        placeholder="https://..."
+                    >
+                </div>
+            `;
 
         }
 
@@ -415,122 +562,314 @@ course.addEventListener(
 
 
 /* =========================================================
-   LOAD CHAPTERS
+   OPEN / CLOSE FORM
 ========================================================= */
 
-subject.addEventListener(
-    "change",
-    async () => {
+function openForm() {
 
-        resetSelect(
-            chapter,
-            "Select Chapter"
+    formPanel.style.display =
+        "block";
+
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+    });
+
+}
+
+
+function closeForm() {
+
+    formPanel.style.display =
+        "none";
+
+    editingId =
+        null;
+
+    form.reset();
+
+    zoomInfo.style.display =
+        "flex";
+
+    providerFields.innerHTML =
+        "";
+
+    saveButton.textContent =
+        "Schedule Live Class";
+
+}
+
+
+newClassBtn.addEventListener(
+    "click",
+    () => {
+
+        closeForm();
+
+        openForm();
+
+    }
+);
+
+
+closeFormBtn.addEventListener(
+    "click",
+    closeForm
+);
+
+cancelBtn.addEventListener(
+    "click",
+    closeForm
+);
+
+
+/* =========================================================
+   ZOOM CREATION
+========================================================= */
+
+async function createZoomForClass() {
+
+    const start =
+        createDateTime(
+            dateStart.value,
+            timeStart.value
         );
 
-        chapter.disabled = true;
+    const minutes =
+        Number(
+            duration.value || 60
+        );
 
 
-        if (!subject.value) {
+    /*
+       IMPORTANT:
+       These are the fields sent to the deployed
+       createZoomMeeting callable function.
+    */
 
-            return;
+    const result =
+        await createZoomMeeting({
+
+            topic:
+                titleInput.value.trim(),
+
+            startTime:
+                start,
+
+            duration:
+                minutes
+
+        });
+
+
+    return result.data;
+
+}
+
+
+/* =========================================================
+   BUILD LIVE CLASS DATA
+========================================================= */
+
+function buildData(
+    zoomData = null
+) {
+
+    const selectedCourse =
+        course.options[
+            course.selectedIndex
+        ];
+
+    const selectedSubject =
+        subject.options[
+            subject.selectedIndex
+        ];
+
+    const selectedChapter =
+        chapter.options[
+            chapter.selectedIndex
+        ];
+
+
+    const type =
+        liveType.value;
+
+
+    const data = {
+
+        title:
+            titleInput.value.trim(),
+
+        teacherName:
+            teacherInput.value.trim(),
+
+        facultyName:
+            teacherInput.value.trim(),
+
+        courseId:
+            course.value,
+
+        courseName:
+            selectedCourse?.textContent ||
+            null,
+
+        subjectId:
+            subject.value,
+
+        subjectName:
+            selectedSubject?.textContent ||
+            null,
+
+        chapterId:
+            chapter.value ||
+            null,
+
+        chapterName:
+            chapter.value
+                ? selectedChapter?.textContent ||
+                  null
+                : null,
+
+        thumbnailUrl:
+            thumbnailInput.value.trim() ||
+            null,
+
+        liveType:
+            type,
+
+        mode:
+            type,
+
+        scheduledDate:
+            dateStart.value,
+
+        scheduledTime:
+            timeStart.value,
+
+        startTime:
+            timeStart.value,
+
+        endDate:
+            dateEnd.value,
+
+        endTime:
+            timeEnd.value,
+
+        startDateTime:
+            createDateTime(
+                dateStart.value,
+                timeStart.value
+            ),
+
+        endDateTime:
+            createDateTime(
+                dateEnd.value,
+                timeEnd.value
+            ),
+
+        accessType:
+            accessType.value,
+
+        requiresPurchase:
+            accessType.value === "PAID",
+
+        status:
+            "SCHEDULED",
+
+        active:
+            true,
+
+        description:
+            description.value.trim() ||
+            null,
+
+        createdAt:
+            serverTimestamp()
+
+    };
+
+
+    if (type === "ZOOM" && zoomData) {
+
+        data.zoomMeetingNumber =
+            zoomData.meetingNumber ||
+            zoomData.meetingId ||
+            null;
+
+        data.zoomMeetingId =
+            zoomData.meetingId ||
+            zoomData.meetingNumber ||
+            null;
+
+        data.zoomPassword =
+            zoomData.password ||
+            null;
+
+        data.zoomJoinUrl =
+            zoomData.joinUrl ||
+            null;
+
+        data.zoomStartUrl =
+            zoomData.startUrl ||
+            null;
+
+        data.zoomCreated =
+            true;
+
+    }
+
+
+    if (
+        type !== "ZOOM" &&
+        document.getElementById(
+            "providerUrl"
+        )
+    ) {
+
+        const url =
+            document.getElementById(
+                "providerUrl"
+            ).value.trim();
+
+        if (
+            type ===
+            "YOUTUBE_LIVE"
+        ) {
+
+            data.youtubeLiveUrl =
+                url;
+
+            data.youtubeUrl =
+                url;
 
         }
 
+        if (
+            type ===
+            "RECORDED_VIDEO"
+        ) {
 
-        try {
-
-            const snapshot =
-                await getDocs(
-                    collection(
-                        db,
-                        "zen2Chapters"
-                    )
-                );
-
-
-            const list =
-                snapshot.docs
-                    .map(
-                        item => ({
-
-                            id: item.id,
-
-                            ...item.data()
-
-                        })
-                    )
-                    .filter(
-                        item =>
-                            item.subjectId ===
-                            subject.value &&
-                            item.active !== false
-                    )
-                    .sort(
-                        (a, b) =>
-                            Number(
-                                a.order ??
-                                a.chapterNumber ??
-                                9999
-                            ) -
-                            Number(
-                                b.order ??
-                                b.chapterNumber ??
-                                9999
-                            )
-                    );
-
-
-            list.forEach(
-                data => {
-
-                    const option =
-                        document.createElement(
-                            "option"
-                        );
-
-                    option.value =
-                        data.id;
-
-                    option.textContent =
-                        data.name ||
-                        data.title ||
-                        data.chapterName ||
-                        data.chapterTitle ||
-                        "Chapter";
-
-                    option.dataset.name =
-                        data.name ||
-                        data.title ||
-                        data.chapterName ||
-                        data.chapterTitle ||
-                        "";
-
-                    chapter.appendChild(
-                        option
-                    );
-
-                }
-            );
-
-
-            chapter.disabled =
-                list.length === 0;
+            data.videoUrl =
+                url;
 
         }
 
-        catch (error) {
+        if (
+            type ===
+            "EXTERNAL_VIDEO"
+        ) {
 
-            console.error(error);
-
-            showFormMessage(
-                "Unable to load chapters.",
-                "error"
-            );
+            data.externalVideoUrl =
+                url;
 
         }
 
     }
-);
+
+
+    return data;
+
+}
 
 
 /* =========================================================
@@ -543,301 +882,90 @@ form.addEventListener(
 
         event.preventDefault();
 
-        clearFormMessage();
-
-
-        const title =
-            titleInput.value.trim();
-
-        const teacher =
-            teacherInput.value.trim();
-
-        const type =
-            liveType.value;
-
-        const dateStart =
-            startDate.value;
-
-        const timeStart =
-            startTime.value;
-
-        const dateEnd =
-            endDate.value;
-
-        const timeEnd =
-            endTime.value;
-
 
         if (
-            !title ||
-            !teacher ||
             !course.value ||
-            !subject.value ||
-            !dateStart ||
-            !timeStart ||
-            !dateEnd ||
-            !timeEnd
+            !subject.value
         ) {
 
-            showFormMessage(
-                "Please fill all required fields.",
-                "error"
+            showToast(
+                "Please select course and subject."
             );
 
             return;
-
         }
 
 
         if (
-            dateEnd + "T" + timeEnd <
-            dateStart + "T" + timeStart
+            dateStart.value >
+            dateEnd.value
         ) {
 
-            showFormMessage(
-                "End time cannot be before start time.",
-                "error"
+            showToast(
+                "End date cannot be before start date."
             );
 
             return;
-
         }
 
 
-        if (
-            type === "ZOOM" &&
-            (
-                !zoomMeetingNumber.value.trim() ||
-                !zoomPassword.value.trim()
-            )
-        ) {
-
-            showFormMessage(
-                "Enter the Zoom Meeting ID and passcode.",
-                "error"
-            );
-
-            return;
-
-        }
-
-
-        if (
-            type === "YOUTUBE_LIVE" &&
-            !youtubeLiveUrl.value.trim()
-        ) {
-
-            showFormMessage(
-                "Enter the YouTube Live URL.",
-                "error"
-            );
-
-            return;
-
-        }
-
-
-        if (
-            type === "RECORDED_VIDEO" &&
-            !videoUrl.value.trim()
-        ) {
-
-            showFormMessage(
-                "Enter the recorded video URL.",
-                "error"
-            );
-
-            return;
-
-        }
-
-
-        if (
-            type === "EXTERNAL_VIDEO" &&
-            !externalVideoUrl.value.trim()
-        ) {
-
-            showFormMessage(
-                "Enter the external video URL.",
-                "error"
-            );
-
-            return;
-
-        }
-
-
-        const courseOption =
-            course.options[
-                course.selectedIndex
-            ];
-
-        const subjectOption =
-            subject.options[
-                subject.selectedIndex
-            ];
-
-        const chapterOption =
-            chapter.options[
-                chapter.selectedIndex
-            ];
-
-
-        const startDateTime =
-            createTimestamp(
-                dateStart,
-                timeStart
-            );
-
-        const endDateTime =
-            createTimestamp(
-                dateEnd,
-                timeEnd
-            );
-
-
-        const data = {
-
-            title,
-
-            teacherName: teacher,
-
-            facultyName: teacher,
-
-
-            courseId:
-                course.value,
-
-            courseName:
-                courseOption.dataset.name ||
-                courseOption.textContent,
-
-
-            subjectId:
-                subject.value,
-
-            subjectName:
-                subjectOption.dataset.name ||
-                subjectOption.textContent,
-
-
-            chapterId:
-                chapter.value ||
-                null,
-
-            chapterName:
-                chapter.value
-                    ? (
-                        chapterOption.dataset.name ||
-                        chapterOption.textContent
-                    )
-                    : null,
-
-
-            thumbnailUrl:
-                thumbnailInput.value.trim() ||
-                null,
-
-
-            liveType: type,
-
-            mode:
-                type === "ZOOM"
-                    ? "ZOOM"
-                    : type,
-
-
-            zoomMeetingNumber:
-                type === "ZOOM"
-                    ? zoomMeetingNumber.value.trim()
-                    : null,
-
-            zoomMeetingId:
-                type === "ZOOM"
-                    ? zoomMeetingNumber.value.trim()
-                    : null,
-
-            zoomPassword:
-                type === "ZOOM"
-                    ? zoomPassword.value.trim()
-                    : null,
-
-
-            youtubeLiveUrl:
-                type === "YOUTUBE_LIVE"
-                    ? youtubeLiveUrl.value.trim()
-                    : null,
-
-            youtubeUrl:
-                type === "YOUTUBE_LIVE"
-                    ? youtubeLiveUrl.value.trim()
-                    : null,
-
-
-            videoUrl:
-                type === "RECORDED_VIDEO"
-                    ? videoUrl.value.trim()
-                    : null,
-
-
-            externalVideoUrl:
-                type === "EXTERNAL_VIDEO"
-                    ? externalVideoUrl.value.trim()
-                    : null,
-
-
-            scheduledDate:
-                dateStart,
-
-            scheduledTime:
-                timeStart,
-
-            startTime:
-                timeStart,
-
-            endDate:
-                dateEnd,
-
-            endTime:
-                timeEnd,
-
-
-            startDateTime,
-
-            endDateTime,
-
-
-            accessType:
-                accessType.value,
-
-            requiresPurchase:
-                accessType.value === "PAID",
-
-
-            status:
-                "SCHEDULED",
-
-            active:
-                true,
-
-            description:
-                description.value.trim() ||
-                null
-
-        };
-
-
-        saveButton.disabled = true;
-
-        saveButton.textContent =
-            editingId
-                ? "SAVING..."
-                : "SCHEDULING...";
+        saveButton.disabled =
+            true;
 
 
         try {
 
+            let zoomData =
+                null;
+
+
+            /*
+              CREATE ZOOM AUTOMATICALLY
+            */
+
+            if (
+                liveType.value ===
+                "ZOOM"
+            ) {
+
+                saveButton.textContent =
+                    "CREATING ZOOM MEETING...";
+
+
+                zoomData =
+                    await createZoomForClass();
+
+
+                if (
+                    !zoomData
+                ) {
+
+                    throw new Error(
+                        "Zoom meeting was not created."
+                    );
+
+                }
+
+            }
+
+
+            saveButton.textContent =
+                "SAVING CLASS...";
+
+
+            const data =
+                buildData(
+                    zoomData
+                );
+
+
             if (editingId) {
+
+                delete data.createdAt;
+
+                data.updatedAt =
+                    serverTimestamp();
+
 
                 await updateDoc(
                     doc(
@@ -845,74 +973,71 @@ form.addEventListener(
                         "liveClasses",
                         editingId
                     ),
-                    {
-
-                        ...data,
-
-                        updatedAt:
-                            serverTimestamp()
-
-                    }
+                    data
                 );
 
 
                 showToast(
-                    "Live class updated."
+                    "Live class updated successfully."
                 );
 
-            }
-
-            else {
+            } else {
 
                 await addDoc(
                     collection(
                         db,
                         "liveClasses"
                     ),
-                    {
-
-                        ...data,
-
-                        createdAt:
-                            serverTimestamp()
-
-                    }
+                    data
                 );
 
 
-                showToast(
-                    "Live class scheduled."
-                );
+                if (
+                    liveType.value ===
+                    "ZOOM"
+                ) {
+
+                    showToast(
+                        "Live class scheduled and Zoom meeting created."
+                    );
+
+                } else {
+
+                    showToast(
+                        "Live class scheduled successfully."
+                    );
+
+                }
 
             }
 
 
-            resetForm();
+            closeForm();
 
-            await loadClasses();
+            await loadLiveClasses();
 
-        }
 
-        catch (error) {
+        } catch (error) {
 
-            console.error(error);
-
-            showFormMessage(
-                error.message ||
-                "Unable to save live class.",
-                "error"
+            console.error(
+                "Live class error:",
+                error
             );
 
-        }
 
-        finally {
+            showToast(
+                error?.message ||
+                "Unable to save live class."
+            );
+
+        } finally {
 
             saveButton.disabled =
                 false;
 
             saveButton.textContent =
                 editingId
-                    ? "Save Changes"
+                    ? "Update Live Class"
                     : "Schedule Live Class";
 
         }
@@ -922,238 +1047,272 @@ form.addEventListener(
 
 
 /* =========================================================
-   LOAD CLASSES
+   LOAD LIVE CLASSES
 ========================================================= */
 
-async function loadClasses() {
+async function loadLiveClasses() {
 
-    classes.innerHTML = `
-        <div class="loading">
-            Loading classes...
-        </div>
-    `;
+    loading.classList.remove(
+        "hidden"
+    );
 
-
-    try {
-
-        const snapshot =
-            await getDocs(
-                collection(
-                    db,
-                    "liveClasses"
-                )
-            );
+    emptyState.classList.add(
+        "hidden"
+    );
 
 
-        let data =
-            snapshot.docs.map(
-                item => ({
-
-                    id: item.id,
-
-                    ...item.data()
-
-                })
-            );
-
-
-        data.sort(
-            (a, b) =>
-                getDateValue(a.startDateTime, a.scheduledDate, a.scheduledTime) -
-                getDateValue(b.startDateTime, b.scheduledDate, b.scheduledTime)
+    const snap =
+        await getDocs(
+            collection(
+                db,
+                "liveClasses"
+            )
         );
 
 
-        classCount.textContent =
-            data.length;
+    liveClasses =
+        snap.docs.map(
+            d => ({
+                id: d.id,
+                ...d.data()
+            })
+        );
 
 
-        if (!data.length) {
+    liveClasses.sort(
+        (a, b) => {
 
-            classes.innerHTML = `
-                <div class="empty-state">
-                    No live classes scheduled yet.
-                </div>
-            `;
+            const aa =
+                a.startDateTime || "";
 
-            return;
+            const bb =
+                b.startDateTime || "";
+
+            return aa.localeCompare(
+                bb
+            );
 
         }
+    );
 
 
-        classes.innerHTML =
-            data
-                .map(
-                    item =>
-                        createClassCard(
-                            item.id,
-                            item
-                        )
-                )
-                .join("");
-
-
-        attachClassActions();
-
-    }
-
-    catch (error) {
-
-        console.error(error);
-
-        classes.innerHTML = `
-            <div class="empty-state">
-                Unable to load live classes.
-            </div>
-        `;
-
-    }
+    renderClasses();
 
 }
 
 
 /* =========================================================
-   CARD
+   RENDER
 ========================================================= */
 
-function createClassCard(
-    id,
-    data
-) {
+function renderClasses() {
 
-    const status =
-        getClassStatus(data);
-
-    const provider =
-        getProviderName(
-            data.liveType
-        );
+    loading.classList.add(
+        "hidden"
+    );
 
 
-    const thumb =
-        data.thumbnailUrl
-            ? `
-                <img
-                    src="${escapeAttribute(data.thumbnailUrl)}"
-                    alt=""
-                    loading="lazy"
-                    onerror="this.style.display='none'"
-                >
-            `
-            : `
-                <div class="class-thumb-empty">
-                    ZENOVA
-                </div>
-            `;
+    let upcoming = 0;
+    let live = 0;
+    let completed = 0;
 
 
-    return `
-
-        <article
-            class="class-card"
-        >
-
-            <div class="class-thumb">
-                ${thumb}
-            </div>
+    classesList.innerHTML =
+        "";
 
 
-            <div class="class-main">
+    liveClasses.forEach(
+        item => {
 
-                <div class="class-title">
-                    ${escapeHtml(
-                        data.title ||
-                        "Live Class"
-                    )}
-                </div>
+            const status =
+                getStatus(item);
 
 
-                <div class="class-meta">
+            if (
+                status ===
+                "UPCOMING"
+            ) upcoming++;
 
-                    <span>
+            if (
+                status ===
+                "LIVE"
+            ) live++;
+
+            if (
+                status ===
+                "COMPLETED"
+            ) completed++;
+
+
+            const card =
+                document.createElement(
+                    "div"
+                );
+
+            card.className =
+                "class-card";
+
+
+            const zoom =
+                item.liveType ===
+                "ZOOM";
+
+
+            card.innerHTML = `
+
+                <div class="class-main">
+
+                    <div class="class-title">
                         ${escapeHtml(
-                            data.courseName ||
-                            "-"
+                            item.title ||
+                            "Untitled Class"
                         )}
-                    </span>
+                    </div>
 
-                    <span>
-                        ${escapeHtml(
-                            data.subjectName ||
-                            "-"
-                        )}
-                    </span>
+                    <div class="class-meta">
 
-                    ${
-                        data.chapterName
-                            ? `
-                                <span>
+                        <span class="badge">
+                            ${escapeHtml(
+                                item.courseName ||
+                                "Course"
+                            )}
+                        </span>
+
+                        <span class="badge">
+                            ${escapeHtml(
+                                item.subjectName ||
+                                "Subject"
+                            )}
+                        </span>
+
+                        ${
+                            zoom
+                                ? `
+                                <span class="badge zoom">
+                                    ZOOM
+                                </span>
+                                `
+                                : `
+                                <span class="badge">
                                     ${escapeHtml(
-                                        data.chapterName
+                                        item.liveType ||
+                                        ""
                                     )}
                                 </span>
+                                `
+                        }
+
+                        <span class="badge ${status.toLowerCase()}">
+                            ${status}
+                        </span>
+
+                    </div>
+
+                    <p>
+                        ${escapeHtml(
+                            item.teacherName ||
+                            ""
+                        )}
+                    </p>
+
+                    <p>
+                        ${escapeHtml(
+                            item.scheduledDate ||
+                            ""
+                        )}
+                        •
+                        ${escapeHtml(
+                            item.scheduledTime ||
+                            ""
+                        )}
+                    </p>
+
+                    ${
+                        zoom &&
+                        item.zoomMeetingNumber
+                            ? `
+                            <p>
+                                Zoom Meeting:
+                                <strong>
+                                    ${escapeHtml(
+                                        String(
+                                            item.zoomMeetingNumber
+                                        )
+                                    )}
+                                </strong>
+                            </p>
                             `
                             : ""
                     }
 
-                    <span>
-                        ${escapeHtml(
-                            data.teacherName ||
-                            data.facultyName ||
-                            "-"
-                        )}
-                    </span>
-
-                    <span>
-                        ${formatDateTime(data)}
-                    </span>
-
                 </div>
 
 
-                <span
-                    class="class-provider ${
-                        data.liveType === "ZOOM"
-                            ? "zoom"
+                <div class="class-actions">
+
+                    ${
+                        zoom &&
+                        item.zoomJoinUrl
+                            ? `
+                            <button
+                                class="small-btn"
+                                data-action="zoom"
+                                data-id="${item.id}"
+                            >
+                                Zoom Link
+                            </button>
+                            `
                             : ""
-                    }"
-                >
-                    ${escapeHtml(provider)}
-                </span>
+                    }
+
+                    <button
+                        class="small-btn"
+                        data-action="edit"
+                        data-id="${item.id}"
+                    >
+                        Edit
+                    </button>
+
+                    <button
+                        class="small-btn danger"
+                        data-action="delete"
+                        data-id="${item.id}"
+                    >
+                        Delete
+                    </button>
+
+                </div>
+
+            `;
 
 
-                <span
-                    class="class-status ${status.className}"
-                >
-                    ${escapeHtml(status.label)}
-                </span>
+            classesList.appendChild(
+                card
+            );
 
-            </div>
+        }
+    );
 
 
-            <div class="class-actions">
+    upcomingCount.textContent =
+        upcoming;
 
-                <button
-                    type="button"
-                    class="action-button edit"
-                    data-edit="${escapeAttribute(id)}"
-                >
-                    Edit
-                </button>
+    liveCount.textContent =
+        live;
 
-                <button
-                    type="button"
-                    class="action-button delete"
-                    data-delete="${escapeAttribute(id)}"
-                >
-                    Delete
-                </button>
+    completedCount.textContent =
+        completed;
 
-            </div>
 
-        </article>
+    if (
+        liveClasses.length === 0
+    ) {
 
-    `;
+        emptyState.classList.remove(
+            "hidden"
+        );
+
+    }
 
 }
 
@@ -1162,342 +1321,190 @@ function createClassCard(
    ACTIONS
 ========================================================= */
 
-function attachClassActions() {
+classesList.addEventListener(
+    "click",
+    async event => {
 
-    document
-        .querySelectorAll("[data-edit]")
-        .forEach(
-            button => {
+        const button =
+            event.target.closest(
+                "button"
+            );
 
-                button.addEventListener(
-                    "click",
-                    () => {
+        if (!button) {
+            return;
+        }
 
-                        const id =
-                            button.dataset.edit;
 
-                        editClass(id);
+        const id =
+            button.dataset.id;
 
-                    }
+        const action =
+            button.dataset.action;
+
+
+        const item =
+            liveClasses.find(
+                x => x.id === id
+            );
+
+
+        if (!item) {
+            return;
+        }
+
+
+        if (
+            action ===
+            "zoom"
+        ) {
+
+            if (
+                item.zoomJoinUrl
+            ) {
+
+                window.open(
+                    item.zoomJoinUrl,
+                    "_blank"
                 );
 
             }
-        );
-
-
-    document
-        .querySelectorAll("[data-delete]")
-        .forEach(
-            button => {
-
-                button.addEventListener(
-                    "click",
-                    () => {
-
-                        const id =
-                            button.dataset.delete;
-
-                        deleteClass(id);
-
-                    }
-                );
-
-            }
-        );
-
-}
-
-
-/* =========================================================
-   EDIT
-========================================================= */
-
-async function editClass(id) {
-
-    try {
-
-        const snapshot =
-            await getDocs(
-                collection(
-                    db,
-                    "liveClasses"
-                )
-            );
-
-
-        const found =
-            snapshot.docs.find(
-                item =>
-                    item.id === id
-            );
-
-
-        if (!found) {
-
-            showToast(
-                "Class not found."
-            );
 
             return;
 
         }
 
 
-        const data =
-            found.data();
-
-
-        editingId = id;
-
-
-        titleInput.value =
-            data.title || "";
-
-        teacherInput.value =
-            data.teacherName ||
-            data.facultyName ||
-            "";
-
-        liveType.value =
-            data.liveType ||
-            "ZOOM";
-
-
-        await setCourseValue(
-            data.courseId
-        );
-
-
-        await setSubjectValue(
-            data.subjectId
-        );
-
-
-        await setChapterValue(
-            data.chapterId
-        );
-
-
-        thumbnailInput.value =
-            data.thumbnailUrl ||
-            "";
-
-
-        const start =
-            extractDateTime(
-                data.startDateTime,
-                data.scheduledDate,
-                data.scheduledTime
-            );
-
-        const end =
-            extractDateTime(
-                data.endDateTime,
-                data.endDate,
-                data.endTime
-            );
-
-
-        startDate.value =
-            start.date;
-
-        startTime.value =
-            start.time;
-
-        endDate.value =
-            end.date;
-
-        endTime.value =
-            end.time;
-
-
-        accessType.value =
-            data.accessType ||
-            "FREE";
-
-        description.value =
-            data.description ||
-            "";
-
-
-        zoomMeetingNumber.value =
-            data.zoomMeetingNumber ||
-            data.zoomMeetingId ||
-            "";
-
-        zoomPassword.value =
-            data.zoomPassword ||
-            "";
-
-
-        youtubeLiveUrl.value =
-            data.youtubeLiveUrl ||
-            data.youtubeUrl ||
-            "";
-
-
-        videoUrl.value =
-            data.videoUrl ||
-            "";
-
-
-        externalVideoUrl.value =
-            data.externalVideoUrl ||
-            "";
-
-
-        updateProviderFields();
-
-
-        saveButton.textContent =
-            "Save Changes";
-
-        cancelEditButton.classList.remove(
-            "hidden"
-        );
-
-
-        window.scrollTo({
-            top: 0,
-            behavior: "smooth"
-        });
-
-    }
-
-    catch (error) {
-
-        console.error(error);
-
-        showToast(
-            "Unable to open class."
-        );
-
-    }
-
-}
-
-
-/* =========================================================
-   DELETE
-========================================================= */
-
-async function deleteClass(id) {
-
-    const confirmed =
-        confirm(
-            "Delete this live class?"
-        );
-
-
-    if (!confirmed) {
-
-        return;
-
-    }
-
-
-    try {
-
-        await deleteDoc(
-            doc(
-                db,
-                "liveClasses",
-                id
-            )
-        );
-
-
-        showToast(
-            "Live class deleted."
-        );
-
-
         if (
-            editingId === id
+            action ===
+            "delete"
         ) {
 
-            resetForm();
+            const yes =
+                confirm(
+                    "Delete this live class?"
+                );
+
+            if (!yes) {
+                return;
+            }
+
+
+            await deleteDoc(
+                doc(
+                    db,
+                    "liveClasses",
+                    id
+                )
+            );
+
+
+            showToast(
+                "Live class deleted."
+            );
+
+
+            await loadLiveClasses();
+
+            return;
 
         }
 
 
-        await loadClasses();
+        if (
+            action ===
+            "edit"
+        ) {
+
+            editingId =
+                id;
+
+            openForm();
+
+
+            titleInput.value =
+                item.title || "";
+
+            teacherInput.value =
+                item.teacherName || "";
+
+            liveType.value =
+                item.liveType ||
+                "ZOOM";
+
+            thumbnailInput.value =
+                item.thumbnailUrl ||
+                "";
+
+            dateStart.value =
+                item.scheduledDate ||
+                "";
+
+            timeStart.value =
+                item.scheduledTime ||
+                "";
+
+            dateEnd.value =
+                item.endDate ||
+                item.scheduledDate ||
+                "";
+
+            timeEnd.value =
+                item.endTime ||
+                "";
+
+            accessType.value =
+                item.accessType ||
+                "PAID";
+
+            description.value =
+                item.description ||
+                "";
+
+
+            await loadSubjects(
+                item.courseId
+            );
+
+            course.value =
+                item.courseId ||
+                "";
+
+
+            await loadChapters(
+                item.subjectId
+            );
+
+            subject.value =
+                item.subjectId ||
+                "";
+
+            chapter.value =
+                item.chapterId ||
+                "";
+
+
+            document.getElementById(
+                "formTitle"
+            ).textContent =
+                "Edit Live Class";
+
+
+            saveButton.textContent =
+                "Update Live Class";
+
+        }
 
     }
-
-    catch (error) {
-
-        console.error(error);
-
-        showToast(
-            "Unable to delete class."
-        );
-
-    }
-
-}
-
-
-/* =========================================================
-   CANCEL EDIT
-========================================================= */
-
-cancelEditButton.addEventListener(
-    "click",
-    resetForm
 );
-
-
-function resetForm() {
-
-    editingId = null;
-
-    form.reset();
-
-
-    resetSelect(
-        subject,
-        "Select Subject"
-    );
-
-    resetSelect(
-        chapter,
-        "Select Chapter"
-    );
-
-
-    subject.disabled = true;
-
-    chapter.disabled = true;
-
-
-    liveType.value =
-        "ZOOM";
-
-    updateProviderFields();
-
-
-    saveButton.textContent =
-        "Schedule Live Class";
-
-
-    cancelEditButton.classList.add(
-        "hidden"
-    );
-
-
-    clearFormMessage();
-
-}
 
 
 /* =========================================================
    REFRESH
 ========================================================= */
 
-refreshButton.addEventListener(
+refreshBtn.addEventListener(
     "click",
-    loadClasses
+    loadLiveClasses
 );
 
 
@@ -1505,528 +1512,65 @@ refreshButton.addEventListener(
    HELPERS
 ========================================================= */
 
-function resetSelect(
-    element,
-    label
-) {
-
-    element.innerHTML = `
-        <option value="">
-            ${label}
-        </option>
-    `;
-
-}
-
-
-function createTimestamp(
-    date,
-    time
-) {
-
-    return Timestamp.fromDate(
-        new Date(
-            `${date}T${time}:00+05:30`
-        )
-    );
-
-}
-
-
-function getClassStatus(data) {
-
-    const now =
-        Date.now();
-
-
-    const start =
-        getDateValue(
-            data.startDateTime,
-            data.scheduledDate,
-            data.scheduledTime
-        );
-
-
-    const end =
-        getDateValue(
-            data.endDateTime,
-            data.endDate ||
-            data.scheduledDate,
-            data.endTime ||
-            data.scheduledTime
-        );
-
-
-    const actualEnd =
-        end > start
-            ? end
-            : start + 2 * 60 * 60 * 1000;
-
-
-    if (
-        now < start
-    ) {
-
-        return {
-            label: "UPCOMING",
-            className: "upcoming"
-        };
-
-    }
-
-
-    if (
-        now >= start &&
-        now <= actualEnd
-    ) {
-
-        return {
-            label: "LIVE NOW",
-            className: "live"
-        };
-
-    }
-
-
-    return {
-        label: "ENDED",
-        className: "ended"
-    };
-
-}
-
-
-function getDateValue(
-    timestamp,
-    date,
-    time
-) {
-
-    if (
-        timestamp &&
-        typeof timestamp.toMillis === "function"
-    ) {
-
-        return timestamp.toMillis();
-
-    }
-
-
-    if (
-        timestamp &&
-        timestamp.seconds
-    ) {
-
-        return (
-            Number(timestamp.seconds) *
-            1000
-        );
-
-    }
-
-
-    if (
-        date &&
-        time
-    ) {
-
-        return new Date(
-            `${date}T${time}:00+05:30`
-        ).getTime();
-
-    }
-
-
-    return 0;
-
-}
-
-
-function extractDateTime(
-    timestamp,
-    fallbackDate,
-    fallbackTime
-) {
-
-    if (
-        timestamp &&
-        typeof timestamp.toDate === "function"
-    ) {
-
-        const date =
-            timestamp.toDate();
-
-
-        return {
-            date:
-                formatInputDate(date),
-            time:
-                formatInputTime(date)
-        };
-
-    }
-
-
-    return {
-        date:
-            fallbackDate || "",
-        time:
-            fallbackTime || ""
-    };
-
-}
-
-
-function formatInputDate(
-    date
-) {
-
-    return [
-        date.getFullYear(),
-        String(
-            date.getMonth() + 1
-        ).padStart(2, "0"),
-        String(
-            date.getDate()
-        ).padStart(2, "0")
-    ].join("-");
-
-}
-
-
-function formatInputTime(
-    date
-) {
-
-    return [
-        String(
-            date.getHours()
-        ).padStart(2, "0"),
-        String(
-            date.getMinutes()
-        ).padStart(2, "0")
-    ].join(":");
-
-}
-
-
-function formatDateTime(data) {
-
-    const value =
-        getDateValue(
-            data.startDateTime,
-            data.scheduledDate,
-            data.scheduledTime
-        );
-
-
-    if (!value) {
-
-        return "-";
-
-    }
-
-
-    return new Intl.DateTimeFormat(
-        "en-IN",
-        {
-            day: "2-digit",
-            month: "short",
-            year: "numeric",
-            hour: "2-digit",
-            minute: "2-digit",
-            hour12: true,
-            timeZone: "Asia/Kolkata"
-        }
-    ).format(
-        new Date(value)
-    );
-
-}
-
-
-function getProviderName(
-    type
-) {
-
-    switch (type) {
-
-        case "ZOOM":
-            return "ZOOM CLASSROOM";
-
-        case "YOUTUBE_LIVE":
-            return "YOUTUBE LIVE";
-
-        case "RECORDED_VIDEO":
-            return "RECORDED VIDEO";
-
-        case "EXTERNAL_VIDEO":
-            return "EXTERNAL VIDEO";
-
-        default:
-            return "LIVE CLASS";
-
-    }
-
-}
-
-
-async function setCourseValue(
-    courseId
-) {
-
-    if (!courseId) {
-
-        return;
-
-    }
-
-
-    course.value =
-        courseId;
-
-}
-
-
-async function setSubjectValue(
-    subjectId
-) {
-
-    if (!subjectId) {
-
-        return;
-
-    }
-
-
-    const snapshot =
-        await getDocs(
-            collection(
-                db,
-                "zen2Subjects"
-            )
-        );
-
-
-    resetSelect(
-        subject,
-        "Select Subject"
-    );
-
-
-    snapshot.docs
-        .map(
-            item => ({
-
-                id: item.id,
-
-                ...item.data()
-
-            })
-        )
-        .filter(
-            item =>
-                item.courseId ===
-                course.value &&
-                item.active !== false
-        )
-        .forEach(
-            data => {
-
-                const option =
-                    document.createElement(
-                        "option"
-                    );
-
-                option.value =
-                    data.id;
-
-                option.textContent =
-                    data.name ||
-                    data.title ||
-                    "Subject";
-
-                option.dataset.name =
-                    option.textContent;
-
-                subject.appendChild(
-                    option
-                );
-
-            }
-        );
-
-
-    subject.disabled = false;
-
-    subject.value =
-        subjectId;
-
-}
-
-
-async function setChapterValue(
-    chapterId
-) {
-
-    resetSelect(
-        chapter,
-        "Select Chapter"
-    );
-
-
-    if (!chapterId) {
-
-        chapter.disabled = false;
-
-        return;
-
-    }
-
-
-    const snapshot =
-        await getDocs(
-            collection(
-                db,
-                "zen2Chapters"
-            )
-        );
-
-
-    snapshot.docs
-        .map(
-            item => ({
-
-                id: item.id,
-
-                ...item.data()
-
-            })
-        )
-        .filter(
-            item =>
-                item.subjectId ===
-                subject.value &&
-                item.active !== false
-        )
-        .sort(
-            (a, b) =>
-                Number(
-                    a.order ??
-                    a.chapterNumber ??
-                    9999
-                ) -
-                Number(
-                    b.order ??
-                    b.chapterNumber ??
-                    9999
-                )
-        )
-        .forEach(
-            data => {
-
-                const option =
-                    document.createElement(
-                        "option"
-                    );
-
-                option.value =
-                    data.id;
-
-                option.textContent =
-                    data.name ||
-                    data.title ||
-                    "Chapter";
-
-                option.dataset.name =
-                    option.textContent;
-
-                chapter.appendChild(
-                    option
-                );
-
-            }
-        );
-
-
-    chapter.disabled = false;
-
-    chapter.value =
-        chapterId;
-
-}
-
-
-function showFormMessage(
-    message,
-    type
-) {
-
-    formMessage.textContent =
-        message;
-
-    formMessage.className =
-        `form-message ${type}`;
-
-}
-
-
-function clearFormMessage() {
-
-    formMessage.textContent = "";
-
-    formMessage.className =
-        "form-message";
-
-}
-
-
-function showToast(
-    message
-) {
-
-    toast.textContent =
-        message;
-
-    toast.classList.add(
-        "show"
-    );
-
-
-    setTimeout(
-        () => {
-
-            toast.classList.remove(
-                "show"
-            );
-
-        },
-        2500
-    );
-
-}
-
-
-function escapeHtml(
-    value
-) {
+function escapeHtml(value) {
 
     return String(
         value ?? ""
     )
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
+        .replaceAll(
+            "&",
+            "&amp;"
+        )
+        .replaceAll(
+            "<",
+            "&lt;"
+        )
+        .replaceAll(
+            ">",
+            "&gt;"
+        )
+        .replaceAll(
+            '"',
+            "&quot;"
+        )
+        .replaceAll(
+            "'",
+            "&#039;"
+        );
 
 }
 
 
-function escapeAttribute(
-    value
-) {
+/* =========================================================
+   INITIAL LOAD
+========================================================= */
 
-    return escapeHtml(value);
+async function loadAll() {
 
-}
+    try {
+
+        await loadCourses();
+
+        await loadLiveClasses();
+
+        liveType.dispatchEvent(
+            new Event("change")
+        );
+
+    } catch (error) {
+
+        console.error(
+            error
+        );
+
+        showToast(
+            error?.message ||
+            "Unable to load Live Class CRM."
+        );
+
+        loading.textContent =
+            "Unable to load classes.";
+
+    }
+
+        }
