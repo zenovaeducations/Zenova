@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
 
     <meta
@@ -8,65 +10,82 @@
         content="width=device-width, initial-scale=1.0"
     >
 
-    <title>Zenova | Live Classes</title>
+    <meta
+        name="theme-color"
+        content="#ffffff"
+    >
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <title>Zenova — Live Classes</title>
 
     <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700&display=swap"
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700;700;800&display=swap"
         rel="stylesheet"
     >
 
-    <link rel="stylesheet" href="./live.css">
+    <link
+        rel="stylesheet"
+        href="./live.css"
+    >
+
 </head>
+
 
 <body>
 
-    <!-- =====================================================
-         TOP BAR
-    ====================================================== -->
 
-    <header class="topbar">
+<header class="topbar">
 
-        <button
-            id="backButton"
-            class="back-button"
-            type="button"
-        >
-            <span class="back-icon">‹</span>
-            <span>Back</span>
-        </button>
+    <button
+        id="backButton"
+        class="back-button"
+        type="button"
+        aria-label="Go back"
+    >
+        ←
+    </button>
 
+
+    <div class="topbar-title">
 
         <div class="brand">
-
-            <div class="brand-title">
-                ZENOVA
-            </div>
-
-            <div class="brand-subtitle">
-                LIVE CLASSES
-            </div>
-
+            ZENOVA
         </div>
 
+        <span>
+            LIVE CLASSES
+        </span>
 
-        <div class="top-space"></div>
-
-    </header>
+    </div>
 
 
-    <!-- =====================================================
-         LOADING
-    ====================================================== -->
+    <div class="topbar-spacer"></div>
+
+</header>
+
+
+
+<main class="page">
+
+
+    <!-- LOADING -->
 
     <section
         id="loadingState"
-        class="state-screen"
+        class="state-card"
     >
 
-        <div class="loader"></div>
+        <div class="spinner"></div>
 
         <p>
             Loading live classes...
@@ -75,76 +94,67 @@
     </section>
 
 
-    <!-- =====================================================
-         ERROR
-    ====================================================== -->
+
+    <!-- ERROR -->
 
     <section
         id="errorState"
-        class="state-screen hidden"
+        class="state-card error-state hidden"
     >
 
-        <div class="error-icon">
+        <div class="state-icon">
             !
         </div>
 
         <h2>
-            Unable to load live classes
+            Unable to load classes
         </h2>
 
-        <p id="errorMessage">
-            Something went wrong.
+        <p id="errorText">
+            Please try again.
         </p>
 
         <button
-            id="errorBackButton"
-            class="dark-button"
+            id="retryButton"
             type="button"
+            class="dark-button"
         >
-            Go Back
+            Try Again
         </button>
 
     </section>
 
 
-    <!-- =====================================================
-         APP
-    ====================================================== -->
 
-    <main
+    <!-- APP -->
+
+    <div
         id="liveApp"
-        class="live-app hidden"
+        class="hidden"
     >
 
-        <!-- =================================================
-             INTRO
-        ================================================== -->
+
+        <!-- PAGE HEADER -->
 
         <section class="intro">
 
-            <div>
+            <span class="eyebrow">
+                YOUR CLASSROOM
+            </span>
 
-                <span class="eyebrow">
-                    ZENOVA LEARNING
-                </span>
+            <h1>
+                Live Classes
+            </h1>
 
-                <h1>
-                    Live Classes
-                </h1>
-
-                <p>
-                    Join your live classes, or watch recordings
-                    of classes you missed.
-                </p>
-
-            </div>
+            <p>
+                Attend your scheduled classes and watch missed classes later.
+            </p>
 
         </section>
 
 
-        <!-- =================================================
-             TODAY
-        ================================================== -->
+
+        <!-- TODAY -->
 
         <section class="section">
 
@@ -152,7 +162,7 @@
 
                 <div>
 
-                    <span class="section-eyebrow">
+                    <span class="eyebrow">
                         TODAY
                     </span>
 
@@ -162,149 +172,57 @@
 
                 </div>
 
+                <div
+                    id="todayDate"
+                    class="date-label"
+                ></div>
+
             </div>
 
 
             <div
                 id="todayClasses"
-                class="today-classes"
+                class="today-list"
             ></div>
 
 
             <div
                 id="todayEmpty"
-                class="empty-state hidden"
+                class="empty-card hidden"
             >
 
                 <div class="empty-icon">
                     ◷
                 </div>
 
-                <h3>
+                <strong>
                     No classes today
-                </h3>
+                </strong>
 
-                <p>
+                <span>
                     There are no live classes scheduled for today.
-                </p>
+                </span>
 
             </div>
 
         </section>
 
 
-        <!-- =================================================
-             UPCOMING
-        ================================================== -->
 
-        <section
-            id="upcomingSection"
-            class="section"
-        >
+        <!-- DATE SELECTOR -->
+
+        <section class="section">
 
             <div class="section-heading">
 
                 <div>
 
-                    <span class="section-eyebrow">
-                        NEXT
-                    </span>
-
-                    <h2>
-                        Upcoming Classes
-                    </h2>
-
-                </div>
-
-            </div>
-
-
-            <div
-                id="upcomingClasses"
-                class="upcoming-list"
-            ></div>
-
-
-            <div
-                id="upcomingEmpty"
-                class="empty-state compact hidden"
-            >
-
-                <p>
-                    No upcoming classes.
-                </p>
-
-            </div>
-
-        </section>
-
-
-        <!-- =================================================
-             RECORDED LIVE
-        ================================================== -->
-
-        <section
-            id="recordedSection"
-            class="section"
-        >
-
-            <div class="section-heading">
-
-                <div>
-
-                    <span class="section-eyebrow">
-                        WATCH AGAIN
-                    </span>
-
-                    <h2>
-                        Recorded Live Classes
-                    </h2>
-
-                    <p>
-                        Classes that have already been completed.
-                    </p>
-
-                </div>
-
-            </div>
-
-
-            <div
-                id="recordedClasses"
-                class="recorded-grid"
-            ></div>
-
-
-            <div
-                id="recordedEmpty"
-                class="empty-state compact hidden"
-            >
-
-                <p>
-                    No recorded live classes available yet.
-                </p>
-
-            </div>
-
-        </section>
-
-
-        <!-- =================================================
-             DATE SELECTOR
-        ================================================== -->
-
-        <section class="section date-section">
-
-            <div class="section-heading">
-
-                <div>
-
-                    <span class="section-eyebrow">
+                    <span class="eyebrow">
                         CLASS CALENDAR
                     </span>
 
                     <h2>
-                        Browse by Date
+                        Select a Date
                     </h2>
 
                 </div>
@@ -312,41 +230,78 @@
             </div>
 
 
-            <div
-                id="dateSelector"
-                class="date-selector"
-            ></div>
+            <div class="date-picker-card">
+
+                <button
+                    id="previousDate"
+                    class="date-arrow"
+                    type="button"
+                >
+                    ‹
+                </button>
 
 
-            <div
-                id="selectedDateLabel"
-                class="selected-date-label"
-            ></div>
+                <div class="selected-date">
+
+                    <span>
+                        SELECTED DATE
+                    </span>
+
+                    <strong id="selectedDateText">
+                        Today
+                    </strong>
+
+                </div>
+
+
+                <input
+                    id="datePicker"
+                    type="date"
+                    aria-label="Select class date"
+                >
+
+
+                <button
+                    id="nextDate"
+                    class="date-arrow"
+                    type="button"
+                >
+                    ›
+                </button>
+
+            </div>
 
 
             <div
                 id="selectedDateClasses"
-                class="selected-date-classes"
+                class="date-list"
             ></div>
 
 
             <div
                 id="selectedDateEmpty"
-                class="empty-state compact hidden"
+                class="empty-card hidden"
             >
 
-                <p>
-                    No class was taken on this date.
-                </p>
+                <div class="empty-icon">
+                    ◷
+                </div>
+
+                <strong>
+                    No class was taken on this date
+                </strong>
+
+                <span>
+                    No scheduled live class was found for the selected date.
+                </span>
 
             </div>
 
         </section>
 
 
-        <!-- =================================================
-             SUBJECTS
-        ================================================== -->
+
+        <!-- ALL SUBJECTS -->
 
         <section class="section subjects-section">
 
@@ -354,16 +309,16 @@
 
                 <div>
 
-                    <span class="section-eyebrow">
-                        EXPLORE
+                    <span class="eyebrow">
+                        YOUR BATCH
                     </span>
 
                     <h2>
-                        Subjects
+                        All Subjects
                     </h2>
 
                     <p>
-                        View live classes and recordings by subject.
+                        Select a subject to view previous live classes.
                     </p>
 
                 </div>
@@ -379,46 +334,53 @@
 
             <div
                 id="subjectsEmpty"
-                class="empty-state compact hidden"
+                class="empty-card hidden"
             >
 
-                <p>
-                    No subjects available.
-                </p>
+                <div class="empty-icon">
+                    —
+                </div>
+
+                <strong>
+                    No subjects available
+                </strong>
+
+                <span>
+                    Subjects for your batch will appear here.
+                </span>
 
             </div>
 
         </section>
 
 
-        <!-- =================================================
-             SUBJECT HISTORY
-        ================================================== -->
+
+        <!-- SUBJECT HISTORY -->
 
         <section
             id="subjectHistorySection"
-            class="section subject-history hidden"
+            class="section hidden"
         >
 
-            <div class="section-heading">
+            <div class="history-header">
 
                 <div>
 
-                    <span class="section-eyebrow">
+                    <span class="eyebrow">
                         SUBJECT HISTORY
                     </span>
 
-                    <h2 id="subjectHistoryTitle">
-                        Subject
+                    <h2 id="historySubjectName">
+                        Previous Classes
                     </h2>
 
                 </div>
 
 
                 <button
-                    id="closeSubjectHistory"
-                    class="close-button"
+                    id="closeHistory"
                     type="button"
+                    class="close-button"
                 >
                     Close
                 </button>
@@ -428,65 +390,122 @@
 
             <div
                 id="subjectHistory"
-                class="subject-history-list"
+                class="history-list"
             ></div>
+
+
+            <div
+                id="historyEmpty"
+                class="empty-card hidden"
+            >
+
+                <div class="empty-icon">
+                    ◷
+                </div>
+
+                <strong>
+                    No previous classes
+                </strong>
+
+                <span>
+                    No live class recordings are available for this subject yet.
+                </span>
+
+            </div>
 
         </section>
 
-    </main>
+
+    </div>
+
+</main>
 
 
-    <!-- =====================================================
-         BOTTOM NAV
-    ====================================================== -->
 
-    <nav class="bottom-nav">
+<!-- BOTTOM NAV -->
 
-        <button
-            type="button"
-            data-route="../"
-        >
-            <span>⌂</span>
-            <small>HOME</small>
-        </button>
+<nav class="bottom-nav">
 
-        <button
-            type="button"
-            class="active"
-        >
-            <span>●</span>
-            <small>LIVE</small>
-        </button>
+    <button
+        type="button"
+        data-nav="../../home/"
+    >
 
-        <button
-            type="button"
-            data-route="../revision/"
-        >
-            <span>▤</span>
-            <small>REVISION</small>
-        </button>
+        <span class="nav-icon">
+            ⌂
+        </span>
 
-        <button
-            type="button"
-            data-route="../profile/"
-        >
-            <span>○</span>
-            <small>PROFILE</small>
-        </button>
+        <span>
+            Home
+        </span>
 
-    </nav>
+    </button>
 
 
-    <div
-        id="toast"
-        class="toast hidden"
-    ></div>
+    <button
+        type="button"
+        class="active"
+        data-nav="../live/"
+    >
+
+        <span class="nav-icon">
+            ◉
+        </span>
+
+        <span>
+            Live
+        </span>
+
+    </button>
 
 
-    <script
-        type="module"
-        src="./live.js"
-    ></script>
+    <button
+        type="button"
+        data-nav="../revision/"
+    >
+
+        <span class="nav-icon">
+            ▣
+        </span>
+
+        <span>
+            Revision
+        </span>
+
+    </button>
+
+
+    <button
+        type="button"
+        data-nav="../profile/"
+    >
+
+        <span class="nav-icon">
+            ○
+        </span>
+
+        <span>
+            Profile
+        </span>
+
+    </button>
+
+</nav>
+
+
+
+<div
+    id="toast"
+    class="toast"
+></div>
+
+
+<script
+    type="module"
+    src="./live.js"
+></script>
+
 
 </body>
+
 </html>
