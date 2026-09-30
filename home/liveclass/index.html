@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>ZENOVA - Live Class</title>
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700&display=swap"
+        rel="stylesheet"
+    >
+
+    <link
+        rel="stylesheet"
+        href="./liveclass.css"
+    >
+
+</head>
+
+
+<body>
+
+
+    <!-- =========================
+         TOP BAR
+    ========================== -->
+
+    <header class="topbar">
+
+        <button
+            id="backButton"
+            class="back-button"
+            type="button"
+            aria-label="Go back"
+        >
+            ←
+        </button>
+
+
+        <div class="brand">
+
+            <div class="brand-name">
+                ZENOVA
+            </div>
+
+            <div class="brand-subtitle">
+                LIVE CLASS
+            </div>
+
+        </div>
+
+
+        <div class="live-status">
+
+            <span class="live-dot"></span>
+
+            <span>
+                LIVE
+            </span>
+
+        </div>
+
+    </header>
+
+
+
+    <!-- =========================
+         LOADER
+    ========================== -->
+
+    <section
+        id="loader"
+        class="state-screen"
+    >
+
+        <div class="spinner"></div>
+
+        <p>
+            Connecting to live class...
+        </p>
+
+    </section>
+
+
+
+    <!-- =========================
+         ERROR
+    ========================== -->
+
+    <section
+        id="errorState"
+        class="state-screen hidden"
+    >
+
+        <div class="state-icon">
+            !
+        </div>
+
+        <h2>
+            Unable to open class
+        </h2>
+
+        <p id="errorMessage">
+            Something went wrong.
+        </p>
+
+        <button
+            id="backFromError"
+            class="primary-button"
+            type="button"
+        >
+            Back to Live Classes
+        </button>
+
+    </section>
+
+
+
+    <!-- =========================
+         MAIN APP
+    ========================== -->
+
+    <main
+        id="app"
+        class="app hidden"
+    >
+
+
+        <!-- =====================
+             LIVE PLAYER
+        ====================== -->
+
+        <section class="player-section">
+
+
+            <div
+                id="playerContainer"
+                class="player-container"
+            >
+
+
+                <!-- YouTube -->
+
+                <div
+                    id="youtubePlayer"
+                    class="youtube-player hidden"
+                ></div>
+
+
+                <!-- Direct video -->
+
+                <video
+                    id="videoPlayer"
+                    class="video-player hidden"
+                    playsinline
+                    autoplay
+                    preload="auto"
+                ></video>
+
+
+                <!-- HLS / external player -->
+
+                <div
+                    id="externalPlayer"
+                    class="external-player hidden"
+                ></div>
+
+
+                <!-- Waiting -->
+
+                <div
+                    id="waitingPlayer"
+                    class="waiting-player hidden"
+                >
+
+                    <div class="waiting-icon">
+                        LIVE
+                    </div>
+
+                    <h3>
+                        Live class is ready
+                    </h3>
+
+                    <p>
+                        Waiting for the live stream...
+                    </p>
+
+                </div>
+
+
+                <!-- Player overlay -->
+
+                <div
+                    id="playerOverlay"
+                    class="player-overlay"
+                >
+
+                    <div class="overlay-top">
+
+                        <div class="overlay-live">
+
+                            <span class="live-dot"></span>
+
+                            LIVE
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="overlay-bottom">
+
+                        <button
+                            id="playButton"
+                            class="control-button"
+                            type="button"
+                        >
+                            ▶
+                        </button>
+
+
+                        <button
+                            id="muteButton"
+                            class="control-button"
+                            type="button"
+                        >
+                            🔊
+                        </button>
+
+
+                        <div class="overlay-spacer"></div>
+
+
+                        <button
+                            id="fullscreenButton"
+                            class="control-button"
+                            type="button"
+                        >
+                            ⛶
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Watermark -->
+
+                <div
+                    id="watermark"
+                    class="watermark"
+                ></div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =====================
+             CLASS INFORMATION
+        ====================== -->
+
+        <section class="class-info-section">
+
+
+            <div class="class-header-row">
+
+
+                <div class="class-heading">
+
+                    <div
+                        id="subjectBadge"
+                        class="subject-badge"
+                    >
+                        Live Class
+                    </div>
+
+
+                    <h1 id="classTitle">
+                        Live Class
+                    </h1>
+
+                </div>
+
+
+                <div
+                    id="classStatus"
+                    class="class-status"
+                >
+                    LIVE
+                </div>
+
+            </div>
+
+
+
+            <div class="hierarchy">
+
+
+                <span id="courseName">
+                    —
+                </span>
+
+
+                <span class="separator">
+                    /
+                </span>
+
+
+                <span id="subjectName">
+                    —
+                </span>
+
+
+                <span class="separator">
+                    /
+                </span>
+
+
+                <span id="chapterName">
+                    —
+                </span>
+
+            </div>
+
+
+
+            <div class="teacher-row">
+
+
+                <div class="teacher-avatar">
+                    <span id="teacherInitial">
+                        Z
+                    </span>
+                </div>
+
+
+                <div class="teacher-details">
+
+                    <span class="teacher-label">
+                        Faculty
+                    </span>
+
+                    <strong id="teacherName">
+                        —
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+
+            <div
+                id="classDescription"
+                class="description hidden"
+            ></div>
+
+
+        </section>
+
+
+
+        <!-- =====================
+             LIVE NOTICE
+        ====================== -->
+
+        <section class="notice-card">
+
+            <div class="notice-icon">
+                ●
+            </div>
+
+
+            <div>
+
+                <strong>
+                    You are attending a live class
+                </strong>
+
+                <p>
+                    Please keep your internet connection stable.
+                </p>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =====================
+             STUDENT WATERMARK INFO
+        ====================== -->
+
+        <section class="student-card">
+
+            <div class="student-card-icon">
+                ✓
+            </div>
+
+
+            <div>
+
+                <span>
+                    Attending as
+                </span>
+
+                <strong id="studentName">
+                    Student
+                </strong>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =====================
+             LEAVE CLASS
+        ====================== -->
+
+        <button
+            id="leaveButton"
+            class="leave-button"
+            type="button"
+        >
+            LEAVE LIVE CLASS
+        </button>
+
+
+    </main>
+
+
+
+    <!-- =========================
+         TOAST
+    ========================== -->
+
+    <div
+        id="toast"
+        class="toast"
+    ></div>
+
+
+
+    <script
+        type="module"
+        src="./liveclass.js"
+    ></script>
+
+
+</body>
+
+</html>
