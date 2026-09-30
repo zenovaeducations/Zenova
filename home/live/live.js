@@ -1,21 +1,4 @@
-/* =========================================================
-   ZENOVA EDUCATIONS
-   LIVE CLASSES PAGE
-
-   LIVE NOW
-      -> /home/livevideoplayer/?liveClassId=ID
-
-   RECORDED LIVE
-      -> /home/videoplayer/?liveClassId=ID
-
-   UPCOMING
-      -> No player until class starts
-========================================================= */
-
-import {
-    auth,
-    db
-} from "../../firebase/firebase-config.js";
+import { auth, db } from "../../firebase/firebase-config.js";
 
 import {
     onAuthStateChanged
@@ -27,6 +10,80 @@ import {
     collection,
     getDocs
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
+
+
+/* =========================================================
+   DOM
+========================================================= */
+
+const loadingState =
+    document.getElementById("loadingState");
+
+const errorState =
+    document.getElementById("errorState");
+
+const errorText =
+    document.getElementById("errorText");
+
+const liveApp =
+    document.getElementById("liveApp");
+
+const todayClasses =
+    document.getElementById("todayClasses");
+
+const todayEmpty =
+    document.getElementById("todayEmpty");
+
+const todayDate =
+    document.getElementById("todayDate");
+
+const datePicker =
+    document.getElementById("datePicker");
+
+const selectedDateText =
+    document.getElementById("selectedDateText");
+
+const selectedDateClasses =
+    document.getElementById("selectedDateClasses");
+
+const selectedDateEmpty =
+    document.getElementById("selectedDateEmpty");
+
+const previousDate =
+    document.getElementById("previousDate");
+
+const nextDate =
+    document.getElementById("nextDate");
+
+const subjectGrid =
+    document.getElementById("subjectGrid");
+
+const subjectsEmpty =
+    document.getElementById("subjectsEmpty");
+
+const subjectHistorySection =
+    document.getElementById("subjectHistorySection");
+
+const historySubjectName =
+    document.getElementById("historySubjectName");
+
+const subjectHistory =
+    document.getElementById("subjectHistory");
+
+const historyEmpty =
+    document.getElementById("historyEmpty");
+
+const closeHistory =
+    document.getElementById("closeHistory");
+
+const backButton =
+    document.getElementById("backButton");
+
+const retryButton =
+    document.getElementById("retryButton");
+
+
 
 /* =========================================================
    STATE
@@ -42,134 +99,17 @@ let allClasses = [];
 
 let allSubjects = [];
 
-let selectedDate = null;
+let selectedDate = getTodayString();
+
+
 
 /* =========================================================
-   DOM
-========================================================= */
-
-const loadingState =
-    document.getElementById(
-        "loadingState"
-    );
-
-const errorState =
-    document.getElementById(
-        "errorState"
-    );
-
-const errorMessage =
-    document.getElementById(
-        "errorMessage"
-    );
-
-const errorBackButton =
-    document.getElementById(
-        "errorBackButton"
-    );
-
-const liveApp =
-    document.getElementById(
-        "liveApp"
-    );
-
-const backButton =
-    document.getElementById(
-        "backButton"
-    );
-
-const todayClasses =
-    document.getElementById(
-        "todayClasses"
-    );
-
-const todayEmpty =
-    document.getElementById(
-        "todayEmpty"
-    );
-
-const upcomingClasses =
-    document.getElementById(
-        "upcomingClasses"
-    );
-
-const upcomingEmpty =
-    document.getElementById(
-        "upcomingEmpty"
-    );
-
-const recordedClasses =
-    document.getElementById(
-        "recordedClasses"
-    );
-
-const recordedEmpty =
-    document.getElementById(
-        "recordedEmpty"
-    );
-
-const dateSelector =
-    document.getElementById(
-        "dateSelector"
-    );
-
-const selectedDateLabel =
-    document.getElementById(
-        "selectedDateLabel"
-    );
-
-const selectedDateClasses =
-    document.getElementById(
-        "selectedDateClasses"
-    );
-
-const selectedDateEmpty =
-    document.getElementById(
-        "selectedDateEmpty"
-    );
-
-const subjectGrid =
-    document.getElementById(
-        "subjectGrid"
-    );
-
-const subjectsEmpty =
-    document.getElementById(
-        "subjectsEmpty"
-    );
-
-const subjectHistorySection =
-    document.getElementById(
-        "subjectHistorySection"
-    );
-
-const subjectHistoryTitle =
-    document.getElementById(
-        "subjectHistoryTitle"
-    );
-
-const subjectHistory =
-    document.getElementById(
-        "subjectHistory"
-    );
-
-const closeSubjectHistory =
-    document.getElementById(
-        "closeSubjectHistory"
-    );
-
-const toast =
-    document.getElementById(
-        "toast"
-    );
-
-/* =========================================================
-   INITIAL
+   AUTH
 ========================================================= */
 
 onAuthStateChanged(
     auth,
-    async (user) => {
+    async user => {
 
         if (!user) {
 
@@ -177,105 +117,104 @@ onAuthStateChanged(
                 "../../account/login/";
 
             return;
+
         }
 
-        currentUser =
-            user;
+
+        currentUser = user;
+
 
         try {
 
-            await initialize();
+            await loadPage();
 
-        } catch (error) {
+        }
+
+        catch (error) {
 
             console.error(
+                "LIVE PAGE ERROR:",
                 error
             );
 
             showError(
-                error?.message ||
+                error.message ||
                 "Unable to load live classes."
             );
+
         }
+
     }
 );
 
+
+
 /* =========================================================
-   INITIALIZE
+   MAIN LOAD
 ========================================================= */
 
-async function initialize() {
+async function loadPage() {
 
     showLoading();
 
-    await loadStudent();
 
-    await loadStudentCourse();
+    /*
+     * Student
+     */
 
-    await loadLiveClasses();
-
-    await loadSubjects();
-
-    renderToday();
-
-    renderUpcoming();
-
-    renderRecorded();
-
-    renderDateSelector();
-
-    renderSelectedDate();
-
-    renderSubjects();
-
-    hideLoading();
-}
-
-/* =========================================================
-   STUDENT
-========================================================= */
-
-async function loadStudent() {
-
-    const ref =
+    const studentRef =
         doc(
             db,
             "zen2Students",
             currentUser.uid
         );
 
-    const snapshot =
-        await getDoc(ref);
 
-    if (!snapshot.exists()) {
+    const studentSnap =
+        await getDoc(
+            studentRef
+        );
+
+
+    if (!studentSnap.exists()) {
 
         throw new Error(
             "Student profile was not found."
         );
+
     }
 
+
     student = {
-        id: snapshot.id,
-        ...snapshot.data()
+        id: studentSnap.id,
+        ...studentSnap.data()
     };
-}
 
-/* =========================================================
-   COURSE
-========================================================= */
 
-async function loadStudentCourse() {
+    /*
+     * Find student's class
+     */
 
-    const studentClass =
-        normalizeClass(
-            student.className ||
-            student.class ||
-            student.standard ||
-            student.grade ||
-            student.targetClass
+    const className =
+        getStudentClass(
+            student
         );
 
-    const coursesSnapshot =
+
+    if (!className) {
+
+        throw new Error(
+            "Your class is not assigned yet."
+        );
+
+    }
+
+
+    /*
+     * Load courses
+     */
+
+    const coursesSnap =
         await getDocs(
             collection(
                 db,
@@ -283,60 +222,86 @@ async function loadStudentCourse() {
             )
         );
 
-    const courses = [];
 
-    coursesSnapshot.forEach(
-        (snapshot) => {
+    const courses =
+        coursesSnap.docs
+            .map(
+                item => ({
 
-            const data =
-                snapshot.data();
+                    id: item.id,
 
-            if (
-                data.active === false
-            ) {
-                return;
-            }
+                    ...item.data()
 
-            courses.push({
-                id: snapshot.id,
-                ...data
-            });
-        }
-    );
+                })
+            )
+            .filter(
+                item =>
+                    item.active !== false
+            );
+
 
     /*
-       First try class match.
-    */
+     * Find matching course.
+     */
 
     studentCourse =
         courses.find(
-            course => {
+            course =>
+                normalizeClass(
+                    getCourseClass(course)
+                ) ===
+                normalizeClass(
+                    className
+                )
+        );
 
-                const courseClass =
-                    normalizeClass(
-                        course.className ||
-                        course.courseClass ||
-                        course.targetClass ||
-                        course.standard ||
-                        course.grade
-                    );
 
-                return (
-                    studentClass &&
-                    courseClass ===
-                    studentClass
-                );
-            }
-        ) || null;
-}
+    /*
+     * If student's document already
+     * has courseId, prefer it.
+     */
 
-/* =========================================================
-   LIVE CLASSES
-========================================================= */
+    if (
+        student.courseId ||
+        student.batchId
+    ) {
 
-async function loadLiveClasses() {
+        const directId =
+            student.courseId ||
+            student.batchId;
 
-    const snapshot =
+
+        const directCourse =
+            courses.find(
+                item =>
+                    item.id === directId
+            );
+
+
+        if (directCourse) {
+
+            studentCourse =
+                directCourse;
+
+        }
+
+    }
+
+
+    if (!studentCourse) {
+
+        throw new Error(
+            `No batch was found for ${className}.`
+        );
+
+    }
+
+
+    /*
+     * Load live classes.
+     */
+
+    const liveSnap =
         await getDocs(
             collection(
                 db,
@@ -344,256 +309,89 @@ async function loadLiveClasses() {
             )
         );
 
-    allClasses = [];
 
-    snapshot.forEach(
-        (docSnapshot) => {
+    allClasses =
+        liveSnap.docs
+            .map(
+                item => ({
 
-            const data =
-                docSnapshot.data();
+                    id: item.id,
 
-            if (
-                data.active === false
-            ) {
-                return;
-            }
+                    ...item.data()
 
-            /*
-               If we know the student's course,
-               prefer matching classes.
-
-               If courseId is absent, keep the
-               class because older admin records
-               may not contain it.
-            */
-
-            if (
-                studentCourse &&
-                data.courseId &&
-                data.courseId !==
-                    studentCourse.id
-            ) {
-
-                return;
-            }
-
-            allClasses.push({
-                id: docSnapshot.id,
-                ...data
-            });
-        }
-    );
-
-    /*
-       Sort oldest/newest consistently.
-    */
-
-    allClasses.sort(
-        (a, b) => {
-
-            return (
-                getStartTimestamp(a) -
-                getStartTimestamp(b)
-            );
-        }
-    );
-}
-
-/* =========================================================
-   SUBJECTS
-========================================================= */
-
-async function loadSubjects() {
-
-    allSubjects = [];
-
-    if (
-        studentCourse
-    ) {
-
-        const snapshot =
-            await getDocs(
-                collection(
-                    db,
-                    "zen2Subjects"
-                )
-            );
-
-        snapshot.forEach(
-            (docSnapshot) => {
-
-                const data =
-                    docSnapshot.data();
-
-                if (
-                    data.active === false
-                ) {
-                    return;
-                }
-
-                if (
-                    data.courseId !==
-                    studentCourse.id
-                ) {
-                    return;
-                }
-
-                allSubjects.push({
-                    id: docSnapshot.id,
-                    ...data
-                });
-            }
-        );
-    }
-
-    /*
-       Also discover subjects from
-       liveClasses in case some subjects
-       don't yet exist in zen2Subjects.
-    */
-
-    allClasses.forEach(
-        item => {
-
-            const subjectId =
-                item.subjectId;
-
-            const subjectName =
-                item.subjectName ||
-                item.subject;
-
-            if (
-                !subjectName &&
-                !subjectId
-            ) {
-                return;
-            }
-
-            const exists =
-                allSubjects.some(
-                    subject =>
-                        (
-                            subjectId &&
-                            subject.id ===
-                                subjectId
-                        ) ||
-                        (
-                            subjectName &&
-                            normalizeText(
-                                subject.name ||
-                                subject.title
-                            ) ===
-                            normalizeText(
-                                subjectName
-                            )
-                        )
-                );
-
-            if (
-                !exists
-            ) {
-
-                allSubjects.push({
-
-                    id:
-                        subjectId ||
-                        slugify(
-                            subjectName
-                        ),
-
-                    name:
-                        subjectName ||
-                        "Subject",
-
-                    title:
-                        subjectName ||
-                        "Subject",
-
-                    courseId:
-                        item.courseId ||
-                        studentCourse?.id ||
-                        null
-
-                });
-            }
-        }
-    );
-
-    allSubjects.sort(
-        (a, b) =>
-            String(
-                a.name ||
-                a.title ||
-                ""
-            ).localeCompare(
-                String(
-                    b.name ||
-                    b.title ||
-                    ""
-                )
+                })
             )
-    );
-}
+            .filter(
+                item =>
+                    item.active !== false
+            )
+            .filter(
+                item =>
+                    belongsToCourse(
+                        item,
+                        studentCourse
+                    )
+            );
 
-/* =========================================================
-   STATUS
-========================================================= */
-
-function getClassStatus(
-    item
-) {
-
-    const start =
-        getStartTimestamp(
-            item
-        );
-
-    const end =
-        getEndTimestamp(
-            item
-        );
-
-    const now =
-        Date.now();
-
-    if (
-        start &&
-        now < start
-    ) {
-
-        return "UPCOMING";
-    }
 
     /*
-       If there is no end time, assume
-       the class is live for 2 hours.
-    */
+     * Load subjects.
+     */
 
-    const effectiveEnd =
-        end ||
-        (
-            start
-                ? start +
-                    (
-                        2 *
-                        60 *
-                        60 *
-                        1000
-                    )
-                : 0
+    const subjectsSnap =
+        await getDocs(
+            collection(
+                db,
+                "zen2Subjects"
+            )
         );
 
-    if (
-        start &&
-        now >= start &&
-        now <= effectiveEnd
-    ) {
 
-        return "LIVE";
-    }
+    allSubjects =
+        subjectsSnap.docs
+            .map(
+                item => ({
 
-    return "ENDED";
+                    id: item.id,
+
+                    ...item.data()
+
+                })
+            )
+            .filter(
+                item =>
+                    item.courseId ===
+                    studentCourse.id
+            )
+            .filter(
+                item =>
+                    item.active !== false
+            )
+            .sort(
+                sortSubjects
+            );
+
+
+    /*
+     * Date setup
+     */
+
+    datePicker.value =
+        selectedDate;
+
+
+    renderToday();
+
+    renderSelectedDate();
+
+    renderSubjects();
+
+
+    showApp();
+
 }
+
+
 
 /* =========================================================
    TODAY
@@ -601,927 +399,165 @@ function getClassStatus(
 
 function renderToday() {
 
-    todayClasses.innerHTML = "";
-
     const today =
-        getDateKey(
-            new Date()
+        getTodayString();
+
+
+    todayDate.textContent =
+        formatLongDate(
+            today
         );
 
-    const classes =
-        allClasses
-            .filter(
-                item =>
-                    getClassDate(
-                        item
-                    ) === today
-            )
-            .sort(
-                (
-                    a,
-                    b
-                ) =>
-                    getStartTimestamp(a) -
-                    getStartTimestamp(b)
-            );
 
-    if (!classes.length) {
+    const list =
+        getClassesForDate(
+            today
+        );
+
+
+    if (!list.length) {
+
+        todayClasses.innerHTML =
+            "";
 
         todayEmpty.classList.remove(
             "hidden"
         );
 
         return;
+
     }
+
 
     todayEmpty.classList.add(
         "hidden"
     );
 
-    classes.forEach(
-        item => {
 
-            const status =
-                getClassStatus(
-                    item
-                );
-
-            /*
-               Don't put completed classes
-               into the TODAY live area if
-               they have already moved into
-               recording.
-            */
-
-            if (
-                status === "ENDED"
-            ) {
-
-                return;
-            }
-
-            todayClasses.appendChild(
-                createTodayCard(
-                    item,
-                    status
-                )
-            );
-        }
-    );
-
-    if (
-        !todayClasses.children.length
-    ) {
-
-        todayEmpty.classList.remove(
-            "hidden"
-        );
-    }
-}
-
-/* =========================================================
-   TODAY CARD
-========================================================= */
-
-function createTodayCard(
-    item,
-    status
-) {
-
-    const card =
-        document.createElement(
-            "article"
-        );
-
-    card.className =
-        "today-card";
-
-    const thumbnail =
-        getThumbnail(
-            item
-        );
-
-    const title =
-        getTitle(
-            item
-        );
-
-    const subject =
-        getSubjectName(
-            item
-        );
-
-    const chapter =
-        getChapterName(
-            item
-        );
-
-    const teacher =
-        getTeacher(
-            item
-        );
-
-    const time =
-        getTimeRange(
-            item
-        );
-
-    const image =
-        thumbnail
-            ? `<img src="${escapeAttribute(thumbnail)}" alt="">`
-            : placeholderThumbnail();
-
-    card.innerHTML = `
-
-        <div class="today-thumbnail">
-
-            ${image}
-
-            ${
-                status === "LIVE"
-                    ? `
-                        <div class="today-live-label">
-                            <span></span>
-                            LIVE NOW
-                        </div>
-                    `
-                    : ""
-            }
-
-        </div>
-
-        <div class="today-content">
-
-            <h3 class="today-title">
-                ${escapeHTML(title)}
-            </h3>
-
-            <div class="today-meta">
-
-                ${escapeHTML(subject)}
-                •
-                ${escapeHTML(chapter)}
-
-            </div>
-
-            <div class="today-footer">
-
-                <span class="teacher">
-                    ${escapeHTML(teacher)}
-                    <br>
-                    ${escapeHTML(time)}
-                </span>
-
-                <button
-                    class="join-button"
-                    type="button"
-                >
-                    ${
-                        status === "LIVE"
-                            ? "JOIN LIVE"
-                            : "UPCOMING"
-                    }
-                </button>
-
-            </div>
-
-        </div>
-    `;
-
-    const button =
-        card.querySelector(
-            ".join-button"
-        );
-
-    if (
-        status === "LIVE"
-    ) {
-
-        button.addEventListener(
-            "click",
-            () => {
-
-                openLivePlayer(
-                    item.id
-                );
-            }
-        );
-
-    } else {
-
-        button.disabled =
-            true;
-
-        button.style.opacity =
-            "0.5";
-
-        button.style.cursor =
-            "default";
-    }
-
-    return card;
-}
-
-/* =========================================================
-   UPCOMING
-========================================================= */
-
-function renderUpcoming() {
-
-    upcomingClasses.innerHTML = "";
-
-    const upcoming =
-        allClasses
-            .filter(
+    todayClasses.innerHTML =
+        list
+            .map(
                 item =>
-                    getClassStatus(
-                        item
-                    ) ===
-                    "UPCOMING"
-            )
-            .sort(
-                (
-                    a,
-                    b
-                ) =>
-                    getStartTimestamp(a) -
-                    getStartTimestamp(b)
-            )
-            .slice(
-                0,
-                8
-            );
-
-    if (!upcoming.length) {
-
-        upcomingEmpty.classList.remove(
-            "hidden"
-        );
-
-        return;
-    }
-
-    upcomingEmpty.classList.add(
-        "hidden"
-    );
-
-    upcoming.forEach(
-        item => {
-
-            upcomingClasses.appendChild(
-                createUpcomingCard(
-                    item
-                )
-            );
-        }
-    );
-}
-
-/* =========================================================
-   UPCOMING CARD
-========================================================= */
-
-function createUpcomingCard(
-    item
-) {
-
-    const card =
-        document.createElement(
-            "article"
-        );
-
-    card.className =
-        "upcoming-card";
-
-    const date =
-        getDateObject(
-            item
-        );
-
-    const day =
-        date
-            ? date.getDate()
-            : "—";
-
-    const month =
-        date
-            ? date.toLocaleDateString(
-                "en-IN",
-                {
-                    month: "short"
-                }
-            )
-            : "";
-
-    card.innerHTML = `
-
-        <div class="upcoming-date">
-
-            <span class="upcoming-day">
-                ${day}
-            </span>
-
-            <span class="upcoming-month">
-                ${escapeHTML(month)}
-            </span>
-
-        </div>
-
-        <div>
-
-            <h3 class="upcoming-title">
-                ${escapeHTML(
-                    getTitle(item)
-                )}
-            </h3>
-
-            <div class="upcoming-meta">
-
-                ${escapeHTML(
-                    getSubjectName(item)
-                )}
-
-                •
-
-                ${escapeHTML(
-                    getChapterName(item)
-                )}
-
-                <br>
-
-                ${escapeHTML(
-                    getTeacher(item)
-                )}
-
-            </div>
-
-            <span class="upcoming-badge">
-                UPCOMING
-            </span>
-
-        </div>
-
-        <div class="upcoming-time">
-
-            ${escapeHTML(
-                getTimeRange(item)
-            )}
-
-        </div>
-    `;
-
-    return card;
-}
-
-/* =========================================================
-   RECORDED
-========================================================= */
-
-function renderRecorded() {
-
-    recordedClasses.innerHTML = "";
-
-    const recorded =
-        allClasses
-            .filter(
-                item =>
-                    getClassStatus(
-                        item
-                    ) ===
-                    "ENDED" &&
-                    hasRecording(
+                    createLiveCard(
                         item
                     )
             )
-            .sort(
-                (
-                    a,
-                    b
-                ) =>
-                    getStartTimestamp(b) -
-                    getStartTimestamp(a)
-            )
-            .slice(
-                0,
-                12
-            );
+            .join("");
 
-    if (!recorded.length) {
-
-        recordedEmpty.classList.remove(
-            "hidden"
-        );
-
-        return;
-    }
-
-    recordedEmpty.classList.add(
-        "hidden"
-    );
-
-    recorded.forEach(
-        item => {
-
-            recordedClasses.appendChild(
-                createRecordedCard(
-                    item
-                )
-            );
-        }
-    );
 }
 
-/* =========================================================
-   RECORDED CARD
-========================================================= */
 
-function createRecordedCard(
-    item
-) {
-
-    const card =
-        document.createElement(
-            "article"
-        );
-
-    card.className =
-        "recorded-card";
-
-    const thumbnail =
-        getThumbnail(
-            item
-        );
-
-    const image =
-        thumbnail
-            ? `<img src="${escapeAttribute(thumbnail)}" alt="">`
-            : placeholderThumbnail();
-
-    card.innerHTML = `
-
-        <div class="recorded-thumbnail">
-
-            ${image}
-
-            <div class="recorded-play">
-                ▶
-            </div>
-
-            <div class="recorded-badge">
-                RECORDED LIVE
-            </div>
-
-        </div>
-
-        <div class="recorded-content">
-
-            <h3 class="recorded-title">
-                ${escapeHTML(
-                    getTitle(item)
-                )}
-            </h3>
-
-            <div class="recorded-meta">
-
-                ${escapeHTML(
-                    getSubjectName(item)
-                )}
-
-                •
-
-                ${escapeHTML(
-                    getChapterName(item)
-                )}
-
-                <br>
-
-                ${escapeHTML(
-                    getTeacher(item)
-                )}
-
-            </div>
-
-            <div class="recorded-date">
-
-                ${escapeHTML(
-                    formatDate(
-                        getClassDate(item)
-                    )
-                )}
-
-                •
-
-                ${escapeHTML(
-                    getTimeRange(item)
-                )}
-
-            </div>
-
-        </div>
-    `;
-
-    card.addEventListener(
-        "click",
-        () => {
-
-            /*
-               IMPORTANT:
-
-               Recorded live class goes to
-               the COMMON VIDEO PLAYER.
-
-               NOT livevideoplayer.
-            */
-
-            openRecordedPlayer(
-                item.id
-            );
-        }
-    );
-
-    return card;
-}
 
 /* =========================================================
    DATE SELECTOR
 ========================================================= */
 
-function renderDateSelector() {
+datePicker.addEventListener(
+    "change",
+    () => {
 
-    dateSelector.innerHTML = "";
+        if (!datePicker.value) {
 
-    const dates =
-        [];
+            return;
 
-    allClasses.forEach(
-        item => {
-
-            const date =
-                getClassDate(
-                    item
-                );
-
-            if (
-                date &&
-                !dates.includes(
-                    date
-                )
-            ) {
-
-                dates.push(
-                    date
-                );
-            }
         }
-    );
 
-    dates.sort();
-
-    /*
-       Show latest/future dates first
-       around the current period.
-    */
-
-    const today =
-        getDateKey(
-            new Date()
-        );
-
-    dates.sort(
-        (
-            a,
-            b
-        ) => {
-
-            const da =
-                dateFromKey(a)
-                    .getTime();
-
-            const db =
-                dateFromKey(b)
-                    .getTime();
-
-            return da - db;
-        }
-    );
-
-    const visibleDates =
-        dates.slice(
-            0,
-            30
-        );
-
-    if (
-        !selectedDate
-    ) {
 
         selectedDate =
-            dates.includes(
-                today
-            )
-                ? today
-                : (
-                    dates[0] ||
-                    today
-                );
+            datePicker.value;
+
+
+        renderSelectedDate();
+
     }
+);
 
-    visibleDates.forEach(
-        dateKey => {
 
-            const button =
-                document.createElement(
-                    "button"
-                );
+previousDate.addEventListener(
+    "click",
+    () => {
 
-            button.type =
-                "button";
-
-            button.className =
-                "date-button";
-
-            if (
-                dateKey ===
-                selectedDate
-            ) {
-
-                button.classList.add(
-                    "active"
-                );
-            }
-
-            const date =
-                dateFromKey(
-                    dateKey
-                );
-
-            button.innerHTML = `
-
-                <span class="date-day">
-                    ${date.getDate()}
-                </span>
-
-                <span class="date-name">
-                    ${date.toLocaleDateString(
-                        "en-IN",
-                        {
-                            weekday: "short"
-                        }
-                    )}
-                </span>
-            `;
-
-            button.addEventListener(
-                "click",
-                () => {
-
-                    selectedDate =
-                        dateKey;
-
-                    renderDateSelector();
-
-                    renderSelectedDate();
-                }
+        selectedDate =
+            shiftDate(
+                selectedDate,
+                -1
             );
 
-            dateSelector.appendChild(
-                button
-            );
-        }
-    );
-}
+        datePicker.value =
+            selectedDate;
 
-/* =========================================================
-   SELECTED DATE
-========================================================= */
+        renderSelectedDate();
+
+    }
+);
+
+
+nextDate.addEventListener(
+    "click",
+    () => {
+
+        selectedDate =
+            shiftDate(
+                selectedDate,
+                1
+            );
+
+        datePicker.value =
+            selectedDate;
+
+        renderSelectedDate();
+
+    }
+);
+
+
 
 function renderSelectedDate() {
 
-    selectedDateClasses.innerHTML =
-        "";
-
-    const date =
-        dateFromKey(
+    selectedDateText.textContent =
+        formatLongDate(
             selectedDate
         );
 
-    selectedDateLabel.textContent =
-        date
-            ? date.toLocaleDateString(
-                "en-IN",
-                {
-                    weekday: "long",
-                    day: "numeric",
-                    month: "long",
-                    year: "numeric"
-                }
-            )
-            : "";
 
-    const classes =
-        allClasses
-            .filter(
-                item =>
-                    getClassDate(
-                        item
-                    ) ===
-                    selectedDate
-            )
-            .sort(
-                (
-                    a,
-                    b
-                ) =>
-                    getStartTimestamp(a) -
-                    getStartTimestamp(b)
-            );
+    const list =
+        getClassesForDate(
+            selectedDate
+        );
 
-    if (!classes.length) {
+
+    if (!list.length) {
+
+        selectedDateClasses.innerHTML =
+            "";
 
         selectedDateEmpty.classList.remove(
             "hidden"
         );
 
         return;
+
     }
+
 
     selectedDateEmpty.classList.add(
         "hidden"
     );
 
-    classes.forEach(
-        item => {
 
-            selectedDateClasses.appendChild(
-                createDateClass(
-                    item
-                )
-            );
-        }
-    );
+    selectedDateClasses.innerHTML =
+        list
+            .map(
+                item =>
+                    createDateClassCard(
+                        item
+                    )
+            )
+            .join("");
+
 }
 
-/* =========================================================
-   DATE CLASS
-========================================================= */
 
-function createDateClass(
-    item
-) {
-
-    const card =
-        document.createElement(
-            "article"
-        );
-
-    card.className =
-        "date-class";
-
-    const status =
-        getClassStatus(
-            item
-        );
-
-    const hasRecordingValue =
-        hasRecording(
-            item
-        );
-
-    let buttonText =
-        "UPCOMING";
-
-    let buttonClass =
-        "";
-
-    if (
-        status ===
-        "LIVE"
-    ) {
-
-        buttonText =
-            "JOIN LIVE";
-
-    } else if (
-        status ===
-            "ENDED" &&
-        hasRecordingValue
-    ) {
-
-        buttonText =
-            "WATCH";
-
-        buttonClass =
-            "recorded";
-
-    } else if (
-        status ===
-        "ENDED"
-    ) {
-
-        buttonText =
-            "NO RECORDING";
-
-        buttonClass =
-            "recorded";
-    }
-
-    card.innerHTML = `
-
-        <div class="date-class-time">
-
-            ${escapeHTML(
-                getTimeRange(item)
-            )}
-
-        </div>
-
-        <div>
-
-            <h3 class="date-class-title">
-                ${escapeHTML(
-                    getTitle(item)
-                )}
-            </h3>
-
-            <div class="date-class-meta">
-
-                ${escapeHTML(
-                    getSubjectName(item)
-                )}
-
-                •
-
-                ${escapeHTML(
-                    getChapterName(item)
-                )}
-
-                <br>
-
-                ${escapeHTML(
-                    getTeacher(item)
-                )}
-
-            </div>
-
-        </div>
-
-        <button
-            class="date-class-button ${buttonClass}"
-            type="button"
-        >
-            ${buttonText}
-        </button>
-    `;
-
-    const button =
-        card.querySelector(
-            ".date-class-button"
-        );
-
-    if (
-        status ===
-        "LIVE"
-    ) {
-
-        button.addEventListener(
-            "click",
-            () => {
-
-                openLivePlayer(
-                    item.id
-                );
-            }
-        );
-
-    } else if (
-        status === "ENDED" &&
-        hasRecordingValue
-    ) {
-
-        button.addEventListener(
-            "click",
-            () => {
-
-                openRecordedPlayer(
-                    item.id
-                );
-            }
-        );
-
-    } else {
-
-        button.disabled =
-            true;
-
-        button.style.opacity =
-            "0.45";
-
-        button.style.cursor =
-            "default";
-    }
-
-    return card;
-}
 
 /* =========================================================
    SUBJECTS
@@ -1529,202 +565,569 @@ function createDateClass(
 
 function renderSubjects() {
 
-    subjectGrid.innerHTML =
-        "";
+    if (!allSubjects.length) {
 
-    if (
-        !allSubjects.length
-    ) {
+        subjectGrid.innerHTML =
+            "";
 
         subjectsEmpty.classList.remove(
             "hidden"
         );
 
         return;
+
     }
+
 
     subjectsEmpty.classList.add(
         "hidden"
     );
 
-    allSubjects.forEach(
-        subject => {
 
-            const subjectName =
-                subject.name ||
-                subject.title ||
-                "Subject";
+    subjectGrid.innerHTML =
+        allSubjects
+            .map(
+                subject =>
+                    createSubjectCard(
+                        subject
+                    )
+            )
+            .join("");
 
-            const subjectId =
-                subject.id;
 
-            const count =
-                allClasses.filter(
-                    item => {
+    document
+        .querySelectorAll(
+            "[data-subject-id]"
+        )
+        .forEach(
+            button => {
 
-                        if (
-                            subjectId &&
-                            item.subjectId
-                        ) {
+                button.addEventListener(
+                    "click",
+                    () => {
 
-                            return (
-                                item.subjectId ===
-                                subjectId
-                            );
-                        }
-
-                        return (
-                            normalizeText(
-                                getSubjectName(
-                                    item
-                                )
-                            ) ===
-                            normalizeText(
-                                subjectName
-                            )
+                        showSubjectHistory(
+                            button.dataset.subjectId
                         );
-                    }
-                ).length;
 
-            const card =
-                document.createElement(
-                    "article"
+                    }
                 );
 
-            card.className =
-                "subject-card";
+            }
+        );
 
-            card.innerHTML = `
-
-                <div class="subject-icon">
-                    ${escapeHTML(
-                        getInitial(
-                            subjectName
-                        )
-                    )}
-                </div>
-
-                <span class="subject-name">
-                    ${escapeHTML(
-                        subjectName
-                    )}
-                </span>
-
-                <span class="subject-count">
-                    ${count}
-                    ${count === 1 ? "class" : "classes"}
-                </span>
-            `;
-
-            card.addEventListener(
-                "click",
-                () => {
-
-                    showSubjectHistory(
-                        subject
-                    );
-                }
-            );
-
-            subjectGrid.appendChild(
-                card
-            );
-        }
-    );
 }
+
+
 
 /* =========================================================
    SUBJECT HISTORY
 ========================================================= */
 
 function showSubjectHistory(
-    subject
+    subjectId
 ) {
 
-    const subjectName =
-        subject.name ||
-        subject.title ||
-        "Subject";
+    const subject =
+        allSubjects.find(
+            item =>
+                item.id ===
+                subjectId
+        );
 
-    subjectHistoryTitle.textContent =
-        subjectName;
 
-    subjectHistory.innerHTML =
-        "";
+    if (!subject) {
 
-    const classes =
+        return;
+
+    }
+
+
+    const history =
         allClasses
             .filter(
-                item => {
-
-                    if (
-                        subject.id &&
-                        item.subjectId
-                    ) {
-
-                        return (
-                            item.subjectId ===
-                            subject.id
-                        );
-                    }
-
-                    return (
-                        normalizeText(
-                            getSubjectName(
-                                item
-                            )
-                        ) ===
-                        normalizeText(
-                            subjectName
-                        )
-                    );
-                }
+                item =>
+                    item.subjectId ===
+                    subjectId
+            )
+            .filter(
+                item =>
+                    getClassStatus(
+                        item
+                    ).status ===
+                    "ENDED"
             )
             .sort(
-                (
-                    a,
-                    b
-                ) =>
-                    getStartTimestamp(b) -
-                    getStartTimestamp(a)
+                (a, b) =>
+                    getStartMillis(b) -
+                    getStartMillis(a)
             );
 
-    if (!classes.length) {
 
-        subjectHistory.innerHTML = `
+    historySubjectName.textContent =
+        subject.name ||
+        subject.title ||
+        "Previous Classes";
 
-            <div class="empty-state compact">
-
-                <p>
-                    No classes found for this subject.
-                </p>
-
-            </div>
-        `;
-
-    } else {
-
-        classes.forEach(
-            item => {
-
-                subjectHistory.appendChild(
-                    createHistoryCard(
-                        item
-                    )
-                );
-            }
-        );
-    }
 
     subjectHistorySection.classList.remove(
         "hidden"
     );
 
+
+    if (!history.length) {
+
+        subjectHistory.innerHTML =
+            "";
+
+        historyEmpty.classList.remove(
+            "hidden"
+        );
+
+    }
+
+    else {
+
+        historyEmpty.classList.add(
+            "hidden"
+        );
+
+
+        subjectHistory.innerHTML =
+            history
+                .map(
+                    item =>
+                        createHistoryCard(
+                            item
+                        )
+                )
+                .join("");
+
+    }
+
+
     subjectHistorySection.scrollIntoView({
         behavior: "smooth",
         block: "start"
     });
+
 }
+
+
+
+closeHistory.addEventListener(
+    "click",
+    () => {
+
+        subjectHistorySection.classList.add(
+            "hidden"
+        );
+
+    }
+);
+
+
+
+/* =========================================================
+   CARD — TODAY
+========================================================= */
+
+function createLiveCard(
+    item
+) {
+
+    const status =
+        getClassStatus(
+            item
+        );
+
+
+    const provider =
+        getProvider(
+            item
+        );
+
+
+    let action =
+        "";
+
+
+    if (
+        status.status ===
+        "LIVE"
+    ) {
+
+        action = `
+            <button
+                type="button"
+                class="action-button live-button"
+                data-join="${escapeAttribute(item.id)}"
+            >
+                JOIN CLASS
+            </button>
+        `;
+
+    }
+
+    else if (
+        status.status ===
+        "ENDED"
+    ) {
+
+        if (
+            hasRecording(
+                item
+            )
+        ) {
+
+            action = `
+                <button
+                    type="button"
+                    class="action-button watch-button"
+                    data-recording="${escapeAttribute(item.id)}"
+                >
+                    WATCH RECORDING
+                </button>
+            `;
+
+        }
+
+        else {
+
+            action = `
+                <span class="provider-label">
+                    Class ended
+                </span>
+            `;
+
+        }
+
+    }
+
+    else {
+
+        action = `
+            <span class="provider-label">
+                Starts ${formatTime(item)}
+            </span>
+        `;
+
+    }
+
+
+    return `
+
+        <article
+            class="live-card ${
+                status.status === "LIVE"
+                    ? "live-now"
+                    : ""
+            }"
+        >
+
+            <div class="live-card-top">
+
+                <div>
+
+                    <h3 class="live-card-title">
+                        ${escapeHtml(
+                            item.title ||
+                            "Live Class"
+                        )}
+                    </h3>
+
+                    <div class="live-card-subject">
+
+                        ${escapeHtml(
+                            item.subjectName ||
+                            "Class"
+                        )}
+
+                        ${
+                            item.chapterName
+                                ? `
+                                    ·
+                                    ${escapeHtml(
+                                        item.chapterName
+                                    )}
+                                `
+                                : ""
+                        }
+
+                    </div>
+
+                </div>
+
+
+                <span
+                    class="status-pill ${
+                        status.status === "LIVE"
+                            ? "live"
+                            : status.status === "UPCOMING"
+                                ? "upcoming"
+                                : "missed"
+                    }"
+                >
+                    ${escapeHtml(
+                        status.label
+                    )}
+                </span>
+
+            </div>
+
+
+            <div class="class-details">
+
+                <span>
+                    🕒 ${escapeHtml(
+                        formatTimeRange(item)
+                    )}
+                </span>
+
+                <span>
+                    👨‍🏫 ${escapeHtml(
+                        item.teacherName ||
+                        item.facultyName ||
+                        "Faculty"
+                    )}
+                </span>
+
+            </div>
+
+
+            <div class="class-action-row">
+
+                <span
+                    class="provider-label ${
+                        item.liveType === "ZOOM"
+                            ? "zoom"
+                            : ""
+                    }"
+                >
+                    ${escapeHtml(
+                        provider
+                    )}
+                </span>
+
+
+                <div>
+                    ${action}
+                </div>
+
+            </div>
+
+        </article>
+
+    `;
+
+}
+
+
+
+/* =========================================================
+   DATE CLASS CARD
+========================================================= */
+
+function createDateClassCard(
+    item
+) {
+
+    const status =
+        getClassStatus(
+            item
+        );
+
+
+    let action =
+        "";
+
+
+    if (
+        status.status ===
+        "LIVE"
+    ) {
+
+        action = `
+            <button
+                type="button"
+                class="action-button live-button"
+                data-join="${escapeAttribute(item.id)}"
+            >
+                JOIN CLASS
+            </button>
+        `;
+
+    }
+
+    else if (
+        status.status ===
+        "ENDED" &&
+        hasRecording(item)
+    ) {
+
+        action = `
+            <button
+                type="button"
+                class="action-button watch-button"
+                data-recording="${escapeAttribute(item.id)}"
+            >
+                WATCH RECORDING
+            </button>
+        `;
+
+    }
+
+    else if (
+        status.status ===
+        "UPCOMING"
+    ) {
+
+        action = `
+            <span class="provider-label">
+                UPCOMING
+            </span>
+        `;
+
+    }
+
+
+    return `
+
+        <article class="date-class-card">
+
+            <div class="date-class-main">
+
+                <div class="date-class-title">
+
+                    ${escapeHtml(
+                        item.title ||
+                        "Live Class"
+                    )}
+
+                </div>
+
+
+                <div class="date-class-info">
+
+                    ${escapeHtml(
+                        item.subjectName ||
+                        "Subject"
+                    )}
+
+                    ${
+                        item.chapterName
+                            ? `
+                                ·
+                                ${escapeHtml(
+                                    item.chapterName
+                                )}
+                            `
+                            : ""
+                    }
+
+                    <br>
+
+                    ${escapeHtml(
+                        item.teacherName ||
+                        item.facultyName ||
+                        "Faculty"
+                    )}
+
+                    ·
+
+                    ${escapeHtml(
+                        formatTimeRange(item)
+                    )}
+
+                </div>
+
+            </div>
+
+
+            <div class="date-class-action">
+
+                ${action}
+
+            </div>
+
+        </article>
+
+    `;
+
+}
+
+
+
+/* =========================================================
+   SUBJECT CARD
+========================================================= */
+
+function createSubjectCard(
+    subject
+) {
+
+    const name =
+        subject.name ||
+        subject.title ||
+        "Subject";
+
+
+    const count =
+        allClasses.filter(
+            item =>
+                item.subjectId ===
+                subject.id
+        ).length;
+
+
+    return `
+
+        <button
+            type="button"
+            class="subject-card"
+            data-subject-id="${escapeAttribute(subject.id)}"
+        >
+
+            <div class="subject-icon">
+
+                ${escapeHtml(
+                    getInitial(name)
+                )}
+
+            </div>
+
+
+            <div class="subject-name">
+
+                <strong>
+                    ${escapeHtml(
+                        name
+                    )}
+                </strong>
+
+                <span>
+                    ${count}
+                    ${
+                        count === 1
+                            ? "class"
+                            : "classes"
+                    }
+                </span>
+
+            </div>
+
+
+            <div class="subject-arrow">
+                ›
+            </div>
+
+        </button>
+
+    `;
+
+}
+
+
 
 /* =========================================================
    HISTORY CARD
@@ -1734,204 +1137,260 @@ function createHistoryCard(
     item
 ) {
 
-    const card =
-        document.createElement(
-            "article"
+    return `
+
+        <article class="history-card">
+
+            <div>
+
+                <div class="history-title">
+
+                    ${escapeHtml(
+                        item.title ||
+                        "Live Class"
+                    )}
+
+                </div>
+
+
+                <div class="history-info">
+
+                    ${escapeHtml(
+                        item.chapterName ||
+                        "Class"
+                    )}
+
+                    <br>
+
+                    ${escapeHtml(
+                        item.teacherName ||
+                        item.facultyName ||
+                        "Faculty"
+                    )}
+
+                    ·
+
+                    ${escapeHtml(
+                        formatHistoryDate(item)
+                    )}
+
+                </div>
+
+            </div>
+
+
+            ${
+                hasRecording(item)
+                    ? `
+                        <button
+                            type="button"
+                            class="history-watch"
+                            data-recording="${escapeAttribute(item.id)}"
+                        >
+                            WATCH
+                        </button>
+                    `
+                    : `
+                        <span class="provider-label">
+                            NO RECORDING
+                        </span>
+                    `
+            }
+
+        </article>
+
+    `;
+
+}
+
+
+
+/* =========================================================
+   EVENT DELEGATION
+========================================================= */
+
+document.addEventListener(
+    "click",
+    event => {
+
+        const join =
+            event.target.closest(
+                "[data-join]"
+            );
+
+
+        if (join) {
+
+            openLiveClass(
+                join.dataset.join
+            );
+
+            return;
+
+        }
+
+
+        const recording =
+            event.target.closest(
+                "[data-recording]"
+            );
+
+
+        if (recording) {
+
+            openRecording(
+                recording.dataset.recording
+            );
+
+        }
+
+    }
+);
+
+
+
+/* =========================================================
+   ZOOM CONNECTION
+========================================================= */
+
+function openLiveClass(
+    liveClassId
+) {
+
+    const item =
+        allClasses.find(
+            classItem =>
+                classItem.id ===
+                liveClassId
         );
 
-    card.className =
-        "history-card";
 
-    const date =
-        getDateObject(
-            item
+    if (!item) {
+
+        showToast(
+            "Live class not found."
         );
+
+        return;
+
+    }
+
 
     const status =
         getClassStatus(
             item
         );
 
-    const recording =
-        hasRecording(
-            item
-        );
 
-    let action =
-        "UPCOMING";
+    /*
+     * Only allow joining an actual
+     * currently-live class.
+     */
 
     if (
-        status ===
+        status.status !==
         "LIVE"
     ) {
 
-        action =
-            "JOIN LIVE";
+        showToast(
+            "This class is not live right now."
+        );
 
-    } else if (
-        status === "ENDED" &&
-        recording
-    ) {
+        return;
 
-        action =
-            "WATCH";
-    } else if (
-        status === "ENDED"
-    ) {
-
-        action =
-            "NO RECORDING";
     }
 
-    card.innerHTML = `
 
-        <div class="history-date">
+    /*
+     * NEW ZOOM ROUTE
+     *
+     * The Zoom Meeting SDK will be
+     * loaded by /home/liveclass/
+     */
 
-            <strong>
-                ${
-                    date
-                        ? date.getDate()
-                        : "—"
-                }
-            </strong>
+    window.location.href =
+        `../liveclass/?liveClassId=${
+            encodeURIComponent(
+                liveClassId
+            )
+        }`;
 
-            <span>
-                ${
-                    date
-                        ? date.toLocaleDateString(
-                            "en-IN",
-                            {
-                                month: "short"
-                            }
-                        )
-                        : ""
-                }
-            </span>
-
-        </div>
-
-        <div>
-
-            <h3 class="history-title">
-                ${escapeHTML(
-                    getTitle(item)
-                )}
-            </h3>
-
-            <div class="history-meta">
-
-                ${escapeHTML(
-                    getChapterName(item)
-                )}
-
-                •
-                ${escapeHTML(
-                    getTeacher(item)
-                )}
-
-                <br>
-
-                ${escapeHTML(
-                    getTimeRange(item)
-                )}
-
-            </div>
-
-        </div>
-
-        <button
-            class="history-watch"
-            type="button"
-        >
-            ${action}
-        </button>
-    `;
-
-    const button =
-        card.querySelector(
-            ".history-watch"
-        );
-
-    if (
-        status === "LIVE"
-    ) {
-
-        button.addEventListener(
-            "click",
-            () => {
-
-                openLivePlayer(
-                    item.id
-                );
-            }
-        );
-
-    } else if (
-        status === "ENDED" &&
-        recording
-    ) {
-
-        button.addEventListener(
-            "click",
-            () => {
-
-                openRecordedPlayer(
-                    item.id
-                );
-            }
-        );
-
-    } else {
-
-        button.disabled =
-            true;
-
-        button.style.opacity =
-            "0.45";
-
-        button.style.cursor =
-            "default";
-    }
-
-    return card;
 }
 
+
+
 /* =========================================================
-   ROUTING
+   RECORDING
 ========================================================= */
 
-function openLivePlayer(
-    id
+function openRecording(
+    liveClassId
 ) {
 
+    const item =
+        allClasses.find(
+            classItem =>
+                classItem.id ===
+                liveClassId
+        );
+
+
+    if (!item) {
+
+        showToast(
+            "Recording not found."
+        );
+
+        return;
+
+    }
+
+
+    if (
+        !hasRecording(item)
+    ) {
+
+        showToast(
+            "Recording is not available yet."
+        );
+
+        return;
+
+    }
+
+
     /*
-       ACTUAL LIVE ONLY
-    */
+     * Common Zenova Video Player
+     */
 
     window.location.href =
-        `../livevideoplayer/?liveClassId=${encodeURIComponent(id)}`;
+        `../videoplayer/?liveClassId=${
+            encodeURIComponent(
+                liveClassId
+            )
+        }`;
+
 }
 
-function openRecordedPlayer(
-    id
-) {
 
-    /*
-       RECORDED LIVE CLASS
-       ALWAYS COMMON VIDEO PLAYER
-    */
-
-    window.location.href =
-        `../videoplayer/?liveClassId=${encodeURIComponent(id)}`;
-}
 
 /* =========================================================
-   RECORDING CHECK
+   RECORDING DETECTION
 ========================================================= */
 
 function hasRecording(
     item
 ) {
+
+    /*
+     * IMPORTANT:
+     *
+     * youtubeLiveUrl is NOT considered
+     * a recording.
+     *
+     * A live source alone does not mean
+     * a replay exists.
+     */
 
     return Boolean(
 
@@ -1941,784 +1400,910 @@ function hasRecording(
 
         item.replayUrl ||
 
-        item.videoUrl ||
+        item.recordedVideoUrl ||
 
-        item.externalVideoUrl ||
+        item.recordingVideoUrl ||
 
-        item.youtubeUrl ||
+        (
+            item.videoUrl &&
+            item.liveType ===
+            "RECORDED_VIDEO"
+        ) ||
 
-        item.youtubeLiveUrl ||
-
-        item.contentId
+        item.recordingContentId
 
     );
+
 }
 
+
+
 /* =========================================================
-   TITLE
+   CLASS STATUS
 ========================================================= */
 
-function getTitle(
+function getClassStatus(
     item
 ) {
 
-    return (
-        item.title ||
-        item.classTitle ||
-        item.liveTitle ||
-        item.topic ||
-        item.name ||
-        "Live Class"
-    );
+    const now =
+        Date.now();
+
+
+    const start =
+        getStartMillis(
+            item
+        );
+
+
+    let end =
+        getEndMillis(
+            item
+        );
+
+
+    /*
+     * If end time is unavailable,
+     * assume two hours.
+     */
+
+    if (
+        !end ||
+        end <= start
+    ) {
+
+        end =
+            start +
+            (
+                2 *
+                60 *
+                60 *
+                1000
+            );
+
+    }
+
+
+    if (
+        now <
+        start
+    ) {
+
+        return {
+
+            status: "UPCOMING",
+
+            label: "UPCOMING"
+
+        };
+
+    }
+
+
+    if (
+        now >= start &&
+        now <= end
+    ) {
+
+        return {
+
+            status: "LIVE",
+
+            label: "LIVE NOW"
+
+        };
+
+    }
+
+
+    return {
+
+        status: "ENDED",
+
+        label: "MISSED"
+
+    };
+
 }
 
+
+
 /* =========================================================
-   SUBJECT
+   DATE / TIME
 ========================================================= */
 
-function getSubjectName(
+function getStartMillis(
     item
 ) {
 
-    return (
-        item.subjectName ||
-        item.subject ||
-        "Subject"
+    if (
+        item.startDateTime &&
+        typeof item.startDateTime.toMillis ===
+        "function"
+    ) {
+
+        return item.startDateTime.toMillis();
+
+    }
+
+
+    if (
+        item.startDateTime &&
+        item.startDateTime.seconds
+    ) {
+
+        return (
+            Number(
+                item.startDateTime.seconds
+            ) * 1000
+        );
+
+    }
+
+
+    return parseIndiaDateTime(
+        item.scheduledDate,
+        item.scheduledTime ||
+        item.startTime
     );
+
 }
 
-/* =========================================================
-   CHAPTER
-========================================================= */
 
-function getChapterName(
+
+function getEndMillis(
     item
 ) {
 
-    return (
-        item.chapterName ||
-        item.chapter ||
-        "Chapter"
+    if (
+        item.endDateTime &&
+        typeof item.endDateTime.toMillis ===
+        "function"
+    ) {
+
+        return item.endDateTime.toMillis();
+
+    }
+
+
+    if (
+        item.endDateTime &&
+        item.endDateTime.seconds
+    ) {
+
+        return (
+            Number(
+                item.endDateTime.seconds
+            ) * 1000
+        );
+
+    }
+
+
+    return parseIndiaDateTime(
+        item.endDate ||
+        item.scheduledDate,
+        item.endTime
     );
+
 }
 
-/* =========================================================
-   TEACHER
-========================================================= */
 
-function getTeacher(
+
+function parseIndiaDateTime(
+    date,
+    time
+) {
+
+    if (
+        !date ||
+        !time
+    ) {
+
+        return 0;
+
+    }
+
+
+    return new Date(
+        `${date}T${time}:00+05:30`
+    ).getTime();
+
+}
+
+
+
+function formatTime(
     item
 ) {
 
-    return (
-        item.teacherName ||
-        item.facultyName ||
-        item.teacher ||
-        item.faculty ||
-        "Zenova Faculty"
+    const millis =
+        getStartMillis(
+            item
+        );
+
+
+    if (!millis) {
+
+        return "--";
+
+    }
+
+
+    return new Intl.DateTimeFormat(
+        "en-IN",
+        {
+
+            hour: "numeric",
+
+            minute: "2-digit",
+
+            hour12: true,
+
+            timeZone:
+                "Asia/Kolkata"
+
+        }
+    ).format(
+        new Date(millis)
     );
+
 }
 
-/* =========================================================
-   TIME
-========================================================= */
 
-function getTimeRange(
+
+function formatTimeRange(
     item
 ) {
 
     const start =
-        item.scheduledTime ||
-        item.startTime ||
-        item.classTime ||
-        item.startClockTime ||
-        "";
+        getStartMillis(
+            item
+        );
+
 
     const end =
-        item.endTime ||
-        "";
-
-    if (
-        start &&
-        end
-    ) {
-
-        return `${start} – ${end}`;
-    }
-
-    if (start) {
-        return start;
-    }
-
-    return "Time not specified";
-}
-
-/* =========================================================
-   DATE
-========================================================= */
-
-function getClassDate(
-    item
-) {
-
-    return (
-        item.scheduledDate ||
-        item.classDate ||
-        item.liveDate ||
-        item.startDate ||
-        ""
-    );
-}
-
-/* =========================================================
-   START TIMESTAMP
-========================================================= */
-
-function getStartTimestamp(
-    item
-) {
-
-    const date =
-        getClassDate(
+        getEndMillis(
             item
         );
 
-    const time =
-        item.scheduledTime ||
-        item.startTime ||
-        item.classTime ||
-        item.startClockTime ||
-        "00:00";
 
-    if (!date) {
-        return 0;
+    if (!start) {
+
+        return "Time unavailable";
+
     }
 
-    const timestamp =
-        new Date(
-            `${date}T${normalizeTime(time)}`
-        ).getTime();
 
-    return Number.isNaN(
-        timestamp
-    )
-        ? 0
-        : timestamp;
-}
+    const formatter =
+        new Intl.DateTimeFormat(
+            "en-IN",
+            {
 
-/* =========================================================
-   END TIMESTAMP
-========================================================= */
+                hour: "numeric",
 
-function getEndTimestamp(
-    item
-) {
+                minute: "2-digit",
 
-    const date =
-        getClassDate(
-            item
-        );
+                hour12: true,
 
-    const endTime =
-        item.endTime ||
-        "";
+                timeZone:
+                    "Asia/Kolkata"
 
-    if (
-        !date ||
-        !endTime
-    ) {
-
-        return 0;
-    }
-
-    const timestamp =
-        new Date(
-            `${date}T${normalizeTime(endTime)}`
-        ).getTime();
-
-    return Number.isNaN(
-        timestamp
-    )
-        ? 0
-        : timestamp;
-}
-
-/* =========================================================
-   DATE OBJECT
-========================================================= */
-
-function getDateObject(
-    item
-) {
-
-    const date =
-        getClassDate(
-            item
-        );
-
-    if (!date) {
-        return null;
-    }
-
-    const time =
-        item.scheduledTime ||
-        item.startTime ||
-        item.classTime ||
-        "00:00";
-
-    const result =
-        new Date(
-            `${date}T${normalizeTime(time)}`
-        );
-
-    if (
-        Number.isNaN(
-            result.getTime()
-        )
-    ) {
-
-        return null;
-    }
-
-    return result;
-}
-
-/* =========================================================
-   THUMBNAIL
-========================================================= */
-
-function getThumbnail(
-    item
-) {
-
-    if (
-        item.thumbnailUrl
-    ) {
-
-        return item.thumbnailUrl;
-    }
-
-    if (
-        item.thumbnail
-    ) {
-
-        return item.thumbnail;
-    }
-
-    const candidates = [
-
-        item.recordingUrl,
-
-        item.recordedUrl,
-
-        item.replayUrl,
-
-        item.videoUrl,
-
-        item.externalVideoUrl,
-
-        item.youtubeUrl,
-
-        item.youtubeLiveUrl
-
-    ];
-
-    for (
-        const candidate
-        of candidates
-    ) {
-
-        const id =
-            extractYouTubeId(
-                candidate
-            );
-
-        if (id) {
-
-            return (
-                `https://img.youtube.com/vi/${id}/hqdefault.jpg`
-            );
-        }
-    }
-
-    return "";
-}
-
-/* =========================================================
-   PLACEHOLDER
-========================================================= */
-
-function placeholderThumbnail() {
-
-    return `
-
-        <div style="
-            width:100%;
-            height:100%;
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            background:#eeeeee;
-            color:#777777;
-            font-family:Poppins,sans-serif;
-            font-size:13px;
-            font-weight:600;
-        ">
-            ZENOVA
-        </div>
-    `;
-}
-
-/* =========================================================
-   YOUTUBE ID
-========================================================= */
-
-function extractYouTubeId(
-    value
-) {
-
-    if (!value) {
-        return null;
-    }
-
-    const text =
-        String(
-            value
-        ).trim();
-
-    if (
-        /^[a-zA-Z0-9_-]{11}$/.test(
-            text
-        )
-    ) {
-
-        return text;
-    }
-
-    try {
-
-        const url =
-            new URL(
-                text
-            );
-
-        if (
-            url.hostname.includes(
-                "youtu.be"
-            )
-        ) {
-
-            return url.pathname
-                .replace(
-                    "/",
-                    ""
-                )
-                .slice(
-                    0,
-                    11
-                );
-        }
-
-        if (
-            url.hostname.includes(
-                "youtube.com"
-            )
-        ) {
-
-            const watchId =
-                url.searchParams.get(
-                    "v"
-                );
-
-            if (watchId) {
-                return watchId;
             }
+        );
 
-            const parts =
-                url.pathname
-                    .split("/")
-                    .filter(Boolean);
 
-            const index =
-                parts.findIndex(
-                    part =>
-                        [
-                            "live",
-                            "embed",
-                            "shorts"
-                        ].includes(
-                            part
-                        )
-                );
+    const startText =
+        formatter.format(
+            new Date(start)
+        );
 
-            if (
-                index >= 0 &&
-                parts[index + 1]
-            ) {
 
-                return parts[
-                    index + 1
-                ].slice(
-                    0,
-                    11
-                );
-            }
-        }
+    if (!end) {
 
-    } catch (error) {
+        return startText;
 
-        return null;
     }
 
-    return null;
+
+    return `${startText} – ${
+        formatter.format(
+            new Date(end)
+        )
+    }`;
+
 }
+
+
 
 /* =========================================================
    DATE HELPERS
 ========================================================= */
 
-function getDateKey(
-    date
-) {
+function getTodayString() {
 
-    const year =
-        date.getFullYear();
+    const parts =
+        new Intl.DateTimeFormat(
+            "en-CA",
+            {
 
-    const month =
-        String(
-            date.getMonth() + 1
-        ).padStart(
-            2,
-            "0"
+                timeZone:
+                    "Asia/Kolkata",
+
+                year: "numeric",
+
+                month: "2-digit",
+
+                day: "2-digit"
+
+            }
+        ).formatToParts(
+            new Date()
         );
 
-    const day =
-        String(
-            date.getDate()
-        ).padStart(
-            2,
-            "0"
-        );
 
-    return (
-        `${year}-${month}-${day}`
+    const values = {};
+
+
+    parts.forEach(
+        part => {
+
+            if (
+                part.type !==
+                "literal"
+            ) {
+
+                values[part.type] =
+                    part.value;
+
+            }
+
+        }
     );
+
+
+    return `${
+        values.year
+    }-${
+        values.month
+    }-${
+        values.day
+    }`;
+
 }
 
-function dateFromKey(
-    key
-) {
 
-    if (!key) {
-        return null;
-    }
 
-    const result =
-        new Date(
-            `${key}T00:00:00`
-        );
-
-    return Number.isNaN(
-        result.getTime()
-    )
-        ? null
-        : result;
-}
-
-function formatDate(
-    key
+function shiftDate(
+    dateString,
+    amount
 ) {
 
     const date =
-        dateFromKey(
-            key
+        new Date(
+            `${dateString}T12:00:00+05:30`
         );
 
-    if (!date) {
-        return "Date not specified";
-    }
 
-    return date.toLocaleDateString(
-        "en-IN",
-        {
-            day: "numeric",
-            month: "short",
-            year: "numeric"
-        }
+    date.setDate(
+        date.getDate() +
+        amount
     );
+
+
+    return formatDateInput(
+        date
+    );
+
 }
 
-/* =========================================================
-   TIME NORMALIZATION
-========================================================= */
 
-function normalizeTime(
-    value
+
+function formatDateInput(
+    date
 ) {
 
-    if (!value) {
-        return "00:00";
-    }
-
-    const text =
+    return [
+        date.getFullYear(),
         String(
-            value
-        )
-            .trim()
-            .toUpperCase();
-
-    /*
-       Already 24-hour.
-    */
-
-    if (
-        /^\d{1,2}:\d{2}$/.test(
-            text
-        )
-    ) {
-
-        return text;
-    }
-
-    const match =
-        text.match(
-            /^(\d{1,2}):(\d{2})\s*(AM|PM)$/
-        );
-
-    if (!match) {
-
-        return "00:00";
-    }
-
-    let hours =
-        Number(
-            match[1]
-        );
-
-    const minutes =
-        match[2];
-
-    const period =
-        match[3];
-
-    if (
-        period === "PM" &&
-        hours !== 12
-    ) {
-
-        hours += 12;
-    }
-
-    if (
-        period === "AM" &&
-        hours === 12
-    ) {
-
-        hours = 0;
-    }
-
-    return (
+            date.getMonth() + 1
+        ).padStart(2, "0"),
         String(
-            hours
-        ).padStart(
-            2,
-            "0"
-        ) +
-        ":" +
-        minutes
-    );
+            date.getDate()
+        ).padStart(2, "0")
+    ].join("-");
+
 }
 
+
+
+function formatLongDate(
+    dateString
+) {
+
+    if (!dateString) {
+
+        return "";
+
+    }
+
+
+    return new Intl.DateTimeFormat(
+        "en-IN",
+        {
+
+            weekday: "short",
+
+            day: "numeric",
+
+            month: "short",
+
+            year: "numeric",
+
+            timeZone:
+                "Asia/Kolkata"
+
+        }
+    ).format(
+        new Date(
+            `${dateString}T12:00:00+05:30`
+        )
+    );
+
+}
+
+
+
+function formatHistoryDate(
+    item
+) {
+
+    const millis =
+        getStartMillis(
+            item
+        );
+
+
+    if (!millis) {
+
+        return "Date unavailable";
+
+    }
+
+
+    return new Intl.DateTimeFormat(
+        "en-IN",
+        {
+
+            weekday: "short",
+
+            day: "numeric",
+
+            month: "short",
+
+            year: "numeric",
+
+            hour: "numeric",
+
+            minute: "2-digit",
+
+            hour12: true,
+
+            timeZone:
+                "Asia/Kolkata"
+
+        }
+    ).format(
+        new Date(millis)
+    );
+
+}
+
+
+
 /* =========================================================
-   CLASS NORMALIZATION
+   CLASS FILTER
 ========================================================= */
+
+function getClassesForDate(
+    dateString
+) {
+
+    return allClasses
+        .filter(
+            item =>
+                getClassDate(
+                    item
+                ) ===
+                dateString
+        )
+        .sort(
+            (a, b) =>
+                getStartMillis(a) -
+                getStartMillis(b)
+        );
+
+}
+
+
+
+function getClassDate(
+    item
+) {
+
+    const millis =
+        getStartMillis(
+            item
+        );
+
+
+    if (!millis) {
+
+        return "";
+
+    }
+
+
+    const parts =
+        new Intl.DateTimeFormat(
+            "en-CA",
+            {
+
+                timeZone:
+                    "Asia/Kolkata",
+
+                year: "numeric",
+
+                month: "2-digit",
+
+                day: "2-digit"
+
+            }
+        ).formatToParts(
+            new Date(millis)
+        );
+
+
+    const values = {};
+
+
+    parts.forEach(
+        part => {
+
+            if (
+                part.type !==
+                "literal"
+            ) {
+
+                values[part.type] =
+                    part.value;
+
+            }
+
+        }
+    );
+
+
+    return `${
+        values.year
+    }-${
+        values.month
+    }-${
+        values.day
+    }`;
+
+}
+
+
+
+function belongsToCourse(
+    item,
+    course
+) {
+
+    if (
+        item.courseId
+    ) {
+
+        return (
+            item.courseId ===
+            course.id
+        );
+
+    }
+
+
+    return normalizeClass(
+        item.courseClass ||
+        item.className ||
+        item.standard ||
+        ""
+    ) ===
+    normalizeClass(
+        getCourseClass(course)
+    );
+
+}
+
+
+
+function getStudentClass(
+    data
+) {
+
+    return (
+        data.className ||
+        data.class ||
+        data.standard ||
+        data.grade ||
+        data.targetClass ||
+        ""
+    );
+
+}
+
+
+
+function getCourseClass(
+    data
+) {
+
+    return (
+        data.className ||
+        data.courseClass ||
+        data.targetClass ||
+        data.standard ||
+        data.grade ||
+        data.crmClass ||
+        ""
+    );
+
+}
+
+
 
 function normalizeClass(
     value
 ) {
 
-    if (!value) {
-        return "";
-    }
-
     const text =
         String(
-            value
+            value ||
+            ""
         )
-            .toLowerCase()
             .trim()
+            .toLowerCase()
             .replace(
                 /\s+/g,
                 ""
             );
 
+
     if (
-        [
-            "10",
-            "10th",
-            "class10",
-            "class10th",
-            "sslc"
-        ].includes(
-            text
-        )
+        text === "10" ||
+        text === "10th" ||
+        text === "class10" ||
+        text === "10thstandard"
     ) {
 
         return "10th";
+
     }
 
+
     if (
-        [
-            "9",
-            "9th",
-            "class9",
-            "class9th"
-        ].includes(
-            text
-        )
+        text === "9" ||
+        text === "9th" ||
+        text === "class9" ||
+        text === "9thstandard"
     ) {
 
         return "9th";
+
     }
 
+
     if (
-        [
-            "8",
-            "8th",
-            "class8",
-            "class8th"
-        ].includes(
-            text
-        )
+        text === "8" ||
+        text === "8th" ||
+        text === "class8" ||
+        text === "8thstandard"
     ) {
 
         return "8th";
+
     }
+
 
     if (
-        text.includes(
-            "1stpuc"
-        ) ||
-        text === "puc1"
+        text.includes("1stpuc") ||
+        text.includes("puc1")
     ) {
 
-        return "1st puc";
+        return "1stpuc";
+
     }
+
 
     if (
-        text.includes(
-            "2ndpuc"
-        ) ||
-        text === "puc2"
+        text.includes("2ndpuc") ||
+        text.includes("puc2")
     ) {
 
-        return "2nd puc";
+        return "2ndpuc";
+
     }
+
 
     return text;
+
 }
+
+
 
 /* =========================================================
-   TEXT
+   PROVIDER
 ========================================================= */
 
-function normalizeText(
-    value
+function getProvider(
+    item
 ) {
 
-    return String(
-        value || ""
-    )
-        .toLowerCase()
-        .trim()
-        .replace(
-            /\s+/g,
-            " "
-        );
+    if (
+        item.liveType ===
+        "ZOOM"
+    ) {
+
+        return "ZOOM CLASSROOM";
+
+    }
+
+
+    if (
+        item.liveType ===
+        "YOUTUBE_LIVE"
+    ) {
+
+        return "YOUTUBE LIVE";
+
+    }
+
+
+    if (
+        item.liveType ===
+        "RECORDED_VIDEO"
+    ) {
+
+        return "RECORDED CLASS";
+
+    }
+
+
+    if (
+        item.liveType ===
+        "EXTERNAL_VIDEO"
+    ) {
+
+        return "LIVE CLASS";
+
+    }
+
+
+    return "ZENOVA LIVE";
+
 }
 
-function slugify(
-    value
+
+
+/* =========================================================
+   SUBJECT SORT
+========================================================= */
+
+function sortSubjects(
+    a,
+    b
 ) {
 
-    return String(
-        value || "subject"
-    )
-        .toLowerCase()
-        .replace(
-            /[^a-z0-9]+/g,
-            "-"
+    return (
+        Number(
+            a.order ??
+            9999
+        ) -
+        Number(
+            b.order ??
+            9999
         )
-        .replace(
-            /^-+|-+$/g,
-            ""
-        );
+    );
+
 }
+
+
+
+/* =========================================================
+   INITIAL
+========================================================= */
 
 function getInitial(
     value
 ) {
 
     return String(
-        value || "Z"
+        value ||
+        "Z"
     )
         .trim()
         .charAt(0)
-        .toUpperCase() || "Z";
+        .toUpperCase() ||
+        "Z";
+
 }
 
+
+
 /* =========================================================
-   ESCAPE
+   NAVIGATION
 ========================================================= */
 
-function escapeHTML(
-    value
-) {
-
-    return String(
-        value ?? ""
+document
+    .querySelectorAll(
+        "[data-nav]"
     )
-        .replace(
-            /&/g,
-            "&amp;"
-        )
-        .replace(
-            /</g,
-            "&lt;"
-        )
-        .replace(
-            />/g,
-            "&gt;"
-        )
-        .replace(
-            /"/g,
-            "&quot;"
-        )
-        .replace(
-            /'/g,
-            "&#039;"
-        );
-}
+    .forEach(
+        button => {
 
-function escapeAttribute(
-    value
-) {
+            button.addEventListener(
+                "click",
+                () => {
 
-    return String(
-        value ?? ""
-    )
-        .replace(
-            /"/g,
-            "&quot;"
-        )
-        .replace(
-            /'/g,
-            "&#039;"
-        );
-}
+                    window.location.href =
+                        button.dataset.nav;
+
+                }
+            );
+
+        }
+    );
+
+
+backButton.addEventListener(
+    "click",
+    () => {
+
+        if (
+            document.referrer &&
+            document.referrer.includes(
+                window.location.origin
+            )
+        ) {
+
+            history.back();
+
+        }
+
+        else {
+
+            window.location.href =
+                "../../home/";
+
+        }
+
+    }
+);
+
+
+retryButton.addEventListener(
+    "click",
+    () => {
+
+        window.location.reload();
+
+    }
+);
+
+
 
 /* =========================================================
-   UI
+   UI STATES
 ========================================================= */
 
 function showLoading() {
@@ -2734,9 +2319,12 @@ function showLoading() {
     liveApp.classList.add(
         "hidden"
     );
+
 }
 
-function hideLoading() {
+
+
+function showApp() {
 
     loadingState.classList.add(
         "hidden"
@@ -2749,7 +2337,10 @@ function hideLoading() {
     liveApp.classList.remove(
         "hidden"
     );
+
 }
+
+
 
 function showError(
     message
@@ -2767,98 +2358,92 @@ function showError(
         "hidden"
     );
 
-    errorMessage.textContent =
+    errorText.textContent =
         message;
+
 }
 
-/* =========================================================
-   BACK
-========================================================= */
 
-backButton.addEventListener(
-    "click",
-    goBack
-);
-
-errorBackButton.addEventListener(
-    "click",
-    goBack
-);
-
-function goBack() {
-
-    if (
-        document.referrer
-    ) {
-
-        try {
-
-            const referrer =
-                new URL(
-                    document.referrer
-                );
-
-            if (
-                referrer.origin ===
-                window.location.origin
-            ) {
-
-                window.location.href =
-                    document.referrer;
-
-                return;
-            }
-
-        } catch (error) {
-            console.warn(error);
-        }
-    }
-
-    if (
-        window.history.length > 1
-    ) {
-
-        window.history.back();
-
-        return;
-    }
-
-    window.location.href =
-        "../";
-}
 
 /* =========================================================
-   BOTTOM NAV
+   TOAST
 ========================================================= */
 
-document
-    .querySelectorAll(
-        ".bottom-nav button[data-route]"
-    )
-    .forEach(
-        button => {
+function showToast(
+    message
+) {
 
-            button.addEventListener(
-                "click",
-                () => {
+    const toast =
+        document.getElementById(
+            "toast"
+        );
 
-                    window.location.href =
-                        button.dataset.route;
-                }
-            );
-        }
+
+    toast.textContent =
+        message;
+
+    toast.classList.add(
+        "show"
     );
 
+
+    setTimeout(
+        () => {
+
+            toast.classList.remove(
+                "show"
+            );
+
+        },
+        2500
+    );
+
+}
+
+
+
 /* =========================================================
-   CLOSE SUBJECT HISTORY
+   ESCAPE
 ========================================================= */
 
-closeSubjectHistory.addEventListener(
-    "click",
-    () => {
+function escapeHtml(
+    value
+) {
 
-        subjectHistorySection.classList.add(
-            "hidden"
+    return String(
+        value ?? ""
+    )
+        .replaceAll(
+            "&",
+            "&amp;"
+        )
+        .replaceAll(
+            "<",
+            "&lt;"
+        )
+        .replaceAll(
+            ">",
+            "&gt;"
+        )
+        .replaceAll(
+            '"',
+            "&quot;"
+        )
+        .replaceAll(
+            "'",
+            "&#039;"
         );
-    }
-);
+
+}
+
+
+
+function escapeAttribute(
+    value
+) {
+
+    return escapeHtml(
+        value
+    );
+
+}
