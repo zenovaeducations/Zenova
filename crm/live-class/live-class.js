@@ -825,48 +825,82 @@ function getClassTitle() {
 
 async function createZoomForClass() {
 
-    const start =
-        createDateTime(
-            dateStart?.value,
-            timeStart?.value
-        );
+    const title =
+        getClassTitle();
+
+    const scheduledDate =
+        dateStart?.value?.trim() || "";
+
+    const scheduledTime =
+        timeStart?.value?.trim() || "";
 
     const minutes =
         Number(
             duration?.value || 60
         );
 
-    if (!start) {
 
+    if (!title) {
         throw new Error(
-            "Please select the class start date and time."
+            "Class title could not be generated."
         );
-
     }
 
-    if (!minutes || minutes <= 0) {
 
+    if (!scheduledDate) {
+        throw new Error(
+            "Please select the start date."
+        );
+    }
+
+
+    if (!scheduledTime) {
+        throw new Error(
+            "Please select the start time."
+        );
+    }
+
+
+    if (!minutes || minutes <= 0) {
         throw new Error(
             "Please enter a valid class duration."
         );
-
     }
 
-    const topic =
-        getClassTitle();
+
+    console.log(
+        "Creating Zoom meeting:",
+        {
+            title,
+            scheduledDate,
+            scheduledTime,
+            duration: minutes
+        }
+    );
+
 
     const result =
         await createZoomMeeting({
 
-            topic: topic,
+            title:
+                title,
 
-            startTime: start,
+            scheduledDate:
+                scheduledDate,
 
-            duration: minutes
+            scheduledTime:
+                scheduledTime,
+
+            duration:
+                minutes
 
         });
 
-    if (!result?.data) {
+
+    if (
+        !result ||
+        !result.data
+    ) {
 
         throw new Error(
             "Zoom backend returned no meeting data."
@@ -874,9 +908,20 @@ async function createZoomForClass() {
 
     }
 
-    return result.data;
 
-}
+    if (
+        result.data.success !== true
+    ) {
+
+        throw new Error(
+            "Zoom meeting creation failed."
+        );
+
+    }
+
+
+    return result.data;
+            }
 
 /* =========================================================
    BUILD LIVE CLASS DATA
