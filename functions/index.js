@@ -310,20 +310,40 @@ exports.createZoomMeeting =
             const zoom =
                 await zoomResponse.json();
 
+if (!zoomResponse.ok) {
 
-            if (!zoomResponse.ok) {
+    console.error(
+        "========== ZOOM API ERROR =========="
+    );
 
-                console.error(
-                    "Zoom meeting creation error:",
-                    zoom
-                );
+    console.error(
+        "HTTP STATUS:",
+        zoomResponse.status
+    );
 
-                throw new HttpsError(
-                    "internal",
-                    "Zoom meeting could not be created."
-                );
+    console.error(
+        "ZOOM RESPONSE:",
+        JSON.stringify(zoom)
+    );
 
-            }
+    console.error(
+        "===================================="
+    );
+
+
+    const zoomMessage =
+        zoom?.message ||
+        zoom?.error ||
+        "Unknown Zoom API error";
+
+
+    throw new HttpsError(
+        "internal",
+        `Zoom API error (${zoomResponse.status}): ${zoomMessage}`
+    );
+
+}
+        
 
 
             return {
