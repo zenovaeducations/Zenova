@@ -1,44 +1,41 @@
 import {
-    auth,
-    db
+    auth
 } from "../../firebase/firebase-config.js";
-
 
 import {
     onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
 
-
 import {
-    doc,
-    getDoc,
-    setDoc,
-    serverTimestamp
-} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+    getFunctions,
+    httpsCallable
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-functions.js";
 
-
-/* =========================================================
-   CONFIG
-========================================================= */
 
 const ALLOWED_EMAIL =
     "zenovaeducations@gmail.com";
 
-const CONFIG_COLLECTION =
-    "systemConfig";
 
-const CONFIG_DOCUMENT =
-    "zoom";
-
-
-/* =========================================================
-   DOM
-========================================================= */
-
-const userEmail =
-    document.getElementById(
-        "userEmail"
+const functions =
+    getFunctions(
+        undefined,
+        "asia-south1"
     );
+
+
+const saveZoomConfig =
+    httpsCallable(
+        functions,
+        "saveZoomConfig"
+    );
+
+
+const getZoomConfig =
+    httpsCallable(
+        functions,
+        "getZoomConfig"
+    );
+
 
 const form =
     document.getElementById(
@@ -58,6 +55,11 @@ const saveButton =
 const saveText =
     document.getElementById(
         "saveText"
+    );
+
+const userEmail =
+    document.getElementById(
+        "userEmail"
     );
 
 
@@ -87,10 +89,6 @@ const meetingSdkClientSecret =
     );
 
 
-/* =========================================================
-   MESSAGE
-========================================================= */
-
 function showMessage(
     text,
     type = ""
@@ -113,10 +111,6 @@ function showMessage(
 }
 
 
-/* =========================================================
-   ACCESS DENIED
-========================================================= */
-
 function denyAccess() {
 
     document.body.innerHTML = `
@@ -125,51 +119,22 @@ function denyAccess() {
             display:flex;
             align-items:center;
             justify-content:center;
-            padding:30px;
+            font-family:Arial,sans-serif;
             background:#f5f7fb;
-            font-family:Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
         ">
 
             <div style="
-                width:min(430px,100%);
                 background:white;
-                border:1px solid #e5e7eb;
+                padding:40px;
                 border-radius:20px;
-                padding:35px;
                 text-align:center;
-                box-shadow:0 15px 40px rgba(0,0,0,.06);
+                box-shadow:0 10px 40px rgba(0,0,0,.08);
             ">
 
-                <div style="
-                    width:58px;
-                    height:58px;
-                    margin:0 auto 18px;
-                    border-radius:16px;
-                    background:#fef2f2;
-                    display:flex;
-                    align-items:center;
-                    justify-content:center;
-                    font-size:26px;
-                ">
-                    🔒
-                </div>
+                <h2>Access Denied</h2>
 
-                <h2 style="
-                    margin:0;
-                    color:#111827;
-                    font-size:21px;
-                ">
-                    Access Denied
-                </h2>
-
-                <p style="
-                    margin:10px 0 0;
-                    color:#6b7280;
-                    font-size:14px;
-                    line-height:21px;
-                ">
-                    You are not authorized to access
-                    Zenova Developer Settings.
+                <p>
+                    You are not authorized to access this page.
                 </p>
 
             </div>
@@ -179,10 +144,6 @@ function denyAccess() {
 
 }
 
-
-/* =========================================================
-   AUTH
-========================================================= */
 
 onAuthStateChanged(
     auth,
@@ -229,43 +190,22 @@ onAuthStateChanged(
 );
 
 
-/* =========================================================
-   LOAD KEYS
-========================================================= */
-
 async function loadKeys() {
 
     try {
 
-        const configRef =
-            doc(
-                db,
-                CONFIG_COLLECTION,
-                CONFIG_DOCUMENT
-            );
+        showMessage(
+            "Checking Firestore configuration..."
+        );
 
 
-        const snapshot =
-            await getDoc(
-                configRef
-            );
-
-
-        if (
-            !snapshot.exists()
-        ) {
-
-            showMessage(
-                "No Zoom configuration saved yet."
-            );
-
-            return;
-
-        }
+        const result =
+            await getZoomConfig();
 
 
         const data =
-            snapshot.data();
+            result.data ||
+            {};
 
 
         accountId.value =
@@ -290,7 +230,8 @@ async function loadKeys() {
 
 
         showMessage(
-            "Existing Zoom configuration loaded."
+            "Firestore configuration loaded.",
+            "success"
         );
 
     }
@@ -298,24 +239,34 @@ async function loadKeys() {
     catch (error) {
 
         console.error(
-            "Load Zoom configuration error:",
             error
         );
 
 
-        showMessage(
-            "Unable to load configuration. Check Firestore permissions.",
-            "error"
-        );
+        if (
+            error?.code ===
+            "functions/not-found"
+        ) {
+
+            showMessage(
+                "Zoom configuration has not been saved yet.",
+                "error"
+            );
+
+        } else {
+
+            showMessage(
+                error?.message ||
+                "Unable to check Firestore configuration.",
+                "error"
+            );
+
+        }
 
     }
 
 }
 
-
-/* =========================================================
-   SAVE KEYS
-========================================================= */
 
 form.addEventListener(
     "submit",
@@ -360,7 +311,7 @@ form.addEventListener(
         }
 
 
-        const values = {
+        const data = {
 
             accountId:
                 accountId.value.trim(),
@@ -381,11 +332,11 @@ form.addEventListener(
 
 
         if (
-            !values.accountId ||
-            !values.s2sClientId ||
-            !values.s2sClientSecret ||
-            !values.meetingSdkClientId ||
-            !values.meetingSdkClientSecret
+            !data.accountId ||
+            !data.s2sClientId ||
+            !data.s2sClientSecret ||
+            !data.meetingSdkClientId ||
+            !data.meetingSdkClientSecret
         ) {
 
             showMessage(
@@ -402,64 +353,39 @@ form.addEventListener(
             true;
 
         saveText.textContent =
-            "Saving...";
-
-        showMessage("");
+            "Saving to Firestore...";
 
 
         try {
 
-            const configRef =
-                doc(
-                    db,
-                    CONFIG_COLLECTION,
-                    CONFIG_DOCUMENT
+            const result =
+                await saveZoomConfig(
+                    data
                 );
 
 
-            await setDoc(
-                configRef,
-                {
+            if (
+                result.data?.success
+            ) {
 
-                    accountId:
-                        values.accountId,
+                showMessage(
+                    "Zoom keys saved successfully to Firestore.",
+                    "success"
+                );
 
-                    s2sClientId:
-                        values.s2sClientId,
+            } else {
 
-                    s2sClientSecret:
-                        values.s2sClientSecret,
+                throw new Error(
+                    "Firestore save failed."
+                );
 
-                    meetingSdkClientId:
-                        values.meetingSdkClientId,
-
-                    meetingSdkClientSecret:
-                        values.meetingSdkClientSecret,
-
-                    updatedAt:
-                        serverTimestamp(),
-
-                    updatedBy:
-                        user.email
-
-                },
-                {
-                    merge: true
-                }
-            );
-
-
-            showMessage(
-                "Zoom configuration saved successfully.",
-                "success"
-            );
+            }
 
         }
 
         catch (error) {
 
             console.error(
-                "Save Zoom configuration error:",
                 error
             );
 
@@ -485,10 +411,6 @@ form.addEventListener(
     }
 );
 
-
-/* =========================================================
-   SHOW / HIDE
-========================================================= */
 
 document
     .querySelectorAll(
