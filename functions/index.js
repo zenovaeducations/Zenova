@@ -3,20 +3,22 @@ const {
     HttpsError
 } = require("firebase-functions/v2/https");
 
+const {
+    defineSecret
+} = require("firebase-functions/params");
+
 const admin = require("firebase-admin");
 
 const jwt = require("jsonwebtoken");
-
-const crypto = require("crypto");
 
 const {
     setGlobalOptions
 } = require("firebase-functions/v2");
 
 
-/* =========================================================
+/* ============================================================
    FIREBASE
-========================================================= */
+============================================================ */
 
 admin.initializeApp();
 
@@ -27,26 +29,37 @@ setGlobalOptions({
 });
 
 
-/* =========================================================
+/* ============================================================
+   ZOOM SECRETS
+============================================================ */
+
+const ZOOM_ACCOUNT_ID =
+    defineSecret("ZOOM_ACCOUNT_ID");
+
+const ZOOM_S2S_CLIENT_ID =
+    defineSecret("ZOOM_S2S_CLIENT_ID");
+
+const ZOOM_S2S_CLIENT_SECRET =
+    defineSecret("ZOOM_S2S_CLIENT_SECRET");
+
+const ZOOM_MEETING_SDK_CLIENT_ID =
+    defineSecret("ZOOM_MEETING_SDK_CLIENT_ID");
+
+const ZOOM_MEETING_SDK_CLIENT_SECRET =
+    defineSecret("ZOOM_MEETING_SDK_CLIENT_SECRET");
+
+
+/* ============================================================
    CONSTANTS
-========================================================= */
+============================================================ */
 
 const LIVE_CLASSES =
     "liveClasses";
 
-const ZOOM_CONFIG_COLLECTION =
-    "systemConfig";
 
-const ZOOM_CONFIG_DOCUMENT =
-    "zoom";
-
-const ADMIN_EMAIL =
-    "zenovaeducations@gmail.com";
-
-
-/* =========================================================
+/* ============================================================
    HELPERS
-========================================================= */
+============================================================ */
 
 function clean(value) {
 
@@ -73,565 +86,408 @@ function requireAuth(request) {
 }
 
 
-function requireAdmin(request) {
-
-    const auth =
-        requireAuth(request);
-
-    const email =
-        clean(
-            auth.token?.email
-        ).toLowerCase();
-
-    if (
-        email !==
-        ADMIN_EMAIL
-    ) {
-
-        throw new HttpsError(
-            "permission-denied",
-            "You are not authorized."
-        );
-
-    }
-
-    return auth;
-
-}
-
-
-/* =========================================================
-   READ ZOOM CONFIGURATION FROM FIRESTORE
-========================================================= */
-
-async function getZoomConfig() {
-
-    const ref =
-        db
-            .collection(
-                ZOOM_CONFIG_COLLECTION
-            )
-            .doc(
-                ZOOM_CONFIG_DOCUMENT
-            );
-
-
-    const snapshot =
-        await ref.get();
-
-
-    if (
-        !snapshot.exists
-    ) {
-
-        throw new Error(
-            "Zoom configuration has not been saved."
-        );
-
-    }
-
-
-    const data =
-        snapshot.data();
-
-
-    const accountId =
-        clean(
-            data.accountId
-        );
-
-    const s2sClientId =
-        clean(
-            data.s2sClientId
-        );
-
-    const s2sClientSecret =
-        clean(
-            data.s2sClientSecret
-        );
-
-    const meetingSdkClientId =
-        clean(
-            data.meetingSdkClientId
-        );
-
-    const meetingSdkClientSecret =
-        clean(
-            data.meetingSdkClientSecret
-        );
-
-
-    if (
-        !accountId ||
-        !s2sClientId ||
-        !s2sClientSecret ||
-        !meetingSdkClientId ||
-        !meetingSdkClientSecret
-    ) {
-
-        throw new Error(
-            "Zoom configuration is incomplete."
-        );
-
-    }
-
-
-    return {
-
-        accountId,
-
-        s2sClientId,
-
-        s2sClientSecret,
-
-        meetingSdkClientId,
-
-        meetingSdkClientSecret
-
-    };
-
-}
-
-
-/* =========================================================
-   SAVE ZOOM CONFIGURATION
-   CRM / KEYS PAGE
-========================================================= */
-
-exports.saveZoomConfig =
-    onCall(
-
-        {
-            region: "asia-south1"
-        },
-
-        async request => {
-
-            const auth =
-                requireAdmin(
-                    request
-                );
-
-
-            const data =
-                request.data ||
-                {};
-
-
-            const accountId =
-                clean(
-                    data.accountId
-                );
-
-            const s2sClientId =
-                clean(
-                    data.s2sClientId
-                );
-
-            const s2sClientSecret =
-                clean(
-                    data.s2sClientSecret
-                );
-
-            const meetingSdkClientId =
-                clean(
-                    data.meetingSdkClientId
-                );
-
-            const meetingSdkClientSecret =
-                clean(
-                    data.meetingSdkClientSecret
-                );
-
-
-            if (
-                !accountId ||
-                !s2sClientId ||
-                !s2sClientSecret ||
-                !meetingSdkClientId ||
-                !meetingSdkClientSecret
-            ) {
-
-                throw new HttpsError(
-                    "invalid-argument",
-                    "All five Zoom credentials are required."
-                );
-
-            }
-
-
-            await db
-                .collection(
-                    ZOOM_CONFIG_COLLECTION
-                )
-                .doc(
-                    ZOOM_CONFIG_DOCUMENT
-                )
-                .set(
-
-                    {
-
-                        accountId,
-
-                        s2sClientId,
-
-                        s2sClientSecret,
-
-                        meetingSdkClientId,
-
-                        meetingSdkClientSecret,
-
-                        updatedAt:
-                            admin.firestore.FieldValue
-                                .serverTimestamp(),
-
-                        updatedBy:
-                            auth.token?.email ||
-                            ADMIN_EMAIL
-
-                    },
-
-                    {
-                        merge: true
-                    }
-
-                );
-
-
-            return {
-
-                success:
-                    true,
-
-                message:
-                    "Zoom configuration saved."
-
-            };
-
-        }
-
-    );
-
-
-/* =========================================================
-   GET ZOOM CONFIGURATION
-   CRM / KEYS PAGE
-========================================================= */
-
-exports.getZoomConfig =
-    onCall(
-
-        {
-            region: "asia-south1"
-        },
-
-        async request => {
-
-            requireAdmin(
-                request
-            );
-
-
-            const config =
-                await getZoomConfig();
-
-
-            return {
-
-                success:
-                    true,
-
-                ...config
-
-            };
-
-        }
-
-    );
-
-
-/* =========================================================
-   ZOOM SERVER-TO-SERVER ACCESS TOKEN
-========================================================= */
+/* ============================================================
+   ZOOM ACCESS TOKEN
+============================================================ */
 
 async function getZoomAccessToken() {
 
-    const config =
-        await getZoomConfig();
+    try {
 
+        const accountId =
+            clean(
+                ZOOM_ACCOUNT_ID.value()
+            );
 
-    const accountId =
-        config.accountId;
+        const clientId =
+            clean(
+                ZOOM_S2S_CLIENT_ID.value()
+            );
 
-    const clientId =
-        config.s2sClientId;
-
-    const clientSecret =
-        config.s2sClientSecret;
-
-
-    const basicAuth =
-        Buffer
-            .from(
-                `${clientId}:${clientSecret}`
-            )
-            .toString(
-                "base64"
+        const clientSecret =
+            clean(
+                ZOOM_S2S_CLIENT_SECRET.value()
             );
 
 
-    const url =
-        new URL(
-            "https://zoom.us/oauth/token"
+        console.log(
+            "========== ZOOM TOKEN CHECK =========="
+        );
+
+        console.log(
+            "Account ID present:",
+            !!accountId
+        );
+
+        console.log(
+            "Client ID present:",
+            !!clientId
+        );
+
+        console.log(
+            "Client Secret present:",
+            !!clientSecret
+        );
+
+        console.log(
+            "======================================"
         );
 
 
-    url.searchParams.set(
-        "grant_type",
-        "account_credentials"
-    );
+        if (!accountId) {
+
+            throw new Error(
+                "ZOOM_ACCOUNT_ID secret is empty or unavailable."
+            );
+
+        }
+
+        if (!clientId) {
+
+            throw new Error(
+                "ZOOM_S2S_CLIENT_ID secret is empty or unavailable."
+            );
+
+        }
+
+        if (!clientSecret) {
+
+            throw new Error(
+                "ZOOM_S2S_CLIENT_SECRET secret is empty or unavailable."
+            );
+
+        }
 
 
-    url.searchParams.set(
-        "account_id",
-        accountId
-    );
+        const basicAuth =
+            Buffer
+                .from(
+                    `${clientId}:${clientSecret}`
+                )
+                .toString("base64");
 
 
-    const response =
-        await fetch(
-            url.toString(),
-            {
+        const response =
+            await fetch(
+                "https://zoom.us/oauth/token",
+                {
 
-                method:
-                    "POST",
+                    method:
+                        "POST",
 
-                headers: {
+                    headers: {
 
-                    "Authorization":
-                        `Basic ${basicAuth}`,
+                        "Authorization":
+                            `Basic ${basicAuth}`,
 
-                    "Content-Type":
-                        "application/x-www-form-urlencoded"
+                        "Content-Type":
+                            "application/x-www-form-urlencoded"
+
+                    },
+
+                    body:
+                        new URLSearchParams({
+
+                            grant_type:
+                                "account_credentials",
+
+                            account_id:
+                                accountId
+
+                        })
 
                 }
+            );
 
-            }
+
+        const responseText =
+            await response.text();
+
+
+        let data = {};
+
+        try {
+
+            data =
+                responseText
+                    ? JSON.parse(
+                        responseText
+                    )
+                    : {};
+
+        } catch {
+
+            data = {
+
+                raw:
+                    responseText
+
+            };
+
+        }
+
+
+        console.log(
+            "========== ZOOM TOKEN RESPONSE =========="
         );
 
-
-    const data =
-        await response.json();
-
-
-    if (
-        !response.ok
-    ) {
-
-        console.error(
-            "========== ZOOM TOKEN ERROR =========="
-        );
-
-        console.error(
+        console.log(
             "HTTP STATUS:",
             response.status
         );
 
-        console.error(
+        console.log(
             "ZOOM RESPONSE:",
             JSON.stringify(
                 data
             )
         );
 
+        console.log(
+            "=========================================="
+        );
+
+
+        if (!response.ok) {
+
+            const zoomMessage =
+                data?.message ||
+                data?.error ||
+                data?.error_description ||
+                data?.raw ||
+                "Unknown Zoom authentication error";
+
+
+            throw new Error(
+                `Zoom OAuth error (${response.status}): ${zoomMessage}`
+            );
+
+        }
+
+
+        if (!data.access_token) {
+
+            throw new Error(
+                "Zoom OAuth succeeded but no access_token was returned."
+            );
+
+        }
+
+
+        return data.access_token;
+
+
+    } catch (error) {
+
         console.error(
-            "======================================"
+            "========== ZOOM TOKEN FAILURE =========="
         );
 
-
-        throw new Error(
-            data?.reason ||
-            data?.error ||
-            "Unable to authenticate with Zoom."
+        console.error(
+            error
         );
+
+        console.error(
+            "========================================="
+        );
+
+        throw error;
 
     }
-
-
-    return data.access_token;
 
 }
 
 
-/* =========================================================
+/* ============================================================
    CREATE ZOOM MEETING
-========================================================= */
+============================================================ */
 
 exports.createZoomMeeting =
     onCall(
 
         {
-            region: "asia-south1"
+
+            region:
+                "asia-south1",
+
+            secrets: [
+
+                ZOOM_ACCOUNT_ID,
+
+                ZOOM_S2S_CLIENT_ID,
+
+                ZOOM_S2S_CLIENT_SECRET
+
+            ]
+
         },
 
         async request => {
 
-            const auth =
-                requireAuth(
-                    request
-                );
+            try {
 
-
-            const data =
-                request.data ||
-                {};
-
-
-            /*
-             * Supports BOTH the old CRM format
-             * and the new CRM format.
-             */
-
-            const title =
-                clean(
-                    data.title ||
-                    data.topic
-                );
-
-
-            const scheduledDate =
-                clean(
-                    data.scheduledDate ||
-                    (
-                        data.startTime
-                            ? String(
-                                data.startTime
-                            ).substring(
-                                0,
-                                10
-                            )
-                            : ""
-                    )
-                );
-
-
-            let scheduledTime =
-                clean(
-                    data.scheduledTime
-                );
-
-
-            if (
-                !scheduledTime &&
-                data.startTime
-            ) {
-
-                const raw =
-                    String(
-                        data.startTime
+                const auth =
+                    requireAuth(
+                        request
                     );
 
-                if (
-                    raw.includes("T")
-                ) {
 
-                    scheduledTime =
-                        raw
-                            .split("T")[1]
-                            .substring(
-                                0,
-                                5
-                            );
+                const data =
+                    request.data || {};
+
+
+                const title =
+                    clean(
+                        data.title
+                    );
+
+
+                const scheduledDate =
+                    clean(
+                        data.scheduledDate
+                    );
+
+
+                const scheduledTime =
+                    clean(
+                        data.scheduledTime
+                    );
+
+
+                const duration =
+                    Number(
+                        data.duration || 60
+                    );
+
+
+                console.log(
+                    "========== CREATE ZOOM MEETING =========="
+                );
+
+                console.log(
+                    "Title:",
+                    title
+                );
+
+                console.log(
+                    "Date:",
+                    scheduledDate
+                );
+
+                console.log(
+                    "Time:",
+                    scheduledTime
+                );
+
+                console.log(
+                    "Duration:",
+                    duration
+                );
+
+                console.log(
+                    "User:",
+                    auth.token?.email || auth.uid
+                );
+
+                console.log(
+                    "=========================================="
+                );
+
+
+                /* ----------------------------------------
+                   VALIDATION
+                ---------------------------------------- */
+
+                if (!title) {
+
+                    throw new HttpsError(
+                        "invalid-argument",
+                        "Class title is required."
+                    );
 
                 }
 
-            }
+
+                if (!scheduledDate) {
+
+                    throw new HttpsError(
+                        "invalid-argument",
+                        "Scheduled date is required."
+                    );
+
+                }
 
 
-            const duration =
-                Number(
-                    data.duration ||
-                    60
+                if (!scheduledTime) {
+
+                    throw new HttpsError(
+                        "invalid-argument",
+                        "Scheduled time is required."
+                    );
+
+                }
+
+
+                if (
+                    !duration ||
+                    duration <= 0
+                ) {
+
+                    throw new HttpsError(
+                        "invalid-argument",
+                        "Valid duration is required."
+                    );
+
+                }
+
+
+                /* ----------------------------------------
+                   GET ZOOM TOKEN
+                ---------------------------------------- */
+
+                const accessToken =
+                    await getZoomAccessToken();
+
+
+                console.log(
+                    "Zoom access token obtained successfully."
                 );
 
 
-            if (!title) {
+                /* ----------------------------------------
+                   CREATE MEETING
+                ---------------------------------------- */
 
-                throw new HttpsError(
-                    "invalid-argument",
-                    "Class title is required."
+                const startTime =
+                    `${scheduledDate}T${scheduledTime}:00+05:30`;
+
+
+                console.log(
+                    "Zoom start time:",
+                    startTime
                 );
 
-            }
 
+                const zoomResponse =
+                    await fetch(
+                        "https://api.zoom.us/v2/users/me/meetings",
+                        {
 
-            if (!scheduledDate) {
+                            method:
+                                "POST",
 
-                throw new HttpsError(
-                    "invalid-argument",
-                    "Scheduled date is required."
-                );
+                            headers: {
 
-            }
+                                "Authorization":
+                                    `Bearer ${accessToken}`,
 
+                                "Content-Type":
+                                    "application/json"
 
-            if (!scheduledTime) {
+                            },
 
-                throw new HttpsError(
-                    "invalid-argument",
-                    "Scheduled time is required."
-                );
-
-            }
-
-
-            if (
-                !Number.isFinite(
-                    duration
-                ) ||
-                duration <= 0
-            ) {
-
-                throw new HttpsError(
-                    "invalid-argument",
-                    "Invalid duration."
-                );
-
-            }
-
-
-            const accessToken =
-                await getZoomAccessToken();
-
-
-            const startTime =
-                `${scheduledDate}T${scheduledTime}:00+05:30`;
-
-
-            const zoomResponse =
-                await fetch(
-
-                    "https://api.zoom.us/v2/users/me/meetings",
-
-                    {
-
-                        method:
-                            "POST",
-
-                        headers: {
-
-                            "Authorization":
-                                `Bearer ${accessToken}`,
-
-                            "Content-Type":
-                                "application/json"
-
-                        },
-
-                        body:
-                            JSON.stringify(
-
-                                {
+                            body:
+                                JSON.stringify({
 
                                     topic:
                                         title,
@@ -670,105 +526,241 @@ exports.createZoomMeeting =
 
                                     }
 
-                                }
+                                })
 
+                        }
+                    );
+
+
+                const responseText =
+                    await zoomResponse.text();
+
+
+                let zoom = {};
+
+                try {
+
+                    zoom =
+                        responseText
+                            ? JSON.parse(
+                                responseText
                             )
+                            : {};
 
-                    }
+                } catch {
 
+                    zoom = {
+
+                        raw:
+                            responseText
+
+                    };
+
+                }
+
+
+                /* ----------------------------------------
+                   ZOOM RESPONSE LOG
+                ---------------------------------------- */
+
+                console.log(
+                    "========== ZOOM MEETING RESPONSE =========="
                 );
 
-
-            const zoom =
-                await zoomResponse.json();
-
-
-            if (
-                !zoomResponse.ok
-            ) {
-
-                console.error(
-                    "========== ZOOM API ERROR =========="
-                );
-
-                console.error(
+                console.log(
                     "HTTP STATUS:",
                     zoomResponse.status
                 );
 
-                console.error(
+                console.log(
                     "ZOOM RESPONSE:",
                     JSON.stringify(
                         zoom
                     )
                 );
 
-                console.error(
-                    "===================================="
+                console.log(
+                    "============================================"
                 );
 
 
-                const zoomMessage =
-                    zoom?.message ||
-                    zoom?.error ||
-                    "Unknown Zoom API error";
+                /* ----------------------------------------
+                   ZOOM ERROR
+                ---------------------------------------- */
+
+                if (
+                    !zoomResponse.ok
+                ) {
+
+                    const zoomMessage =
+                        zoom?.message ||
+                        zoom?.error ||
+                        zoom?.error_description ||
+                        zoom?.raw ||
+                        "Unknown Zoom API error";
+
+
+                    throw new HttpsError(
+                        "internal",
+
+                        `Zoom API error (${zoomResponse.status}): ${zoomMessage}`
+                    );
+
+                }
+
+
+                if (
+                    !zoom.id
+                ) {
+
+                    throw new HttpsError(
+                        "internal",
+                        "Zoom returned no meeting ID."
+                    );
+
+                }
+
+
+                /* ----------------------------------------
+                   SUCCESS
+                ---------------------------------------- */
+
+                console.log(
+                    "========== ZOOM MEETING CREATED =========="
+                );
+
+                console.log(
+                    "Meeting ID:",
+                    zoom.id
+                );
+
+                console.log(
+                    "Join URL:",
+                    zoom.join_url
+                );
+
+                console.log(
+                    "=========================================="
+                );
+
+
+                return {
+
+                    success:
+                        true,
+
+                    meetingId:
+                        String(
+                            zoom.id
+                        ),
+
+                    meetingNumber:
+                        String(
+                            zoom.id
+                        ),
+
+                    password:
+                        zoom.password ||
+                        "",
+
+                    joinUrl:
+                        zoom.join_url ||
+                        "",
+
+                    startUrl:
+                        zoom.start_url ||
+                        "",
+
+                    hostEmail:
+                        auth.token?.email ||
+                        ""
+
+                };
+
+
+            } catch (error) {
+
+                console.error(
+                    "========== CREATE ZOOM ERROR =========="
+                );
+
+                console.error(
+                    "NAME:",
+                    error?.name
+                );
+
+                console.error(
+                    "MESSAGE:",
+                    error?.message
+                );
+
+                console.error(
+                    "CODE:",
+                    error?.code
+                );
+
+                console.error(
+                    "DETAILS:",
+                    error?.details
+                );
+
+                console.error(
+                    "STACK:",
+                    error?.stack
+                );
+
+                console.error(
+                    "======================================="
+                );
+
+
+                /*
+                 * Preserve Firebase HttpsError.
+                 */
+
+                if (
+                    error instanceof HttpsError
+                ) {
+
+                    throw error;
+
+                }
 
 
                 throw new HttpsError(
                     "internal",
-                    `Zoom API error (${zoomResponse.status}): ${zoomMessage}`
+
+                    error?.message ||
+                    "Unable to create Zoom meeting."
                 );
 
             }
-
-
-            return {
-
-                success:
-                    true,
-
-                meetingId:
-                    String(
-                        zoom.id
-                    ),
-
-                meetingNumber:
-                    String(
-                        zoom.id
-                    ),
-
-                password:
-                    zoom.password ||
-                    "",
-
-                joinUrl:
-                    zoom.join_url ||
-                    "",
-
-                startUrl:
-                    zoom.start_url ||
-                    "",
-
-                hostEmail:
-                    auth.token?.email ||
-                    ""
-
-            };
 
         }
 
     );
 
 
-/* =========================================================
+/* ============================================================
    GENERATE ZOOM MEETING SDK SIGNATURE
-========================================================= */
+============================================================ */
 
 exports.getZoomMeetingSignature =
     onCall(
 
         {
-            region: "asia-south1"
+
+            region:
+                "asia-south1",
+
+            secrets: [
+
+                ZOOM_MEETING_SDK_CLIENT_ID,
+
+                ZOOM_MEETING_SDK_CLIENT_SECRET
+
+            ]
+
         },
 
         async request => {
@@ -780,20 +772,16 @@ exports.getZoomMeetingSignature =
 
 
             const data =
-                request.data ||
-                {};
+                request.data || {};
 
 
             const meetingNumber =
                 clean(
-                    data.meetingNumber ||
-                    data.meetingId
+                    data.meetingNumber
                 );
 
 
-            if (
-                !meetingNumber
-            ) {
+            if (!meetingNumber) {
 
                 throw new HttpsError(
                     "invalid-argument",
@@ -835,43 +823,30 @@ exports.getZoomMeetingSignature =
 
             const studentName =
                 clean(
-
                     student.name ||
-
                     student.studentName ||
-
-                    auth.token?.name ||
-
+                    auth.token.name ||
                     "Zenova Student"
-
                 );
 
 
-            const config =
-                await getZoomConfig();
-
-
             const clientId =
-                config.meetingSdkClientId;
+                ZOOM_MEETING_SDK_CLIENT_ID.value();
+
 
             const clientSecret =
-                config.meetingSdkClientSecret;
+                ZOOM_MEETING_SDK_CLIENT_SECRET.value();
 
 
             const now =
                 Math.floor(
-                    Date.now() /
-                    1000
+                    Date.now() / 1000
                 );
 
 
             const expiration =
                 now +
-                (
-                    60 *
-                    60 *
-                    2
-                );
+                (60 * 60 * 2);
 
 
             const payload = {
@@ -899,16 +874,14 @@ exports.getZoomMeetingSignature =
 
             const signature =
                 jwt.sign(
-
                     payload,
-
                     clientSecret,
-
                     {
+
                         algorithm:
                             "HS256"
-                    }
 
+                    }
                 );
 
 
@@ -917,9 +890,11 @@ exports.getZoomMeetingSignature =
                 success:
                     true,
 
-                signature,
+                signature:
+                    signature,
 
-                meetingNumber,
+                meetingNumber:
+                    meetingNumber,
 
                 userName:
                     studentName,
@@ -935,15 +910,28 @@ exports.getZoomMeetingSignature =
     );
 
 
-/* =========================================================
-   SAVE ZOOM DETAILS TO LIVE CLASS
-========================================================= */
+/* ============================================================
+   ATTACH ZOOM MEETING TO LIVE CLASS
+============================================================ */
 
 exports.attachZoomMeetingToLiveClass =
     onCall(
 
         {
-            region: "asia-south1"
+
+            region:
+                "asia-south1",
+
+            secrets: [
+
+                ZOOM_ACCOUNT_ID,
+
+                ZOOM_S2S_CLIENT_ID,
+
+                ZOOM_S2S_CLIENT_SECRET
+
+            ]
+
         },
 
         async request => {
@@ -954,8 +942,7 @@ exports.attachZoomMeetingToLiveClass =
 
 
             const data =
-                request.data ||
-                {};
+                request.data || {};
 
 
             const liveClassId =
@@ -964,9 +951,7 @@ exports.attachZoomMeetingToLiveClass =
                 );
 
 
-            if (
-                !liveClassId
-            ) {
+            if (!liveClassId) {
 
                 throw new HttpsError(
                     "invalid-argument",
@@ -977,8 +962,7 @@ exports.attachZoomMeetingToLiveClass =
 
 
             const meeting =
-                data.meeting ||
-                {};
+                data.meeting || {};
 
 
             const ref =
@@ -1007,53 +991,43 @@ exports.attachZoomMeetingToLiveClass =
             }
 
 
-            await ref.update(
+            await ref.update({
 
-                {
+                liveType:
+                    "ZOOM",
 
-                    liveType:
-                        "ZOOM",
+                mode:
+                    "ZOOM",
 
-                    mode:
-                        "ZOOM",
+                zoomMeetingId:
+                    clean(
+                        meeting.meetingId
+                    ),
 
-                    zoomMeetingId:
-                        clean(
-                            meeting.meetingId ||
-                            meeting.meetingNumber
-                        ),
+                zoomMeetingNumber:
+                    clean(
+                        meeting.meetingNumber
+                    ),
 
-                    zoomMeetingNumber:
-                        clean(
-                            meeting.meetingNumber ||
-                            meeting.meetingId
-                        ),
+                zoomPassword:
+                    clean(
+                        meeting.password
+                    ),
 
-                    zoomPassword:
-                        clean(
-                            meeting.password
-                        ),
+                zoomJoinUrl:
+                    clean(
+                        meeting.joinUrl
+                    ),
 
-                    zoomJoinUrl:
-                        clean(
-                            meeting.joinUrl
-                        ),
+                zoomCreated:
+                    true,
 
-                    zoomStartUrl:
-                        clean(
-                            meeting.startUrl
-                        ),
+                zoomCreatedAt:
+                    admin.firestore
+                        .FieldValue
+                        .serverTimestamp()
 
-                    zoomCreated:
-                        true,
-
-                    zoomCreatedAt:
-                        admin.firestore.FieldValue
-                            .serverTimestamp()
-
-                }
-
-            );
+            });
 
 
             return {
@@ -1061,7 +1035,8 @@ exports.attachZoomMeetingToLiveClass =
                 success:
                     true,
 
-                liveClassId
+                liveClassId:
+                    liveClassId
 
             };
 
