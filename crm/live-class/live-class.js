@@ -61,7 +61,10 @@ onAuthStateChanged(auth, async (user) => {
     return;
   }
 
-  if ((user.email || "").toLowerCase() !== ALLOWED_EMAIL) {
+if (
+  !user.email ||
+  user.email.toLowerCase().trim() !== ALLOWED_EMAIL.toLowerCase().trim()
+) {
     document.body.innerHTML = `
       <div style="
         min-height:100vh;
