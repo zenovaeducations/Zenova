@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Zenova — Zoom Keys</title>
+
+    <link rel="stylesheet" href="./keys.css">
+</head>
+
+<body>
+
+    <div class="page">
+
+        <header class="topbar">
+
+            <div class="brand">
+                <div class="logo">Z</div>
+
+                <div>
+                    <h1>Zenova</h1>
+                    <span>Developer Settings</span>
+                </div>
+            </div>
+
+            <div class="account">
+                <span id="userEmail">Checking account...</span>
+            </div>
+
+        </header>
+
+
+        <main class="container">
+
+            <section class="hero">
+
+                <div class="hero-icon">
+                    🔐
+                </div>
+
+                <div>
+                    <h2>Zoom Configuration</h2>
+
+                    <p>
+                        Enter the Zoom credentials used by Zenova
+                        for live classes and Meeting SDK.
+                    </p>
+                </div>
+
+            </section>
+
+
+            <section class="card">
+
+                <div class="card-header">
+
+                    <div>
+                        <h3>Zoom Credentials</h3>
+
+                        <p>
+                            These values are stored in Firestore under
+                            <strong>systemConfig / zoom</strong>.
+                        </p>
+                    </div>
+
+                    <div class="secure-badge">
+                        🔒 SECURE
+                    </div>
+
+                </div>
+
+
+                <form id="keysForm">
+
+                    <div class="section-title">
+                        Server-to-Server OAuth
+                    </div>
+
+
+                    <div class="field">
+
+                        <label for="accountId">
+                            Zoom Account ID
+                        </label>
+
+                        <div class="input-wrap">
+
+                            <input
+                                id="accountId"
+                                type="text"
+                                autocomplete="off"
+                                placeholder="Enter Zoom Account ID"
+                                required
+                            >
+
+                            <button
+                                type="button"
+                                class="copy-toggle"
+                                data-target="accountId"
+                            >
+                                Show
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="field">
+
+                        <label for="s2sClientId">
+                            S2S Client ID
+                        </label>
+
+                        <div class="input-wrap">
+
+                            <input
+                                id="s2sClientId"
+                                type="text"
+                                autocomplete="off"
+                                placeholder="Enter S2S Client ID"
+                                required
+                            >
+
+                            <button
+                                type="button"
+                                class="copy-toggle"
+                                data-target="s2sClientId"
+                            >
+                                Show
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="field">
+
+                        <label for="s2sClientSecret">
+                            S2S Client Secret
+                        </label>
+
+                        <div class="input-wrap">
+
+                            <input
+                                id="s2sClientSecret"
+                                type="password"
+                                autocomplete="new-password"
+                                placeholder="Enter S2S Client Secret"
+                                required
+                            >
+
+                            <button
+                                type="button"
+                                class="copy-toggle"
+                                data-target="s2sClientSecret"
+                            >
+                                Show
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="divider"></div>
+
+
+                    <div class="section-title">
+                        Meeting SDK
+                    </div>
+
+
+                    <div class="field">
+
+                        <label for="meetingSdkClientId">
+                            Meeting SDK Client ID
+                        </label>
+
+                        <div class="input-wrap">
+
+                            <input
+                                id="meetingSdkClientId"
+                                type="text"
+                                autocomplete="off"
+                                placeholder="Enter Meeting SDK Client ID"
+                                required
+                            >
+
+                            <button
+                                type="button"
+                                class="copy-toggle"
+                                data-target="meetingSdkClientId"
+                            >
+                                Show
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="field">
+
+                        <label for="meetingSdkClientSecret">
+                            Meeting SDK Client Secret
+                        </label>
+
+                        <div class="input-wrap">
+
+                            <input
+                                id="meetingSdkClientSecret"
+                                type="password"
+                                autocomplete="new-password"
+                                placeholder="Enter Meeting SDK Client Secret"
+                                required
+                            >
+
+                            <button
+                                type="button"
+                                class="copy-toggle"
+                                data-target="meetingSdkClientSecret"
+                            >
+                                Show
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <div
+                        id="message"
+                        class="message"
+                    ></div>
+
+
+                    <button
+                        id="saveButton"
+                        type="submit"
+                        class="save-button"
+                    >
+                        <span id="saveText">
+                            Save Zoom Configuration
+                        </span>
+                    </button>
+
+                </form>
+
+            </section>
+
+
+            <section class="info-card">
+
+                <div class="info-icon">
+                    ℹ️
+                </div>
+
+                <div>
+                    <strong>Configuration</strong>
+
+                    <p>
+                        Zenova will use these credentials for Zoom
+                        live-class creation and Meeting SDK access.
+                    </p>
+                </div>
+
+            </section>
+
+        </main>
+
+    </div>
+
+
+    <script
+        type="module"
+        src="./keys.js"
+    ></script>
+
+</body>
+</html>
