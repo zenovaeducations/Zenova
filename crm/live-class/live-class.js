@@ -6,9 +6,6 @@ import {
     query,
     where,
     addDoc,
-    updateDoc,
-    deleteDoc,
-    doc,
     serverTimestamp
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
@@ -18,9 +15,19 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-functions.js";
 
 
-/* =========================================================
+/* ============================================================
+   COLLECTIONS
+============================================================ */
+
+const COURSES = "zen2Courses";
+const SUBJECTS = "zen2Subjects";
+const CHAPTERS = "zen2Chapters";
+const LIVE_CLASSES = "liveClasses";
+
+
+/* ============================================================
    FIREBASE FUNCTIONS
-========================================================= */
+============================================================ */
 
 const functions = getFunctions(
     undefined,
@@ -33,30 +40,27 @@ const createZoomMeeting = httpsCallable(
 );
 
 
-/* =========================================================
-   ELEMENTS
-========================================================= */
+/* ============================================================
+   DOM
+============================================================ */
 
 const form =
-    document.getElementById("liveForm");
+    document.getElementById("liveClassForm");
 
-const course =
+const courseSelect =
     document.getElementById("course");
 
-const subject =
+const subjectSelect =
     document.getElementById("subject");
 
-const chapter =
+const chapterSelect =
     document.getElementById("chapter");
 
 const titleInput =
     document.getElementById("title");
 
-const teacherInput =
-    document.getElementById("teacher");
-
-const thumbnailInput =
-    document.getElementById("thumbnail");
+const facultyInput =
+    document.getElementById("faculty");
 
 const dateInput =
     document.getElementById("date");
@@ -64,32 +68,34 @@ const dateInput =
 const timeInput =
     document.getElementById("time");
 
+const durationInput =
+    document.getElementById("duration");
+
+const thumbnailInput =
+    document.getElementById("thumbnail");
+
 const message =
     document.getElementById("message");
 
 const saveButton =
     document.getElementById("saveButton");
 
-const classes =
-    document.getElementById("classes");
-
-const refreshButton =
-    document.getElementById("refresh");
+const saveText =
+    document.getElementById("saveText");
 
 
-/* =========================================================
-   DATA
-========================================================= */
+/* ============================================================
+   STATE
+============================================================ */
 
 let courses = [];
 let subjects = [];
 let chapters = [];
-let liveClasses = [];
 
 
-/* =========================================================
+/* ============================================================
    MESSAGE
-========================================================= */
+============================================================ */
 
 function showMessage(
     text,
@@ -108,11 +114,75 @@ function showMessage(
 }
 
 
-/* =========================================================
+/* ============================================================
+   BUTTON LOADING
+============================================================ */
+
+function setLoading(
+    loading,
+    text = ""
+) {
+
+    if (saveButton) {
+        saveButton.disabled = loading;
+    }
+
+    if (saveText) {
+
+        saveText.textContent =
+            loading
+                ? text || "Please wait..."
+                : "Create Live Class";
+
+    }
+
+}
+
+
+/* ============================================================
+   RESET SUBJECT
+============================================================ */
+
+function resetSubject() {
+
+    subjectSelect.innerHTML = `
+        <option value="">
+            Select Subject
+        </option>
+    `;
+
+    subjectSelect.disabled = true;
+
+}
+
+
+/* ============================================================
+   RESET CHAPTER
+============================================================ */
+
+function resetChapter() {
+
+    chapterSelect.innerHTML = `
+        <option value="">
+            Select Chapter
+        </option>
+    `;
+
+    chapterSelect.disabled = true;
+
+}
+
+
+/* ============================================================
    LOAD COURSES
-========================================================= */
+============================================================ */
 
 async function loadCourses() {
+
+    console.log(
+        "[LIVE CLASS] Loading courses from:",
+        COURSES
+    );
 
     try {
 
@@ -120,35 +190,66 @@ async function loadCourses() {
             "Loading courses..."
         );
 
+
         const snapshot =
             await getDocs(
                 collection(
                     db,
-                    "zen2Courses"
+                    COURSES
                 )
             );
 
+
+        console.log(
+            "[LIVE CLASS] Course documents:",
+            snapshot.size
+        );
+
+
         courses =
             snapshot.docs.map(
-                item => ({
-                    id: item.id,
-                    ...item.data()
-                })
+                documentSnapshot => {
+
+                    const data =
+                        documentSnapshot.data();
+
+                    console.log(
+                        "[LIVE CLASS] Course:",
+                        documentSnapshot.id,
+                        data
+                    );
+
+                    return {
+
+                        id:
+                            documentSnapshot.id,
+
+                        ...data
+
+                    };
+
+                }
             );
 
 
+        /*
+         * EXACT ZEN2 FIELD:
+         * courseName
+         */
+
         courses.sort(
             (a, b) =>
-                Number(
-                    a.order || 0
-                ) -
-                Number(
-                    b.order || 0
+                String(
+                    a.courseName || ""
+                ).localeCompare(
+                    String(
+                        b.courseName || ""
+                    )
                 )
         );
 
 
-        course.innerHTML = `
+        courseSelect.innerHTML = `
             <option value="">
                 Select Course
             </option>
@@ -156,25 +257,24 @@ async function loadCourses() {
 
 
         courses.forEach(
-            item => {
+            course => {
 
                 const option =
                     document.createElement(
                         "option"
                     );
 
+
                 option.value =
-                    item.id;
+                    course.id;
+
 
                 option.textContent =
-                    item.name ||
-                    item.title ||
-                    item.courseName ||
-                    item.className ||
-                    item.crmCourseName ||
-                    "Course";
+                    course.courseName ||
+                    "Unnamed Course";
 
-                course.appendChild(
+
+                courseSelect.appendChild(
                     option
                 );
 
@@ -182,20 +282,42 @@ async function loadCourses() {
         );
 
 
-        course.disabled = false;
+        courseSelect.disabled =
+            false;
 
-        showMessage("");
+
+        if (
+            courses.length === 0
+        ) {
+
+            showMessage(
+                "No courses found in zen2Courses.",
+                "error"
+            );
+
+        } else {
+
+            showMessage(
+                ""
+            );
+
+        }
+
 
     } catch (error) {
 
         console.error(
-            "LOAD COURSES ERROR:",
+            "[LIVE CLASS] LOAD COURSES ERROR:",
             error
         );
 
+
         showMessage(
             "Unable to load courses: " +
-            (error.message || error),
+            (
+                error.message ||
+                "Unknown error"
+            ),
             "error"
         );
 
@@ -204,28 +326,16 @@ async function loadCourses() {
 }
 
 
-/* =========================================================
+/* ============================================================
    LOAD SUBJECTS
-========================================================= */
+============================================================ */
 
 async function loadSubjects(
     courseId
 ) {
 
-    subject.innerHTML = `
-        <option value="">
-            Select Subject
-        </option>
-    `;
-
-    chapter.innerHTML = `
-        <option value="">
-            Select Chapter
-        </option>
-    `;
-
-    subject.disabled = true;
-    chapter.disabled = true;
+    resetSubject();
+    resetChapter();
 
     subjects = [];
     chapters = [];
@@ -236,6 +346,12 @@ async function loadSubjects(
     }
 
 
+    console.log(
+        "[LIVE CLASS] Loading subjects for course:",
+        courseId
+    );
+
+
     try {
 
         showMessage(
@@ -244,15 +360,18 @@ async function loadSubjects(
 
 
         /*
-         * IMPORTANT:
-         * Subjects are connected using courseId.
+         * EXACT ZEN2 RELATION:
+         *
+         * zen2Subjects.courseId
+         * ==
+         * selected course ID
          */
 
-        const q =
+        const subjectQuery =
             query(
                 collection(
                     db,
-                    "zen2Subjects"
+                    SUBJECTS
                 ),
                 where(
                     "courseId",
@@ -263,17 +382,47 @@ async function loadSubjects(
 
 
         const snapshot =
-            await getDocs(q);
+            await getDocs(
+                subjectQuery
+            );
+
+
+        console.log(
+            "[LIVE CLASS] Subject documents:",
+            snapshot.size
+        );
 
 
         subjects =
             snapshot.docs.map(
-                item => ({
-                    id: item.id,
-                    ...item.data()
-                })
+                documentSnapshot => {
+
+                    const data =
+                        documentSnapshot.data();
+
+                    console.log(
+                        "[LIVE CLASS] Subject:",
+                        documentSnapshot.id,
+                        data
+                    );
+
+                    return {
+
+                        id:
+                            documentSnapshot.id,
+
+                        ...data
+
+                    };
+
+                }
             );
 
+
+        /*
+         * EXACT ZEN2 FIELD:
+         * subjectName
+         */
 
         subjects.sort(
             (a, b) =>
@@ -287,24 +436,24 @@ async function loadSubjects(
 
 
         subjects.forEach(
-            item => {
+            subject => {
 
                 const option =
                     document.createElement(
                         "option"
                     );
 
+
                 option.value =
-                    item.id;
+                    subject.id;
+
 
                 option.textContent =
-                    item.name ||
-                    item.title ||
-                    item.subjectName ||
-                    item.subject ||
-                    "Subject";
+                    subject.subjectName ||
+                    "Unnamed Subject";
 
-                subject.appendChild(
+
+                subjectSelect.appendChild(
                     option
                 );
 
@@ -312,7 +461,7 @@ async function loadSubjects(
         );
 
 
-        subject.disabled =
+        subjectSelect.disabled =
             subjects.length === 0;
 
 
@@ -327,20 +476,27 @@ async function loadSubjects(
 
         } else {
 
-            showMessage("");
+            showMessage(
+                ""
+            );
 
         }
+
 
     } catch (error) {
 
         console.error(
-            "LOAD SUBJECTS ERROR:",
+            "[LIVE CLASS] LOAD SUBJECTS ERROR:",
             error
         );
 
+
         showMessage(
             "Unable to load subjects: " +
-            (error.message || error),
+            (
+                error.message ||
+                "Unknown error"
+            ),
             "error"
         );
 
@@ -349,28 +505,37 @@ async function loadSubjects(
 }
 
 
-/* =========================================================
+/* ============================================================
    LOAD CHAPTERS
-========================================================= */
+============================================================ */
 
 async function loadChapters(
+    courseId,
     subjectId
 ) {
 
-    chapter.innerHTML = `
-        <option value="">
-            Select Chapter
-        </option>
-    `;
-
-    chapter.disabled = true;
+    resetChapter();
 
     chapters = [];
 
 
-    if (!subjectId) {
+    if (
+        !courseId ||
+        !subjectId
+    ) {
+
         return;
+
     }
+
+
+    console.log(
+        "[LIVE CLASS] Loading chapters:",
+        {
+            courseId,
+            subjectId
+        }
+    );
 
 
     try {
@@ -381,15 +546,29 @@ async function loadChapters(
 
 
         /*
-         * IMPORTANT:
-         * Chapters are connected using subjectId.
+         * EXACT ZEN2 RELATION:
+         *
+         * zen2Chapters.courseId
+         * ==
+         * selected course ID
+         *
+         * AND
+         *
+         * zen2Chapters.subjectId
+         * ==
+         * selected subject ID
          */
 
-        const q =
+        const chapterQuery =
             query(
                 collection(
                     db,
-                    "zen2Chapters"
+                    CHAPTERS
+                ),
+                where(
+                    "courseId",
+                    "==",
+                    courseId
                 ),
                 where(
                     "subjectId",
@@ -400,69 +579,84 @@ async function loadChapters(
 
 
         const snapshot =
-            await getDocs(q);
+            await getDocs(
+                chapterQuery
+            );
+
+
+        console.log(
+            "[LIVE CLASS] Chapter documents:",
+            snapshot.size
+        );
 
 
         chapters =
             snapshot.docs.map(
-                item => ({
-                    id: item.id,
-                    ...item.data()
-                })
+                documentSnapshot => {
+
+                    const data =
+                        documentSnapshot.data();
+
+                    console.log(
+                        "[LIVE CLASS] Chapter:",
+                        documentSnapshot.id,
+                        data
+                    );
+
+                    return {
+
+                        id:
+                            documentSnapshot.id,
+
+                        ...data
+
+                    };
+
+                }
             );
 
 
-        chapters =
-            chapters.filter(
-                item =>
-                    item.active !== false
-            );
-
+        /*
+         * EXACT ZEN2 FIELD:
+         * chapterNumber
+         */
 
         chapters.sort(
-            (a, b) => {
-
-                const aNumber =
-                    Number(
-                        a.chapterNumber ??
-                        a.order ??
-                        0
-                    );
-
-                const bNumber =
-                    Number(
-                        b.chapterNumber ??
-                        b.order ??
-                        0
-                    );
-
-                return (
-                    aNumber -
-                    bNumber
-                );
-
-            }
+            (a, b) =>
+                Number(
+                    a.chapterNumber || 0
+                ) -
+                Number(
+                    b.chapterNumber || 0
+                )
         );
 
 
         chapters.forEach(
-            item => {
+            chapter => {
 
                 const option =
                     document.createElement(
                         "option"
                     );
 
+
                 option.value =
-                    item.id;
+                    chapter.id;
+
 
                 option.textContent =
-                    item.name ||
-                    item.title ||
-                    item.chapterName ||
-                    "Chapter";
+                    `Chapter ${
+                        chapter.chapterNumber || ""
+                    }${
+                        chapter.chapterName
+                            ? " - " +
+                              chapter.chapterName
+                            : ""
+                    }`;
 
-                chapter.appendChild(
+
+                chapterSelect.appendChild(
                     option
                 );
 
@@ -470,7 +664,7 @@ async function loadChapters(
         );
 
 
-        chapter.disabled =
+        chapterSelect.disabled =
             chapters.length === 0;
 
 
@@ -485,20 +679,27 @@ async function loadChapters(
 
         } else {
 
-            showMessage("");
+            showMessage(
+                ""
+            );
 
         }
+
 
     } catch (error) {
 
         console.error(
-            "LOAD CHAPTERS ERROR:",
+            "[LIVE CLASS] LOAD CHAPTERS ERROR:",
             error
         );
 
+
         showMessage(
             "Unable to load chapters: " +
-            (error.message || error),
+            (
+                error.message ||
+                "Unknown error"
+            ),
             "error"
         );
 
@@ -507,61 +708,11 @@ async function loadChapters(
 }
 
 
-/* =========================================================
-   COURSE CHANGE
-========================================================= */
+/* ============================================================
+   SELECTED NAME HELPERS
+============================================================ */
 
-course.addEventListener(
-    "change",
-    async () => {
-
-        await loadSubjects(
-            course.value
-        );
-
-        autoTitle();
-
-    }
-);
-
-
-/* =========================================================
-   SUBJECT CHANGE
-========================================================= */
-
-subject.addEventListener(
-    "change",
-    async () => {
-
-        await loadChapters(
-            subject.value
-        );
-
-        autoTitle();
-
-    }
-);
-
-
-/* =========================================================
-   CHAPTER CHANGE
-========================================================= */
-
-chapter.addEventListener(
-    "change",
-    () => {
-
-        autoTitle();
-
-    }
-);
-
-
-/* =========================================================
-   GET SELECTED NAME
-========================================================= */
-
-function getSelectedName(
+function selectedText(
     select
 ) {
 
@@ -569,13 +720,17 @@ function getSelectedName(
         !select ||
         !select.value
     ) {
+
         return "";
+
     }
+
 
     const option =
         select.options[
             select.selectedIndex
         ];
+
 
     return (
         option?.textContent?.trim() ||
@@ -585,71 +740,194 @@ function getSelectedName(
 }
 
 
-/* =========================================================
+/* ============================================================
+   GET ACTUAL COURSE
+============================================================ */
+
+function getSelectedCourse() {
+
+    return courses.find(
+        course =>
+            course.id ===
+            courseSelect.value
+    ) || null;
+
+}
+
+
+/* ============================================================
+   GET ACTUAL SUBJECT
+============================================================ */
+
+function getSelectedSubject() {
+
+    return subjects.find(
+        subject =>
+            subject.id ===
+            subjectSelect.value
+    ) || null;
+
+}
+
+
+/* ============================================================
+   GET ACTUAL CHAPTER
+============================================================ */
+
+function getSelectedChapter() {
+
+    return chapters.find(
+        chapter =>
+            chapter.id ===
+            chapterSelect.value
+    ) || null;
+
+}
+
+
+/* ============================================================
    AUTO TITLE
-========================================================= */
+============================================================ */
 
 function autoTitle() {
 
     if (
-        titleInput &&
         titleInput.value.trim()
     ) {
+
         return;
+
     }
 
 
+    const subjectData =
+        getSelectedSubject();
+
+    const chapterData =
+        getSelectedChapter();
+
+
     const courseName =
-        getSelectedName(course);
+        getSelectedCourse()?.courseName ||
+        "";
+
 
     const subjectName =
-        getSelectedName(subject);
+        subjectData?.subjectName ||
+        "";
+
 
     const chapterName =
-        getSelectedName(chapter);
+        chapterData?.chapterName ||
+        "";
 
 
-    const title = [
+    const titleParts = [
         courseName,
         subjectName,
         chapterName
-    ]
-        .filter(Boolean)
-        .join(" - ");
+    ].filter(Boolean);
 
 
-    if (titleInput) {
+    if (
+        titleParts.length
+    ) {
+
         titleInput.value =
-            title;
+            titleParts.join(
+                " - "
+            );
+
     }
 
 }
 
 
-/* =========================================================
-   CREATE ZOOM MEETING
-========================================================= */
+/* ============================================================
+   COURSE CHANGE
+============================================================ */
 
-async function createZoomForClass() {
+courseSelect.addEventListener(
+    "change",
+    async () => {
+
+        await loadSubjects(
+            courseSelect.value
+        );
+
+        autoTitle();
+
+    }
+);
+
+
+/* ============================================================
+   SUBJECT CHANGE
+============================================================ */
+
+subjectSelect.addEventListener(
+    "change",
+    async () => {
+
+        await loadChapters(
+            courseSelect.value,
+            subjectSelect.value
+        );
+
+        autoTitle();
+
+    }
+);
+
+
+/* ============================================================
+   CHAPTER CHANGE
+============================================================ */
+
+chapterSelect.addEventListener(
+    "change",
+    () => {
+
+        autoTitle();
+
+    }
+);
+
+
+/* ============================================================
+   CREATE ZOOM
+============================================================ */
+
+async function createZoom() {
 
     const title =
         titleInput.value.trim();
 
+
     const scheduledDate =
-        dateInput.value.trim();
+        dateInput.value;
+
 
     const scheduledTime =
-        timeInput.value.trim();
+        timeInput.value;
 
 
-    /*
-     * Existing backend supports:
-     *
-     * title
-     * scheduledDate
-     * scheduledTime
-     * duration
-     */
+    const duration =
+        Number(
+            durationInput.value
+        );
+
+
+    console.log(
+        "[LIVE CLASS] Sending Zoom request:",
+        {
+            title,
+            scheduledDate,
+            scheduledTime,
+            duration
+        }
+    );
+
 
     const result =
         await createZoomMeeting({
@@ -660,9 +938,15 @@ async function createZoomForClass() {
 
             scheduledTime,
 
-            duration: 60
+            duration
 
         });
+
+
+    console.log(
+        "[LIVE CLASS] Zoom response:",
+        result
+    );
 
 
     return result.data;
@@ -670,9 +954,9 @@ async function createZoomForClass() {
 }
 
 
-/* =========================================================
+/* ============================================================
    FORM SUBMIT
-========================================================= */
+============================================================ */
 
 form.addEventListener(
     "submit",
@@ -681,11 +965,13 @@ form.addEventListener(
         event.preventDefault();
 
 
-        /* -----------------------------------------
+        /* --------------------------------------------
            VALIDATION
-        ----------------------------------------- */
+        -------------------------------------------- */
 
-        if (!course.value) {
+        if (
+            !courseSelect.value
+        ) {
 
             showMessage(
                 "Please select a course.",
@@ -697,7 +983,9 @@ form.addEventListener(
         }
 
 
-        if (!subject.value) {
+        if (
+            !subjectSelect.value
+        ) {
 
             showMessage(
                 "Please select a subject.",
@@ -709,7 +997,9 @@ form.addEventListener(
         }
 
 
-        if (!chapter.value) {
+        if (
+            !chapterSelect.value
+        ) {
 
             showMessage(
                 "Please select a chapter.",
@@ -721,17 +1011,15 @@ form.addEventListener(
         }
 
 
-        if (!titleInput.value.trim()) {
-
-            autoTitle();
-
-        }
+        autoTitle();
 
 
-        if (!titleInput.value.trim()) {
+        if (
+            !titleInput.value.trim()
+        ) {
 
             showMessage(
-                "Please enter a class title.",
+                "Please enter class title.",
                 "error"
             );
 
@@ -740,10 +1028,12 @@ form.addEventListener(
         }
 
 
-        if (!teacherInput.value.trim()) {
+        if (
+            !facultyInput.value.trim()
+        ) {
 
             showMessage(
-                "Please enter teacher name.",
+                "Please enter faculty name.",
                 "error"
             );
 
@@ -752,7 +1042,9 @@ form.addEventListener(
         }
 
 
-        if (!dateInput.value) {
+        if (
+            !dateInput.value
+        ) {
 
             showMessage(
                 "Please select class date.",
@@ -764,7 +1056,9 @@ form.addEventListener(
         }
 
 
-        if (!timeInput.value) {
+        if (
+            !timeInput.value
+        ) {
 
             showMessage(
                 "Please select class time.",
@@ -776,36 +1070,64 @@ form.addEventListener(
         }
 
 
-        /* -----------------------------------------
-           DISABLE BUTTON
-        ----------------------------------------- */
+        const duration =
+            Number(
+                durationInput.value
+            );
 
-        saveButton.disabled =
-            true;
 
-        saveButton.textContent =
-            "CREATING ZOOM MEETING...";
+        if (
+            !duration ||
+            duration <= 0
+        ) {
+
+            showMessage(
+                "Please enter a valid duration.",
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        /* --------------------------------------------
+           DATA
+        -------------------------------------------- */
+
+        const selectedCourse =
+            getSelectedCourse();
+
+        const selectedSubject =
+            getSelectedSubject();
+
+        const selectedChapter =
+            getSelectedChapter();
+
+
+        /* --------------------------------------------
+           LOADING
+        -------------------------------------------- */
+
+        setLoading(
+            true,
+            "Creating Zoom Meeting..."
+        );
 
 
         try {
 
-            /* =====================================
+            /* ========================================
                CREATE ZOOM
-            ===================================== */
+            ======================================== */
 
-            const zoomData =
-                await createZoomForClass();
-
-
-            console.log(
-                "ZOOM RESPONSE:",
-                zoomData
-            );
+            const zoom =
+                await createZoom();
 
 
             if (
-                !zoomData ||
-                !zoomData.meetingId
+                !zoom ||
+                !zoom.meetingId
             ) {
 
                 throw new Error(
@@ -815,51 +1137,77 @@ form.addEventListener(
             }
 
 
-            /* =====================================
+            console.log(
+                "[LIVE CLASS] Zoom created:",
+                zoom
+            );
+
+
+            /* ========================================
                SAVE LIVE CLASS
-            ===================================== */
+            ======================================== */
 
-            saveButton.textContent =
-                "SAVING LIVE CLASS...";
+            setLoading(
+                true,
+                "Saving Live Class..."
+            );
 
 
-            const data = {
+            const liveClassData = {
+
+                /*
+                 * CLASS INFORMATION
+                 */
 
                 title:
                     titleInput.value.trim(),
 
-                teacherName:
-                    teacherInput.value.trim(),
+                faculty:
+                    facultyInput.value.trim(),
 
-                facultyName:
-                    teacherInput.value.trim(),
+                teacherName:
+                    facultyInput.value.trim(),
+
+
+                /*
+                 * ZEN2 COURSE
+                 */
 
                 courseId:
-                    course.value,
+                    selectedCourse.id,
 
                 courseName:
-                    getSelectedName(
-                        course
-                    ),
+                    selectedCourse.courseName || "",
+
+
+                /*
+                 * ZEN2 SUBJECT
+                 */
 
                 subjectId:
-                    subject.value,
+                    selectedSubject.id,
 
                 subjectName:
-                    getSelectedName(
-                        subject
-                    ),
+                    selectedSubject.subjectName || "",
+
+
+                /*
+                 * ZEN2 CHAPTER
+                 */
 
                 chapterId:
-                    chapter.value,
+                    selectedChapter.id,
+
+                chapterNumber:
+                    selectedChapter.chapterNumber || 0,
 
                 chapterName:
-                    getSelectedName(
-                        chapter
-                    ),
+                    selectedChapter.chapterName || "",
 
-                thumbnailUrl:
-                    thumbnailInput.value.trim(),
+
+                /*
+                 * CLASS SCHEDULE
+                 */
 
                 scheduledDate:
                     dateInput.value,
@@ -868,39 +1216,57 @@ form.addEventListener(
                     timeInput.value,
 
                 duration:
-                    60,
+                    duration,
+
+
+                /*
+                 * THUMBNAIL
+                 */
+
+                thumbnailUrl:
+                    thumbnailInput.value.trim(),
+
+
+                /*
+                 * LIVE CLASS
+                 */
 
                 liveType:
                     "ZOOM",
 
+                status:
+                    "SCHEDULED",
+
                 accessType:
                     "PAID",
 
-                status:
-                    "scheduled",
+
+                /*
+                 * ZOOM
+                 */
 
                 zoomCreated:
                     true,
 
                 zoomMeetingId:
-                    zoomData.meetingId ||
-                    "",
+                    zoom.meetingId || "",
 
                 zoomMeetingNumber:
-                    zoomData.meetingNumber ||
-                    "",
+                    zoom.meetingNumber || "",
 
                 zoomPassword:
-                    zoomData.password ||
-                    "",
+                    zoom.password || "",
 
                 zoomJoinUrl:
-                    zoomData.joinUrl ||
-                    "",
+                    zoom.joinUrl || "",
 
                 zoomStartUrl:
-                    zoomData.startUrl ||
-                    "",
+                    zoom.startUrl || "",
+
+
+                /*
+                 * TIMESTAMP
+                 */
 
                 createdAt:
                     serverTimestamp(),
@@ -911,21 +1277,31 @@ form.addEventListener(
             };
 
 
-            const ref =
+            console.log(
+                "[LIVE CLASS] Firestore data:",
+                liveClassData
+            );
+
+
+            const liveClassRef =
                 await addDoc(
                     collection(
                         db,
-                        "liveClasses"
+                        LIVE_CLASSES
                     ),
-                    data
+                    liveClassData
                 );
 
 
             console.log(
-                "LIVE CLASS CREATED:",
-                ref.id
+                "[LIVE CLASS] Created:",
+                liveClassRef.id
             );
 
+
+            /* --------------------------------------------
+               SUCCESS
+            -------------------------------------------- */
 
             showMessage(
                 "Live class created successfully.",
@@ -936,39 +1312,30 @@ form.addEventListener(
             form.reset();
 
 
-            subject.innerHTML = `
-                <option value="">
-                    Select Subject
-                </option>
-            `;
+            resetSubject();
 
-            chapter.innerHTML = `
-                <option value="">
-                    Select Chapter
-                </option>
-            `;
-
-            subject.disabled = true;
-            chapter.disabled = true;
+            resetChapter();
 
 
-            await loadClasses();
+            durationInput.value =
+                "60";
 
 
         } catch (error) {
 
             console.error(
-                "LIVE CLASS ERROR:",
+                "[LIVE CLASS] ERROR:",
                 error
             );
 
+
             console.error(
-                "ERROR DETAILS:",
+                "[LIVE CLASS] ERROR DETAILS:",
                 error?.details
             );
 
 
-            let errorMessage =
+            let errorText =
                 "Unable to create live class.";
 
 
@@ -976,31 +1343,29 @@ form.addEventListener(
                 error?.details?.message
             ) {
 
-                errorMessage =
+                errorText =
                     error.details.message;
 
             } else if (
                 error?.message
             ) {
 
-                errorMessage =
+                errorText =
                     error.message;
 
             }
 
 
             showMessage(
-                errorMessage,
+                errorText,
                 "error"
             );
 
         } finally {
 
-            saveButton.disabled =
-                false;
-
-            saveButton.textContent =
-                "SCHEDULE LIVE CLASS";
+            setLoading(
+                false
+            );
 
         }
 
@@ -1008,275 +1373,33 @@ form.addEventListener(
 );
 
 
-/* =========================================================
-   LOAD EXISTING LIVE CLASSES
-========================================================= */
-
-async function loadClasses() {
-
-    if (!classes) {
-        return;
-    }
-
-
-    try {
-
-        classes.innerHTML =
-            "Loading...";
-
-
-        const snapshot =
-            await getDocs(
-                collection(
-                    db,
-                    "liveClasses"
-                )
-            );
-
-
-        liveClasses =
-            snapshot.docs.map(
-                item => ({
-                    id: item.id,
-                    ...item.data()
-                })
-            );
-
-
-        liveClasses.sort(
-            (a, b) => {
-
-                const aDate =
-                    `${a.scheduledDate || ""} ${a.scheduledTime || ""}`;
-
-                const bDate =
-                    `${b.scheduledDate || ""} ${b.scheduledTime || ""}`;
-
-                return aDate.localeCompare(
-                    bDate
-                );
-
-            }
-        );
-
-
-        renderClasses();
-
-
-    } catch (error) {
-
-        console.error(
-            "LOAD LIVE CLASSES ERROR:",
-            error
-        );
-
-        classes.innerHTML =
-            "Unable to load classes.";
-
-    }
-
-}
-
-
-/* =========================================================
-   RENDER LIVE CLASSES
-========================================================= */
-
-function renderClasses() {
-
-    if (
-        !liveClasses.length
-    ) {
-
-        classes.innerHTML = `
-            <div class="empty">
-                No live classes scheduled yet.
-            </div>
-        `;
-
-        return;
-
-    }
-
-
-    classes.innerHTML = "";
-
-
-    liveClasses.forEach(
-        item => {
-
-            const card =
-                document.createElement(
-                    "div"
-                );
-
-            card.className =
-                "class-card";
-
-
-            card.innerHTML = `
-
-                <div class="class-main">
-
-                    <h3>
-                        ${escapeHtml(
-                            item.title ||
-                            "Live Class"
-                        )}
-                    </h3>
-
-                    <p>
-                        ${escapeHtml(
-                            item.courseName ||
-                            ""
-                        )}
-                        ${item.subjectName
-                            ? " • " +
-                              escapeHtml(
-                                  item.subjectName
-                              )
-                            : ""}
-                        ${item.chapterName
-                            ? " • " +
-                              escapeHtml(
-                                  item.chapterName
-                              )
-                            : ""}
-                    </p>
-
-                    <p class="class-time">
-                        ${escapeHtml(
-                            item.scheduledDate ||
-                            ""
-                        )}
-                        ${item.scheduledTime
-                            ? " at " +
-                              escapeHtml(
-                                  item.scheduledTime
-                              )
-                            : ""}
-                    </p>
-
-                </div>
-
-                <div class="class-actions">
-
-                    ${
-                        item.zoomJoinUrl
-                            ? `
-                                <button
-                                    class="join-button"
-                                    data-id="${item.id}"
-                                >
-                                    Join Zoom
-                                </button>
-                              `
-                            : ""
-                    }
-
-                </div>
-
-            `;
-
-
-            const joinButton =
-                card.querySelector(
-                    ".join-button"
-                );
-
-
-            if (joinButton) {
-
-                joinButton.addEventListener(
-                    "click",
-                    () => {
-
-                        window.open(
-                            item.zoomJoinUrl,
-                            "_blank"
-                        );
-
-                    }
-                );
-
-            }
-
-
-            classes.appendChild(
-                card
-            );
-
-        }
-    );
-
-}
-
-
-/* =========================================================
-   REFRESH
-========================================================= */
-
-if (refreshButton) {
-
-    refreshButton.addEventListener(
-        "click",
-        async () => {
-
-            await loadCourses();
-
-            await loadClasses();
-
-        }
-    );
-
-}
-
-
-/* =========================================================
-   ESCAPE HTML
-========================================================= */
-
-function escapeHtml(
-    value
-) {
-
-    return String(
-        value ?? ""
-    )
-        .replaceAll(
-            "&",
-            "&amp;"
-        )
-        .replaceAll(
-            "<",
-            "&lt;"
-        )
-        .replaceAll(
-            ">",
-            "&gt;"
-        )
-        .replaceAll(
-            '"',
-            "&quot;"
-        )
-        .replaceAll(
-            "'",
-            "&#039;"
-        );
-
-}
-
-
-/* =========================================================
-   INITIAL LOAD
-========================================================= */
+/* ============================================================
+   INITIALIZE
+============================================================ */
 
 async function init() {
 
+    console.log(
+        "[LIVE CLASS] Initializing..."
+    );
+
+
+    /*
+     * Make sure dropdowns start correctly.
+     */
+
+    resetSubject();
+
+    resetChapter();
+
+
+    /*
+     * Load actual Zenova courses.
+     */
+
     await loadCourses();
 
-    await loadClasses();
-
 }
+
 
 init();
