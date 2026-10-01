@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>Zenova — Create Live Class</title>
+
+  <link rel="stylesheet" href="./live-class.css">
+</head>
+
+<body>
+
+  <div class="page">
+
+    <!-- HEADER -->
+    <header class="topbar">
+
+      <div class="brand">
+
+        <div class="brand-logo">
+          Z
+        </div>
+
+        <div>
+          <div class="brand-name">
+            Zenova
+          </div>
+
+          <div class="brand-subtitle">
+            Educations
+          </div>
+        </div>
+
+      </div>
+
+      <div class="page-title">
+        Live Class
+      </div>
+
+    </header>
+
+
+    <!-- MAIN -->
+    <main class="main">
+
+      <div class="heading">
+
+        <div>
+          <h1>Create Live Class</h1>
+
+          <p>
+            Schedule a live class and automatically create its Zoom meeting.
+          </p>
+        </div>
+
+      </div>
+
+
+      <!-- FORM CARD -->
+      <section class="card">
+
+        <form id="liveClassForm" novalidate>
+
+
+          <!-- ACADEMIC DETAILS -->
+          <div class="section">
+
+            <div class="section-title">
+              Academic Details
+            </div>
+
+            <div class="grid three">
+
+              <div class="field">
+
+                <label for="course">
+                  Course
+                </label>
+
+                <select id="course">
+                  <option value="">
+                    Loading courses...
+                  </option>
+                </select>
+
+              </div>
+
+
+              <div class="field">
+
+                <label for="subject">
+                  Subject
+                </label>
+
+                <select
+                  id="subject"
+                  disabled
+                >
+                  <option value="">
+                    Select Subject
+                  </option>
+                </select>
+
+              </div>
+
+
+              <div class="field">
+
+                <label for="chapter">
+                  Chapter
+                </label>
+
+                <select
+                  id="chapter"
+                  disabled
+                >
+                  <option value="">
+                    Select Chapter
+                  </option>
+                </select>
+
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <div class="divider"></div>
+
+
+          <!-- CLASS DETAILS -->
+          <div class="section">
+
+            <div class="section-title">
+              Class Details
+            </div>
+
+
+            <div class="field full">
+
+              <label for="title">
+                Class Title
+              </label>
+
+              <input
+                id="title"
+                type="text"
+                placeholder="Example: Mathematics - Trigonometry - Introduction"
+                autocomplete="off"
+              >
+
+              <div class="hint">
+                Title is automatically generated from course, subject and chapter if left empty.
+              </div>
+
+            </div>
+
+
+            <div class="grid three">
+
+              <div class="field">
+
+                <label for="faculty">
+                  Faculty Name
+                </label>
+
+                <input
+                  id="faculty"
+                  type="text"
+                  placeholder="Enter faculty name"
+                  autocomplete="off"
+                >
+
+              </div>
+
+
+              <div class="field">
+
+                <label for="date">
+                  Class Date
+                </label>
+
+                <input
+                  id="date"
+                  type="date"
+                >
+
+              </div>
+
+
+              <div class="field">
+
+                <label for="time">
+                  Start Time
+                </label>
+
+                <input
+                  id="time"
+                  type="time"
+                >
+
+              </div>
+
+            </div>
+
+
+            <div class="grid two">
+
+              <div class="field">
+
+                <label for="duration">
+                  Duration
+                </label>
+
+                <div class="duration-wrap">
+
+                  <input
+                    id="duration"
+                    type="number"
+                    min="1"
+                    step="1"
+                    value="60"
+                    placeholder="60"
+                  >
+
+                  <span>
+                    minutes
+                  </span>
+
+                </div>
+
+              </div>
+
+
+              <div class="field">
+
+                <label for="thumbnail">
+                  Thumbnail URL
+                </label>
+
+                <input
+                  id="thumbnail"
+                  type="url"
+                  placeholder="https://..."
+                  autocomplete="off"
+                >
+
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <div class="divider"></div>
+
+
+          <!-- ZOOM INFO -->
+          <div class="zoom-box">
+
+            <div class="zoom-icon">
+              Z
+            </div>
+
+            <div class="zoom-content">
+
+              <div class="zoom-title">
+                Zoom Meeting
+              </div>
+
+              <div class="zoom-description">
+                A Zoom meeting will be created automatically when you create this class.
+                Students will later join through Zenova.
+              </div>
+
+            </div>
+
+            <div class="zoom-status">
+              <span class="status-dot"></span>
+              Connected
+            </div>
+
+          </div>
+
+
+          <!-- MESSAGE -->
+          <div
+            id="message"
+            class="message"
+            aria-live="polite"
+          ></div>
+
+
+          <!-- ACTION -->
+          <div class="actions">
+
+            <button
+              type="submit"
+              id="saveButton"
+              class="create-button"
+            >
+
+              <span id="saveText">
+                Create Live Class
+              </span>
+
+              <span class="arrow">
+                →
+              </span>
+
+            </button>
+
+          </div>
+
+        </form>
+
+      </section>
+
+
+      <!-- INFO -->
+      <div class="bottom-note">
+
+        <span class="lock">
+          🔒
+        </span>
+
+        Zoom credentials are handled securely by the Firebase backend.
+
+      </div>
+
+    </main>
+
+  </div>
+
+
+  <script type="module" src="./live-class.js"></script>
+
+</body>
+</html>
