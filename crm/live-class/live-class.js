@@ -1,272 +1,136 @@
+import { auth } from "../../firebase/firebase-config.js";
 import {
-    auth,
-    db
-} from "../../firebase/firebase-config.js";
-
-import {
-    onAuthStateChanged
+  onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
 
 import {
-    getFunctions,
-    httpsCallable
+  getFunctions,
+  httpsCallable
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-functions.js";
 
 import {
-    collection,
-    getDocs,
-    addDoc,
-    updateDoc,
-    deleteDoc,
-    doc,
-    serverTimestamp
+  getFirestore,
+  collection,
+  getDocs,
+  addDoc,
+  updateDoc,
+  doc,
+  serverTimestamp
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
-/* =========================================================
-   FIREBASE FUNCTIONS
-========================================================= */
+const ALLOWED_EMAIL = "zenovaeducations@gmail.com";
 
-const functions =
-    getFunctions(undefined, "asia-south1");
+const db = getFirestore();
+const functions = getFunctions(undefined, "asia-south1");
 
-const createZoomMeeting =
-    httpsCallable(
-        functions,
-        "createZoomMeeting"
-    );
+const createZoomMeeting = httpsCallable(
+  functions,
+  "createZoomMeeting"
+);
 
-/* =========================================================
-   DOM
-========================================================= */
+const form = document.getElementById("liveClassForm");
 
-const form =
-    document.getElementById("liveForm");
+const courseSelect = document.getElementById("course");
+const subjectSelect = document.getElementById("subject");
+const chapterSelect = document.getElementById("chapter");
 
-const formPanel =
-    document.getElementById("formPanel");
+const titleInput = document.getElementById("title");
+const facultyInput = document.getElementById("faculty");
+const dateInput = document.getElementById("date");
+const timeInput = document.getElementById("time");
+const durationInput = document.getElementById("duration");
+const thumbnailInput = document.getElementById("thumbnail");
 
-const newClassBtn =
-    document.getElementById("newClassBtn");
-
-const closeFormBtn =
-    document.getElementById("closeFormBtn");
-
-const cancelBtn =
-    document.getElementById("cancelBtn");
-
-const refreshBtn =
-    document.getElementById("refreshBtn");
-
-const saveButton =
-    document.getElementById("saveButton");
-
-const titleInput =
-    document.getElementById("title");
-
-const teacherInput =
-    document.getElementById("teacherName");
-
-const liveType =
-    document.getElementById("liveType");
-
-const course =
-    document.getElementById("course");
-
-const subject =
-    document.getElementById("subject");
-
-const chapter =
-    document.getElementById("chapter");
-
-const thumbnailInput =
-    document.getElementById("thumbnailUrl");
-
-const dateStart =
-    document.getElementById("dateStart");
-
-const timeStart =
-    document.getElementById("timeStart");
-
-const dateEnd =
-    document.getElementById("dateEnd");
-
-const timeEnd =
-    document.getElementById("timeEnd");
-
-const duration =
-    document.getElementById("duration");
-
-const accessType =
-    document.getElementById("accessType");
-
-const description =
-    document.getElementById("description");
-
-const classesList =
-    document.getElementById("classesList");
-
-const loading =
-    document.getElementById("loading");
-
-const emptyState =
-    document.getElementById("emptyState");
-
-const upcomingCount =
-    document.getElementById("upcomingCount");
-
-const liveCount =
-    document.getElementById("liveCount");
-
-const completedCount =
-    document.getElementById("completedCount");
-
-const zoomInfo =
-    document.getElementById("zoomInfo");
-
-const providerFields =
-    document.getElementById("providerFields");
-
-const toast =
-    document.getElementById("toast");
-
-/* =========================================================
-   STATE
-========================================================= */
+const message = document.getElementById("message");
+const saveButton = document.getElementById("saveButton");
+const saveText = document.getElementById("saveText");
 
 let courses = [];
 let subjects = [];
 let chapters = [];
-let liveClasses = [];
 
-let editingId = null;
-
-/* =========================================================
-   IMPORTANT
-   Disable browser native required validation.
-
-   This prevents the browser from stopping submission
-   before our JavaScript can handle the form.
-========================================================= */
-
-if (form) {
-    form.noValidate = true;
-}
+let currentUser = null;
 
 /* =========================================================
    AUTH
 ========================================================= */
 
-onAuthStateChanged(
-    auth,
-    async user => {
+onAuthStateChanged(auth, async (user) => {
+  if (!user) {
+    window.location.href = "../../login/";
+    return;
+  }
 
-        if (!user) {
+  if ((user.email || "").toLowerCase() !== ALLOWED_EMAIL) {
+    document.body.innerHTML = `
+      <div style="
+        min-height:100vh;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        font-family:Arial,sans-serif;
+        background:#f5f7fb;
+      ">
+        <div style="
+          background:white;
+          padding:40px;
+          border-radius:20px;
+          text-align:center;
+          box-shadow:0 10px 40px rgba(0,0,0,.08);
+        ">
+          <h2>Access Denied</h2>
+          <p>This page is restricted to the Zenova administrator.</p>
+        </div>
+      </div>
+    `;
+    return;
+  }
 
-            window.location.href =
-                "../../account/login/";
+  currentUser = user;
 
-            return;
-        }
-
-        await loadAll();
-
-    }
-);
-
-/* =========================================================
-   TOAST
-========================================================= */
-
-function showToast(message) {
-
-    if (!toast) {
-        alert(message);
-        return;
-    }
-
-    toast.textContent =
-        message;
-
-    toast.classList.add("show");
-
-    setTimeout(() => {
-
-        toast.classList.remove("show");
-
-    }, 3500);
-}
+  await loadCourses();
+});
 
 /* =========================================================
-   DATE / TIME
+   HELPERS
 ========================================================= */
 
-function createDateTime(date, time) {
+function showMessage(text, type = "info") {
+  if (!message) return;
 
-    if (!date || !time) {
-        return null;
-    }
+  message.textContent = text;
 
-    return `${date}T${time}:00+05:30`;
+  message.className = "message";
+
+  if (type === "success") {
+    message.classList.add("success");
+  }
+
+  if (type === "error") {
+    message.classList.add("error");
+  }
 }
 
-function getStatus(item) {
+function setLoading(loading) {
+  if (!saveButton) return;
 
-    const now =
-        new Date();
+  saveButton.disabled = loading;
 
-    const start =
-        item.startDateTime
-            ? new Date(item.startDateTime)
-            : null;
-
-    const end =
-        item.endDateTime
-            ? new Date(item.endDateTime)
-            : null;
-
-    if (!start) {
-        return "UPCOMING";
-    }
-
-    if (
-        start <= now &&
-        end &&
-        now <= end
-    ) {
-
-        return "LIVE";
-    }
-
-    if (
-        end &&
-        now > end
-    ) {
-
-        return "COMPLETED";
-    }
-
-    return "UPCOMING";
+  if (saveText) {
+    saveText.textContent = loading
+      ? "Creating Zoom Class..."
+      : "Create Live Class";
+  }
 }
 
-/* =========================================================
-   GET SELECTED OPTION TEXT
-========================================================= */
+function resetSelect(select, text) {
+  if (!select) return;
 
-function getSelectedText(selectElement) {
+  select.innerHTML = `
+    <option value="">${text}</option>
+  `;
 
-    if (
-        !selectElement ||
-        selectElement.selectedIndex < 0
-    ) {
-        return "";
-    }
-
-    const option =
-        selectElement.options[
-            selectElement.selectedIndex
-        ];
-
-    return option?.textContent?.trim() || "";
+  select.disabled = true;
 }
 
 /* =========================================================
@@ -274,1908 +138,575 @@ function getSelectedText(selectElement) {
 ========================================================= */
 
 async function loadCourses() {
+  try {
+    showMessage("Loading courses...");
 
-    if (!course) {
-        return;
-    }
-
-    const snap =
-        await getDocs(
-            collection(
-                db,
-                "zen2Courses"
-            )
-        );
-
-    courses =
-        snap.docs.map(
-            d => ({
-                id: d.id,
-                ...d.data()
-            })
-        );
-
-    courses.sort(
-        (a, b) =>
-            Number(a.order || 0) -
-            Number(b.order || 0)
+    const snapshot = await getDocs(
+      collection(db, "zen2Courses")
     );
 
-    course.innerHTML =
-        `<option value="">Select Course</option>`;
+    courses = [];
 
-    courses.forEach(
-        item => {
+    snapshot.forEach((item) => {
+      courses.push({
+        id: item.id,
+        ...item.data()
+      });
+    });
 
-            const option =
-                document.createElement(
-                    "option"
-                );
-
-            option.value =
-                item.id;
-
-            option.textContent =
-                item.name ||
-                item.title ||
-                item.courseName ||
-                item.className ||
-                "Course";
-
-            course.appendChild(
-                option
-            );
-
-        }
+    courses.sort((a, b) =>
+      String(a.name || a.title || "")
+        .localeCompare(
+          String(b.name || b.title || "")
+        )
     );
 
-}
+    courseSelect.innerHTML = `
+      <option value="">Select Course</option>
+    `;
 
-/* =========================================================
-   LOAD SUBJECTS
-========================================================= */
+    courses.forEach((course) => {
+      const option = document.createElement("option");
 
-async function loadSubjects(courseId) {
+      option.value = course.id;
 
-    if (!subject || !chapter) {
-        return;
-    }
+      option.textContent =
+        course.name ||
+        course.title ||
+        course.courseName ||
+        course.id;
 
-    subject.innerHTML =
-        `<option value="">Select Subject</option>`;
+      courseSelect.appendChild(option);
+    });
 
-    chapter.innerHTML =
-        `<option value="">Select Chapter</option>`;
+    courseSelect.disabled = false;
 
-    subject.disabled = true;
-    chapter.disabled = true;
+    showMessage("");
+  } catch (error) {
+    console.error("COURSE LOAD ERROR:", error);
 
-    subjects = [];
-    chapters = [];
-
-    if (!courseId) {
-        return;
-    }
-
-    const snap =
-        await getDocs(
-            collection(
-                db,
-                "zen2Subjects"
-            )
-        );
-
-    subjects =
-        snap.docs
-            .map(
-                d => ({
-                    id: d.id,
-                    ...d.data()
-                })
-            )
-            .filter(
-                item =>
-                    item.courseId === courseId &&
-                    item.active !== false
-            );
-
-    subjects.sort(
-        (a, b) =>
-            Number(a.order || 0) -
-            Number(b.order || 0)
+    showMessage(
+      "Unable to load courses.",
+      "error"
     );
-
-    subjects.forEach(
-        item => {
-
-            const option =
-                document.createElement(
-                    "option"
-                );
-
-            option.value =
-                item.id;
-
-            option.textContent =
-                item.name ||
-                item.title ||
-                item.subjectName ||
-                "Subject";
-
-            subject.appendChild(
-                option
-            );
-
-        }
-    );
-
-    subject.disabled =
-        subjects.length === 0;
-
-}
-
-/* =========================================================
-   LOAD CHAPTERS
-========================================================= */
-
-async function loadChapters(subjectId) {
-
-    if (!chapter) {
-        return;
-    }
-
-    chapter.innerHTML =
-        `<option value="">Select Chapter</option>`;
-
-    chapter.disabled = true;
-
-    chapters = [];
-
-    if (!subjectId) {
-        return;
-    }
-
-    const snap =
-        await getDocs(
-            collection(
-                db,
-                "zen2Chapters"
-            )
-        );
-
-    chapters =
-        snap.docs
-            .map(
-                d => ({
-                    id: d.id,
-                    ...d.data()
-                })
-            )
-            .filter(
-                item =>
-                    item.subjectId === subjectId &&
-                    item.active !== false
-            );
-
-    chapters.sort(
-        (a, b) =>
-            Number(
-                a.chapterNumber ||
-                a.order ||
-                0
-            ) -
-            Number(
-                b.chapterNumber ||
-                b.order ||
-                0
-            )
-    );
-
-    chapters.forEach(
-        item => {
-
-            const option =
-                document.createElement(
-                    "option"
-                );
-
-            option.value =
-                item.id;
-
-            option.textContent =
-                item.name ||
-                item.title ||
-                item.chapterName ||
-                "Chapter";
-
-            chapter.appendChild(
-                option
-            );
-
-        }
-    );
-
-    chapter.disabled =
-        chapters.length === 0;
-
+  }
 }
 
 /* =========================================================
    COURSE CHANGE
 ========================================================= */
 
-if (course) {
+courseSelect?.addEventListener("change", async () => {
+  const courseId = courseSelect.value;
 
-    course.addEventListener(
-        "change",
-        async () => {
+  resetSelect(
+    subjectSelect,
+    "Select Subject"
+  );
 
-            await loadSubjects(
-                course.value
-            );
+  resetSelect(
+    chapterSelect,
+    "Select Chapter"
+  );
 
-        }
+  if (!courseId) return;
+
+  await loadSubjects(courseId);
+});
+
+/* =========================================================
+   LOAD SUBJECTS
+========================================================= */
+
+async function loadSubjects(courseId) {
+  try {
+    showMessage("Loading subjects...");
+
+    const snapshot = await getDocs(
+      collection(db, "zen2Subjects")
     );
 
+    subjects = [];
+
+    snapshot.forEach((item) => {
+      const data = item.data();
+
+      const relatedCourse =
+        data.courseId ||
+        data.courseID ||
+        data.course;
+
+      if (
+        relatedCourse === courseId
+      ) {
+        subjects.push({
+          id: item.id,
+          ...data
+        });
+      }
+    });
+
+    subjects.sort((a, b) =>
+      String(a.name || a.title || "")
+        .localeCompare(
+          String(b.name || b.title || "")
+        )
+    );
+
+    subjectSelect.innerHTML = `
+      <option value="">Select Subject</option>
+    `;
+
+    subjects.forEach((subject) => {
+      const option = document.createElement("option");
+
+      option.value = subject.id;
+
+      option.textContent =
+        subject.name ||
+        subject.title ||
+        subject.subjectName ||
+        subject.id;
+
+      subjectSelect.appendChild(option);
+    });
+
+    subjectSelect.disabled = false;
+
+    showMessage("");
+  } catch (error) {
+    console.error("SUBJECT LOAD ERROR:", error);
+
+    showMessage(
+      "Unable to load subjects.",
+      "error"
+    );
+  }
 }
 
 /* =========================================================
    SUBJECT CHANGE
 ========================================================= */
 
-if (subject) {
+subjectSelect?.addEventListener("change", async () => {
+  const subjectId = subjectSelect.value;
 
-    subject.addEventListener(
-        "change",
-        async () => {
+  resetSelect(
+    chapterSelect,
+    "Select Chapter"
+  );
 
-            await loadChapters(
-                subject.value
-            );
+  if (!subjectId) return;
 
-        }
+  await loadChapters(subjectId);
+});
+
+/* =========================================================
+   LOAD CHAPTERS
+========================================================= */
+
+async function loadChapters(subjectId) {
+  try {
+    showMessage("Loading chapters...");
+
+    const snapshot = await getDocs(
+      collection(db, "zen2Chapters")
     );
 
-}
-
-/* =========================================================
-   LIVE TYPE
-========================================================= */
-
-function updateProviderFields() {
-
-    if (!liveType) {
-        return;
-    }
-
-    const type =
-        liveType.value;
-
-    if (type === "ZOOM") {
-
-        if (zoomInfo) {
-            zoomInfo.style.display =
-                "flex";
-        }
-
-        if (providerFields) {
-            providerFields.innerHTML =
-                "";
-        }
-
-        return;
-    }
-
-    if (zoomInfo) {
-        zoomInfo.style.display =
-            "none";
-    }
-
-    if (!providerFields) {
-        return;
-    }
-
-    if (type === "YOUTUBE_LIVE") {
-
-        providerFields.innerHTML = `
-            <div class="field">
-                <label>YouTube Live URL</label>
-
-                <input
-                    id="providerUrl"
-                    type="url"
-                    placeholder="https://youtube.com/live/..."
-                >
-            </div>
-        `;
-
-    }
-
-    else if (type === "RECORDED_VIDEO") {
-
-        providerFields.innerHTML = `
-            <div class="field">
-                <label>Recorded Video URL</label>
-
-                <input
-                    id="providerUrl"
-                    type="url"
-                    placeholder="Video URL"
-                >
-            </div>
-        `;
-
-    }
-
-    else {
-
-        providerFields.innerHTML = `
-            <div class="field">
-                <label>External Video URL</label>
-
-                <input
-                    id="providerUrl"
-                    type="url"
-                    placeholder="https://..."
-                >
-            </div>
-        `;
-
-    }
-
-}
-
-if (liveType) {
-
-    liveType.addEventListener(
-        "change",
-        updateProviderFields
-    );
-
-}
-
-/* =========================================================
-   OPEN FORM
-========================================================= */
-
-function openForm() {
-
-    if (!formPanel) {
-        return;
-    }
-
-    formPanel.style.display =
-        "block";
-
-    window.scrollTo({
-        top: 0,
-        behavior: "smooth"
-    });
-
-}
-
-/* =========================================================
-   RESET FORM
-========================================================= */
-
-function resetForm() {
-
-    editingId = null;
-
-    if (form) {
-        form.reset();
-    }
-
-    if (subject) {
-        subject.innerHTML =
-            `<option value="">Select Subject</option>`;
-
-        subject.disabled = true;
-    }
-
-    if (chapter) {
-        chapter.innerHTML =
-            `<option value="">Select Chapter</option>`;
-
-        chapter.disabled = true;
-    }
-
-    subjects = [];
     chapters = [];
 
-    if (zoomInfo) {
-        zoomInfo.style.display =
-            "flex";
-    }
+    snapshot.forEach((item) => {
+      const data = item.data();
 
-    if (providerFields) {
-        providerFields.innerHTML =
-            "";
-    }
+      const relatedSubject =
+        data.subjectId ||
+        data.subjectID ||
+        data.subject;
 
-    if (saveButton) {
-        saveButton.textContent =
-            "Schedule Live Class";
-    }
+      if (
+        relatedSubject === subjectId
+      ) {
+        chapters.push({
+          id: item.id,
+          ...data
+        });
+      }
+    });
 
-    const formTitle =
-        document.getElementById(
-            "formTitle"
-        );
-
-    if (formTitle) {
-        formTitle.textContent =
-            "Create Live Class";
-    }
-
-}
-
-/* =========================================================
-   CLOSE FORM
-========================================================= */
-
-function closeForm() {
-
-    if (formPanel) {
-        formPanel.style.display =
-            "none";
-    }
-
-    resetForm();
-
-}
-
-/* =========================================================
-   NEW CLASS
-========================================================= */
-
-if (newClassBtn) {
-
-    newClassBtn.addEventListener(
-        "click",
-        () => {
-
-            resetForm();
-
-            openForm();
-
-        }
+    chapters.sort((a, b) =>
+      String(a.name || a.title || "")
+        .localeCompare(
+          String(b.name || b.title || "")
+        )
     );
 
-}
+    chapterSelect.innerHTML = `
+      <option value="">Select Chapter</option>
+    `;
 
-/* =========================================================
-   CLOSE BUTTON
-========================================================= */
+    chapters.forEach((chapter) => {
+      const option = document.createElement("option");
 
-if (closeFormBtn) {
+      option.value = chapter.id;
 
-    closeFormBtn.addEventListener(
-        "click",
-        closeForm
+      option.textContent =
+        chapter.name ||
+        chapter.title ||
+        chapter.chapterName ||
+        chapter.id;
+
+      chapterSelect.appendChild(option);
+    });
+
+    chapterSelect.disabled = false;
+
+    showMessage("");
+  } catch (error) {
+    console.error("CHAPTER LOAD ERROR:", error);
+
+    showMessage(
+      "Unable to load chapters.",
+      "error"
     );
-
+  }
 }
 
 /* =========================================================
-   CANCEL BUTTON
+   AUTO TITLE
 ========================================================= */
 
-if (cancelBtn) {
+function getSelectedText(select) {
+  if (!select || !select.value) return "";
 
-    cancelBtn.addEventListener(
-        "click",
-        closeForm
-    );
+  const option =
+    select.options[select.selectedIndex];
 
+  return option?.textContent?.trim() || "";
 }
 
+function generateTitle() {
+  const courseName = getSelectedText(courseSelect);
+  const subjectName = getSelectedText(subjectSelect);
+  const chapterName = getSelectedText(chapterSelect);
+
+  const parts = [
+    courseName,
+    subjectName,
+    chapterName
+  ].filter(Boolean);
+
+  if (parts.length > 0) {
+    return parts.join(" - ");
+  }
+
+  return "";
+}
+
+[
+  courseSelect,
+  subjectSelect,
+  chapterSelect
+].forEach((select) => {
+  select?.addEventListener(
+    "change",
+    () => {
+      if (
+        !titleInput.value.trim()
+      ) {
+        titleInput.value =
+          generateTitle();
+      }
+    }
+  );
+});
+
 /* =========================================================
-   BUILD AUTOMATIC TITLE
+   CREATE LIVE CLASS
 ========================================================= */
 
-function getClassTitle() {
+form?.addEventListener(
+  "submit",
+  async (event) => {
+    event.preventDefault();
 
-    const manualTitle =
-        titleInput?.value?.trim() || "";
-
-    /*
-       If admin entered a title,
-       ALWAYS use that title.
-    */
-
-    if (manualTitle) {
-        return manualTitle;
+    if (!currentUser) {
+      showMessage(
+        "Please login again.",
+        "error"
+      );
+      return;
     }
 
-    /*
-       If title is empty,
-       automatically generate:
-       Course • Subject • Chapter
-    */
+    const courseId =
+      courseSelect.value.trim();
 
-    const courseName =
-        getSelectedText(course);
+    const subjectId =
+      subjectSelect.value.trim();
 
-    const subjectName =
-        getSelectedText(subject);
-
-    const chapterName =
-        getSelectedText(chapter);
-
-    const generatedTitle =
-        [
-            courseName,
-            subjectName,
-            chapterName
-        ]
-            .filter(Boolean)
-            .join(" • ");
-
-    if (generatedTitle) {
-        return generatedTitle;
-    }
-
-    return "Live Class";
-}
-
-/* =========================================================
-   CREATE ZOOM MEETING
-========================================================= */
-
-async function createZoomForClass() {
-
-    const title =
-        getClassTitle();
+    const chapterId =
+      chapterSelect.value.trim();
 
     const scheduledDate =
-        dateStart?.value?.trim() || "";
+      dateInput.value.trim();
 
     const scheduledTime =
-        timeStart?.value?.trim() || "";
+      timeInput.value.trim();
 
-    const minutes =
-        Number(
-            duration?.value || 60
-        );
+    const duration =
+      Number(durationInput.value);
 
+    const faculty =
+      facultyInput.value.trim();
+
+    const thumbnail =
+      thumbnailInput.value.trim();
+
+    let title =
+      titleInput.value.trim();
 
     if (!title) {
-        throw new Error(
-            "Class title could not be generated."
-        );
+      title = generateTitle();
     }
 
+    /* -----------------------------------------
+       VALIDATION
+    ----------------------------------------- */
+
+    if (!courseId) {
+      showMessage(
+        "Please select a course.",
+        "error"
+      );
+      return;
+    }
+
+    if (!subjectId) {
+      showMessage(
+        "Please select a subject.",
+        "error"
+      );
+      return;
+    }
+
+    if (!chapterId) {
+      showMessage(
+        "Please select a chapter.",
+        "error"
+      );
+      return;
+    }
+
+    if (!title) {
+      showMessage(
+        "Please enter a class title.",
+        "error"
+      );
+      return;
+    }
 
     if (!scheduledDate) {
-        throw new Error(
-            "Please select the start date."
-        );
+      showMessage(
+        "Please select the class date.",
+        "error"
+      );
+      return;
     }
-
 
     if (!scheduledTime) {
-        throw new Error(
-            "Please select the start time."
-        );
-    }
-
-
-    if (!minutes || minutes <= 0) {
-        throw new Error(
-            "Please enter a valid class duration."
-        );
-    }
-
-
-    console.log(
-        "Creating Zoom meeting:",
-        {
-            title,
-            scheduledDate,
-            scheduledTime,
-            duration: minutes
-        }
-    );
-
-
-    const result =
-        await createZoomMeeting({
-
-            title:
-                title,
-
-            scheduledDate:
-                scheduledDate,
-
-            scheduledTime:
-                scheduledTime,
-
-            duration:
-                minutes
-
-        });
-
-
-    if (
-        !result ||
-        !result.data
-    ) {
-
-        throw new Error(
-            "Zoom backend returned no meeting data."
-        );
-
-    }
-
-
-    if (
-        result.data.success !== true
-    ) {
-
-        throw new Error(
-            "Zoom meeting creation failed."
-        );
-
-    }
-
-
-    return result.data;
-            }
-
-/* =========================================================
-   BUILD LIVE CLASS DATA
-========================================================= */
-
-function buildData(
-    zoomData = null
-) {
-
-    const type =
-        liveType?.value || "ZOOM";
-
-    const selectedCourseName =
-        getSelectedText(course);
-
-    const selectedSubjectName =
-        getSelectedText(subject);
-
-    const selectedChapterName =
-        getSelectedText(chapter);
-
-    const data = {
-
-        title:
-            getClassTitle(),
-
-        teacherName:
-            teacherInput?.value?.trim() || "",
-
-        facultyName:
-            teacherInput?.value?.trim() || "",
-
-        courseId:
-            course?.value || "",
-
-        courseName:
-            selectedCourseName || null,
-
-        subjectId:
-            subject?.value || "",
-
-        subjectName:
-            selectedSubjectName || null,
-
-        chapterId:
-            chapter?.value || null,
-
-        chapterName:
-            chapter?.value
-                ? selectedChapterName || null
-                : null,
-
-        thumbnailUrl:
-            thumbnailInput?.value?.trim() || null,
-
-        liveType:
-            type,
-
-        mode:
-            type,
-
-        scheduledDate:
-            dateStart?.value || "",
-
-        scheduledTime:
-            timeStart?.value || "",
-
-        startTime:
-            timeStart?.value || "",
-
-        endDate:
-            dateEnd?.value || "",
-
-        endTime:
-            timeEnd?.value || "",
-
-        startDateTime:
-            createDateTime(
-                dateStart?.value,
-                timeStart?.value
-            ),
-
-        endDateTime:
-            createDateTime(
-                dateEnd?.value,
-                timeEnd?.value
-            ),
-
-        accessType:
-            accessType?.value || "PAID",
-
-        requiresPurchase:
-            accessType?.value === "PAID",
-
-        status:
-            "SCHEDULED",
-
-        active:
-            true,
-
-        description:
-            description?.value?.trim() || null
-
-    };
-
-    /* =====================================================
-       ZOOM
-    ===================================================== */
-
-    if (
-        type === "ZOOM" &&
-        zoomData
-    ) {
-
-        data.zoomMeetingNumber =
-            zoomData.meetingNumber ||
-            zoomData.meetingId ||
-            null;
-
-        data.zoomMeetingId =
-            zoomData.meetingId ||
-            zoomData.meetingNumber ||
-            null;
-
-        data.zoomPassword =
-            zoomData.password ||
-            null;
-
-        data.zoomJoinUrl =
-            zoomData.joinUrl ||
-            null;
-
-        data.zoomStartUrl =
-            zoomData.startUrl ||
-            null;
-
-        data.zoomCreated =
-            true;
-
-    }
-
-    /* =====================================================
-       OTHER PROVIDERS
-    ===================================================== */
-
-    if (
-        type !== "ZOOM"
-    ) {
-
-        const providerInput =
-            document.getElementById(
-                "providerUrl"
-            );
-
-        const url =
-            providerInput?.value?.trim() || "";
-
-        if (
-            type === "YOUTUBE_LIVE"
-        ) {
-
-            data.youtubeLiveUrl =
-                url || null;
-
-            data.youtubeUrl =
-                url || null;
-
-        }
-
-        else if (
-            type === "RECORDED_VIDEO"
-        ) {
-
-            data.videoUrl =
-                url || null;
-
-        }
-
-        else if (
-            type === "EXTERNAL_VIDEO"
-        ) {
-
-            data.externalVideoUrl =
-                url || null;
-
-        }
-
-    }
-
-    return data;
-
-}
-
-/* =========================================================
-   VALIDATE FORM
-========================================================= */
-
-function validateForm() {
-
-    /*
-       TITLE IS NOT REQUIRED.
-       It is automatically generated.
-    */
-
-    if (!course?.value) {
-
-        showToast(
-            "Please select a course."
-        );
-
-        return false;
-    }
-
-    if (!subject?.value) {
-
-        showToast(
-            "Please select a subject."
-        );
-
-        return false;
-    }
-
-    if (!dateStart?.value) {
-
-        showToast(
-            "Please select the start date."
-        );
-
-        return false;
-    }
-
-    if (!timeStart?.value) {
-
-        showToast(
-            "Please select the start time."
-        );
-
-        return false;
-    }
-
-    if (!dateEnd?.value) {
-
-        showToast(
-            "Please select the end date."
-        );
-
-        return false;
-    }
-
-    if (!timeEnd?.value) {
-
-        showToast(
-            "Please select the end time."
-        );
-
-        return false;
-    }
-
-    const start =
-        new Date(
-            createDateTime(
-                dateStart.value,
-                timeStart.value
-            )
-        );
-
-    const end =
-        new Date(
-            createDateTime(
-                dateEnd.value,
-                timeEnd.value
-            )
-        );
-
-    if (
-        Number.isNaN(start.getTime()) ||
-        Number.isNaN(end.getTime())
-    ) {
-
-        showToast(
-            "Please enter valid date and time."
-        );
-
-        return false;
-    }
-
-    if (end <= start) {
-
-        showToast(
-            "End date/time must be after start date/time."
-        );
-
-        return false;
-    }
-
-    /*
-       Validate provider URL when not Zoom.
-    */
-
-    if (
-        liveType?.value !== "ZOOM"
-    ) {
-
-        const providerInput =
-            document.getElementById(
-                "providerUrl"
-            );
-
-        if (
-            !providerInput?.value?.trim()
-        ) {
-
-            showToast(
-                "Please enter the video/provider URL."
-            );
-
-            return false;
-        }
-
-    }
-
-    return true;
-
-}
-
-/* =========================================================
-   SAVE
-========================================================= */
-
-if (form) {
-
-    form.addEventListener(
-        "submit",
-        async event => {
-
-            event.preventDefault();
-            event.stopPropagation();
-
-            if (!validateForm()) {
-                return;
-            }
-
-            if (saveButton) {
-                saveButton.disabled =
-                    true;
-            }
-
-            try {
-
-                let zoomData =
-                    null;
-
-                /* =========================================
-                   CREATE ZOOM ONLY FOR NEW ZOOM CLASS
-                ========================================= */
-
-                if (
-                    liveType?.value === "ZOOM" &&
-                    !editingId
-                ) {
-
-                    if (saveButton) {
-
-                        saveButton.textContent =
-                            "CREATING ZOOM MEETING...";
-                    }
-
-                    zoomData =
-                        await createZoomForClass();
-
-                    if (!zoomData) {
-
-                        throw new Error(
-                            "Zoom meeting was not created."
-                        );
-
-                    }
-
-                }
-
-                if (saveButton) {
-
-                    saveButton.textContent =
-                        editingId
-                            ? "UPDATING CLASS..."
-                            : "SAVING CLASS...";
-                }
-
-                const data =
-                    buildData(
-                        zoomData
-                    );
-
-                /* =========================================
-                   EDIT EXISTING CLASS
-                ========================================= */
-
-                if (editingId) {
-
-                    data.updatedAt =
-                        serverTimestamp();
-
-                    /*
-                       Do not overwrite existing Zoom data
-                       when editing a Zoom class.
-                    */
-
-                    const existing =
-                        liveClasses.find(
-                            item =>
-                                item.id === editingId
-                        );
-
-                    if (
-                        data.liveType === "ZOOM" &&
-                        existing
-                    ) {
-
-                        data.zoomMeetingNumber =
-                            existing.zoomMeetingNumber ||
-                            null;
-
-                        data.zoomMeetingId =
-                            existing.zoomMeetingId ||
-                            null;
-
-                        data.zoomPassword =
-                            existing.zoomPassword ||
-                            null;
-
-                        data.zoomJoinUrl =
-                            existing.zoomJoinUrl ||
-                            null;
-
-                        data.zoomStartUrl =
-                            existing.zoomStartUrl ||
-                            null;
-
-                        data.zoomCreated =
-                            existing.zoomCreated ||
-                            false;
-
-                    }
-
-                    await updateDoc(
-                        doc(
-                            db,
-                            "liveClasses",
-                            editingId
-                        ),
-                        data
-                    );
-
-                    showToast(
-                        "Live class updated successfully."
-                    );
-
-                }
-
-                /* =========================================
-                   CREATE NEW CLASS
-                ========================================= */
-
-                else {
-
-                    data.createdAt =
-                        serverTimestamp();
-
-                    await addDoc(
-                        collection(
-                            db,
-                            "liveClasses"
-                        ),
-                        data
-                    );
-
-                    if (
-                        liveType?.value === "ZOOM"
-                    ) {
-
-                        showToast(
-                            "Live class scheduled and Zoom meeting created."
-                        );
-
-                    }
-
-                    else {
-
-                        showToast(
-                            "Live class scheduled successfully."
-                        );
-
-                    }
-
-                }
-
-                closeForm();
-
-                await loadLiveClasses();
-
-            }
-
-            catch (error) {
-
-                console.error(
-                    "Live class error:",
-                    error
-                );
-
-                let message =
-                    error?.message ||
-                    "Unable to save live class.";
-
-                if (
-                    error?.code ===
-                    "functions/invalid-argument"
-                ) {
-
-                    message =
-                        "Zoom backend rejected the meeting details.";
-
-                }
-
-                if (
-                    error?.code ===
-                    "functions/unauthenticated"
-                ) {
-
-                    message =
-                        "Please login again.";
-
-                }
-
-                if (
-                    error?.code ===
-                    "functions/internal"
-                ) {
-
-                    message =
-                        "Zoom/Firebase backend error. Please check Firebase Functions logs.";
-
-                }
-
-                showToast(
-                    message
-                );
-
-            }
-
-            finally {
-
-                if (saveButton) {
-
-                    saveButton.disabled =
-                        false;
-
-                    saveButton.textContent =
-                        editingId
-                            ? "Update Live Class"
-                            : "Schedule Live Class";
-
-                }
-
-            }
-
-        }
-    );
-
-}
-
-/* =========================================================
-   LOAD LIVE CLASSES
-========================================================= */
-
-async function loadLiveClasses() {
-
-    if (loading) {
-
-        loading.classList.remove(
-            "hidden"
-        );
-
-    }
-
-    if (emptyState) {
-
-        emptyState.classList.add(
-            "hidden"
-        );
-
-    }
-
-    const snap =
-        await getDocs(
-            collection(
-                db,
-                "liveClasses"
-            )
-        );
-
-    liveClasses =
-        snap.docs.map(
-            d => ({
-                id: d.id,
-                ...d.data()
-            })
-        );
-
-    liveClasses.sort(
-        (a, b) => {
-
-            const aa =
-                a.startDateTime || "";
-
-            const bb =
-                b.startDateTime || "";
-
-            return aa.localeCompare(
-                bb
-            );
-
-        }
-    );
-
-    renderClasses();
-
-}
-
-/* =========================================================
-   RENDER CLASSES
-========================================================= */
-
-function renderClasses() {
-
-    if (loading) {
-
-        loading.classList.add(
-            "hidden"
-        );
-
-    }
-
-    let upcoming = 0;
-    let live = 0;
-    let completed = 0;
-
-    if (classesList) {
-
-        classesList.innerHTML =
-            "";
-
-    }
-
-    liveClasses.forEach(
-        item => {
-
-            const status =
-                getStatus(item);
-
-            if (
-                status === "UPCOMING"
-            ) {
-
-                upcoming++;
-
-            }
-
-            if (
-                status === "LIVE"
-            ) {
-
-                live++;
-
-            }
-
-            if (
-                status === "COMPLETED"
-            ) {
-
-                completed++;
-
-            }
-
-            if (!classesList) {
-                return;
-            }
-
-            const card =
-                document.createElement(
-                    "div"
-                );
-
-            card.className =
-                "class-card";
-
-            const isZoom =
-                item.liveType ===
-                "ZOOM";
-
-            card.innerHTML = `
-
-                <div class="class-main">
-
-                    <div class="class-title">
-                        ${escapeHtml(
-                            item.title ||
-                            "Live Class"
-                        )}
-                    </div>
-
-                    <div class="class-meta">
-
-                        <span class="badge">
-                            ${escapeHtml(
-                                item.courseName ||
-                                "Course"
-                            )}
-                        </span>
-
-                        <span class="badge">
-                            ${escapeHtml(
-                                item.subjectName ||
-                                "Subject"
-                            )}
-                        </span>
-
-                        ${
-                            isZoom
-                                ? `
-                                    <span class="badge zoom">
-                                        ZOOM
-                                    </span>
-                                `
-                                : `
-                                    <span class="badge">
-                                        ${escapeHtml(
-                                            item.liveType ||
-                                            ""
-                                        )}
-                                    </span>
-                                `
-                        }
-
-                        <span class="badge ${status.toLowerCase()}">
-                            ${status}
-                        </span>
-
-                    </div>
-
-                    ${
-                        item.chapterName
-                            ? `
-                                <p>
-                                    Chapter:
-                                    ${escapeHtml(
-                                        item.chapterName
-                                    )}
-                                </p>
-                            `
-                            : ""
-                    }
-
-                    ${
-                        item.teacherName
-                            ? `
-                                <p>
-                                    Faculty:
-                                    ${escapeHtml(
-                                        item.teacherName
-                                    )}
-                                </p>
-                            `
-                            : ""
-                    }
-
-                    <p>
-                        ${escapeHtml(
-                            item.scheduledDate ||
-                            ""
-                        )}
-
-                        •
-
-                        ${escapeHtml(
-                            item.scheduledTime ||
-                            ""
-                        )}
-                    </p>
-
-                    ${
-                        isZoom &&
-                        item.zoomMeetingNumber
-                            ? `
-                                <p>
-                                    Zoom Meeting:
-                                    <strong>
-                                        ${escapeHtml(
-                                            String(
-                                                item.zoomMeetingNumber
-                                            )
-                                        )}
-                                    </strong>
-                                </p>
-                            `
-                            : ""
-                    }
-
-                </div>
-
-                <div class="class-actions">
-
-                    ${
-                        isZoom &&
-                        item.zoomJoinUrl
-                            ? `
-                                <button
-                                    class="small-btn"
-                                    data-action="zoom"
-                                    data-id="${item.id}"
-                                >
-                                    Zoom Link
-                                </button>
-                            `
-                            : ""
-                    }
-
-                    <button
-                        class="small-btn"
-                        data-action="edit"
-                        data-id="${item.id}"
-                    >
-                        Edit
-                    </button>
-
-                    <button
-                        class="small-btn danger"
-                        data-action="delete"
-                        data-id="${item.id}"
-                    >
-                        Delete
-                    </button>
-
-                </div>
-
-            `;
-
-            classesList.appendChild(
-                card
-            );
-
-        }
-    );
-
-    if (upcomingCount) {
-        upcomingCount.textContent =
-            upcoming;
-    }
-
-    if (liveCount) {
-        liveCount.textContent =
-            live;
-    }
-
-    if (completedCount) {
-        completedCount.textContent =
-            completed;
+      showMessage(
+        "Please select the class time.",
+        "error"
+      );
+      return;
     }
 
     if (
-        emptyState &&
-        liveClasses.length === 0
+      !duration ||
+      duration <= 0
     ) {
-
-        emptyState.classList.remove(
-            "hidden"
-        );
-
+      showMessage(
+        "Please enter a valid duration.",
+        "error"
+      );
+      return;
     }
 
-}
-
-/* =========================================================
-   CLASS ACTIONS
-========================================================= */
-
-if (classesList) {
-
-    classesList.addEventListener(
-        "click",
-        async event => {
-
-            const button =
-                event.target.closest(
-                    "button"
-                );
-
-            if (!button) {
-                return;
-            }
-
-            const id =
-                button.dataset.id;
-
-            const action =
-                button.dataset.action;
-
-            const item =
-                liveClasses.find(
-                    x => x.id === id
-                );
-
-            if (!item) {
-                return;
-            }
-
-            /* =========================================
-               ZOOM LINK
-            ========================================= */
-
-            if (
-                action === "zoom"
-            ) {
-
-                if (
-                    item.zoomJoinUrl
-                ) {
-
-                    window.open(
-                        item.zoomJoinUrl,
-                        "_blank"
-                    );
-
-                }
-
-                return;
-
-            }
-
-            /* =========================================
-               DELETE
-            ========================================= */
-
-            if (
-                action === "delete"
-            ) {
-
-                const yes =
-                    confirm(
-                        "Delete this live class?"
-                    );
-
-                if (!yes) {
-                    return;
-                }
-
-                try {
-
-                    await deleteDoc(
-                        doc(
-                            db,
-                            "liveClasses",
-                            id
-                        )
-                    );
-
-                    showToast(
-                        "Live class deleted."
-                    );
-
-                    await loadLiveClasses();
-
-                }
-
-                catch (error) {
-
-                    console.error(
-                        error
-                    );
-
-                    showToast(
-                        error?.message ||
-                        "Unable to delete live class."
-                    );
-
-                }
-
-                return;
-
-            }
-
-            /* =========================================
-               EDIT
-            ========================================= */
-
-            if (
-                action === "edit"
-            ) {
-
-                editingId =
-                    id;
-
-                resetForm();
-
-                editingId =
-                    id;
-
-                openForm();
-
-                titleInput.value =
-                    item.title ||
-                    "";
-
-                teacherInput.value =
-                    item.teacherName ||
-                    item.facultyName ||
-                    "";
-
-                liveType.value =
-                    item.liveType ||
-                    "ZOOM";
-
-                thumbnailInput.value =
-                    item.thumbnailUrl ||
-                    "";
-
-                dateStart.value =
-                    item.scheduledDate ||
-                    "";
-
-                timeStart.value =
-                    item.scheduledTime ||
-                    "";
-
-                dateEnd.value =
-                    item.endDate ||
-                    item.scheduledDate ||
-                    "";
-
-                timeEnd.value =
-                    item.endTime ||
-                    "";
-
-                accessType.value =
-                    item.accessType ||
-                    "PAID";
-
-                description.value =
-                    item.description ||
-                    "";
-
-                await loadSubjects(
-                    item.courseId
-                );
-
-                course.value =
-                    item.courseId ||
-                    "";
-
-                await loadChapters(
-                    item.subjectId
-                );
-
-                subject.value =
-                    item.subjectId ||
-                    "";
-
-                chapter.value =
-                    item.chapterId ||
-                    "";
-
-                /*
-                   Load provider URL.
-                */
-
-                updateProviderFields();
-
-                if (
-                    item.liveType !==
-                    "ZOOM"
-                ) {
-
-                    const providerInput =
-                        document.getElementById(
-                            "providerUrl"
-                        );
-
-                    if (providerInput) {
-
-                        if (
-                            item.liveType ===
-                            "YOUTUBE_LIVE"
-                        ) {
-
-                            providerInput.value =
-                                item.youtubeLiveUrl ||
-                                item.youtubeUrl ||
-                                "";
-
-                        }
-
-                        else if (
-                            item.liveType ===
-                            "RECORDED_VIDEO"
-                        ) {
-
-                            providerInput.value =
-                                item.videoUrl ||
-                                "";
-
-                        }
-
-                        else {
-
-                            providerInput.value =
-                                item.externalVideoUrl ||
-                                "";
-
-                        }
-
-                    }
-
-                }
-
-                const formTitle =
-                    document.getElementById(
-                        "formTitle"
-                    );
-
-                if (formTitle) {
-
-                    formTitle.textContent =
-                        "Edit Live Class";
-
-                }
-
-                if (saveButton) {
-
-                    saveButton.textContent =
-                        "Update Live Class";
-
-                }
-
-            }
-
-        }
-    );
-
-}
-
-/* =========================================================
-   REFRESH
-========================================================= */
-
-if (refreshBtn) {
-
-    refreshBtn.addEventListener(
-        "click",
-        async () => {
-
-            try {
-
-                await loadLiveClasses();
-
-                showToast(
-                    "Live classes refreshed."
-                );
-
-            }
-
-            catch (error) {
-
-                console.error(
-                    error
-                );
-
-                showToast(
-                    error?.message ||
-                    "Unable to refresh."
-                );
-
-            }
-
-        }
-    );
-
-}
-
-/* =========================================================
-   ESCAPE HTML
-========================================================= */
-
-function escapeHtml(value) {
-
-    return String(
-        value ?? ""
-    )
-        .replaceAll(
-            "&",
-            "&amp;"
-        )
-        .replaceAll(
-            "<",
-            "&lt;"
-        )
-        .replaceAll(
-            ">",
-            "&gt;"
-        )
-        .replaceAll(
-            '"',
-            "&quot;"
-        )
-        .replaceAll(
-            "'",
-            "&#039;"
-        );
-
-}
-
-/* =========================================================
-   INITIAL LOAD
-========================================================= */
-
-async function loadAll() {
+    if (!faculty) {
+      showMessage(
+        "Please enter faculty name.",
+        "error"
+      );
+      return;
+    }
+
+    /* -----------------------------------------
+       START
+    ----------------------------------------- */
 
     try {
+      setLoading(true);
 
-        await loadCourses();
+      showMessage(
+        "Creating Zoom meeting..."
+      );
 
-        await loadLiveClasses();
+      /*
+       * Backend reads the Zoom credentials
+       * from:
+       *
+       * systemConfig/zoom
+       *
+       * Browser never receives the credentials.
+       */
 
-        updateProviderFields();
+      const zoomResult =
+        await createZoomMeeting({
+          title,
+          scheduledDate,
+          scheduledTime,
+          duration
+        });
 
-    }
+      const zoom =
+        zoomResult.data || {};
 
-    catch (error) {
+      if (!zoom.meetingId) {
+        throw new Error(
+          "Zoom meeting was not created."
+        );
+      }
 
-        console.error(
-            "Live Class CRM load error:",
-            error
+      showMessage(
+        "Zoom meeting created. Saving class..."
+      );
+
+      /* -----------------------------------------
+         SAVE LIVE CLASS
+      ----------------------------------------- */
+
+      const liveClassData = {
+        title,
+
+        courseId,
+        subjectId,
+        chapterId,
+
+        courseName:
+          getSelectedText(courseSelect),
+
+        subjectName:
+          getSelectedText(subjectSelect),
+
+        chapterName:
+          getSelectedText(chapterSelect),
+
+        faculty,
+
+        scheduledDate,
+        scheduledTime,
+
+        duration,
+
+        thumbnail,
+
+        status: "scheduled",
+
+        zoomMeetingId:
+          zoom.meetingId || "",
+
+        zoomMeetingNumber:
+          zoom.meetingNumber || "",
+
+        zoomPassword:
+          zoom.password || "",
+
+        zoomJoinUrl:
+          zoom.joinUrl || "",
+
+        zoomStartUrl:
+          zoom.startUrl || "",
+
+        zoomCreated: true,
+
+        createdBy:
+          currentUser.uid,
+
+        createdByEmail:
+          currentUser.email,
+
+        createdAt:
+          serverTimestamp(),
+
+        updatedAt:
+          serverTimestamp()
+      };
+
+      const liveClassRef =
+        await addDoc(
+          collection(
+            db,
+            "liveClasses"
+          ),
+          liveClassData
         );
 
-        showToast(
-            error?.message ||
-            "Unable to load Live Class CRM."
-        );
+      console.log(
+        "LIVE CLASS CREATED:",
+        liveClassRef.id
+      );
 
-        if (loading) {
+      showMessage(
+        "Live class created successfully.",
+        "success"
+      );
 
-            loading.textContent =
-                "Unable to load classes.";
+      /* -----------------------------------------
+         RESET FORM
+      ----------------------------------------- */
 
-        }
+      form.reset();
 
+      resetSelect(
+        subjectSelect,
+        "Select Subject"
+      );
+
+      resetSelect(
+        chapterSelect,
+        "Select Chapter"
+      );
+
+      setLoading(false);
+
+    } catch (error) {
+      console.error(
+        "LIVE CLASS CREATION ERROR:",
+        error
+      );
+
+      let errorMessage =
+        "Unable to create live class.";
+
+      if (
+        error?.message
+      ) {
+        errorMessage =
+          error.message;
+      }
+
+      if (
+        error?.details?.message
+      ) {
+        errorMessage =
+          error.details.message;
+      }
+
+      showMessage(
+        errorMessage,
+        "error"
+      );
+
+      setLoading(false);
     }
-
-}
+  }
+);
