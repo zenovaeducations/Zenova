@@ -1,8 +1,3 @@
-import { auth } from "../../firebase/firebase-config.js";
-import {
-  onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
-
 import {
   getFunctions,
   httpsCallable
@@ -13,111 +8,92 @@ import {
   collection,
   getDocs,
   addDoc,
-  updateDoc,
-  doc,
   serverTimestamp
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
-const ALLOWED_EMAIL = "zenovaeducations@gmail.com";
-
 const db = getFirestore();
-const functions = getFunctions(undefined, "asia-south1");
+
+const functions = getFunctions(
+  undefined,
+  "asia-south1"
+);
 
 const createZoomMeeting = httpsCallable(
   functions,
   "createZoomMeeting"
 );
 
-const form = document.getElementById("liveClassForm");
+const form =
+  document.getElementById("liveClassForm");
 
-const courseSelect = document.getElementById("course");
-const subjectSelect = document.getElementById("subject");
-const chapterSelect = document.getElementById("chapter");
+const courseSelect =
+  document.getElementById("course");
 
-const titleInput = document.getElementById("title");
-const facultyInput = document.getElementById("faculty");
-const dateInput = document.getElementById("date");
-const timeInput = document.getElementById("time");
-const durationInput = document.getElementById("duration");
-const thumbnailInput = document.getElementById("thumbnail");
+const subjectSelect =
+  document.getElementById("subject");
 
-const message = document.getElementById("message");
-const saveButton = document.getElementById("saveButton");
-const saveText = document.getElementById("saveText");
+const chapterSelect =
+  document.getElementById("chapter");
+
+const titleInput =
+  document.getElementById("title");
+
+const facultyInput =
+  document.getElementById("faculty");
+
+const dateInput =
+  document.getElementById("date");
+
+const timeInput =
+  document.getElementById("time");
+
+const durationInput =
+  document.getElementById("duration");
+
+const thumbnailInput =
+  document.getElementById("thumbnail");
+
+const message =
+  document.getElementById("message");
+
+const saveButton =
+  document.getElementById("saveButton");
+
+const saveText =
+  document.getElementById("saveText");
 
 let courses = [];
 let subjects = [];
 let chapters = [];
 
-let currentUser = null;
 
 /* =========================================================
-   AUTH
+   MESSAGE
 ========================================================= */
 
-onAuthStateChanged(auth, async (user) => {
-  if (!user) {
-    window.location.href = "../../login/";
-    return;
-  }
+function showMessage(text, type = "") {
 
-if (
-  !user.email ||
-  user.email.toLowerCase().trim() !== ALLOWED_EMAIL.toLowerCase().trim()
-) {
-    document.body.innerHTML = `
-      <div style="
-        min-height:100vh;
-        display:flex;
-        align-items:center;
-        justify-content:center;
-        font-family:Arial,sans-serif;
-        background:#f5f7fb;
-      ">
-        <div style="
-          background:white;
-          padding:40px;
-          border-radius:20px;
-          text-align:center;
-          box-shadow:0 10px 40px rgba(0,0,0,.08);
-        ">
-          <h2>Access Denied</h2>
-          <p>This page is restricted to the Zenova administrator.</p>
-        </div>
-      </div>
-    `;
-    return;
-  }
-
-  currentUser = user;
-
-  await loadCourses();
-});
-
-/* =========================================================
-   HELPERS
-========================================================= */
-
-function showMessage(text, type = "info") {
   if (!message) return;
 
   message.textContent = text;
 
   message.className = "message";
 
-  if (type === "success") {
-    message.classList.add("success");
-  }
-
-  if (type === "error") {
-    message.classList.add("error");
+  if (type) {
+    message.classList.add(type);
   }
 }
 
-function setLoading(loading) {
-  if (!saveButton) return;
 
-  saveButton.disabled = loading;
+/* =========================================================
+   LOADING
+========================================================= */
+
+function setLoading(loading) {
+
+  if (saveButton) {
+    saveButton.disabled = loading;
+  }
 
   if (saveText) {
     saveText.textContent = loading
@@ -126,7 +102,13 @@ function setLoading(loading) {
   }
 }
 
+
+/* =========================================================
+   SELECT RESET
+========================================================= */
+
 function resetSelect(select, text) {
+
   if (!select) return;
 
   select.innerHTML = `
@@ -136,12 +118,15 @@ function resetSelect(select, text) {
   select.disabled = true;
 }
 
+
 /* =========================================================
    LOAD COURSES
 ========================================================= */
 
 async function loadCourses() {
+
   try {
+
     showMessage("Loading courses...");
 
     const snapshot = await getDocs(
@@ -151,17 +136,28 @@ async function loadCourses() {
     courses = [];
 
     snapshot.forEach((item) => {
+
       courses.push({
         id: item.id,
         ...item.data()
       });
+
     });
 
     courses.sort((a, b) =>
-      String(a.name || a.title || "")
-        .localeCompare(
-          String(b.name || b.title || "")
+      String(
+        a.name ||
+        a.title ||
+        a.courseName ||
+        ""
+      ).localeCompare(
+        String(
+          b.name ||
+          b.title ||
+          b.courseName ||
+          ""
         )
+      )
     );
 
     courseSelect.innerHTML = `
@@ -169,7 +165,9 @@ async function loadCourses() {
     `;
 
     courses.forEach((course) => {
-      const option = document.createElement("option");
+
+      const option =
+        document.createElement("option");
 
       option.value = course.id;
 
@@ -180,49 +178,69 @@ async function loadCourses() {
         course.id;
 
       courseSelect.appendChild(option);
+
     });
 
     courseSelect.disabled = false;
 
     showMessage("");
+
   } catch (error) {
-    console.error("COURSE LOAD ERROR:", error);
+
+    console.error(
+      "COURSE LOAD ERROR:",
+      error
+    );
 
     showMessage(
       "Unable to load courses.",
       "error"
     );
+
   }
+
 }
+
 
 /* =========================================================
    COURSE CHANGE
 ========================================================= */
 
-courseSelect?.addEventListener("change", async () => {
-  const courseId = courseSelect.value;
+courseSelect?.addEventListener(
+  "change",
+  async () => {
 
-  resetSelect(
-    subjectSelect,
-    "Select Subject"
-  );
+    const courseId =
+      courseSelect.value;
 
-  resetSelect(
-    chapterSelect,
-    "Select Chapter"
-  );
+    resetSelect(
+      subjectSelect,
+      "Select Subject"
+    );
 
-  if (!courseId) return;
+    resetSelect(
+      chapterSelect,
+      "Select Chapter"
+    );
 
-  await loadSubjects(courseId);
-});
+    if (!courseId) return;
+
+    await loadSubjects(courseId);
+
+    autoGenerateTitle();
+
+  }
+);
+
 
 /* =========================================================
    LOAD SUBJECTS
 ========================================================= */
 
 async function loadSubjects(courseId) {
+
   try {
+
     showMessage("Loading subjects...");
 
     const snapshot = await getDocs(
@@ -232,6 +250,7 @@ async function loadSubjects(courseId) {
     subjects = [];
 
     snapshot.forEach((item) => {
+
       const data = item.data();
 
       const relatedCourse =
@@ -239,21 +258,31 @@ async function loadSubjects(courseId) {
         data.courseID ||
         data.course;
 
-      if (
-        relatedCourse === courseId
-      ) {
+      if (relatedCourse === courseId) {
+
         subjects.push({
           id: item.id,
           ...data
         });
+
       }
+
     });
 
     subjects.sort((a, b) =>
-      String(a.name || a.title || "")
-        .localeCompare(
-          String(b.name || b.title || "")
+      String(
+        a.name ||
+        a.title ||
+        a.subjectName ||
+        ""
+      ).localeCompare(
+        String(
+          b.name ||
+          b.title ||
+          b.subjectName ||
+          ""
         )
+      )
     );
 
     subjectSelect.innerHTML = `
@@ -261,7 +290,9 @@ async function loadSubjects(courseId) {
     `;
 
     subjects.forEach((subject) => {
-      const option = document.createElement("option");
+
+      const option =
+        document.createElement("option");
 
       option.value = subject.id;
 
@@ -272,44 +303,64 @@ async function loadSubjects(courseId) {
         subject.id;
 
       subjectSelect.appendChild(option);
+
     });
 
     subjectSelect.disabled = false;
 
     showMessage("");
+
   } catch (error) {
-    console.error("SUBJECT LOAD ERROR:", error);
+
+    console.error(
+      "SUBJECT LOAD ERROR:",
+      error
+    );
 
     showMessage(
       "Unable to load subjects.",
       "error"
     );
+
   }
+
 }
+
 
 /* =========================================================
    SUBJECT CHANGE
 ========================================================= */
 
-subjectSelect?.addEventListener("change", async () => {
-  const subjectId = subjectSelect.value;
+subjectSelect?.addEventListener(
+  "change",
+  async () => {
 
-  resetSelect(
-    chapterSelect,
-    "Select Chapter"
-  );
+    const subjectId =
+      subjectSelect.value;
 
-  if (!subjectId) return;
+    resetSelect(
+      chapterSelect,
+      "Select Chapter"
+    );
 
-  await loadChapters(subjectId);
-});
+    if (!subjectId) return;
+
+    await loadChapters(subjectId);
+
+    autoGenerateTitle();
+
+  }
+);
+
 
 /* =========================================================
    LOAD CHAPTERS
 ========================================================= */
 
 async function loadChapters(subjectId) {
+
   try {
+
     showMessage("Loading chapters...");
 
     const snapshot = await getDocs(
@@ -319,6 +370,7 @@ async function loadChapters(subjectId) {
     chapters = [];
 
     snapshot.forEach((item) => {
+
       const data = item.data();
 
       const relatedSubject =
@@ -326,21 +378,31 @@ async function loadChapters(subjectId) {
         data.subjectID ||
         data.subject;
 
-      if (
-        relatedSubject === subjectId
-      ) {
+      if (relatedSubject === subjectId) {
+
         chapters.push({
           id: item.id,
           ...data
         });
+
       }
+
     });
 
     chapters.sort((a, b) =>
-      String(a.name || a.title || "")
-        .localeCompare(
-          String(b.name || b.title || "")
+      String(
+        a.name ||
+        a.title ||
+        a.chapterName ||
+        ""
+      ).localeCompare(
+        String(
+          b.name ||
+          b.title ||
+          b.chapterName ||
+          ""
         )
+      )
     );
 
     chapterSelect.innerHTML = `
@@ -348,7 +410,9 @@ async function loadChapters(subjectId) {
     `;
 
     chapters.forEach((chapter) => {
-      const option = document.createElement("option");
+
+      const option =
+        document.createElement("option");
 
       option.value = chapter.id;
 
@@ -359,69 +423,99 @@ async function loadChapters(subjectId) {
         chapter.id;
 
       chapterSelect.appendChild(option);
+
     });
 
     chapterSelect.disabled = false;
 
     showMessage("");
+
   } catch (error) {
-    console.error("CHAPTER LOAD ERROR:", error);
+
+    console.error(
+      "CHAPTER LOAD ERROR:",
+      error
+    );
 
     showMessage(
       "Unable to load chapters.",
       "error"
     );
+
   }
+
 }
+
+
+/* =========================================================
+   GET SELECTED TEXT
+========================================================= */
+
+function getSelectedText(select) {
+
+  if (
+    !select ||
+    !select.value
+  ) {
+    return "";
+  }
+
+  return (
+    select.options[
+      select.selectedIndex
+    ]?.textContent?.trim() || ""
+  );
+
+}
+
 
 /* =========================================================
    AUTO TITLE
 ========================================================= */
 
-function getSelectedText(select) {
-  if (!select || !select.value) return "";
+function autoGenerateTitle() {
 
-  const option =
-    select.options[select.selectedIndex];
-
-  return option?.textContent?.trim() || "";
-}
-
-function generateTitle() {
-  const courseName = getSelectedText(courseSelect);
-  const subjectName = getSelectedText(subjectSelect);
-  const chapterName = getSelectedText(chapterSelect);
-
-  const parts = [
-    courseName,
-    subjectName,
-    chapterName
-  ].filter(Boolean);
-
-  if (parts.length > 0) {
-    return parts.join(" - ");
+  if (
+    titleInput &&
+    titleInput.value.trim()
+  ) {
+    return;
   }
 
-  return "";
+  const course =
+    getSelectedText(courseSelect);
+
+  const subject =
+    getSelectedText(subjectSelect);
+
+  const chapter =
+    getSelectedText(chapterSelect);
+
+  const parts = [
+    course,
+    subject,
+    chapter
+  ].filter(Boolean);
+
+  if (parts.length) {
+    titleInput.value =
+      parts.join(" - ");
+  }
+
 }
 
-[
-  courseSelect,
-  subjectSelect,
-  chapterSelect
-].forEach((select) => {
-  select?.addEventListener(
-    "change",
-    () => {
-      if (
-        !titleInput.value.trim()
-      ) {
-        titleInput.value =
-          generateTitle();
-      }
-    }
-  );
-});
+
+/* =========================================================
+   CHAPTER CHANGE
+========================================================= */
+
+chapterSelect?.addEventListener(
+  "change",
+  () => {
+    autoGenerateTitle();
+  }
+);
+
 
 /* =========================================================
    CREATE LIVE CLASS
@@ -430,15 +524,8 @@ function generateTitle() {
 form?.addEventListener(
   "submit",
   async (event) => {
-    event.preventDefault();
 
-    if (!currentUser) {
-      showMessage(
-        "Please login again.",
-        "error"
-      );
-      return;
-    }
+    event.preventDefault();
 
     const courseId =
       courseSelect.value.trim();
@@ -449,6 +536,12 @@ form?.addEventListener(
     const chapterId =
       chapterSelect.value.trim();
 
+    let title =
+      titleInput.value.trim();
+
+    const faculty =
+      facultyInput.value.trim();
+
     const scheduledDate =
       dateInput.value.trim();
 
@@ -458,22 +551,13 @@ form?.addEventListener(
     const duration =
       Number(durationInput.value);
 
-    const faculty =
-      facultyInput.value.trim();
-
     const thumbnail =
       thumbnailInput.value.trim();
 
-    let title =
-      titleInput.value.trim();
 
-    if (!title) {
-      title = generateTitle();
-    }
-
-    /* -----------------------------------------
+    /* =========================================
        VALIDATION
-    ----------------------------------------- */
+    ========================================= */
 
     if (!courseId) {
       showMessage(
@@ -497,6 +581,15 @@ form?.addEventListener(
         "error"
       );
       return;
+    }
+
+    if (!title) {
+
+      autoGenerateTitle();
+
+      title =
+        titleInput.value.trim();
+
     }
 
     if (!title) {
@@ -542,77 +635,101 @@ form?.addEventListener(
       return;
     }
 
-    /* -----------------------------------------
-       START
-    ----------------------------------------- */
+
+    /* =========================================
+       CREATE ZOOM MEETING
+    ========================================= */
 
     try {
+
       setLoading(true);
 
       showMessage(
-        "Creating Zoom meeting..."
+        "Connecting to Zoom..."
       );
 
-      /*
-       * Backend reads the Zoom credentials
-       * from:
-       *
-       * systemConfig/zoom
-       *
-       * Browser never receives the credentials.
-       */
-
-      const zoomResult =
+      const result =
         await createZoomMeeting({
+
           title,
+
           scheduledDate,
+
           scheduledTime,
+
           duration
+
         });
 
+
       const zoom =
-        zoomResult.data || {};
+        result.data || {};
+
+
+      console.log(
+        "ZOOM RESPONSE:",
+        zoom
+      );
+
 
       if (!zoom.meetingId) {
+
         throw new Error(
           "Zoom meeting was not created."
         );
+
       }
 
+
       showMessage(
-        "Zoom meeting created. Saving class..."
+        "Zoom meeting created. Saving live class..."
       );
 
-      /* -----------------------------------------
-         SAVE LIVE CLASS
-      ----------------------------------------- */
 
-      const liveClassData = {
+      /* =========================================
+         SAVE LIVE CLASS
+      ========================================= */
+
+      const liveClass = {
+
         title,
 
         courseId,
+
         subjectId,
+
         chapterId,
 
         courseName:
-          getSelectedText(courseSelect),
+          getSelectedText(
+            courseSelect
+          ),
 
         subjectName:
-          getSelectedText(subjectSelect),
+          getSelectedText(
+            subjectSelect
+          ),
 
         chapterName:
-          getSelectedText(chapterSelect),
+          getSelectedText(
+            chapterSelect
+          ),
 
         faculty,
 
         scheduledDate,
+
         scheduledTime,
 
         duration,
 
         thumbnail,
 
-        status: "scheduled",
+        status:
+          "scheduled",
+
+        zoomCreated:
+          true,
 
         zoomMeetingId:
           zoom.meetingId || "",
@@ -629,43 +746,46 @@ form?.addEventListener(
         zoomStartUrl:
           zoom.startUrl || "",
 
-        zoomCreated: true,
-
-        createdBy:
-          currentUser.uid,
-
-        createdByEmail:
-          currentUser.email,
-
         createdAt:
           serverTimestamp(),
 
         updatedAt:
           serverTimestamp()
+
       };
 
-      const liveClassRef =
+
+      const docRef =
         await addDoc(
           collection(
             db,
             "liveClasses"
           ),
-          liveClassData
+          liveClass
         );
 
+
       console.log(
-        "LIVE CLASS CREATED:",
-        liveClassRef.id
+        "LIVE CLASS ID:",
+        docRef.id
       );
+
+
+      console.log(
+        "ZOOM MEETING:",
+        zoom
+      );
+
 
       showMessage(
         "Live class created successfully.",
         "success"
       );
 
-      /* -----------------------------------------
-         RESET FORM
-      ----------------------------------------- */
+
+      /* =========================================
+         RESET
+      ========================================= */
 
       form.reset();
 
@@ -679,37 +799,61 @@ form?.addEventListener(
         "Select Chapter"
       );
 
+
       setLoading(false);
 
+
     } catch (error) {
+
       console.error(
-        "LIVE CLASS CREATION ERROR:",
+        "CREATE LIVE CLASS ERROR:",
         error
       );
+
+
+      console.error(
+        "ERROR DETAILS:",
+        error?.details
+      );
+
 
       let errorMessage =
         "Unable to create live class.";
 
-      if (
-        error?.message
-      ) {
-        errorMessage =
-          error.message;
-      }
 
       if (
         error?.details?.message
       ) {
+
         errorMessage =
           error.details.message;
+
+      } else if (
+        error?.message
+      ) {
+
+        errorMessage =
+          error.message;
+
       }
+
 
       showMessage(
         errorMessage,
         "error"
       );
 
+
       setLoading(false);
+
     }
+
   }
 );
+
+
+/* =========================================================
+   START
+========================================================= */
+
+loadCourses();
