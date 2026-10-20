@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Live Classroom | Zenova Educations</title>
+
+    <style>
+        :root{color-scheme:dark;--black:#111114;--panel:#19191f;--panel2:#222229;--purple:#7650d6;--lavender:#eee8ff;--muted:#aaa9b4;--border:#34333d;--danger:#ef4444}
+        *{box-sizing:border-box}
+        html,body{margin:0;padding:0;width:100%;height:100%;min-height:100%;background:#09090c;color:#fff;font-family:Inter,Arial,Helvetica,sans-serif;-webkit-font-smoothing:antialiased}
+        body{overflow:hidden}
+        #app{width:100%;height:100%;min-height:100%;position:relative;background:#09090c}
+        #meetingSDKElement{position:absolute;inset:0;width:100%;height:100%;background:#09090c}
+        #loadingScreen,#errorScreen{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;padding:24px;background:radial-gradient(ellipse at top,#24202f 0%,#111114 45%,#09090c 100%);text-align:center}
+        .state-card{width:min(100%,440px);padding:clamp(24px,5vw,38px);border:1px solid rgba(238,232,255,.14);border-radius:24px;background:rgba(25,25,31,.92);box-shadow:0 24px 80px rgba(0,0,0,.35)}
+        .brand{display:flex;align-items:center;justify-content:center;gap:11px;margin-bottom:30px}
+        .brand-mark{display:grid;place-items:center;width:44px;height:44px;border-radius:12px;background:var(--lavender);color:#6040b5;font-size:25px;font-weight:900}
+        .brand-copy{text-align:left}.brand-name{font-size:16px;font-weight:800;letter-spacing:.1px}.brand-tagline{margin-top:4px;color:#b8b5c4;font-size:10px;font-weight:700;letter-spacing:1.15px}
+        .live-pill{display:inline-flex;align-items:center;gap:8px;padding:8px 13px;margin-bottom:20px;border:1px solid rgba(239,68,68,.28);border-radius:999px;background:rgba(239,68,68,.12);color:#ff7777;font-size:11px;font-weight:800;letter-spacing:1.2px}
+        .live-dot{width:7px;height:7px;border-radius:50%;background:#ff4545;box-shadow:0 0 12px rgba(255,69,69,.8)}
+        #loadingScreen h1,#errorScreen h2{margin:0;color:#fff;font-size:clamp(23px,5vw,29px);line-height:1.2;font-weight:800;letter-spacing:-.6px}
+        #loadingScreen p,#errorScreen p{margin:12px 0 0;color:var(--muted);font-size:14px;line-height:1.65;overflow-wrap:anywhere}
+        .loader{width:42px;height:42px;margin:0 auto 25px;border:3px solid #3a3745;border-top-color:#b9a2ff;border-radius:50%;animation:spin .8s linear infinite}
+        @keyframes spin{to{transform:rotate(360deg)}}
+        .state-icon{display:grid;place-items:center;width:58px;height:58px;margin:0 auto 20px;border-radius:18px;background:rgba(118,80,214,.18);color:#c4b2ff;font-size:27px}
+        .back-button{display:inline-flex;align-items:center;justify-content:center;min-height:48px;margin-top:24px;padding:0 22px;border:0;border-radius:13px;background:var(--purple);color:#fff;font-size:14px;font-weight:750;cursor:pointer;transition:transform .15s,background .15s}
+        .back-button:hover{background:#6841ca;transform:translateY(-1px)}.back-button:focus-visible{outline:3px solid #c4b2ff;outline-offset:3px}
+        .helper{margin-top:18px;color:#777581;font-size:11px;line-height:1.5}
+        @media(max-width:480px){.state-card{border-radius:20px}.brand{margin-bottom:25px}.brand-mark{width:40px;height:40px}}
+        @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important}}
+    </style>
+</head>
+
+<body>
+
+    <div id="app">
+
+        <!-- LOADING -->
+
+        <div id="loadingScreen" role="status" aria-live="polite">
+            <div class="state-card">
+                <div class="brand">
+                    <div class="brand-mark" aria-hidden="true">Z</div>
+                    <div class="brand-copy">
+                        <div class="brand-name">Zenova Educations</div>
+                        <div class="brand-tagline">LEARN · PRACTICE · ACHIEVE</div>
+                    </div>
+                </div>
+                <div class="live-pill"><span class="live-dot"></span> LIVE CLASSROOM</div>
+                <div class="loader" aria-hidden="true"></div>
+                <h1>Connecting to your class</h1>
+                <p id="loadingText">The live classroom is being connected.</p>
+                <div class="helper">Please keep this page open while we securely connect you.</div>
+            </div>
+        </div>
+
+
+        <!-- ERROR -->
+
+        <div id="errorScreen" role="alert" aria-live="assertive" style="display:none">
+            <div class="state-card">
+                <div class="brand">
+                    <div class="brand-mark" aria-hidden="true">Z</div>
+                    <div class="brand-copy">
+                        <div class="brand-name">Zenova Educations</div>
+                        <div class="brand-tagline">LEARN · PRACTICE · ACHIEVE</div>
+                    </div>
+                </div>
+                <div class="state-icon" aria-hidden="true">!</div>
+                <h2>Unable to join class</h2>
+                <p id="errorText">Something went wrong while connecting to the live classroom.</p>
+                <button class="back-button" type="button" onclick="history.back()">Go back to Live Classes</button>
+                <div class="helper">If the problem continues, return to Live Classes and try again later.</div>
+            </div>
+        </div>
+
+
+        <!-- ZOOM -->
+
+        <div id="meetingSDKElement"></div>
+
+    </div>
+
+
+    <!--
+        ZOOM MEETING SDK
+
+        Zoom currently recommends Meeting SDK
+        5.1.4 or later for WebRTC compatibility.
+    -->
+
+    <script src="https://source.zoom.us/5.1.4/lib/vendor/react.min.js"></script>
+
+    <script src="https://source.zoom.us/5.1.4/lib/vendor/react-dom.min.js"></script>
+
+    <script src="https://source.zoom.us/5.1.4/lib/vendor/redux.min.js"></script>
+
+    <script src="https://source.zoom.us/5.1.4/lib/vendor/redux-thunk.min.js"></script>
+
+    <script src="https://source.zoom.us/5.1.4/lib/vendor/lodash.min.js"></script>
+
+    <script src="https://source.zoom.us/zoom-meeting-5.1.4.min.js"></script>
+
+
+    <!-- ZENOVA -->
+
+    <script type="module">
+import {
+    auth,
+    db
+} from "../../firebase/firebase-config.js";
+
+
+import {
+    doc,
+    getDoc
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
+
+import {
+    onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+
+
+import {
+    getFunctions,
+    httpsCallable
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-functions.js";
+
+
+/* =========================================================
+   FIREBASE FUNCTIONS
+========================================================= */
+
+const functions =
+    getFunctions(
+        undefined,
+        "asia-south1"
+    );
+
+
+const getZoomMeetingSignature =
+    httpsCallable(
+        functions,
+        "getZoomMeetingSignature"
+    );
+
+
+/* =========================================================
+   DOM
+========================================================= */
+
+const loadingScreen =
+    document.getElementById(
+        "loadingScreen"
+    );
+
+
+const loadingText =
+    document.getElementById(
+        "loadingText"
+    );
+
+
+const errorScreen =
+    document.getElementById(
+        "errorScreen"
+    );
+
+
+const errorText =
+    document.getElementById(
+        "errorText"
+    );
+
+
+const meetingSDKElement =
+    document.getElementById(
+        "meetingSDKElement"
+    );
+
+
+/* =========================================================
+   URL
+========================================================= */
+
+const params =
+    new URLSearchParams(
+        window.location.search
+    );
+
+
+const liveClassId =
+    params.get(
+        "liveClassId"
+    );
+
+
+/* =========================================================
+   START
+========================================================= */
+
+onAuthStateChanged(
+    auth,
+    async user => {
+
+        try {
+
+            if (!user) {
+
+                showError(
+                    "Please login to join the live class."
+                );
+
+                return;
+
+            }
+
+
+            if (!liveClassId) {
+
+                showError(
+                    "Live class ID is missing."
+                );
+
+                return;
+
+            }
+
+
+            await startStudentClass(
+                user
+            );
+
+
+        } catch (error) {
+
+            console.error(
+                "LIVE CLASS ERROR:",
+                error
+            );
+
+
+            showError(
+                getErrorMessage(
+                    error
+                )
+            );
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   START STUDENT CLASS
+========================================================= */
+
+async function startStudentClass(
+    user
+) {
+
+    loadingText.textContent =
+        "Loading live class...";
+
+
+    /* ---------------------------------
+       LOAD FIRESTORE LIVE CLASS
+    --------------------------------- */
+
+    const liveClassRef =
+        doc(
+            db,
+            "liveClasses",
+            liveClassId
+        );
+
+
+    const liveClassSnapshot =
+        await getDoc(
+            liveClassRef
+        );
+
+
+    if (
+        !liveClassSnapshot.exists()
+    ) {
+
+        throw new Error(
+            "Live class not found."
+        );
+
+    }
+
+
+    const liveClass =
+        liveClassSnapshot.data();
+
+
+    console.log(
+        "LIVE CLASS:",
+        liveClass
+    );
+
+
+    /* ---------------------------------
+       CHECK ZOOM
+    --------------------------------- */
+
+    if (
+        liveClass.liveType !==
+        "ZOOM" &&
+        liveClass.mode !==
+        "ZOOM"
+    ) {
+
+        throw new Error(
+            "This live class is not configured for Zoom."
+        );
+
+    }
+
+
+    const meetingNumber =
+        String(
+            liveClass.zoomMeetingNumber ||
+            liveClass.zoomMeetingId ||
+            ""
+        ).trim();
+
+
+    const password =
+        String(
+            liveClass.zoomPassword ||
+            ""
+        );
+
+
+    if (!meetingNumber) {
+
+        throw new Error(
+            "Zoom meeting number is missing."
+        );
+
+    }
+
+
+    /* ---------------------------------
+       GET STUDENT NAME
+    --------------------------------- */
+
+    const studentName =
+        await getStudentName(
+            user
+        );
+
+
+    /* ---------------------------------
+       GET ZOOM SIGNATURE
+    --------------------------------- */
+
+    loadingText.textContent =
+        "Authenticating with Zoom...";
+
+
+    const result =
+        await getZoomMeetingSignature({
+            meetingNumber:
+                meetingNumber
+        });
+
+
+    const data =
+        result.data;
+
+
+    console.log(
+        "ZOOM SIGNATURE RESPONSE:",
+        data
+    );
+
+
+    if (
+        !data ||
+        !data.signature
+    ) {
+
+        throw new Error(
+            "Zoom authorization was not returned."
+        );
+
+    }
+
+
+    /* ---------------------------------
+       INITIALIZE ZOOM
+    --------------------------------- */
+
+    loadingText.textContent =
+        "Starting live classroom...";
+
+
+    await initializeZoom(
+        {
+            signature:
+                data.signature,
+
+            meetingNumber:
+                meetingNumber,
+
+            password:
+                password,
+
+            userName:
+                data.userName ||
+                studentName,
+
+            userEmail:
+                data.userEmail ||
+                user.email ||
+                ""
+        }
+    );
+
+}
+
+
+/* =========================================================
+   GET STUDENT NAME
+========================================================= */
+
+async function getStudentName(
+    user
+) {
+
+    try {
+
+        const studentRef =
+            doc(
+                db,
+                "zen2Students",
+                user.uid
+            );
+
+
+        const studentSnapshot =
+            await getDoc(
+                studentRef
+            );
+
+
+        if (
+            studentSnapshot.exists()
+        ) {
+
+            const student =
+                studentSnapshot.data();
+
+
+            return (
+                student.name ||
+                student.studentName ||
+                user.displayName ||
+                "Zenova Student"
+            );
+
+        }
+
+    } catch (error) {
+
+        console.warn(
+            "Could not load student name:",
+            error
+        );
+
+    }
+
+
+    return (
+        user.displayName ||
+        "Zenova Student"
+    );
+
+}
+
+
+/* =========================================================
+   INITIALIZE ZOOM
+========================================================= */
+
+function initializeZoom(
+    zoomData
+) {
+
+    return new Promise(
+        (
+            resolve,
+            reject
+        ) => {
+
+
+            if (
+                typeof ZoomMtg ===
+                "undefined"
+            ) {
+
+                reject(
+                    new Error(
+                        "Zoom Meeting SDK failed to load."
+                    )
+                );
+
+                return;
+
+            }
+
+
+            try {
+
+                /*
+                 * Zoom SDK preparation
+                 */
+
+                if (
+                    typeof ZoomMtg.preLoadWasm ===
+                    "function"
+                ) {
+
+                    ZoomMtg.preLoadWasm();
+
+                }
+
+
+                if (
+                    typeof ZoomMtg.prepareWebSDK ===
+                    "function"
+                ) {
+
+                    ZoomMtg.prepareWebSDK();
+
+                }
+
+
+                /*
+                 * Initialize Zoom
+                 */
+
+                ZoomMtg.init({
+
+                    leaveUrl:
+                        window.location.origin +
+                        "/Zenova/home/live/",
+
+                    disablePreview:
+                        false,
+
+                    leaveOnPageUnload:
+                        true,
+
+                    success:
+                        function () {
+
+                            console.log(
+                                "Zoom SDK initialized."
+                            );
+
+
+                            joinZoom(
+                                zoomData,
+                                resolve,
+                                reject
+                            );
+
+                        },
+
+                    error:
+                        function (
+                            error
+                        ) {
+
+                            console.error(
+                                "Zoom INIT ERROR:",
+                                error
+                            );
+
+
+                            reject(
+                                new Error(
+                                    formatZoomError(
+                                        error
+                                    )
+                                )
+                            );
+
+                        }
+
+                });
+
+            } catch (error) {
+
+                reject(
+                    error
+                );
+
+            }
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   JOIN ZOOM
+========================================================= */
+
+function joinZoom(
+    zoomData,
+    resolve,
+    reject
+) {
+
+    console.log(
+        "Joining Zoom meeting:",
+        zoomData.meetingNumber
+    );
+
+
+    ZoomMtg.join({
+
+        signature:
+            zoomData.signature,
+
+        meetingNumber:
+            zoomData.meetingNumber,
+
+        passWord:
+            zoomData.password,
+
+        userName:
+            zoomData.userName,
+
+        userEmail:
+            zoomData.userEmail,
+
+        success:
+            function (
+                result
+            ) {
+
+                console.log(
+                    "ZOOM JOIN SUCCESS:",
+                    result
+                );
+
+
+                loadingScreen.style.display =
+                    "none";
+
+
+                resolve(
+                    result
+                );
+
+            },
+
+        error:
+            function (
+                error
+            ) {
+
+                console.error(
+                    "ZOOM JOIN ERROR:",
+                    error
+                );
+
+
+                reject(
+                    new Error(
+                        formatZoomError(
+                            error
+                        )
+                    )
+                );
+
+            }
+
+    });
+
+}
+
+
+/* =========================================================
+   ERROR
+========================================================= */
+
+function showError(
+    message
+) {
+
+    console.error(
+        message
+    );
+
+
+    loadingScreen.style.display =
+        "none";
+
+
+    errorText.textContent =
+        message ||
+        "Unable to join the live class.";
+
+
+    errorScreen.style.display =
+        "flex";
+
+}
+
+
+/* =========================================================
+   FORMAT ERROR
+========================================================= */
+
+function formatZoomError(
+    error
+) {
+
+    if (!error) {
+
+        return "Unknown Zoom error.";
+
+    }
+
+
+    if (
+        typeof error ===
+        "string"
+    ) {
+
+        return error;
+
+    }
+
+
+    return (
+        error.message ||
+        error.reason ||
+        error.error ||
+        JSON.stringify(
+            error
+        )
+    );
+
+}
+
+
+/* =========================================================
+   ERROR MESSAGE
+========================================================= */
+
+function getErrorMessage(
+    error
+) {
+
+    if (
+        error?.details
+    ) {
+
+        return error.details;
+
+    }
+
+
+    if (
+        error?.message
+    ) {
+
+        return error.message;
+
+    }
+
+
+    return "Unable to connect to the live classroom.";
+
+}
+
+    </script>
+
+</body>
+</html>
