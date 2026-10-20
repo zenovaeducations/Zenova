@@ -1,0 +1,3256 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    >
+
+    <title>Zenova | Setup Your Profile</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+    min-height: 100%;
+    font-family:
+        Inter,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+    background: #ffffff;
+    color: #111111;
+}
+
+body {
+    min-height: 100vh;
+}
+
+
+/* =========================
+   APP
+========================= */
+
+.hidden {
+    display: none !important;
+}
+
+.onboarding-app {
+    min-height: 100vh;
+    padding:
+        28px
+        28px
+        calc(28px + env(safe-area-inset-bottom));
+}
+
+.onboarding-container {
+    width: min(760px, 100%);
+    margin: 0 auto;
+}
+
+
+/* =========================
+   HEADER
+========================= */
+
+.top-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    margin-bottom: 28px;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    font-size: 15px;
+    font-weight: 800;
+    letter-spacing: 1.4px;
+}
+
+.brand-mark {
+    width: 34px;
+    height: 34px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 10px;
+
+    background: #111111;
+    color: #ffffff;
+
+    font-weight: 800;
+}
+
+.step-indicator {
+    color: #777777;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+
+/* =========================
+   PROGRESS
+========================= */
+
+.progress-area {
+    margin-bottom: 52px;
+}
+
+.progress-track {
+    width: 100%;
+    height: 4px;
+
+    background: #eeeeee;
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    width: 33.333%;
+    height: 100%;
+
+    background: #6c3cff;
+
+    transition: width 0.3s ease;
+}
+
+
+/* =========================
+   STEPS
+========================= */
+
+.step {
+    display: none;
+}
+
+.step.active {
+    display: block;
+}
+
+.step-heading {
+    max-width: 620px;
+    margin-bottom: 38px;
+}
+
+.eyebrow {
+    display: block;
+
+    margin-bottom: 12px;
+
+    color: #6c3cff;
+
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1.8px;
+}
+
+.step-heading h1 {
+    margin: 0 0 12px;
+
+    font-size: clamp(30px, 5vw, 46px);
+    line-height: 1.08;
+    letter-spacing: -1.8px;
+}
+
+.step-heading p {
+    margin: 0;
+
+    color: #707070;
+
+    font-size: 15px;
+    line-height: 1.6;
+}
+
+
+/* =========================
+   FORM
+========================= */
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 22px;
+}
+
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+}
+
+.field.full {
+    grid-column: 1 / -1;
+}
+
+.field label {
+    font-size: 13px;
+    font-weight: 700;
+    color: #222222;
+}
+
+.field input,
+.field select {
+    width: 100%;
+    height: 52px;
+
+    padding: 0 15px;
+
+    border: 1px solid #dedede;
+    border-radius: 12px;
+
+    background: #ffffff;
+    color: #111111;
+
+    font-size: 14px;
+    outline: none;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.field input:focus,
+.field select:focus {
+    border-color: #6c3cff;
+    box-shadow: 0 0 0 3px rgba(108, 60, 255, 0.08);
+}
+
+.field select:disabled {
+    background: #f7f7f7;
+    color: #999999;
+    cursor: not-allowed;
+}
+
+
+/* =========================
+   CONDITIONAL
+========================= */
+
+.conditional-fields {
+    display: none;
+
+    grid-column: 1 / -1;
+
+    grid-template-columns: 1fr 1fr;
+    gap: 22px;
+}
+
+.conditional-fields.show {
+    display: grid;
+}
+
+
+/* =========================
+   BUTTONS
+========================= */
+
+.button-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 15px;
+
+    margin-top: 42px;
+}
+
+.continue-btn,
+.back-btn {
+    height: 52px;
+
+    border-radius: 12px;
+
+    padding: 0 22px;
+
+    font-size: 14px;
+    font-weight: 750;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.15s ease,
+        opacity 0.15s ease;
+}
+
+.continue-btn {
+    border: none;
+
+    background: #111111;
+    color: #ffffff;
+
+    margin-left: auto;
+}
+
+.continue-btn span {
+    margin-left: 10px;
+    font-size: 18px;
+}
+
+.continue-btn:hover {
+    transform: translateY(-1px);
+}
+
+.continue-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.back-btn {
+    border: 1px solid #dddddd;
+
+    background: #ffffff;
+    color: #222222;
+}
+
+.back-btn:hover {
+    background: #f7f7f7;
+}
+
+
+/* =========================
+   ERROR
+========================= */
+
+.form-error {
+    min-height: 20px;
+
+    margin-top: 20px;
+
+    color: #d33131;
+
+    font-size: 13px;
+    font-weight: 600;
+}
+
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 650px) {
+
+    .onboarding-app {
+        padding: 22px 18px;
+    }
+
+    .progress-area {
+        margin-bottom: 38px;
+    }
+
+    .step-heading {
+        margin-bottom: 30px;
+    }
+
+    .step-heading h1 {
+        letter-spacing: -1.2px;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .field.full {
+        grid-column: auto;
+    }
+
+    .conditional-fields {
+        grid-template-columns: 1fr;
+    }
+
+    .button-row {
+        margin-top: 32px;
+    }
+
+    .continue-btn,
+    .back-btn {
+        flex: 1;
+    }
+}
+/* ============================================================
+   ZEN2 FIXED COURSE
+============================================================ */
+
+.fixed-value {
+    width: 100%;
+    min-height: 52px;
+
+    display: flex;
+    align-items: center;
+
+    padding: 0 15px;
+
+    border: 1px solid #dedede;
+    border-radius: 12px;
+
+    background: #f8f8fa;
+
+    color: #333333;
+
+    font-size: 14px;
+    font-weight: 650;
+}
+
+
+/* ============================================================
+   TOUGH SUBJECTS
+============================================================ */
+
+.tough-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 15px;
+
+    margin-bottom: 10px;
+}
+
+.tough-heading label {
+    display: block;
+}
+
+.tough-heading p {
+    margin: 4px 0 0;
+
+    color: #888888;
+
+    font-size: 11px;
+}
+
+.tough-count {
+    flex: 0 0 auto;
+
+    padding: 6px 9px;
+
+    border-radius: 999px;
+
+    background: #f1edff;
+
+    color: #6c3cff;
+
+    font-size: 11px;
+    font-weight: 800;
+}
+
+
+/* ============================================================
+   SUBJECT OPTIONS
+============================================================ */
+
+.subject-options {
+    display: grid;
+
+    grid-template-columns:
+        1fr 1fr;
+
+    gap: 10px;
+}
+
+.subject-option {
+    min-height: 55px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 0 15px;
+
+    border: 1px solid #dedede;
+    border-radius: 12px;
+
+    background: #ffffff;
+
+    color: #222222;
+
+    font-size: 13px;
+    font-weight: 650;
+
+    text-align: left;
+
+    transition:
+        border-color 0.15s ease,
+        background 0.15s ease,
+        transform 0.1s ease;
+}
+
+.subject-option:hover {
+    border-color: #bcaaf0;
+
+    background: #fbfaff;
+}
+
+.subject-option:active {
+    transform: scale(0.99);
+}
+
+.subject-option.selected {
+    border-color: #6c3cff;
+
+    background: #f7f3ff;
+
+    color: #5d31c9;
+}
+
+.subject-check {
+    width: 22px;
+    height: 22px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 1px solid #d8d8dc;
+    border-radius: 50%;
+
+    color: transparent;
+
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.subject-option.selected .subject-check {
+    border-color: #6c3cff;
+
+    background: #6c3cff;
+
+    color: #ffffff;
+}
+
+
+/* ============================================================
+   FORM ERROR
+============================================================ */
+
+.form-error {
+    display: none;
+
+    margin-top: 18px;
+
+    padding: 11px 13px;
+
+    border-radius: 9px;
+
+    background: #fff3f3;
+
+    color: #c32929;
+
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.form-error.show {
+    display: block;
+}
+
+
+/* ============================================================
+   MOBILE
+============================================================ */
+
+@media (max-width: 600px) {
+
+    .subject-options {
+        grid-template-columns: 1fr;
+    }
+
+    .tough-heading {
+        align-items: flex-start;
+    }
+
+}
+
+
+/* Premium motion layer */
+:root { --zenova-purple:#7650d6; }
+body { background: radial-gradient(ellipse at 12% 4%, #f1eaff 0, transparent 34%), radial-gradient(ellipse at 92% 86%, #eaf4ff 0, transparent 28%), #fff; }
+.onboarding-container { animation: pageEnter .65s cubic-bezier(.2,.75,.25,1) both; }
+.brand-mark { position:relative; isolation:isolate; box-shadow:0 8px 24px #7650d62c; animation:brandFloat 4s ease-in-out infinite; }
+.brand-mark:after { content:""; position:absolute; inset:-5px; border:1px solid #7650d64c; border-radius:14px; animation:halo 2.8s ease-out infinite; z-index:-1; }
+.step-heading { animation:headingIn .5s cubic-bezier(.2,.75,.25,1) both; }
+.step.active { animation:stepIn .42s cubic-bezier(.2,.75,.25,1) both; }
+.field { animation:fieldIn .45s both; }
+.field:nth-child(2){animation-delay:.04s}.field:nth-child(3){animation-delay:.08s}.field:nth-child(4){animation-delay:.12s}.field:nth-child(5){animation-delay:.16s}.field:nth-child(6){animation-delay:.2s}
+input,select,.fixed-value,.subject-option { transition:border-color .2s ease, box-shadow .2s ease, transform .2s ease, background .2s ease; }
+input:focus,select:focus { transform:translateY(-1px); box-shadow:0 0 0 4px #7650d619; }
+.continue-btn,.back-btn { transition:transform .18s ease, box-shadow .18s ease, background .18s ease; }
+.continue-btn:hover { transform:translateY(-2px); box-shadow:0 10px 24px #7650d633; }
+.continue-btn:active,.back-btn:active { transform:scale(.985); }
+.progress-bar { background:linear-gradient(90deg,#7650d6,#a78bfa,#7650d6); background-size:200% 100%; animation:progressGlow 3s linear infinite; }
+.subject-option.selected { box-shadow:0 6px 18px #7650d61a; transform:translateY(-1px); }
+.form-error.show { animation:errorIn .22s ease-out both; }
+/* Floating decorative light shapes */
+.onboarding-container:before,.onboarding-container:after { content:""; position:fixed; width:180px; height:180px; border-radius:50%; filter:blur(48px); opacity:.18; pointer-events:none; z-index:-1; }
+.onboarding-container:before { background:#a78bfa; top:18%; left:-110px; animation:orbDrift 11s ease-in-out infinite alternate; }
+.onboarding-container:after { background:#7dd3fc; bottom:5%; right:-110px; animation:orbDrift 13s ease-in-out infinite alternate-reverse; }
+@keyframes pageEnter { from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)} }
+@keyframes headingIn { from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)} }
+@keyframes stepIn { from{opacity:0;transform:translateX(14px)}to{opacity:1;transform:translateX(0)} }
+@keyframes fieldIn { from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)} }
+@keyframes brandFloat { 0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)} }
+@keyframes halo { 0%{transform:scale(.94);opacity:.7}100%{transform:scale(1.25);opacity:0} }
+@keyframes progressGlow { to{background-position:200% 0} }
+@keyframes errorIn { from{opacity:0;transform:translateY(-3px)}to{opacity:1;transform:translateY(0)} }
+@keyframes orbDrift { from{transform:translate(0,0) scale(.9)}to{transform:translate(40px,-28px) scale(1.15)} }
+
+/* === ZENOVA MOTION GRAPHICS: geometry, guide lines, and moving grid === */
+body { isolation:isolate; overflow-x:hidden; }
+.motion-art { position:fixed; inset:0; overflow:hidden; pointer-events:none; z-index:-1; }
+.motion-grid {
+  position:absolute; inset:-20%;
+  background-image:linear-gradient(#7650d60b 1px,transparent 1px),linear-gradient(90deg,#7650d60b 1px,transparent 1px);
+  background-size:42px 42px;
+  mask-image:linear-gradient(to bottom,transparent,#000 20%,#000 78%,transparent);
+  animation:gridDrift 28s linear infinite;
+}
+.motion-line { position:absolute; height:1px; width:70vw; opacity:.55; transform-origin:left center;
+  background:linear-gradient(90deg,transparent,#8b5cf6,#67e8f9,transparent); }
+.line-a { left:-10vw; top:27%; transform:rotate(17deg); animation:lineTravel 13s ease-in-out infinite alternate; }
+.line-b { right:-15vw; bottom:23%; transform:rotate(-19deg); animation:lineTravel2 16s ease-in-out infinite alternate; }
+.geo { position:absolute; opacity:.52; will-change:transform; }
+.geo-square { width:70px;height:70px;left:5%;top:18%;border:1px solid #9b83e6;border-radius:14px;transform:rotate(18deg);animation:floatRotate 17s ease-in-out infinite; }
+.geo-diamond { width:45px;height:45px;right:8%;top:25%;border:1px solid #67b9df;transform:rotate(45deg);animation:diamondDrift 12s ease-in-out infinite; }
+.geo-triangle { width:0;height:0;left:9%;bottom:18%;border-left:27px solid transparent;border-right:27px solid transparent;border-bottom:48px solid #a78bfa22;filter:drop-shadow(0 0 1px #8b5cf6);animation:triangleFloat 10s ease-in-out infinite; }
+.geo-ring { width:116px;height:116px;right:5%;bottom:10%;border:1px solid #8b5cf655;border-radius:50%;box-shadow:inset 0 0 24px #8b5cf60b,0 0 24px #8b5cf60b;animation:ringPulse 6s ease-in-out infinite; }
+.geo-ring:after { content:"";position:absolute;inset:12px;border:1px dashed #67b9df80;border-radius:50%;animation:spinGeo 24s linear infinite; }
+.geo-cross { color:#8b5cf6;font-size:28px;font-weight:300; }
+.cross-a { left:28%;top:12%;animation:crossBob 6s ease-in-out infinite; }
+.cross-b { right:27%;bottom:13%;color:#38a6ca;animation:crossBob 8s ease-in-out infinite reverse; }
+.geo-dot { width:7px;height:7px;border-radius:50%;background:#8b5cf6;box-shadow:0 0 0 5px #8b5cf61a,0 0 20px #8b5cf655; }
+.dot-a { left:24%;top:37%;animation:dotPulse 3s ease-in-out infinite; }
+.dot-b { right:22%;top:60%;background:#38a6ca;animation:dotPulse 4s ease-in-out infinite .8s; }
+.dot-c { left:16%;bottom:33%;animation:dotPulse 3.5s ease-in-out infinite 1.3s; }
+.onboarding-app { position:relative; z-index:1; }
+.onboarding-container { position:relative; }
+.step.active .field { animation:fieldIn .48s both; }
+.step.active .field:nth-child(2){animation-delay:.04s}
+.step.active .field:nth-child(3){animation-delay:.08s}
+.step.active .field:nth-child(4){animation-delay:.12s}
+.step.active .field:nth-child(5){animation-delay:.16s}
+.step.active .field:nth-child(6){animation-delay:.2s}
+@keyframes gridDrift { from{transform:translate3d(0,0,0)}to{transform:translate3d(42px,42px,0)} }
+@keyframes lineTravel { from{translate:-5vw -15px;opacity:.12}to{translate:30vw 35px;opacity:.65} }
+@keyframes lineTravel2 { from{translate:5vw 20px;opacity:.15}to{translate:-30vw -35px;opacity:.6} }
+@keyframes floatRotate { 0%,100%{transform:translateY(0) rotate(18deg)}50%{transform:translateY(-24px) rotate(78deg)} }
+@keyframes diamondDrift { 0%,100%{transform:translate(0,0) rotate(45deg)}50%{transform:translate(-18px,26px) rotate(135deg)} }
+@keyframes triangleFloat { 0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-22px) rotate(15deg)} }
+@keyframes ringPulse { 0%,100%{transform:scale(.92);opacity:.3}50%{transform:scale(1.08);opacity:.7} }
+@keyframes spinGeo { to{transform:rotate(360deg)} }
+@keyframes crossBob { 0%,100%{transform:translateY(0) rotate(0);opacity:.35}50%{transform:translateY(-12px) rotate(45deg);opacity:.9} }
+@keyframes dotPulse { 0%,100%{transform:scale(.7);opacity:.35}50%{transform:scale(1.35);opacity:1} }
+@media(max-width:600px){.geo-square{width:42px;height:42px;left:-8px}.geo-ring{width:75px;height:75px;right:-15px}.geo-diamond{right:1%;width:28px;height:28px}.cross-a{left:5%}.cross-b{right:7%}.motion-grid{background-size:32px 32px}}
+
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}}
+</style>
+
+</head>
+
+
+<body>
+    <!-- Decorative animated geometry: no logo loader or blocking splash -->
+    <div class="motion-art" aria-hidden="true">
+      <div class="motion-grid"></div>
+      <div class="motion-line line-a"></div>
+      <div class="motion-line line-b"></div>
+      <div class="geo geo-square"></div>
+      <div class="geo geo-diamond"></div>
+      <div class="geo geo-triangle"></div>
+      <div class="geo geo-ring"></div>
+      <div class="geo geo-cross cross-a">＋</div>
+      <div class="geo geo-cross cross-b">×</div>
+      <div class="geo geo-dot dot-a"></div>
+      <div class="geo geo-dot dot-b"></div>
+      <div class="geo geo-dot dot-c"></div>
+    </div>
+
+
+    <!-- =====================================================
+         APP
+    ====================================================== -->
+
+    <main
+        id="onboardingApp"
+        class="onboarding-app"
+    >
+
+        <div class="onboarding-container">
+
+
+            <!-- =================================================
+                 HEADER
+            ================================================== -->
+
+            <header class="top-header">
+
+                <div class="brand">
+
+                    <div class="brand-mark">
+                        Z
+                    </div>
+
+                    <span>
+                        ZENOVA
+                    </span>
+
+                </div>
+
+
+                <div class="step-indicator">
+
+                    <span id="stepText">
+                        1 of 3
+                    </span>
+
+                </div>
+
+            </header>
+
+
+            <!-- =================================================
+                 PROGRESS
+            ================================================== -->
+
+            <div class="progress-area">
+
+                <div class="progress-track">
+
+                    <div
+                        id="progressBar"
+                        class="progress-bar"
+                    ></div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 STEP 1
+            ================================================== -->
+
+            <section
+                id="step1"
+                class="step active"
+            >
+
+                <div class="step-heading">
+
+                    <span class="eyebrow">
+                        WELCOME TO ZENOVA
+                    </span>
+
+                    <h1>
+                        Let's get to know you.
+                    </h1>
+
+                    <p>
+                        Just a few details to create your
+                        student profile.
+                    </p>
+
+                </div>
+
+
+                <div class="form-grid">
+
+
+                    <div class="field full">
+
+                        <label for="fullName">
+                            Full Name
+                        </label>
+
+                        <input
+                            type="text"
+                            id="fullName"
+                            placeholder="Enter your full name"
+                            autocomplete="name"
+                        >
+
+                    </div>
+
+
+                    <div class="field">
+
+                        <label for="dob">
+                            Date of Birth
+                        </label>
+
+                        <input
+                            type="date"
+                            id="dob"
+                        >
+
+                    </div>
+
+
+                    <div class="field">
+
+                        <label for="gender">
+                            Gender
+                        </label>
+
+                        <select id="gender">
+
+                            <option value="">
+                                Select gender
+                            </option>
+
+                            <option value="MALE">
+                                Male
+                            </option>
+
+                            <option value="FEMALE">
+                                Female
+                            </option>
+
+                            <option value="OTHER">
+                                Other
+                            </option>
+
+                            <option value="PREFER_NOT_TO_SAY">
+                                Prefer not to say
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                </div>
+
+
+                <div
+                    id="step1Error"
+                    class="form-error"
+                ></div>
+
+
+                <button
+                    type="button"
+                    class="continue-btn"
+                    id="step1Next"
+                >
+
+                    Continue
+
+                    <span>
+                        →
+                    </span>
+
+                </button>
+
+
+            </section>
+
+
+            <!-- =================================================
+                 STEP 2
+            ================================================== -->
+
+            <section
+                id="step2"
+                class="step"
+            >
+
+                <div class="step-heading">
+
+                    <span class="eyebrow">
+                        YOUR STUDIES
+                    </span>
+
+                    <h1>
+                        Tell us about your studies.
+                    </h1>
+
+                    <p>
+                        You're joining Zenova for
+                        10th Standard.
+                    </p>
+
+                </div>
+
+
+                <div class="form-grid">
+
+
+                    <!-- CLASS -->
+
+                    <div class="field full">
+
+                        <label>
+                            Current Class
+                        </label>
+
+                        <div class="fixed-value">
+                            10th Standard
+                        </div>
+
+                    </div>
+
+
+                    <!-- BOARD -->
+
+                    <div class="field full">
+
+                        <label for="board">
+                            Board
+                        </label>
+
+                        <select id="board">
+
+                            <option value="">
+                                Select board
+                            </option>
+
+                            <option value="KSEAB">
+                                Karnataka State Board
+                            </option>
+
+                            <option value="CBSE">
+                                CBSE
+                            </option>
+
+                            <option value="ICSE">
+                                ICSE
+                            </option>
+
+                            <option value="OTHER">
+                                Other
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- MEDIUM -->
+
+                    <div class="field full">
+
+                        <label for="medium">
+                            Medium
+                        </label>
+
+                        <select id="medium">
+
+                            <option value="">
+                                Select medium
+                            </option>
+
+                            <option value="KANNADA">
+                                Kannada Medium
+                            </option>
+
+                            <option value="ENGLISH">
+                                English Medium
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- TOUGH SUBJECTS -->
+
+                    <div class="field full">
+
+                        <div class="tough-heading">
+
+                            <div>
+
+                                <label>
+                                    Your Tough Subjects
+                                </label>
+
+                                <p>
+                                    Select exactly 2 subjects.
+                                </p>
+
+                            </div>
+
+                            <span
+                                id="toughCount"
+                                class="tough-count"
+                            >
+                                0 / 2
+                            </span>
+
+                        </div>
+
+
+                        <div
+                            id="toughSubjects"
+                            class="subject-options"
+                        >
+
+                            <button
+                                type="button"
+                                class="subject-option"
+                                data-subject="Mathematics"
+                            >
+                                <span>
+                                    Mathematics
+                                </span>
+
+                                <span class="subject-check">
+                                    ✓
+                                </span>
+
+                            </button>
+
+
+                            <button
+                                type="button"
+                                class="subject-option"
+                                data-subject="Science"
+                            >
+                                <span>
+                                    Science
+                                </span>
+
+                                <span class="subject-check">
+                                    ✓
+                                </span>
+
+                            </button>
+
+
+                            <button
+                                type="button"
+                                class="subject-option"
+                                data-subject="Social Science"
+                            >
+                                <span>
+                                    Social Science
+                                </span>
+
+                                <span class="subject-check">
+                                    ✓
+                                </span>
+
+                            </button>
+
+
+                            <button
+                                type="button"
+                                class="subject-option"
+                                data-subject="English"
+                            >
+                                <span>
+                                    English
+                                </span>
+
+                                <span class="subject-check">
+                                    ✓
+                                </span>
+
+                            </button>
+
+
+                            <button
+                                type="button"
+                                class="subject-option"
+                                data-subject="Kannada"
+                            >
+                                <span>
+                                    Kannada
+                                </span>
+
+                                <span class="subject-check">
+                                    ✓
+                                </span>
+
+                            </button>
+
+
+                            <button
+                                type="button"
+                                class="subject-option"
+                                data-subject="Hindi"
+                            >
+                                <span>
+                                    Hindi
+                                </span>
+
+                                <span class="subject-check">
+                                    ✓
+                                </span>
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    id="step2Error"
+                    class="form-error"
+                ></div>
+
+
+                <div class="button-row">
+
+                    <button
+                        type="button"
+                        class="back-btn"
+                        id="step2Back"
+                    >
+                        ← Back
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="continue-btn"
+                        id="step2Next"
+                    >
+
+                        Continue
+
+                        <span>
+                            →
+                        </span>
+
+                    </button>
+
+                </div>
+
+
+            </section>
+
+
+            <!-- =================================================
+                 STEP 3
+            ================================================== -->
+
+            <section
+                id="step3"
+                class="step"
+            >
+
+                <div class="step-heading">
+
+                    <span class="eyebrow">
+                        YOUR SCHOOL
+                    </span>
+
+                    <h1>
+                        Where do you study?
+                    </h1>
+
+                    <p>
+                        Select your location and school.
+                    </p>
+
+                </div>
+
+
+                <div class="form-grid">
+
+
+                    <!-- OPTIONAL ZNV CODE: FREE TEXT, NO CRM LOOKUP -->
+                    <div class="field full">
+                        <label for="znvCode">ZNV Student Code (Optional)</label>
+                        <input type="text" id="znvCode" maxlength="100" placeholder="Enter any code you want">
+                        <small style="display:block;color:#777;font-size:11px;margin-top:6px;line-height:1.5">This is only for reference. Any text is accepted; it is not matched against CRM.</small>
+                    </div>
+
+                    <!-- DISTRICT -->
+
+                    <div class="field">
+
+                        <label for="district">
+                            District
+                        </label>
+
+                        <select id="district">
+
+                            <option value="">
+                                Select district
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- TALUK -->
+
+                    <div class="field">
+
+                        <label for="taluk">
+                            Taluk
+                        </label>
+
+                        <select
+                            id="taluk"
+                            disabled
+                        >
+
+                            <option value="">
+                                Select taluk
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- GP -->
+
+                    <div class="field">
+
+                        <label for="gramPanchayat">
+                            Gram Panchayat
+                        </label>
+
+                        <select
+                            id="gramPanchayat"
+                            disabled
+                        >
+
+                            <option value="">
+                                Select Gram Panchayat
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- VILLAGE -->
+
+                    <div class="field">
+
+                        <label for="village">
+                            Village
+                        </label>
+
+                        <select
+                            id="village"
+                            disabled
+                        >
+
+                            <option value="">
+                                Select village
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- SCHOOL -->
+
+                    <div class="field full">
+
+                        <label for="school">
+                            School
+                        </label>
+
+                        <select
+                            id="school"
+                            disabled
+                        >
+
+                            <option value="">
+                                Select your school
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    id="step3Error"
+                    class="form-error"
+                ></div>
+
+
+                <div class="button-row">
+
+                    <button
+                        type="button"
+                        class="back-btn"
+                        id="step3Back"
+                    >
+
+                        ← Back
+
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="continue-btn"
+                        id="finishBtn"
+                    >
+
+                        Finish
+
+                        <span>
+                            →
+                        </span>
+
+                    </button>
+
+                </div>
+
+
+            </section>
+
+
+        </div>
+
+    </main>
+
+
+<script type="module">
+/* ============================================================
+   ZENOVA 2
+   STUDENT ONBOARDING
+
+   CURRENT PRODUCT:
+
+   10th Standard
+   One Zenova course
+   Kannada / English medium
+
+   STUDENT DATA:
+
+   zen2Students/{Firebase Auth UID}
+
+   CRM MASTER DATA REMAINS:
+
+   crmDistricts
+   crmTaluks
+   crmGramPanchayats
+   crmVillages
+   crmSchools
+
+============================================================ */
+
+
+import {
+    auth,
+    db
+} from "../../firebase/firebase-config.js";
+
+
+import {
+    onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+
+
+import {
+    collection,
+    getDocs,
+    doc,
+    getDoc,
+    setDoc,
+    serverTimestamp
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
+
+/* ============================================================
+   DOM
+============================================================ */
+
+const app =
+    document.getElementById(
+        "onboardingApp"
+    );
+
+const progressBar =
+    document.getElementById(
+        "progressBar"
+    );
+
+const stepText =
+    document.getElementById(
+        "stepText"
+    );
+
+
+const step1 =
+    document.getElementById(
+        "step1"
+    );
+
+const step2 =
+    document.getElementById(
+        "step2"
+    );
+
+const step3 =
+    document.getElementById(
+        "step3"
+    );
+
+
+const step1Next =
+    document.getElementById(
+        "step1Next"
+    );
+
+const step2Next =
+    document.getElementById(
+        "step2Next"
+    );
+
+const step2Back =
+    document.getElementById(
+        "step2Back"
+    );
+
+const step3Back =
+    document.getElementById(
+        "step3Back"
+    );
+
+const finishBtn =
+    document.getElementById(
+        "finishBtn"
+    );
+
+
+const fullNameInput =
+    document.getElementById(
+        "fullName"
+    );
+
+const dobInput =
+    document.getElementById(
+        "dob"
+    );
+
+const genderSelect =
+    document.getElementById(
+        "gender"
+    );
+
+const boardSelect =
+    document.getElementById(
+        "board"
+    );
+
+const mediumSelect =
+    document.getElementById(
+        "medium"
+    );
+
+const znvCodeInput =
+    document.getElementById("znvCode");
+
+
+const districtSelect =
+    document.getElementById(
+        "district"
+    );
+
+const talukSelect =
+    document.getElementById(
+        "taluk"
+    );
+
+const gpSelect =
+    document.getElementById(
+        "gramPanchayat"
+    );
+
+const villageSelect =
+    document.getElementById(
+        "village"
+    );
+
+const schoolSelect =
+    document.getElementById(
+        "school"
+    );
+
+
+const toughCount =
+    document.getElementById(
+        "toughCount"
+    );
+
+const toughSubjectButtons =
+    document.querySelectorAll(
+        ".subject-option"
+    );
+
+
+/* ============================================================
+   STATE
+============================================================ */
+
+let currentUser = null;
+
+let currentStep = 1;
+
+let selectedToughSubjects = [];
+
+
+/*
+ * CRM master data
+ */
+
+let districts = [];
+
+let taluks = [];
+
+let gramPanchayats = [];
+
+let villages = [];
+
+let schools = [];
+
+
+/* ============================================================
+   AUTH
+============================================================ */
+
+onAuthStateChanged(
+    auth,
+    async (user) => {
+
+        /*
+         * Not logged in.
+         */
+
+        if (!user) {
+
+            window.location.replace(
+                "../../login/"
+            );
+
+            return;
+
+        }
+
+
+        currentUser =
+            user;
+
+        // Prefill an existing free-text ZNV reference, if present.
+        try {
+            const prefillSnap = await getDoc(doc(db, "zen2Students", user.uid));
+            if (prefillSnap.exists() && znvCodeInput) {
+                znvCodeInput.value = prefillSnap.data().znvCode || "";
+            }
+        } catch (prefillError) {
+            console.warn("Could not prefill optional ZNV code:", prefillError);
+        }
+
+
+        /*
+         * Prefill Google name.
+         */
+
+        if (
+            user.displayName &&
+            !fullNameInput.value
+        ) {
+
+            fullNameInput.value =
+                user.displayName;
+
+        }
+
+
+        try {
+
+            /*
+             * Check whether onboarding
+             * is already complete.
+             */
+
+            const studentRef =
+                doc(
+                    db,
+                    "zen2Students",
+                    user.uid
+                );
+
+
+            const studentSnapshot =
+                await getDoc(
+                    studentRef
+                );
+
+
+            if (
+                studentSnapshot.exists() &&
+                studentSnapshot.data()
+                    .onboardingComplete === true
+            ) {
+
+                window.location.replace(
+                    "../../home/"
+                );
+
+                return;
+
+            }
+
+
+            /*
+             * Load CRM master data.
+             */
+
+            // Keep the form visible while CRM lists load; CRM loading must not block the questions.
+            loadMasterData().catch((crmError) => {
+                console.error("CRM master data could not be loaded:", crmError);
+                showError(3, "Location lists could not be loaded. Please refresh or contact the administrator.");
+            });
+
+
+            /*
+             * Show application.
+             */
+
+            app.classList.remove(
+                "hidden"
+            );
+
+
+            updateStepUI();
+
+
+        } catch (error) {
+
+            console.error(
+                "Onboarding initialization error:",
+                error
+            );
+
+
+            showError(
+                1,
+                "Some profile information could not be loaded. You can still complete the form; please retry if saved details are missing."
+            );
+
+
+            app.classList.remove(
+                "hidden"
+            );
+
+        }
+
+    }
+);
+
+
+/* ============================================================
+   STEP 1
+============================================================ */
+
+step1Next.addEventListener(
+    "click",
+    () => {
+
+        clearAllErrors();
+
+
+        const name =
+            fullNameInput.value.trim();
+
+        const dob =
+            dobInput.value;
+
+        const gender =
+            genderSelect.value;
+
+
+        if (!name) {
+
+            showError(
+                1,
+                "Please enter your full name."
+            );
+
+            fullNameInput.focus();
+
+            return;
+
+        }
+
+
+        if (name.length < 2) {
+
+            showError(
+                1,
+                "Please enter a valid full name."
+            );
+
+            fullNameInput.focus();
+
+            return;
+
+        }
+
+
+        if (!dob) {
+
+            showError(
+                1,
+                "Please select your date of birth."
+            );
+
+            dobInput.focus();
+
+            return;
+
+        }
+
+
+        if (!gender) {
+
+            showError(
+                1,
+                "Please select your gender."
+            );
+
+            genderSelect.focus();
+
+            return;
+
+        }
+
+
+        showStep(2);
+
+    }
+);
+
+
+/* ============================================================
+   STEP 2
+============================================================ */
+
+step2Back.addEventListener(
+    "click",
+    () => {
+
+        clearAllErrors();
+
+        showStep(1);
+
+    }
+);
+
+
+step2Next.addEventListener(
+    "click",
+    () => {
+
+        clearAllErrors();
+
+
+        const board =
+            boardSelect.value;
+
+        const medium =
+            mediumSelect.value;
+
+
+        if (!board) {
+
+            showError(
+                2,
+                "Please select your board."
+            );
+
+            boardSelect.focus();
+
+            return;
+
+        }
+
+
+        if (!medium) {
+
+            showError(
+                2,
+                "Please select your medium."
+            );
+
+            mediumSelect.focus();
+
+            return;
+
+        }
+
+
+        if (
+            selectedToughSubjects.length !== 2
+        ) {
+
+            showError(
+                2,
+                "Please select exactly 2 tough subjects."
+            );
+
+            return;
+
+        }
+
+
+        showStep(3);
+
+    }
+);
+
+
+/* ============================================================
+   TOUGH SUBJECTS
+============================================================ */
+
+toughSubjectButtons.forEach(
+    (button) => {
+
+        button.addEventListener(
+            "click",
+            () => {
+
+                const subject =
+                    button.dataset.subject;
+
+
+                const index =
+                    selectedToughSubjects.indexOf(
+                        subject
+                    );
+
+
+                /*
+                 * Already selected.
+                 * Remove it.
+                 */
+
+                if (index !== -1) {
+
+                    selectedToughSubjects.splice(
+                        index,
+                        1
+                    );
+
+                    button.classList.remove(
+                        "selected"
+                    );
+
+                    updateToughCount();
+
+                    return;
+
+                }
+
+
+                /*
+                 * Already two selected.
+                 */
+
+                if (
+                    selectedToughSubjects.length >= 2
+                ) {
+
+                    showError(
+                        2,
+                        "You can select only 2 tough subjects."
+                    );
+
+                    return;
+
+                }
+
+
+                /*
+                 * Select.
+                 */
+
+                selectedToughSubjects.push(
+                    subject
+                );
+
+                button.classList.add(
+                    "selected"
+                );
+
+                updateToughCount();
+
+            }
+        );
+
+    }
+);
+
+
+/* ============================================================
+   TOUGH COUNT
+============================================================ */
+
+function updateToughCount() {
+
+    toughCount.textContent =
+        `${selectedToughSubjects.length} / 2`;
+
+}
+
+
+/* ============================================================
+   STEP 3 BACK
+============================================================ */
+
+step3Back.addEventListener(
+    "click",
+    () => {
+
+        clearAllErrors();
+
+        showStep(2);
+
+    }
+);
+
+
+/* ============================================================
+   LOAD CRM MASTER DATA
+============================================================ */
+
+async function loadMasterData() {
+
+    const [
+        districtSnapshot,
+        talukSnapshot,
+        gpSnapshot,
+        villageSnapshot,
+        schoolSnapshot
+    ] = await Promise.all([
+
+        getDocs(
+            collection(
+                db,
+                "crmDistricts"
+            )
+        ),
+
+        getDocs(
+            collection(
+                db,
+                "crmTaluks"
+            )
+        ),
+
+        getDocs(
+            collection(
+                db,
+                "crmGramPanchayats"
+            )
+        ),
+
+        getDocs(
+            collection(
+                db,
+                "crmVillages"
+            )
+        ),
+
+        getDocs(
+            collection(
+                db,
+                "crmSchools"
+            )
+        )
+
+    ]);
+
+
+    /*
+     * DISTRICTS
+     */
+
+    districts =
+        districtSnapshot.docs
+            .map(
+                (item) => ({
+                    id: item.id,
+                    ...item.data()
+                })
+            )
+            .filter(
+                (item) =>
+                    item.crmActive !== false
+            )
+            .sort(
+                (a, b) =>
+                    String(
+                        a.crmDistrictName || ""
+                    ).localeCompare(
+                        String(
+                            b.crmDistrictName || ""
+                        )
+                    )
+            );
+
+
+    /*
+     * TALUKS
+     */
+
+    taluks =
+        talukSnapshot.docs
+            .map(
+                (item) => ({
+                    id: item.id,
+                    ...item.data()
+                })
+            )
+            .filter(
+                (item) =>
+                    item.crmActive !== false
+            );
+
+
+    /*
+     * GP
+     */
+
+    gramPanchayats =
+        gpSnapshot.docs
+            .map(
+                (item) => ({
+                    id: item.id,
+                    ...item.data()
+                })
+            )
+            .filter(
+                (item) =>
+                    item.crmActive !== false
+            );
+
+
+    /*
+     * VILLAGES
+     */
+
+    villages =
+        villageSnapshot.docs
+            .map(
+                (item) => ({
+                    id: item.id,
+                    ...item.data()
+                })
+            )
+            .filter(
+                (item) =>
+                    item.crmActive !== false
+            );
+
+
+    /*
+     * SCHOOLS
+     */
+
+    schools =
+        schoolSnapshot.docs
+            .map(
+                (item) => ({
+                    id: item.id,
+                    ...item.data()
+                })
+            )
+            .filter(
+                (item) =>
+                    item.crmActive !== false
+            );
+
+
+    /*
+     * Populate districts.
+     */
+
+    populateDistricts();
+
+}
+
+
+/* ============================================================
+   DISTRICT
+============================================================ */
+
+districtSelect.addEventListener(
+    "change",
+    () => {
+
+        clearAllErrors();
+
+        const districtId =
+            districtSelect.value;
+
+
+        resetSelect(
+            talukSelect,
+            "Select taluk"
+        );
+
+        resetSelect(
+            gpSelect,
+            "Select Gram Panchayat"
+        );
+
+        resetSelect(
+            villageSelect,
+            "Select village"
+        );
+
+        resetSelect(
+            schoolSelect,
+            "Select your school"
+        );
+
+
+        talukSelect.disabled =
+            true;
+
+        gpSelect.disabled =
+            true;
+
+        villageSelect.disabled =
+            true;
+
+        schoolSelect.disabled =
+            true;
+
+
+        if (!districtId) {
+            return;
+        }
+
+
+        const matchingTaluks =
+            taluks
+                .filter(
+                    (item) =>
+                        item.crmDistrictId ===
+                        districtId
+                )
+                .sort(
+                    sortByTaluk
+                );
+
+
+        appendOptions(
+            talukSelect,
+            matchingTaluks,
+            "crmTalukName"
+        );
+
+
+        talukSelect.disabled =
+            matchingTaluks.length === 0;
+
+    }
+);
+
+
+/* ============================================================
+   TALUK
+============================================================ */
+
+talukSelect.addEventListener(
+    "change",
+    () => {
+
+        clearAllErrors();
+
+        const talukId =
+            talukSelect.value;
+
+
+        resetSelect(
+            gpSelect,
+            "Select Gram Panchayat"
+        );
+
+        resetSelect(
+            villageSelect,
+            "Select village"
+        );
+
+        resetSelect(
+            schoolSelect,
+            "Select your school"
+        );
+
+
+        gpSelect.disabled =
+            true;
+
+        villageSelect.disabled =
+            true;
+
+        schoolSelect.disabled =
+            true;
+
+
+        if (!talukId) {
+            return;
+        }
+
+
+        const matchingGPs =
+            gramPanchayats
+                .filter(
+                    (item) =>
+                        item.crmTalukId ===
+                        talukId
+                )
+                .sort(
+                    sortByGP
+                );
+
+
+        appendOptions(
+            gpSelect,
+            matchingGPs,
+            "crmGPName"
+        );
+
+
+        gpSelect.disabled =
+            matchingGPs.length === 0;
+
+
+        /*
+         * Schools are also associated
+         * with the taluk in the existing
+         * CRM system.
+         */
+
+        populateSchoolsForTaluk(
+            talukId
+        );
+
+    }
+);
+
+
+/* ============================================================
+   GP
+============================================================ */
+
+gpSelect.addEventListener(
+    "change",
+    () => {
+
+        clearAllErrors();
+
+        const gpId =
+            gpSelect.value;
+
+
+        resetSelect(
+            villageSelect,
+            "Select village"
+        );
+
+
+        villageSelect.disabled =
+            true;
+
+
+        if (!gpId) {
+            return;
+        }
+
+
+        const matchingVillages =
+            villages
+                .filter(
+                    (item) =>
+                        item.crmGPId ===
+                        gpId
+                )
+                .sort(
+                    sortByVillage
+                );
+
+
+        appendOptions(
+            villageSelect,
+            matchingVillages,
+            "crmVillageName"
+        );
+
+
+        villageSelect.disabled =
+            matchingVillages.length === 0;
+
+    }
+);
+
+
+/* ============================================================
+   VILLAGE
+============================================================ */
+
+villageSelect.addEventListener(
+    "change",
+    () => {
+
+        /*
+         * School list has already been
+         * filtered by taluk.
+         *
+         * We additionally try to match
+         * village where the CRM data
+         * provides that relationship.
+         */
+
+        const villageId =
+            villageSelect.value;
+
+
+        const talukId =
+            talukSelect.value;
+
+
+        if (!talukId) {
+            return;
+        }
+
+
+        let matchingSchools =
+            schools.filter(
+                (school) =>
+                    school.crmTalukId ===
+                    talukId
+            );
+
+
+        /*
+         * If schools contain village
+         * relationship information,
+         * use it.
+         */
+
+        const villageMatched =
+            matchingSchools.filter(
+                (school) =>
+                    school.crmVillageId ===
+                    villageId
+            );
+
+
+        if (
+            villageMatched.length > 0
+        ) {
+
+            matchingSchools =
+                villageMatched;
+
+        }
+
+
+        matchingSchools.sort(
+            sortBySchool
+        );
+
+
+        resetSelect(
+            schoolSelect,
+            "Select your school"
+        );
+
+
+        appendOptions(
+            schoolSelect,
+            matchingSchools,
+            getSchoolNameField
+        );
+
+
+        schoolSelect.disabled =
+            matchingSchools.length === 0;
+
+    }
+);
+
+
+/* ============================================================
+   POPULATE DISTRICTS
+============================================================ */
+
+function populateDistricts() {
+
+    resetSelect(
+        districtSelect,
+        "Select district"
+    );
+
+
+    districts.forEach(
+        (district) => {
+
+            const option =
+                document.createElement(
+                    "option"
+                );
+
+
+            option.value =
+                district.id;
+
+
+            option.textContent =
+                district.crmDistrictName ||
+                "District";
+
+
+            districtSelect.appendChild(
+                option
+            );
+
+        }
+    );
+
+}
+
+
+/* ============================================================
+   POPULATE SCHOOLS
+============================================================ */
+
+function populateSchoolsForTaluk(
+    talukId
+) {
+
+    let matchingSchools =
+        schools.filter(
+            (school) =>
+                school.crmTalukId ===
+                talukId
+        );
+
+
+    matchingSchools.sort(
+        sortBySchool
+    );
+
+
+    resetSelect(
+        schoolSelect,
+        "Select your school"
+    );
+
+
+    /*
+     * Don't enable the school yet.
+     *
+     * The user will choose village
+     * first.
+     */
+
+    schoolSelect.disabled =
+        true;
+
+}
+
+
+/* ============================================================
+   APPEND OPTIONS
+============================================================ */
+
+function appendOptions(
+    select,
+    items,
+    nameField
+) {
+
+    items.forEach(
+        (item) => {
+
+            const option =
+                document.createElement(
+                    "option"
+                );
+
+
+            option.value =
+                item.id;
+
+
+            option.textContent =
+                typeof nameField === "function"
+                    ? nameField(item)
+                    : (
+                        item[nameField] ||
+                        "Select"
+                    );
+
+
+            select.appendChild(
+                option
+            );
+
+        }
+    );
+
+}
+
+
+/* ============================================================
+   RESET SELECT
+============================================================ */
+
+function resetSelect(
+    select,
+    placeholder
+) {
+
+    select.innerHTML =
+        "";
+
+
+    const option =
+        document.createElement(
+            "option"
+        );
+
+
+    option.value =
+        "";
+
+
+    option.textContent =
+        placeholder;
+
+
+    select.appendChild(
+        option
+    );
+
+
+    select.value =
+        "";
+
+}
+
+
+/* ============================================================
+   FINISH ONBOARDING
+============================================================ */
+
+finishBtn.addEventListener(
+    "click",
+    completeOnboarding
+);
+
+
+async function completeOnboarding() {
+
+    clearAllErrors();
+
+
+    if (!currentUser) {
+
+        window.location.replace(
+            "../../login/"
+        );
+
+        return;
+
+    }
+
+
+    /*
+     * Validate location.
+     */
+
+    const districtId =
+        districtSelect.value;
+
+    const talukId =
+        talukSelect.value;
+
+    const gpId =
+        gpSelect.value;
+
+    const villageId =
+        villageSelect.value;
+
+    const schoolId =
+        schoolSelect.value;
+
+
+    if (!districtId) {
+
+        showError(
+            3,
+            "Please select your district."
+        );
+
+        districtSelect.focus();
+
+        return;
+
+    }
+
+
+    if (!talukId) {
+
+        showError(
+            3,
+            "Please select your taluk."
+        );
+
+        talukSelect.focus();
+
+        return;
+
+    }
+
+
+    if (!gpId) {
+
+        showError(
+            3,
+            "Please select your Gram Panchayat."
+        );
+
+        gpSelect.focus();
+
+        return;
+
+    }
+
+
+    if (!villageId) {
+
+        showError(
+            3,
+            "Please select your village."
+        );
+
+        villageSelect.focus();
+
+        return;
+
+    }
+
+
+    if (!schoolId) {
+
+        showError(
+            3,
+            "Please select your school."
+        );
+
+        schoolSelect.focus();
+
+        return;
+
+    }
+
+
+    /*
+     * Find actual CRM records.
+     */
+
+    const district =
+        districts.find(
+            (item) =>
+                item.id === districtId
+        );
+
+
+    const taluk =
+        taluks.find(
+            (item) =>
+                item.id === talukId
+        );
+
+
+    const gp =
+        gramPanchayats.find(
+            (item) =>
+                item.id === gpId
+        );
+
+
+    const village =
+        villages.find(
+            (item) =>
+                item.id === villageId
+        );
+
+
+    const school =
+        schools.find(
+            (item) =>
+                item.id === schoolId
+        );
+
+
+    if (
+        !district ||
+        !taluk ||
+        !gp ||
+        !village ||
+        !school
+    ) {
+
+        showError(
+            3,
+            "The selected location could not be verified. Please select again."
+        );
+
+        return;
+
+    }
+
+
+    /*
+     * Button loading.
+     */
+
+    finishBtn.disabled =
+        true;
+
+    finishBtn.innerHTML =
+        "Saving...";
+
+
+    try {
+
+        /*
+         * Existing profile, if any.
+         */
+
+        const studentRef =
+            doc(
+                db,
+                "zen2Students",
+                currentUser.uid
+            );
+
+
+        const existingSnapshot =
+            await getDoc(
+                studentRef
+            );
+
+
+        const existingData =
+            existingSnapshot.exists()
+                ? existingSnapshot.data()
+                : {};
+
+
+        /*
+         * =====================================================
+         * NEW ZENOVA STUDENT PROFILE
+         * =====================================================
+         */
+
+        const studentData = {
+
+            /*
+             * AUTH
+             */
+
+            uid:
+                currentUser.uid,
+
+            email:
+                currentUser.email || "",
+
+            phone:
+                currentUser.phoneNumber || "",
+
+
+            /*
+             * GOOGLE PROFILE
+             */
+
+            photoURL:
+                currentUser.photoURL || "",
+
+            googleDisplayName:
+                currentUser.displayName || "",
+
+
+            /*
+             * PERSONAL
+             */
+
+            name:
+                fullNameInput.value.trim(),
+
+            dateOfBirth:
+                dobInput.value,
+
+            gender:
+                genderSelect.value,
+
+
+            /*
+             * CURRENT COURSE
+             *
+             * Current Zenova product is
+             * only 10th Standard.
+             */
+
+            className:
+                "10th",
+
+            classDisplayName:
+                "10th Standard",
+
+            board:
+                boardSelect.value,
+
+            medium:
+                mediumSelect.value,
+
+            // Optional free-text reference only. No CRM lookup or matching.
+            znvCode:
+                znvCodeInput?.value?.trim() || "",
+
+            /*
+             * TOUGH SUBJECTS
+             */
+
+            toughSubjects:
+                [...selectedToughSubjects],
+
+
+            /*
+             * LOCATION IDS
+             */
+
+            districtId:
+                district.id,
+
+            talukId:
+                taluk.id,
+
+            gramPanchayatId:
+                gp.id,
+
+            villageId:
+                village.id,
+
+            schoolId:
+                school.id,
+
+
+            /*
+             * LOCATION NAMES
+             */
+
+            districtName:
+                district.crmDistrictName || "",
+
+            talukName:
+                taluk.crmTalukName || "",
+
+            gramPanchayatName:
+                gp.crmGPName || "",
+
+            villageName:
+                village.crmVillageName || "",
+
+            schoolName:
+                getSchoolNameField(
+                    school
+                ),
+
+
+            /*
+             * ZENOVA VERSION
+             */
+
+            appVersion:
+                "ZEN2",
+
+            profileVersion:
+                1,
+
+
+            /*
+             * ONBOARDING
+             */
+
+            onboardingComplete:
+                true,
+
+            onboardingCompletedAt:
+                serverTimestamp(),
+
+
+            /*
+             * UPDATE
+             */
+
+            updatedAt:
+                serverTimestamp()
+
+        };
+
+
+        /*
+         * Only create createdAt for
+         * a brand-new student.
+         */
+
+        if (
+            !existingSnapshot.exists()
+        ) {
+
+            studentData.createdAt =
+                serverTimestamp();
+
+        } else if (
+            existingData.createdAt
+        ) {
+
+            studentData.createdAt =
+                existingData.createdAt;
+
+        }
+
+
+        /*
+         * SAVE
+         *
+         * zen2Students/{uid}
+         */
+
+        await setDoc(
+            studentRef,
+            studentData,
+            {
+                merge: true
+            }
+        );
+
+
+        console.log(
+            "ZEN2 onboarding saved:",
+            currentUser.uid
+        );
+
+
+        /*
+         * HOME
+         */
+
+        window.location.replace(
+            "../../home/"
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "ZEN2 ONBOARDING ERROR:",
+            error
+        );
+
+
+        showError(
+            3,
+            getFirebaseErrorMessage(
+                error
+            )
+        );
+
+
+        finishBtn.disabled =
+            false;
+
+        finishBtn.innerHTML =
+            `Finish <span>→</span>`;
+
+    }
+
+}
+
+
+/* ============================================================
+   STEP UI
+============================================================ */
+
+function showStep(
+    step
+) {
+
+    currentStep =
+        step;
+
+    updateStepUI();
+
+}
+
+
+/* ============================================================
+   UPDATE STEP UI
+============================================================ */
+
+function updateStepUI() {
+
+    step1.classList.remove(
+        "active"
+    );
+
+    step2.classList.remove(
+        "active"
+    );
+
+    step3.classList.remove(
+        "active"
+    );
+
+
+    if (currentStep === 1) {
+
+        step1.classList.add(
+            "active"
+        );
+
+    }
+
+
+    if (currentStep === 2) {
+
+        step2.classList.add(
+            "active"
+        );
+
+    }
+
+
+    if (currentStep === 3) {
+
+        step3.classList.add(
+            "active"
+        );
+
+    }
+
+
+    stepText.textContent =
+        `${currentStep} of 3`;
+
+
+    progressBar.style.width =
+        `${(
+            currentStep / 3
+        ) * 100}%`;
+
+}
+
+
+/* ============================================================
+   ERRORS
+============================================================ */
+
+function showError(
+    step,
+    message
+) {
+
+    clearAllErrors();
+
+
+    const errorElement =
+        document.getElementById(
+            `step${step}Error`
+        );
+
+
+    if (!errorElement) {
+        return;
+    }
+
+
+    errorElement.textContent =
+        message;
+
+
+    errorElement.classList.add(
+        "show"
+    );
+
+}
+
+
+function clearAllErrors() {
+
+    document
+        .querySelectorAll(
+            ".form-error"
+        )
+        .forEach(
+            (element) => {
+
+                element.textContent =
+                    "";
+
+                element.classList.remove(
+                    "show"
+                );
+
+            }
+        );
+
+}
+
+
+/* ============================================================
+   SORTING
+============================================================ */
+
+function sortByTaluk(
+    a,
+    b
+) {
+
+    return String(
+        a.crmTalukName || ""
+    ).localeCompare(
+        String(
+            b.crmTalukName || ""
+        )
+    );
+
+}
+
+
+function sortByGP(
+    a,
+    b
+) {
+
+    return String(
+        a.crmGPName || ""
+    ).localeCompare(
+        String(
+            b.crmGPName || ""
+        )
+    );
+
+}
+
+
+function sortByVillage(
+    a,
+    b
+) {
+
+    return String(
+        a.crmVillageName || ""
+    ).localeCompare(
+        String(
+            b.crmVillageName || ""
+        )
+    );
+
+}
+
+
+function sortBySchool(
+    a,
+    b
+) {
+
+    return getSchoolNameField(
+        a
+    ).localeCompare(
+        getSchoolNameField(
+            b
+        )
+    );
+
+}
+
+
+/* ============================================================
+   SCHOOL NAME
+============================================================ */
+
+function getSchoolNameField(
+    school
+) {
+
+    return (
+        school.crmSchoolName ||
+        school.schoolName ||
+        school.name ||
+        ""
+    );
+
+}
+
+
+/* ============================================================
+   FIREBASE ERROR
+============================================================ */
+
+function getFirebaseErrorMessage(
+    error
+) {
+
+    switch (error?.code) {
+
+        case "permission-denied":
+
+            return "You don't have permission to save your profile. Please contact Zenova.";
+
+        case "unavailable":
+
+            return "Firebase is temporarily unavailable. Please check your internet connection.";
+
+        case "failed-precondition":
+
+            return "Firebase needs additional configuration. Please contact Zenova.";
+
+        default:
+
+            return (
+                error?.message ||
+                "Unable to save your profile. Please try again."
+            );
+
+    }
+
+}
+
+</script>
+
+</body>
+
+</html>
