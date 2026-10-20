@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#111114"><title>Subject Details | Zenova Educations</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.css">
+<style>
+:root{--black:#111114;--text:#17151d;--muted:#777783;--light:#f7f7fa;--border:#e9e8ef;--white:#fff;--purple:#7650d6;--lav:#eee8ff;--lav2:#f7f3ff;--bottom:78px}
+*{box-sizing:border-box}html{background:var(--light);scroll-behavior:smooth}body{margin:0;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--light);color:var(--text);padding-bottom:calc(var(--bottom) + env(safe-area-inset-bottom));-webkit-font-smoothing:antialiased}
+.header{background:#111114;color:#fff;padding:18px 18px 23px;border-radius:0 0 26px 26px;position:relative;z-index:10}.header-wrap{width:100%;max-width:920px;margin:0 auto}.header-inner{display:flex;align-items:center;justify-content:space-between;gap:14px;min-height:46px}.brand{display:flex;align-items:center;gap:11px;min-width:0;flex:1}.brand-mark.small{width:46px;height:46px;flex:0 0 46px;border-radius:15px;background:#eee8ff;color:#6040b5;display:grid;place-items:center;font-size:24px;font-weight:900;box-shadow:0 8px 25px #7650d633}.brand-copy{min-width:0}.brand-name{font-size:16px;line-height:1.2;font-weight:900;letter-spacing:.1px;color:#fff;white-space:nowrap}.brand-sub{font-size:10px;line-height:1.3;color:#bdb8c8;margin-top:4px;letter-spacing:1.4px;text-transform:uppercase;white-space:nowrap}.profile{width:46px;height:46px;flex:0 0 46px;border:2px solid #a58be8;background:#292532;color:#fff;border-radius:50%;display:grid;place-items:center;overflow:hidden;padding:0;cursor:pointer}.profile img{width:100%;height:100%;object-fit:cover}.profile span{font-size:16px;font-weight:850}
+.page{width:min(100%,970px);margin:0 auto;padding:22px 18px 35px}.back-row{margin:0 0 17px}.back-button{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--border);background:#fff;color:#51466a;border-radius:12px;padding:10px 13px;font-size:13px;font-weight:800;cursor:pointer}.hero{background:#fff;border:1px solid var(--border);border-radius:23px;padding:23px;margin-bottom:28px;display:flex;align-items:center;justify-content:space-between;gap:18px;box-shadow:0 5px 20px #21163805}.eyebrow{display:block;color:#96939e;font-size:11px;font-weight:850;letter-spacing:1.8px;text-transform:uppercase;margin-bottom:8px}.hero h1{font-size:clamp(23px,4vw,32px);line-height:1.18;letter-spacing:-.7px;margin:0 0 9px;font-weight:900;overflow-wrap:anywhere}.hero p{margin:0;color:#777581;font-size:14px;line-height:1.65}.hero-count{flex:0 0 104px;min-height:104px;border-radius:20px;background:#f5f2fb;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#6040b5}.hero-count strong{font-size:29px;font-weight:900;line-height:1.2}.hero-count span{font-size:10px;letter-spacing:1.4px;font-weight:850;margin-top:7px;text-transform:uppercase}.section{margin:0 0 30px}.section-head{display:flex;align-items:end;justify-content:space-between;gap:12px;margin-bottom:15px}.section-head h2{font-size:24px;line-height:1.2;letter-spacing:-.4px;margin:0;font-weight:900}.section-head p{font-size:12px;color:var(--muted);margin:6px 0 0}.chapter-list{display:grid;gap:11px}.chapter-card{width:100%;display:flex;align-items:center;gap:13px;text-align:left;background:#fff;border:1px solid var(--border);border-radius:18px;padding:14px;cursor:pointer;color:inherit;box-shadow:0 4px 16px #21163804;transition:transform .15s,border-color .15s}.chapter-card:active{transform:scale(.99)}.chapter-number{width:54px;height:54px;flex:0 0 54px;border-radius:16px;background:var(--lav);color:#6040b5;display:grid;place-items:center;font-size:18px;font-weight:900}.chapter-copy{min-width:0;flex:1}.chapter-kicker{font-size:9px;color:#96919f;letter-spacing:1.5px;font-weight:850;text-transform:uppercase;margin-bottom:5px}.chapter-title{font-size:15px;line-height:1.35;font-weight:850;overflow-wrap:anywhere}.chapter-description{font-size:12px;line-height:1.45;color:#85818e;margin-top:5px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}.chapter-arrow{color:#7650d6;font-size:22px;flex:0 0 auto}.state-card{background:#fff;border:1px solid var(--border);border-radius:18px;padding:28px 20px;text-align:center;color:var(--muted)}.state-card h2{margin:0 0 7px;color:var(--text);font-size:18px}.state-card p{margin:0;font-size:13px;line-height:1.6}.state-icon{width:48px;height:48px;border-radius:15px;background:var(--lav);color:#7042c7;display:grid;place-items:center;margin:0 auto 13px;font-size:22px}.primary-button{margin-top:16px;background:#7042c7;color:white;border:0;border-radius:12px;padding:11px 16px;font-weight:850;cursor:pointer}.spinner{width:28px;height:28px;border:3px solid #e8e0fa;border-top-color:#7042c7;border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 12px}@keyframes spin{to{transform:rotate(360deg)}}.hidden{display:none!important}
+.bottom-nav{position:fixed;z-index:500;left:0;right:0;bottom:0;min-height:calc(62px + env(safe-area-inset-bottom));background:#fff;border-top:1px solid #e9e6ef;box-shadow:0 -6px 24px #21163808;padding:8px 12px calc(8px + env(safe-area-inset-bottom));display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px}.bottom-nav a{position:relative;text-decoration:none;color:#8b8795;border-radius:13px;min-height:54px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-size:10px;font-weight:800;padding:5px 2px}.bottom-nav a .nav-icon{font-size:21px;line-height:1}.bottom-nav a.active{background:#eee8ff;color:#6040b5}.bottom-nav a.active:before{content:"";position:absolute;top:4px;left:50%;transform:translateX(-50%);width:18px;height:3px;border-radius:5px;background:#7650d6}.bottom-nav a.active .nav-icon{color:#6040b5}
+@media(min-width:650px){.header{padding:18px 24px 23px}.header-wrap{max-width:920px}.page{padding:26px 25px 35px}.bottom-nav{left:50%;right:auto;transform:translateX(-50%);width:min(100%,520px);bottom:12px;border:1px solid #e9e6ef;border-radius:19px;padding:8px;box-shadow:0 12px 35px #18111f18}.bottom-nav a{min-height:48px}}
+@media(max-width:380px){.header{padding:18px 16px 23px}.brand{gap:9px}.brand-mark.small,.profile{width:46px;height:46px;flex-basis:46px}.brand-name{font-size:16px}.brand-sub{font-size:9px;letter-spacing:1px}.page{padding-left:12px;padding-right:12px}.hero{padding:18px;gap:10px}.hero-count{flex-basis:76px;min-height:82px;border-radius:15px}.hero-count strong{font-size:24px}.hero h1{font-size:22px}.chapter-card{padding:11px;gap:10px}.chapter-number{width:46px;height:46px;flex-basis:46px;border-radius:13px}.chapter-title{font-size:14px}}
+</style></head>
+<body>
+<header class="header" aria-label="Zenova Educations header"><div class="header-wrap"><div class="header-inner"><div class="brand"><div class="brand-mark small" aria-hidden="true">Z</div><div class="brand-copy"><div class="brand-name">Zenova Educations</div><div class="brand-sub">Learn · Practice · Achieve</div></div></div><button id="profileButton" class="profile" type="button" aria-label="Open student profile"><img id="profilePhoto" alt="Student profile" hidden><span id="profileInitial">S</span></button></div></div></header>
+<main class="page">
+<div class="back-row"><button id="backButton" class="back-button" type="button"><i class="ri-arrow-left-line"></i> Back to Revision</button></div>
+<section class="hero"><div><span class="eyebrow">SUBJECT DETAILS</span><h1 id="subjectTitle">Loading subject...</h1><p id="subjectDescription">Explore chapters and continue learning.</p></div><div class="hero-count"><strong id="chapterCount">—</strong><span>Chapters</span></div></section>
+<section class="section"><div class="section-head"><div><span class="eyebrow">YOUR LEARNING PATH</span><h2>Chapters</h2><p id="courseName">Loading your course...</p></div></div><div id="loadingState" class="state-card"><div class="spinner"></div><p>Loading chapters...</p></div><div id="chapterList" class="chapter-list hidden"></div><div id="emptyState" class="state-card hidden"><div class="state-icon"><i class="ri-book-open-line"></i></div><h2>No chapters available yet</h2><p>Chapters for this subject will appear here when they are added.</p></div><div id="errorState" class="state-card hidden"><div class="state-icon"><i class="ri-alert-line"></i></div><h2>Unable to load subject</h2><p id="errorMessage">Please try again.</p><button id="retryButton" class="primary-button" type="button">Try Again</button></div></section>
+</main>
+<nav class="bottom-nav" aria-label="Main navigation"><a href="../" data-nav="home"><i class="ri-home-5-line nav-icon"></i><span>Home</span></a><a href="../live/" data-nav="live"><i class="ri-live-line nav-icon"></i><span>Live</span></a><a href="../revision/" data-nav="revision" class="active" aria-current="page"><i class="ri-book-open-fill nav-icon"></i><span>Revision</span></a><a href="../profile/" data-nav="profile"><i class="ri-user-3-line nav-icon"></i><span>Profile</span></a></nav>
+<script type="module">
+import { auth, db } from "../../firebase/firebase-config.js";
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+import { collection, doc, getDoc, getDocs, query, where } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+const $ = id => document.getElementById(id);
+const params = new URLSearchParams(location.search);
+const subjectId = params.get("subjectId");
+let courseId = params.get("courseId") || "";
+let currentUser = null, student = null, subject = null, chapters = [];
+const routes = {home:"../",live:"../live/",revision:"../revision/",profile:"../profile/"};
+// All navigation links are normal anchors with explicit relative routes, so they work without JS too.
+document.querySelectorAll("[data-nav]").forEach(a => { a.href = new URL(routes[a.dataset.nav], location.href).href; });
+$("profileButton").addEventListener("click", () => location.assign(new URL(routes.profile, location.href).href));
+$("backButton").addEventListener("click", () => location.assign(new URL(routes.revision, location.href).href));
+$("retryButton").addEventListener("click", () => location.reload());
+if (!subjectId) showError("The subject ID is missing from the page URL. Open this subject from Revision and try again.");
+else onAuthStateChanged(auth, async user => {
+  if (!user) { location.replace(new URL("../../account/login/", location.href).href); return; }
+  currentUser = user;
+  try {
+    await loadStudent();
+    await loadSubject();
+    await loadCourse();
+    await loadChapters();
+    render();
+    $("loadingState").classList.add("hidden");
+    if (chapters.length) $("chapterList").classList.remove("hidden"); else $("emptyState").classList.remove("hidden");
+  } catch (e) { console.error("ZENOVA SUBJECT DETAILS:", e); showError(readableError(e)); }
+});
+async function loadStudent(){
+  const snap = await getDoc(doc(db,"zen2Students",currentUser.uid));
+  if (snap.exists()) student = snap.data();
+  const name = student?.name || student?.fullName || student?.studentName || currentUser.displayName || "Student";
+  $("profileInitial").textContent = (name.trim()[0] || "S").toUpperCase();
+  const photoUrl = student?.photoURL || student?.photoUrl || student?.profilePhotoUrl || currentUser.photoURL || "";
+  if(photoUrl){const img=$("profilePhoto");img.src=photoUrl;img.hidden=false;$("profileInitial").hidden=true;img.onerror=()=>{img.hidden=true;$("profileInitial").hidden=false;};}
+}
+async function loadSubject(){
+  const snap = await getDoc(doc(db,"zen2Subjects",subjectId));
+  if(!snap.exists()) throw new Error("This subject does not exist.");
+  subject={id:snap.id,...snap.data()};
+  if(!courseId) courseId=subject.courseId || "";
+  if(subject.active===false) throw new Error("This subject is currently unavailable.");
+}
+async function loadCourse(){
+  if(!courseId) return;
+  const snap=await getDoc(doc(db,"zen2Courses",courseId));
+  if(snap.exists()) $("courseName").textContent=snap.data().courseName || snap.data().name || snap.data().title || snap.data().batchName || "Your course";
+  else $("courseName").textContent="Your course";
+}
+async function loadChapters(){
+  const q=query(collection(db,"zen2Chapters"),where("subjectId","==",subjectId));
+  const snap=await getDocs(q);
+  chapters=snap.docs.map(d=>({id:d.id,...d.data()})).filter(ch=>ch.active!==false).sort((a,b)=>Number(a.order ?? a.chapterNumber ?? 999999)-Number(b.order ?? b.chapterNumber ?? 999999));
+}
+function render(){
+  const name=subject.subjectName || subject.name || subject.title || subject.displayName || "Subject";
+  $("subjectTitle").textContent=name;
+  $("subjectDescription").textContent=subject.description || subject.subjectDescription || "Explore the chapters, recorded classes and study materials for this subject.";
+  $("chapterCount").textContent=chapters.length;
+  $("chapterList").innerHTML=chapters.map((ch,i)=>{
+    const title=ch.chapterName || ch.title || ch.name || `Chapter ${i+1}`;
+    const number=ch.chapterNumber ?? ch.number ?? (i+1);
+    const desc=ch.description || ch.chapterDescription || "Open chapter videos and study material.";
+    return `<button type="button" class="chapter-card" data-chapter-id="${esc(ch.id)}"><span class="chapter-number">${esc(String(number))}</span><span class="chapter-copy"><span class="chapter-kicker">CHAPTER ${esc(String(number))}</span><span class="chapter-title">${esc(title)}</span><span class="chapter-description">${esc(desc)}</span></span><i class="ri-arrow-right-s-line chapter-arrow" aria-hidden="true"></i></button>`;
+  }).join("");
+  $("chapterList").querySelectorAll("[data-chapter-id]").forEach(card=>card.addEventListener("click",()=>{
+    const url=new URL("../chapterdetails/",location.href);
+    url.searchParams.set("chapterId",card.dataset.chapterId);
+    url.searchParams.set("subjectId",subjectId);
+    if(courseId) url.searchParams.set("courseId",courseId);
+    location.assign(url.href);
+  }));
+}
+function showError(message){$("loadingState").classList.add("hidden");$("chapterList").classList.add("hidden");$("emptyState").classList.add("hidden");$("errorMessage").textContent=message;$("errorState").classList.remove("hidden");}
+function readableError(e){if(e?.code==="permission-denied" || String(e?.message||"").toLowerCase().includes("insufficient permissions")) return "Firebase denied access to this subject or its chapters. Check the existing Firestore rules for zen2Subjects and zen2Chapters.";return e?.message || "Please check your connection and try again.";}
+function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;", "'":"&#39;"}[c]));}
+</script>
+</body></html>
