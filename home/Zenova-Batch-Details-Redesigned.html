@@ -1,0 +1,1940 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Batch Details - ZENOVA</title>
+
+
+
+<style>
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+
+body {
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    background: #f6f6f6;
+
+    color: #111;
+
+}
+
+
+button {
+
+    font-family: inherit;
+
+    cursor: pointer;
+
+}
+
+
+.hidden {
+
+    display: none !important;
+
+}
+
+
+
+/* =========================================
+   LOADING
+========================================= */
+
+.loading {
+
+    min-height: 100vh;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    background: #fff;
+
+}
+
+
+.loading-logo {
+
+    font-size: 28px;
+
+    font-weight: 900;
+
+    letter-spacing: 4px;
+
+}
+
+
+.loading p {
+
+    margin-top: 10px;
+
+    color: #888;
+
+    font-size: 13px;
+
+}
+
+
+
+/* =========================================
+   APP
+========================================= */
+
+.app {
+
+    min-height: 100vh;
+
+}
+
+
+
+/* =========================================
+   TOP BAR
+========================================= */
+
+.topbar {
+
+    position: sticky;
+
+    top: 0;
+
+    z-index: 20;
+
+    height: 64px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 15px;
+
+    padding: 0 24px;
+
+    background: #111;
+
+    color: #fff;
+
+}
+
+
+.back-button {
+
+    width: 38px;
+
+    height: 38px;
+
+    border: 1px solid
+        rgba(255,255,255,.2);
+
+    border-radius: 50%;
+
+    background: transparent;
+
+    color: #fff;
+
+    font-size: 21px;
+
+}
+
+
+.topbar-title {
+
+    font-size: 15px;
+
+    font-weight: 700;
+
+}
+
+
+
+/* =========================================
+   HERO
+========================================= */
+
+.batch-hero {
+
+    max-width: 1100px;
+
+    margin: 30px auto;
+
+    padding: 0 20px;
+
+    display: grid;
+
+    grid-template-columns:
+        1.1fr
+        1fr;
+
+    gap: 35px;
+
+    align-items: center;
+
+}
+
+
+.hero-image-wrapper {
+
+    width: 100%;
+
+    aspect-ratio: 16 / 9;
+
+    overflow: hidden;
+
+    border-radius: 18px;
+
+    background: #eaeaea;
+
+}
+
+
+.hero-image {
+
+    width: 100%;
+
+    height: 100%;
+
+    object-fit: cover;
+
+}
+
+
+.hero-content {
+
+    padding: 10px 0;
+
+}
+
+
+.batch-tag {
+
+    display: inline-block;
+
+    padding: 6px 10px;
+
+    margin-bottom: 13px;
+
+    border-radius: 20px;
+
+    background: #111;
+
+    color: #fff;
+
+    font-size: 10px;
+
+    font-weight: 800;
+
+    letter-spacing: 1px;
+
+}
+
+
+.hero-content h1 {
+
+    font-size: 36px;
+
+    line-height: 1.12;
+
+    margin-bottom: 14px;
+
+}
+
+
+.short-description {
+
+    color: #666;
+
+    line-height: 1.7;
+
+    font-size: 15px;
+
+}
+
+
+.price {
+
+    margin-top: 22px;
+
+    font-size: 25px;
+
+    font-weight: 900;
+
+}
+
+
+.buy-button {
+
+    width: 100%;
+
+    height: 52px;
+
+    margin-top: 20px;
+
+    border: 0;
+
+    border-radius: 10px;
+
+    background: #111;
+
+    color: #fff;
+
+    font-size: 13px;
+
+    font-weight: 800;
+
+    letter-spacing: .7px;
+
+}
+
+
+.buy-button:hover {
+
+    opacity: .88;
+
+}
+
+
+
+/* =========================================
+   SECTIONS
+========================================= */
+
+.section {
+
+    max-width: 1100px;
+
+    margin: 0 auto;
+
+    padding: 25px 20px;
+
+}
+
+
+.section h2 {
+
+    font-size: 21px;
+
+    margin-bottom: 16px;
+
+}
+
+
+.section-heading {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+}
+
+
+.section-heading p {
+
+    color: #888;
+
+    font-size: 12px;
+
+}
+
+
+
+/* =========================================
+   DESCRIPTION
+========================================= */
+
+.description {
+
+    padding: 22px;
+
+    background: #fff;
+
+    border: 1px solid #e6e6e6;
+
+    border-radius: 14px;
+
+    color: #555;
+
+    line-height: 1.8;
+
+    font-size: 14px;
+
+    white-space: pre-line;
+
+}
+
+
+
+/* =========================================
+   DETAILS
+========================================= */
+
+.details-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    gap: 12px;
+
+}
+
+
+.detail-card {
+
+    background: #fff;
+
+    border: 1px solid #e6e6e6;
+
+    border-radius: 12px;
+
+    padding: 18px;
+
+}
+
+
+.detail-label {
+
+    color: #999;
+
+    font-size: 10px;
+
+    font-weight: 700;
+
+    letter-spacing: 1px;
+
+    text-transform: uppercase;
+
+}
+
+
+.detail-value {
+
+    margin-top: 7px;
+
+    font-size: 14px;
+
+    font-weight: 700;
+
+}
+
+
+
+/* =========================================
+   FEATURES
+========================================= */
+
+.features-list {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, 1fr);
+
+    gap: 10px;
+
+}
+
+
+.feature {
+
+    padding: 15px;
+
+    background: #fff;
+
+    border: 1px solid #e6e6e6;
+
+    border-radius: 10px;
+
+    font-size: 13px;
+
+}
+
+
+.feature::before {
+
+    content: "✓";
+
+    margin-right: 9px;
+
+    font-weight: 900;
+
+}
+
+
+
+/* =========================================
+   SUBJECTS
+========================================= */
+
+.subjects-list {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, 1fr);
+
+    gap: 10px;
+
+}
+
+
+.subject-card {
+
+    background: #fff;
+
+    border: 1px solid #e6e6e6;
+
+    border-radius: 12px;
+
+    padding: 17px;
+
+    font-size: 14px;
+
+    font-weight: 700;
+
+}
+
+
+
+/* =========================================
+   BOTTOM BUY
+========================================= */
+
+.bottom-buy {
+
+    position: sticky;
+
+    bottom: 0;
+
+    z-index: 15;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 20px;
+
+    padding: 16px 25px;
+
+    background: #fff;
+
+    border-top: 1px solid #ddd;
+
+}
+
+
+.bottom-buy div {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 5px;
+
+}
+
+
+.bottom-buy span {
+
+    color: #888;
+
+    font-size: 11px;
+
+}
+
+
+.bottom-buy strong {
+
+    font-size: 14px;
+
+}
+
+
+.bottom-buy button {
+
+    min-width: 150px;
+
+    height: 46px;
+
+    padding: 0 20px;
+
+    border: 0;
+
+    border-radius: 9px;
+
+    background: #111;
+
+    color: #fff;
+
+    font-size: 12px;
+
+    font-weight: 800;
+
+}
+
+
+
+/* =========================================
+   ERROR
+========================================= */
+
+.error-screen {
+
+    min-height: 100vh;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 30px;
+
+    text-align: center;
+
+}
+
+
+.error-logo {
+
+    font-size: 25px;
+
+    font-weight: 900;
+
+    letter-spacing: 3px;
+
+}
+
+
+.error-screen h2 {
+
+    margin-top: 20px;
+
+}
+
+
+.error-screen p {
+
+    margin-top: 8px;
+
+    color: #777;
+
+    font-size: 13px;
+
+}
+
+
+.error-screen button {
+
+    margin-top: 20px;
+
+    height: 44px;
+
+    padding: 0 20px;
+
+    border: 0;
+
+    border-radius: 8px;
+
+    background: #111;
+
+    color: #fff;
+
+    font-weight: 700;
+
+}
+
+
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 750px) {
+
+    .batch-hero {
+
+        grid-template-columns: 1fr;
+
+        margin-top: 20px;
+
+        gap: 20px;
+
+    }
+
+
+    .hero-content h1 {
+
+        font-size: 28px;
+
+    }
+
+
+    .details-grid {
+
+        grid-template-columns:
+            repeat(2, 1fr);
+
+    }
+
+
+    .features-list,
+    .subjects-list {
+
+        grid-template-columns: 1fr;
+
+    }
+
+
+    .bottom-buy {
+
+        padding: 13px 16px;
+
+    }
+
+
+    .bottom-buy button {
+
+        min-width: 120px;
+
+    }
+
+}
+
+
+@media (max-width: 450px) {
+
+    .details-grid {
+
+        grid-template-columns: 1fr;
+
+    }
+
+
+    .bottom-buy strong {
+
+        max-width: 160px;
+
+        overflow: hidden;
+
+        text-overflow: ellipsis;
+
+        white-space: nowrap;
+
+    }
+
+}
+
+
+/* Zenova shared header, navigation and responsive batch-detail refresh */
+:root{--z-black:#111114;--z-purple:#7650D6;--z-lavender:#EEE8FF;--z-muted:#777783;--z-border:#E9E8EF;--z-bg:#F7F7FA}
+body{background:var(--z-bg);color:var(--z-black);padding-bottom:92px}
+.app{max-width:900px;margin:0 auto;min-height:100vh;padding-bottom:24px}
+.zenova-header{height:82px;background:#111114;color:#fff;display:flex;align-items:center;gap:12px;padding:14px 20px;border-radius:0 0 18px 18px;box-shadow:0 5px 18px #11111412}
+.zenova-mark{width:48px;height:48px;flex:0 0 48px;display:grid;place-items:center;background:#EEE8FF;color:#6040B5;border-radius:12px;font-weight:900;font-size:29px}
+.zenova-brand{display:flex;flex-direction:column;gap:4px;min-width:0}.zenova-brand strong{font-size:18px;letter-spacing:-.3px}.zenova-brand span{font-size:9px;letter-spacing:1.5px;color:#d6d1e5}
+.profile-shortcut{margin-left:auto;border:1px solid #777;color:white;background:transparent;width:42px;height:42px;border-radius:50%;display:grid;place-items:center}.profile-shortcut span{font-size:18px}
+.page-back-row{display:flex;align-items:center;gap:12px;padding:18px 20px 8px;font-size:15px;font-weight:650}.back-button{border:0!important;background:transparent!important;color:#25222e!important;font-size:28px!important;padding:0 4px!important;box-shadow:none!important}
+.batch-hero,.section{margin:14px 16px!important;border:1px solid var(--z-border);border-radius:20px!important;background:#fff;box-shadow:0 5px 18px #26203a06;overflow:hidden}.batch-hero{display:grid;grid-template-columns:minmax(180px,34%) 1fr;gap:0}.hero-image-wrapper{min-height:220px;background:#EEE8FF;display:flex;align-items:center;justify-content:center}.hero-image{width:100%;height:100%;min-height:220px;object-fit:cover}.hero-content{padding:24px;display:flex;flex-direction:column;align-items:flex-start;gap:12px}.hero-content h1{font-size:clamp(23px,3vw,32px);line-height:1.2}.short-description,.description{color:#666675;line-height:1.7}.price{color:#6040B5;font-size:26px;font-weight:800}.buy-button,.bottom-buy button,#errorBack{border:0!important;background:#7650D6!important;color:#fff!important;border-radius:12px!important;padding:14px 22px!important;font-weight:750!important;box-shadow:none!important}.buy-button{width:100%;margin-top:4px}.section{padding:22px}.section h2{font-size:20px;margin-bottom:14px}.details-grid{gap:12px!important}.details-grid>*{border-radius:14px!important;background:#F8F6FF!important;border:1px solid #EEE8FF!important;padding:14px!important}.features-list,.subjects-list{gap:10px!important}.features-list>* ,.subjects-list>*{border:1px solid var(--z-border)!important;border-radius:14px!important;padding:14px!important;background:#fff!important}.bottom-buy{position:static!important;margin:14px 16px!important;border:1px solid var(--z-border);border-radius:16px;background:#fff;padding:16px!important;box-shadow:0 5px 18px #26203a08;display:flex;align-items:center;justify-content:space-between;gap:14px}.bottom-buy span{display:block;color:var(--z-muted);font-size:12px;margin-bottom:4px}.bottom-buy strong{display:block;font-size:14px}.bottom-buy button{white-space:nowrap}.bottom-navigation{position:fixed;z-index:1000;bottom:0;left:50%;transform:translateX(-50%);width:min(100%,900px);min-height:76px;padding:8px 10px calc(8px + env(safe-area-inset-bottom));display:grid;grid-template-columns:repeat(4,1fr);background:#fff;border:1px solid var(--z-border);border-bottom:0;border-radius:20px 20px 0 0;box-shadow:0 -6px 24px #1713230d}.nav-item{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;text-decoration:none;color:#777783;font-size:11px;font-weight:600;border-radius:13px;min-height:54px}.nav-icon{font-size:24px;line-height:1.1}.nav-item.active{background:#EEE8FF;color:#6040B5}.error-screen{max-width:600px;margin:15vh auto;padding:28px;text-align:center;background:#fff;border-radius:20px;border:1px solid var(--z-border)}.error-logo{font-weight:900;color:#6040B5;margin-bottom:20px}
+@media(max-width:620px){.app{width:100%}.zenova-header{height:76px;padding:12px 16px;border-radius:0 0 16px 16px}.zenova-mark{width:44px;height:44px;flex-basis:44px}.zenova-brand strong{font-size:16px}.zenova-brand span{font-size:8px;letter-spacing:1px}.batch-hero{grid-template-columns:1fr}.hero-image-wrapper,.hero-image{min-height:170px;max-height:220px}.hero-content{padding:20px}.section{padding:18px;margin:12px!important}.bottom-buy{margin:12px!important}.bottom-buy button{padding:12px 14px!important}.details-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
+
+</style>
+</head>
+
+
+<body>
+
+
+    <!-- LOADING -->
+
+    <div
+        id="loading"
+        class="loading"
+    >
+
+        <div class="loading-logo">
+            ZENOVA
+        </div>
+
+        <p>
+            Loading batch...
+        </p>
+
+    </div>
+
+
+
+    <!-- APP -->
+
+    <main
+        id="app"
+        class="app hidden"
+    >
+
+
+        <!-- TOP BAR -->
+
+        <header class="zenova-header">
+          <div class="zenova-mark">Z</div>
+          <div class="zenova-brand"><strong>Zenova Educations</strong><span>LEARN · PRACTICE · ACHIEVE</span></div>
+          <button class="profile-shortcut" type="button" aria-label="Open profile" onclick="window.location.href='../profile/'"><span>U</span></button>
+        </header>
+        <div class="page-back-row"><button id="backButton" class="back-button" type="button" aria-label="Go back">←</button><span>Batch Details</span></div>
+
+
+
+        <!-- BATCH HERO -->
+
+        <section class="batch-hero">
+
+
+            <div class="hero-image-wrapper">
+
+                <img
+                    id="batchImage"
+                    class="hero-image"
+                    src=""
+                    alt="Batch"
+                >
+
+            </div>
+
+
+            <div class="hero-content">
+
+                <div
+                    id="batchTag"
+                    class="batch-tag hidden"
+                >
+                </div>
+
+
+                <h1 id="batchName">
+                    -
+                </h1>
+
+
+                <p
+                    id="batchShortDescription"
+                    class="short-description"
+                >
+                </p>
+
+
+                <div
+                    id="batchPrice"
+                    class="price"
+                >
+                </div>
+
+
+                <button
+                    id="buyButton"
+                    class="buy-button"
+                    type="button"
+                >
+                    BUY NOW
+                </button>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- DESCRIPTION -->
+
+        <section class="section">
+
+
+            <h2>
+                About This Batch
+            </h2>
+
+
+            <div
+                id="batchDescription"
+                class="description"
+            >
+                Loading...
+            </div>
+
+        </section>
+
+
+
+        <!-- DETAILS -->
+
+        <section class="section">
+
+
+            <h2>
+                Batch Details
+            </h2>
+
+
+            <div
+                id="detailsGrid"
+                class="details-grid"
+            >
+            </div>
+
+        </section>
+
+
+
+        <!-- FEATURES -->
+
+        <section
+            id="featuresSection"
+            class="section hidden"
+        >
+
+            <h2>
+                What You Get
+            </h2>
+
+
+            <div
+                id="featuresList"
+                class="features-list"
+            >
+            </div>
+
+        </section>
+
+
+
+        <!-- SUBJECTS -->
+
+        <section
+            id="subjectsSection"
+            class="section hidden"
+        >
+
+            <div class="section-heading">
+
+                <div>
+
+                    <h2>
+                        Subjects
+                    </h2>
+
+                    <p>
+                        Subjects included in this batch
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div
+                id="subjectsList"
+                class="subjects-list"
+            >
+            </div>
+
+        </section>
+
+
+
+        <!-- BOTTOM BUY -->
+
+        <section class="bottom-buy">
+
+            <div>
+
+                <span>
+                    Ready to start learning?
+                </span>
+
+                <strong id="bottomBatchName">
+                    -
+                </strong>
+
+            </div>
+
+
+            <button
+                id="bottomBuyButton"
+                type="button"
+            >
+                BUY NOW
+            </button>
+
+        </section>
+
+
+
+      <nav class="bottom-navigation" aria-label="Main navigation">
+        <a class="nav-item active" href="../index.html" aria-current="page"><span class="nav-icon">⌂</span><span>Home</span></a>
+        <a class="nav-item" href="../live/"><span class="nav-icon">◉</span><span>Live</span></a>
+        <a class="nav-item" href="../revision/"><span class="nav-icon">▤</span><span>Revision</span></a>
+        <a class="nav-item" href="../profile/"><span class="nav-icon">♙</span><span>Profile</span></a>
+      </nav>
+    </main>
+
+
+    <div
+        id="error"
+        class="error-screen hidden"
+    >
+
+        <div class="error-logo">
+            ZENOVA
+        </div>
+
+        <h2>
+            Batch not found
+        </h2>
+
+        <p id="errorMessage">
+            This batch could not be loaded.
+        </p>
+
+        <button
+            id="errorBack"
+            type="button"
+        >
+            GO BACK
+        </button>
+
+    </div>
+
+
+
+    <script type="module">
+import {
+    auth,
+    db
+} from "../../firebase/firebase-config.js";
+
+
+import {
+    onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+
+
+import {
+    doc,
+    getDoc,
+    collection,
+    query,
+    where,
+    getDocs
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
+
+
+/* =========================================
+   ELEMENTS
+========================================= */
+
+const loading =
+    document.getElementById(
+        "loading"
+    );
+
+
+const app =
+    document.getElementById(
+        "app"
+    );
+
+
+const errorScreen =
+    document.getElementById(
+        "error"
+    );
+
+
+const errorMessage =
+    document.getElementById(
+        "errorMessage"
+    );
+
+
+const backButton =
+    document.getElementById(
+        "backButton"
+    );
+
+
+const errorBack =
+    document.getElementById(
+        "errorBack"
+    );
+
+
+const batchImage =
+    document.getElementById(
+        "batchImage"
+    );
+
+
+const batchName =
+    document.getElementById(
+        "batchName"
+    );
+
+
+const batchTag =
+    document.getElementById(
+        "batchTag"
+    );
+
+
+const batchShortDescription =
+    document.getElementById(
+        "batchShortDescription"
+    );
+
+
+const batchPrice =
+    document.getElementById(
+        "batchPrice"
+    );
+
+
+const batchDescription =
+    document.getElementById(
+        "batchDescription"
+    );
+
+
+const detailsGrid =
+    document.getElementById(
+        "detailsGrid"
+    );
+
+
+const featuresSection =
+    document.getElementById(
+        "featuresSection"
+    );
+
+
+const featuresList =
+    document.getElementById(
+        "featuresList"
+    );
+
+
+const subjectsSection =
+    document.getElementById(
+        "subjectsSection"
+    );
+
+
+const subjectsList =
+    document.getElementById(
+        "subjectsList"
+    );
+
+
+const bottomBatchName =
+    document.getElementById(
+        "bottomBatchName"
+    );
+
+
+const buyButton =
+    document.getElementById(
+        "buyButton"
+    );
+
+
+const bottomBuyButton =
+    document.getElementById(
+        "bottomBuyButton"
+    );
+
+
+
+/* =========================================
+   COURSE ID
+========================================= */
+
+const params =
+    new URLSearchParams(
+        window.location.search
+    );
+
+
+const courseId =
+    params.get(
+        "courseId"
+    );
+
+
+
+/* =========================================
+   AUTH
+========================================= */
+
+onAuthStateChanged(
+    auth,
+    async user => {
+
+        if (!user) {
+
+            window.location.replace(
+                "../../account/login/"
+            );
+
+            return;
+
+        }
+
+
+        if (!courseId) {
+
+            showError(
+                "No batch was selected."
+            );
+
+            return;
+
+        }
+
+
+        await loadBatch();
+
+    }
+);
+
+
+
+/* =========================================
+   LOAD BATCH
+========================================= */
+
+async function loadBatch() {
+
+    try {
+
+        const batchRef =
+            doc(
+                db,
+                "zen2Courses",
+                courseId
+            );
+
+
+        const snapshot =
+            await getDoc(
+                batchRef
+            );
+
+
+        if (!snapshot.exists()) {
+
+            showError(
+                "This batch does not exist."
+            );
+
+            return;
+
+        }
+
+
+        const batch =
+            snapshot.data();
+
+
+        renderBatch(
+            batch
+        );
+
+
+        await loadSubjects();
+
+
+        showApp();
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Batch details error:",
+            error
+        );
+
+
+        showError(
+            "Unable to load this batch."
+        );
+
+    }
+
+}
+
+
+
+/* =========================================
+   RENDER BATCH
+========================================= */
+
+function renderBatch(
+    batch
+) {
+
+    const name =
+        batch.name ||
+        batch.title ||
+        batch.courseName ||
+        batch.batchName ||
+        "Zenova Batch";
+
+
+    const image =
+        batch.thumbnailUrl ||
+        batch.imageUrl ||
+        batch.thumbnail ||
+        batch.bannerUrl ||
+        "";
+
+
+    const shortDescription =
+        batch.shortDescription ||
+        batch.tagline ||
+        "";
+
+
+    const description =
+        batch.description ||
+        batch.fullDescription ||
+        batch.details ||
+        "Batch information will be available soon.";
+
+
+    const price =
+        batch.price ??
+        batch.fee ??
+        batch.courseFee ??
+        null;
+
+
+    const tag =
+        batch.tag ||
+        batch.mode ||
+        batch.medium ||
+        "";
+
+
+
+    /* IMAGE */
+
+    if (image) {
+
+        batchImage.src =
+            image;
+
+    }
+
+    else {
+
+        batchImage.style.display =
+            "none";
+
+    }
+
+
+
+    /* NAME */
+
+    batchName.textContent =
+        name;
+
+
+    bottomBatchName.textContent =
+        name;
+
+
+
+    /* SHORT DESCRIPTION */
+
+    batchShortDescription.textContent =
+        shortDescription;
+
+
+
+    /* DESCRIPTION */
+
+    batchDescription.textContent =
+        description;
+
+
+
+    /* PRICE */
+
+    if (
+        price !== null &&
+        price !== undefined &&
+        price !== ""
+    ) {
+
+        const numericPrice =
+            Number(
+                price
+            );
+
+
+        batchPrice.textContent =
+            Number.isFinite(
+                numericPrice
+            )
+                ? `₹${numericPrice.toLocaleString("en-IN")}`
+                : `₹${price}`;
+
+    }
+
+    else {
+
+        batchPrice.textContent =
+            "";
+
+    }
+
+
+
+    /* TAG */
+
+    if (tag) {
+
+        batchTag.textContent =
+            tag;
+
+        batchTag.classList.remove(
+            "hidden"
+        );
+
+    }
+
+
+
+    /* DETAILS */
+
+    renderDetails(
+        batch
+    );
+
+
+
+    /* FEATURES */
+
+    renderFeatures(
+        batch
+    );
+
+}
+
+
+
+/* =========================================
+   DETAILS
+========================================= */
+
+function renderDetails(
+    batch
+) {
+
+    const details = [];
+
+
+    addDetail(
+        details,
+        "Class",
+        batch.className ||
+        batch.class ||
+        batch.standard
+    );
+
+
+    addDetail(
+        details,
+        "Medium",
+        batch.medium ||
+        batch.language
+    );
+
+
+    addDetail(
+        details,
+        "Mode",
+        batch.mode ||
+        batch.batchMode
+    );
+
+
+    addDetail(
+        details,
+        "Duration",
+        batch.duration ||
+        batch.courseDuration
+    );
+
+
+    addDetail(
+        details,
+        "Faculty",
+        batch.faculty ||
+        batch.facultyName
+    );
+
+
+    addDetail(
+        details,
+        "Validity",
+        batch.validity ||
+        batch.accessValidity
+    );
+
+
+    detailsGrid.innerHTML =
+        details
+            .map(
+                item => `
+
+                    <div
+                        class="detail-card"
+                    >
+
+                        <div
+                            class="detail-label"
+                        >
+                            ${escapeHtml(
+                                item.label
+                            )}
+                        </div>
+
+                        <div
+                            class="detail-value"
+                        >
+                            ${escapeHtml(
+                                item.value
+                            )}
+                        </div>
+
+                    </div>
+
+                `
+            )
+            .join("");
+
+
+}
+
+
+
+/* =========================================
+   ADD DETAIL
+========================================= */
+
+function addDetail(
+    array,
+    label,
+    value
+) {
+
+    if (
+        value === undefined ||
+        value === null ||
+        String(value).trim() === ""
+    ) {
+
+        return;
+
+    }
+
+
+    array.push({
+
+        label,
+
+        value:
+            String(
+                value
+            )
+
+    });
+
+}
+
+
+
+/* =========================================
+   FEATURES
+========================================= */
+
+function renderFeatures(
+    batch
+) {
+
+    let features =
+        batch.features ||
+        batch.benefits ||
+        batch.inclusions ||
+        [];
+
+
+    if (
+        typeof features ===
+        "string"
+    ) {
+
+        features =
+            features
+                .split("\n")
+                .map(
+                    item =>
+                        item.trim()
+                )
+                .filter(Boolean);
+
+    }
+
+
+    if (
+        !Array.isArray(
+            features
+        ) ||
+        !features.length
+    ) {
+
+        featuresSection.classList.add(
+            "hidden"
+        );
+
+        return;
+
+    }
+
+
+    featuresSection.classList.remove(
+        "hidden"
+    );
+
+
+    featuresList.innerHTML =
+        features
+            .map(
+                feature => `
+
+                    <div
+                        class="feature"
+                    >
+                        ${escapeHtml(
+                            typeof feature === "string"
+                                ? feature
+                                : feature.name ||
+                                  feature.title ||
+                                  ""
+                        )}
+                    </div>
+
+                `
+            )
+            .join("");
+
+}
+
+
+
+/* =========================================
+   SUBJECTS
+========================================= */
+
+async function loadSubjects() {
+
+    try {
+
+        const q =
+            query(
+                collection(
+                    db,
+                    "zen2Subjects"
+                ),
+
+                where(
+                    "courseId",
+                    "==",
+                    courseId
+                )
+            );
+
+
+        const snapshot =
+            await getDocs(
+                q
+            );
+
+
+        if (
+            snapshot.empty
+        ) {
+
+            subjectsSection.classList.add(
+                "hidden"
+            );
+
+            return;
+
+        }
+
+
+        subjectsSection.classList.remove(
+            "hidden"
+        );
+
+
+        subjectsList.innerHTML =
+            snapshot.docs
+                .map(
+                    item => {
+
+                        const data =
+                            item.data();
+
+
+                        const name =
+                            data.name ||
+                            data.title ||
+                            data.subjectName ||
+                            data.subject ||
+                            "Subject";
+
+
+                        return `
+
+                            <div
+                                class="subject-card"
+                            >
+
+                                ${escapeHtml(
+                                    name
+                                )}
+
+                            </div>
+
+                        `;
+
+                    }
+                )
+                .join("");
+
+    }
+
+    catch (error) {
+
+        console.warn(
+            "Unable to load subjects:",
+            error
+        );
+
+
+        subjectsSection.classList.add(
+            "hidden"
+        );
+
+    }
+
+}
+
+
+
+/* =========================================
+   BUY NOW
+========================================= */
+
+function openPurchase() {
+
+    /*
+     * Purchase page will be connected
+     * separately to the ZEN2 enrollment
+     * system.
+     */
+
+    window.location.href =
+        `../checkout/?courseId=${
+            encodeURIComponent(
+                courseId
+            )
+        }`;
+
+}
+
+
+buyButton.addEventListener(
+    "click",
+    openPurchase
+);
+
+
+bottomBuyButton.addEventListener(
+    "click",
+    openPurchase
+);
+
+
+
+/* =========================================
+   BACK
+========================================= */
+
+backButton.addEventListener(
+    "click",
+    () => {
+
+        if (
+            window.history.length > 1
+        ) {
+
+            window.history.back();
+
+            return;
+
+        }
+
+
+        window.location.href =
+            "../";
+
+    }
+);
+
+
+errorBack.addEventListener(
+    "click",
+    () => {
+
+        window.history.back();
+
+    }
+);
+
+
+
+/* =========================================
+   SHOW APP
+========================================= */
+
+function showApp() {
+
+    loading.classList.add(
+        "hidden"
+    );
+
+
+    app.classList.remove(
+        "hidden"
+    );
+
+}
+
+
+
+/* =========================================
+   ERROR
+========================================= */
+
+function showError(
+    text
+) {
+
+    loading.classList.add(
+        "hidden"
+    );
+
+
+    app.classList.add(
+        "hidden"
+    );
+
+
+    errorMessage.textContent =
+        text;
+
+
+    errorScreen.classList.remove(
+        "hidden"
+    );
+
+}
+
+
+
+/* =========================================
+   ESCAPE HTML
+========================================= */
+
+function escapeHtml(
+    value
+) {
+
+    return String(
+        value ?? ""
+    )
+
+        .replaceAll(
+            "&",
+            "&amp;"
+        )
+
+        .replaceAll(
+            "<",
+            "&lt;"
+        )
+
+        .replaceAll(
+            ">",
+            "&gt;"
+        )
+
+        .replaceAll(
+            '"',
+            "&quot;"
+        )
+
+        .replaceAll(
+            "'",
+            "&#039;"
+        );
+
+}
+
+    </script>
+
+
+</body>
+
+</html>
