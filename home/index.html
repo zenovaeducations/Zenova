@@ -207,6 +207,57 @@ async function loadCourses() {
     $("myBatchesList").innerHTML = `<div class="empty"><i class="ri-book-open-line"></i>No active course is available for your class right now.</div>`;
   }
 }
+  async function loadCourseData() {
+  const course = state.selectedCourse;
+
+  if (!course) return;
+
+  const ss = await getDocs(
+    query(
+      collection(db, "zen2Subjects"),
+      where("courseId", "==", course.id)
+    )
+  );
+
+  state.subjects = ss.docs
+    .map(d => ({ id: d.id, ...d.data() }))
+    .filter(x => x.active !== false)
+    .sort(sortOrder);
+
+  const chapterResults = await Promise.all(
+    state.subjects.map(s =>
+      getDocs(
+        query(
+          collection(db, "zen2Chapters"),
+          where("courseId", "==", course.id),
+          where("subjectId", "==", s.id)
+        )
+      )
+    )
+  );
+
+  state.chapters = chapterResults
+    .flatMap(snap => snap.docs.map(d => ({ id: d.id, ...d.data() })))
+    .filter(x => x.active !== false)
+    .sort(sortOrder);
+
+  const contentResults = await Promise.all(
+    state.chapters.map(ch =>
+      getDocs(
+        query(
+          collection(db, "zen2Content"),
+          where("courseId", "==", course.id),
+          where("chapterId", "==", ch.id)
+        )
+      )
+    )
+  );
+
+  state.contents = contentResults
+    .flatMap(snap => snap.docs.map(d => ({ id: d.id, ...d.data() })))
+    .filter(x => x.active !== false)
+    .sort(sortOrder);
+  }
   async function loadBanners() {
   try {
     const snap = await getDocs(
