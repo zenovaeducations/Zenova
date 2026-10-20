@@ -1365,16 +1365,11 @@ button {
     }
 
 }
-/* Match the Zenova Home page header */
-.topbar,
-header.topbar {
-  display: none !important;
-}
-
+/* Zenova header — match Home page dimensions */
 .header {
   background: #111114;
   color: #fff;
-  padding: 18px 18px 23px;
+  padding: 18px 28px;
   border-radius: 0 0 26px 26px;
 }
 
@@ -1382,63 +1377,89 @@ header.topbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 14px;
+  gap: 12px;
+  min-height: 64px;
 }
 
 .brand {
   display: flex;
   align-items: center;
-  gap: 11px;
+  gap: 12px;
   min-width: 0;
+  flex: 1;
 }
 
 .brand-mark.small {
-  width: 46px;
-  height: 46px;
-  flex-shrink: 0;
-  border-radius: 15px;
+  width: 64px;
+  height: 64px;
+  flex: 0 0 64px;
+  border-radius: 20px;
   background: #eee8ff;
-  color: #5e36bd;
+  color: #6040b5;
   display: grid;
   place-items: center;
-  font-size: 24px;
+  font-size: 34px;
   font-weight: 900;
 }
 
 .brand-name {
   color: #fff;
-  font-size: 19px;
+  font-size: 20px;
+  line-height: 1.2;
   font-weight: 800;
+  white-space: nowrap;
 }
 
 .brand-sub {
-  margin-top: 5px;
+  margin-top: 6px;
   color: #c7c3d0;
-  font-size: 11px;
-  letter-spacing: 2px;
-  text-transform: uppercase;
+  font-size: 10px;
+  line-height: 1.3;
+  letter-spacing: 1.7px;
+  white-space: nowrap;
 }
 
 .profile {
-  width: 52px;
-  height: 52px;
-  flex-shrink: 0;
+  width: 64px;
+  height: 64px;
+  flex: 0 0 64px;
   border-radius: 50%;
   border: 2px solid #b7a0ff;
   background: #111114;
   color: #fff;
   display: grid;
   place-items: center;
-  font-weight: 900;
+  font-size: 12px;
+  font-weight: 800;
 }
 
 @media (max-width: 380px) {
+  .header {
+    padding: 16px 16px;
+  }
+
+  .brand {
+    gap: 9px;
+  }
+
+  .brand-mark.small,
+  .profile {
+    width: 48px;
+    height: 48px;
+    flex-basis: 48px;
+  }
+
+  .brand-mark.small {
+    font-size: 27px;
+    border-radius: 15px;
+  }
+
   .brand-name {
     font-size: 16px;
   }
 
   .brand-sub {
-    font-size: 9px;
+    font-size: 8px;
     letter-spacing: 1px;
   }
 }
