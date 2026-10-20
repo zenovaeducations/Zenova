@@ -1,0 +1,3296 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>ZENOVA | Revision Classes</title>
+
+    <meta
+        name="theme-color"
+        content="#111111"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.css"
+        rel="stylesheet"
+    >
+
+<style>
+:root {
+
+    --black: #111111;
+    --text: #171717;
+    --muted: #7b7b7b;
+    --light: #f7f7f7;
+    --border: #e7e7e7;
+    --white: #ffffff;
+
+    --nav-height: 72px;
+
+}
+
+
+* {
+
+    box-sizing: border-box;
+
+    margin: 0;
+
+    padding: 0;
+
+}
+
+
+html {
+
+    scroll-behavior: smooth;
+
+}
+
+
+body {
+
+    min-height: 100vh;
+
+    background: var(--light);
+
+    color: var(--text);
+
+    font-family:
+        "Poppins",
+        sans-serif;
+
+    padding-bottom:
+        var(--nav-height);
+
+}
+
+
+button,
+a {
+
+    font-family:
+        inherit;
+
+}
+
+
+button {
+
+    cursor:
+        pointer;
+
+}
+
+
+a {
+
+    color:
+        inherit;
+
+    text-decoration:
+        none;
+
+}
+
+
+.hidden {
+
+    display:
+        none !important;
+
+}
+
+
+/* =====================================================
+   LOADER
+===================================================== */
+
+.loader {
+
+    position:
+        fixed;
+
+    inset:
+        0;
+
+    z-index:
+        99999;
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    background:
+        #ffffff;
+
+    transition:
+        opacity .3s ease,
+        visibility .3s ease;
+
+}
+
+
+.loader.fade {
+
+    opacity:
+        0;
+
+    visibility:
+        hidden;
+
+}
+
+
+.loader-logo {
+
+    font-size:
+        27px;
+
+    font-weight:
+        800;
+
+    letter-spacing:
+        4px;
+
+}
+
+
+.loader-line {
+
+    width:
+        58px;
+
+    height:
+        3px;
+
+    margin-top:
+        13px;
+
+    border-radius:
+        10px;
+
+    background:
+        #111111;
+
+    animation:
+        loading 1s infinite;
+
+}
+
+
+@keyframes loading {
+
+    0% {
+
+        transform:
+            scaleX(.4);
+
+        opacity:
+            .25;
+
+    }
+
+    50% {
+
+        transform:
+            scaleX(1);
+
+        opacity:
+            1;
+
+    }
+
+    100% {
+
+        transform:
+            scaleX(.4);
+
+        opacity:
+            .25;
+
+    }
+
+}
+
+
+/* =====================================================
+   HEADER
+===================================================== */
+
+.top-header {
+
+    background:
+        #111111;
+
+    color:
+        #ffffff;
+
+}
+
+
+.header-content {
+
+    width:
+        min(
+            calc(100% - 32px),
+            1180px
+        );
+
+    min-height:
+        190px;
+
+    margin:
+        auto;
+
+    padding:
+        32px 0;
+
+    display:
+        flex;
+
+    align-items:
+        flex-end;
+
+    justify-content:
+        space-between;
+
+}
+
+
+.eyebrow {
+
+    display:
+        block;
+
+    color:
+        rgba(
+            255,
+            255,
+            255,
+            .55
+        );
+
+    font-size:
+        9px;
+
+    font-weight:
+        700;
+
+    letter-spacing:
+        1.7px;
+
+}
+
+
+.top-header h1 {
+
+    margin-top:
+        7px;
+
+    font-size:
+        27px;
+
+    line-height:
+        1.2;
+
+}
+
+
+.top-header p {
+
+    max-width:
+        430px;
+
+    margin-top:
+        7px;
+
+    color:
+        rgba(
+            255,
+            255,
+            255,
+            .58
+        );
+
+    font-size:
+        11px;
+
+    line-height:
+        1.6;
+
+}
+
+
+.profile-button {
+
+    width:
+        43px;
+
+    height:
+        43px;
+
+    flex-shrink:
+        0;
+
+    border:
+        1px solid
+        rgba(
+            255,
+            255,
+            255,
+            .25
+        );
+
+    border-radius:
+        50%;
+
+    background:
+        #ffffff;
+
+    color:
+        #111111;
+
+    font-size:
+        14px;
+
+    font-weight:
+        800;
+
+}
+
+
+/* =====================================================
+   MAIN
+===================================================== */
+
+.main-content {
+
+    width:
+        min(
+            calc(100% - 32px),
+            1180px
+        );
+
+    margin:
+        auto;
+
+}
+
+
+/* =====================================================
+   SECTION
+===================================================== */
+
+.section {
+
+    margin-top:
+        29px;
+
+}
+
+
+.section-heading {
+
+    margin-bottom:
+        13px;
+
+}
+
+
+.section-heading span {
+
+    display:
+        block;
+
+    color:
+        #999999;
+
+    font-size:
+        9px;
+
+    font-weight:
+        700;
+
+    letter-spacing:
+        1.5px;
+
+}
+
+
+.section-heading h2 {
+
+    margin-top:
+        3px;
+
+    font-size:
+        19px;
+
+    line-height:
+        1.3;
+
+}
+
+
+.course-name {
+
+    margin-top:
+        3px;
+
+    color:
+        #999999;
+
+    font-size:
+        10px;
+
+}
+
+
+/* =====================================================
+   LOADING
+===================================================== */
+
+.loading-box {
+
+    min-height:
+        80px;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    border:
+        1px solid
+        var(--border);
+
+    border-radius:
+        13px;
+
+    background:
+        #ffffff;
+
+    color:
+        #888888;
+
+    font-size:
+        10px;
+
+}
+
+
+/* =====================================================
+   CONTINUE CARD
+===================================================== */
+
+.continue-card {
+
+    min-height:
+        125px;
+
+    padding:
+        12px;
+
+    display:
+        flex;
+
+    align-items:
+        stretch;
+
+    gap:
+        14px;
+
+    border:
+        1px solid
+        var(--border);
+
+    border-radius:
+        14px;
+
+    background:
+        #ffffff;
+
+}
+
+
+.continue-thumbnail {
+
+    width:
+        175px;
+
+    min-height:
+        100px;
+
+    flex-shrink:
+        0;
+
+    overflow:
+        hidden;
+
+    border-radius:
+        10px;
+
+    background:
+        #111111;
+
+}
+
+
+.continue-thumbnail img {
+
+    width:
+        100%;
+
+    height:
+        100%;
+
+    object-fit:
+        cover;
+
+    display:
+        block;
+
+}
+
+
+.thumbnail-placeholder {
+
+    width:
+        100%;
+
+    height:
+        100%;
+
+    min-height:
+        100px;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    color:
+        #ffffff;
+
+    font-size:
+        10px;
+
+    font-weight:
+        800;
+
+    letter-spacing:
+        1px;
+
+}
+
+
+.continue-info {
+
+    min-width:
+        0;
+
+    flex:
+        1;
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    justify-content:
+        center;
+
+}
+
+
+.continue-label {
+
+    color:
+        #999999;
+
+    font-size:
+        8px;
+
+    font-weight:
+        700;
+
+    letter-spacing:
+        1.1px;
+
+}
+
+
+.continue-info h3 {
+
+    margin-top:
+        6px;
+
+    font-size:
+        15px;
+
+    line-height:
+        1.4;
+
+}
+
+
+.continue-info p {
+
+    margin-top:
+        5px;
+
+    color:
+        #888888;
+
+    font-size:
+        9px;
+
+}
+
+
+.continue-button {
+
+    align-self:
+        center;
+
+    width:
+        92px;
+
+    height:
+        37px;
+
+    flex-shrink:
+        0;
+
+    border:
+        0;
+
+    border-radius:
+        7px;
+
+    background:
+        #111111;
+
+    color:
+        #ffffff;
+
+    font-size:
+        8px;
+
+    font-weight:
+        700;
+
+}
+
+
+/* =====================================================
+   VIDEO LIST
+===================================================== */
+
+.video-list {
+
+    display:
+        grid;
+
+    grid-template-columns:
+        repeat(
+            3,
+            1fr
+        );
+
+    gap:
+        12px;
+
+}
+
+
+.video-card {
+
+    overflow:
+        hidden;
+
+    border:
+        1px solid
+        var(--border);
+
+    border-radius:
+        13px;
+
+    background:
+        #ffffff;
+
+    cursor:
+        pointer;
+
+    transition:
+        transform .15s ease,
+        box-shadow .15s ease;
+
+}
+
+
+.video-card:hover {
+
+    transform:
+        translateY(-2px);
+
+    box-shadow:
+        0 8px 25px
+        rgba(
+            0,
+            0,
+            0,
+            .06
+        );
+
+}
+
+
+.video-thumbnail {
+
+    position:
+        relative;
+
+    width:
+        100%;
+
+    aspect-ratio:
+        16 / 9;
+
+    overflow:
+        hidden;
+
+    background:
+        #111111;
+
+}
+
+
+.video-thumbnail img {
+
+    width:
+        100%;
+
+    height:
+        100%;
+
+    object-fit:
+        cover;
+
+    display:
+        block;
+
+}
+
+
+.video-placeholder {
+
+    width:
+        100%;
+
+    height:
+        100%;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    color:
+        #ffffff;
+
+    font-size:
+        10px;
+
+    font-weight:
+        800;
+
+}
+
+
+.play-icon {
+
+    position:
+        absolute;
+
+    left:
+        12px;
+
+    bottom:
+        10px;
+
+    width:
+        31px;
+
+    height:
+        31px;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    border-radius:
+        50%;
+
+    background:
+        #ffffff;
+
+    color:
+        #111111;
+
+    font-size:
+        13px;
+
+}
+
+
+.access-badge {
+
+    position:
+        absolute;
+
+    right:
+        8px;
+
+    top:
+        8px;
+
+    padding:
+        4px 6px;
+
+    border-radius:
+        4px;
+
+    background:
+        rgba(
+            0,
+            0,
+            0,
+            .75
+        );
+
+    color:
+        #ffffff;
+
+    font-size:
+        7px;
+
+    font-weight:
+        700;
+
+}
+
+
+.video-info {
+
+    padding:
+        11px;
+
+}
+
+
+.video-info h3 {
+
+    font-size:
+        12px;
+
+    line-height:
+        1.45;
+
+}
+
+
+.video-info p {
+
+    margin-top:
+        5px;
+
+    color:
+        #888888;
+
+    font-size:
+        8px;
+
+    line-height:
+        1.5;
+
+}
+
+
+/* =====================================================
+   SUBJECTS
+===================================================== */
+
+.subjects-list {
+
+    display:
+        grid;
+
+    grid-template-columns:
+        repeat(
+            2,
+            1fr
+        );
+
+    gap:
+        10px;
+
+}
+
+
+.subject-card {
+
+    min-height:
+        85px;
+
+    padding:
+        14px;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        12px;
+
+    border:
+        1px solid
+        var(--border);
+
+    border-radius:
+        13px;
+
+    background:
+        #ffffff;
+
+    cursor:
+        pointer;
+
+    transition:
+        transform .15s ease,
+        box-shadow .15s ease;
+
+}
+
+
+.subject-card:hover {
+
+    transform:
+        translateY(-2px);
+
+    box-shadow:
+        0 8px 25px
+        rgba(
+            0,
+            0,
+            0,
+            .06
+        );
+
+}
+
+
+.subject-icon {
+
+    width:
+        45px;
+
+    height:
+        45px;
+
+    flex-shrink:
+        0;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    border-radius:
+        11px;
+
+    background:
+        #111111;
+
+    color:
+        #ffffff;
+
+    font-size:
+        15px;
+
+    font-weight:
+        800;
+
+}
+
+
+.subject-info {
+
+    min-width:
+        0;
+
+    flex:
+        1;
+
+}
+
+
+.subject-info h3 {
+
+    font-size:
+        13px;
+
+    line-height:
+        1.4;
+
+}
+
+
+.subject-info p {
+
+    margin-top:
+        4px;
+
+    color:
+        #999999;
+
+    font-size:
+        8px;
+
+}
+
+
+.subject-arrow {
+
+    color:
+        #999999;
+
+    font-size:
+        19px;
+
+}
+
+
+/* =====================================================
+   BOTTOM NAVIGATION
+===================================================== */
+
+.bottom-nav {
+
+    position:
+        fixed;
+
+    left:
+        0;
+
+    right:
+        0;
+
+    bottom:
+        0;
+
+    z-index:
+        100;
+
+    height:
+        var(--nav-height);
+
+    display:
+        grid;
+
+    grid-template-columns:
+        repeat(
+            4,
+            1fr
+        );
+
+    background:
+        rgba(
+            255,
+            255,
+            255,
+            .97
+        );
+
+    border-top:
+        1px solid
+        #dddddd;
+
+    box-shadow:
+        0 -4px 20px
+        rgba(
+            0,
+            0,
+            0,
+            .06
+        );
+
+}
+
+
+.nav-item {
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    gap:
+        4px;
+
+    color:
+        #999999;
+
+    font-size:
+        9px;
+
+    font-weight:
+        600;
+
+}
+
+
+.nav-item i {
+
+    font-size:
+        19px;
+
+}
+
+
+.nav-item.active {
+
+    color:
+        #111111;
+
+}
+
+
+/* =====================================================
+   ERROR
+===================================================== */
+
+.error-screen {
+
+    position:
+        fixed;
+
+    inset:
+        0;
+
+    z-index:
+        999999;
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    padding:
+        25px;
+
+    background:
+        #ffffff;
+
+    text-align:
+        center;
+
+}
+
+
+.error-logo {
+
+    font-size:
+        26px;
+
+    font-weight:
+        800;
+
+    letter-spacing:
+        4px;
+
+}
+
+
+.error-screen h2 {
+
+    margin-top:
+        17px;
+
+    font-size:
+        20px;
+
+}
+
+
+.error-screen p {
+
+    max-width:
+        360px;
+
+    margin-top:
+        7px;
+
+    color:
+        #777777;
+
+    font-size:
+        10px;
+
+    line-height:
+        1.6;
+
+}
+
+
+.error-screen button {
+
+    margin-top:
+        18px;
+
+    height:
+        40px;
+
+    padding:
+        0 20px;
+
+    border:
+        0;
+
+    border-radius:
+        7px;
+
+    background:
+        #111111;
+
+    color:
+        #ffffff;
+
+    font-size:
+        9px;
+
+    font-weight:
+        700;
+
+}
+
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media (
+    max-width: 700px
+) {
+
+    .header-content {
+
+        width:
+            calc(
+                100% - 28px
+            );
+
+        min-height:
+            165px;
+
+        padding:
+            27px 0;
+
+    }
+
+
+    .top-header h1 {
+
+        font-size:
+            24px;
+
+    }
+
+
+    .main-content {
+
+        width:
+            calc(
+                100% - 24px
+            );
+
+    }
+
+
+    .video-list {
+
+        grid-template-columns:
+            repeat(
+                2,
+                1fr
+            );
+
+    }
+
+
+    .subjects-list {
+
+        grid-template-columns:
+            1fr;
+
+    }
+
+}
+
+
+@media (
+    max-width: 480px
+) {
+
+    .top-header h1 {
+
+        font-size:
+            21px;
+
+    }
+
+
+    .top-header p {
+
+        max-width:
+            280px;
+
+    }
+
+
+    .continue-card {
+
+        min-height:
+            110px;
+
+        gap:
+            10px;
+
+    }
+
+
+    .continue-thumbnail {
+
+        width:
+            105px;
+
+    }
+
+
+    .continue-button {
+
+        width:
+            70px;
+
+    }
+
+
+    .video-list {
+
+        grid-template-columns:
+            1fr 1fr;
+
+        gap:
+            9px;
+
+    }
+
+
+    .video-info {
+
+        padding:
+            9px;
+
+    }
+
+
+    .video-info h3 {
+
+        font-size:
+            10px;
+
+    }
+
+}
+
+
+@media (
+    max-width: 360px
+) {
+
+    .video-list {
+
+        grid-template-columns:
+            1fr;
+
+    }
+
+}
+
+
+/* =====================================================
+   SHARED ZENOVA HEADER + BOTTOM NAV — MATCH HOME PAGE
+   ===================================================== */
+:root { --black:#111114; --text:#111114; --muted:#777783; --light:#f7f7fa; --border:#e9e8ef; --white:#fff; --purple:#7650d6; --purple-dark:#5e36bd; --lav:#eee8ff; --lav2:#f7f3ff; --nav-height:76px; }
+body { font-family:Inter,system-ui,-apple-system,sans-serif; background:#f7f7fa; color:#111114; padding-bottom:calc(76px + env(safe-area-inset-bottom)); }
+.header { background:#111114; color:#fff; padding:18px 18px 23px; border-radius:0 0 26px 26px; }
+.header .wrap { width:min(100%,1100px); margin:0 auto; }
+.header-inner { min-height:46px; display:flex; align-items:center; justify-content:space-between; gap:14px; }
+.brand { display:flex; align-items:center; gap:11px; min-width:0; }
+.brand-mark.small { width:46px; height:46px; flex:0 0 46px; border-radius:15px; background:#eee8ff; color:#5e36bd; display:grid; place-items:center; font-size:24px; font-weight:900; box-shadow:0 8px 25px #7650d633; }
+.brand-copy { min-width:0; }
+.brand-name { color:#fff; font-size:16px; font-weight:900; letter-spacing:.1px; line-height:1.2; white-space:nowrap; }
+.brand-sub { color:#bdb8c8; font-size:10px; margin-top:4px; letter-spacing:1.4px; text-transform:uppercase; white-space:nowrap; }
+.profile { width:46px; height:46px; flex:0 0 46px; padding:0; border:2px solid #a58be8; border-radius:50%; background:#292532; color:#fff; display:grid; place-items:center; overflow:hidden; }
+.profile img { width:100%; height:100%; object-fit:cover; border-radius:50%; }
+.profile span { font-size:16px; font-weight:800; }
+.bottom-nav { position:fixed; z-index:1000; left:0; right:0; bottom:0; min-height:calc(76px + env(safe-area-inset-bottom)); padding:8px 12px calc(8px + env(safe-area-inset-bottom)); background:#fff; border-top:1px solid #e9e6ef; display:flex; justify-content:center; box-shadow:0 -6px 24px #21163808; }
+.nav-inner { width:min(100%,700px); display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:5px; }
+.nav-item { position:relative; border:0; background:transparent; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; border-radius:22px; color:#8b8795; font-size:12px; font-weight:750; min-height:62px; text-decoration:none; }
+.nav-item i { font-size:23px; line-height:1; }
+.nav-item.active { background:#f0e9ff; color:#5e36bd; }
+.nav-item.active:before { content:""; width:20px; height:3px; border-radius:5px; background:#7650d6; position:absolute; top:5px; }
+.main-content { width:min(calc(100% - 30px),1100px); margin:0 auto; }
+.section-heading span { color:#7650d6; }
+.subject-card { cursor:pointer; }
+@media(max-width:380px){ .header{padding:16px 16px 20px;} .brand{gap:9px;} .brand-mark.small,.profile{width:46px;height:46px;flex-basis:46px;} .brand-name{font-size:16px;} .brand-sub{font-size:8px;letter-spacing:1px;} .nav-item{font-size:11px;} }
+
+</style>
+</head>
+
+
+<body>
+
+
+<!-- =====================================================
+     LOADER
+===================================================== -->
+
+<div
+    id="loader"
+    class="loader"
+>
+
+    <div class="loader-logo">
+        ZENOVA
+    </div>
+
+    <div class="loader-line"></div>
+
+</div>
+
+
+
+<!-- =====================================================
+     APP
+===================================================== -->
+
+<div
+    id="app"
+    class="app hidden"
+>
+
+
+    <!-- =================================================
+         HEADER
+    ================================================== -->
+
+    <!-- ZENOVA SHARED HEADER — MATCHES HOME AND LIVE -->
+    <header class="header">
+      <div class="wrap">
+        <div class="header-inner">
+          <div class="brand">
+            <div class="brand-mark small">Z</div>
+            <div class="brand-copy">
+              <div class="brand-name">Zenova Educations</div>
+              <div class="brand-sub">Learn · Practice · Achieve</div>
+            </div>
+          </div>
+          <button id="profileButton" class="profile" type="button" aria-label="Open student profile">
+            <img id="profilePhoto" class="hidden" alt="Student profile">
+            <span id="profileInitial">S</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+
+
+    <!-- =================================================
+         MAIN
+    ================================================== -->
+
+    <main class="main-content">
+
+
+        <!-- =================================================
+             CONTINUE LEARNING
+        ================================================== -->
+
+        <section class="section">
+
+            <div class="section-heading">
+
+                <div>
+
+                    <span>
+                        PICK UP WHERE YOU LEFT
+                    </span>
+
+                    <h2>
+                        Continue Learning
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <div
+                id="continueCard"
+                class="continue-card"
+            >
+
+                <div class="loading-box">
+                    Loading...
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             RECOMMENDED VIDEOS
+        ================================================== -->
+
+        <section class="section">
+
+            <div class="section-heading">
+
+                <div>
+
+                    <span>
+                        FOR YOUR PREPARATION
+                    </span>
+
+                    <h2>
+                        Recommended Videos
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <div
+                id="recommendedVideos"
+                class="video-list"
+            >
+
+                <div class="loading-box">
+                    Loading videos...
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             ALL SUBJECTS
+        ================================================== -->
+
+        <section class="section subjects-section">
+
+            <div class="section-heading">
+
+                <div>
+
+                    <span>
+                        YOUR COURSE
+                    </span>
+
+                    <h2>
+                        All Subjects
+                    </h2>
+
+                    <p
+                        id="courseName"
+                        class="course-name"
+                    >
+                        Loading course...
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div
+                id="subjectsList"
+                class="subjects-list"
+            >
+
+                <div class="loading-box">
+                    Loading subjects...
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <div class="bottom-space"></div>
+
+    </main>
+
+
+
+    <!-- =================================================
+         BOTTOM NAVIGATION
+    ================================================== -->
+
+    <!-- ZENOVA SHARED BOTTOM NAVIGATION — MATCHES HOME AND LIVE -->
+    <nav class="bottom-nav" aria-label="Main navigation">
+      <div class="nav-inner">
+        <a href="../" class="nav-item"><i class="ri-home-5-line"></i><span>Home</span></a>
+        <a href="../live/" class="nav-item"><i class="ri-live-line"></i><span>Live</span></a>
+        <a href="./" class="nav-item active" aria-current="page"><i class="ri-book-open-fill"></i><span>Revision</span></a>
+        <a href="../profile/" class="nav-item"><i class="ri-user-3-line"></i><span>Profile</span></a>
+      </div>
+    </nav>
+
+</div>
+
+
+
+<!-- =====================================================
+     ERROR SCREEN
+===================================================== -->
+
+<div
+    id="errorScreen"
+    class="error-screen hidden"
+>
+
+    <div class="error-logo">
+        ZENOVA
+    </div>
+
+    <h2>
+        Unable to load Revision
+    </h2>
+
+    <p id="errorMessage">
+        Something went wrong.
+    </p>
+
+    <button
+        id="retryButton"
+        type="button"
+    >
+        TRY AGAIN
+    </button>
+
+</div>
+
+<script type="module">
+import {
+    auth,
+    db
+} from "../../firebase/firebase-config.js";
+
+import {
+    onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+
+import {
+    doc,
+    getDoc,
+    collection,
+    getDocs,
+    query,
+    where
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
+
+/* =====================================================
+   ZEN2 REVISION
+===================================================== */
+
+let currentUser = null;
+let zen2Student = null;
+let currentCourse = null;
+let subjects = [];
+
+
+/* =====================================================
+   ELEMENTS
+===================================================== */
+
+const loader =
+    document.getElementById("loader");
+
+const app =
+    document.getElementById("app");
+
+const errorScreen =
+    document.getElementById("errorScreen");
+
+const errorMessage =
+    document.getElementById("errorMessage");
+
+const subjectsList =
+    document.getElementById("subjectsList");
+
+const courseName =
+    document.getElementById("courseName");
+
+const continueCard =
+    document.getElementById("continueCard");
+
+const recommendedVideos =
+    document.getElementById("recommendedVideos");
+
+const profileInitial =
+    document.getElementById("profileInitial");
+
+const profilePhoto = document.getElementById("profilePhoto");
+
+document.getElementById("profileButton")?.addEventListener("click", () => {
+    window.location.href = "../profile/";
+});
+
+
+/* =====================================================
+   START
+===================================================== */
+
+onAuthStateChanged(
+    auth,
+    async (user) => {
+
+        console.log(
+            "ZEN2 REVISION AUTH:",
+            user
+        );
+
+
+        /*
+         * NOT LOGGED IN
+         */
+
+        if (!user) {
+
+            window.location.replace(
+                "../../account/login/"
+            );
+
+            return;
+
+        }
+
+
+        currentUser = user;
+
+
+        try {
+
+            /*
+             * 1. GET ZEN2 STUDENT
+             */
+
+            await loadZen2Student();
+
+
+            /*
+             * 2. FIND COURSE
+             *    ACCORDING TO STUDENT CLASS
+             */
+
+            await loadCorrectCourse();
+
+
+            /*
+             * 3. GET SUBJECTS
+             *    OF THAT COURSE
+             */
+
+            await loadCourseSubjects();
+
+
+            /*
+             * 4. DISPLAY
+             */
+
+            renderStudent();
+
+            renderCourse();
+
+            renderSubjects();
+
+            renderContinueLearning();
+
+            renderRecommendedVideos();
+
+
+            /*
+             * 5. SHOW APP
+             */
+
+            showApp();
+
+        }
+
+        catch (error) {
+
+            console.error(
+                "ZEN2 REVISION ERROR:",
+                error
+            );
+
+            showError(
+                error.message ||
+                "Unable to load Revision."
+            );
+
+        }
+
+    }
+);
+
+
+/* =====================================================
+   LOAD ZEN2 STUDENT
+===================================================== */
+
+async function loadZen2Student() {
+
+    /*
+     * IMPORTANT
+     *
+     * ONLY ZEN2 STUDENTS
+     *
+     * zen2Students/{uid}
+     */
+
+    const studentRef =
+        doc(
+            db,
+            "zen2Students",
+            currentUser.uid
+        );
+
+
+    const snapshot =
+        await getDoc(
+            studentRef
+        );
+
+
+    console.log(
+        "ZEN2 STUDENT EXISTS:",
+        snapshot.exists()
+    );
+
+
+    if (!snapshot.exists()) {
+
+        throw new Error(
+            "ZEN2 student profile not found."
+        );
+
+    }
+
+
+    zen2Student =
+        snapshot.data();
+
+
+    console.log(
+        "ZEN2 STUDENT DATA:",
+        zen2Student
+    );
+
+
+    /*
+     * Student name
+     */
+
+    if (profileInitial) {
+
+        const name =
+            zen2Student.name ||
+            zen2Student.fullName ||
+            currentUser.displayName ||
+            "S";
+
+
+        profileInitial.textContent =
+            name
+                .trim()
+                .charAt(0)
+                .toUpperCase();
+
+    }
+
+}
+
+
+/* =====================================================
+   LOAD CORRECT COURSE
+===================================================== */
+
+async function loadCorrectCourse() {
+
+    /*
+     * Student class from ZEN2
+     */
+
+    const studentClass =
+        getStudentClass();
+
+
+    console.log(
+        "ZEN2 STUDENT CLASS:",
+        studentClass
+    );
+
+
+    if (!studentClass) {
+
+        throw new Error(
+            "Class is not available in your ZEN2 student profile."
+        );
+
+    }
+
+
+    /*
+     * Get ALL ZEN2 courses.
+     */
+
+    const snapshot =
+        await getDocs(
+            collection(
+                db,
+                "zen2Courses"
+            )
+        );
+
+
+    const courses =
+        snapshot.docs.map(
+            item => ({
+
+                id:
+                    item.id,
+
+                ...item.data()
+
+            })
+        );
+
+
+    console.log(
+        "ZEN2 COURSES:",
+        courses
+    );
+
+
+    /*
+     * Find course whose class matches
+     * student's class.
+     */
+
+    const matchingCourses =
+        courses.filter(
+            course => {
+
+                const courseClass =
+                    getCourseClass(
+                        course
+                    );
+
+
+                return (
+                    normalizeClass(
+                        courseClass
+                    ) ===
+                    normalizeClass(
+                        studentClass
+                    )
+                );
+
+            }
+        );
+
+
+    console.log(
+        "MATCHING ZEN2 COURSES:",
+        matchingCourses
+    );
+
+
+    if (
+        !matchingCourses.length
+    ) {
+
+        throw new Error(
+            `No ZEN2 course found for class ${studentClass}.`
+        );
+
+    }
+
+
+    /*
+     * If there are multiple courses
+     * for same class, use first active one.
+     */
+
+    const activeCourse =
+        matchingCourses.find(
+            course =>
+                course.active !== false
+        );
+
+
+    currentCourse =
+        activeCourse ||
+        matchingCourses[0];
+
+
+    console.log(
+        "SELECTED ZEN2 COURSE:",
+        currentCourse
+    );
+
+}
+
+
+/* =====================================================
+   GET STUDENT CLASS
+===================================================== */
+
+function getStudentClass() {
+
+    /*
+     * Main field:
+     *
+     * className
+     *
+     * Other fallbacks are only to make this
+     * compatible with the existing ZEN2
+     * onboarding data if the field name differs.
+     */
+
+    return (
+        zen2Student.className ||
+        zen2Student.class ||
+        zen2Student.standard ||
+        zen2Student.grade ||
+        zen2Student.targetClass ||
+        ""
+    );
+
+}
+
+
+/* =====================================================
+   GET COURSE CLASS
+===================================================== */
+
+function getCourseClass(
+    course
+) {
+
+    /*
+     * Main ZEN2 field:
+     *
+     * className
+     *
+     * Fallbacks supported.
+     */
+
+    return (
+        course.className ||
+        course.courseClass ||
+        course.targetClass ||
+        course.standard ||
+        course.grade ||
+        course.crmClass ||
+        ""
+    );
+
+}
+
+
+/* =====================================================
+   LOAD SUBJECTS
+===================================================== */
+
+async function loadCourseSubjects() {
+
+    if (!currentCourse) {
+
+        throw new Error(
+            "ZEN2 course not selected."
+        );
+
+    }
+
+
+    /*
+     * Subjects are connected through:
+     *
+     * courseId
+     */
+
+    const subjectsQuery =
+        query(
+            collection(
+                db,
+                "zen2Subjects"
+            ),
+
+            where(
+                "courseId",
+                "==",
+                currentCourse.id
+            )
+        );
+
+
+    const snapshot =
+        await getDocs(
+            subjectsQuery
+        );
+
+
+    subjects =
+        snapshot.docs.map(
+            item => ({
+
+                id:
+                    item.id,
+
+                ...item.data()
+
+            })
+        );
+
+
+    /*
+     * Remove disabled subjects
+     */
+
+    subjects =
+        subjects.filter(
+            subject =>
+                subject.active !== false
+        );
+
+
+    /*
+     * Sort according to admin order.
+     */
+
+    subjects.sort(
+        (a, b) => {
+
+            return (
+                Number(
+                    a.order ??
+                    999999
+                ) -
+                Number(
+                    b.order ??
+                    999999
+                )
+            );
+
+        }
+    );
+
+
+    console.log(
+        "ZEN2 SUBJECTS:",
+        subjects
+    );
+
+}
+
+
+/* =====================================================
+   RENDER STUDENT
+===================================================== */
+
+function renderStudent() {
+    const name = zen2Student.name || zen2Student.fullName || currentUser.displayName || "Student";
+    if (profileInitial) {
+        profileInitial.textContent = name.trim().charAt(0).toUpperCase();
+    }
+    const photoUrl = zen2Student.photoURL || zen2Student.photoUrl || zen2Student.profilePhotoUrl || currentUser.photoURL || "";
+    if (photoUrl && profilePhoto) {
+        profilePhoto.src = photoUrl;
+        profilePhoto.classList.remove("hidden");
+        if (profileInitial) profileInitial.classList.add("hidden");
+        profilePhoto.onerror = () => {
+            profilePhoto.classList.add("hidden");
+            if (profileInitial) profileInitial.classList.remove("hidden");
+        };
+    }
+}
+
+
+/* =====================================================
+   RENDER COURSE
+===================================================== */
+
+function renderCourse() {
+
+    if (!courseName) {
+        return;
+    }
+
+
+    courseName.textContent =
+        currentCourse.courseName ||
+        currentCourse.name ||
+        currentCourse.title ||
+        currentCourse.batchName ||
+        getCourseClass(
+            currentCourse
+        ) ||
+        "Your Course";
+
+}
+
+
+/* =====================================================
+   RENDER SUBJECTS
+===================================================== */
+
+function renderSubjects() {
+
+    if (!subjectsList) {
+        return;
+    }
+
+
+    if (!subjects.length) {
+
+        subjectsList.innerHTML = `
+
+            <div class="loading-box">
+
+                No subjects have been added
+                to this course yet.
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    subjectsList.innerHTML =
+        subjects
+            .map(
+                subject => {
+
+                    const name =
+                        subject.subjectName ||
+                        subject.name ||
+                        subject.title ||
+                        subject.displayName ||
+                        "Subject";
+
+
+                    const firstLetter =
+                        name
+                            .trim()
+                            .charAt(0)
+                            .toUpperCase();
+
+
+                    return `
+
+                        <article
+                            class="subject-card"
+                            data-subject-id="${escapeHtml(
+                                subject.id
+                            )}"
+                        >
+
+                            <div
+                                class="subject-icon"
+                            >
+
+                                ${escapeHtml(
+                                    firstLetter
+                                )}
+
+                            </div>
+
+
+                            <div
+                                class="subject-info"
+                            >
+
+                                <h3>
+                                    ${escapeHtml(
+                                        name
+                                    )}
+                                </h3>
+
+
+                                <p>
+                                    View Chapters →
+                                </p>
+
+                            </div>
+
+
+                            <div
+                                class="subject-arrow"
+                            >
+                                →
+                            </div>
+
+                        </article>
+
+                    `;
+
+                }
+            )
+            .join("");
+
+
+    /*
+     * SUBJECT CLICK
+     *
+     * Revision
+     * ↓
+     * Subject Details
+     */
+
+    document
+        .querySelectorAll(
+            ".subject-card"
+        )
+        .forEach(
+            card => {
+
+                card.addEventListener(
+                    "click",
+                    () => {
+
+                        const subjectId =
+                            card.dataset.subjectId;
+
+
+                        window.location.href =
+                            `../subjectdetails/?courseId=${
+                                encodeURIComponent(
+                                    currentCourse.id
+                                )
+                            }&subjectId=${
+                                encodeURIComponent(
+                                    subjectId
+                                )
+                            }`;
+
+                    }
+                );
+
+            }
+        );
+
+}
+
+
+/* =====================================================
+   CONTINUE LEARNING
+===================================================== */
+
+function renderContinueLearning() {
+
+    if (!continueCard) {
+        return;
+    }
+
+
+    /*
+     * We are not creating a new progress
+     * system now.
+     *
+     * Just show the first video if available.
+     */
+
+    loadFirstVideo()
+        .then(
+            video => {
+
+                if (!video) {
+
+                    continueCard.innerHTML = `
+
+                        <div class="loading-box">
+
+                            No learning video
+                            available yet.
+
+                        </div>
+
+                    `;
+
+                    return;
+
+                }
+
+
+                const subject =
+                    subjects.find(
+                        subject =>
+                            subject.id ===
+                            video.subjectId
+                    );
+
+
+                const subjectName =
+                    subject?.subjectName ||
+                    subject?.name ||
+                    "Subject";
+
+
+                continueCard.innerHTML = `
+
+                    <div
+                        class="continue-thumbnail"
+                    >
+
+                        ${
+                            video.thumbnailUrl
+
+                                ? `
+
+                                    <img
+                                        src="${escapeHtml(
+                                            video.thumbnailUrl
+                                        )}"
+                                        alt=""
+                                    >
+
+                                `
+
+                                : `
+
+                                    <div
+                                        class="thumbnail-placeholder"
+                                    >
+                                        ZENOVA
+                                    </div>
+
+                                `
+                        }
+
+                    </div>
+
+
+                    <div
+                        class="continue-info"
+                    >
+
+                        <span
+                            class="continue-label"
+                        >
+                            START LEARNING
+                        </span>
+
+
+                        <h3>
+                            ${escapeHtml(
+                                video.title ||
+                                "Learning Video"
+                            )}
+                        </h3>
+
+
+                        <p>
+                            ${escapeHtml(
+                                subjectName
+                            )}
+                        </p>
+
+                    </div>
+
+
+                    <button
+                        class="continue-button"
+                        id="continueButton"
+                        type="button"
+                    >
+                        START
+                    </button>
+
+                `;
+
+
+                document
+                    .getElementById(
+                        "continueButton"
+                    )
+                    ?.addEventListener(
+                        "click",
+                        () => {
+
+                            openContent(
+                                video
+                            );
+
+                        }
+                    );
+
+            }
+        )
+        .catch(
+            error => {
+
+                console.error(
+                    "CONTINUE VIDEO:",
+                    error
+                );
+
+            }
+        );
+
+}
+
+
+/* =====================================================
+   LOAD FIRST VIDEO
+===================================================== */
+
+async function loadFirstVideo() {
+
+    if (!currentCourse) {
+        return null;
+    }
+
+
+    const contentQuery =
+        query(
+            collection(
+                db,
+                "zen2Content"
+            ),
+
+            where(
+                "courseId",
+                "==",
+                currentCourse.id
+            )
+        );
+
+
+    const snapshot =
+        await getDocs(
+            contentQuery
+        );
+
+
+    const videos =
+        snapshot.docs
+            .map(
+                item => ({
+
+                    id:
+                        item.id,
+
+                    ...item.data()
+
+                })
+            )
+            .filter(
+                item => {
+
+                    const type =
+                        String(
+                            item.contentType ||
+                            item.type ||
+                            ""
+                        )
+                        .toUpperCase();
+
+
+                    return (
+                        type === "VIDEO" &&
+                        item.active !== false
+                    );
+
+                }
+            );
+
+
+    videos.sort(
+        (a, b) => {
+
+            return (
+                Number(
+                    a.order ??
+                    999999
+                ) -
+                Number(
+                    b.order ??
+                    999999
+                )
+            );
+
+        }
+    );
+
+
+    return (
+        videos[0] ||
+        null
+    );
+
+}
+
+
+/* =====================================================
+   RECOMMENDED VIDEOS
+===================================================== */
+
+async function renderRecommendedVideos() {
+
+    if (!recommendedVideos) {
+        return;
+    }
+
+
+    try {
+
+        const firstVideos =
+            await loadRecommendedVideos();
+
+
+        if (!firstVideos.length) {
+
+            recommendedVideos.innerHTML = `
+
+                <div class="loading-box">
+
+                    No recommended videos
+                    available yet.
+
+                </div>
+
+            `;
+
+            return;
+
+        }
+
+
+        recommendedVideos.innerHTML =
+            firstVideos
+                .map(
+                    video => {
+
+                        const subject =
+                            subjects.find(
+                                item =>
+                                    item.id ===
+                                    video.subjectId
+                            );
+
+
+                        const subjectName =
+                            subject?.subjectName ||
+                            subject?.name ||
+                            "";
+
+
+                        return `
+
+                            <article
+                                class="video-card"
+                                data-content-id="${escapeHtml(
+                                    video.id
+                                )}"
+                            >
+
+                                <div
+                                    class="video-thumbnail"
+                                >
+
+                                    ${
+                                        video.thumbnailUrl
+
+                                            ? `
+
+                                                <img
+                                                    src="${escapeHtml(
+                                                        video.thumbnailUrl
+                                                    )}"
+                                                    alt=""
+                                                    loading="lazy"
+                                                >
+
+                                            `
+
+                                            : `
+
+                                                <div
+                                                    class="video-placeholder"
+                                                >
+                                                    ZENOVA
+                                                </div>
+
+                                            `
+                                    }
+
+
+                                    <span
+                                        class="play-icon"
+                                    >
+                                        ▶
+                                    </span>
+
+                                </div>
+
+
+                                <div
+                                    class="video-info"
+                                >
+
+                                    <h3>
+                                        ${escapeHtml(
+                                            video.title ||
+                                            "Learning Video"
+                                        )}
+                                    </h3>
+
+
+                                    <p>
+                                        ${escapeHtml(
+                                            subjectName
+                                        )}
+                                    </p>
+
+                                </div>
+
+                            </article>
+
+                        `;
+
+                    }
+                )
+                .join("");
+
+
+        document
+            .querySelectorAll(
+                ".video-card"
+            )
+            .forEach(
+                card => {
+
+                    card.addEventListener(
+                        "click",
+                        async () => {
+
+                            const id =
+                                card.dataset.contentId;
+
+
+                            const video =
+                                firstVideos.find(
+                                    item =>
+                                        item.id ===
+                                        id
+                                );
+
+
+                            if (video) {
+
+                                openContent(
+                                    video
+                                );
+
+                            }
+
+                        }
+                    );
+
+                }
+            );
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "RECOMMENDED VIDEOS:",
+            error
+        );
+
+        recommendedVideos.innerHTML = `
+
+            <div class="loading-box">
+
+                Unable to load videos.
+
+            </div>
+
+        `;
+
+    }
+
+}
+
+
+/* =====================================================
+   LOAD RECOMMENDED VIDEOS
+===================================================== */
+
+async function loadRecommendedVideos() {
+
+    const contentQuery =
+        query(
+            collection(
+                db,
+                "zen2Content"
+            ),
+
+            where(
+                "courseId",
+                "==",
+                currentCourse.id
+            )
+        );
+
+
+    const snapshot =
+        await getDocs(
+            contentQuery
+        );
+
+
+    const videos =
+        snapshot.docs
+            .map(
+                item => ({
+
+                    id:
+                        item.id,
+
+                    ...item.data()
+
+                })
+            )
+            .filter(
+                item => {
+
+                    const type =
+                        String(
+                            item.contentType ||
+                            item.type ||
+                            ""
+                        )
+                        .toUpperCase();
+
+
+                    return (
+                        type === "VIDEO" &&
+                        item.active !== false
+                    );
+
+                }
+            );
+
+
+    videos.sort(
+        (a, b) => {
+
+            return (
+                Number(
+                    a.order ??
+                    999999
+                ) -
+                Number(
+                    b.order ??
+                    999999
+                )
+            );
+
+        }
+    );
+
+
+    return videos.slice(
+        0,
+        6
+    );
+
+}
+
+
+/* =====================================================
+   OPEN CONTENT
+===================================================== */
+
+function openContent(
+    content
+) {
+
+    if (
+        !content.chapterId
+    ) {
+
+        console.warn(
+            "Chapter ID missing:",
+            content
+        );
+
+        return;
+
+    }
+
+
+    window.location.href =
+        `../chapterdetails/?courseId=${
+            encodeURIComponent(
+                currentCourse.id
+            )
+        }&subjectId=${
+            encodeURIComponent(
+                content.subjectId || ""
+            )
+        }&chapterId=${
+            encodeURIComponent(
+                content.chapterId
+            )
+        }&contentId=${
+            encodeURIComponent(
+                content.id
+            )
+        }`;
+
+}
+
+
+/* =====================================================
+   SHOW APP
+===================================================== */
+
+function showApp() {
+
+    if (app) {
+
+        app.classList.remove(
+            "hidden"
+        );
+
+    }
+
+
+    setTimeout(
+        () => {
+
+            loader?.classList.add(
+                "fade"
+            );
+
+        },
+        150
+    );
+
+}
+
+
+/* =====================================================
+   ERROR
+===================================================== */
+
+function showError(
+    message
+) {
+
+    console.error(
+        "ZEN2 REVISION:",
+        message
+    );
+
+
+    if (errorMessage) {
+
+        errorMessage.textContent =
+            message;
+
+    }
+
+
+    loader?.classList.add(
+        "fade"
+    );
+
+
+    errorScreen?.classList.remove(
+        "hidden"
+    );
+
+}
+
+
+/* =====================================================
+   NORMALIZE CLASS
+===================================================== */
+
+function normalizeClass(
+    value
+) {
+
+    let text =
+        String(
+            value || ""
+        )
+        .trim()
+        .toLowerCase();
+
+
+    /*
+     * Convert common variations:
+     *
+     * 10th
+     * 10th standard
+     * class 10
+     * class 10th
+     * 10
+     */
+
+    text =
+        text
+            .replace(
+                /^class\s*/,
+                ""
+            )
+            .replace(
+                /\s*standard$/,
+                ""
+            )
+            .trim();
+
+
+    if (
+        text === "10"
+    ) {
+
+        return "10th";
+
+    }
+
+
+    if (
+        text === "10th"
+    ) {
+
+        return "10th";
+
+    }
+
+
+    if (
+        text === "9"
+    ) {
+
+        return "9th";
+
+    }
+
+
+    if (
+        text === "9th"
+    ) {
+
+        return "9th";
+
+    }
+
+
+    if (
+        text === "8"
+    ) {
+
+        return "8th";
+
+    }
+
+
+    if (
+        text === "8th"
+    ) {
+
+        return "8th";
+
+    }
+
+
+    if (
+        text === "1 puc" ||
+        text === "1st puc" ||
+        text === "1st pu"
+    ) {
+
+        return "1st puc";
+
+    }
+
+
+    if (
+        text === "2 puc" ||
+        text === "2nd puc" ||
+        text === "2nd pu"
+    ) {
+
+        return "2nd puc";
+
+    }
+
+
+    return text;
+
+}
+
+
+/* =====================================================
+   ESCAPE HTML
+===================================================== */
+
+function escapeHtml(
+    value
+) {
+
+    return String(
+        value ?? ""
+    )
+        .replaceAll(
+            "&",
+            "&amp;"
+        )
+        .replaceAll(
+            "<",
+            "&lt;"
+        )
+        .replaceAll(
+            ">",
+            "&gt;"
+        )
+        .replaceAll(
+            '"',
+            "&quot;"
+        )
+        .replaceAll(
+            "'",
+            "&#039;"
+        );
+
+}
+
+
+// Shared navigation route highlighting
+(function setActiveZenovaNavigation(){
+  const path = window.location.pathname.toLowerCase();
+  document.querySelectorAll(".bottom-nav .nav-item").forEach(link => {
+    const href = link.getAttribute("href") || "";
+    const isRevision = path.includes("/revision");
+    const isLive = path.includes("/live");
+    const isProfile = path.includes("/profile");
+    const expected = isRevision ? "revision" : isLive ? "live" : isProfile ? "profile" : "home";
+    const label = (link.textContent || "").trim().toLowerCase();
+    const active = label === expected;
+    link.classList.toggle("active", active);
+    if(active) link.setAttribute("aria-current","page"); else link.removeAttribute("aria-current");
+  });
+})();
+
+</script>
+</body>
+
+</html>
