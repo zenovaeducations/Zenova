@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#ffffff">
+  <title>Zenova Educations</title>
+  <style>
+    * { box-sizing: border-box; }
+    html, body { width: 100%; min-height: 100%; margin: 0; }
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: #ffffff;
+      color: #24212d;
+      display: grid;
+      place-items: center;
+    }
+    #status {
+      font-size: 14px;
+      color: #6b6577;
+      text-align: center;
+      padding: 24px;
+    }
+    #status strong { color: #7650d6; }
+  </style>
+</head>
+<body>
+  <p id="status">Opening <strong>Zenova Educations</strong>…</p>
+
+  <script type="module">
+    import { auth } from "./firebase/firebase-config.js";
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+
+    let routed = false;
+
+    function goTo(path) {
+      if (routed) return;
+      routed = true;
+      window.location.replace(path);
+    }
+
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        goTo("./home/index.html");
+      } else {
+        goTo("./login/index.html");
+      }
+    });
+
+    // Deliberately no timeout fallback: Firebase must finish restoring
+    // the session before routing, otherwise a signed-in student could
+    // be incorrectly sent to the login page.
+  </script>
+</body>
+</html>
