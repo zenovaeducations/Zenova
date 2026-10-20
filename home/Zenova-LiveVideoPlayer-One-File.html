@@ -1,0 +1,3186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    >
+
+    <title>ZENOVA | Live Video Player</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700&display=swap"
+        rel="stylesheet"
+    >
+
+    <style>
+:root {
+    --black: #111111;
+    --black-soft: #181818;
+
+    --white: #ffffff;
+
+    --page: #f7f7f8;
+
+    --text: #111111;
+    --secondary: #737373;
+    --muted: #a1a1aa;
+
+    --border: #e7e7e7;
+
+    --red: #ef4444;
+    --red-dark: #dc2626;
+
+    --radius: 14px;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background: var(--page);
+
+    color: var(--text);
+
+    font-family:
+        Inter,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+
+    -webkit-font-smoothing: antialiased;
+
+    overflow-x: hidden;
+}
+
+button {
+    font: inherit;
+}
+
+button:focus-visible {
+    outline: 2px solid #2563eb;
+    outline-offset: 2px;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.topbar {
+    position: sticky;
+
+    top: 0;
+
+    z-index: 100;
+
+    height: 78px;
+
+    display: grid;
+
+    grid-template-columns: 1fr auto 1fr;
+
+    align-items: center;
+
+    padding: 0 34px;
+
+    background: rgba(255, 255, 255, 0.97);
+
+    border-bottom: 1px solid var(--border);
+
+    backdrop-filter: blur(15px);
+}
+
+.back-button {
+    justify-self: start;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 7px;
+
+    padding: 8px 0;
+
+    background: transparent;
+
+    color: #333333;
+
+    font-size: 16px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+}
+
+.back-button:hover {
+    color: #000000;
+}
+
+.back-icon {
+    font-size: 31px;
+
+    line-height: 15px;
+}
+
+.brand {
+    text-align: center;
+}
+
+.brand-title {
+    font-family: Poppins, sans-serif;
+
+    font-size: 22px;
+
+    font-weight: 700;
+
+    letter-spacing: 4px;
+}
+
+.brand-live {
+    display: flex;
+
+    justify-content: center;
+    align-items: center;
+
+    gap: 6px;
+
+    margin-top: 3px;
+
+    color: #e4585e;
+
+    font-size: 10px;
+
+    font-weight: 700;
+
+    letter-spacing: 1.5px;
+}
+
+.brand-live span {
+    width: 7px;
+    height: 7px;
+
+    border-radius: 50%;
+
+    background: #e4585e;
+}
+
+.top-space {
+    width: 70px;
+}
+
+/* =========================================================
+   STATES
+========================================================= */
+
+.loading-screen,
+.error-screen {
+    min-height: calc(100vh - 78px);
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+    justify-content: center;
+
+    text-align: center;
+
+    padding: 30px;
+}
+
+.loading-screen p,
+.error-screen p {
+    color: var(--secondary);
+}
+
+.loader {
+    width: 34px;
+    height: 34px;
+
+    margin-bottom: 15px;
+
+    border: 3px solid #e5e5e5;
+
+    border-top-color: #111111;
+
+    border-radius: 50%;
+
+    animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.error-icon {
+    width: 52px;
+    height: 52px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    margin-bottom: 15px;
+
+    border-radius: 50%;
+
+    background: #fff0f0;
+
+    color: #dc2626;
+
+    font-size: 24px;
+
+    font-weight: 700;
+}
+
+.error-screen h2 {
+    margin: 0;
+}
+
+.dark-button {
+    min-height: 42px;
+
+    padding: 0 18px;
+
+    margin-top: 12px;
+
+    background: #111111;
+
+    color: white;
+
+    border-radius: 9px;
+
+    cursor: pointer;
+}
+
+/* =========================================================
+   PLAYER
+========================================================= */
+
+.player {
+    width: 100%;
+
+    background: #000000;
+
+    overflow: hidden;
+}
+
+.stage {
+    position: relative;
+
+    width: 100%;
+
+    aspect-ratio: 16 / 8.4;
+
+    min-height: 440px;
+
+    background: #000000;
+
+    overflow: hidden;
+}
+
+.live-video,
+.youtube-container,
+.youtube-container iframe {
+    position: absolute;
+
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    border: 0;
+
+    background: #000000;
+}
+
+.live-video {
+    object-fit: contain;
+}
+
+.youtube-container {
+    z-index: 2;
+}
+
+/* =========================================================
+   PLAYER LOADING
+========================================================= */
+
+.player-loading {
+    position: absolute;
+
+    inset: 0;
+
+    z-index: 20;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 12px;
+
+    background: rgba(0, 0, 0, 0.35);
+
+    color: #ffffff;
+
+    font-size: 12px;
+}
+
+.player-spinner {
+    width: 34px;
+    height: 34px;
+
+    border: 3px solid rgba(255,255,255,0.35);
+
+    border-top-color: white;
+
+    border-radius: 50%;
+
+    animation: spin 0.7s linear infinite;
+}
+
+/* =========================================================
+   CENTER PLAY
+========================================================= */
+
+.center-play {
+    position: absolute;
+
+    top: 50%;
+    left: 50%;
+
+    z-index: 25;
+
+    width: 72px;
+    height: 72px;
+
+    transform: translate(-50%, -50%);
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: rgba(0,0,0,0.8);
+
+    color: white;
+
+    font-size: 23px;
+
+    padding-left: 5px;
+
+    cursor: pointer;
+}
+
+/* =========================================================
+   LOGO
+========================================================= */
+
+.video-logo {
+    position: absolute;
+
+    top: 22px;
+    left: 24px;
+
+    z-index: 10;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    color: white;
+
+    pointer-events: none;
+
+    opacity: 0.9;
+}
+
+.logo-circle {
+    width: 39px;
+    height: 39px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: rgba(0,0,0,0.7);
+
+    border: 1px solid rgba(255,255,255,0.25);
+
+    font-family: Poppins, sans-serif;
+
+    font-size: 17px;
+
+    font-weight: 700;
+}
+
+.video-logo span {
+    font-family: Poppins, sans-serif;
+
+    font-size: 11px;
+
+    font-weight: 600;
+
+    letter-spacing: 1.4px;
+}
+
+/* =========================================================
+   LIVE BADGE
+========================================================= */
+
+.live-badge {
+    position: absolute;
+
+    top: 22px;
+    right: 24px;
+
+    z-index: 15;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 7px;
+
+    padding: 8px 12px;
+
+    background: rgba(0,0,0,0.72);
+
+    color: white;
+
+    border-radius: 8px;
+
+    font-size: 11px;
+
+    font-weight: 700;
+
+    letter-spacing: 0.5px;
+}
+
+.live-dot {
+    width: 8px;
+    height: 8px;
+
+    border-radius: 50%;
+
+    background: #ef4444;
+
+    box-shadow:
+        0 0 0 3px rgba(239,68,68,0.18);
+}
+
+/* =========================================================
+   WATERMARK
+========================================================= */
+
+.watermark {
+    position: absolute;
+
+    top: 50%;
+    right: 26px;
+
+    z-index: 12;
+
+    min-width: 155px;
+
+    padding: 12px 14px;
+
+    transform: translateY(-50%);
+
+    background: rgba(0,0,0,0.45);
+
+    border-radius: 10px;
+
+    color: rgba(255,255,255,0.9);
+
+    backdrop-filter: blur(7px);
+
+    pointer-events: none;
+
+    user-select: none;
+}
+
+.watermark strong {
+    display: block;
+
+    font-size: 13px;
+}
+
+.watermark span {
+    display: block;
+
+    margin-top: 2px;
+
+    font-size: 11px;
+}
+
+.watermark small {
+    display: block;
+
+    margin-top: 6px;
+
+    color: rgba(255,255,255,0.6);
+
+    font-size: 9px;
+
+    letter-spacing: 0.5px;
+}
+
+/* =========================================================
+   CONTROLS
+========================================================= */
+
+.controls {
+    position: absolute;
+
+    right: 0;
+    bottom: 0;
+    left: 0;
+
+    z-index: 30;
+
+    padding: 35px 20px 14px;
+
+    background:
+        linear-gradient(
+            to bottom,
+            transparent,
+            rgba(0,0,0,0.9)
+        );
+
+    transition: opacity 0.2s ease;
+}
+
+.player.controls-hidden .controls {
+    opacity: 0;
+
+    pointer-events: none;
+}
+
+.controls-row {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+}
+
+.controls-left,
+.controls-right {
+    display: flex;
+
+    align-items: center;
+
+    gap: 5px;
+}
+
+.control {
+    min-width: 39px;
+    height: 39px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    background: transparent;
+
+    color: white;
+
+    border-radius: 8px;
+
+    font-size: 17px;
+
+    cursor: pointer;
+}
+
+.control:hover {
+    background: rgba(255,255,255,0.13);
+}
+
+.fullscreen {
+    font-size: 21px;
+}
+
+.live-time {
+    margin-left: 5px;
+
+    color: rgba(255,255,255,0.9);
+
+    font-size: 12px;
+
+    font-weight: 600;
+
+    letter-spacing: 0.4px;
+}
+
+/* =========================================================
+   CLASS INFORMATION
+========================================================= */
+
+.class-information {
+    width: min(1050px, calc(100% - 48px));
+
+    margin: auto;
+
+    padding: 30px 0 34px;
+}
+
+.live-status {
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    margin-bottom: 14px;
+}
+
+.status-pill {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 7px;
+
+    min-height: 34px;
+
+    padding: 0 12px;
+
+    background: #fff0f0;
+
+    color: #d83f46;
+
+    border-radius: 9px;
+
+    font-size: 12px;
+
+    font-weight: 700;
+}
+
+.status-pill span {
+    width: 7px;
+    height: 7px;
+
+    border-radius: 50%;
+
+    background: #ef4444;
+}
+
+.class-time {
+    color: #777777;
+
+    font-size: 14px;
+}
+
+.class-information h1 {
+    margin: 0;
+
+    font-family: Poppins, sans-serif;
+
+    font-size: clamp(27px, 4vw, 43px);
+
+    line-height: 1.15;
+
+    letter-spacing: -1.4px;
+}
+
+.hierarchy {
+    margin-top: 12px;
+
+    color: #777777;
+
+    font-size: 15px;
+
+    line-height: 1.6;
+}
+
+/* =========================================================
+   FACULTY
+========================================================= */
+
+.faculty {
+    display: flex;
+
+    align-items: center;
+
+    gap: 14px;
+
+    margin-top: 28px;
+}
+
+.faculty-avatar {
+    width: 58px;
+    height: 58px;
+
+    flex: 0 0 58px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #111111;
+
+    color: white;
+
+    font-family: Poppins, sans-serif;
+
+    font-size: 21px;
+
+    font-weight: 600;
+}
+
+.faculty span {
+    display: block;
+
+    color: #888888;
+
+    font-size: 12px;
+}
+
+.faculty strong {
+    display: block;
+
+    margin-top: 2px;
+
+    font-family: Poppins, sans-serif;
+
+    font-size: 18px;
+}
+
+/* =========================================================
+   DESCRIPTION
+========================================================= */
+
+.description {
+    margin-top: 28px;
+
+    padding-top: 24px;
+
+    border-top: 1px solid var(--border);
+}
+
+.description h2 {
+    margin: 0 0 8px;
+
+    font-family: Poppins, sans-serif;
+
+    font-size: 17px;
+}
+
+.description p {
+    margin: 0;
+
+    color: #737373;
+
+    line-height: 1.7;
+
+    font-size: 14px;
+
+    white-space: pre-wrap;
+}
+
+/* =========================================================
+   SESSION INFORMATION
+========================================================= */
+
+.session-info {
+    width: min(1050px, calc(100% - 48px));
+
+    margin: 0 auto;
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    border-top: 1px solid var(--border);
+
+    border-bottom: 1px solid var(--border);
+}
+
+.session-item {
+    padding: 20px 18px;
+
+    border-right: 1px solid var(--border);
+}
+
+.session-item:last-child {
+    border-right: 0;
+}
+
+.session-label {
+    display: block;
+
+    margin-bottom: 5px;
+
+    color: #999999;
+
+    font-size: 10px;
+
+    font-weight: 700;
+
+    letter-spacing: 1.2px;
+}
+
+.session-item strong {
+    font-size: 13px;
+
+    font-weight: 600;
+}
+
+/* =========================================================
+   NOTICE
+========================================================= */
+
+.live-notice {
+    width: min(1050px, calc(100% - 48px));
+
+    margin: 24px auto 70px;
+
+    display: flex;
+
+    align-items: flex-start;
+
+    gap: 12px;
+
+    padding: 16px;
+
+    background: #ffffff;
+
+    border: 1px solid var(--border);
+
+    border-radius: 12px;
+}
+
+.notice-icon {
+    color: #ef4444;
+
+    font-size: 11px;
+
+    padding-top: 2px;
+}
+
+.live-notice strong {
+    display: block;
+
+    font-size: 13px;
+}
+
+.live-notice p {
+    margin: 4px 0 0;
+
+    color: #777777;
+
+    font-size: 12px;
+
+    line-height: 1.5;
+}
+
+/* =========================================================
+   TOAST
+========================================================= */
+
+.toast {
+    position: fixed;
+
+    right: 20px;
+    bottom: 20px;
+
+    z-index: 999;
+
+    padding: 12px 16px;
+
+    background: #111111;
+
+    color: white;
+
+    border-radius: 9px;
+
+    font-size: 12px;
+
+    box-shadow:
+        0 10px 35px rgba(0,0,0,0.2);
+}
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 800px) {
+
+    .topbar {
+        height: 70px;
+
+        padding: 0 18px;
+    }
+
+    .brand-title {
+        font-size: 19px;
+
+        letter-spacing: 3px;
+    }
+
+    .back-button {
+        font-size: 14px;
+    }
+
+    .stage {
+        min-height: 0;
+
+        aspect-ratio: 16 / 9;
+    }
+
+    .video-logo {
+        top: 13px;
+        left: 14px;
+    }
+
+    .logo-circle {
+        width: 32px;
+        height: 32px;
+
+        font-size: 14px;
+    }
+
+    .video-logo span {
+        display: none;
+    }
+
+    .live-badge {
+        top: 14px;
+        right: 14px;
+
+        padding: 6px 9px;
+
+        font-size: 9px;
+    }
+
+    .watermark {
+        right: 12px;
+
+        min-width: 125px;
+
+        padding: 8px 10px;
+    }
+
+    .watermark strong {
+        font-size: 10px;
+    }
+
+    .watermark span {
+        font-size: 9px;
+    }
+
+    .watermark small {
+        font-size: 7px;
+    }
+
+    .center-play {
+        width: 58px;
+        height: 58px;
+
+        font-size: 19px;
+    }
+
+    .controls {
+        padding: 25px 9px 6px;
+    }
+
+    .control {
+        min-width: 32px;
+        height: 32px;
+
+        font-size: 14px;
+    }
+
+    .fullscreen {
+        font-size: 19px;
+    }
+
+    .class-information,
+    .session-info,
+    .live-notice {
+        width: calc(100% - 28px);
+    }
+
+    .class-information {
+        padding-top: 22px;
+    }
+
+    .class-information h1 {
+        font-size: 27px;
+    }
+
+    .hierarchy {
+        font-size: 13px;
+    }
+
+    .session-info {
+        grid-template-columns: 1fr;
+
+        border-bottom: 0;
+    }
+
+    .session-item {
+        border-right: 0;
+
+        border-bottom: 1px solid var(--border);
+    }
+
+    .session-item:last-child {
+        border-bottom: 0;
+    }
+
+    .live-notice {
+        margin-bottom: 40px;
+    }
+}
+
+@media (max-width: 480px) {
+
+    .back-button span:last-child {
+        display: none;
+    }
+
+    .topbar {
+        grid-template-columns: 1fr auto 1fr;
+    }
+
+    .watermark {
+        top: 35%;
+    }
+}
+
+
+/* Student watermark: subtle, readable, and kept near the video edges so it
+   does not cover the teacher's face, board, captions, or center of the lesson. */
+.watermark {
+    top: 12%;
+    right: auto;
+    bottom: auto;
+    left: 3%;
+    z-index: 18;
+    min-width: 0;
+    max-width: 42%;
+    padding: 6px 9px;
+    border: 1px solid rgba(255,255,255,.16);
+    border-radius: 7px;
+    background: rgba(10,10,14,.20);
+    color: rgba(255,255,255,.56);
+    opacity: .72;
+    box-shadow: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    animation: watermarkOrbit 32s linear infinite;
+    pointer-events: none;
+    user-select: none;
+}
+.watermark span {
+    display: block;
+    margin: 0;
+    font-size: clamp(9px, 1.1vw, 12px);
+    line-height: 1.25;
+    font-weight: 600;
+    letter-spacing: .25px;
+    white-space: nowrap;
+    text-shadow: 0 1px 3px rgba(0,0,0,.45);
+}
+@keyframes watermarkOrbit {
+    0%   { top: 10%; left: 3%; right: auto; bottom: auto; }
+    24%  { top: 10%; left: auto; right: 3%; bottom: auto; }
+    26%  { top: 10%; left: auto; right: 3%; bottom: auto; }
+    50%  { top: auto; left: auto; right: 3%; bottom: 12%; }
+    74%  { top: auto; left: 3%; right: auto; bottom: 12%; }
+    76%  { top: auto; left: 3%; right: auto; bottom: 12%; }
+    100% { top: 10%; left: 3%; right: auto; bottom: auto; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .watermark { animation-duration: 60s; }
+}
+@media (max-width: 600px) {
+    .watermark { padding: 5px 7px; max-width: 48%; }
+    .watermark span { font-size: 9px; }
+}
+
+</style>
+</head>
+
+<body>
+
+<header class="topbar">
+
+    <button
+        id="backButton"
+        class="back-button"
+        type="button"
+    >
+        <span class="back-icon">‹</span>
+        <span>Back</span>
+    </button>
+
+    <div class="brand">
+
+        <div class="brand-title">
+            ZENOVA
+        </div>
+
+        <div class="brand-live">
+            <span></span>
+            LIVE CLASS
+        </div>
+
+    </div>
+
+    <div class="top-space"></div>
+
+</header>
+
+<main>
+
+    <!-- LOADING -->
+
+    <section
+        id="loading"
+        class="loading-screen"
+    >
+
+        <div class="loader"></div>
+
+        <p>
+            Connecting to live class...
+        </p>
+
+    </section>
+
+    <!-- ERROR -->
+
+    <section
+        id="error"
+        class="error-screen hidden"
+    >
+
+        <div class="error-icon">
+            !
+        </div>
+
+        <h2>
+            Unable to join live class
+        </h2>
+
+        <p id="errorText">
+            Something went wrong.
+        </p>
+
+        <button
+            id="errorBack"
+            class="dark-button"
+            type="button"
+        >
+            Go Back
+        </button>
+
+    </section>
+
+    <!-- LIVE APP -->
+
+    <section
+        id="liveApp"
+        class="live-app hidden"
+    >
+
+        <!-- =================================================
+             PLAYER
+        ================================================== -->
+
+        <div
+            id="player"
+            class="player"
+        >
+
+            <div
+                id="stage"
+                class="stage"
+            >
+
+                <!-- HTML VIDEO -->
+
+                <video
+                    id="liveVideo"
+                    class="live-video hidden"
+                    playsinline
+                    autoplay
+                    muted
+                    preload="none"
+                ></video>
+
+                <!-- YOUTUBE -->
+
+                <div
+                    id="youtubeContainer"
+                    class="youtube-container hidden"
+                ></div>
+
+                <!-- PLAYER LOADING -->
+
+                <div
+                    id="playerLoading"
+                    class="player-loading"
+                >
+
+                    <div class="player-spinner"></div>
+
+                    <span>
+                        Connecting...
+                    </span>
+
+                </div>
+
+                <!-- CENTER PLAY -->
+
+                <button
+                    id="centerPlay"
+                    class="center-play hidden"
+                    type="button"
+                >
+                    ▶
+                </button>
+
+                <!-- ZENOVA LOGO -->
+
+                <div class="video-logo">
+
+                    <div class="logo-circle">
+                        Z
+                    </div>
+
+                    <span>
+                        ZENOVA
+                    </span>
+
+                </div>
+
+                <!-- LIVE BADGE -->
+
+                <div
+                    id="liveBadge"
+                    class="live-badge"
+                >
+
+                    <span class="live-dot"></span>
+
+                    LIVE
+
+                </div>
+
+                <!-- STUDENT WATERMARK -->
+
+                <div id="watermark" class="watermark" aria-label="Student identity watermark">
+                    <span id="studentIdentity">Student code</span>
+                </div>
+
+                <!-- CONTROLS -->
+
+                <div
+                    id="controls"
+                    class="controls"
+                >
+
+                    <div class="controls-row">
+
+                        <div class="controls-left">
+
+                            <button
+                                id="playButton"
+                                class="control"
+                                type="button"
+                            >
+                                ▶
+                            </button>
+
+                            <button
+                                id="muteButton"
+                                class="control"
+                                type="button"
+                            >
+                                🔊
+                            </button>
+
+                            <span
+                                id="liveTime"
+                                class="live-time"
+                            >
+                                LIVE
+                            </span>
+
+                        </div>
+
+                        <div class="controls-right">
+
+                            <button
+                                id="fullscreenButton"
+                                class="control fullscreen"
+                                type="button"
+                            >
+                                ⛶
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- =================================================
+             INFORMATION
+        ================================================== -->
+
+        <section class="class-information">
+
+            <div class="live-status">
+
+                <span class="status-pill">
+                    <span></span>
+                    LIVE NOW
+                </span>
+
+                <span
+                    id="classTime"
+                    class="class-time"
+                ></span>
+
+            </div>
+
+            <h1 id="classTitle">
+                Live Class
+            </h1>
+
+            <div
+                id="classHierarchy"
+                class="hierarchy"
+            >
+                Batch • Subject • Chapter
+            </div>
+
+            <div class="faculty">
+
+                <div
+                    id="facultyAvatar"
+                    class="faculty-avatar"
+                >
+                    Z
+                </div>
+
+                <div>
+
+                    <span>
+                        Faculty
+                    </span>
+
+                    <strong id="facultyName">
+                        Faculty
+                    </strong>
+
+                </div>
+
+            </div>
+
+            <div
+                id="descriptionBox"
+                class="description hidden"
+            >
+
+                <h2>
+                    About this class
+                </h2>
+
+                <p id="description"></p>
+
+            </div>
+
+        </section>
+
+        <!-- =================================================
+             LIVE CLASS INFORMATION
+        ================================================== -->
+
+        <section class="session-info">
+
+            <div class="session-item">
+
+                <span class="session-label">
+                    CLASS
+                </span>
+
+                <strong id="sessionTitle">
+                    Live Class
+                </strong>
+
+            </div>
+
+            <div class="session-item">
+
+                <span class="session-label">
+                    DATE
+                </span>
+
+                <strong id="sessionDate">
+                    —
+                </strong>
+
+            </div>
+
+            <div class="session-item">
+
+                <span class="session-label">
+                    TIME
+                </span>
+
+                <strong id="sessionTime">
+                    —
+                </strong>
+
+            </div>
+
+        </section>
+
+        <!-- =================================================
+             LIVE NOTICE
+        ================================================== -->
+
+        <section class="live-notice">
+
+            <div class="notice-icon">
+                ●
+            </div>
+
+            <div>
+
+                <strong>
+                    You are watching a live class
+                </strong>
+
+                <p>
+                    This class is currently being streamed live.
+                    The seek controls are disabled during the live session.
+                </p>
+
+            </div>
+
+        </section>
+
+    </section>
+
+</main>
+
+<div
+    id="toast"
+    class="toast hidden"
+></div>
+
+<script src="https://www.youtube.com/iframe_api"></script>
+
+<script type="module">
+/* =========================================================
+   ZENOVA EDUCATIONS
+   ACTUAL LIVE VIDEO PLAYER
+
+   This player is ONLY for currently live classes.
+
+   URL:
+
+   /home/livevideoplayer/?liveClassId=XXXXX
+
+   Recorded classes DO NOT come here.
+   Recorded classes use:
+
+   /home/videoplayer/?liveClassId=XXXXX
+   ========================================================= */
+
+import {
+    auth,
+    db
+} from "../../firebase/firebase-config.js";
+
+import {
+    onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+
+import {
+    doc,
+    getDoc
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
+/* =========================================================
+   URL
+========================================================= */
+
+const params =
+    new URLSearchParams(
+        window.location.search
+    );
+
+const liveClassId =
+    params.get(
+        "liveClassId"
+    );
+
+/* =========================================================
+   STATE
+========================================================= */
+
+let currentUser = null;
+
+let student = null;
+
+let liveClass = null;
+
+let course = null;
+
+let subject = null;
+
+let chapter = null;
+
+let youtubePlayer = null;
+
+let youtubeReady = false;
+
+let youtubeVideoId = null;
+
+let controlsTimer = null;
+
+/* =========================================================
+   DOM
+========================================================= */
+
+const loading =
+    document.getElementById(
+        "loading"
+    );
+
+const error =
+    document.getElementById(
+        "error"
+    );
+
+const errorText =
+    document.getElementById(
+        "errorText"
+    );
+
+const liveApp =
+    document.getElementById(
+        "liveApp"
+    );
+
+const errorBack =
+    document.getElementById(
+        "errorBack"
+    );
+
+const backButton =
+    document.getElementById(
+        "backButton"
+    );
+
+const player =
+    document.getElementById(
+        "player"
+    );
+
+const stage =
+    document.getElementById(
+        "stage"
+    );
+
+const liveVideo =
+    document.getElementById(
+        "liveVideo"
+    );
+
+const youtubeContainer =
+    document.getElementById(
+        "youtubeContainer"
+    );
+
+const playerLoading =
+    document.getElementById(
+        "playerLoading"
+    );
+
+const centerPlay =
+    document.getElementById(
+        "centerPlay"
+    );
+
+const playButton =
+    document.getElementById(
+        "playButton"
+    );
+
+const muteButton =
+    document.getElementById(
+        "muteButton"
+    );
+
+const fullscreenButton =
+    document.getElementById(
+        "fullscreenButton"
+    );
+
+const liveTime =
+    document.getElementById(
+        "liveTime"
+    );
+
+const studentIdentity =
+    document.getElementById("studentIdentity");
+
+const classTime =
+    document.getElementById(
+        "classTime"
+    );
+
+const classTitle =
+    document.getElementById(
+        "classTitle"
+    );
+
+const classHierarchy =
+    document.getElementById(
+        "classHierarchy"
+    );
+
+const facultyAvatar =
+    document.getElementById(
+        "facultyAvatar"
+    );
+
+const facultyName =
+    document.getElementById(
+        "facultyName"
+    );
+
+const descriptionBox =
+    document.getElementById(
+        "descriptionBox"
+    );
+
+const description =
+    document.getElementById(
+        "description"
+    );
+
+const sessionTitle =
+    document.getElementById(
+        "sessionTitle"
+    );
+
+const sessionDate =
+    document.getElementById(
+        "sessionDate"
+    );
+
+const sessionTime =
+    document.getElementById(
+        "sessionTime"
+    );
+
+const toast =
+    document.getElementById(
+        "toast"
+    );
+
+/* =========================================================
+   INITIAL
+========================================================= */
+
+if (!liveClassId) {
+
+    showError(
+        "No live class was selected."
+    );
+
+} else {
+
+    onAuthStateChanged(
+        auth,
+        async (user) => {
+
+            if (!user) {
+
+                window.location.href =
+                    "../../account/login/";
+
+                return;
+            }
+
+            currentUser =
+                user;
+
+            await initialize();
+
+        }
+    );
+}
+
+/* =========================================================
+   INITIALIZE
+========================================================= */
+
+async function initialize() {
+
+    try {
+
+        showLoading();
+
+        await loadStudent();
+
+        await loadLiveClass();
+
+        await loadHierarchy();
+
+        renderInformation();
+
+        renderWatermark();
+
+        setupPlayer();
+
+        setupControls();
+
+        setupFullscreen();
+
+        setupMouseControls();
+
+        hideLoading();
+
+    } catch (err) {
+
+        console.error(
+            err
+        );
+
+        showError(
+            err?.message ||
+            "Unable to connect to the live class."
+        );
+    }
+}
+
+/* =========================================================
+   STUDENT
+========================================================= */
+
+async function loadStudent() {
+
+    const ref =
+        doc(
+            db,
+            "zen2Students",
+            currentUser.uid
+        );
+
+    const snapshot =
+        await getDoc(ref);
+
+    if (!snapshot.exists()) {
+
+        throw new Error(
+            "Student profile was not found."
+        );
+    }
+
+    student = {
+        id: snapshot.id,
+        ...snapshot.data()
+    };
+}
+
+/* =========================================================
+   LIVE CLASS
+========================================================= */
+
+async function loadLiveClass() {
+
+    const ref =
+        doc(
+            db,
+            "liveClasses",
+            liveClassId
+        );
+
+    const snapshot =
+        await getDoc(ref);
+
+    if (!snapshot.exists()) {
+
+        throw new Error(
+            "Live class was not found."
+        );
+    }
+
+    liveClass = {
+        id: snapshot.id,
+        ...snapshot.data()
+    };
+
+    if (
+        liveClass.active === false
+    ) {
+
+        throw new Error(
+            "This live class is not active."
+        );
+    }
+
+    /*
+       IMPORTANT:
+
+       If this class is actually a recorded
+       video, don't play it in the live player.
+
+       It belongs in /videoplayer/.
+    */
+
+    const type =
+        String(
+            liveClass.liveType ||
+            liveClass.mode ||
+            ""
+        ).toUpperCase();
+
+    if (
+        type === "RECORDED" ||
+        type === "RECORDED_VIDEO"
+    ) {
+
+        throw new Error(
+            "This class is a recorded class. Please open it from the recorded videos section."
+        );
+    }
+}
+
+function getInitial(value) {
+
+    return String(
+        value || "Z"
+    )
+        .trim()
+        .charAt(0)
+        .toUpperCase() || "Z";
+
+}
+/* =========================================================
+   HIERARCHY
+========================================================= */
+
+async function loadHierarchy() {
+
+    if (
+        liveClass.courseId
+    ) {
+
+        course =
+            await getDocument(
+                "zen2Courses",
+                liveClass.courseId
+            );
+    }
+
+    if (
+        liveClass.subjectId
+    ) {
+
+        subject =
+            await getDocument(
+                "zen2Subjects",
+                liveClass.subjectId
+            );
+    }
+
+    if (
+        liveClass.chapterId
+    ) {
+
+        chapter =
+            await getDocument(
+                "zen2Chapters",
+                liveClass.chapterId
+            );
+    }
+}
+
+/* =========================================================
+   GENERIC DOCUMENT
+========================================================= */
+
+async function getDocument(
+    collectionName,
+    id
+) {
+
+    if (!id) {
+        return null;
+    }
+
+    const ref =
+        doc(
+            db,
+            collectionName,
+            id
+        );
+
+    const snapshot =
+        await getDoc(ref);
+
+    if (!snapshot.exists()) {
+        return null;
+    }
+
+    return {
+        id: snapshot.id,
+        ...snapshot.data()
+    };
+}
+
+/* =========================================================
+   RENDER INFORMATION
+========================================================= */
+
+function renderInformation() {
+
+    const title =
+        liveClass.title ||
+        liveClass.classTitle ||
+        liveClass.liveTitle ||
+        liveClass.topic ||
+        "Live Class";
+
+    classTitle.textContent =
+        title;
+
+    sessionTitle.textContent =
+        title;
+
+    const batchName =
+        liveClass.courseName ||
+        course?.name ||
+        course?.title ||
+        "Zenova";
+
+    const subjectName =
+        liveClass.subjectName ||
+        subject?.name ||
+        subject?.title ||
+        "Subject";
+
+    const chapterName =
+        liveClass.chapterName ||
+        chapter?.name ||
+        chapter?.title ||
+        "Chapter";
+
+    classHierarchy.textContent =
+        `${batchName} • ${subjectName} • ${chapterName}`;
+
+    const teacher =
+        liveClass.teacherName ||
+        liveClass.facultyName ||
+        liveClass.teacher ||
+        liveClass.faculty ||
+        "Zenova Faculty";
+
+    facultyName.textContent =
+        teacher;
+
+    facultyAvatar.textContent =
+        getInitial(
+            teacher
+        );
+
+    const desc =
+        liveClass.description ||
+        liveClass.classDescription ||
+        "";
+
+    if (
+        desc.trim()
+    ) {
+
+        descriptionBox.classList.remove(
+            "hidden"
+        );
+
+        description.textContent =
+            desc;
+
+    } else {
+
+        descriptionBox.classList.add(
+            "hidden"
+        );
+    }
+
+    const date =
+        liveClass.scheduledDate ||
+        liveClass.classDate ||
+        liveClass.liveDate ||
+        "";
+
+    const start =
+        liveClass.scheduledTime ||
+        liveClass.startTime ||
+        liveClass.classTime ||
+        "";
+
+    const end =
+        liveClass.endTime ||
+        "";
+
+    sessionDate.textContent =
+        formatDate(
+            date
+        );
+
+    sessionTime.textContent =
+        formatTimeRange(
+            start,
+            end
+        );
+
+    classTime.textContent =
+        formatTimeRange(
+            start,
+            end
+        );
+}
+
+/* =========================================================
+   WATERMARK
+========================================================= */
+
+function renderWatermark() {
+    // Prefer the student's Zenova/student code. If no code exists,
+    // show a masked phone number instead of exposing the full number.
+    const code =
+        student.znvCode || student.znv_code || student.studentCode ||
+        student.student_code || student.admissionNumber || student.admissionNo ||
+        student.code || student.znvId || student.studentId || "";
+
+    const phone =
+        student.phone || student.phoneNumber || student.mobile ||
+        student.mobileNumber || student.contactNumber || "";
+
+    const identity = code
+        ? `ZNV • ${String(code).trim()}`
+        : (phone ? `+91 ${maskPhone(phone)}` : "ZENOVA STUDENT");
+
+    studentIdentity.textContent = identity;
+}
+
+/* =========================================================
+   PLAYER SOURCE
+========================================================= */
+
+function setupPlayer() {
+
+    /*
+       Actual YouTube Live
+    */
+
+    const youtubeSource =
+        liveClass.youtubeLiveUrl ||
+        liveClass.youtubeUrl ||
+        (
+            String(
+                liveClass.liveType ||
+                ""
+            ).toUpperCase() ===
+            "YOUTUBE"
+                ? liveClass.videoUrl
+                : null
+        );
+
+    const youtubeId =
+        extractYouTubeId(
+            youtubeSource
+        );
+
+    if (youtubeId) {
+
+        setupYouTube(
+            youtubeId
+        );
+
+        return;
+    }
+
+    /*
+       Direct live stream / external source
+    */
+
+    const external =
+        liveClass.externalVideoUrl ||
+        (
+            String(
+                liveClass.liveType ||
+                ""
+            ).toUpperCase() ===
+            "EXTERNAL"
+                ? liveClass.videoUrl
+                : null
+        );
+
+    if (external) {
+
+        setupHTMLLive(
+            external
+        );
+
+        return;
+    }
+
+    /*
+       Cloudflare / other HLS URL
+       can also be placed in videoUrl.
+    */
+
+    if (
+        liveClass.videoUrl
+    ) {
+
+        setupHTMLLive(
+            liveClass.videoUrl
+        );
+
+        return;
+    }
+
+    throw new Error(
+        "No live stream source is configured for this class."
+    );
+}
+
+/* =========================================================
+   YOUTUBE LIVE
+========================================================= */
+
+function setupYouTube(
+    videoId
+) {
+
+    youtubeVideoId =
+        videoId;
+
+    youtubeContainer.classList.remove(
+        "hidden"
+    );
+
+    liveVideo.classList.add(
+        "hidden"
+    );
+
+    if (
+        window.YT &&
+        window.YT.Player
+    ) {
+
+        createYouTubePlayer();
+
+    } else {
+
+        window.onYouTubeIframeAPIReady =
+            createYouTubePlayer;
+    }
+}
+
+/* =========================================================
+   YOUTUBE PLAYER
+========================================================= */
+
+function createYouTubePlayer() {
+
+    youtubePlayer =
+        new YT.Player(
+            youtubeContainer,
+            {
+                videoId:
+                    youtubeVideoId,
+
+                playerVars: {
+
+                    autoplay: 1,
+
+                    controls: 0,
+
+                    rel: 0,
+
+                    modestbranding: 1,
+
+                    playsinline: 1,
+
+                    fs: 0,
+
+                    iv_load_policy: 3,
+
+                    disablekb: 1
+                },
+
+                events: {
+
+                    onReady:
+                        onYouTubeReady,
+
+                    onStateChange:
+                        onYouTubeStateChange,
+
+                    onError:
+                        onYouTubeError
+                }
+            }
+        );
+}
+
+/* =========================================================
+   YOUTUBE READY
+========================================================= */
+
+function onYouTubeReady() {
+
+    youtubeReady =
+        true;
+
+    playerLoading.classList.add(
+        "hidden"
+    );
+
+    updatePlayButton();
+
+    startLiveClock();
+
+    /*
+       Try autoplay.
+    */
+
+    try {
+
+        youtubePlayer.playVideo();
+
+    } catch (error) {
+
+        centerPlay.classList.remove(
+            "hidden"
+        );
+    }
+}
+
+/* =========================================================
+   YOUTUBE STATE
+========================================================= */
+
+function onYouTubeStateChange(
+    event
+) {
+
+    if (
+        event.data ===
+        YT.PlayerState.PLAYING
+    ) {
+
+        playButton.textContent =
+            "❚❚";
+
+        centerPlay.classList.add(
+            "hidden"
+        );
+
+        player.classList.remove(
+            "controls-hidden"
+        );
+
+        scheduleControlsHide();
+
+    } else {
+
+        playButton.textContent =
+            "▶";
+
+        centerPlay.classList.remove(
+            "hidden"
+        );
+
+        player.classList.remove(
+            "controls-hidden"
+        );
+    }
+}
+
+/* =========================================================
+   YOUTUBE ERROR
+========================================================= */
+
+function onYouTubeError(
+    event
+) {
+
+    console.error(
+        "YouTube live error:",
+        event
+    );
+
+    showError(
+        "The live stream is currently unavailable."
+    );
+}
+
+/* =========================================================
+   HTML LIVE
+========================================================= */
+
+function setupHTMLLive(
+    url
+) {
+
+    liveVideo.classList.remove(
+        "hidden"
+    );
+
+    youtubeContainer.classList.add(
+        "hidden"
+    );
+
+    liveVideo.src =
+        url;
+
+    /*
+       HLS (.m3u8) works natively on
+       Safari/iOS. Chrome may require
+       hls.js later.
+
+       We keep the player ready for
+       direct MP4/WebM/HLS sources.
+    */
+
+    liveVideo.addEventListener(
+        "loadedmetadata",
+        () => {
+
+            playerLoading.classList.add(
+                "hidden"
+            );
+
+            startLiveClock();
+
+        }
+    );
+
+    liveVideo.addEventListener(
+        "canplay",
+        () => {
+
+            playerLoading.classList.add(
+                "hidden"
+            );
+
+        }
+    );
+
+    liveVideo.addEventListener(
+        "playing",
+        () => {
+
+            playButton.textContent =
+                "❚❚";
+
+            centerPlay.classList.add(
+                "hidden"
+            );
+
+            startLiveClock();
+        }
+    );
+
+    liveVideo.addEventListener(
+        "pause",
+        () => {
+
+            playButton.textContent =
+                "▶";
+
+            centerPlay.classList.remove(
+                "hidden"
+            );
+        }
+    );
+
+    liveVideo.addEventListener(
+        "volumechange",
+        updateMuteButton
+    );
+
+    liveVideo.addEventListener(
+        "error",
+        () => {
+
+            showError(
+                "The live stream is currently unavailable."
+            );
+        }
+    );
+
+    /*
+       Try autoplay.
+
+       Muted autoplay is normally allowed.
+    */
+
+    liveVideo.play()
+        .catch(
+            () => {
+
+                centerPlay.classList.remove(
+                    "hidden"
+                );
+
+            }
+        );
+}
+
+/* =========================================================
+   CONTROLS
+========================================================= */
+
+function setupControls() {
+
+    playButton.addEventListener(
+        "click",
+        togglePlay
+    );
+
+    centerPlay.addEventListener(
+        "click",
+        togglePlay
+    );
+
+    muteButton.addEventListener(
+        "click",
+        toggleMute
+    );
+
+    /*
+       There is deliberately NO:
+
+       - progress bar
+       - seek
+       - back 10
+       - forward 10
+
+       because this is an actual LIVE player.
+    */
+}
+
+/* =========================================================
+   PLAY / PAUSE
+========================================================= */
+
+function togglePlay() {
+
+    if (
+        youtubePlayer &&
+        youtubeReady
+    ) {
+
+        const state =
+            youtubePlayer.getPlayerState();
+
+        if (
+            state ===
+            YT.PlayerState.PLAYING
+        ) {
+
+            youtubePlayer.pauseVideo();
+
+        } else {
+
+            youtubePlayer.playVideo();
+        }
+
+        return;
+    }
+
+    if (
+        liveVideo &&
+        liveVideo.src
+    ) {
+
+        if (
+            liveVideo.paused
+        ) {
+
+            liveVideo.play()
+                .catch(
+                    console.error
+                );
+
+        } else {
+
+            liveVideo.pause();
+        }
+    }
+}
+
+/* =========================================================
+   MUTE
+========================================================= */
+
+function toggleMute() {
+
+    if (
+        youtubePlayer &&
+        youtubeReady
+    ) {
+
+        if (
+            youtubePlayer.isMuted()
+        ) {
+
+            youtubePlayer.unMute();
+
+        } else {
+
+            youtubePlayer.mute();
+        }
+
+        updateMuteButton();
+
+        return;
+    }
+
+    if (
+        liveVideo &&
+        liveVideo.src
+    ) {
+
+        liveVideo.muted =
+            !liveVideo.muted;
+
+        updateMuteButton();
+    }
+}
+
+/* =========================================================
+   MUTE UI
+========================================================= */
+
+function updateMuteButton() {
+
+    if (
+        youtubePlayer &&
+        youtubeReady
+    ) {
+
+        muteButton.textContent =
+            youtubePlayer.isMuted()
+                ? "🔇"
+                : "🔊";
+
+        return;
+    }
+
+    muteButton.textContent =
+        liveVideo.muted
+            ? "🔇"
+            : "🔊";
+}
+
+/* =========================================================
+   FULLSCREEN
+========================================================= */
+
+function setupFullscreen() {
+
+    fullscreenButton.addEventListener(
+        "click",
+        toggleFullscreen
+    );
+}
+
+async function toggleFullscreen() {
+
+    try {
+
+        if (
+            document.fullscreenElement
+        ) {
+
+            await document.exitFullscreen();
+
+            return;
+        }
+
+        if (
+            player.requestFullscreen
+        ) {
+
+            await player.requestFullscreen();
+
+        } else if (
+            player.webkitRequestFullscreen
+        ) {
+
+            player.webkitRequestFullscreen();
+        }
+
+    } catch (error) {
+
+        console.warn(
+            "Fullscreen failed:",
+            error
+        );
+    }
+}
+
+/* =========================================================
+   MOUSE / TOUCH
+========================================================= */
+
+function setupMouseControls() {
+
+    stage.addEventListener(
+        "mousemove",
+        showControls
+    );
+
+    stage.addEventListener(
+        "touchstart",
+        showControls,
+        {
+            passive: true
+        }
+    );
+
+    stage.addEventListener(
+        "mouseleave",
+        scheduleControlsHide
+    );
+
+    /*
+       Clicking video itself:
+
+       For HTML live video → play/pause.
+
+       YouTube iframe handles its own internal
+       surface, so custom center button is used.
+    */
+
+    stage.addEventListener(
+        "click",
+        (event) => {
+
+            if (
+                event.target.closest(
+                    "button"
+                )
+            ) {
+                return;
+            }
+
+            if (
+                !youtubePlayer &&
+                liveVideo &&
+                !liveVideo.classList.contains(
+                    "hidden"
+                )
+            ) {
+
+                togglePlay();
+            }
+        }
+    );
+}
+
+function showControls() {
+
+    player.classList.remove(
+        "controls-hidden"
+    );
+
+    scheduleControlsHide();
+}
+
+function scheduleControlsHide() {
+
+    clearTimeout(
+        controlsTimer
+    );
+
+    controlsTimer =
+        setTimeout(
+            () => {
+
+                if (
+                    isPlaying()
+                ) {
+
+                    player.classList.add(
+                        "controls-hidden"
+                    );
+                }
+
+            },
+            3000
+        );
+}
+
+function isPlaying() {
+
+    if (
+        youtubePlayer &&
+        youtubeReady
+    ) {
+
+        return (
+            youtubePlayer.getPlayerState() ===
+            YT.PlayerState.PLAYING
+        );
+    }
+
+    return (
+        liveVideo &&
+        !liveVideo.paused
+    );
+}
+
+/* =========================================================
+   LIVE CLOCK
+========================================================= */
+
+function startLiveClock() {
+
+    updateLiveClock();
+
+    setInterval(
+        updateLiveClock,
+        1000
+    );
+}
+
+function updateLiveClock() {
+
+    liveTime.textContent =
+        "LIVE";
+}
+
+/* =========================================================
+   DATE / TIME
+========================================================= */
+
+function formatDate(
+    value
+) {
+
+    if (!value) {
+        return "—";
+    }
+
+    try {
+
+        const date =
+            new Date(
+                `${value}T00:00:00`
+            );
+
+        if (
+            Number.isNaN(
+                date.getTime()
+            )
+        ) {
+
+            return value;
+        }
+
+        return date.toLocaleDateString(
+            "en-IN",
+            {
+                day: "numeric",
+                month: "long",
+                year: "numeric"
+            }
+        );
+
+    } catch (error) {
+
+        return value;
+    }
+}
+
+function formatTimeRange(
+    start,
+    end
+) {
+
+    if (
+        start &&
+        end
+    ) {
+
+        return `${start} – ${end}`;
+    }
+
+    if (start) {
+
+        return start;
+    }
+
+    return "—";
+}
+
+/* =========================================================
+   PHONE
+========================================================= */
+
+function maskPhone(
+    phone
+) {
+
+    const digits =
+        String(
+            phone || ""
+        )
+            .replace(
+                /\D/g,
+                ""
+            );
+
+    if (
+        digits.length < 6
+    ) {
+
+        return "XXXXX";
+    }
+
+    return (
+        digits.slice(
+            0,
+            2
+        ) +
+        "XXXXX" +
+        digits.slice(
+            -2
+        )
+    );
+}
+
+/* =========================================================
+   YOUTUBE ID
+========================================================= */
+
+function extractYouTubeId(
+    value
+) {
+
+    if (!value) {
+        return null;
+    }
+
+    const text =
+        String(
+            value
+        ).trim();
+
+    if (
+        /^[a-zA-Z0-9_-]{11}$/.test(
+            text
+        )
+    ) {
+
+        return text;
+    }
+
+    try {
+
+        const url =
+            new URL(
+                text
+            );
+
+        if (
+            url.hostname.includes(
+                "youtu.be"
+            )
+        ) {
+
+            return url.pathname
+                .replace(
+                    "/",
+                    ""
+                )
+                .slice(
+                    0,
+                    11
+                );
+        }
+
+        if (
+            url.hostname.includes(
+                "youtube.com"
+            )
+        ) {
+
+            const id =
+                url.searchParams.get(
+                    "v"
+                );
+
+            if (id) {
+                return id;
+            }
+
+            const parts =
+                url.pathname
+                    .split("/")
+                    .filter(Boolean);
+
+            const index =
+                parts.findIndex(
+                    part =>
+                        [
+                            "live",
+                            "embed",
+                            "shorts"
+                        ].includes(
+                            part
+                        )
+                );
+
+            if (
+                index >= 0 &&
+                parts[index + 1]
+            ) {
+
+                return parts[
+                    index + 1
+                ].slice(
+                    0,
+                    11
+                );
+            }
+        }
+
+    } catch (error) {
+
+        console.warn(
+            "YouTube URL parsing failed:",
+            error
+        );
+    }
+
+    return null;
+}
+
+/* =========================================================
+   INITIAL UI
+========================================================= */
+
+function showLoading() {
+
+    loading.classList.remove(
+        "hidden"
+    );
+
+    error.classList.add(
+        "hidden"
+    );
+
+    liveApp.classList.add(
+        "hidden"
+    );
+}
+
+function hideLoading() {
+
+    loading.classList.add(
+        "hidden"
+    );
+
+    error.classList.add(
+        "hidden"
+    );
+
+    liveApp.classList.remove(
+        "hidden"
+    );
+}
+
+function showError(
+    message
+) {
+
+    loading.classList.add(
+        "hidden"
+    );
+
+    liveApp.classList.add(
+        "hidden"
+    );
+
+    error.classList.remove(
+        "hidden"
+    );
+
+    errorText.textContent =
+        message;
+}
+
+/* =========================================================
+   BACK
+========================================================= */
+
+backButton.addEventListener(
+    "click",
+    goBack
+);
+
+errorBack.addEventListener(
+    "click",
+    goBack
+);
+
+function goBack() {
+
+    /*
+       Prefer the actual previous page.
+    */
+
+    try {
+
+        if (
+            document.referrer
+        ) {
+
+            const referrer =
+                new URL(
+                    document.referrer
+                );
+
+            if (
+                referrer.origin ===
+                window.location.origin
+            ) {
+
+                window.location.href =
+                    document.referrer;
+
+                return;
+            }
+        }
+
+    } catch (error) {
+
+        console.warn(
+            error
+        );
+    }
+
+    /*
+       Browser fallback.
+    */
+
+    if (
+        window.history.length > 1
+    ) {
+
+        window.history.back();
+
+        return;
+    }
+
+    window.location.href =
+        "../live/";
+}
+
+/* =========================================================
+   TOAST
+========================================================= */
+
+let toastTimer = null;
+
+function showToast(
+    message
+) {
+
+    toast.textContent =
+        message;
+
+    toast.classList.remove(
+        "hidden"
+    );
+
+    clearTimeout(
+        toastTimer
+    );
+
+    toastTimer =
+        setTimeout(
+            () => {
+
+                toast.classList.add(
+                    "hidden"
+                );
+
+            },
+            2500
+        );
+}
+
+/* =========================================================
+   INITIAL PLAY BUTTON
+========================================================= */
+
+playButton.textContent =
+    "▶";
+
+muteButton.textContent =
+    "🔇";
+
+</script>
+
+</body>
+</html>
