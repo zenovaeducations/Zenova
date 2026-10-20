@@ -206,7 +206,8 @@ async function loadCourses() {
   if (!state.selectedCourse) {
     $("myBatchesList").innerHTML = `<div class="empty"><i class="ri-book-open-line"></i>No active course is available for your class right now.</div>`;
   }
-}async function loadBanners() {
+}
+  async function loadBanners() {
   try {
     const snap = await getDocs(
       query(
