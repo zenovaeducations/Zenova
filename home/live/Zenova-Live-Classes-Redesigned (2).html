@@ -1,0 +1,4261 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="theme-color"
+        content="#ffffff"
+    >
+
+    <title>Zenova — Live Classes</title>
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+:root {
+
+    --black: #111111;
+
+    --text: #171717;
+
+    --muted: #777777;
+
+    --light: #f7f7f8;
+
+    --border: #e8e8e8;
+
+    --white: #ffffff;
+
+    --red: #d62828;
+
+    --green: #16803c;
+
+    --blue: #2563eb;
+
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+
+    margin: 0;
+
+    background: #fafafa;
+
+    color: var(--text);
+
+    font-family:
+        Inter,
+        Arial,
+        sans-serif;
+
+    padding-bottom: 88px;
+
+    -webkit-font-smoothing: antialiased;
+
+}
+
+button,
+input {
+
+    font: inherit;
+
+}
+
+button {
+
+    cursor: pointer;
+
+}
+
+.hidden {
+
+    display: none !important;
+
+}
+
+
+
+/* =========================================================
+   TOPBAR
+========================================================= */
+
+.topbar {
+
+    position: sticky;
+
+    top: 0;
+
+    z-index: 50;
+
+    height: 64px;
+
+    padding: 0 18px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    background:
+        rgba(255,255,255,.94);
+
+    backdrop-filter: blur(18px);
+
+    border-bottom: 1px solid var(--border);
+
+}
+
+.back-button {
+
+    width: 38px;
+
+    height: 38px;
+
+    border: 0;
+
+    border-radius: 50%;
+
+    background: #f3f3f3;
+
+    color: #111;
+
+    font-size: 22px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+}
+
+.topbar-title {
+
+    position: absolute;
+
+    left: 50%;
+
+    transform: translateX(-50%);
+
+    text-align: center;
+
+}
+
+.brand {
+
+    font-family: Poppins, sans-serif;
+
+    font-size: 16px;
+
+    font-weight: 800;
+
+    letter-spacing: 1.8px;
+
+}
+
+.topbar-title span {
+
+    display: block;
+
+    margin-top: 1px;
+
+    color: #999;
+
+    font-size: 8px;
+
+    font-weight: 700;
+
+    letter-spacing: 1.3px;
+
+}
+
+.topbar-spacer {
+
+    width: 38px;
+
+}
+
+
+
+/* =========================================================
+   PAGE
+========================================================= */
+
+.page {
+
+    width: min(
+        1050px,
+        calc(100% - 32px)
+    );
+
+    margin: 28px auto 50px;
+
+}
+
+.intro {
+
+    margin-bottom: 32px;
+
+}
+
+.eyebrow {
+
+    display: block;
+
+    margin-bottom: 6px;
+
+    color: #999;
+
+    font-size: 9px;
+
+    font-weight: 800;
+
+    letter-spacing: 1.7px;
+
+}
+
+.intro h1 {
+
+    margin: 0;
+
+    font-family: Poppins, sans-serif;
+
+    font-size: 30px;
+
+    letter-spacing: -.8px;
+
+}
+
+.intro p {
+
+    margin: 7px 0 0;
+
+    max-width: 560px;
+
+    color: var(--muted);
+
+    font-size: 13px;
+
+    line-height: 1.6;
+
+}
+
+
+
+/* =========================================================
+   SECTION
+========================================================= */
+
+.section {
+
+    margin-bottom: 42px;
+
+}
+
+.section-heading {
+
+    display: flex;
+
+    align-items: flex-end;
+
+    justify-content: space-between;
+
+    gap: 15px;
+
+    margin-bottom: 15px;
+
+}
+
+.section-heading h2 {
+
+    margin: 0;
+
+    font-family: Poppins, sans-serif;
+
+    font-size: 19px;
+
+    letter-spacing: -.3px;
+
+}
+
+.section-heading p {
+
+    margin: 5px 0 0;
+
+    color: #888;
+
+    font-size: 11px;
+
+}
+
+.date-label {
+
+    color: #888;
+
+    font-size: 11px;
+
+}
+
+
+
+/* =========================================================
+   TODAY CLASS
+========================================================= */
+
+.today-list {
+
+    display: grid;
+
+    gap: 12px;
+
+}
+
+.live-card {
+
+    position: relative;
+
+    overflow: hidden;
+
+    padding: 18px;
+
+    background: white;
+
+    border: 1px solid var(--border);
+
+    border-radius: 16px;
+
+    box-shadow:
+        0 3px 12px rgba(0,0,0,.025);
+
+}
+
+.live-card.live-now {
+
+    border-color: #f1cccc;
+
+}
+
+.live-card-top {
+
+    display: flex;
+
+    align-items: flex-start;
+
+    justify-content: space-between;
+
+    gap: 15px;
+
+}
+
+.live-card-title {
+
+    margin: 0;
+
+    font-family: Poppins, sans-serif;
+
+    font-size: 15px;
+
+    font-weight: 700;
+
+}
+
+.live-card-subject {
+
+    margin-top: 5px;
+
+    color: #777;
+
+    font-size: 11px;
+
+}
+
+.status-pill {
+
+    flex-shrink: 0;
+
+    padding: 5px 9px;
+
+    border-radius: 30px;
+
+    background: #f1f1f1;
+
+    color: #777;
+
+    font-size: 9px;
+
+    font-weight: 800;
+
+    letter-spacing: .5px;
+
+}
+
+.status-pill.live {
+
+    background: #fff0f0;
+
+    color: var(--red);
+
+}
+
+.status-pill.upcoming {
+
+    background: #eef4ff;
+
+    color: var(--blue);
+
+}
+
+.status-pill.missed {
+
+    background: #f1f1f1;
+
+    color: #777;
+
+}
+
+.class-details {
+
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 7px 14px;
+
+    margin-top: 14px;
+
+    color: #777;
+
+    font-size: 10px;
+
+}
+
+.class-details span {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 4px;
+
+}
+
+.class-action-row {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 12px;
+
+    margin-top: 16px;
+
+    padding-top: 13px;
+
+    border-top: 1px solid #f0f0f0;
+
+}
+
+.provider-label {
+
+    color: #888;
+
+    font-size: 9px;
+
+    font-weight: 700;
+
+}
+
+.provider-label.zoom {
+
+    color: #3155c7;
+
+}
+
+.action-button {
+
+    min-height: 38px;
+
+    padding: 0 17px;
+
+    border: 0;
+
+    border-radius: 9px;
+
+    background: #111;
+
+    color: white;
+
+    font-size: 11px;
+
+    font-weight: 700;
+
+}
+
+.action-button.live-button {
+
+    background: var(--red);
+
+}
+
+.action-button.watch-button {
+
+    background: #111;
+
+}
+
+
+
+/* =========================================================
+   DATE PICKER
+========================================================= */
+
+.date-picker-card {
+
+    display: grid;
+
+    grid-template-columns: 42px 1fr auto 42px;
+
+    align-items: center;
+
+    gap: 10px;
+
+    padding: 12px;
+
+    background: white;
+
+    border: 1px solid var(--border);
+
+    border-radius: 15px;
+
+}
+
+.date-arrow {
+
+    width: 40px;
+
+    height: 40px;
+
+    border: 0;
+
+    border-radius: 9px;
+
+    background: #f3f3f3;
+
+    font-size: 25px;
+
+    color: #222;
+
+}
+
+.selected-date span {
+
+    display: block;
+
+    margin-bottom: 3px;
+
+    color: #999;
+
+    font-size: 8px;
+
+    font-weight: 800;
+
+    letter-spacing: 1px;
+
+}
+
+.selected-date strong {
+
+    font-family: Poppins, sans-serif;
+
+    font-size: 14px;
+
+}
+
+#datePicker {
+
+    height: 40px;
+
+    padding: 0 10px;
+
+    border: 1px solid #ddd;
+
+    border-radius: 9px;
+
+    background: white;
+
+    color: #222;
+
+    outline: none;
+
+    font-size: 11px;
+
+}
+
+.date-list {
+
+    display: grid;
+
+    gap: 10px;
+
+    margin-top: 12px;
+
+}
+
+
+
+/* =========================================================
+   DATE CLASS CARD
+========================================================= */
+
+.date-class-card {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 15px;
+
+    padding: 15px;
+
+    background: white;
+
+    border: 1px solid var(--border);
+
+    border-radius: 13px;
+
+}
+
+.date-class-main {
+
+    min-width: 0;
+
+}
+
+.date-class-title {
+
+    font-family: Poppins, sans-serif;
+
+    font-size: 13px;
+
+    font-weight: 700;
+
+}
+
+.date-class-info {
+
+    margin-top: 5px;
+
+    color: #777;
+
+    font-size: 10px;
+
+    line-height: 1.6;
+
+}
+
+.date-class-action {
+
+    flex-shrink: 0;
+
+}
+
+
+
+/* =========================================================
+   SUBJECTS
+========================================================= */
+
+.subject-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            auto-fit,
+            minmax(170px, 1fr)
+        );
+
+    gap: 11px;
+
+}
+
+.subject-card {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    padding: 14px;
+
+    border: 1px solid var(--border);
+
+    border-radius: 14px;
+
+    background: white;
+
+    text-align: left;
+
+    transition:
+        transform .15s ease,
+        border-color .15s ease;
+
+}
+
+.subject-card:hover {
+
+    transform: translateY(-2px);
+
+    border-color: #ccc;
+
+}
+
+.subject-icon {
+
+    width: 40px;
+
+    height: 40px;
+
+    flex-shrink: 0;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 10px;
+
+    background: #f2f2f2;
+
+    font-family: Poppins, sans-serif;
+
+    font-size: 13px;
+
+    font-weight: 800;
+
+}
+
+.subject-name {
+
+    min-width: 0;
+
+}
+
+.subject-name strong {
+
+    display: block;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+
+    white-space: nowrap;
+
+    font-size: 12px;
+
+}
+
+.subject-name span {
+
+    display: block;
+
+    margin-top: 3px;
+
+    color: #999;
+
+    font-size: 9px;
+
+}
+
+.subject-arrow {
+
+    margin-left: auto;
+
+    color: #999;
+
+    font-size: 18px;
+
+}
+
+
+
+/* =========================================================
+   HISTORY
+========================================================= */
+
+.history-header {
+
+    display: flex;
+
+    align-items: flex-end;
+
+    justify-content: space-between;
+
+    gap: 15px;
+
+    margin-bottom: 15px;
+
+}
+
+.history-header h2 {
+
+    margin: 0;
+
+    font-family: Poppins, sans-serif;
+
+    font-size: 19px;
+
+}
+
+.close-button {
+
+    padding: 8px 12px;
+
+    border: 1px solid #ddd;
+
+    border-radius: 8px;
+
+    background: white;
+
+    color: #555;
+
+    font-size: 10px;
+
+    font-weight: 700;
+
+}
+
+.history-list {
+
+    display: grid;
+
+    gap: 10px;
+
+}
+
+.history-card {
+
+    display: grid;
+
+    grid-template-columns: 1fr auto;
+
+    align-items: center;
+
+    gap: 15px;
+
+    padding: 15px;
+
+    background: white;
+
+    border: 1px solid var(--border);
+
+    border-radius: 13px;
+
+}
+
+.history-title {
+
+    font-family: Poppins, sans-serif;
+
+    font-size: 13px;
+
+    font-weight: 700;
+
+}
+
+.history-info {
+
+    margin-top: 5px;
+
+    color: #777;
+
+    font-size: 10px;
+
+    line-height: 1.7;
+
+}
+
+.history-watch {
+
+    min-height: 36px;
+
+    padding: 0 14px;
+
+    border: 0;
+
+    border-radius: 8px;
+
+    background: #111;
+
+    color: white;
+
+    font-size: 10px;
+
+    font-weight: 700;
+
+}
+
+
+
+/* =========================================================
+   EMPTY / STATES
+========================================================= */
+
+.empty-card {
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    min-height: 150px;
+
+    padding: 25px;
+
+    background: white;
+
+    border: 1px dashed #ddd;
+
+    border-radius: 14px;
+
+    text-align: center;
+
+}
+
+.empty-icon {
+
+    width: 38px;
+
+    height: 38px;
+
+    margin-bottom: 10px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #f3f3f3;
+
+    color: #777;
+
+}
+
+.empty-card strong {
+
+    font-size: 12px;
+
+}
+
+.empty-card span {
+
+    max-width: 300px;
+
+    margin-top: 5px;
+
+    color: #999;
+
+    font-size: 10px;
+
+    line-height: 1.5;
+
+}
+
+.state-card {
+
+    min-height: 250px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    text-align: center;
+
+}
+
+.state-card p {
+
+    color: #888;
+
+    font-size: 12px;
+
+}
+
+.error-state {
+
+    background: white;
+
+    border: 1px solid var(--border);
+
+    border-radius: 16px;
+
+    padding: 30px;
+
+}
+
+.state-icon {
+
+    width: 42px;
+
+    height: 42px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #fff0f0;
+
+    color: var(--red);
+
+    font-weight: 800;
+
+}
+
+.error-state h2 {
+
+    margin: 13px 0 0;
+
+    font-family: Poppins, sans-serif;
+
+    font-size: 16px;
+
+}
+
+.error-state p {
+
+    margin-bottom: 15px;
+
+}
+
+.dark-button {
+
+    height: 40px;
+
+    padding: 0 16px;
+
+    border: 0;
+
+    border-radius: 8px;
+
+    background: #111;
+
+    color: white;
+
+    font-size: 11px;
+
+    font-weight: 700;
+
+}
+
+.spinner {
+
+    width: 25px;
+
+    height: 25px;
+
+    border: 2px solid #ddd;
+
+    border-top-color: #111;
+
+    border-radius: 50%;
+
+    animation:
+        spin .8s linear infinite;
+
+}
+
+@keyframes spin {
+
+    to {
+        transform: rotate(360deg);
+    }
+
+}
+
+
+
+/* =========================================================
+   BOTTOM NAV
+========================================================= */
+
+.bottom-nav {
+
+    position: fixed;
+
+    left: 0;
+
+    right: 0;
+
+    bottom: 0;
+
+    z-index: 100;
+
+    height: 70px;
+
+    display: grid;
+
+    grid-template-columns: repeat(4, 1fr);
+
+    padding:
+        6px
+        max(
+            8px,
+            env(safe-area-inset-right)
+        )
+        calc(
+            6px +
+            env(safe-area-inset-bottom)
+        )
+        max(
+            8px,
+            env(safe-area-inset-left)
+        );
+
+    background:
+        rgba(255,255,255,.96);
+
+    backdrop-filter: blur(18px);
+
+    border-top: 1px solid var(--border);
+
+}
+
+.bottom-nav button {
+
+    border: 0;
+
+    background: transparent;
+
+    color: #999;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 3px;
+
+    font-size: 9px;
+
+    font-weight: 600;
+
+}
+
+.bottom-nav button.active {
+
+    color: #111;
+
+}
+
+.nav-icon {
+
+    font-size: 19px;
+
+    line-height: 20px;
+
+}
+
+
+
+/* =========================================================
+   TOAST
+========================================================= */
+
+.toast {
+
+    position: fixed;
+
+    left: 50%;
+
+    bottom: 85px;
+
+    z-index: 150;
+
+    transform:
+        translate(-50%, 20px);
+
+    padding: 10px 15px;
+
+    border-radius: 9px;
+
+    background: #111;
+
+    color: white;
+
+    font-size: 11px;
+
+    opacity: 0;
+
+    pointer-events: none;
+
+    transition:
+        opacity .2s ease,
+        transform .2s ease;
+
+}
+
+.toast.show {
+
+    opacity: 1;
+
+    transform:
+        translate(-50%, 0);
+
+}
+
+
+
+/* =========================================================
+   DESKTOP
+========================================================= */
+
+@media (min-width: 800px) {
+
+    .today-list {
+
+        grid-template-columns:
+            repeat(
+                2,
+                minmax(0, 1fr)
+            );
+
+    }
+
+}
+
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 600px) {
+
+    .page {
+
+        width:
+            calc(100% - 22px);
+
+        margin-top: 22px;
+
+    }
+
+    .intro h1 {
+
+        font-size: 26px;
+
+    }
+
+    .section {
+
+        margin-bottom: 34px;
+
+    }
+
+    .date-picker-card {
+
+        grid-template-columns:
+            38px
+            1fr
+            38px;
+
+    }
+
+    #datePicker {
+
+        grid-column: 1 / -1;
+
+        width: 100%;
+
+        order: 5;
+
+    }
+
+    .date-arrow {
+
+        width: 36px;
+
+        height: 36px;
+
+    }
+
+    .history-card {
+
+        grid-template-columns: 1fr;
+
+    }
+
+    .history-watch {
+
+        width: 100%;
+
+    }
+
+    .date-class-card {
+
+        align-items: flex-start;
+
+        flex-direction: column;
+
+    }
+
+    .date-class-action {
+
+        width: 100%;
+
+    }
+
+    .date-class-action .action-button {
+
+        width: 100%;
+
+    }
+
+}
+
+/* ZENOVA UNIFIED BRAND OVERRIDES */
+:root{--black:#111114;--text:#17151d;--muted:#777381;--light:#f7f6fa;--border:#e9e6ef;--white:#fff;--red:#d92f48;--green:#198754;--blue:#7042c7;--purple:#7042c7;--lav:#eee7ff;--lav2:#f7f3ff;--bottom:78px}
+html{background:#f7f6fa}body{font-family:Inter,system-ui,-apple-system,sans-serif;background:#f7f6fa;color:#17151d;padding-bottom:calc(var(--bottom) + env(safe-area-inset-bottom))}
+.topbar{background:#111114!important;color:#fff!important;border:0!important;box-shadow:0 8px 26px #11111412!important;padding:14px 16px!important;min-height:76px;display:grid!important;grid-template-columns:40px minmax(0,1fr) 44px!important;align-items:center!important;gap:10px!important;position:sticky;top:0;z-index:100}
+.back-button{width:38px!important;height:38px!important;border-radius:12px!important;background:#292532!important;border:1px solid #484151!important;color:#fff!important;font-size:22px!important;display:grid;place-items:center}
+.topbar-title{text-align:left!important;display:flex!important;flex-direction:column!important;align-items:flex-start!important;gap:3px!important;min-width:0}
+.topbar-title .brand{font-size:16px!important;line-height:1.2!important;font-weight:900!important;letter-spacing:.1px!important;color:#fff!important}
+.topbar-title span{font-size:9px!important;letter-spacing:1.5px!important;font-weight:800!important;color:#c8b7f6!important}
+.topbar-spacer{width:42px;height:42px;border-radius:50%;border:2px solid #a58be8;background:#292532;position:relative}
+.topbar-spacer:after{content:'Z';position:absolute;inset:0;display:grid;place-items:center;color:#fff;font-size:17px;font-weight:900}
+.page{max-width:920px!important;margin:0 auto!important;padding:20px 15px 28px!important}
+.intro{background:#111114!important;color:#fff!important;border-radius:22px!important;padding:23px 20px!important;margin:0 0 24px!important;box-shadow:0 10px 28px #20153b12!important}
+.intro .eyebrow,.section .eyebrow{color:#7650d6!important;font-weight:850!important;letter-spacing:1.5px!important}
+.intro .eyebrow{color:#c8b5ff!important}.intro h1{color:#fff!important;font-weight:900!important;letter-spacing:-.8px!important}.intro p{color:#d0cbd8!important;line-height:1.6!important}
+.section{margin-top:25px!important}.section-heading{align-items:center!important;margin-bottom:13px!important}.section-heading h2{font-weight:900!important;letter-spacing:-.45px!important;color:#17151d!important}.section-heading p{color:#777381!important;line-height:1.5!important}
+.today-list,.date-list,.history-list{gap:12px!important}.card,.today-card,.class-card,.date-picker-card,.empty-card,.subject-card,.history-card{border-radius:18px!important}
+.date-picker-card{background:#fff!important;border:1px solid #e9e6ef!important;box-shadow:0 5px 18px #21163806!important;padding:12px!important}.date-arrow{background:#f0e9ff!important;color:#7042c7!important;border:1px solid #e3d8fb!important;border-radius:12px!important}.selected-date strong{color:#17151d!important}.selected-date span{color:#777381!important}
+.subject-grid{gap:11px!important}.subject-card{background:#fff!important;border:1px solid #e8e3f0!important;box-shadow:0 5px 18px #21163806!important;transition:border-color .18s,transform .18s!important}.subject-card:hover{border-color:#cbbcf2!important}.subject-card:active{transform:scale(.99)}
+.dark-button,.primary-button,.join-button,.watch-button,.class-action,button[class*="primary"]{background:#7042c7!important;color:#fff!important;border:0!important;border-radius:12px!important;font-weight:850!important;box-shadow:0 5px 14px #7042c71c!important}.dark-button:hover,.primary-button:hover,.join-button:hover{background:#5e36bd!important}
+.state-card{border-radius:20px!important;background:#fff!important;border:1px solid #e9e6ef!important;box-shadow:0 6px 22px #21163807!important}.spinner{border-top-color:#7042c7!important}.state-icon,.empty-icon{background:#eee7ff!important;color:#7042c7!important;border-radius:14px!important}.empty-card{background:#fff!important;border:1px dashed #dcd4ea!important;color:#777381!important;padding:22px!important}.empty-card strong{color:#17151d!important}
+.hidden{display:none!important}
+.bottom-nav{position:fixed!important;z-index:500!important;left:0!important;right:0!important;bottom:0!important;background:#fff!important;border-top:1px solid #e9e6ef!important;box-shadow:0 -8px 28px #18111f0c!important;padding:8px 12px calc(8px + env(safe-area-inset-bottom))!important;display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:5px!important}
+.bottom-nav button{border:0!important;background:transparent!important;color:#777381!important;border-radius:13px!important;min-height:50px!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:4px!important;font-size:10px!important;font-weight:750!important;padding:5px 2px!important}
+.bottom-nav button .nav-icon{font-size:20px!important;line-height:1!important;color:inherit!important}.bottom-nav button.active{background:#f0e9ff!important;color:#7042c7!important}.bottom-nav button.active .nav-icon{color:#7042c7!important}
+.toast{background:#211d2b!important;border:1px solid #423650!important;border-radius:13px!important}
+@media(min-width:650px){.topbar{padding:16px max(24px,calc((100vw - 920px)/2))!important}.page{padding:26px 25px 35px!important}.intro{padding:28px!important}.bottom-nav{left:50%!important;right:auto!important;transform:translateX(-50%)!important;width:min(100%,520px)!important;bottom:12px!important;border:1px solid #e9e6ef!important;border-radius:19px!important;padding:8px!important;box-shadow:0 12px 35px #18111f18!important}.bottom-nav button{min-height:48px!important}}
+@media(max-width:380px){.page{padding-left:11px!important;padding-right:11px!important}.intro{padding:19px 16px!important}.topbar{padding:12px!important}.topbar-title .brand{font-size:15px!important}}
+</style>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.css">
+</head>
+
+
+<body>
+
+
+<header class="topbar" aria-label="Zenova Live Classes header">
+    <button id="backButton" class="back-button" type="button" aria-label="Go back"><i class="ri-arrow-left-line"></i></button>
+    <div class="topbar-title">
+        <div class="brand">ZENOVA EDUCATIONS</div>
+        <span>YOUR CLASSROOM · LIVE CLASSES</span>
+    </div>
+    <button class="topbar-spacer" type="button" data-nav="../profile/" aria-label="Open student profile" style="border:0;cursor:pointer"></button>
+</header>
+
+
+
+<main class="page">
+
+
+    <!-- LOADING -->
+
+    <section
+        id="loadingState"
+        class="state-card"
+    >
+
+        <div class="spinner"></div>
+
+        <p>
+            Loading live classes...
+        </p>
+
+    </section>
+
+
+
+    <!-- ERROR -->
+
+    <section
+        id="errorState"
+        class="state-card error-state hidden"
+    >
+
+        <div class="state-icon">
+            !
+        </div>
+
+        <h2>
+            Unable to load classes
+        </h2>
+
+        <p id="errorText">
+            Please try again.
+        </p>
+
+        <button
+            id="retryButton"
+            type="button"
+            class="dark-button"
+        >
+            Try Again
+        </button>
+
+    </section>
+
+
+
+    <!-- APP -->
+
+    <div
+        id="liveApp"
+        class="hidden"
+    >
+
+
+        <!-- PAGE HEADER -->
+
+        <section class="intro">
+
+            <span class="eyebrow">
+                YOUR CLASSROOM
+            </span>
+
+            <h1>
+                Live Classes
+            </h1>
+
+            <p>
+                Attend your scheduled classes and watch missed classes later.
+            </p>
+
+        </section>
+
+
+
+        <!-- TODAY -->
+
+        <section class="section">
+
+            <div class="section-heading">
+
+                <div>
+
+                    <span class="eyebrow">
+                        TODAY
+                    </span>
+
+                    <h2>
+                        Today's Classes
+                    </h2>
+
+                </div>
+
+                <div
+                    id="todayDate"
+                    class="date-label"
+                ></div>
+
+            </div>
+
+
+            <div
+                id="todayClasses"
+                class="today-list"
+            ></div>
+
+
+            <div
+                id="todayEmpty"
+                class="empty-card hidden"
+            >
+
+                <div class="empty-icon">
+                    ◷
+                </div>
+
+                <strong>
+                    No classes today
+                </strong>
+
+                <span>
+                    There are no live classes scheduled for today.
+                </span>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- DATE SELECTOR -->
+
+        <section class="section">
+
+            <div class="section-heading">
+
+                <div>
+
+                    <span class="eyebrow">
+                        CLASS CALENDAR
+                    </span>
+
+                    <h2>
+                        Select a Date
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <div class="date-picker-card">
+
+                <button
+                    id="previousDate"
+                    class="date-arrow"
+                    type="button"
+                >
+                    ‹
+                </button>
+
+
+                <div class="selected-date">
+
+                    <span>
+                        SELECTED DATE
+                    </span>
+
+                    <strong id="selectedDateText">
+                        Today
+                    </strong>
+
+                </div>
+
+
+                <input
+                    id="datePicker"
+                    type="date"
+                    aria-label="Select class date"
+                >
+
+
+                <button
+                    id="nextDate"
+                    class="date-arrow"
+                    type="button"
+                >
+                    ›
+                </button>
+
+            </div>
+
+
+            <div
+                id="selectedDateClasses"
+                class="date-list"
+            ></div>
+
+
+            <div
+                id="selectedDateEmpty"
+                class="empty-card hidden"
+            >
+
+                <div class="empty-icon">
+                    ◷
+                </div>
+
+                <strong>
+                    No class was taken on this date
+                </strong>
+
+                <span>
+                    No scheduled live class was found for the selected date.
+                </span>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ALL SUBJECTS -->
+
+        <section class="section subjects-section">
+
+            <div class="section-heading">
+
+                <div>
+
+                    <span class="eyebrow">
+                        YOUR BATCH
+                    </span>
+
+                    <h2>
+                        All Subjects
+                    </h2>
+
+                    <p>
+                        Select a subject to view previous live classes.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div
+                id="subjectGrid"
+                class="subject-grid"
+            ></div>
+
+
+            <div
+                id="subjectsEmpty"
+                class="empty-card hidden"
+            >
+
+                <div class="empty-icon">
+                    —
+                </div>
+
+                <strong>
+                    No subjects available
+                </strong>
+
+                <span>
+                    Subjects for your batch will appear here.
+                </span>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- SUBJECT HISTORY -->
+
+        <section
+            id="subjectHistorySection"
+            class="section hidden"
+        >
+
+            <div class="history-header">
+
+                <div>
+
+                    <span class="eyebrow">
+                        SUBJECT HISTORY
+                    </span>
+
+                    <h2 id="historySubjectName">
+                        Previous Classes
+                    </h2>
+
+                </div>
+
+
+                <button
+                    id="closeHistory"
+                    type="button"
+                    class="close-button"
+                >
+                    Close
+                </button>
+
+            </div>
+
+
+            <div
+                id="subjectHistory"
+                class="history-list"
+            ></div>
+
+
+            <div
+                id="historyEmpty"
+                class="empty-card hidden"
+            >
+
+                <div class="empty-icon">
+                    ◷
+                </div>
+
+                <strong>
+                    No previous classes
+                </strong>
+
+                <span>
+                    No live class recordings are available for this subject yet.
+                </span>
+
+            </div>
+
+        </section>
+
+
+    </div>
+
+</main>
+
+
+
+<!-- BOTTOM NAV -->
+
+<nav class="bottom-nav" aria-label="Main navigation">
+    <button type="button" data-nav="../../home/"><span class="nav-icon"><i class="ri-home-5-line"></i></span><span>Home</span></button>
+    <button type="button" class="active" data-nav="../live/" aria-current="page"><span class="nav-icon"><i class="ri-live-line"></i></span><span>Live</span></button>
+    <button type="button" data-nav="../revision/"><span class="nav-icon"><i class="ri-book-open-line"></i></span><span>Revision</span></button>
+    <button type="button" data-nav="../profile/"><span class="nav-icon"><i class="ri-user-3-line"></i></span><span>Profile</span></button>
+</nav>
+
+
+
+<div
+    id="toast"
+    class="toast"
+></div>
+
+
+<script type="module">
+import { auth, db } from "../../firebase/firebase-config.js";
+
+import {
+    onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+
+import {
+    doc,
+    getDoc,
+    collection,
+    getDocs
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
+
+
+/* =========================================================
+   DOM
+========================================================= */
+
+const loadingState =
+    document.getElementById("loadingState");
+
+const errorState =
+    document.getElementById("errorState");
+
+const errorText =
+    document.getElementById("errorText");
+
+const liveApp =
+    document.getElementById("liveApp");
+
+const todayClasses =
+    document.getElementById("todayClasses");
+
+const todayEmpty =
+    document.getElementById("todayEmpty");
+
+const todayDate =
+    document.getElementById("todayDate");
+
+const datePicker =
+    document.getElementById("datePicker");
+
+const selectedDateText =
+    document.getElementById("selectedDateText");
+
+const selectedDateClasses =
+    document.getElementById("selectedDateClasses");
+
+const selectedDateEmpty =
+    document.getElementById("selectedDateEmpty");
+
+const previousDate =
+    document.getElementById("previousDate");
+
+const nextDate =
+    document.getElementById("nextDate");
+
+const subjectGrid =
+    document.getElementById("subjectGrid");
+
+const subjectsEmpty =
+    document.getElementById("subjectsEmpty");
+
+const subjectHistorySection =
+    document.getElementById("subjectHistorySection");
+
+const historySubjectName =
+    document.getElementById("historySubjectName");
+
+const subjectHistory =
+    document.getElementById("subjectHistory");
+
+const historyEmpty =
+    document.getElementById("historyEmpty");
+
+const closeHistory =
+    document.getElementById("closeHistory");
+
+const backButton =
+    document.getElementById("backButton");
+
+const retryButton =
+    document.getElementById("retryButton");
+
+
+
+/* =========================================================
+   STATE
+========================================================= */
+
+let currentUser = null;
+
+let student = null;
+
+let studentCourse = null;
+
+let allClasses = [];
+
+let allSubjects = [];
+
+let selectedDate = getTodayString();
+
+
+
+/* =========================================================
+   AUTH
+========================================================= */
+
+onAuthStateChanged(
+    auth,
+    async user => {
+
+        if (!user) {
+
+            window.location.href =
+                "../../account/login/";
+
+            return;
+
+        }
+
+
+        currentUser = user;
+
+
+        try {
+
+            await loadPage();
+
+        }
+
+        catch (error) {
+
+            console.error(
+                "LIVE PAGE ERROR:",
+                error
+            );
+
+            showError(
+                error.message ||
+                "Unable to load live classes."
+            );
+
+        }
+
+    }
+);
+
+
+
+/* =========================================================
+   MAIN LOAD
+========================================================= */
+
+async function loadPage() {
+
+    showLoading();
+
+
+    /*
+     * Student
+     */
+
+    const studentRef =
+        doc(
+            db,
+            "zen2Students",
+            currentUser.uid
+        );
+
+
+    const studentSnap =
+        await getDoc(
+            studentRef
+        );
+
+
+    if (!studentSnap.exists()) {
+
+        throw new Error(
+            "Student profile was not found."
+        );
+
+    }
+
+
+    student = {
+        id: studentSnap.id,
+        ...studentSnap.data()
+    };
+
+
+    /*
+     * Find student's class
+     */
+
+    const className =
+        getStudentClass(
+            student
+        );
+
+
+    if (!className) {
+
+        throw new Error(
+            "Your class is not assigned yet."
+        );
+
+    }
+
+
+    /*
+     * Load courses
+     */
+
+    const coursesSnap =
+        await getDocs(
+            collection(
+                db,
+                "zen2Courses"
+            )
+        );
+
+
+    const courses =
+        coursesSnap.docs
+            .map(
+                item => ({
+
+                    id: item.id,
+
+                    ...item.data()
+
+                })
+            )
+            .filter(
+                item =>
+                    item.active !== false
+            );
+
+
+    /*
+     * Find matching course.
+     */
+
+    studentCourse =
+        courses.find(
+            course =>
+                normalizeClass(
+                    getCourseClass(course)
+                ) ===
+                normalizeClass(
+                    className
+                )
+        );
+
+
+    /*
+     * If student's document already
+     * has courseId, prefer it.
+     */
+
+    if (
+        student.courseId ||
+        student.batchId
+    ) {
+
+        const directId =
+            student.courseId ||
+            student.batchId;
+
+
+        const directCourse =
+            courses.find(
+                item =>
+                    item.id === directId
+            );
+
+
+        if (directCourse) {
+
+            studentCourse =
+                directCourse;
+
+        }
+
+    }
+
+
+    if (!studentCourse) {
+
+        throw new Error(
+            `No batch was found for ${className}.`
+        );
+
+    }
+
+
+    /*
+     * Load live classes.
+     */
+
+    const liveSnap =
+        await getDocs(
+            collection(
+                db,
+                "liveClasses"
+            )
+        );
+
+
+    allClasses =
+        liveSnap.docs
+            .map(
+                item => ({
+
+                    id: item.id,
+
+                    ...item.data()
+
+                })
+            )
+            .filter(
+                item =>
+                    item.active !== false
+            )
+            .filter(
+                item =>
+                    belongsToCourse(
+                        item,
+                        studentCourse
+                    )
+            );
+
+
+    /*
+     * Load subjects.
+     */
+
+    const subjectsSnap =
+        await getDocs(
+            collection(
+                db,
+                "zen2Subjects"
+            )
+        );
+
+
+    allSubjects =
+        subjectsSnap.docs
+            .map(
+                item => ({
+
+                    id: item.id,
+
+                    ...item.data()
+
+                })
+            )
+            .filter(
+                item =>
+                    item.courseId ===
+                    studentCourse.id
+            )
+            .filter(
+                item =>
+                    item.active !== false
+            )
+            .sort(
+                sortSubjects
+            );
+
+
+    /*
+     * Date setup
+     */
+
+    datePicker.value =
+        selectedDate;
+
+
+    renderToday();
+
+    renderSelectedDate();
+
+    renderSubjects();
+
+
+    showApp();
+
+}
+
+
+
+/* =========================================================
+   TODAY
+========================================================= */
+
+function renderToday() {
+
+    const today =
+        getTodayString();
+
+
+    todayDate.textContent =
+        formatLongDate(
+            today
+        );
+
+
+    const list =
+        getClassesForDate(
+            today
+        );
+
+
+    if (!list.length) {
+
+        todayClasses.innerHTML =
+            "";
+
+        todayEmpty.classList.remove(
+            "hidden"
+        );
+
+        return;
+
+    }
+
+
+    todayEmpty.classList.add(
+        "hidden"
+    );
+
+
+    todayClasses.innerHTML =
+        list
+            .map(
+                item =>
+                    createLiveCard(
+                        item
+                    )
+            )
+            .join("");
+
+}
+
+
+
+/* =========================================================
+   DATE SELECTOR
+========================================================= */
+
+datePicker.addEventListener(
+    "change",
+    () => {
+
+        if (!datePicker.value) {
+
+            return;
+
+        }
+
+
+        selectedDate =
+            datePicker.value;
+
+
+        renderSelectedDate();
+
+    }
+);
+
+
+previousDate.addEventListener(
+    "click",
+    () => {
+
+        selectedDate =
+            shiftDate(
+                selectedDate,
+                -1
+            );
+
+        datePicker.value =
+            selectedDate;
+
+        renderSelectedDate();
+
+    }
+);
+
+
+nextDate.addEventListener(
+    "click",
+    () => {
+
+        selectedDate =
+            shiftDate(
+                selectedDate,
+                1
+            );
+
+        datePicker.value =
+            selectedDate;
+
+        renderSelectedDate();
+
+    }
+);
+
+
+
+function renderSelectedDate() {
+
+    selectedDateText.textContent =
+        formatLongDate(
+            selectedDate
+        );
+
+
+    const list =
+        getClassesForDate(
+            selectedDate
+        );
+
+
+    if (!list.length) {
+
+        selectedDateClasses.innerHTML =
+            "";
+
+        selectedDateEmpty.classList.remove(
+            "hidden"
+        );
+
+        return;
+
+    }
+
+
+    selectedDateEmpty.classList.add(
+        "hidden"
+    );
+
+
+    selectedDateClasses.innerHTML =
+        list
+            .map(
+                item =>
+                    createDateClassCard(
+                        item
+                    )
+            )
+            .join("");
+
+}
+
+
+
+/* =========================================================
+   SUBJECTS
+========================================================= */
+
+function renderSubjects() {
+
+    if (!allSubjects.length) {
+
+        subjectGrid.innerHTML =
+            "";
+
+        subjectsEmpty.classList.remove(
+            "hidden"
+        );
+
+        return;
+
+    }
+
+
+    subjectsEmpty.classList.add(
+        "hidden"
+    );
+
+
+    subjectGrid.innerHTML =
+        allSubjects
+            .map(
+                subject =>
+                    createSubjectCard(
+                        subject
+                    )
+            )
+            .join("");
+
+
+    document
+        .querySelectorAll(
+            "[data-subject-id]"
+        )
+        .forEach(
+            button => {
+
+                button.addEventListener(
+                    "click",
+                    () => {
+
+                        showSubjectHistory(
+                            button.dataset.subjectId
+                        );
+
+                    }
+                );
+
+            }
+        );
+
+}
+
+
+
+/* =========================================================
+   SUBJECT HISTORY
+========================================================= */
+
+function showSubjectHistory(
+    subjectId
+) {
+
+    const subject =
+        allSubjects.find(
+            item =>
+                item.id ===
+                subjectId
+        );
+
+
+    if (!subject) {
+
+        return;
+
+    }
+
+
+    const history =
+        allClasses
+            .filter(
+                item =>
+                    item.subjectId ===
+                    subjectId
+            )
+            .filter(
+                item =>
+                    getClassStatus(
+                        item
+                    ).status ===
+                    "ENDED"
+            )
+            .sort(
+                (a, b) =>
+                    getStartMillis(b) -
+                    getStartMillis(a)
+            );
+
+
+    historySubjectName.textContent =
+        getSubjectDisplayName(subject) ||
+        "Previous Classes";
+
+
+    subjectHistorySection.classList.remove(
+        "hidden"
+    );
+
+
+    if (!history.length) {
+
+        subjectHistory.innerHTML =
+            "";
+
+        historyEmpty.classList.remove(
+            "hidden"
+        );
+
+    }
+
+    else {
+
+        historyEmpty.classList.add(
+            "hidden"
+        );
+
+
+        subjectHistory.innerHTML =
+            history
+                .map(
+                    item =>
+                        createHistoryCard(
+                            item
+                        )
+                )
+                .join("");
+
+    }
+
+
+    subjectHistorySection.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+    });
+
+}
+
+
+
+closeHistory.addEventListener(
+    "click",
+    () => {
+
+        subjectHistorySection.classList.add(
+            "hidden"
+        );
+
+    }
+);
+
+
+
+/* =========================================================
+   CARD — TODAY
+========================================================= */
+
+function createLiveCard(
+    item
+) {
+
+    const status =
+        getClassStatus(
+            item
+        );
+
+
+    const provider =
+        getProvider(
+            item
+        );
+
+
+    let action =
+        "";
+
+
+    if (
+        status.status ===
+        "LIVE"
+    ) {
+
+        action = `
+            <button
+                type="button"
+                class="action-button live-button"
+                data-join="${escapeAttribute(item.id)}"
+            >
+                JOIN CLASS
+            </button>
+        `;
+
+    }
+
+    else if (
+        status.status ===
+        "ENDED"
+    ) {
+
+        if (
+            hasRecording(
+                item
+            )
+        ) {
+
+            action = `
+                <button
+                    type="button"
+                    class="action-button watch-button"
+                    data-recording="${escapeAttribute(item.id)}"
+                >
+                    WATCH RECORDING
+                </button>
+            `;
+
+        }
+
+        else {
+
+            action = `
+                <span class="provider-label">
+                    Class ended
+                </span>
+            `;
+
+        }
+
+    }
+
+    else {
+
+        action = `
+            <span class="provider-label">
+                Starts ${formatTime(item)}
+            </span>
+        `;
+
+    }
+
+
+    return `
+
+        <article
+            class="live-card ${
+                status.status === "LIVE"
+                    ? "live-now"
+                    : ""
+            }"
+        >
+
+            <div class="live-card-top">
+
+                <div>
+
+                    <h3 class="live-card-title">
+                        ${escapeHtml(
+                            item.title ||
+                            "Live Class"
+                        )}
+                    </h3>
+
+                    <div class="live-card-subject">
+
+                        ${escapeHtml(
+                            item.subjectName ||
+                            "Class"
+                        )}
+
+                        ${
+                            item.chapterName
+                                ? `
+                                    ·
+                                    ${escapeHtml(
+                                        item.chapterName
+                                    )}
+                                `
+                                : ""
+                        }
+
+                    </div>
+
+                </div>
+
+
+                <span
+                    class="status-pill ${
+                        status.status === "LIVE"
+                            ? "live"
+                            : status.status === "UPCOMING"
+                                ? "upcoming"
+                                : "missed"
+                    }"
+                >
+                    ${escapeHtml(
+                        status.label
+                    )}
+                </span>
+
+            </div>
+
+
+            <div class="class-details">
+
+                <span>
+                    🕒 ${escapeHtml(
+                        formatTimeRange(item)
+                    )}
+                </span>
+
+                <span>
+                    👨‍🏫 ${escapeHtml(
+                        item.teacherName ||
+                        item.facultyName ||
+                        "Faculty"
+                    )}
+                </span>
+
+            </div>
+
+
+            <div class="class-action-row">
+
+                <span
+                    class="provider-label ${
+                        item.liveType === "ZOOM"
+                            ? "zoom"
+                            : ""
+                    }"
+                >
+                    ${escapeHtml(
+                        provider
+                    )}
+                </span>
+
+
+                <div>
+                    ${action}
+                </div>
+
+            </div>
+
+        </article>
+
+    `;
+
+}
+
+
+
+/* =========================================================
+   DATE CLASS CARD
+========================================================= */
+
+function createDateClassCard(
+    item
+) {
+
+    const status =
+        getClassStatus(
+            item
+        );
+
+
+    let action =
+        "";
+
+
+    if (
+        status.status ===
+        "LIVE"
+    ) {
+
+        action = `
+            <button
+                type="button"
+                class="action-button live-button"
+                data-join="${escapeAttribute(item.id)}"
+            >
+                JOIN CLASS
+            </button>
+        `;
+
+    }
+
+    else if (
+        status.status ===
+        "ENDED" &&
+        hasRecording(item)
+    ) {
+
+        action = `
+            <button
+                type="button"
+                class="action-button watch-button"
+                data-recording="${escapeAttribute(item.id)}"
+            >
+                WATCH RECORDING
+            </button>
+        `;
+
+    }
+
+    else if (
+        status.status ===
+        "UPCOMING"
+    ) {
+
+        action = `
+            <span class="provider-label">
+                UPCOMING
+            </span>
+        `;
+
+    }
+
+
+    return `
+
+        <article class="date-class-card">
+
+            <div class="date-class-main">
+
+                <div class="date-class-title">
+
+                    ${escapeHtml(
+                        item.title ||
+                        "Live Class"
+                    )}
+
+                </div>
+
+
+                <div class="date-class-info">
+
+                    ${escapeHtml(
+                        item.subjectName ||
+                        "Subject"
+                    )}
+
+                    ${
+                        item.chapterName
+                            ? `
+                                ·
+                                ${escapeHtml(
+                                    item.chapterName
+                                )}
+                            `
+                            : ""
+                    }
+
+                    <br>
+
+                    ${escapeHtml(
+                        item.teacherName ||
+                        item.facultyName ||
+                        "Faculty"
+                    )}
+
+                    ·
+
+                    ${escapeHtml(
+                        formatTimeRange(item)
+                    )}
+
+                </div>
+
+            </div>
+
+
+            <div class="date-class-action">
+
+                ${action}
+
+            </div>
+
+        </article>
+
+    `;
+
+}
+
+
+
+/* =========================================================
+   SUBJECT DISPLAY NAME
+   Supports the common field names used by subject documents.
+   This only changes displayed labels; class loading/counts remain unchanged.
+========================================================= */
+
+function getSubjectDisplayName(subject) {
+    const candidates = [
+        subject?.name,
+        subject?.subjectName,
+        subject?.subject_name,
+        subject?.title,
+        subject?.displayName,
+        subject?.label,
+        subject?.nameEnglish,
+        subject?.subjectNameEnglish,
+        subject?.englishName,
+        subject?.nameKannada,
+        subject?.subjectNameKannada
+    ];
+
+    const value = candidates.find(
+        item => typeof item === "string" && item.trim().length > 0
+    );
+
+    return value ? value.trim() : "Subject";
+}
+
+
+/* =========================================================
+   SUBJECT CARD
+========================================================= */
+
+function createSubjectCard(
+    subject
+) {
+
+    const name = getSubjectDisplayName(subject);
+
+
+    const count =
+        allClasses.filter(
+            item =>
+                item.subjectId ===
+                subject.id
+        ).length;
+
+
+    return `
+
+        <button
+            type="button"
+            class="subject-card"
+            data-subject-id="${escapeAttribute(subject.id)}"
+        >
+
+            <div class="subject-icon">
+
+                ${escapeHtml(
+                    getInitial(name)
+                )}
+
+            </div>
+
+
+            <div class="subject-name">
+
+                <strong>
+                    ${escapeHtml(
+                        name
+                    )}
+                </strong>
+
+                <span>
+                    ${count}
+                    ${
+                        count === 1
+                            ? "class"
+                            : "classes"
+                    }
+                </span>
+
+            </div>
+
+
+            <div class="subject-arrow">
+                ›
+            </div>
+
+        </button>
+
+    `;
+
+}
+
+
+
+/* =========================================================
+   HISTORY CARD
+========================================================= */
+
+function createHistoryCard(
+    item
+) {
+
+    return `
+
+        <article class="history-card">
+
+            <div>
+
+                <div class="history-title">
+
+                    ${escapeHtml(
+                        item.title ||
+                        "Live Class"
+                    )}
+
+                </div>
+
+
+                <div class="history-info">
+
+                    ${escapeHtml(
+                        item.chapterName ||
+                        "Class"
+                    )}
+
+                    <br>
+
+                    ${escapeHtml(
+                        item.teacherName ||
+                        item.facultyName ||
+                        "Faculty"
+                    )}
+
+                    ·
+
+                    ${escapeHtml(
+                        formatHistoryDate(item)
+                    )}
+
+                </div>
+
+            </div>
+
+
+            ${
+                hasRecording(item)
+                    ? `
+                        <button
+                            type="button"
+                            class="history-watch"
+                            data-recording="${escapeAttribute(item.id)}"
+                        >
+                            WATCH
+                        </button>
+                    `
+                    : `
+                        <span class="provider-label">
+                            NO RECORDING
+                        </span>
+                    `
+            }
+
+        </article>
+
+    `;
+
+}
+
+
+
+/* =========================================================
+   EVENT DELEGATION
+========================================================= */
+
+document.addEventListener(
+    "click",
+    event => {
+
+        const join =
+            event.target.closest(
+                "[data-join]"
+            );
+
+
+        if (join) {
+
+            openLiveClass(
+                join.dataset.join
+            );
+
+            return;
+
+        }
+
+
+        const recording =
+            event.target.closest(
+                "[data-recording]"
+            );
+
+
+        if (recording) {
+
+            openRecording(
+                recording.dataset.recording
+            );
+
+        }
+
+    }
+);
+
+
+
+/* =========================================================
+   ZOOM CONNECTION
+========================================================= */
+
+function openLiveClass(
+    liveClassId
+) {
+
+    const item =
+        allClasses.find(
+            classItem =>
+                classItem.id ===
+                liveClassId
+        );
+
+
+    if (!item) {
+
+        showToast(
+            "Live class not found."
+        );
+
+        return;
+
+    }
+
+
+    const status =
+        getClassStatus(
+            item
+        );
+
+
+    /*
+     * Only allow joining an actual
+     * currently-live class.
+     */
+
+    if (
+        status.status !==
+        "LIVE"
+    ) {
+
+        showToast(
+            "This class is not live right now."
+        );
+
+        return;
+
+    }
+
+
+    /*
+     * NEW ZOOM ROUTE
+     *
+     * The Zoom Meeting SDK will be
+     * loaded by /home/liveclass/
+     */
+
+    window.location.href =
+        `../liveclass/?liveClassId=${
+            encodeURIComponent(
+                liveClassId
+            )
+        }`;
+
+}
+
+
+
+/* =========================================================
+   RECORDING
+========================================================= */
+
+function openRecording(
+    liveClassId
+) {
+
+    const item =
+        allClasses.find(
+            classItem =>
+                classItem.id ===
+                liveClassId
+        );
+
+
+    if (!item) {
+
+        showToast(
+            "Recording not found."
+        );
+
+        return;
+
+    }
+
+
+    if (
+        !hasRecording(item)
+    ) {
+
+        showToast(
+            "Recording is not available yet."
+        );
+
+        return;
+
+    }
+
+
+    /*
+     * Common Zenova Video Player
+     */
+
+    window.location.href =
+        `../videoplayer/?liveClassId=${
+            encodeURIComponent(
+                liveClassId
+            )
+        }`;
+
+}
+
+
+
+/* =========================================================
+   RECORDING DETECTION
+========================================================= */
+
+function hasRecording(
+    item
+) {
+
+    /*
+     * IMPORTANT:
+     *
+     * youtubeLiveUrl is NOT considered
+     * a recording.
+     *
+     * A live source alone does not mean
+     * a replay exists.
+     */
+
+    return Boolean(
+
+        item.recordingUrl ||
+
+        item.recordedUrl ||
+
+        item.replayUrl ||
+
+        item.recordedVideoUrl ||
+
+        item.recordingVideoUrl ||
+
+        (
+            item.videoUrl &&
+            item.liveType ===
+            "RECORDED_VIDEO"
+        ) ||
+
+        item.recordingContentId
+
+    );
+
+}
+
+
+
+/* =========================================================
+   CLASS STATUS
+========================================================= */
+
+function getClassStatus(
+    item
+) {
+
+    const now =
+        Date.now();
+
+
+    const start =
+        getStartMillis(
+            item
+        );
+
+
+    let end =
+        getEndMillis(
+            item
+        );
+
+
+    /*
+     * If end time is unavailable,
+     * assume two hours.
+     */
+
+    if (
+        !end ||
+        end <= start
+    ) {
+
+        end =
+            start +
+            (
+                2 *
+                60 *
+                60 *
+                1000
+            );
+
+    }
+
+
+    if (
+        now <
+        start
+    ) {
+
+        return {
+
+            status: "UPCOMING",
+
+            label: "UPCOMING"
+
+        };
+
+    }
+
+
+    if (
+        now >= start &&
+        now <= end
+    ) {
+
+        return {
+
+            status: "LIVE",
+
+            label: "LIVE NOW"
+
+        };
+
+    }
+
+
+    return {
+
+        status: "ENDED",
+
+        label: "MISSED"
+
+    };
+
+}
+
+
+
+/* =========================================================
+   DATE / TIME
+========================================================= */
+
+function getStartMillis(
+    item
+) {
+
+    if (
+        item.startDateTime &&
+        typeof item.startDateTime.toMillis ===
+        "function"
+    ) {
+
+        return item.startDateTime.toMillis();
+
+    }
+
+
+    if (
+        item.startDateTime &&
+        item.startDateTime.seconds
+    ) {
+
+        return (
+            Number(
+                item.startDateTime.seconds
+            ) * 1000
+        );
+
+    }
+
+
+    return parseIndiaDateTime(
+        item.scheduledDate,
+        item.scheduledTime ||
+        item.startTime
+    );
+
+}
+
+
+
+function getEndMillis(
+    item
+) {
+
+    if (
+        item.endDateTime &&
+        typeof item.endDateTime.toMillis ===
+        "function"
+    ) {
+
+        return item.endDateTime.toMillis();
+
+    }
+
+
+    if (
+        item.endDateTime &&
+        item.endDateTime.seconds
+    ) {
+
+        return (
+            Number(
+                item.endDateTime.seconds
+            ) * 1000
+        );
+
+    }
+
+
+    return parseIndiaDateTime(
+        item.endDate ||
+        item.scheduledDate,
+        item.endTime
+    );
+
+}
+
+
+
+function parseIndiaDateTime(
+    date,
+    time
+) {
+
+    if (
+        !date ||
+        !time
+    ) {
+
+        return 0;
+
+    }
+
+
+    return new Date(
+        `${date}T${time}:00+05:30`
+    ).getTime();
+
+}
+
+
+
+function formatTime(
+    item
+) {
+
+    const millis =
+        getStartMillis(
+            item
+        );
+
+
+    if (!millis) {
+
+        return "--";
+
+    }
+
+
+    return new Intl.DateTimeFormat(
+        "en-IN",
+        {
+
+            hour: "numeric",
+
+            minute: "2-digit",
+
+            hour12: true,
+
+            timeZone:
+                "Asia/Kolkata"
+
+        }
+    ).format(
+        new Date(millis)
+    );
+
+}
+
+
+
+function formatTimeRange(
+    item
+) {
+
+    const start =
+        getStartMillis(
+            item
+        );
+
+
+    const end =
+        getEndMillis(
+            item
+        );
+
+
+    if (!start) {
+
+        return "Time unavailable";
+
+    }
+
+
+    const formatter =
+        new Intl.DateTimeFormat(
+            "en-IN",
+            {
+
+                hour: "numeric",
+
+                minute: "2-digit",
+
+                hour12: true,
+
+                timeZone:
+                    "Asia/Kolkata"
+
+            }
+        );
+
+
+    const startText =
+        formatter.format(
+            new Date(start)
+        );
+
+
+    if (!end) {
+
+        return startText;
+
+    }
+
+
+    return `${startText} – ${
+        formatter.format(
+            new Date(end)
+        )
+    }`;
+
+}
+
+
+
+/* =========================================================
+   DATE HELPERS
+========================================================= */
+
+function getTodayString() {
+
+    const parts =
+        new Intl.DateTimeFormat(
+            "en-CA",
+            {
+
+                timeZone:
+                    "Asia/Kolkata",
+
+                year: "numeric",
+
+                month: "2-digit",
+
+                day: "2-digit"
+
+            }
+        ).formatToParts(
+            new Date()
+        );
+
+
+    const values = {};
+
+
+    parts.forEach(
+        part => {
+
+            if (
+                part.type !==
+                "literal"
+            ) {
+
+                values[part.type] =
+                    part.value;
+
+            }
+
+        }
+    );
+
+
+    return `${
+        values.year
+    }-${
+        values.month
+    }-${
+        values.day
+    }`;
+
+}
+
+
+
+function shiftDate(
+    dateString,
+    amount
+) {
+
+    const date =
+        new Date(
+            `${dateString}T12:00:00+05:30`
+        );
+
+
+    date.setDate(
+        date.getDate() +
+        amount
+    );
+
+
+    return formatDateInput(
+        date
+    );
+
+}
+
+
+
+function formatDateInput(
+    date
+) {
+
+    return [
+        date.getFullYear(),
+        String(
+            date.getMonth() + 1
+        ).padStart(2, "0"),
+        String(
+            date.getDate()
+        ).padStart(2, "0")
+    ].join("-");
+
+}
+
+
+
+function formatLongDate(
+    dateString
+) {
+
+    if (!dateString) {
+
+        return "";
+
+    }
+
+
+    return new Intl.DateTimeFormat(
+        "en-IN",
+        {
+
+            weekday: "short",
+
+            day: "numeric",
+
+            month: "short",
+
+            year: "numeric",
+
+            timeZone:
+                "Asia/Kolkata"
+
+        }
+    ).format(
+        new Date(
+            `${dateString}T12:00:00+05:30`
+        )
+    );
+
+}
+
+
+
+function formatHistoryDate(
+    item
+) {
+
+    const millis =
+        getStartMillis(
+            item
+        );
+
+
+    if (!millis) {
+
+        return "Date unavailable";
+
+    }
+
+
+    return new Intl.DateTimeFormat(
+        "en-IN",
+        {
+
+            weekday: "short",
+
+            day: "numeric",
+
+            month: "short",
+
+            year: "numeric",
+
+            hour: "numeric",
+
+            minute: "2-digit",
+
+            hour12: true,
+
+            timeZone:
+                "Asia/Kolkata"
+
+        }
+    ).format(
+        new Date(millis)
+    );
+
+}
+
+
+
+/* =========================================================
+   CLASS FILTER
+========================================================= */
+
+function getClassesForDate(
+    dateString
+) {
+
+    return allClasses
+        .filter(
+            item =>
+                getClassDate(
+                    item
+                ) ===
+                dateString
+        )
+        .sort(
+            (a, b) =>
+                getStartMillis(a) -
+                getStartMillis(b)
+        );
+
+}
+
+
+
+function getClassDate(
+    item
+) {
+
+    const millis =
+        getStartMillis(
+            item
+        );
+
+
+    if (!millis) {
+
+        return "";
+
+    }
+
+
+    const parts =
+        new Intl.DateTimeFormat(
+            "en-CA",
+            {
+
+                timeZone:
+                    "Asia/Kolkata",
+
+                year: "numeric",
+
+                month: "2-digit",
+
+                day: "2-digit"
+
+            }
+        ).formatToParts(
+            new Date(millis)
+        );
+
+
+    const values = {};
+
+
+    parts.forEach(
+        part => {
+
+            if (
+                part.type !==
+                "literal"
+            ) {
+
+                values[part.type] =
+                    part.value;
+
+            }
+
+        }
+    );
+
+
+    return `${
+        values.year
+    }-${
+        values.month
+    }-${
+        values.day
+    }`;
+
+}
+
+
+
+function belongsToCourse(
+    item,
+    course
+) {
+
+    if (
+        item.courseId
+    ) {
+
+        return (
+            item.courseId ===
+            course.id
+        );
+
+    }
+
+
+    return normalizeClass(
+        item.courseClass ||
+        item.className ||
+        item.standard ||
+        ""
+    ) ===
+    normalizeClass(
+        getCourseClass(course)
+    );
+
+}
+
+
+
+function getStudentClass(
+    data
+) {
+
+    return (
+        data.className ||
+        data.class ||
+        data.standard ||
+        data.grade ||
+        data.targetClass ||
+        ""
+    );
+
+}
+
+
+
+function getCourseClass(
+    data
+) {
+
+    return (
+        data.className ||
+        data.courseClass ||
+        data.targetClass ||
+        data.standard ||
+        data.grade ||
+        data.crmClass ||
+        ""
+    );
+
+}
+
+
+
+function normalizeClass(
+    value
+) {
+
+    const text =
+        String(
+            value ||
+            ""
+        )
+            .trim()
+            .toLowerCase()
+            .replace(
+                /\s+/g,
+                ""
+            );
+
+
+    if (
+        text === "10" ||
+        text === "10th" ||
+        text === "class10" ||
+        text === "10thstandard"
+    ) {
+
+        return "10th";
+
+    }
+
+
+    if (
+        text === "9" ||
+        text === "9th" ||
+        text === "class9" ||
+        text === "9thstandard"
+    ) {
+
+        return "9th";
+
+    }
+
+
+    if (
+        text === "8" ||
+        text === "8th" ||
+        text === "class8" ||
+        text === "8thstandard"
+    ) {
+
+        return "8th";
+
+    }
+
+
+    if (
+        text.includes("1stpuc") ||
+        text.includes("puc1")
+    ) {
+
+        return "1stpuc";
+
+    }
+
+
+    if (
+        text.includes("2ndpuc") ||
+        text.includes("puc2")
+    ) {
+
+        return "2ndpuc";
+
+    }
+
+
+    return text;
+
+}
+
+
+
+/* =========================================================
+   PROVIDER
+========================================================= */
+
+function getProvider(
+    item
+) {
+
+    if (
+        item.liveType ===
+        "ZOOM"
+    ) {
+
+        return "ZOOM CLASSROOM";
+
+    }
+
+
+    if (
+        item.liveType ===
+        "YOUTUBE_LIVE"
+    ) {
+
+        return "YOUTUBE LIVE";
+
+    }
+
+
+    if (
+        item.liveType ===
+        "RECORDED_VIDEO"
+    ) {
+
+        return "RECORDED CLASS";
+
+    }
+
+
+    if (
+        item.liveType ===
+        "EXTERNAL_VIDEO"
+    ) {
+
+        return "LIVE CLASS";
+
+    }
+
+
+    return "ZENOVA LIVE";
+
+}
+
+
+
+/* =========================================================
+   SUBJECT SORT
+========================================================= */
+
+function sortSubjects(
+    a,
+    b
+) {
+
+    return (
+        Number(
+            a.order ??
+            9999
+        ) -
+        Number(
+            b.order ??
+            9999
+        )
+    );
+
+}
+
+
+
+/* =========================================================
+   INITIAL
+========================================================= */
+
+function getInitial(
+    value
+) {
+
+    return String(
+        value ||
+        "Z"
+    )
+        .trim()
+        .charAt(0)
+        .toUpperCase() ||
+        "Z";
+
+}
+
+
+
+/* =========================================================
+   NAVIGATION
+========================================================= */
+
+document
+    .querySelectorAll(
+        "[data-nav]"
+    )
+    .forEach(
+        button => {
+
+            button.addEventListener(
+                "click",
+                () => {
+
+                    window.location.href =
+                        button.dataset.nav;
+
+                }
+            );
+
+        }
+    );
+
+
+backButton.addEventListener(
+    "click",
+    () => {
+
+        if (
+            document.referrer &&
+            document.referrer.includes(
+                window.location.origin
+            )
+        ) {
+
+            history.back();
+
+        }
+
+        else {
+
+            window.location.href =
+                "../../home/";
+
+        }
+
+    }
+);
+
+
+retryButton.addEventListener(
+    "click",
+    () => {
+
+        window.location.reload();
+
+    }
+);
+
+
+
+/* =========================================================
+   UI STATES
+========================================================= */
+
+function showLoading() {
+
+    loadingState.classList.remove(
+        "hidden"
+    );
+
+    errorState.classList.add(
+        "hidden"
+    );
+
+    liveApp.classList.add(
+        "hidden"
+    );
+
+}
+
+
+
+function showApp() {
+
+    loadingState.classList.add(
+        "hidden"
+    );
+
+    errorState.classList.add(
+        "hidden"
+    );
+
+    liveApp.classList.remove(
+        "hidden"
+    );
+
+}
+
+
+
+function showError(
+    message
+) {
+
+    loadingState.classList.add(
+        "hidden"
+    );
+
+    liveApp.classList.add(
+        "hidden"
+    );
+
+    errorState.classList.remove(
+        "hidden"
+    );
+
+    errorText.textContent =
+        message;
+
+}
+
+
+
+/* =========================================================
+   TOAST
+========================================================= */
+
+function showToast(
+    message
+) {
+
+    const toast =
+        document.getElementById(
+            "toast"
+        );
+
+
+    toast.textContent =
+        message;
+
+    toast.classList.add(
+        "show"
+    );
+
+
+    setTimeout(
+        () => {
+
+            toast.classList.remove(
+                "show"
+            );
+
+        },
+        2500
+    );
+
+}
+
+
+
+/* =========================================================
+   ESCAPE
+========================================================= */
+
+function escapeHtml(
+    value
+) {
+
+    return String(
+        value ?? ""
+    )
+        .replaceAll(
+            "&",
+            "&amp;"
+        )
+        .replaceAll(
+            "<",
+            "&lt;"
+        )
+        .replaceAll(
+            ">",
+            "&gt;"
+        )
+        .replaceAll(
+            '"',
+            "&quot;"
+        )
+        .replaceAll(
+            "'",
+            "&#039;"
+        );
+
+}
+
+
+
+function escapeAttribute(
+    value
+) {
+
+    return escapeHtml(
+        value
+    );
+
+}
+
+</script>
+
+
+</body>
+
+</html>
