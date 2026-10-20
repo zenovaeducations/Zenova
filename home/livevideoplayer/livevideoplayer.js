@@ -234,7 +234,7 @@ if (!liveClassId) {
             if (!user) {
 
                 window.location.href =
-                    "../../account/login/";
+                    "../../login/";
 
                 return;
             }
