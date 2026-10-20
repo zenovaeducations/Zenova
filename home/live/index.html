@@ -1365,7 +1365,83 @@ button {
     }
 
 }
+/* Match the Zenova Home page header */
+.topbar,
+header.topbar {
+  display: none !important;
+}
 
+.header {
+  background: #111114;
+  color: #fff;
+  padding: 18px 18px 23px;
+  border-radius: 0 0 26px 26px;
+}
+
+.header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  min-width: 0;
+}
+
+.brand-mark.small {
+  width: 46px;
+  height: 46px;
+  flex-shrink: 0;
+  border-radius: 15px;
+  background: #eee8ff;
+  color: #5e36bd;
+  display: grid;
+  place-items: center;
+  font-size: 24px;
+  font-weight: 900;
+}
+
+.brand-name {
+  color: #fff;
+  font-size: 19px;
+  font-weight: 800;
+}
+
+.brand-sub {
+  margin-top: 5px;
+  color: #c7c3d0;
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.profile {
+  width: 52px;
+  height: 52px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  border: 2px solid #b7a0ff;
+  background: #111114;
+  color: #fff;
+  display: grid;
+  place-items: center;
+  font-weight: 900;
+}
+
+@media (max-width: 380px) {
+  .brand-name {
+    font-size: 16px;
+  }
+
+  .brand-sub {
+    font-size: 9px;
+    letter-spacing: 1px;
+  }
+}
 /* ZENOVA UNIFIED BRAND OVERRIDES */
 :root{--black:#111114;--text:#17151d;--muted:#777381;--light:#f7f6fa;--border:#e9e6ef;--white:#fff;--red:#d92f48;--green:#198754;--blue:#7042c7;--purple:#7042c7;--lav:#eee7ff;--lav2:#f7f3ff;--bottom:78px}
 html{background:#f7f6fa}body{font-family:Inter,system-ui,-apple-system,sans-serif;background:#f7f6fa;color:#17151d;padding-bottom:calc(var(--bottom) + env(safe-area-inset-bottom))}
@@ -1472,25 +1548,28 @@ html{background:#f7f6fa}body{font-family:Inter,system-ui,-apple-system,sans-seri
     >
 
 
-        <!-- PAGE HEADER -->
+        <header class="header">
+  <div class="wrap">
+    <div class="header-inner">
+      <div class="brand">
+        <div class="brand-mark small">Z</div>
+        <div>
+          <div class="brand-name">Zenova Educations</div>
+          <div class="brand-sub">Learn · Practice · Achieve</div>
+        </div>
+      </div>
 
-        <section class="intro">
-
-            <span class="eyebrow">
-                YOUR CLASSROOM
-            </span>
-
-            <h1>
-                Live Classes
-            </h1>
-
-            <p>
-                Attend your scheduled classes and watch missed classes later.
-            </p>
-
-        </section>
-
-
+      <button
+        id="liveProfileShortcut"
+        class="profile"
+        type="button"
+        aria-label="Open student profile"
+      >
+        <span>Z</span>
+      </button>
+    </div>
+  </div>
+        </header>
 
         <!-- TODAY -->
 
@@ -4252,9 +4331,12 @@ function escapeAttribute(
     );
 
 }
-
+document
+  .getElementById("liveProfileShortcut")
+  ?.addEventListener("click", () => {
+    window.location.href = "../profile/";
+  });
 </script>
-
 
 </body>
 
