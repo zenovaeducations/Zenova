@@ -200,16 +200,40 @@ function renderStudent() {
   $("greeting").textContent = hour < 12 ? "GOOD MORNING" : hour < 17 ? "GOOD AFTERNOON" : "GOOD EVENING";
 }
 async function loadCourses() {
-  const studentClass = normalizeClass(state.student.className || state.student.classDisplayName);
+  const studentClass = normalizeClass(
+    state.student.className || state.student.classDisplayName
+  );
+
   const snap = await getDocs(collection(db, "zen2Courses"));
-  state.courses = snap.docs.map(d => ({id:d.id, ...d.data()})).filter(c => {
-    const cc = normalizeClass(c.className || c.classDisplayName);
-    return c.active !== false && String(c.status || "").toUpperCase() !== "INACTIVE" && (!studentClass || cc === studentClass);
-  }).sort((a,b) => Number(a.order ?? a.priority ?? 9999) - Number(b.order ?? b.priority ?? 9999));
+
+  const allCourses = snap.docs
+    .map(d => ({ id: d.id, ...d.data() }))
+    .filter(c =>
+      c.active !== false &&
+      String(c.status || "").toUpperCase() !== "INACTIVE"
+    )
+    .sort((a, b) =>
+      Number(a.order ?? a.priority ?? 9999) -
+      Number(b.order ?? b.priority ?? 9999)
+    );
+
+  state.courses = allCourses.filter(c =>
+    !studentClass ||
+    normalizeClass(c.className || c.classDisplayName) === studentClass
+  );
+
+  state.availableCourses = allCourses.filter(c =>
+    studentClass &&
+    normalizeClass(c.className || c.classDisplayName) !== studentClass
+  );
+
   state.selectedCourse = state.courses[0] || null;
+
   renderCourses();
+
   if (!state.selectedCourse) {
-    $("myBatchesList").innerHTML = `<div class="empty"><i class="ri-book-open-line"></i>No active course is available for your class right now.</div>`;
+    $("coursesForYouList").innerHTML =
+      `<div class="empty">No active courses are available for your class right now.</div>`;
   }
 }
 async function loadCourseData() {
@@ -328,29 +352,67 @@ function renderBanners() {
 }
 
 function renderCourses() {
-  const container=$("myBatchesList");
-  if(!state.courses.length)return;
-  container.innerHTML=state.courses.map(course=>{
-    const name=course.courseName||course.name||course.title||"Zenova Course";
-    const className=course.classDisplayName||course.className||state.student.classDisplayName||"";
-    const board=course.board||"";
-    const year=course.academicYear||"";
-    const purchased=isCoursePurchased(course);
-    const image=course.thumbnailUrl||course.imageUrl||course.coverImageUrl||"";
-    return `<article class="course-card" data-course-card="${esc(course.id)}">
-      <div class="course-cover">${image?`<img src="${esc(image)}" alt="" loading="lazy" onerror="this.remove()">`:""}<div class="cover-content"><span class="course-pill">${purchased?"ENROLLED COURSE":"ZENOVA LEARNING"}</span><h3>${esc(name)}</h3></div></div>
-      <div class="course-body"><div class="course-title">${esc(name)}</div><div class="course-meta">${className?`<span>${esc(className)}</span>`:""}${board?`<span>${esc(board)}</span>`:""}${year?`<span>${esc(year)}</span>`:""}</div>
-      <div class="course-actions">${purchased?`<button class="btn btn-primary" data-start-course="${esc(course.id)}" type="button"><i class="ri-play-circle-fill"></i> Start studying</button>`:`<button class="btn btn-primary" data-buy-course="${esc(course.id)}" type="button">Buy now <i class="ri-arrow-right-line"></i></button><button class="btn btn-outline" data-explore-course="${esc(course.id)}" type="button">Details</button>`}</div>
-      </div></article>`;
-  }).join("");
-  container.querySelectorAll("[data-buy-course],[data-explore-course]").forEach(btn=>btn.addEventListener("click",()=>{
-    const id=btn.dataset.buyCourse||btn.dataset.exploreCourse;
-    window.location.href=`./batchdetails/?courseId=${encodeURIComponent(id)}${btn.hasAttribute("data-buy-course")?"&buy=true":""}`;
-  }));
-  container.querySelectorAll("[data-start-course]").forEach(btn=>btn.addEventListener("click",()=>{
-    const id=btn.dataset.startCourse;
-    window.location.href=`./study/?courseId=${encodeURIComponent(id)}`;
-  }));
+  const forYou = $("coursesForYouList");
+  const available = $("availableCoursesList");
+
+  function courseCard(course) {
+    const name = course.courseName || course.name || course.title || "Zenova Course";
+    const className = course.classDisplayName || course.className || "";
+    const image = course.thumbnailUrl || course.imageUrl || course.coverImageUrl || "";
+    const purchased = isCoursePurchased(course);
+
+    return `
+      <article class="course-card">
+        <div class="course-cover">
+          ${image ? `<img src="${esc(image)}" alt="" loading="lazy">` : ""}
+          <div class="cover-content">
+            <span class="course-pill">ZENOVA LEARNING</span>
+            <h3>${esc(name)}</h3>
+          </div>
+        </div>
+        <div class="course-body">
+          <div class="course-title">${esc(name)}</div>
+          <div class="course-meta">
+            ${className ? `<span>${esc(className)}</span>` : ""}
+          </div>
+          <div class="course-actions">
+            ${purchased
+              ? `<button class="btn btn-primary" data-start-course="${esc(course.id)}" type="button">Start Studying</button>`
+              : `<button class="btn btn-outline" data-explore-course="${esc(course.id)}" type="button">Explore</button>
+                 <button class="btn btn-primary" data-buy-course="${esc(course.id)}" type="button">Buy Now</button>`
+            }
+          </div>
+        </div>
+      </article>`;
+  }
+
+  if (forYou) {
+    forYou.innerHTML = state.courses.length
+      ? state.courses.map(courseCard).join("")
+      : `<div class="empty">No courses available for your class right now.</div>`;
+  }
+
+  if (available) {
+    available.innerHTML = state.availableCourses?.length
+      ? state.availableCourses.map(courseCard).join("")
+      : `<div class="empty">No other courses available right now.</div>`;
+  }
+
+  document.querySelectorAll("[data-buy-course], [data-explore-course]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const id = btn.dataset.buyCourse || btn.dataset.exploreCourse;
+      const buy = btn.hasAttribute("data-buy-course");
+      window.location.href =
+        `./batchdetails/?courseId=${encodeURIComponent(id)}${buy ? "&buy=true" : ""}`;
+    });
+  });
+
+  document.querySelectorAll("[data-start-course]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      window.location.href =
+        `./study/?courseId=${encodeURIComponent(btn.dataset.startCourse)}`;
+    });
+  });
 }
 function isCoursePurchased(course) {
   const s=state.student||{}, uid=state.user?.uid;
