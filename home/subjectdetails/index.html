@@ -38,7 +38,7 @@ $("backButton").addEventListener("click", () => location.assign(new URL(routes.r
 $("retryButton").addEventListener("click", () => location.reload());
 if (!subjectId) showError("The subject ID is missing from the page URL. Open this subject from Revision and try again.");
 else onAuthStateChanged(auth, async user => {
-  if (!user) { location.replace(new URL("../../account/login/", location.href).href); return; }
+  if (!user) { location.replace(new URL("../../login/", location.href).href); return; }
   currentUser = user;
   try {
     await loadStudent();
