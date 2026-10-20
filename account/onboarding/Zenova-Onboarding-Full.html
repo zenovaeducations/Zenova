@@ -1,0 +1,3105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    >
+
+    <title>Zenova | Setup Your Profile</title>
+
+    <style>
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+    min-height: 100%;
+    font-family:
+        Inter,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+    background: #ffffff;
+    color: #111111;
+}
+
+body {
+    min-height: 100vh;
+}
+
+
+/* =========================
+   LOADER
+========================= */
+
+.loader-screen {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #ffffff;
+}
+
+.loader-ring {
+    width: 54px;
+    height: 54px;
+
+    border: 2px solid #eeeeee;
+    border-top-color: #6c3cff;
+
+    border-radius: 50%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    animation: spin 0.9s linear infinite;
+}
+
+.loader-ring span {
+    color: #6c3cff;
+    font-size: 17px;
+    font-weight: 800;
+
+    animation: counterSpin 0.9s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes counterSpin {
+    to {
+        transform: rotate(-360deg);
+    }
+}
+
+
+/* =========================
+   APP
+========================= */
+
+.hidden {
+    display: none !important;
+}
+
+.onboarding-app {
+    min-height: 100vh;
+    padding:
+        28px
+        28px
+        calc(28px + env(safe-area-inset-bottom));
+}
+
+.onboarding-container {
+    width: min(760px, 100%);
+    margin: 0 auto;
+}
+
+
+/* =========================
+   HEADER
+========================= */
+
+.top-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    margin-bottom: 28px;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    font-size: 15px;
+    font-weight: 800;
+    letter-spacing: 1.4px;
+}
+
+.brand-mark {
+    width: 34px;
+    height: 34px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 10px;
+
+    background: #111111;
+    color: #ffffff;
+
+    font-weight: 800;
+}
+
+.step-indicator {
+    color: #777777;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+
+/* =========================
+   PROGRESS
+========================= */
+
+.progress-area {
+    margin-bottom: 52px;
+}
+
+.progress-track {
+    width: 100%;
+    height: 4px;
+
+    background: #eeeeee;
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    width: 33.333%;
+    height: 100%;
+
+    background: #6c3cff;
+
+    transition: width 0.3s ease;
+}
+
+
+/* =========================
+   STEPS
+========================= */
+
+.step {
+    display: none;
+}
+
+.step.active {
+    display: block;
+}
+
+.step-heading {
+    max-width: 620px;
+    margin-bottom: 38px;
+}
+
+.eyebrow {
+    display: block;
+
+    margin-bottom: 12px;
+
+    color: #6c3cff;
+
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1.8px;
+}
+
+.step-heading h1 {
+    margin: 0 0 12px;
+
+    font-size: clamp(30px, 5vw, 46px);
+    line-height: 1.08;
+    letter-spacing: -1.8px;
+}
+
+.step-heading p {
+    margin: 0;
+
+    color: #707070;
+
+    font-size: 15px;
+    line-height: 1.6;
+}
+
+
+/* =========================
+   FORM
+========================= */
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 22px;
+}
+
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+}
+
+.field.full {
+    grid-column: 1 / -1;
+}
+
+.field label {
+    font-size: 13px;
+    font-weight: 700;
+    color: #222222;
+}
+
+.field input,
+.field select {
+    width: 100%;
+    height: 52px;
+
+    padding: 0 15px;
+
+    border: 1px solid #dedede;
+    border-radius: 12px;
+
+    background: #ffffff;
+    color: #111111;
+
+    font-size: 14px;
+    outline: none;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.field input:focus,
+.field select:focus {
+    border-color: #6c3cff;
+    box-shadow: 0 0 0 3px rgba(108, 60, 255, 0.08);
+}
+
+.field select:disabled {
+    background: #f7f7f7;
+    color: #999999;
+    cursor: not-allowed;
+}
+
+
+/* =========================
+   CONDITIONAL
+========================= */
+
+.conditional-fields {
+    display: none;
+
+    grid-column: 1 / -1;
+
+    grid-template-columns: 1fr 1fr;
+    gap: 22px;
+}
+
+.conditional-fields.show {
+    display: grid;
+}
+
+
+/* =========================
+   BUTTONS
+========================= */
+
+.button-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 15px;
+
+    margin-top: 42px;
+}
+
+.continue-btn,
+.back-btn {
+    height: 52px;
+
+    border-radius: 12px;
+
+    padding: 0 22px;
+
+    font-size: 14px;
+    font-weight: 750;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.15s ease,
+        opacity 0.15s ease;
+}
+
+.continue-btn {
+    border: none;
+
+    background: #111111;
+    color: #ffffff;
+
+    margin-left: auto;
+}
+
+.continue-btn span {
+    margin-left: 10px;
+    font-size: 18px;
+}
+
+.continue-btn:hover {
+    transform: translateY(-1px);
+}
+
+.continue-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.back-btn {
+    border: 1px solid #dddddd;
+
+    background: #ffffff;
+    color: #222222;
+}
+
+.back-btn:hover {
+    background: #f7f7f7;
+}
+
+
+/* =========================
+   ERROR
+========================= */
+
+.form-error {
+    min-height: 20px;
+
+    margin-top: 20px;
+
+    color: #d33131;
+
+    font-size: 13px;
+    font-weight: 600;
+}
+
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 650px) {
+
+    .onboarding-app {
+        padding: 22px 18px;
+    }
+
+    .progress-area {
+        margin-bottom: 38px;
+    }
+
+    .step-heading {
+        margin-bottom: 30px;
+    }
+
+    .step-heading h1 {
+        letter-spacing: -1.2px;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .field.full {
+        grid-column: auto;
+    }
+
+    .conditional-fields {
+        grid-template-columns: 1fr;
+    }
+
+    .button-row {
+        margin-top: 32px;
+    }
+
+    .continue-btn,
+    .back-btn {
+        flex: 1;
+    }
+}
+/* ============================================================
+   ZEN2 FIXED COURSE
+============================================================ */
+
+.fixed-value {
+    width: 100%;
+    min-height: 52px;
+
+    display: flex;
+    align-items: center;
+
+    padding: 0 15px;
+
+    border: 1px solid #dedede;
+    border-radius: 12px;
+
+    background: #f8f8fa;
+
+    color: #333333;
+
+    font-size: 14px;
+    font-weight: 650;
+}
+
+
+/* ============================================================
+   TOUGH SUBJECTS
+============================================================ */
+
+.tough-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 15px;
+
+    margin-bottom: 10px;
+}
+
+.tough-heading label {
+    display: block;
+}
+
+.tough-heading p {
+    margin: 4px 0 0;
+
+    color: #888888;
+
+    font-size: 11px;
+}
+
+.tough-count {
+    flex: 0 0 auto;
+
+    padding: 6px 9px;
+
+    border-radius: 999px;
+
+    background: #f1edff;
+
+    color: #6c3cff;
+
+    font-size: 11px;
+    font-weight: 800;
+}
+
+
+/* ============================================================
+   SUBJECT OPTIONS
+============================================================ */
+
+.subject-options {
+    display: grid;
+
+    grid-template-columns:
+        1fr 1fr;
+
+    gap: 10px;
+}
+
+.subject-option {
+    min-height: 55px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 0 15px;
+
+    border: 1px solid #dedede;
+    border-radius: 12px;
+
+    background: #ffffff;
+
+    color: #222222;
+
+    font-size: 13px;
+    font-weight: 650;
+
+    text-align: left;
+
+    transition:
+        border-color 0.15s ease,
+        background 0.15s ease,
+        transform 0.1s ease;
+}
+
+.subject-option:hover {
+    border-color: #bcaaf0;
+
+    background: #fbfaff;
+}
+
+.subject-option:active {
+    transform: scale(0.99);
+}
+
+.subject-option.selected {
+    border-color: #6c3cff;
+
+    background: #f7f3ff;
+
+    color: #5d31c9;
+}
+
+.subject-check {
+    width: 22px;
+    height: 22px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 1px solid #d8d8dc;
+    border-radius: 50%;
+
+    color: transparent;
+
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.subject-option.selected .subject-check {
+    border-color: #6c3cff;
+
+    background: #6c3cff;
+
+    color: #ffffff;
+}
+
+
+/* ============================================================
+   FORM ERROR
+============================================================ */
+
+.form-error {
+    display: none;
+
+    margin-top: 18px;
+
+    padding: 11px 13px;
+
+    border-radius: 9px;
+
+    background: #fff3f3;
+
+    color: #c32929;
+
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.form-error.show {
+    display: block;
+}
+
+
+/* ============================================================
+   MOBILE
+============================================================ */
+
+@media (max-width: 600px) {
+
+    .subject-options {
+        grid-template-columns: 1fr;
+    }
+
+    .tough-heading {
+        align-items: flex-start;
+    }
+
+}
+
+
+/* Cinematic but lightweight motion design */
+:root { color-scheme: light; }
+body { background: radial-gradient(ellipse at 8% 8%, rgba(118,80,214,.10), transparent 35%), radial-gradient(ellipse at 92% 20%, rgba(183,155,255,.14), transparent 30%), #f8f7fb; }
+.onboarding-container { position:relative; isolation:isolate; background:rgba(255,255,255,.92); border:1px solid rgba(118,80,214,.12); border-radius:28px; padding:clamp(20px,4vw,42px); box-shadow:0 24px 80px rgba(30,18,70,.09); animation:containerEnter .7s cubic-bezier(.2,.8,.2,1) both; overflow:hidden; }
+.onboarding-container:before { content:""; position:absolute; width:280px; height:280px; right:-140px; top:-155px; border-radius:50%; background:radial-gradient(circle,rgba(118,80,214,.15),transparent 70%); pointer-events:none; z-index:-1; animation:ambientFloat 8s ease-in-out infinite alternate; }
+.brand-mark { background:#111114; box-shadow:0 0 0 5px #eee8ff; }
+.progress-track { height:6px; background:#eeeaf6; }
+.progress-bar { background:linear-gradient(90deg,#7650d6,#b99aff); box-shadow:0 0 14px rgba(118,80,214,.35); }
+.step.active { animation:stepEnter .42s cubic-bezier(.2,.75,.25,1) both; }
+.field { animation:fieldEnter .45s both; }
+.field:nth-child(2) { animation-delay:.04s; } .field:nth-child(3) { animation-delay:.08s; } .field:nth-child(4) { animation-delay:.12s; }
+.field input,.field select { border-color:#e4deef; background:rgba(255,255,255,.96); border-radius:14px; }
+.field input:focus,.field select:focus { border-color:#7650d6; box-shadow:0 0 0 4px rgba(118,80,214,.12); transform:translateY(-1px); }
+.continue-btn { background:linear-gradient(115deg,#17151e,#302344); box-shadow:0 9px 22px rgba(45,30,75,.16); }
+.continue-btn:hover { box-shadow:0 13px 28px rgba(118,80,214,.25); }
+.subject-option { transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease,background .2s ease; }
+.subject-option:hover { transform:translateY(-2px); }
+.subject-option.selected { box-shadow:0 7px 18px rgba(118,80,214,.13); }
+.field-hint { display:block; margin-top:-2px; color:#77717f; font-size:12px; line-height:1.5; }
+.form-error:not(:empty) { padding:11px 13px; border-radius:12px; background:#fff0f0; border:1px solid #ffd7d7; animation:errorShake .28s ease; }
+.loader-screen { background:linear-gradient(135deg,#111114,#211936); }
+.loader-ring { border-color:rgba(255,255,255,.18); border-top-color:#b99aff; }
+.loader-ring span { color:#eee8ff; }
+@keyframes containerEnter { from {opacity:0;transform:translateY(18px) scale(.985)} to {opacity:1;transform:translateY(0) scale(1)} }
+@keyframes stepEnter { from {opacity:0;transform:translateX(16px)} to {opacity:1;transform:translateX(0)} }
+@keyframes fieldEnter { from {opacity:0;transform:translateY(8px)} to {opacity:1;transform:translateY(0)} }
+@keyframes ambientFloat { from {transform:translate(-8px,0) scale(.9)} to {transform:translate(8px,18px) scale(1.08)} }
+@keyframes errorShake { 0%,100%{transform:translateX(0)} 30%{transform:translateX(-3px)} 70%{transform:translateX(3px)} }
+@media (prefers-reduced-motion: reduce) { *,*::before,*::after { animation-duration:.01ms !important; animation-iteration-count:1 !important; scroll-behavior:auto !important; transition-duration:.01ms !important; } }
+@media (max-width:650px) { .onboarding-app { padding:14px 12px calc(18px + env(safe-area-inset-bottom)); } .onboarding-container { border-radius:22px; padding:22px 18px; } .progress-area { margin-bottom:30px; } .step-heading h1 { font-size:clamp(29px,8vw,38px); } }
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <!-- =====================================================
+         LOADER
+    ====================================================== -->
+
+    <div
+        id="zenovaLoader"
+        class="loader-screen"
+    >
+
+        <div class="loader-ring">
+
+            <span>
+                Z
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         APP
+    ====================================================== -->
+
+    <main
+        id="onboardingApp"
+        class="onboarding-app hidden"
+    >
+
+        <div class="onboarding-container">
+
+
+            <!-- =================================================
+                 HEADER
+            ================================================== -->
+
+            <header class="top-header">
+
+                <div class="brand">
+
+                    <div class="brand-mark">
+                        Z
+                    </div>
+
+                    <span>
+                        ZENOVA
+                    </span>
+
+                </div>
+
+
+                <div class="step-indicator">
+
+                    <span id="stepText">
+                        1 of 3
+                    </span>
+
+                </div>
+
+            </header>
+
+
+            <!-- =================================================
+                 PROGRESS
+            ================================================== -->
+
+            <div class="progress-area">
+
+                <div class="progress-track">
+
+                    <div
+                        id="progressBar"
+                        class="progress-bar"
+                    ></div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 STEP 1
+            ================================================== -->
+
+            <section
+                id="step1"
+                class="step active"
+            >
+
+                <div class="step-heading">
+
+                    <span class="eyebrow">
+                        WELCOME TO ZENOVA
+                    </span>
+
+                    <h1>
+                        Let's get to know you.
+                    </h1>
+
+                    <p>
+                        Just a few details to create your
+                        student profile.
+                    </p>
+
+                </div>
+
+
+                <div class="form-grid">
+
+
+                    <div class="field full">
+
+                        <label for="fullName">
+                            Full Name
+                        </label>
+
+                        <input
+                            type="text"
+                            id="fullName"
+                            placeholder="Enter your full name"
+                            autocomplete="name"
+                        >
+
+                    </div>
+
+                    <div class="field full">
+                        <label for="googleEmail">Google email</label>
+                        <input type="email" id="googleEmail" readonly aria-readonly="true" placeholder="Loaded from Google sign-in">
+                        <small class="field-hint">Automatically taken from the Google account you used to sign in.</small>
+                    </div>
+
+                    <div class="field full">
+                        <label for="phoneNumber">Phone number</label>
+                        <input type="tel" id="phoneNumber" inputmode="numeric" autocomplete="tel" maxlength="10" placeholder="Enter 10-digit mobile number" required>
+                    </div>
+
+                    <div class="field full" id="znvCodeField">
+                        <label for="znvCode">Your ZNV student code</label>
+                        <input type="text" id="znvCode" autocomplete="off" autocapitalize="characters" placeholder="Enter the code already given to you" required>
+                        <small class="field-hint">For this initial registration phase, your code must match an existing CRM student record.</small>
+                    </div>
+
+
+                    <div class="field">
+
+                        <label for="dob">
+                            Date of Birth
+                        </label>
+
+                        <input
+                            type="date"
+                            id="dob"
+                        >
+
+                    </div>
+
+
+                    <div class="field">
+
+                        <label for="gender">
+                            Gender
+                        </label>
+
+                        <select id="gender">
+
+                            <option value="">
+                                Select gender
+                            </option>
+
+                            <option value="MALE">
+                                Male
+                            </option>
+
+                            <option value="FEMALE">
+                                Female
+                            </option>
+
+                            <option value="OTHER">
+                                Other
+                            </option>
+
+                            <option value="PREFER_NOT_TO_SAY">
+                                Prefer not to say
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                </div>
+
+
+                <div
+                    id="step1Error"
+                    class="form-error"
+                ></div>
+
+
+                <button
+                    type="button"
+                    class="continue-btn"
+                    id="step1Next"
+                >
+
+                    Continue
+
+                    <span>
+                        →
+                    </span>
+
+                </button>
+
+
+            </section>
+
+
+            <!-- =================================================
+                 STEP 2
+            ================================================== -->
+
+            <section
+                id="step2"
+                class="step"
+            >
+
+                <div class="step-heading">
+
+                    <span class="eyebrow">
+                        YOUR STUDIES
+                    </span>
+
+                    <h1>
+                        Tell us about your studies.
+                    </h1>
+
+                    <p>
+                        You're joining Zenova for
+                        10th Standard.
+                    </p>
+
+                </div>
+
+
+                <div class="form-grid">
+
+
+                    <!-- CLASS -->
+
+                    <div class="field full">
+
+                        <label for="className">Current Class</label>
+                        <select id="className" required>
+                            <option value="">Select class</option>
+                            <option value="10th" selected>10th Standard (SSLC)</option>
+                        </select>
+                        <small class="field-hint">Zenova's current student course supports 10th Standard.</small>
+
+                    </div>
+
+
+                    <!-- BOARD -->
+
+                    <div class="field full">
+
+                        <label for="board">
+                            Board
+                        </label>
+
+                        <select id="board">
+
+                            <option value="">
+                                Select board
+                            </option>
+
+                            <option value="KSEAB">
+                                Karnataka State Board
+                            </option>
+
+                            <option value="CBSE">
+                                CBSE
+                            </option>
+
+                            <option value="ICSE">
+                                ICSE
+                            </option>
+
+                            <option value="OTHER">
+                                Other
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- MEDIUM -->
+
+                    <div class="field full">
+
+                        <label for="medium">
+                            Medium
+                        </label>
+
+                        <select id="medium">
+
+                            <option value="">
+                                Select medium
+                            </option>
+
+                            <option value="KANNADA">
+                                Kannada Medium
+                            </option>
+
+                            <option value="ENGLISH">
+                                English Medium
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- TOUGH SUBJECTS -->
+
+                    <div class="field full">
+
+                        <div class="tough-heading">
+
+                            <div>
+
+                                <label>
+                                    Your Tough Subjects
+                                </label>
+
+                                <p>
+                                    Select exactly 2 subjects.
+                                </p>
+
+                            </div>
+
+                            <span
+                                id="toughCount"
+                                class="tough-count"
+                            >
+                                0 / 2
+                            </span>
+
+                        </div>
+
+
+                        <div
+                            id="toughSubjects"
+                            class="subject-options"
+                        >
+
+                            <button
+                                type="button"
+                                class="subject-option"
+                                data-subject="Mathematics"
+                            >
+                                <span>
+                                    Mathematics
+                                </span>
+
+                                <span class="subject-check">
+                                    ✓
+                                </span>
+
+                            </button>
+
+
+                            <button
+                                type="button"
+                                class="subject-option"
+                                data-subject="Science"
+                            >
+                                <span>
+                                    Science
+                                </span>
+
+                                <span class="subject-check">
+                                    ✓
+                                </span>
+
+                            </button>
+
+
+                            <button
+                                type="button"
+                                class="subject-option"
+                                data-subject="Social Science"
+                            >
+                                <span>
+                                    Social Science
+                                </span>
+
+                                <span class="subject-check">
+                                    ✓
+                                </span>
+
+                            </button>
+
+
+                            <button
+                                type="button"
+                                class="subject-option"
+                                data-subject="English"
+                            >
+                                <span>
+                                    English
+                                </span>
+
+                                <span class="subject-check">
+                                    ✓
+                                </span>
+
+                            </button>
+
+
+                            <button
+                                type="button"
+                                class="subject-option"
+                                data-subject="Kannada"
+                            >
+                                <span>
+                                    Kannada
+                                </span>
+
+                                <span class="subject-check">
+                                    ✓
+                                </span>
+
+                            </button>
+
+
+                            <button
+                                type="button"
+                                class="subject-option"
+                                data-subject="Hindi"
+                            >
+                                <span>
+                                    Hindi
+                                </span>
+
+                                <span class="subject-check">
+                                    ✓
+                                </span>
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    id="step2Error"
+                    class="form-error"
+                ></div>
+
+
+                <div class="button-row">
+
+                    <button
+                        type="button"
+                        class="back-btn"
+                        id="step2Back"
+                    >
+                        ← Back
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="continue-btn"
+                        id="step2Next"
+                    >
+
+                        Continue
+
+                        <span>
+                            →
+                        </span>
+
+                    </button>
+
+                </div>
+
+
+            </section>
+
+
+            <!-- =================================================
+                 STEP 3
+            ================================================== -->
+
+            <section
+                id="step3"
+                class="step"
+            >
+
+                <div class="step-heading">
+
+                    <span class="eyebrow">
+                        YOUR SCHOOL
+                    </span>
+
+                    <h1>
+                        Where do you study?
+                    </h1>
+
+                    <p>
+                        Select your location and school.
+                    </p>
+
+                </div>
+
+
+                <div class="form-grid">
+
+
+                    <!-- DISTRICT -->
+
+                    <div class="field">
+
+                        <label for="district">
+                            District
+                        </label>
+
+                        <select id="district">
+
+                            <option value="">
+                                Select district
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- TALUK -->
+
+                    <div class="field">
+
+                        <label for="taluk">
+                            Taluk
+                        </label>
+
+                        <select
+                            id="taluk"
+                            disabled
+                        >
+
+                            <option value="">
+                                Select taluk
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- GP -->
+
+                    <div class="field">
+
+                        <label for="gramPanchayat">
+                            Gram Panchayat
+                        </label>
+
+                        <select
+                            id="gramPanchayat"
+                            disabled
+                        >
+
+                            <option value="">
+                                Select Gram Panchayat
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- VILLAGE -->
+
+                    <div class="field">
+
+                        <label for="village">
+                            Village
+                        </label>
+
+                        <select
+                            id="village"
+                            disabled
+                        >
+
+                            <option value="">
+                                Select village
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- SCHOOL -->
+
+                    <div class="field full">
+
+                        <label for="school">
+                            School
+                        </label>
+
+                        <select
+                            id="school"
+                            disabled
+                        >
+
+                            <option value="">
+                                Select your school
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    id="step3Error"
+                    class="form-error"
+                ></div>
+
+
+                <div class="button-row">
+
+                    <button
+                        type="button"
+                        class="back-btn"
+                        id="step3Back"
+                    >
+
+                        ← Back
+
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="continue-btn"
+                        id="finishBtn"
+                    >
+
+                        Finish
+
+                        <span>
+                            →
+                        </span>
+
+                    </button>
+
+                </div>
+
+
+            </section>
+
+
+        </div>
+
+    </main>
+
+
+    <script type="module">
+/* ============================================================
+   ZENOVA 2
+   STUDENT ONBOARDING
+
+   CURRENT PRODUCT:
+
+   10th Standard
+   One Zenova course
+   Kannada / English medium
+
+   STUDENT DATA:
+
+   zen2Students/{Firebase Auth UID}
+
+   CRM MASTER DATA REMAINS:
+
+   crmDistricts
+   crmTaluks
+   crmGramPanchayats
+   crmVillages
+   crmSchools
+
+============================================================ */
+
+
+import {
+    auth,
+    db
+} from "../../firebase/firebase-config.js";
+
+
+import {
+    onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+
+
+import {
+    collection,
+    getDocs,
+    doc,
+    getDoc,
+    setDoc,
+    serverTimestamp,
+    query,
+    where,
+    limit
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
+
+/* ============================================================
+   DOM
+============================================================ */
+
+const loader =
+    document.getElementById(
+        "zenovaLoader"
+    );
+
+const app =
+    document.getElementById(
+        "onboardingApp"
+    );
+
+const progressBar =
+    document.getElementById(
+        "progressBar"
+    );
+
+const stepText =
+    document.getElementById(
+        "stepText"
+    );
+
+
+const step1 =
+    document.getElementById(
+        "step1"
+    );
+
+const step2 =
+    document.getElementById(
+        "step2"
+    );
+
+const step3 =
+    document.getElementById(
+        "step3"
+    );
+
+
+const step1Next =
+    document.getElementById(
+        "step1Next"
+    );
+
+const step2Next =
+    document.getElementById(
+        "step2Next"
+    );
+
+const step2Back =
+    document.getElementById(
+        "step2Back"
+    );
+
+const step3Back =
+    document.getElementById(
+        "step3Back"
+    );
+
+const finishBtn =
+    document.getElementById(
+        "finishBtn"
+    );
+
+
+const fullNameInput =
+    document.getElementById(
+        "fullName"
+    );
+
+const googleEmailInput = document.getElementById("googleEmail");
+const phoneNumberInput = document.getElementById("phoneNumber");
+const znvCodeInput = document.getElementById("znvCode");
+const classNameSelect = document.getElementById("className");
+
+// Initial registration period: turn this off only when the admin workflow
+// has officially moved to assigning codes after registration.
+const REQUIRE_ZNV_CODE = true;
+let matchedCrmStudent = null;
+
+const dobInput =
+    document.getElementById(
+        "dob"
+    );
+
+const genderSelect =
+    document.getElementById(
+        "gender"
+    );
+
+const boardSelect =
+    document.getElementById(
+        "board"
+    );
+
+const mediumSelect =
+    document.getElementById(
+        "medium"
+    );
+
+
+const districtSelect =
+    document.getElementById(
+        "district"
+    );
+
+const talukSelect =
+    document.getElementById(
+        "taluk"
+    );
+
+const gpSelect =
+    document.getElementById(
+        "gramPanchayat"
+    );
+
+const villageSelect =
+    document.getElementById(
+        "village"
+    );
+
+const schoolSelect =
+    document.getElementById(
+        "school"
+    );
+
+
+const toughCount =
+    document.getElementById(
+        "toughCount"
+    );
+
+const toughSubjectButtons =
+    document.querySelectorAll(
+        ".subject-option"
+    );
+
+
+/* ============================================================
+   STATE
+============================================================ */
+
+let currentUser = null;
+
+let currentStep = 1;
+
+let selectedToughSubjects = [];
+
+
+/*
+ * CRM master data
+ */
+
+let districts = [];
+
+let taluks = [];
+
+let gramPanchayats = [];
+
+let villages = [];
+
+let schools = [];
+
+
+/* ============================================================
+   AUTH
+============================================================ */
+
+onAuthStateChanged(
+    auth,
+    async (user) => {
+
+        /*
+         * Not logged in.
+         */
+
+        if (!user) {
+
+            window.location.replace(
+                "../../login/"
+            );
+
+            return;
+
+        }
+
+
+        currentUser =
+            user;
+
+
+        /*
+         * Prefill Google name.
+         */
+
+        if (
+            user.displayName &&
+            !fullNameInput.value
+        ) {
+
+            fullNameInput.value =
+                user.displayName;
+
+        }
+
+        if (googleEmailInput) googleEmailInput.value = user.email || "";
+        if (phoneNumberInput && user.phoneNumber) {
+            phoneNumberInput.value = user.phoneNumber.replace(/^\+91/, "").replace(/\D/g, "").slice(-10);
+        }
+        if (!REQUIRE_ZNV_CODE) {
+            document.getElementById("znvCodeField")?.classList.add("hidden");
+            if (znvCodeInput) znvCodeInput.required = false;
+        }
+
+
+        try {
+
+            /*
+             * Check whether onboarding
+             * is already complete.
+             */
+
+            const studentRef =
+                doc(
+                    db,
+                    "zen2Students",
+                    user.uid
+                );
+
+
+            const studentSnapshot =
+                await getDoc(
+                    studentRef
+                );
+
+
+            if (
+                studentSnapshot.exists() &&
+                studentSnapshot.data()
+                    .onboardingComplete === true
+            ) {
+
+                window.location.replace(
+                    "../../home/"
+                );
+
+                return;
+
+            }
+
+
+            /*
+             * Load CRM master data.
+             */
+
+            await loadMasterData();
+
+
+            /*
+             * Show application.
+             */
+
+            loader.classList.add(
+                "hidden"
+            );
+
+            app.classList.remove(
+                "hidden"
+            );
+
+
+            updateStepUI();
+
+
+        } catch (error) {
+
+            console.error(
+                "Onboarding initialization error:",
+                error
+            );
+
+
+            showError(
+                1,
+                "Unable to load your profile setup. Please refresh and try again."
+            );
+
+
+            loader.classList.add(
+                "hidden"
+            );
+
+            app.classList.remove(
+                "hidden"
+            );
+
+        }
+
+    }
+);
+
+
+/* ============================================================
+   STEP 1
+============================================================ */
+
+step1Next.addEventListener(
+    "click",
+    async () => {
+
+        clearAllErrors();
+
+
+        const name =
+            fullNameInput.value.trim();
+
+        const dob =
+            dobInput.value;
+
+        const gender =
+            genderSelect.value;
+        const phone = (phoneNumberInput?.value || "").replace(/\D/g, "").slice(-10);
+        const znvCode = (znvCodeInput?.value || "").trim().toUpperCase();
+
+
+        if (!name) {
+
+            showError(
+                1,
+                "Please enter your full name."
+            );
+
+            fullNameInput.focus();
+
+            return;
+
+        }
+
+
+        if (name.length < 2) {
+
+            showError(
+                1,
+                "Please enter a valid full name."
+            );
+
+            fullNameInput.focus();
+
+            return;
+
+        }
+
+
+        if (!/^\d{10}$/.test(phone)) {
+            showError(1, "Please enter a valid 10-digit Indian mobile number.");
+            phoneNumberInput.focus();
+            return;
+        }
+
+        if (REQUIRE_ZNV_CODE && !znvCode) {
+            showError(1, "Please enter the ZNV code given to you.");
+            znvCodeInput.focus();
+            return;
+        }
+
+        if (REQUIRE_ZNV_CODE) {
+            step1Next.disabled = true;
+            step1Next.dataset.originalText = step1Next.innerHTML;
+            step1Next.innerHTML = "Verifying code…";
+            try {
+                const codeQuery = query(
+                    collection(db, "crmStudents"),
+                    where("crmStudentCode", "==", znvCode),
+                    limit(2)
+                );
+                const codeSnapshot = await getDocs(codeQuery);
+                if (codeSnapshot.empty) {
+                    showError(1, "This ZNV code was not found in the CRM. Check the code or contact Zenova support.");
+                    znvCodeInput.focus();
+                    return;
+                }
+                if (codeSnapshot.size > 1) {
+                    showError(1, "This code matches more than one CRM record. Please contact Zenova support.");
+                    return;
+                }
+                matchedCrmStudent = { id: codeSnapshot.docs[0].id, ...codeSnapshot.docs[0].data() };
+                const crmPhone = String(matchedCrmStudent.crmStudentPhone || "").replace(/\D/g, "").slice(-10);
+                if (crmPhone && crmPhone !== phone) {
+                    showError(1, "The phone number does not match the phone recorded for this ZNV code. Please check with Zenova support if your number has changed.");
+                    phoneNumberInput.focus();
+                    return;
+                }
+            } catch (error) {
+                console.error("ZNV code verification failed:", error);
+                showError(1, "We couldn't verify your ZNV code. Check your connection and try again.");
+                return;
+            } finally {
+                step1Next.disabled = false;
+                step1Next.innerHTML = step1Next.dataset.originalText || 'Continue <span>→</span>';
+            }
+        }
+
+        if (!dob) {
+
+            showError(
+                1,
+                "Please select your date of birth."
+            );
+
+            dobInput.focus();
+
+            return;
+
+        }
+
+
+        if (!gender) {
+
+            showError(
+                1,
+                "Please select your gender."
+            );
+
+            genderSelect.focus();
+
+            return;
+
+        }
+
+
+        showStep(2);
+
+    }
+);
+
+
+/* ============================================================
+   STEP 2
+============================================================ */
+
+step2Back.addEventListener(
+    "click",
+    () => {
+
+        clearAllErrors();
+
+        showStep(1);
+
+    }
+);
+
+
+step2Next.addEventListener(
+    "click",
+    () => {
+
+        clearAllErrors();
+
+
+        const board =
+            boardSelect.value;
+
+        const medium =
+            mediumSelect.value;
+
+        if (!classNameSelect?.value) {
+            showError(2, "Please select your current class.");
+            classNameSelect?.focus();
+            return;
+        }
+
+
+        if (!board) {
+
+            showError(
+                2,
+                "Please select your board."
+            );
+
+            boardSelect.focus();
+
+            return;
+
+        }
+
+
+        if (!medium) {
+
+            showError(
+                2,
+                "Please select your medium."
+            );
+
+            mediumSelect.focus();
+
+            return;
+
+        }
+
+
+        if (
+            selectedToughSubjects.length !== 2
+        ) {
+
+            showError(
+                2,
+                "Please select exactly 2 tough subjects."
+            );
+
+            return;
+
+        }
+
+
+        showStep(3);
+
+    }
+);
+
+
+/* ============================================================
+   TOUGH SUBJECTS
+============================================================ */
+
+toughSubjectButtons.forEach(
+    (button) => {
+
+        button.addEventListener(
+            "click",
+            () => {
+
+                const subject =
+                    button.dataset.subject;
+
+
+                const index =
+                    selectedToughSubjects.indexOf(
+                        subject
+                    );
+
+
+                /*
+                 * Already selected.
+                 * Remove it.
+                 */
+
+                if (index !== -1) {
+
+                    selectedToughSubjects.splice(
+                        index,
+                        1
+                    );
+
+                    button.classList.remove(
+                        "selected"
+                    );
+
+                    updateToughCount();
+
+                    return;
+
+                }
+
+
+                /*
+                 * Already two selected.
+                 */
+
+                if (
+                    selectedToughSubjects.length >= 2
+                ) {
+
+                    showError(
+                        2,
+                        "You can select only 2 tough subjects."
+                    );
+
+                    return;
+
+                }
+
+
+                /*
+                 * Select.
+                 */
+
+                selectedToughSubjects.push(
+                    subject
+                );
+
+                button.classList.add(
+                    "selected"
+                );
+
+                updateToughCount();
+
+            }
+        );
+
+    }
+);
+
+
+/* ============================================================
+   TOUGH COUNT
+============================================================ */
+
+function updateToughCount() {
+
+    toughCount.textContent =
+        `${selectedToughSubjects.length} / 2`;
+
+}
+
+
+/* ============================================================
+   STEP 3 BACK
+============================================================ */
+
+step3Back.addEventListener(
+    "click",
+    () => {
+
+        clearAllErrors();
+
+        showStep(2);
+
+    }
+);
+
+
+/* ============================================================
+   LOAD CRM MASTER DATA
+============================================================ */
+
+async function loadMasterData() {
+
+    const [
+        districtSnapshot,
+        talukSnapshot,
+        gpSnapshot,
+        villageSnapshot,
+        schoolSnapshot
+    ] = await Promise.all([
+
+        getDocs(
+            collection(
+                db,
+                "crmDistricts"
+            )
+        ),
+
+        getDocs(
+            collection(
+                db,
+                "crmTaluks"
+            )
+        ),
+
+        getDocs(
+            collection(
+                db,
+                "crmGramPanchayats"
+            )
+        ),
+
+        getDocs(
+            collection(
+                db,
+                "crmVillages"
+            )
+        ),
+
+        getDocs(
+            collection(
+                db,
+                "crmSchools"
+            )
+        )
+
+    ]);
+
+
+    /*
+     * DISTRICTS
+     */
+
+    districts =
+        districtSnapshot.docs
+            .map(
+                (item) => ({
+                    id: item.id,
+                    ...item.data()
+                })
+            )
+            .filter(
+                (item) =>
+                    item.crmActive !== false
+            )
+            .sort(
+                (a, b) =>
+                    String(
+                        a.crmDistrictName || ""
+                    ).localeCompare(
+                        String(
+                            b.crmDistrictName || ""
+                        )
+                    )
+            );
+
+
+    /*
+     * TALUKS
+     */
+
+    taluks =
+        talukSnapshot.docs
+            .map(
+                (item) => ({
+                    id: item.id,
+                    ...item.data()
+                })
+            )
+            .filter(
+                (item) =>
+                    item.crmActive !== false
+            );
+
+
+    /*
+     * GP
+     */
+
+    gramPanchayats =
+        gpSnapshot.docs
+            .map(
+                (item) => ({
+                    id: item.id,
+                    ...item.data()
+                })
+            )
+            .filter(
+                (item) =>
+                    item.crmActive !== false
+            );
+
+
+    /*
+     * VILLAGES
+     */
+
+    villages =
+        villageSnapshot.docs
+            .map(
+                (item) => ({
+                    id: item.id,
+                    ...item.data()
+                })
+            )
+            .filter(
+                (item) =>
+                    item.crmActive !== false
+            );
+
+
+    /*
+     * SCHOOLS
+     */
+
+    schools =
+        schoolSnapshot.docs
+            .map(
+                (item) => ({
+                    id: item.id,
+                    ...item.data()
+                })
+            )
+            .filter(
+                (item) =>
+                    item.crmActive !== false
+            );
+
+
+    /*
+     * Populate districts.
+     */
+
+    populateDistricts();
+
+}
+
+
+/* ============================================================
+   CRM LOCATION CASCADE — missing levels are skippable
+============================================================ */
+function setLevel(select, placeholder, items, nameField) {
+    resetSelect(select, placeholder);
+    appendOptions(select, items, nameField);
+    select.disabled = items.length === 0;
+    return items.length;
+}
+function resetLocationAfterDistrict() {
+    resetSelect(talukSelect, "No taluk data / select if available");
+    resetSelect(gpSelect, "No Gram Panchayat data / select if available");
+    resetSelect(villageSelect, "No village data / select if available");
+    resetSelect(schoolSelect, "No school data / select if available");
+    [talukSelect, gpSelect, villageSelect, schoolSelect].forEach(el => el.disabled = true);
+}
+function loadGpsForContext(districtId, talukId = "") {
+    let list = gramPanchayats.filter(item => {
+        if (talukId) return item.crmTalukId === talukId;
+        if (districtId) return item.crmDistrictId === districtId;
+        return false;
+    }).sort(sortByGP);
+    return setLevel(gpSelect, list.length ? "Select Gram Panchayat" : "No CRM Gram Panchayat data — skipped", list, "crmGPName");
+}
+function loadVillagesForContext(districtId, talukId = "", gpId = "") {
+    let list = villages.filter(item => {
+        if (gpId) return item.crmGPId === gpId;
+        if (talukId) return item.crmTalukId === talukId;
+        if (districtId) return item.crmDistrictId === districtId;
+        return false;
+    }).sort(sortByVillage);
+    return setLevel(villageSelect, list.length ? "Select village" : "No CRM village data — skipped", list, "crmVillageName");
+}
+function loadSchoolsForContext(districtId, talukId = "", villageId = "") {
+    let list = schools.filter(item => {
+        if (villageId) {
+            const exact = schools.filter(s => s.crmVillageId === villageId);
+            if (exact.length) return item.crmVillageId === villageId;
+        }
+        if (talukId) return item.crmTalukId === talukId;
+        if (districtId) return item.crmDistrictId === districtId;
+        return false;
+    }).sort(sortBySchool);
+    return setLevel(schoolSelect, list.length ? "Select your school" : "No CRM school data — skipped", list, getSchoolNameField);
+}
+districtSelect.addEventListener("change", () => {
+    clearAllErrors();
+    const districtId = districtSelect.value;
+    resetLocationAfterDistrict();
+    if (!districtId) return;
+    const list = taluks.filter(item => item.crmDistrictId === districtId).sort(sortByTaluk);
+    const count = setLevel(talukSelect, list.length ? "Select taluk" : "No CRM taluk data — skipped", list, "crmTalukName");
+    if (!count) {
+        loadGpsForContext(districtId);
+        const gpCount = gpSelect.options.length > 1;
+        if (!gpCount) loadVillagesForContext(districtId);
+        loadSchoolsForContext(districtId);
+    }
+});
+talukSelect.addEventListener("change", () => {
+    clearAllErrors();
+    const districtId = districtSelect.value, talukId = talukSelect.value;
+    setLevel(gpSelect, "Select Gram Panchayat", [], "crmGPName");
+    setLevel(villageSelect, "Select village", [], "crmVillageName");
+    setLevel(schoolSelect, "Select your school", [], getSchoolNameField);
+    if (!talukId) return;
+    const gpCount = loadGpsForContext(districtId, talukId);
+    if (!gpCount) {
+        const villageCount = loadVillagesForContext(districtId, talukId);
+        loadSchoolsForContext(districtId, talukId);
+        if (!villageCount) loadSchoolsForContext(districtId, talukId);
+    }
+});
+gpSelect.addEventListener("change", () => {
+    clearAllErrors();
+    const districtId = districtSelect.value, talukId = talukSelect.value, gpId = gpSelect.value;
+    setLevel(villageSelect, "Select village", [], "crmVillageName");
+    setLevel(schoolSelect, "Select your school", [], getSchoolNameField);
+    if (!gpId) return;
+    const villageCount = loadVillagesForContext(districtId, talukId, gpId);
+    if (!villageCount) loadSchoolsForContext(districtId, talukId);
+});
+villageSelect.addEventListener("change", () => {
+    clearAllErrors();
+    loadSchoolsForContext(districtSelect.value, talukSelect.value, villageSelect.value);
+});
+
+/* ============================================================
+   POPULATE DISTRICTS
+============================================================ */
+
+function populateDistricts() {
+
+    resetSelect(
+        districtSelect,
+        "Select district"
+    );
+
+
+    districts.forEach(
+        (district) => {
+
+            const option =
+                document.createElement(
+                    "option"
+                );
+
+
+            option.value =
+                district.id;
+
+
+            option.textContent =
+                district.crmDistrictName ||
+                "District";
+
+
+            districtSelect.appendChild(
+                option
+            );
+
+        }
+    );
+
+}
+
+
+/* ============================================================
+   POPULATE SCHOOLS
+============================================================ */
+
+function populateSchoolsForTaluk(
+    talukId
+) {
+
+    let matchingSchools =
+        schools.filter(
+            (school) =>
+                school.crmTalukId ===
+                talukId
+        );
+
+
+    matchingSchools.sort(
+        sortBySchool
+    );
+
+
+    resetSelect(
+        schoolSelect,
+        "Select your school"
+    );
+
+
+    /*
+     * Don't enable the school yet.
+     *
+     * The user will choose village
+     * first.
+     */
+
+    schoolSelect.disabled =
+        true;
+
+}
+
+
+/* ============================================================
+   APPEND OPTIONS
+============================================================ */
+
+function appendOptions(
+    select,
+    items,
+    nameField
+) {
+
+    items.forEach(
+        (item) => {
+
+            const option =
+                document.createElement(
+                    "option"
+                );
+
+
+            option.value =
+                item.id;
+
+
+            option.textContent =
+                typeof nameField === "function"
+                    ? nameField(item)
+                    : (
+                        item[nameField] ||
+                        "Select"
+                    );
+
+
+            select.appendChild(
+                option
+            );
+
+        }
+    );
+
+}
+
+
+/* ============================================================
+   RESET SELECT
+============================================================ */
+
+function resetSelect(
+    select,
+    placeholder
+) {
+
+    select.innerHTML =
+        "";
+
+
+    const option =
+        document.createElement(
+            "option"
+        );
+
+
+    option.value =
+        "";
+
+
+    option.textContent =
+        placeholder;
+
+
+    select.appendChild(
+        option
+    );
+
+
+    select.value =
+        "";
+
+}
+
+
+/* ============================================================
+   FINISH ONBOARDING
+============================================================ */
+
+finishBtn.addEventListener(
+    "click",
+    completeOnboarding
+);
+
+
+async function completeOnboarding() {
+
+    clearAllErrors();
+
+
+    if (!currentUser) {
+
+        window.location.replace(
+            "../../login/"
+        );
+
+        return;
+
+    }
+
+
+    /*
+     * Validate location.
+     */
+
+    const districtId =
+        districtSelect.value;
+
+    const talukId =
+        talukSelect.value;
+
+    const gpId =
+        gpSelect.value;
+
+    const villageId =
+        villageSelect.value;
+
+    const schoolId =
+        schoolSelect.value;
+
+
+    const levelHasOptions = (select) => select && select.options.length > 1;
+
+    if (levelHasOptions(districtSelect) && !districtId) {
+        showError(3, "Please select your district.");
+        districtSelect.focus();
+        return;
+    }
+    if (levelHasOptions(talukSelect) && !talukId) {
+        showError(3, "Please select your taluk.");
+        talukSelect.focus();
+        return;
+    }
+    if (levelHasOptions(gpSelect) && !gpId) {
+        showError(3, "Please select your Gram Panchayat.");
+        gpSelect.focus();
+        return;
+    }
+    if (levelHasOptions(villageSelect) && !villageId) {
+        showError(3, "Please select your village.");
+        villageSelect.focus();
+        return;
+    }
+    if (levelHasOptions(schoolSelect) && !schoolId) {
+        showError(3, "Please select your school.");
+        schoolSelect.focus();
+        return;
+    }
+
+        /*
+     * Find actual CRM records.
+     */
+
+    const district =
+        districts.find(
+            (item) =>
+                item.id === districtId
+        );
+
+
+    const taluk =
+        taluks.find(
+            (item) =>
+                item.id === talukId
+        );
+
+
+    const gp =
+        gramPanchayats.find(
+            (item) =>
+                item.id === gpId
+        );
+
+
+    const village =
+        villages.find(
+            (item) =>
+                item.id === villageId
+        );
+
+
+    const school =
+        schools.find(
+            (item) =>
+                item.id === schoolId
+        );
+
+
+    if (
+        (districtId && !district) ||
+        (talukId && !taluk) ||
+        (gpId && !gp) ||
+        (villageId && !village) ||
+        (schoolId && !school)
+    ) {
+
+        showError(
+            3,
+            "The selected location could not be verified. Please select again."
+        );
+
+        return;
+
+    }
+
+
+    /*
+     * Button loading.
+     */
+
+    finishBtn.disabled =
+        true;
+
+    finishBtn.innerHTML =
+        "Saving...";
+
+
+    try {
+
+        /*
+         * Existing profile, if any.
+         */
+
+        const studentRef =
+            doc(
+                db,
+                "zen2Students",
+                currentUser.uid
+            );
+
+
+        const existingSnapshot =
+            await getDoc(
+                studentRef
+            );
+
+
+        const existingData =
+            existingSnapshot.exists()
+                ? existingSnapshot.data()
+                : {};
+
+
+        /*
+         * =====================================================
+         * NEW ZENOVA STUDENT PROFILE
+         * =====================================================
+         */
+
+        const studentData = {
+
+            /*
+             * AUTH
+             */
+
+            uid:
+                currentUser.uid,
+
+            email:
+                currentUser.email || "",
+
+            phone:
+                phoneNumberInput.value.replace(/\D/g, "").slice(-10),
+
+            phoneNumber:
+                phoneNumberInput.value.replace(/\D/g, "").slice(-10),
+
+            studentCode:
+                REQUIRE_ZNV_CODE ? (matchedCrmStudent?.crmStudentCode || znvCodeInput.value.trim().toUpperCase()) : (existingData.studentCode || existingData.crmStudentCode || ""),
+
+            crmStudentCode:
+                REQUIRE_ZNV_CODE ? (matchedCrmStudent?.crmStudentCode || znvCodeInput.value.trim().toUpperCase()) : (existingData.crmStudentCode || ""),
+
+            crmStudentId:
+                REQUIRE_ZNV_CODE ? (matchedCrmStudent?.id || "") : (existingData.crmStudentId || ""),
+
+
+            /*
+             * GOOGLE PROFILE
+             */
+
+            photoURL:
+                currentUser.photoURL || "",
+
+            googleDisplayName:
+                currentUser.displayName || "",
+
+
+            /*
+             * PERSONAL
+             */
+
+            name:
+                fullNameInput.value.trim(),
+
+            dateOfBirth:
+                dobInput.value,
+
+            gender:
+                genderSelect.value,
+
+
+            /*
+             * CURRENT COURSE
+             *
+             * Current Zenova product is
+             * only 10th Standard.
+             */
+
+            className:
+                classNameSelect.value,
+
+            classDisplayName:
+                classNameSelect.options[classNameSelect.selectedIndex]?.textContent || "10th Standard",
+
+            board:
+                boardSelect.value,
+
+            medium:
+                mediumSelect.value,
+
+
+            /*
+             * TOUGH SUBJECTS
+             */
+
+            toughSubjects:
+                [...selectedToughSubjects],
+
+
+            /*
+             * LOCATION IDS
+             */
+
+            districtId:
+                district?.id || "",
+
+            talukId:
+                taluk?.id || "",
+
+            gramPanchayatId:
+                gp?.id || "",
+
+            villageId:
+                village?.id || "",
+
+            schoolId:
+                school?.id || "",
+
+
+            /*
+             * LOCATION NAMES
+             */
+
+            districtName:
+                district?.crmDistrictName || "",
+
+            talukName:
+                taluk?.crmTalukName || "",
+
+            gramPanchayatName:
+                gp?.crmGPName || "",
+
+            villageName:
+                village?.crmVillageName || "",
+
+            schoolName:
+                school ? getSchoolNameField(school) : "",
+
+
+            /*
+             * ZENOVA VERSION
+             */
+
+            appVersion:
+                "ZEN2",
+
+            profileVersion:
+                1,
+
+
+            /*
+             * ONBOARDING
+             */
+
+            onboardingComplete:
+                true,
+
+            onboardingCompletedAt:
+                serverTimestamp(),
+
+
+            /*
+             * UPDATE
+             */
+
+            updatedAt:
+                serverTimestamp()
+
+        };
+
+
+        /*
+         * Only create createdAt for
+         * a brand-new student.
+         */
+
+        if (
+            !existingSnapshot.exists()
+        ) {
+
+            studentData.createdAt =
+                serverTimestamp();
+
+        } else if (
+            existingData.createdAt
+        ) {
+
+            studentData.createdAt =
+                existingData.createdAt;
+
+        }
+
+
+        /*
+         * SAVE
+         *
+         * zen2Students/{uid}
+         */
+
+        await setDoc(
+            studentRef,
+            studentData,
+            {
+                merge: true
+            }
+        );
+
+
+        console.log(
+            "ZEN2 onboarding saved:",
+            currentUser.uid
+        );
+
+
+        /*
+         * HOME
+         */
+
+        window.location.replace(
+            "../../home/"
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "ZEN2 ONBOARDING ERROR:",
+            error
+        );
+
+
+        showError(
+            3,
+            getFirebaseErrorMessage(
+                error
+            )
+        );
+
+
+        finishBtn.disabled =
+            false;
+
+        finishBtn.innerHTML =
+            `Finish <span>→</span>`;
+
+    }
+
+}
+
+
+/* ============================================================
+   STEP UI
+============================================================ */
+
+function showStep(
+    step
+) {
+
+    currentStep =
+        step;
+
+    updateStepUI();
+
+}
+
+
+/* ============================================================
+   UPDATE STEP UI
+============================================================ */
+
+function updateStepUI() {
+
+    step1.classList.remove(
+        "active"
+    );
+
+    step2.classList.remove(
+        "active"
+    );
+
+    step3.classList.remove(
+        "active"
+    );
+
+
+    if (currentStep === 1) {
+
+        step1.classList.add(
+            "active"
+        );
+
+    }
+
+
+    if (currentStep === 2) {
+
+        step2.classList.add(
+            "active"
+        );
+
+    }
+
+
+    if (currentStep === 3) {
+
+        step3.classList.add(
+            "active"
+        );
+
+    }
+
+
+    stepText.textContent =
+        `${currentStep} of 3`;
+
+
+    progressBar.style.width =
+        `${(
+            currentStep / 3
+        ) * 100}%`;
+
+}
+
+
+/* ============================================================
+   ERRORS
+============================================================ */
+
+function showError(
+    step,
+    message
+) {
+
+    clearAllErrors();
+
+
+    const errorElement =
+        document.getElementById(
+            `step${step}Error`
+        );
+
+
+    if (!errorElement) {
+        return;
+    }
+
+
+    errorElement.textContent =
+        message;
+
+
+    errorElement.classList.add(
+        "show"
+    );
+
+}
+
+
+function clearAllErrors() {
+
+    document
+        .querySelectorAll(
+            ".form-error"
+        )
+        .forEach(
+            (element) => {
+
+                element.textContent =
+                    "";
+
+                element.classList.remove(
+                    "show"
+                );
+
+            }
+        );
+
+}
+
+
+/* ============================================================
+   SORTING
+============================================================ */
+
+function sortByTaluk(
+    a,
+    b
+) {
+
+    return String(
+        a.crmTalukName || ""
+    ).localeCompare(
+        String(
+            b.crmTalukName || ""
+        )
+    );
+
+}
+
+
+function sortByGP(
+    a,
+    b
+) {
+
+    return String(
+        a.crmGPName || ""
+    ).localeCompare(
+        String(
+            b.crmGPName || ""
+        )
+    );
+
+}
+
+
+function sortByVillage(
+    a,
+    b
+) {
+
+    return String(
+        a.crmVillageName || ""
+    ).localeCompare(
+        String(
+            b.crmVillageName || ""
+        )
+    );
+
+}
+
+
+function sortBySchool(
+    a,
+    b
+) {
+
+    return getSchoolNameField(
+        a
+    ).localeCompare(
+        getSchoolNameField(
+            b
+        )
+    );
+
+}
+
+
+/* ============================================================
+   SCHOOL NAME
+============================================================ */
+
+function getSchoolNameField(
+    school
+) {
+
+    return (
+        school.crmSchoolName ||
+        school.schoolName ||
+        school.name ||
+        ""
+    );
+
+}
+
+
+/* ============================================================
+   FIREBASE ERROR
+============================================================ */
+
+function getFirebaseErrorMessage(
+    error
+) {
+
+    switch (error?.code) {
+
+        case "permission-denied":
+
+            return "You don't have permission to save your profile. Please contact Zenova.";
+
+        case "unavailable":
+
+            return "Firebase is temporarily unavailable. Please check your internet connection.";
+
+        case "failed-precondition":
+
+            return "Firebase needs additional configuration. Please contact Zenova.";
+
+        default:
+
+            return (
+                error?.message ||
+                "Unable to save your profile. Please try again."
+            );
+
+    }
+
+}
+
+    </script>
+
+<script>
+(() => {
+ const code = document.getElementById('znvCode');
+ if (code) code.addEventListener('input', () => { code.value = code.value.trim().toUpperCase().replace(/\s+/g, ''); });
+ const phone = document.getElementById('phoneNumber');
+ if (phone) phone.addEventListener('input', () => { phone.value = phone.value.replace(/\D/g, '').slice(0,10); });
+})();
+</script>
+</body>
+
+</html>
