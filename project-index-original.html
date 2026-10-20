@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>Zenova Educations</title>
+
+  <style>
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      background: #ffffff;
+    }
+
+    body {
+      overflow: hidden;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+
+    /* =========================
+       SPLASH
+    ========================= */
+
+    #splash {
+
+      position: fixed;
+
+      inset: 0;
+
+      width: 100%;
+      height: 100%;
+
+      background: #ffffff;
+
+      display: flex;
+
+      align-items: center;
+      justify-content: center;
+
+      z-index: 999999;
+
+    }
+
+
+    /* =========================
+       LOADER
+    ========================= */
+
+    .loader {
+
+      position: relative;
+
+      width: 82px;
+      height: 82px;
+
+      display: flex;
+
+      align-items: center;
+      justify-content: center;
+
+    }
+
+
+    /* ROTATING RING */
+
+    .ring {
+
+      position: absolute;
+
+      width: 82px;
+      height: 82px;
+
+      border-radius: 50%;
+
+      border: 2px solid #eeeeee;
+
+      border-top-color: #7c3aed;
+
+      animation:
+        rotate
+        0.9s
+        linear
+        infinite;
+
+    }
+
+
+    /* Z */
+
+    .logo-z {
+
+      position: relative;
+
+      color: #7c3aed;
+
+      font-size: 28px;
+
+      font-weight: 700;
+
+      line-height: 1;
+
+    }
+
+
+    @keyframes rotate {
+
+      from {
+        transform: rotate(0deg);
+      }
+
+      to {
+        transform: rotate(360deg);
+      }
+
+    }
+
+
+  </style>
+
+</head>
+
+
+<body>
+
+
+  <!-- =========================
+       SPLASH SCREEN
+  ========================= -->
+
+  <div id="splash">
+
+    <div class="loader">
+
+      <div class="ring"></div>
+
+      <div class="logo-z">
+        Z
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- =========================
+       FIREBASE ROUTING
+  ========================= -->
+
+  <script type="module">
+
+    import {
+      auth
+    } from "./firebase/firebase-config.js";
+
+
+    import {
+      onAuthStateChanged
+    } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+
+
+    const splash =
+      document.getElementById("splash");
+
+
+    /*
+      Prevent Firebase from causing the splash
+      to remain forever.
+    */
+
+    let routed = false;
+
+
+    function goTo(path) {
+
+      if (routed) return;
+
+      routed = true;
+
+      window.location.replace(path);
+
+    }
+
+
+    /*
+      Firebase tells us whether a user is
+      already authenticated.
+    */
+
+    onAuthStateChanged(
+      auth,
+      (user) => {
+
+        if (user) {
+
+          /*
+            USER ALREADY LOGGED IN
+
+            Do NOT show login again.
+          */
+
+          goTo("./home/index.html");
+
+        } else {
+
+          /*
+            USER IS NOT LOGGED IN
+
+            Show Google login.
+          */
+
+          goTo("./login/index.html");
+
+        }
+
+      }
+    );
+
+
+    /*
+      Emergency fallback.
+
+      If Firebase takes too long to initialize,
+      the user will still reach login.
+    */
+
+    setTimeout(() => {
+
+      if (!routed) {
+
+        goTo("./login/index.html");
+
+      }
+
+    }, 6000);
+
+
+  </script>
+
+
+</body>
+
+</html>
