@@ -1,0 +1,3137 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Chapter Details | Zenova Educations</title>
+    <meta name="theme-color" content="#111114">
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
+        rel="stylesheet"
+    >
+
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.css" rel="stylesheet">
+    <style>
+/* =========================================================
+   ZENOVA CHAPTER DETAILS
+========================================================= */
+
+* {
+    box-sizing: border-box;
+}
+
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+    min-height: 100%;
+}
+
+
+body {
+    font-family: "Poppins", sans-serif;
+
+    background: #f6f7f9;
+
+    color: #111;
+
+    padding-bottom: 85px;
+}
+
+
+/* =========================================================
+   UTILITIES
+========================================================= */
+
+.hidden {
+    display: none !important;
+}
+
+
+/* =========================================================
+   TOP BAR
+========================================================= */
+
+.topbar {
+    height: 68px;
+
+    background: #fff;
+
+    border-bottom: 1px solid #e9e9e9;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    padding: 0 30px;
+
+    position: sticky;
+
+    top: 0;
+
+    z-index: 100;
+}
+
+
+.back-button {
+    border: 0;
+
+    background: transparent;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    padding: 9px 13px;
+
+    border-radius: 10px;
+
+    font-family: inherit;
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+}
+
+
+.back-button:hover {
+    background: #f1f1f1;
+}
+
+
+.back-button span:first-child {
+    font-size: 22px;
+}
+
+
+/* =========================================================
+   BRAND
+========================================================= */
+
+.brand {
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+}
+
+
+.brand-logo {
+    width: 37px;
+    height: 37px;
+
+    background: #111;
+
+    color: #fff;
+
+    border-radius: 10px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    font-weight: 700;
+
+    font-size: 18px;
+}
+
+
+.brand-text strong {
+    display: block;
+
+    font-size: 14px;
+
+    line-height: 15px;
+}
+
+
+.brand-text span {
+    display: block;
+
+    font-size: 7px;
+
+    color: #999;
+
+    letter-spacing: 1.8px;
+}
+
+
+/* =========================================================
+   LOADER
+========================================================= */
+
+.loader {
+    min-height: calc(100vh - 68px);
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    flex-direction: column;
+
+    gap: 15px;
+}
+
+
+.spinner {
+    width: 35px;
+    height: 35px;
+
+    border: 3px solid #ddd;
+
+    border-top-color: #111;
+
+    border-radius: 50%;
+
+    animation: spin 0.8s linear infinite;
+}
+
+
+@keyframes spin {
+
+    to {
+        transform: rotate(360deg);
+    }
+
+}
+
+
+.loader p {
+    margin: 0;
+
+    color: #888;
+
+    font-size: 12px;
+}
+
+
+/* =========================================================
+   ERROR
+========================================================= */
+
+.error-state {
+    min-height: calc(100vh - 68px);
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    flex-direction: column;
+
+    text-align: center;
+
+    padding: 30px;
+}
+
+
+.error-icon {
+    width: 55px;
+    height: 55px;
+
+    border-radius: 50%;
+
+    background: #eee;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    font-size: 24px;
+
+    font-weight: 700;
+}
+
+
+.error-state h2 {
+    margin: 17px 0 5px;
+}
+
+
+.error-state p {
+    color: #777;
+
+    font-size: 13px;
+
+    max-width: 500px;
+}
+
+
+.error-state button {
+    margin-top: 15px;
+
+    border: 0;
+
+    background: #111;
+
+    color: #fff;
+
+    padding: 11px 19px;
+
+    border-radius: 9px;
+
+    font-family: inherit;
+
+    font-weight: 600;
+
+    cursor: pointer;
+}
+
+
+/* =========================================================
+   APP
+========================================================= */
+
+.app {
+    width: min(1180px, calc(100% - 40px));
+
+    margin: 0 auto;
+
+    padding: 28px 0 55px;
+}
+
+
+/* =========================================================
+   BREADCRUMB
+========================================================= */
+
+.breadcrumb {
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    flex-wrap: wrap;
+
+    font-size: 11px;
+
+    color: #888;
+
+    margin-bottom: 15px;
+}
+
+
+.breadcrumb strong {
+    color: #222;
+}
+
+
+/* =========================================================
+   HERO
+========================================================= */
+
+.hero-section {
+    background: #fff;
+
+    border-radius: 16px;
+
+    overflow: hidden;
+
+    border: 1px solid #e7e7e7;
+
+    box-shadow:
+        0 10px 35px rgba(0, 0, 0, 0.06);
+}
+
+
+/* =========================================================
+   HERO THUMBNAIL
+========================================================= */
+
+.hero-thumbnail {
+    width: 100%;
+
+    aspect-ratio: 16 / 7.2;
+
+    background: #111;
+
+    position: relative;
+
+    overflow: hidden;
+
+    cursor: pointer;
+}
+
+
+.hero-thumbnail img {
+    width: 100%;
+    height: 100%;
+
+    display: block;
+
+    object-fit: cover;
+}
+
+
+.hero-overlay {
+    position: absolute;
+
+    inset: 0;
+
+    background:
+        linear-gradient(
+            to bottom,
+            rgba(0,0,0,0.02),
+            rgba(0,0,0,0.22)
+        );
+}
+
+
+.hero-play-button {
+    position: absolute;
+
+    left: 50%;
+    top: 50%;
+
+    transform: translate(-50%, -50%);
+
+    width: 78px;
+    height: 78px;
+
+    border: 0;
+
+    border-radius: 50%;
+
+    background: rgba(0,0,0,0.82);
+
+    color: #fff;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    font-size: 27px;
+
+    padding-left: 4px;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.2s,
+        background 0.2s;
+}
+
+
+.hero-play-button:hover {
+    transform:
+        translate(-50%, -50%)
+        scale(1.08);
+
+    background: #000;
+}
+
+
+/* =========================================================
+   HERO BOTTOM
+========================================================= */
+
+.hero-bottom {
+    position: absolute;
+
+    left: 18px;
+    right: 18px;
+    bottom: 15px;
+
+    display: flex;
+
+    justify-content: flex-end;
+}
+
+
+.hero-duration {
+    background: rgba(0,0,0,0.8);
+
+    color: #fff;
+
+    padding: 4px 8px;
+
+    border-radius: 5px;
+
+    font-size: 9px;
+
+    font-weight: 600;
+}
+
+
+/* =========================================================
+   HERO INFO
+========================================================= */
+
+.hero-info {
+    padding: 22px 25px 25px;
+}
+
+
+.hero-label {
+    color: #999;
+
+    font-size: 8px;
+
+    font-weight: 700;
+
+    letter-spacing: 1.2px;
+
+    margin-bottom: 5px;
+}
+
+
+.hero-info h1 {
+    margin: 0;
+
+    font-size: clamp(20px, 3vw, 28px);
+
+    line-height: 1.3;
+}
+
+
+.hero-info p {
+    margin: 7px 0 0;
+
+    color: #777;
+
+    font-size: 12px;
+
+    line-height: 1.6;
+}
+
+
+/* =========================================================
+   CHAPTER HEADER
+========================================================= */
+
+.chapter-header {
+    margin-top: 28px;
+
+    padding: 23px;
+
+    background: #fff;
+
+    border: 1px solid #e7e7e7;
+
+    border-radius: 14px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 20px;
+}
+
+
+.eyebrow {
+    font-size: 8px;
+
+    color: #999;
+
+    font-weight: 700;
+
+    letter-spacing: 1.2px;
+}
+
+
+.chapter-header h2 {
+    margin: 4px 0 5px;
+
+    font-size: 21px;
+}
+
+
+.chapter-header p {
+    margin: 0;
+
+    color: #777;
+
+    font-size: 12px;
+
+    line-height: 1.6;
+}
+
+
+.chapter-count {
+    min-width: 85px;
+
+    text-align: center;
+
+    padding: 12px;
+
+    border-radius: 10px;
+
+    background: #f4f4f4;
+}
+
+
+.chapter-count strong {
+    display: block;
+
+    font-size: 21px;
+}
+
+
+.chapter-count span {
+    font-size: 8px;
+
+    color: #999;
+
+    letter-spacing: 1px;
+
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   CONTENT SECTION
+========================================================= */
+
+.content-section {
+    margin-top: 32px;
+}
+
+
+.section-heading {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    margin-bottom: 14px;
+}
+
+
+.section-heading h2 {
+    margin: 4px 0 0;
+
+    font-size: 21px;
+}
+
+
+/* =========================================================
+   VIDEO LIST
+========================================================= */
+
+.video-list {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 10px;
+}
+
+
+/* =========================================================
+   VIDEO CARD
+========================================================= */
+
+.video-card {
+    background: #fff;
+
+    border: 1px solid #e7e7e7;
+
+    border-radius: 12px;
+
+    padding: 10px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 14px;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.18s,
+        box-shadow 0.18s,
+        border-color 0.18s;
+}
+
+
+.video-card:hover {
+    transform: translateY(-1px);
+
+    border-color: #d5d5d5;
+
+    box-shadow:
+        0 7px 22px rgba(0,0,0,0.07);
+}
+
+
+/* =========================================================
+   VIDEO THUMBNAIL
+========================================================= */
+
+.video-card-thumbnail {
+    width: 210px;
+
+    aspect-ratio: 16 / 9;
+
+    flex-shrink: 0;
+
+    border-radius: 8px;
+
+    overflow: hidden;
+
+    background: #111;
+
+    position: relative;
+}
+
+
+.video-card-thumbnail img {
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+
+    display: block;
+}
+
+
+.video-card-thumbnail::after {
+    content: "";
+
+    position: absolute;
+
+    inset: 0;
+
+    background:
+        linear-gradient(
+            transparent,
+            rgba(0,0,0,0.2)
+        );
+}
+
+
+.small-play {
+    position: absolute;
+
+    left: 50%;
+    top: 50%;
+
+    transform: translate(-50%, -50%);
+
+    width: 36px;
+    height: 36px;
+
+    border-radius: 50%;
+
+    background: rgba(0,0,0,0.78);
+
+    color: #fff;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    font-size: 13px;
+
+    z-index: 2;
+}
+
+
+/* =========================================================
+   VIDEO CARD INFO
+========================================================= */
+
+.video-card-info {
+    min-width: 0;
+
+    flex: 1;
+}
+
+
+.video-number {
+    color: #999;
+
+    font-size: 8px;
+
+    font-weight: 700;
+
+    letter-spacing: 1px;
+
+    margin-bottom: 5px;
+}
+
+
+.video-card-title {
+    margin: 0;
+
+    font-size: 14px;
+
+    line-height: 1.45;
+
+    font-weight: 600;
+
+    display: -webkit-box;
+
+    -webkit-line-clamp: 2;
+
+    -webkit-box-orient: vertical;
+
+    overflow: hidden;
+}
+
+
+.video-card-description {
+    margin: 5px 0 0;
+
+    color: #888;
+
+    font-size: 10px;
+
+    line-height: 1.5;
+
+    display: -webkit-box;
+
+    -webkit-line-clamp: 2;
+
+    -webkit-box-orient: vertical;
+
+    overflow: hidden;
+}
+
+
+.watch-label {
+    display: inline-block;
+
+    margin-top: 8px;
+
+    font-size: 8px;
+
+    color: #555;
+
+    background: #f2f2f2;
+
+    padding: 4px 7px;
+
+    border-radius: 5px;
+
+    font-weight: 600;
+}
+
+
+/* =========================================================
+   PDF
+========================================================= */
+
+.pdf-list {
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 10px;
+}
+
+
+.pdf-card {
+    background: #fff;
+
+    border: 1px solid #e7e7e7;
+
+    border-radius: 11px;
+
+    padding: 14px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+}
+
+
+.pdf-icon {
+    width: 40px;
+    height: 40px;
+
+    flex-shrink: 0;
+
+    border-radius: 9px;
+
+    background: #f1f1f1;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    font-size: 10px;
+
+    font-weight: 700;
+}
+
+
+.pdf-info {
+    min-width: 0;
+
+    flex: 1;
+}
+
+
+.pdf-info strong {
+    display: block;
+
+    font-size: 12px;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+}
+
+
+.pdf-info span {
+    display: block;
+
+    color: #999;
+
+    font-size: 9px;
+
+    margin-top: 3px;
+}
+
+
+.pdf-button {
+    border: 0;
+
+    background: #111;
+
+    color: #fff;
+
+    padding: 8px 11px;
+
+    border-radius: 7px;
+
+    font-family: inherit;
+
+    font-size: 9px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    text-decoration: none;
+
+    white-space: nowrap;
+}
+
+
+/* =========================================================
+   EMPTY
+========================================================= */
+
+.empty-state {
+    background: #fff;
+
+    border: 1px dashed #ddd;
+
+    border-radius: 13px;
+
+    padding: 40px 20px;
+
+    text-align: center;
+}
+
+
+.empty-icon {
+    width: 44px;
+    height: 44px;
+
+    margin: 0 auto 12px;
+
+    border-radius: 50%;
+
+    background: #f0f0f0;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    font-size: 10px;
+
+    font-weight: 700;
+}
+
+
+.empty-state h3 {
+    margin: 0 0 5px;
+
+    font-size: 15px;
+}
+
+
+.empty-state p {
+    margin: 0;
+
+    color: #999;
+
+    font-size: 11px;
+}
+
+
+/* =========================================================
+   BOTTOM NAV — robust route handling from chapterdetails
+========================================================= */
+document.querySelectorAll(".bottom-nav [data-nav]").forEach((button) => {
+    button.addEventListener("click", () => {
+        const destinations = {
+            home: "../",
+            live: "../live/",
+            revision: "../revision/",
+            profile: "../profile/"
+        };
+        const destination = destinations[button.dataset.nav];
+        if (!destination) return;
+        window.location.assign(new URL(destination, window.location.href).href);
+    });
+});
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 750px) {
+
+    .topbar {
+        height: 62px;
+
+        padding: 0 15px;
+    }
+
+
+    .app {
+        width: calc(100% - 20px);
+
+        padding-top: 18px;
+    }
+
+
+    .hero-thumbnail {
+        aspect-ratio: 16 / 9;
+    }
+
+
+    .hero-play-button {
+        width: 62px;
+        height: 62px;
+
+        font-size: 22px;
+    }
+
+
+    .hero-info {
+        padding: 17px;
+    }
+
+
+    .chapter-header {
+        align-items: flex-start;
+
+        padding: 17px;
+    }
+
+
+    .chapter-count {
+        min-width: 70px;
+    }
+
+
+    .video-card-thumbnail {
+        width: 145px;
+    }
+
+
+    .video-card {
+        gap: 10px;
+
+        padding: 8px;
+    }
+
+
+    .video-card-title {
+        font-size: 12px;
+    }
+
+
+    .video-card-description {
+        display: none;
+    }
+
+
+    .pdf-list {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+
+@media (max-width: 500px) {
+
+    .brand {
+        display: none;
+    }
+
+
+    .hero-info h1 {
+        font-size: 19px;
+    }
+
+
+    .chapter-header h2 {
+        font-size: 18px;
+    }
+
+
+    .video-card-thumbnail {
+        width: 125px;
+    }
+
+
+    .video-card-title {
+        font-size: 11px;
+
+        -webkit-line-clamp: 3;
+    }
+
+
+    .watch-label {
+        margin-top: 5px;
+    }
+
+}
+
+
+/* ZENOVA SHARED HEADER + NAV — matched to Home and Live redesigned pages */
+:root{--black:#111114;--text:#17151d;--muted:#777783;--light:#f7f7fa;--border:#e9e8ef;--white:#fff;--purple:#7650d6;--lav:#eee8ff;--lav2:#f7f3ff;--bottom:78px}
+html{background:#f7f7fa;scroll-behavior:smooth}
+body{font-family:Inter,system-ui,-apple-system,sans-serif!important;background:#f7f7fa!important;color:#17151d!important;padding-bottom:calc(var(--bottom) + env(safe-area-inset-bottom))!important;-webkit-font-smoothing:antialiased}
+.header{background:#111114!important;color:#fff!important;padding:18px 18px 23px!important;border-radius:0 0 26px 26px!important;border:0!important;box-shadow:none!important;position:relative!important;top:auto!important;z-index:100!important;display:block!important;min-height:0!important;height:auto!important}
+.header-wrap{width:100%;max-width:920px;margin:0 auto}
+.header-inner{display:flex;align-items:center;justify-content:space-between;gap:14px;min-height:46px}
+.brand{display:flex;align-items:center;gap:11px;min-width:0;flex:1}
+.brand-mark.small{width:46px;height:46px;flex:0 0 46px;border-radius:15px;background:#eee8ff;color:#6040b5;display:grid;place-items:center;font-size:24px;font-weight:900;box-shadow:0 8px 25px #7650d633}
+.brand-copy{min-width:0}.brand-name{font-size:16px!important;line-height:1.2!important;font-weight:900!important;letter-spacing:.1px!important;color:#fff!important;white-space:nowrap}.brand-sub{font-size:10px!important;line-height:1.3!important;color:#bdb8c8!important;margin-top:4px!important;letter-spacing:1.4px!important;text-transform:uppercase!important;white-space:nowrap}
+.profile{width:46px;height:46px;flex:0 0 46px;border:2px solid #a58be8;background:#292532;color:#fff;border-radius:50%;display:grid;place-items:center;overflow:hidden;padding:0;cursor:pointer}.profile img{width:100%;height:100%;object-fit:cover}.profile span{font-size:16px;font-weight:850;color:#fff}.profile img:not([hidden]) + span{display:none}
+.bottom-nav{position:fixed!important;left:0!important;right:0!important;bottom:0!important;z-index:120!important;background:#fff!important;border-top:1px solid #e9e6ef!important;box-shadow:0 -6px 24px #21163808!important;padding:8px 12px calc(8px + env(safe-area-inset-bottom))!important;display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:5px!important;height:auto!important}
+.bottom-nav button{position:relative!important;border:0!important;background:transparent!important;color:#8b8795!important;border-radius:13px!important;min-height:54px!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:4px!important;font-size:9px!important;font-weight:750!important;padding:5px 2px!important;font-family:inherit!important}
+.bottom-nav button .nav-icon{font-size:21px!important;line-height:1!important;color:inherit!important}.bottom-nav button .nav-icon i{font-style:normal}.bottom-nav button.active,.bottom-nav button[aria-current="page"]{background:#eee8ff!important;color:#6040b5!important}.bottom-nav button.active:before{content:"";position:absolute;top:4px;left:50%;transform:translateX(-50%);width:18px;height:3px;border-radius:5px;background:#7650d6}.bottom-nav button.active .nav-icon,.bottom-nav button[aria-current="page"] .nav-icon{color:#6040b5!important}
+@media(min-width:650px){.header{padding:18px 24px 23px!important}.header-wrap{max-width:920px}.bottom-nav{left:50%!important;right:auto!important;transform:translateX(-50%)!important;width:min(100%,520px)!important;bottom:12px!important;border:1px solid #e9e6ef!important;border-radius:19px!important;padding:8px!important;box-shadow:0 12px 35px #18111f18!important}}
+@media(max-width:380px){.header{padding:18px 16px 23px!important}.brand{gap:9px}.brand-mark.small,.profile{width:46px;height:46px;flex-basis:46px}.brand-name{font-size:16px!important}.brand-sub{font-size:9px!important;letter-spacing:1px!important}}
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<header class="header" aria-label="Zenova Educations header">
+  <div class="header-wrap">
+    <div class="header-inner">
+      <div class="brand">
+        <div class="brand-mark small" aria-hidden="true">Z</div>
+        <div class="brand-copy">
+          <div class="brand-name">Zenova Educations</div>
+          <div class="brand-sub">Learn · Practice · Achieve</div>
+        </div>
+      </div>
+      <button id="chapterProfileShortcut" class="profile" type="button" data-nav="profile" aria-label="Open student profile">
+        <img id="chapterProfilePhoto" alt="Student profile" hidden>
+        <span id="chapterProfileInitial">Z</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+
+    <!-- =====================================================
+         LOADER
+    ====================================================== -->
+
+    <section
+        id="loader"
+        class="loader"
+    >
+
+        <div class="spinner"></div>
+
+        <p>
+            Loading chapter...
+        </p>
+
+    </section>
+
+
+
+    <!-- =====================================================
+         ERROR
+    ====================================================== -->
+
+    <section
+        id="errorState"
+        class="error-state hidden"
+    >
+
+        <div class="error-icon">
+            !
+        </div>
+
+        <h2>
+            Unable to load chapter
+        </h2>
+
+        <p id="errorMessage">
+            Something went wrong.
+        </p>
+
+        <button
+            id="retryButton"
+            type="button"
+        >
+            Try Again
+        </button>
+
+    </section>
+
+
+
+    <!-- =====================================================
+         MAIN
+    ====================================================== -->
+
+    <main
+        id="app"
+        class="app hidden"
+    >
+
+
+        <!-- =================================================
+             BREADCRUMB
+        ================================================== -->
+
+        <div class="breadcrumb">
+
+            <span id="batchName">
+                Batch
+            </span>
+
+            <span>
+                /
+            </span>
+
+            <span id="subjectName">
+                Subject
+            </span>
+
+            <span>
+                /
+            </span>
+
+            <strong id="chapterName">
+                Chapter
+            </strong>
+
+        </div>
+
+
+
+        <!-- =================================================
+             HERO VIDEO
+        ================================================== -->
+
+        <section
+            id="heroSection"
+            class="hero-section"
+        >
+
+            <div
+                id="heroThumbnail"
+                class="hero-thumbnail"
+            >
+
+                <img
+                    id="heroImage"
+                    src=""
+                    alt="Video thumbnail"
+                >
+
+
+                <div class="hero-overlay"></div>
+
+
+                <button
+                    id="heroPlayButton"
+                    class="hero-play-button"
+                    type="button"
+                    aria-label="Play video"
+                >
+                    ▶
+                </button>
+
+
+                <div class="hero-bottom">
+
+                    <span
+                        id="heroDuration"
+                        class="hero-duration"
+                    >
+                        VIDEO
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="hero-info">
+
+                <div class="hero-label">
+                    NOW AVAILABLE
+                </div>
+
+                <h1 id="heroTitle">
+                    Video Title
+                </h1>
+
+                <p id="heroDescription">
+                    Recorded class
+                </p>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             CHAPTER INFO
+        ================================================== -->
+
+        <section class="chapter-header">
+
+            <div>
+
+                <span class="eyebrow">
+                    CHAPTER
+                </span>
+
+                <h2 id="chapterTitle">
+                    Chapter Name
+                </h2>
+
+                <p id="chapterDescription">
+                    Chapter description
+                </p>
+
+            </div>
+
+
+            <div class="chapter-count">
+
+                <strong id="videoCount">
+                    0
+                </strong>
+
+                <span>
+                    VIDEOS
+                </span>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             VIDEOS
+        ================================================== -->
+
+        <section class="content-section">
+
+            <div class="section-heading">
+
+                <div>
+
+                    <span class="eyebrow">
+                        RECORDED CLASSES
+                    </span>
+
+                    <h2>
+                        Videos
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <div
+                id="videoList"
+                class="video-list"
+            ></div>
+
+
+            <div
+                id="emptyVideos"
+                class="empty-state hidden"
+            >
+
+                <div class="empty-icon">
+                    ▶
+                </div>
+
+                <h3>
+                    No videos yet
+                </h3>
+
+                <p>
+                    Videos for this chapter will appear here.
+                </p>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             PDFs
+        ================================================== -->
+
+        <section
+            id="pdfSection"
+            class="content-section pdf-section"
+        >
+
+            <div class="section-heading">
+
+                <div>
+
+                    <span class="eyebrow">
+                        STUDY MATERIAL
+                    </span>
+
+                    <h2>
+                        Notes & PDFs
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <div
+                id="pdfList"
+                class="pdf-list"
+            ></div>
+
+
+            <div
+                id="emptyPdfs"
+                class="empty-state hidden"
+            >
+
+                <div class="empty-icon">
+                    PDF
+                </div>
+
+                <h3>
+                    No notes available
+                </h3>
+
+                <p>
+                    Study material will appear here.
+                </p>
+
+            </div>
+
+        </section>
+
+
+
+    </main>
+
+
+
+    <!-- BOTTOM NAV — same shared navigation as Home and Live -->
+    <nav class="bottom-nav" aria-label="Main navigation">
+      <button type="button" data-nav="home"><span class="nav-icon"><i class="ri-home-5-line"></i></span><span>Home</span></button>
+      <button type="button" data-nav="live"><span class="nav-icon"><i class="ri-live-line"></i></span><span>Live</span></button>
+      <button type="button" data-nav="revision" class="active" aria-current="page"><span class="nav-icon"><i class="ri-book-open-line"></i></span><span>Revision</span></button>
+      <button type="button" data-nav="profile"><span class="nav-icon"><i class="ri-user-3-line"></i></span><span>Profile</span></button>
+    </nav>
+
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+    <script type="module">
+/* =========================================================
+   ZENOVA CHAPTER DETAILS
+   ZEN2
+========================================================= */
+
+import {
+    auth,
+    db
+} from "../../firebase/firebase-config.js";
+
+
+import {
+    onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+
+
+import {
+    collection,
+    doc,
+    getDoc,
+    getDocs,
+    query,
+    where
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
+
+/* =========================================================
+   ELEMENTS
+========================================================= */
+
+const loader =
+    document.getElementById(
+        "loader"
+    );
+
+
+const app =
+    document.getElementById(
+        "app"
+    );
+
+
+const errorState =
+    document.getElementById(
+        "errorState"
+    );
+
+
+const errorMessage =
+    document.getElementById(
+        "errorMessage"
+    );
+
+
+const retryButton =
+    document.getElementById(
+        "retryButton"
+    );
+
+
+const backButton =
+    document.getElementById(
+        "backButton"
+    );
+
+
+const batchName =
+    document.getElementById(
+        "batchName"
+    );
+
+
+const subjectName =
+    document.getElementById(
+        "subjectName"
+    );
+
+
+const chapterName =
+    document.getElementById(
+        "chapterName"
+    );
+
+
+const chapterTitle =
+    document.getElementById(
+        "chapterTitle"
+    );
+
+
+const chapterDescription =
+    document.getElementById(
+        "chapterDescription"
+    );
+
+
+const videoCount =
+    document.getElementById(
+        "videoCount"
+    );
+
+
+const heroImage =
+    document.getElementById(
+        "heroImage"
+    );
+
+
+const heroTitle =
+    document.getElementById(
+        "heroTitle"
+    );
+
+
+const heroDescription =
+    document.getElementById(
+        "heroDescription"
+    );
+
+
+const heroPlayButton =
+    document.getElementById(
+        "heroPlayButton"
+    );
+
+
+const heroThumbnail =
+    document.getElementById(
+        "heroThumbnail"
+    );
+
+
+const videoList =
+    document.getElementById(
+        "videoList"
+    );
+
+
+const emptyVideos =
+    document.getElementById(
+        "emptyVideos"
+    );
+
+
+const pdfList =
+    document.getElementById(
+        "pdfList"
+    );
+
+
+const emptyPdfs =
+    document.getElementById(
+        "emptyPdfs"
+    );
+
+
+/* =========================================================
+   URL
+========================================================= */
+
+const params =
+    new URLSearchParams(
+        window.location.search
+    );
+
+
+const chapterId =
+    params.get(
+        "chapterId"
+    );
+
+
+const subjectId =
+    params.get(
+        "subjectId"
+    );
+
+
+/* =========================================================
+   STATE
+========================================================= */
+
+let currentUser =
+    null;
+
+
+let currentStudent =
+    null;
+
+
+let currentCourse =
+    null;
+
+
+let currentSubject =
+    null;
+
+
+let currentChapter =
+    null;
+
+
+let videos =
+    [];
+
+
+let pdfs =
+    [];
+
+
+/* =========================================================
+   START
+========================================================= */
+
+if (!chapterId) {
+
+    showError(
+        "No chapter was selected."
+    );
+
+} else {
+
+    start();
+
+}
+
+
+/* =========================================================
+   AUTH
+========================================================= */
+
+function start() {
+
+    onAuthStateChanged(
+        auth,
+        async user => {
+
+            if (!user) {
+
+                window.location.href =
+                    "../../account/login/";
+
+                return;
+
+            }
+
+
+            currentUser =
+                user;
+
+
+            try {
+
+                await loadStudent();
+
+                await loadChapter();
+
+                await loadSubject();
+
+                await loadCourse();
+
+                await loadContent();
+
+                renderPage();
+
+                hideLoader();
+
+            } catch (error) {
+
+                console.error(
+                    "Chapter Details Error:",
+                    error
+                );
+
+
+                showError(
+                    getReadableError(
+                        error
+                    )
+                );
+
+            }
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   LOAD STUDENT
+========================================================= */
+
+async function loadStudent() {
+
+    const studentRef =
+        doc(
+            db,
+            "zen2Students",
+            currentUser.uid
+        );
+
+
+    const snapshot =
+        await getDoc(
+            studentRef
+        );
+
+
+    if (
+        snapshot.exists()
+    ) {
+
+        currentStudent = {
+
+            id:
+                snapshot.id,
+
+            ...snapshot.data()
+
+        };
+
+    }
+
+    // Match the Home/Live profile treatment, using the signed-in student's saved photo when available.
+    const photo = document.getElementById("chapterProfilePhoto");
+    const initial = document.getElementById("chapterProfileInitial");
+    const photoUrl = currentStudent?.photoURL || currentStudent?.photoUrl || currentStudent?.profilePhotoUrl || currentUser?.photoURL || "";
+    const displayName = currentStudent?.name || currentStudent?.studentName || currentUser?.displayName || "Zenova";
+    if (initial) initial.textContent = (displayName.trim()[0] || "Z").toUpperCase();
+    if (photo && photoUrl) {
+        photo.src = photoUrl;
+        photo.hidden = false;
+        photo.onerror = () => { photo.hidden = true; };
+    }
+
+}
+
+
+/* =========================================================
+   LOAD CHAPTER
+========================================================= */
+
+async function loadChapter() {
+
+    const chapterRef =
+        doc(
+            db,
+            "zen2Chapters",
+            chapterId
+        );
+
+
+    const snapshot =
+        await getDoc(
+            chapterRef
+        );
+
+
+    if (
+        !snapshot.exists()
+    ) {
+
+        throw new Error(
+            "This chapter does not exist."
+        );
+
+    }
+
+
+    currentChapter = {
+
+        id:
+            snapshot.id,
+
+        ...snapshot.data()
+
+    };
+
+
+    /*
+     * Check chapter relationship
+     */
+
+    if (
+        subjectId &&
+        currentChapter.subjectId &&
+        currentChapter.subjectId !==
+            subjectId
+    ) {
+
+        throw new Error(
+            "This chapter does not belong to the selected subject."
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   LOAD SUBJECT
+========================================================= */
+
+async function loadSubject() {
+
+    const id =
+        currentChapter.subjectId ||
+        subjectId;
+
+
+    if (!id) {
+
+        throw new Error(
+            "Subject information is missing."
+        );
+
+    }
+
+
+    const subjectRef =
+        doc(
+            db,
+            "zen2Subjects",
+            id
+        );
+
+
+    const snapshot =
+        await getDoc(
+            subjectRef
+        );
+
+
+    if (
+        snapshot.exists()
+    ) {
+
+        currentSubject = {
+
+            id:
+                snapshot.id,
+
+            ...snapshot.data()
+
+        };
+
+    }
+
+}
+
+
+/* =========================================================
+   LOAD COURSE
+========================================================= */
+
+async function loadCourse() {
+
+    const courseId =
+        currentSubject?.courseId ||
+        currentChapter?.courseId;
+
+
+    if (!courseId) {
+
+        return;
+
+    }
+
+
+    const courseRef =
+        doc(
+            db,
+            "zen2Courses",
+            courseId
+        );
+
+
+    const snapshot =
+        await getDoc(
+            courseRef
+        );
+
+
+    if (
+        snapshot.exists()
+    ) {
+
+        currentCourse = {
+
+            id:
+                snapshot.id,
+
+            ...snapshot.data()
+
+        };
+
+    }
+
+}
+
+
+/* =========================================================
+   LOAD CONTENT
+========================================================= */
+
+async function loadContent() {
+
+    const contentRef =
+        collection(
+            db,
+            "zen2Content"
+        );
+
+
+    const contentQuery =
+        query(
+            contentRef,
+            where(
+                "chapterId",
+                "==",
+                chapterId
+            )
+        );
+
+
+    const snapshot =
+        await getDocs(
+            contentQuery
+        );
+
+
+    const content =
+        snapshot.docs.map(
+            item => ({
+
+                id:
+                    item.id,
+
+                ...item.data()
+
+            })
+        );
+
+
+    /*
+     * Active content only.
+     */
+
+    const activeContent =
+        content.filter(
+            item =>
+                item.active !== false
+        );
+
+
+    /*
+     * VIDEO
+     */
+
+    videos =
+        activeContent
+            .filter(
+                item =>
+                    String(
+                        item.contentType ||
+                        ""
+                    ).toUpperCase()
+                    ===
+                    "VIDEO"
+            )
+            .sort(
+                sortContent
+            );
+
+
+    /*
+     * PDF
+     */
+
+    pdfs =
+        activeContent
+            .filter(
+                item =>
+                    String(
+                        item.contentType ||
+                        ""
+                    ).toUpperCase()
+                    ===
+                    "PDF"
+            )
+            .sort(
+                sortContent
+            );
+
+}
+
+
+/* =========================================================
+   SORT
+========================================================= */
+
+function sortContent(
+    a,
+    b
+) {
+
+    const orderA =
+        Number(
+            a.order ||
+            999999
+        );
+
+
+    const orderB =
+        Number(
+            b.order ||
+            999999
+        );
+
+
+    return (
+        orderA -
+        orderB
+    );
+
+}
+
+
+/* =========================================================
+   RENDER PAGE
+========================================================= */
+
+function renderPage() {
+
+    const courseTitle =
+        currentCourse?.name ||
+        currentCourse?.courseName ||
+        currentCourse?.title ||
+        "Zenova Batch";
+
+
+    const subjectTitle =
+        currentSubject?.name ||
+        currentSubject?.subjectName ||
+        currentSubject?.title ||
+        "Subject";
+
+
+    const chapterTitleValue =
+        currentChapter?.title ||
+        currentChapter?.chapterName ||
+        currentChapter?.name ||
+        "Chapter";
+
+
+    /*
+     * Header
+     */
+
+    batchName.textContent =
+        courseTitle;
+
+
+    subjectName.textContent =
+        subjectTitle;
+
+
+    chapterName.textContent =
+        chapterTitleValue;
+
+
+    chapterTitle.textContent =
+        chapterTitleValue;
+
+
+    chapterDescription.textContent =
+        currentChapter?.description ||
+        currentChapter?.chapterDescription ||
+        "Recorded classes and study material for this chapter.";
+
+
+    /*
+     * Count
+     */
+
+    videoCount.textContent =
+        videos.length;
+
+
+    /*
+     * Hero
+     */
+
+    renderHero();
+
+
+    /*
+     * Video list
+     */
+
+    renderVideos();
+
+
+    /*
+     * PDFs
+     */
+
+    renderPDFs();
+
+}
+
+
+/* =========================================================
+   HERO
+========================================================= */
+
+function renderHero() {
+
+    if (
+        !videos.length
+    ) {
+
+        document
+            .getElementById(
+                "heroSection"
+            )
+            .classList.add(
+                "hidden"
+            );
+
+        return;
+
+    }
+
+
+    const video =
+        videos[0];
+
+
+    const title =
+        video.title ||
+        "Recorded Class";
+
+
+    const description =
+        video.description ||
+        "Watch this recorded class inside Zenova.";
+
+
+    const thumbnail =
+        getVideoThumbnail(
+            video
+        );
+
+
+    heroImage.src =
+        thumbnail;
+
+
+    heroImage.alt =
+        title;
+
+
+    heroTitle.textContent =
+        title;
+
+
+    heroDescription.textContent =
+        description;
+
+
+    heroThumbnail.onclick =
+        () => {
+
+            openVideo(
+                video
+            );
+
+        };
+
+
+    heroPlayButton.onclick =
+        event => {
+
+            event.stopPropagation();
+
+            openVideo(
+                video
+            );
+
+        };
+
+}
+
+
+/* =========================================================
+   VIDEO LIST
+========================================================= */
+
+function renderVideos() {
+
+    videoList.innerHTML =
+        "";
+
+
+    if (
+        !videos.length
+    ) {
+
+        emptyVideos.classList.remove(
+            "hidden"
+        );
+
+        return;
+
+    }
+
+
+    emptyVideos.classList.add(
+        "hidden"
+    );
+
+
+    videos.forEach(
+        (
+            video,
+            index
+        ) => {
+
+            const card =
+                document.createElement(
+                    "article"
+                );
+
+
+            card.className =
+                "video-card";
+
+
+            const thumbnail =
+                getVideoThumbnail(
+                    video
+                );
+
+
+            const title =
+                video.title ||
+                "Untitled Video";
+
+
+            const description =
+                video.description ||
+                "";
+
+
+            card.innerHTML = `
+
+                <div class="video-card-thumbnail">
+
+                    <img
+                        src="${escapeAttribute(thumbnail)}"
+                        alt="${escapeAttribute(title)}"
+                        loading="lazy"
+                    >
+
+                    <div class="small-play">
+                        ▶
+                    </div>
+
+                </div>
+
+
+                <div class="video-card-info">
+
+                    <div class="video-number">
+                        VIDEO ${String(
+                            index + 1
+                        ).padStart(
+                            2,
+                            "0"
+                        )}
+                    </div>
+
+
+                    <h3 class="video-card-title">
+                        ${escapeHTML(
+                            title
+                        )}
+                    </h3>
+
+
+                    ${
+                        description
+                            ? `
+                                <p class="video-card-description">
+                                    ${escapeHTML(
+                                        description
+                                    )}
+                                </p>
+                              `
+                            : ""
+                    }
+
+
+                    <span class="watch-label">
+                        ▶ WATCH VIDEO
+                    </span>
+
+                </div>
+
+            `;
+
+
+            card.addEventListener(
+                "click",
+                () => {
+
+                    openVideo(
+                        video
+                    );
+
+                }
+            );
+
+
+            videoList.appendChild(
+                card
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   PDF LIST
+========================================================= */
+
+function renderPDFs() {
+
+    pdfList.innerHTML =
+        "";
+
+
+    if (
+        !pdfs.length
+    ) {
+
+        emptyPdfs.classList.remove(
+            "hidden"
+        );
+
+        return;
+
+    }
+
+
+    emptyPdfs.classList.add(
+        "hidden"
+    );
+
+
+    pdfs.forEach(
+        pdf => {
+
+            const card =
+                document.createElement(
+                    "div"
+                );
+
+
+            card.className =
+                "pdf-card";
+
+
+            const title =
+                pdf.title ||
+                pdf.fileName ||
+                "Study Material";
+
+
+            const url =
+                pdf.fileUrl ||
+                pdf.pdfUrl ||
+                "";
+
+
+            card.innerHTML = `
+
+                <div class="pdf-icon">
+                    PDF
+                </div>
+
+
+                <div class="pdf-info">
+
+                    <strong>
+                        ${escapeHTML(
+                            title
+                        )}
+                    </strong>
+
+                    <span>
+                        Study material
+                    </span>
+
+                </div>
+
+
+                ${
+                    url
+                        ? `
+                            <a
+                                class="pdf-button"
+                                href="${escapeAttribute(url)}"
+                                target="_blank"
+                                rel="noopener"
+                            >
+                                OPEN
+                            </a>
+                          `
+                        : `
+                            <span
+                                class="pdf-button"
+                                style="
+                                    opacity:.45;
+                                    cursor:not-allowed;
+                                "
+                            >
+                                UNAVAILABLE
+                            </span>
+                          `
+                }
+
+            `;
+
+
+            pdfList.appendChild(
+                card
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   VIDEO THUMBNAIL
+========================================================= */
+
+function getVideoThumbnail(
+    video
+) {
+
+    /*
+     * 1. Admin-provided thumbnail
+     */
+
+    if (
+        video.thumbnailUrl &&
+        String(
+            video.thumbnailUrl
+        ).trim()
+    ) {
+
+        return String(
+            video.thumbnailUrl
+        ).trim();
+
+    }
+
+
+    /*
+     * 2. YouTube thumbnail
+     */
+
+    const youtubeId =
+        extractYouTubeId(
+            video.videoUrl
+        );
+
+
+    if (
+        youtubeId
+    ) {
+
+        return (
+            "https://img.youtube.com/vi/" +
+            encodeURIComponent(
+                youtubeId
+            ) +
+            "/maxresdefault.jpg"
+        );
+
+    }
+
+
+    /*
+     * 3. Generic placeholder
+     */
+
+    return createPlaceholderThumbnail();
+
+}
+
+
+/* =========================================================
+   PLACEHOLDER
+========================================================= */
+
+function createPlaceholderThumbnail() {
+
+    return (
+        "data:image/svg+xml;charset=UTF-8," +
+        encodeURIComponent(`
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="1280"
+                height="720"
+                viewBox="0 0 1280 720"
+            >
+                <rect
+                    width="1280"
+                    height="720"
+                    fill="#181818"
+                />
+                <circle
+                    cx="640"
+                    cy="360"
+                    r="70"
+                    fill="#333"
+                />
+                <polygon
+                    points="620,320 620,400 690,360"
+                    fill="#fff"
+                />
+            </svg>
+        `)
+    );
+
+}
+
+
+/* =========================================================
+   OPEN VIDEO PLAYER
+========================================================= */
+
+function openVideo(
+    video
+) {
+
+    if (
+        !video?.id
+    ) {
+
+        return;
+
+    }
+
+
+    /*
+     * IMPORTANT:
+     *
+     * The video itself does NOT play
+     * on chapter details.
+     *
+     * It opens our Zenova player.
+     */
+
+    const url =
+        new URL(
+            "../videoplayer/",
+            window.location.href
+        );
+
+
+    url.searchParams.set(
+        "contentId",
+        video.id
+    );
+
+
+    window.location.href =
+        url.toString();
+
+}
+
+
+/* =========================================================
+   BACK
+========================================================= */
+
+backButton.addEventListener(
+    "click",
+    () => {
+
+        /*
+         * Subject details is the normal
+         * previous page.
+         */
+
+        const url =
+            new URL(
+                "../subjectdetails/",
+                window.location.href
+            );
+
+
+        if (
+            currentSubject?.id
+        ) {
+
+            url.searchParams.set(
+                "subjectId",
+                currentSubject.id
+            );
+
+        }
+
+
+        if (
+            currentCourse?.id
+        ) {
+
+            url.searchParams.set(
+                "courseId",
+                currentCourse.id
+            );
+
+        }
+
+
+        window.location.href =
+            url.toString();
+
+    }
+);
+
+
+/* =========================================================
+   BOTTOM NAV
+========================================================= */
+
+document
+    .querySelectorAll(
+        "[data-nav]"
+    )
+    .forEach(
+        button => {
+
+            button.addEventListener(
+                "click",
+                () => {
+
+                    const nav =
+                        button.dataset.nav;
+
+
+                    if (
+                        nav ===
+                        "home"
+                    ) {
+
+                        window.location.href =
+                            "../";
+
+                    }
+
+
+                    if (
+                        nav ===
+                        "live"
+                    ) {
+
+                        window.location.href =
+                            "../live/";
+
+                    }
+
+
+                    if (
+                        nav ===
+                        "revision"
+                    ) {
+
+                        window.location.href =
+                            "../revision/";
+
+                    }
+
+
+                    if (
+                        nav ===
+                        "profile"
+                    ) {
+
+                        window.location.href =
+                            "../profile/";
+
+                    }
+
+                }
+            );
+
+        }
+    );
+
+
+/* =========================================================
+   RETRY
+========================================================= */
+
+retryButton.addEventListener(
+    "click",
+    () => {
+
+        window.location.reload();
+
+    }
+);
+
+
+/* =========================================================
+   LOADER
+========================================================= */
+
+function hideLoader() {
+
+    loader.classList.add(
+        "hidden"
+    );
+
+
+    app.classList.remove(
+        "hidden"
+    );
+
+}
+
+
+/* =========================================================
+   ERROR
+========================================================= */
+
+function showError(
+    message
+) {
+
+    loader.classList.add(
+        "hidden"
+    );
+
+
+    app.classList.add(
+        "hidden"
+    );
+
+
+    errorMessage.textContent =
+        message ||
+        "Unable to load this chapter.";
+
+
+    errorState.classList.remove(
+        "hidden"
+    );
+
+}
+
+
+/* =========================================================
+   YOUTUBE ID
+========================================================= */
+
+function extractYouTubeId(
+    url
+) {
+
+    if (!url) {
+
+        return null;
+
+    }
+
+
+    const value =
+        String(
+            url
+        ).trim();
+
+
+    /*
+     * Already an ID
+     */
+
+    if (
+        /^[a-zA-Z0-9_-]{11}$/.test(
+            value
+        )
+    ) {
+
+        return value;
+
+    }
+
+
+    try {
+
+        const parsed =
+            new URL(
+                value
+            );
+
+
+        const hostname =
+            parsed.hostname.toLowerCase();
+
+
+        /*
+         * youtu.be
+         */
+
+        if (
+            hostname ===
+                "youtu.be" ||
+            hostname.endsWith(
+                ".youtu.be"
+            )
+        ) {
+
+            const id =
+                parsed.pathname
+                    .split("/")
+                    .filter(
+                        Boolean
+                    )[0];
+
+
+            if (
+                id
+            ) {
+
+                return id;
+
+            }
+
+        }
+
+
+        /*
+         * youtube.com
+         */
+
+        if (
+            hostname.includes(
+                "youtube.com"
+            )
+        ) {
+
+            /*
+             * watch?v=
+             */
+
+            const watchId =
+                parsed.searchParams.get(
+                    "v"
+                );
+
+
+            if (
+                watchId
+            ) {
+
+                return watchId;
+
+            }
+
+
+            /*
+             * embed
+             */
+
+            const embedMatch =
+                parsed.pathname.match(
+                    /\/embed\/([^/]+)/i
+                );
+
+
+            if (
+                embedMatch
+            ) {
+
+                return embedMatch[1];
+
+            }
+
+
+            /*
+             * shorts
+             */
+
+            const shortsMatch =
+                parsed.pathname.match(
+                    /\/shorts\/([^/]+)/i
+                );
+
+
+            if (
+                shortsMatch
+            ) {
+
+                return shortsMatch[1];
+
+            }
+
+
+            /*
+             * live
+             */
+
+            const liveMatch =
+                parsed.pathname.match(
+                    /\/live\/([^/]+)/i
+                );
+
+
+            if (
+                liveMatch
+            ) {
+
+                return liveMatch[1];
+
+            }
+
+        }
+
+    } catch (error) {
+
+        console.warn(
+            "Could not parse video URL:",
+            error
+        );
+
+    }
+
+
+    return null;
+
+}
+
+
+/* =========================================================
+   HTML ESCAPING
+========================================================= */
+
+function escapeHTML(
+    value
+) {
+
+    return String(
+        value ?? ""
+    )
+        .replaceAll(
+            "&",
+            "&amp;"
+        )
+        .replaceAll(
+            "<",
+            "&lt;"
+        )
+        .replaceAll(
+            ">",
+            "&gt;"
+        )
+        .replaceAll(
+            '"',
+            "&quot;"
+        )
+        .replaceAll(
+            "'",
+            "&#039;"
+        );
+
+}
+
+
+function escapeAttribute(
+    value
+) {
+
+    return escapeHTML(
+        value
+    );
+
+}
+
+
+/* =========================================================
+   ERROR MESSAGE
+========================================================= */
+
+function getReadableError(
+    error
+) {
+
+    if (
+        error?.code ===
+        "permission-denied"
+    ) {
+
+        return (
+            "You do not have permission to access this chapter."
+        );
+
+    }
+
+
+    return (
+        error?.message ||
+        "Something went wrong while loading the chapter."
+    );
+
+}
+
+    </script>
+
+</body>
+
+</html>
