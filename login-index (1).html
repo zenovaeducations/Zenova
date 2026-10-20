@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#080b11">
+  <title>Zenova Educations | Sign in</title>
+  <style>
+    :root { color-scheme: dark; --gold:#f5c56b; --ink:#090c12; }
+    * { box-sizing:border-box; }
+    html,body { width:100%; min-height:100%; margin:0; }
+    body { min-height:100svh; overflow:hidden; background:var(--ink); color:#fff; font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif; }
+    .scene { position:fixed; inset:0; overflow:hidden; background:#080b11; isolation:isolate; }
+    .backdrop { position:absolute; inset:0; background-position:center center; background-repeat:no-repeat; background-size:cover; transform:scale(1.015); transition:opacity 1.15s ease, filter 1.15s ease; }
+    .backdrop.off { background-image:url('./off.png'); opacity:1; }
+    .backdrop.on { background-image:url('./on.png'); opacity:0; }
+    .scene.is-on .backdrop.off { opacity:0; }
+    .scene.is-on .backdrop.on { opacity:1; }
+    /* Soft contrast layer keeps the controls readable without hiding the room. */
+    .shade { position:absolute; inset:0; z-index:1; pointer-events:none; background:linear-gradient(180deg,rgba(3,7,14,.55) 0%,rgba(3,7,14,.08) 24%,rgba(3,7,14,.02) 62%,rgba(3,7,14,.58) 100%); transition:opacity 1s ease; }
+    .scene.is-on .shade { opacity:.7; }
+    .brand { position:absolute; z-index:3; top:max(22px,env(safe-area-inset-top)); left:50%; transform:translateX(-50%); width:max-content; max-width:90vw; text-align:center; user-select:none; text-shadow:0 2px 22px rgba(0,0,0,.45); }
+    .brand-name { font-size:clamp(25px,5.4vw,39px); line-height:1; letter-spacing:.105em; font-weight:750; }
+    .brand-name .a { color:#2589f5; }
+    .brand-sub { margin-top:7px; font-size:clamp(9px,1.9vw,12px); letter-spacing:.39em; padding-left:.39em; font-weight:500; }
+    .controls { position:absolute; z-index:4; left:50%; bottom:max(28px,env(safe-area-inset-bottom)); transform:translateX(-50%); width:min(340px,calc(100vw - 36px)); display:flex; flex-direction:column; align-items:center; gap:12px; }
+    .lamp-toggle { display:inline-flex; align-items:center; justify-content:center; gap:8px; min-height:37px; padding:9px 14px; border:1px solid rgba(245,197,107,.78); border-radius:999px; color:#fff4dc; background:rgba(8,10,14,.52); box-shadow:0 4px 22px rgba(0,0,0,.18); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); font-size:12px; font-weight:550; letter-spacing:.015em; cursor:pointer; transition:background .25s ease,border-color .25s ease,transform .25s ease,box-shadow .25s ease; }
+    .lamp-toggle:hover { background:rgba(245,197,107,.13); box-shadow:0 0 24px rgba(245,197,107,.14); }
+    .lamp-toggle:active { transform:scale(.97); }
+    .lamp-toggle:focus-visible,.google-btn:focus-visible { outline:2px solid #fff; outline-offset:4px; }
+    .bulb { width:14px; height:14px; display:inline-block; flex:none; }
+    .google-wrap { width:100%; display:grid; grid-template-rows:0fr; opacity:0; transform:translateY(7px); transition:grid-template-rows .45s ease,opacity .4s ease,transform .4s ease; pointer-events:none; }
+    .google-wrap > div { min-height:0; overflow:hidden; }
+    .scene.is-on .google-wrap { grid-template-rows:1fr; opacity:1; transform:translateY(0); pointer-events:auto; }
+    .google-btn { width:100%; min-height:43px; border:0; border-radius:8px; display:flex; align-items:center; justify-content:center; gap:11px; background:#fff; color:#202124; font-size:14px; font-weight:600; cursor:pointer; box-shadow:0 8px 28px rgba(0,0,0,.24); transition:background .2s ease,transform .2s ease,box-shadow .2s ease; }
+    .google-btn:hover { background:#f7f8fa; box-shadow:0 10px 32px rgba(0,0,0,.32); }
+    .google-btn:active { transform:scale(.99); }
+    .google-btn:disabled { cursor:wait; opacity:.8; }
+    .google-g { font-family:Arial,sans-serif; font-size:20px; font-weight:800; line-height:1; background:conic-gradient(from -45deg,#4285f4 0deg 90deg,#34a853 90deg 180deg,#fbbc05 180deg 250deg,#ea4335 250deg 315deg,#4285f4 315deg); -webkit-background-clip:text; background-clip:text; color:transparent; }
+    .error { display:none; max-width:100%; padding:9px 12px; border-radius:8px; background:rgba(80,15,20,.86); border:1px solid rgba(255,160,160,.3); color:#ffe5e5; text-align:center; font-size:12px; line-height:1.4; }
+    .error.show { display:block; }
+    .scene.is-on .lamp-toggle { color:#fff2d3; background:rgba(35,23,9,.56); }
+    @media (min-aspect-ratio: 4/5) {
+      .backdrop { background-size:cover; }
+      .controls { bottom:max(30px,env(safe-area-inset-bottom)); }
+    }
+    @media (max-height:650px) {
+      .brand { top:max(14px,env(safe-area-inset-top)); }
+      .controls { bottom:max(14px,env(safe-area-inset-bottom)); gap:8px; }
+      .google-btn { min-height:40px; }
+    }
+    @media (prefers-reduced-motion:reduce) { *,*::before,*::after { transition-duration:.01ms !important; animation-duration:.01ms !important; scroll-behavior:auto !important; } }
+  </style>
+</head>
+<body>
+  <main class="scene" id="scene" aria-label="Zenova Educations sign in">
+    <div class="backdrop off" aria-hidden="true"></div>
+    <div class="backdrop on" aria-hidden="true"></div>
+    <div class="shade" aria-hidden="true"></div>
+
+    <header class="brand" aria-label="Zenova Educations">
+      <div class="brand-name">ZENOV<span class="a">A</span></div>
+      <div class="brand-sub">EDUCATIONS</div>
+    </header>
+
+    <section class="controls" aria-label="Sign in controls">
+      <button class="lamp-toggle" id="lampToggle" type="button" aria-pressed="false">
+        <svg class="bulb" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M9 18h6M10 21h4M8.3 14.7A7 7 0 1 1 15.7 14.7C14.8 15.4 14.5 16.2 14.5 17h-5c0-.8-.4-1.6-1.2-2.3Z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span id="lampLabel">Turn on the lamp to continue</span>
+      </button>
+
+      <div class="google-wrap" id="googleWrap" aria-hidden="true">
+        <div>
+          <button class="google-btn" id="googleBtn" type="button" tabindex="-1">
+            <span class="google-g" aria-hidden="true">G</span>
+            <span id="googleBtnText">Continue with Google</span>
+          </button>
+        </div>
+      </div>
+      <div class="error" id="errorBox" role="alert" aria-live="polite"></div>
+    </section>
+  </main>
+
+  <script type="module">
+    import { auth, db } from '../firebase/firebase-config.js';
+    import { GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js';
+    import { doc, getDoc } from 'https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js';
+
+    const scene = document.getElementById('scene');
+    const lampToggle = document.getElementById('lampToggle');
+    const lampLabel = document.getElementById('lampLabel');
+    const googleWrap = document.getElementById('googleWrap');
+    const googleBtn = document.getElementById('googleBtn');
+    const googleBtnText = document.getElementById('googleBtnText');
+    const errorBox = document.getElementById('errorBox');
+    let lampOn = false;
+
+    function setLamp(on) {
+      lampOn = on;
+      scene.classList.toggle('is-on', on);
+      lampToggle.setAttribute('aria-pressed', String(on));
+      lampLabel.textContent = on ? 'Turn off the lamp' : 'Turn on the lamp to continue';
+      googleWrap.setAttribute('aria-hidden', String(!on));
+      googleBtn.tabIndex = on ? 0 : -1;
+      if (!on) clearError();
+    }
+
+    lampToggle.addEventListener('click', () => setLamp(!lampOn));
+
+    // Preserve the existing Zenova session-routing behaviour.
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) return;
+      try { await routeStudent(user); }
+      catch (error) { console.error('Session routing error:', error); }
+    });
+
+    googleBtn.addEventListener('click', async () => {
+      if (!lampOn) return;
+      clearError();
+      googleBtn.disabled = true;
+      googleBtnText.textContent = 'Connecting…';
+      try {
+        const provider = new GoogleAuthProvider();
+        provider.setCustomParameters({ prompt: 'select_account' });
+        const result = await signInWithPopup(auth, provider);
+        await routeStudent(result.user);
+      } catch (error) {
+        console.error('Google sign-in error:', error);
+        showError(getFirebaseErrorMessage(error));
+        googleBtn.disabled = false;
+        googleBtnText.textContent = 'Continue with Google';
+      }
+    });
+
+    async function routeStudent(user) {
+      const studentRef = doc(db, 'zen2Students', user.uid);
+      const snapshot = await getDoc(studentRef);
+      if (snapshot.exists() && snapshot.data().onboardingComplete === true) {
+        window.location.replace('../home/');
+      } else {
+        window.location.replace('../account/onboarding/');
+      }
+    }
+
+    function showError(message) {
+      errorBox.textContent = message;
+      errorBox.classList.add('show');
+    }
+    function clearError() {
+      errorBox.textContent = '';
+      errorBox.classList.remove('show');
+    }
+    function getFirebaseErrorMessage(error) {
+      switch (error?.code) {
+        case 'auth/popup-closed-by-user': return 'Google sign-in was cancelled.';
+        case 'auth/popup-blocked': return 'Your browser blocked the Google sign-in popup. Please allow popups for Zenova.';
+        case 'auth/network-request-failed': return 'Network error. Please check your internet connection.';
+        case 'auth/unauthorized-domain': return 'This website is not authorized for Google sign-in in Firebase.';
+        case 'auth/operation-not-allowed': return 'Google sign-in is not enabled in Firebase Authentication.';
+        case 'auth/account-exists-with-different-credential': return 'An account already exists with a different sign-in method.';
+        default: return error?.message || 'Unable to sign in. Please try again.';
+      }
+    }
+  </script>
+</body>
+</html>
