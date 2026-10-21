@@ -25,7 +25,7 @@ const state={courses:[],error:null};
 const safe=(v)=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const first=(...values)=>values.find(v=>v!==undefined&&v!==null&&String(v).trim()!=="")??"";
 const money=value=>{const n=Number(value);return Number.isFinite(n)&&value!==""?new Intl.NumberFormat("en-IN",{style:"currency",currency:"INR",maximumFractionDigits:0}).format(n):""};
-function courseTitle(c){return first(c.title,c.courseName,c.name,c.batchName,c.courseTitle,"Zenova Course")}
+function courseTitle(c){return first(c.title,c.courseName,c.name,c.batchName,c.courseTitle,)}
 function className(c){return first(c.classDisplayName,c.className,c.classTitle,c.class,c.standard,c.grade)}
 function medium(c){return first(c.medium,c.languageMedium,c.language)}
 function priceInfo(c){const current=first(c.discountedPrice,c.discountPrice,c.finalPrice,c.price,c.fee,c.courseFee);const old=first(c.originalPrice,c.originalFee,c.mrp);const currentN=current!==""&&Number.isFinite(Number(current))?Number(current):null;const oldN=old!==""&&Number.isFinite(Number(old))?Number(old):null;return {current:currentN,old:oldN,showOld:oldN!==null&&currentN!==null&&oldN>currentN}}
