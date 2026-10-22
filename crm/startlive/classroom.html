@@ -1,0 +1,295 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zenova Faculty Live</title>
+
+  <!-- Zoom Meeting SDK -->
+  <link
+    rel="stylesheet"
+    href="https://source.zoom.us/3.13.2/css/bootstrap.css"
+  >
+  <link
+    rel="stylesheet"
+    href="https://source.zoom.us/3.13.2/css/react-select.css"
+  >
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: #101114;
+      color: #f7f7f8;
+      font-family: Arial, sans-serif;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 16px 22px;
+      background: #191a1f;
+      border-bottom: 1px solid #303139;
+    }
+
+    .brand {
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .status {
+      color: #a5abb7;
+      font-size: 13px;
+    }
+
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 28px 18px;
+    }
+
+    .class-title {
+      margin-bottom: 6px;
+      font-size: 24px;
+    }
+
+    .class-meta {
+      margin-bottom: 22px;
+      color: #a5abb7;
+      font-size: 14px;
+    }
+
+    #meetingSDKElement {
+      width: 100%;
+      min-height: 580px;
+      overflow: hidden;
+      border: 1px solid #303139;
+      border-radius: 12px;
+      background: #191a1f;
+    }
+
+    .notice {
+      margin: 18px 0;
+      padding: 14px;
+      border: 1px solid #343640;
+      border-radius: 8px;
+      color: #d6d9e0;
+      line-height: 1.5;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    button {
+      padding: 12px 18px;
+      border: 0;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    #startButton {
+      background: #2563eb;
+      color: white;
+    }
+
+    #backButton {
+      background: #303139;
+      color: white;
+    }
+
+    button:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+
+    #error {
+      color: #ff9a9a;
+      white-space: pre-wrap;
+    }
+
+    @media (max-width: 600px) {
+      header {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .class-title {
+        font-size: 20px;
+      }
+
+      #meetingSDKElement {
+        min-height: 420px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="brand">ZENOVA EDUCATIONS</div>
+    <div class="status" id="status">Preparing classroom…</div>
+  </header>
+
+  <main>
+    <h1 class="class-title" id="classTitle">Faculty Live Class</h1>
+    <div class="class-meta" id="classMeta">
+      Loading class details…
+    </div>
+
+    <div class="notice" id="notice">
+      Check your microphone and camera before starting the class.
+    </div>
+
+    <div id="error" role="alert"></div>
+
+    <div id="meetingSDKElement"></div>
+
+    <div class="actions">
+      <button id="startButton" type="button">
+        Start Teaching
+      </button>
+
+      <button id="backButton" type="button">
+        Back to Faculty Page
+      </button>
+    </div>
+  </main>
+
+  <script type="module">
+    import ZoomMtgEmbedded from
+      "https://source.zoom.us/3.13.2/av/zoom-meeting-embedded-3.13.2.min.js";
+
+    const statusEl = document.getElementById("status");
+    const titleEl = document.getElementById("classTitle");
+    const metaEl = document.getElementById("classMeta");
+    const noticeEl = document.getElementById("notice");
+    const errorEl = document.getElementById("error");
+    const startButton = document.getElementById("startButton");
+    const backButton = document.getElementById("backButton");
+
+    let client = null;
+    let session = null;
+    let starting = false;
+
+    function showError(message) {
+      errorEl.textContent = message;
+      statusEl.textContent = "Unable to start";
+      noticeEl.textContent =
+        "The meeting has not started. Check the error above.";
+    }
+
+    function getHostSession() {
+      try {
+        const raw = sessionStorage.getItem("zenovaHostLive");
+        return raw ? JSON.parse(raw) : null;
+      } catch {
+        return null;
+      }
+    }
+
+    session = getHostSession();
+
+    if (!session) {
+      showError(
+        "Host session data was not found. Return to the faculty page and click START LIVE again."
+      );
+      startButton.disabled = true;
+    } else {
+      titleEl.textContent = session.title || "Faculty Live Class";
+
+      metaEl.textContent = [
+        session.subjectName || "",
+        session.chapterName || "",
+        session.faculty || session.userName || ""
+      ].filter(Boolean).join(" • ");
+
+      statusEl.textContent = "Ready to initialize Zoom";
+    }
+
+    backButton.addEventListener("click", () => {
+      window.location.href = "./index.html";
+    });
+
+    startButton.addEventListener("click", async () => {
+      if (starting) return;
+
+      if (!session) {
+        showError("Missing host session data.");
+        return;
+      }
+
+      const meetingNumber = String(
+        session.meetingNumber || ""
+      ).trim();
+
+      const signature = session.signature;
+      const zak = session.zak;
+      const sdkKey = session.sdkKey;
+
+      if (!meetingNumber || !signature || !zak || !sdkKey) {
+        showError(
+          "Required Zoom host data is missing. Check getZoomHostJoinData and startlive.js."
+        );
+        return;
+      }
+
+      starting = true;
+      startButton.disabled = true;
+      statusEl.textContent = "Connecting to Zoom…";
+      errorEl.textContent = "";
+
+      try {
+        const root = document.getElementById("meetingSDKElement");
+
+        client = ZoomMtgEmbedded.createClient();
+
+        await client.init({
+          zoomAppRoot: root,
+          language: "en-US",
+          patchJsMedia: true,
+          leaveOnPageUnload: true
+        });
+
+        await client.join({
+          sdkKey,
+          signature,
+          meetingNumber,
+          password: session.password || "",
+          zak,
+          userName: session.userName || session.faculty || "Zenova Faculty",
+          userEmail: session.userEmail || ""
+        });
+
+        statusEl.textContent = "Connected";
+        noticeEl.textContent =
+          "You are connected to the Zoom meeting. Verify your camera and microphone using the Zoom controls.";
+        startButton.textContent = "Meeting Started";
+
+      } catch (error) {
+        console.error("Zoom host join failed:", error);
+
+        showError(
+          error?.message ||
+          "Zoom could not start. Check the Firebase function response, Meeting SDK credentials, host ZAK, and Zoom meeting configuration."
+        );
+
+        starting = false;
+        startButton.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>
