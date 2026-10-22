@@ -1,529 +1,525 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zenova Faculty Live</title>
 
-  <meta name="viewport"
-        content="width=device-width, initial-scale=1.0">
+<style>
+*{box-sizing:border-box}
+:root{
+  --ink:#111827;--muted:#64748b;--line:#e2e8f0;
+  --bg:#f5f7fb;--white:#fff;--red:#ef4444;
+  --green:#16a34a;
+}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;
+  color:var(--ink);background:var(--bg)}
+button,select{font:inherit}
+button{cursor:pointer}
+button:disabled{opacity:.55;cursor:not-allowed}
+.topbar{height:70px;background:#fff;border-bottom:1px solid var(--line);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 24px;position:sticky;top:0;z-index:5}
+.brand{display:flex;align-items:center;gap:12px}
+.logo{width:40px;height:40px;border:2px solid var(--ink);
+  border-radius:12px;display:grid;place-items:center;font-weight:900}
+.brand-title{font-size:19px;font-weight:900}
+.brand-subtitle{font-size:11px;color:var(--muted);margin-top:3px}
+.portal{font-size:13px;color:#475569}
+.portal:before{content:"";display:inline-block;width:8px;height:8px;
+  border-radius:50%;background:#22c55e;margin-right:7px}
+main{max-width:1150px;margin:auto;padding:32px 22px 60px}
+h1{font-size:30px;margin:0 0 8px;letter-spacing:-.6px}
+.intro{color:var(--muted);font-size:14px;line-height:1.6}
+.section-heading{font-size:18px;font-weight:800;margin:30px 0 15px}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0}
+.secondary{background:#fff;border:1px solid var(--line);border-radius:10px;
+  padding:10px 14px;color:#334155;font-weight:700}
+.classes{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px}
+.card{background:#fff;border:1px solid var(--line);border-radius:16px;
+  overflow:hidden;box-shadow:0 3px 12px #0f172a08}
+.thumb{height:145px;background:#111827;color:#fff;display:grid;
+  place-items:center;font-weight:900;font-size:25px;position:relative}
+.badge{position:absolute;top:12px;left:12px;background:#dc2626;
+  color:#fff;padding:6px 9px;border-radius:6px;font-size:10px;font-weight:900}
+.card-body{padding:18px}
+.course{font-size:12px;color:var(--muted);font-weight:700}
+.card h2{font-size:18px;line-height:1.35;margin:9px 0}
+.details{font-size:13px;color:var(--muted);line-height:1.8}
+.faculty{font-size:13px;margin-top:12px}
+.start-card{width:100%;margin-top:17px;padding:13px;border:0;
+  border-radius:10px;background:var(--ink);color:#fff;font-weight:800}
+.state{padding:28px 18px;text-align:center;background:#fff;
+  border:1px solid var(--line);border-radius:14px;color:var(--muted);
+  line-height:1.6}
+.state strong{display:block;color:var(--ink);margin-bottom:5px}
+.hidden{display:none!important}
 
-  <title>Zenova Faculty Live</title>
-
-  <style>
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      font-family: Arial, Helvetica, sans-serif;
-      background: #f5f7fa;
-      color: #111827;
-    }
-
-    .topbar {
-      height: 72px;
-      background: #ffffff;
-      border-bottom: 1px solid #e5e7eb;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 28px;
-      position: sticky;
-      top: 0;
-      z-index: 10;
-    }
-
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .brand-logo {
-      width: 40px;
-      height: 40px;
-      border-radius: 10px;
-      object-fit: contain;
-    }
-
-    .brand-title {
-      font-size: 19px;
-      font-weight: 800;
-    }
-
-    .brand-subtitle {
-      font-size: 12px;
-      color: #6b7280;
-      margin-top: 2px;
-    }
-
-    .status {
-      display: flex;
-      align-items: center;
-      gap: 7px;
-      font-size: 13px;
-      color: #374151;
-    }
-
-    .status-dot {
-      width: 8px;
-      height: 8px;
-      background: #22c55e;
-      border-radius: 50%;
-    }
-
-    .page {
-      max-width: 1180px;
-      margin: 0 auto;
-      padding: 32px 22px 60px;
-    }
-
-    .hero {
-      margin-bottom: 28px;
-    }
-
-    .hero h1 {
-      margin: 0;
-      font-size: 32px;
-      font-weight: 800;
-      letter-spacing: -0.8px;
-    }
-
-    .hero p {
-      margin: 8px 0 0;
-      color: #6b7280;
-      font-size: 15px;
-    }
-
-    .section-title {
-      font-size: 18px;
-      font-weight: 800;
-      margin: 30px 0 14px;
-    }
-
-    .classes {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
-      gap: 18px;
-    }
-
-    .class-card {
-      background: #ffffff;
-      border: 1px solid #e5e7eb;
-      border-radius: 18px;
-      overflow: hidden;
-      box-shadow: 0 3px 14px rgba(0,0,0,0.04);
-    }
-
-    .thumbnail {
-      height: 150px;
-      background: #111827;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .thumbnail img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
-    .thumbnail-placeholder {
-      width: 100%;
-      height: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #ffffff;
-      font-size: 22px;
-      font-weight: 800;
-    }
-
-    .live-badge {
-      position: absolute;
-      top: 12px;
-      left: 12px;
-      background: #ef4444;
-      color: #ffffff;
-      font-size: 11px;
-      font-weight: 800;
-      padding: 6px 9px;
-      border-radius: 7px;
-    }
-
-    .card-body {
-      padding: 18px;
-    }
-
-    .course-name {
-      font-size: 12px;
-      color: #6b7280;
-      font-weight: 700;
-      margin-bottom: 7px;
-    }
-
-    .class-title {
-      font-size: 18px;
-      font-weight: 800;
-      line-height: 1.3;
-      margin-bottom: 8px;
-    }
-
-    .details {
-      color: #6b7280;
-      font-size: 13px;
-      line-height: 1.7;
-    }
-
-    .faculty {
-      margin-top: 10px;
-      font-size: 13px;
-      color: #374151;
-    }
-
-    .actions {
-      margin-top: 17px;
-    }
-
-    .start-btn {
-      width: 100%;
-      border: none;
-      border-radius: 11px;
-      padding: 13px 16px;
-      background: #111827;
-      color: #ffffff;
-      font-size: 14px;
-      font-weight: 800;
-      cursor: pointer;
-    }
-
-    .start-btn:hover {
-      background: #000000;
-    }
-
-    .start-btn:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-
-    .empty {
-      background: #ffffff;
-      border: 1px solid #e5e7eb;
-      border-radius: 18px;
-      padding: 50px 20px;
-      text-align: center;
-      color: #6b7280;
-    }
-
-    .empty strong {
-      display: block;
-      color: #111827;
-      margin-bottom: 7px;
-      font-size: 17px;
-    }
-
-    .loading {
-      padding: 40px;
-      text-align: center;
-      color: #6b7280;
-    }
-
-    /* PREVIEW */
-
-    .preview-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.75);
-      z-index: 100;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-    }
-
-    .preview-overlay.show {
-      display: flex;
-    }
-
-    .preview-box {
-      width: min(900px, 100%);
-      background: #ffffff;
-      border-radius: 22px;
-      overflow: hidden;
-      box-shadow: 0 25px 80px rgba(0,0,0,0.35);
-    }
-
-    .preview-header {
-      padding: 20px 22px;
-      border-bottom: 1px solid #e5e7eb;
-    }
-
-    .preview-header h2 {
-      margin: 0;
-      font-size: 21px;
-    }
-
-    .preview-header p {
-      margin: 5px 0 0;
-      color: #6b7280;
-      font-size: 13px;
-    }
-
-    .preview-content {
-      padding: 20px;
-    }
-
-    .camera-box {
-      width: 100%;
-      aspect-ratio: 16 / 9;
-      background: #111827;
-      border-radius: 15px;
-      overflow: hidden;
-      position: relative;
-    }
-
-    #cameraPreview {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      transform: scaleX(-1);
-    }
-
-    .camera-name {
-      position: absolute;
-      bottom: 14px;
-      left: 14px;
-      background: rgba(0,0,0,0.65);
-      color: #ffffff;
-      padding: 7px 10px;
-      border-radius: 7px;
-      font-size: 12px;
-    }
-
-    .device-row {
-      display: flex;
-      gap: 12px;
-      margin-top: 15px;
-      flex-wrap: wrap;
-    }
-
-    .device {
-      flex: 1;
-      min-width: 180px;
-      background: #f8fafc;
-      border: 1px solid #e5e7eb;
-      border-radius: 12px;
-      padding: 13px;
-    }
-
-    .device-title {
-      font-size: 12px;
-      color: #6b7280;
-    }
-
-    .device-value {
-      font-size: 14px;
-      font-weight: 700;
-      margin-top: 4px;
-    }
-
-    .preview-actions {
-      display: flex;
-      gap: 10px;
-      margin-top: 20px;
-    }
-
-    .cancel-btn,
-    .go-live-btn {
-      flex: 1;
-      padding: 14px;
-      border-radius: 11px;
-      font-weight: 800;
-      cursor: pointer;
-      font-size: 14px;
-    }
-
-    .cancel-btn {
-      border: 1px solid #d1d5db;
-      background: #ffffff;
-      color: #374151;
-    }
-
-    .go-live-btn {
-      border: none;
-      background: #ef1111;
-      color: #ffffff;
-    }
-
-    .go-live-btn:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-
-    .error {
-      color: #dc2626;
-      font-size: 13px;
-      margin-top: 12px;
-      display: none;
-    }
-
-    @media (max-width: 600px) {
-      .topbar {
-        padding: 0 15px;
-      }
-
-      .page {
-        padding: 25px 14px 50px;
-      }
-
-      .hero h1 {
-        font-size: 26px;
-      }
-
-      .classes {
-        grid-template-columns: 1fr;
-      }
-    }
-  </style>
+/* Preview */
+.overlay{display:none;position:fixed;inset:0;background:#000b;
+  z-index:20;align-items:center;justify-content:center;padding:18px}
+.overlay.show{display:flex}
+.modal{width:min(760px,100%);max-height:94vh;overflow:auto;
+  background:#fff;border-radius:20px}
+.modal-head{padding:20px 22px;border-bottom:1px solid var(--line)}
+.modal-head h2{font-size:21px;margin:0}
+.modal-head p{font-size:13px;color:var(--muted);margin:7px 0 0}
+.modal-content{padding:20px}
+.camera-box{width:100%;aspect-ratio:16/9;background:#111827;
+  border-radius:14px;overflow:hidden;position:relative}
+#cameraPreview{width:100%;height:100%;object-fit:cover;transform:scaleX(-1)}
+.camera-label{position:absolute;bottom:12px;left:12px;background:#000b;
+  color:#fff;border-radius:7px;padding:7px 10px;font-size:12px}
+.devices{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
+.device{padding:13px;border:1px solid var(--line);border-radius:12px;
+  background:#f8fafc;font-size:12px;color:var(--muted)}
+.device strong{display:block;font-size:14px;color:var(--ink);margin-top:5px}
+.ok{color:var(--green)!important}
+.bad{color:#dc2626!important}
+.error{display:none;background:#fef2f2;color:#b91c1c;
+  border:1px solid #fecaca;border-radius:10px;padding:12px;
+  font-size:13px;line-height:1.55;margin-top:14px;overflow-wrap:anywhere}
+.info{background:#eff6ff;color:#1d4ed8;border-color:#bfdbfe}
+.actions{display:flex;gap:10px;margin-top:18px}
+.actions button{flex:1;padding:14px;border-radius:11px;font-weight:800}
+.cancel{background:#fff;border:1px solid #cbd5e1;color:#334155}
+.go-live{background:#ef4444;border:0;color:#fff}
+.footnote{font-size:12px;color:var(--muted);line-height:1.6;margin-top:14px}
+@media(max-width:600px){
+ main{padding:24px 14px 40px}
+ h1{font-size:25px}
+ .topbar{padding:0 14px}
+ .devices{grid-template-columns:1fr}
+ .modal-content{padding:14px}
+ .actions{flex-direction:column}
+}
+</style>
 </head>
 
 <body>
-
-  <header class="topbar">
-    <div class="brand">
-      <img
-        class="brand-logo"
-        src="../../logo.png"
-        alt="Zenova"
-      >
-
-      <div>
-        <div class="brand-title">ZENOVA</div>
-        <div class="brand-subtitle">FACULTY LIVE</div>
-      </div>
+<header class="topbar">
+  <div class="brand">
+    <div class="logo">Z</div>
+    <div>
+      <div class="brand-title">ZENOVA</div>
+      <div class="brand-subtitle">FACULTY LIVE</div>
     </div>
+  </div>
+  <div class="portal">Faculty Portal</div>
+</header>
 
-    <div class="status">
-      <span class="status-dot"></span>
-      Faculty Portal
-    </div>
-  </header>
-
-  <main class="page">
-
-    <div class="hero">
-      <h1>Start Live Class</h1>
-      <p>
-        Select a scheduled class to check your camera and microphone
-        before starting the live session.
-      </p>
-    </div>
-
-    <div class="section-title">
-      Scheduled Classes
-    </div>
-
-    <div id="loading" class="loading">
-      Loading live classes...
-    </div>
-
-    <div id="classes" class="classes"></div>
-
-  </main>
-
-
-  <!-- PREVIEW -->
-
-  <div id="previewOverlay" class="preview-overlay">
-
-    <div class="preview-box">
-
-      <div class="preview-header">
-        <h2 id="previewTitle">
-          Camera & Microphone Check
-        </h2>
-
-        <p id="previewSubtitle">
-          Make sure everything is ready before going live.
-        </p>
-      </div>
-
-      <div class="preview-content">
-
-        <div class="camera-box">
-
-          <video
-            id="cameraPreview"
-            autoplay
-            muted
-            playsinline>
-          </video>
-
-          <div
-            id="cameraName"
-            class="camera-name">
-            Faculty
-          </div>
-
-        </div>
-
-        <div class="device-row">
-
-          <div class="device">
-            <div class="device-title">
-              🎤 Microphone
-            </div>
-
-            <div
-              id="micStatus"
-              class="device-value">
-              Checking...
-            </div>
-          </div>
-
-          <div class="device">
-            <div class="device-title">
-              📷 Camera
-            </div>
-
-            <div
-              id="cameraStatus"
-              class="device-value">
-              Checking...
-            </div>
-          </div>
-
-        </div>
-
-        <div
-          id="previewError"
-          class="error">
-        </div>
-
-        <div class="preview-actions">
-
-          <button
-            id="cancelPreview"
-            class="cancel-btn">
-            Cancel
-          </button>
-
-          <button
-            id="goLiveButton"
-            class="go-live-btn">
-            START LIVE
-          </button>
-
-        </div>
-
-      </div>
-
-    </div>
-
+<main>
+  <h1>Start Live Class</h1>
+  <div class="intro">
+    Select a scheduled class, check your camera and microphone,
+    and continue to the live classroom.
   </div>
 
+  <div class="toolbar">
+    <button class="secondary" id="refreshButton">↻ Refresh classes</button>
+    <button class="secondary" id="retryAuthButton">Check connection</button>
+  </div>
 
-  <script type="module" src="./startlive.js"></script>
+  <div class="section-heading">Scheduled Classes</div>
+  <div id="loading" class="state">Loading scheduled classes…</div>
+  <div id="classes" class="classes"></div>
+  <div id="pageError" class="error"></div>
+</main>
 
+<div class="overlay" id="previewOverlay" role="dialog"
+     aria-modal="true" aria-labelledby="previewTitle">
+  <div class="modal">
+    <div class="modal-head">
+      <h2 id="previewTitle">Camera &amp; Microphone Check</h2>
+      <p id="previewSubtitle">Check your equipment before going live.</p>
+    </div>
+
+    <div class="modal-content">
+      <div class="camera-box">
+        <video id="cameraPreview" autoplay muted playsinline></video>
+        <div class="camera-label" id="cameraName">Faculty</div>
+      </div>
+
+      <div class="devices">
+        <div class="device">🎤 Microphone
+          <strong id="micStatus">Not checked</strong>
+        </div>
+        <div class="device">📷 Camera
+          <strong id="cameraStatus">Not checked</strong>
+        </div>
+      </div>
+
+      <div id="previewError" class="error"></div>
+
+      <div class="actions">
+        <button class="cancel" id="cancelButton">Cancel</button>
+        <button class="go-live" id="goLiveButton" disabled>START LIVE</button>
+      </div>
+
+      <div class="footnote">
+        Your camera preview does not itself broadcast video to students.
+        Starting the actual class requires a working Zoom Meeting SDK
+        classroom and valid host credentials from the Firebase backend.
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import {auth, db} from "../../firebase/firebase-config.js";
+
+import {
+  collection, getDocs, query, where
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
+import {
+  onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+
+import {
+  getFunctions, httpsCallable
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-functions.js";
+
+const $ = id => document.getElementById(id);
+
+const classesEl = $("classes");
+const loadingEl = $("loading");
+const pageError = $("pageError");
+const overlay = $("previewOverlay");
+const video = $("cameraPreview");
+const cameraStatus = $("cameraStatus");
+const micStatus = $("micStatus");
+const previewError = $("previewError");
+const startButton = $("goLiveButton");
+
+const functions = getFunctions(auth.app, "asia-south1");
+const getZoomHostJoinData =
+  httpsCallable(functions, "getZoomHostJoinData");
+
+let currentUser = null;
+let selectedClass = null;
+let cameraStream = null;
+let isStarting = false;
+
+function showError(element, message, info = false) {
+  element.textContent = message;
+  element.classList.toggle("info", info);
+  element.style.display = "block";
+}
+
+function hideError(element) {
+  element.textContent = "";
+  element.style.display = "none";
+  element.classList.remove("info");
+}
+
+function setDeviceStatus(element, text, good = false) {
+  element.textContent = text;
+  element.classList.toggle("ok", good);
+  element.classList.toggle("bad", !good);
+}
+
+function safeText(value) {
+  return String(value ?? "");
+}
+
+function escapeHTML(value) {
+  return safeText(value).replace(/[&<>"']/g, char => ({
+    "&":"&amp;", "<":"&lt;", ">":"&gt;",
+    '"':"&quot;", "'":"&#039;"
+  })[char]);
+}
+
+function getMeetingNumber(item) {
+  return safeText(item.zoomMeetingNumber || item.zoomMeetingId).trim();
+}
+
+function classDate(item) {
+  return [item.scheduledDate, item.scheduledTime]
+    .filter(Boolean).join(" • ");
+}
+
+function showLoading(message) {
+  loadingEl.textContent = message;
+  loadingEl.style.display = "block";
+}
+
+onAuthStateChanged(auth, async user => {
+  currentUser = user || null;
+
+  if (!user) {
+    classesEl.replaceChildren();
+    showLoading("Please sign in to access Faculty Live.");
+    return;
+  }
+
+  await loadClasses();
+});
+
+async function loadClasses() {
+  classesEl.replaceChildren();
+  hideError(pageError);
+  showLoading("Loading scheduled classes…");
+
+  if (!currentUser) {
+    showLoading("Please sign in to access Faculty Live.");
+    return;
+  }
+
+  try {
+    const snapshot = await getDocs(query(
+      collection(db, "liveClasses"),
+      where("status", "==", "SCHEDULED")
+    ));
+
+    const items = snapshot.docs.map(d => ({
+      id: d.id,
+      ...d.data()
+    }));
+
+    items.sort((a, b) =>
+      classDate(a).localeCompare(classDate(b))
+    );
+
+    loadingEl.style.display = "none";
+
+    if (!items.length) {
+      showLoading("No scheduled live classes were found.");
+      return;
+    }
+
+    for (const item of items) renderClass(item);
+
+  } catch (error) {
+    console.error("Load classes failed:", error);
+    showLoading("Unable to load scheduled classes.");
+    showError(pageError,
+      "Firestore could not load liveClasses. Check your sign-in, database rules, and browser console.");
+  }
+}
+
+function renderClass(item) {
+  const card = document.createElement("article");
+  card.className = "card";
+
+  const title = item.title || "Live Class";
+  const course = item.courseName || "Zenova Course";
+  const subject = item.subjectName || "";
+  const chapter = item.chapterName || "";
+  const faculty = item.faculty || item.teacherName || "Faculty";
+
+  card.innerHTML = `
+    <div class="thumb">
+      ${item.thumbnailUrl
+        ? `<img src="${escapeHTML(item.thumbnailUrl)}"
+             alt="" style="width:100%;height:100%;object-fit:cover"
+             onerror="this.remove()">`
+        : "ZENOVA"}
+      <span class="badge">SCHEDULED</span>
+    </div>
+    <div class="card-body">
+      <div class="course">${escapeHTML(course)}</div>
+      <h2>${escapeHTML(title)}</h2>
+      <div class="details">
+        ${escapeHTML(subject)}
+        ${chapter ? " • " + escapeHTML(chapter) : ""}
+        <br>${escapeHTML(classDate(item))}
+        ${item.duration ? " • " + escapeHTML(item.duration) + " min" : ""}
+      </div>
+      <div class="faculty">Faculty: <strong>${escapeHTML(faculty)}</strong></div>
+      <button class="start-card">START LIVE</button>
+    </div>`;
+
+  card.querySelector("button").addEventListener("click", () => openPreview(item));
+  classesEl.appendChild(card);
+}
+
+async function openPreview(item) {
+  selectedClass = item;
+  hideError(previewError);
+
+  $("previewTitle").textContent = item.title || "Live Class";
+  $("previewSubtitle").textContent =
+    [item.subjectName, item.chapterName].filter(Boolean).join(" • ")
+    || "Check your camera and microphone.";
+  $("cameraName").textContent = item.faculty || item.teacherName || "Faculty";
+
+  overlay.classList.add("show");
+  startButton.disabled = true;
+  startButton.textContent = "START LIVE";
+
+  await startCamera();
+}
+
+async function startCamera() {
+  stopCamera();
+  hideError(previewError);
+  setDeviceStatus(cameraStatus, "Requesting permission…");
+  setDeviceStatus(micStatus, "Requesting permission…");
+  startButton.disabled = true;
+
+  try {
+    if (!navigator.mediaDevices?.getUserMedia) {
+      throw new Error(
+        "Camera access is unavailable. Open this page over HTTPS in a supported browser."
+      );
+    }
+
+    cameraStream = await navigator.mediaDevices.getUserMedia({
+      video: true,
+      audio: true
+    });
+
+    video.srcObject = cameraStream;
+    await video.play();
+
+    const tracks = cameraStream.getTracks();
+    setDeviceStatus(cameraStatus,
+      tracks.some(t => t.kind === "video" && t.enabled) ? "Ready" : "Unavailable",
+      tracks.some(t => t.kind === "video" && t.enabled));
+    setDeviceStatus(micStatus,
+      tracks.some(t => t.kind === "audio" && t.enabled) ? "Ready" : "Unavailable",
+      tracks.some(t => t.kind === "audio" && t.enabled));
+
+    const cameraReady = tracks.some(t => t.kind === "video" && t.enabled);
+    const micReady = tracks.some(t => t.kind === "audio" && t.enabled);
+
+    if (!cameraReady || !micReady) {
+      throw new Error("Enable both camera and microphone before starting.");
+    }
+
+    startButton.disabled = false;
+
+  } catch (error) {
+    console.error("Camera setup failed:", error);
+    setDeviceStatus(cameraStatus, "Not available");
+    setDeviceStatus(micStatus, "Not available");
+    showError(previewError,
+      error.name === "NotAllowedError"
+        ? "Camera or microphone permission was denied. Allow both in Chrome site settings."
+        : error.message || "Unable to open your camera and microphone.");
+  }
+}
+
+$("cancelButton").addEventListener("click", closePreview);
+overlay.addEventListener("click", event => {
+  if (event.target === overlay) closePreview();
+});
+
+function closePreview() {
+  if (isStarting) return;
+  stopCamera();
+  overlay.classList.remove("show");
+  selectedClass = null;
+  hideError(previewError);
+}
+
+function stopCamera() {
+  if (cameraStream) {
+    cameraStream.getTracks().forEach(track => track.stop());
+    cameraStream = null;
+  }
+  video.srcObject = null;
+}
+
+$("refreshButton").addEventListener("click", loadClasses);
+$("retryAuthButton").addEventListener("click", async () => {
+  if (!auth.currentUser) {
+    showError(pageError, "You are not signed in. Sign in to the faculty portal first.");
+    return;
+  }
+  await loadClasses();
+});
+
+startButton.addEventListener("click", startLive);
+
+async function startLive() {
+  if (!selectedClass || isStarting || !cameraStream) return;
+
+  if (!auth.currentUser) {
+    showError(previewError, "Your login session has expired. Sign in again.");
+    return;
+  }
+
+  const meetingNumber = getMeetingNumber(selectedClass);
+
+  if (!meetingNumber) {
+    showError(previewError,
+      "This class has no Zoom meeting number. Create or attach its Zoom meeting in the admin panel first.");
+    return;
+  }
+
+  isStarting = true;
+  startButton.disabled = true;
+  startButton.textContent = "CONNECTING…";
+  hideError(previewError);
+
+  try {
+    /*
+      This callable must exist in Firebase Functions.
+      The uploaded backend file did not contain this export.
+      The backend must securely verify faculty permissions and
+      return signature, zak and sdkKey.
+    */
+    const result = await getZoomHostJoinData({
+      liveClassId: selectedClass.id,
+      meetingNumber
+    });
+
+    const data = result?.data;
+
+    if (!data?.signature || !data?.zak || !data?.sdkKey) {
+      throw new Error(
+        "Firebase returned incomplete host credentials. Verify that getZoomHostJoinData returns signature, zak and sdkKey."
+      );
+    }
+
+    const hostSession = {
+      liveClassId: selectedClass.id,
+      meetingNumber,
+      password: selectedClass.zoomPassword || "",
+      title: selectedClass.title || "Live Class",
+      subjectName: selectedClass.subjectName || "",
+      chapterName: selectedClass.chapterName || "",
+      faculty: selectedClass.faculty || selectedClass.teacherName || "Faculty",
+      signature: data.signature,
+      zak: data.zak,
+      sdkKey: data.sdkKey
+    };
+
+    sessionStorage.setItem("zenovaHostLive", JSON.stringify(hostSession));
+
+    stopCamera();
+
+    // This file must implement the Zoom Meeting SDK host classroom.
+    window.location.href = "./classroom.html";
+
+  } catch (error) {
+    console.error("START LIVE ERROR:", error);
+    const code = error?.code || "";
+    let message = error?.message || "Unable to start the live class.";
+
+    if (code.includes("not-found")) {
+      message = "Firebase function getZoomHostJoinData was not found. Deploy the correct backend function in asia-south1.";
+    } else if (code.includes("unauthenticated")) {
+      message = "Your login has expired. Sign in again.";
+    } else if (code.includes("permission-denied")) {
+      message = "Your account is not authorized to host this class.";
+    } else if (code.includes("unavailable") || code.includes("internal")) {
+      message += " Check Firebase Functions logs for the underlying server error.";
+    }
+
+    showError(previewError, message);
+    startButton.disabled = false;
+    startButton.textContent = "START LIVE";
+
+  } finally {
+    isStarting = false;
+  }
+}
+
+window.addEventListener("beforeunload", stopCamera);
+</script>
 </body>
 </html>
