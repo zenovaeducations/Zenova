@@ -2,1478 +2,1711 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#f7f8fc">
-<title>Zenova Educations | Home</title>
-
-<style>
-:root {
-  --bg: #f7f8fc;
-  --surface: #ffffff;
-  --text: #171b2d;
-  --muted: #737b91;
-  --primary: #5b5ce2;
-  --primary-dark: #4647c7;
-  --soft: #eeeeff;
-  --border: #e8eaf2;
-  --green: #159b72;
-  --radius: 20px;
-  --shadow: 0 8px 30px rgba(30, 37, 75, .055);
-}
-
-* { box-sizing: border-box; }
-
-html { scroll-behavior: smooth; }
-
-body {
-  margin: 0;
-  background: var(--bg);
-  color: var(--text);
-  font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI",
-               Roboto, Arial, sans-serif;
-  font-size: 15px;
-  -webkit-font-smoothing: antialiased;
-}
-
-button, a { font: inherit; }
-button { cursor: pointer; }
-a { color: inherit; text-decoration: none; }
-button:focus-visible, a:focus-visible {
-  outline: 3px solid #999aff;
-  outline-offset: 3px;
-}
-
-/* Full-page loading screen */
-#loadingScreen {
-  position: fixed;
-  inset: 0;
-  z-index: 9999;
-  background: var(--bg);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 18px;
-  transition: opacity .25s ease, visibility .25s ease;
-}
-
-#loadingScreen.hidden {
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-}
-
-.loader-logo {
-  width: 76px;
-  height: 76px;
-  object-fit: contain;
-  animation: breathe 1.5s ease-in-out infinite;
-}
-
-.loader-ring {
-  width: 25px;
-  height: 25px;
-  border: 3px solid #e4e5fb;
-  border-top-color: var(--primary);
-  border-radius: 50%;
-  animation: spin .8s linear infinite;
-}
-
-.loader-message {
-  color: var(--muted);
-  font-size: 13px;
-}
-
-@keyframes spin { to { transform: rotate(360deg); } }
-@keyframes breathe {
-  50% { transform: scale(.94); opacity: .78; }
-}
-
-#app {
-  visibility: hidden;
-  opacity: 0;
-  transition: opacity .25s ease;
-}
-
-#app.ready {
-  visibility: visible;
-  opacity: 1;
-}
-
-.container {
-  width: min(1180px, calc(100% - 44px));
-  margin: 0 auto;
-}
-
-/* Header */
-.header {
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  background: rgba(255,255,255,.94);
-  border-bottom: 1px solid var(--border);
-  backdrop-filter: blur(16px);
-}
-
-.header-inner {
-  min-height: 76px;
-  display: flex;
-  align-items: center;
-  gap: 30px;
-}
-
-.brand {
-  display: flex;
-  align-items: center;
-  gap: 11px;
-  flex-shrink: 0;
-}
-
-.brand img {
-  width: 43px;
-  height: 43px;
-  object-fit: contain;
-}
-
-.brand-name {
-  font-size: 19px;
-  font-weight: 800;
-  letter-spacing: -.7px;
-}
-
-.brand-sub {
-  color: var(--muted);
-  font-size: 10px;
-  margin-top: 3px;
-  letter-spacing: 1.1px;
-  text-transform: uppercase;
-}
-
-.main-nav {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  flex: 1;
-}
-
-.nav-link {
-  padding: 11px 15px;
-  border-radius: 12px;
-  color: #626a80;
-  font-size: 13px;
-  font-weight: 650;
-  transition: .2s;
-}
-
-.nav-link:hover,
-.nav-link.active {
-  color: var(--primary);
-  background: var(--soft);
-}
-
-.header-actions {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.icon-button {
-  position: relative;
-  width: 43px;
-  height: 43px;
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  background: white;
-  color: var(--text);
-  display: grid;
-  place-items: center;
-  font-size: 20px;
-}
-
-.notification-dot {
-  position: absolute;
-  right: 7px;
-  top: 6px;
-  min-width: 17px;
-  height: 17px;
-  padding: 0 4px;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  border: 2px solid white;
-  border-radius: 20px;
-  background: #ef5365;
-  color: white;
-  font-size: 9px;
-  font-weight: 800;
-}
-
-.avatar {
-  width: 43px;
-  height: 43px;
-  border: 0;
-  border-radius: 14px;
-  background: var(--soft);
-  color: var(--primary);
-  font-weight: 800;
-}
-
-/* Main page */
-main { padding: 32px 0 110px; }
-
-.welcome-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 18px;
-  margin-bottom: 26px;
-}
-
-.eyebrow {
-  color: var(--primary);
-  font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 1.7px;
-  text-transform: uppercase;
-}
-
-h1 {
-  margin: 8px 0 7px;
-  font-size: clamp(27px, 4vw, 36px);
-  letter-spacing: -1.4px;
-  line-height: 1.2;
-}
-
-.subtitle {
-  color: var(--muted);
-  margin: 0;
-  font-size: 14px;
-  line-height: 1.7;
-}
-
-.date-pill {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 12px 15px;
-  background: white;
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  color: #697187;
-  font-size: 12px;
-  white-space: nowrap;
-}
-
-/* Welcome panel */
-.hero {
-  position: relative;
-  overflow: hidden;
-  min-height: 225px;
-  padding: 31px 34px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 24px;
-  border-radius: 25px;
-  color: white;
-  background: linear-gradient(115deg, #4849c9 0%, #6969ee 56%, #8886ff 100%);
-  box-shadow: 0 14px 34px rgba(85, 86, 216, .16);
-}
-
-.hero::before, .hero::after {
-  content: "";
-  position: absolute;
-  border: 1px solid rgba(255,255,255,.15);
-  border-radius: 50%;
-  pointer-events: none;
-}
-
-.hero::before {
-  width: 320px;
-  height: 320px;
-  right: -55px;
-  top: -160px;
-}
-
-.hero::after {
-  width: 230px;
-  height: 230px;
-  right: 75px;
-  bottom: -180px;
-}
-
-.hero-content {
-  max-width: 600px;
-  position: relative;
-  z-index: 1;
-}
-
-.hero-label {
-  font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 1.7px;
-  opacity: .8;
-  text-transform: uppercase;
-}
-
-.hero h2 {
-  margin: 13px 0 9px;
-  font-size: clamp(24px, 3vw, 34px);
-  letter-spacing: -.9px;
-  line-height: 1.22;
-}
-
-.hero p {
-  margin: 0;
-  color: rgba(255,255,255,.82);
-  font-size: 13px;
-  line-height: 1.8;
-  max-width: 440px;
-}
-
-.hero-button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 9px;
-  margin-top: 22px;
-  padding: 13px 18px;
-  border: 0;
-  border-radius: 12px;
-  background: white;
-  color: var(--primary-dark);
-  font-weight: 750;
-  font-size: 13px;
-}
-
-.hero-art {
-  position: relative;
-  z-index: 1;
-  width: 155px;
-  height: 155px;
-  flex-shrink: 0;
-  display: grid;
-  place-items: center;
-  border: 1px solid rgba(255,255,255,.22);
-  border-radius: 35px;
-  background: rgba(255,255,255,.12);
-  font-size: 67px;
-  transform: rotate(4deg);
-}
-
-/* Section headings */
-.section {
-  margin-top: 36px;
-  min-width: 0;
-}
-
-.section-heading {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 14px;
-  margin-bottom: 18px;
-}
-
-.section-heading h2 {
-  margin: 0;
-  font-size: 21px;
-  letter-spacing: -.6px;
-}
-
-.section-heading p {
-  margin: 6px 0 0;
-  color: var(--muted);
-  font-size: 12px;
-}
-
-.text-link {
-  color: var(--primary);
-  font-size: 12px;
-  font-weight: 750;
-  border: 0;
-  background: transparent;
-}
-
-/* Purchased course cards */
-.purchased-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 290px), 1fr));
-  gap: 16px;
-}
-
-.course-card {
-  min-width: 0;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 20px;
-  box-shadow: var(--shadow);
-  transition: transform .2s, box-shadow .2s;
-}
-
-.course-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 12px 32px rgba(30,37,75,.09);
-}
-
-.course-top {
-  display: flex;
-  align-items: flex-start;
-  gap: 13px;
-}
-
-.course-icon {
-  width: 52px;
-  height: 52px;
-  display: grid;
-  place-items: center;
-  flex-shrink: 0;
-  border-radius: 16px;
-  background: var(--soft);
-  font-size: 25px;
-}
-
-.course-info { min-width: 0; flex: 1; }
-
-.course-info h3 {
-  margin: 2px 0 7px;
-  font-size: 16px;
-  letter-spacing: -.3px;
-  overflow-wrap: anywhere;
-}
-
-.course-info p {
-  margin: 0;
-  color: var(--muted);
-  font-size: 12px;
-  line-height: 1.6;
-}
-
-.status {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  margin-top: 11px;
-  color: var(--green);
-  font-size: 11px;
-  font-weight: 750;
-}
-
-.status::before {
-  content: "";
-  width: 6px;
-  height: 6px;
-  background: var(--green);
-  border-radius: 50%;
-}
-
-.course-footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  border-top: 1px solid var(--border);
-  padding-top: 15px;
-  margin-top: 19px;
-}
-
-.course-meta {
-  color: var(--muted);
-  font-size: 11px;
-}
-
-.primary-button {
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-  gap: 8px;
-  border: 0;
-  padding: 12px 16px;
-  border-radius: 12px;
-  color: white;
-  background: var(--primary);
-  font-size: 12px;
-  font-weight: 750;
-  transition: background .2s;
-}
-
-.primary-button:hover { background: var(--primary-dark); }
-
-/* Available course carousel */
-.carousel-wrap {
-  position: relative;
-  overflow: hidden;
-  border-radius: var(--radius);
-}
-
-.carousel-track {
-  display: flex;
-  gap: 16px;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  scroll-behavior: smooth;
-  scrollbar-width: none;
-  padding: 2px 2px 10px;
-}
-
-.carousel-track::-webkit-scrollbar { display: none; }
-
-.available-card {
-  flex: 0 0 calc((100% - 32px) / 3);
-  min-width: 245px;
-  display: flex;
-  flex-direction: column;
-  scroll-snap-align: start;
-  overflow: hidden;
-  background: white;
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-}
-
-.available-banner {
-  height: 105px;
-  padding: 17px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: linear-gradient(130deg, #eeeeff, #f7f6ff);
-}
-
-.available-banner .big-icon { font-size: 39px; }
-
-.course-tag {
-  padding: 7px 9px;
-  background: rgba(255,255,255,.8);
-  color: var(--primary);
-  border-radius: 9px;
-  font-size: 10px;
-  font-weight: 800;
-}
-
-.available-body {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  padding: 17px;
-}
-
-.available-body h3 {
-  margin: 0 0 8px;
-  font-size: 15px;
-  line-height: 1.45;
-}
-
-.available-body p {
-  margin: 0;
-  color: var(--muted);
-  font-size: 12px;
-  line-height: 1.7;
-}
-
-.available-bottom {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 9px;
-  margin-top: auto;
-  padding-top: 18px;
-}
-
-.price {
-  font-size: 14px;
-  font-weight: 800;
-}
-
-.carousel-controls {
-  display: flex;
-  gap: 7px;
-}
-
-.carousel-arrow {
-  width: 35px;
-  height: 35px;
-  display: grid;
-  place-items: center;
-  border: 1px solid var(--border);
-  background: white;
-  color: var(--text);
-  border-radius: 11px;
-}
-
-.carousel-arrow:hover {
-  color: var(--primary);
-  background: var(--soft);
-}
-
-/* Quick navigation */
-.quick-grid {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 14px;
-}
-
-.quick-card {
-  display: flex;
-  align-items: center;
-  gap: 13px;
-  padding: 17px;
-  background: white;
-  border: 1px solid var(--border);
-  border-radius: 17px;
-  transition: .2s;
-}
-
-.quick-card:hover {
-  border-color: #c8c8ff;
-  transform: translateY(-2px);
-}
-
-.quick-icon {
-  display: grid;
-  place-items: center;
-  flex-shrink: 0;
-  width: 43px;
-  height: 43px;
-  border-radius: 13px;
-  background: var(--soft);
-  font-size: 20px;
-}
-
-.quick-card strong {
-  display: block;
-  font-size: 12px;
-}
-
-.quick-card small {
-  display: block;
-  margin-top: 5px;
-  color: var(--muted);
-  font-size: 10px;
-  line-height: 1.5;
-}
-
-/* Notifications */
-.notice-list { display: grid; gap: 10px; }
-
-.notice-item {
-  display: flex;
-  gap: 13px;
-  align-items: flex-start;
-  padding: 16px;
-  border: 1px solid var(--border);
-  border-radius: 15px;
-  background: white;
-}
-
-.notice-icon {
-  width: 39px;
-  height: 39px;
-  display: grid;
-  place-items: center;
-  flex-shrink: 0;
-  border-radius: 12px;
-  background: var(--soft);
-  font-size: 18px;
-}
-
-.notice-copy { flex: 1; min-width: 0; }
-
-.notice-copy h3 {
-  margin: 2px 0 6px;
-  font-size: 13px;
-  overflow-wrap: anywhere;
-}
-
-.notice-copy p {
-  margin: 0;
-  color: var(--muted);
-  font-size: 12px;
-  line-height: 1.7;
-  overflow-wrap: anywhere;
-}
-
-.notice-time {
-  margin-top: 7px;
-  color: #969db0;
-  font-size: 10px;
-}
-
-.notice-item.unread { background: #fbfbff; }
-
-.empty-state {
-  padding: 30px 20px;
-  text-align: center;
-  background: white;
-  border: 1px dashed #d9dced;
-  border-radius: var(--radius);
-}
-
-.empty-state .empty-icon {
-  font-size: 31px;
-  margin-bottom: 12px;
-}
-
-.empty-state h3 {
-  margin: 0 0 7px;
-  font-size: 15px;
-}
-
-.empty-state p {
-  margin: 0;
-  color: var(--muted);
-  font-size: 12px;
-  line-height: 1.7;
-}
-
-.error-message {
-  margin-top: 10px;
-  color: #a33b4b;
-  font-size: 12px;
-}
-
-/* Mobile bottom navigation */
-.mobile-nav { display: none; }
-
-.footer {
-  padding: 25px 0;
-  border-top: 1px solid var(--border);
-  color: var(--muted);
-  font-size: 11px;
-  text-align: center;
-}
-
-/* Responsive layout */
-@media (max-width: 900px) {
-  .header-inner { gap: 15px; }
-  .main-nav { gap: 2px; }
-  .nav-link { padding: 10px; font-size: 12px; }
-  .quick-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .available-card { flex-basis: calc((100% - 16px) / 2); }
-  .hero-art { width: 115px; height: 115px; font-size: 50px; }
-}
-
-@media (max-width: 620px) {
-  .container { width: calc(100% - 30px); }
-  .header-inner { min-height: 66px; gap: 10px; }
-  .brand img { width: 37px; height: 37px; }
-  .brand-name { font-size: 16px; }
-  .brand-sub { font-size: 9px; }
-  .main-nav { display: none; }
-  .header-actions { margin-left: auto; gap: 8px; }
-  .icon-button, .avatar { width: 39px; height: 39px; }
-  main { padding-top: 25px; padding-bottom: 100px; }
-  .welcome-row { align-items: flex-start; }
-  .welcome-row h1 { font-size: 27px; }
-  .date-pill { display: none; }
-  .hero { min-height: auto; padding: 25px 22px; border-radius: 21px; }
-  .hero h2 { font-size: 25px; }
-  .hero p { font-size: 12px; }
-  .hero-art { display: none; }
-  .hero-button { padding: 12px 14px; }
-  .section { margin-top: 29px; }
-  .section-heading h2 { font-size: 19px; }
-  .purchased-grid { grid-template-columns: minmax(0, 1fr); }
-  .available-card { flex-basis: 82%; min-width: 0; }
-  .quick-grid { gap: 9px; }
-  .quick-card { padding: 13px 10px; gap: 9px; }
-  .quick-icon { width: 36px; height: 36px; font-size: 17px; }
-  .quick-card strong { font-size: 11px; }
-  .quick-card small { font-size: 9px; }
-  .mobile-nav {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    z-index: 200;
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    padding: 9px 6px calc(9px + env(safe-area-inset-bottom));
-    background: rgba(255,255,255,.97);
-    border-top: 1px solid var(--border);
-    backdrop-filter: blur(15px);
-  }
-  .mobile-nav a {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 5px;
-    padding: 5px 0;
-    color: #83899d;
-    font-size: 9px;
-    font-weight: 650;
-  }
-  .mobile-nav a span:first-child { font-size: 19px; }
-  .mobile-nav a.active { color: var(--primary); }
-  .footer { padding-bottom: 24px; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: .01ms !important;
-    scroll-behavior: auto !important;
-    transition-duration: .01ms !important;
-  }
-}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f7f9fc">
+  <title>Zenova Educations | Home</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.css" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #f7f9fc;
+      --surface: #ffffff;
+      --surface-soft: #f0f5fb;
+      --ink: #172338;
+      --muted: #7b8799;
+      --line: #e7edf5;
+      --blue: #3978e8;
+      --blue-dark: #245fc9;
+      --blue-soft: #eaf2ff;
+      --green: #159b78;
+      --green-soft: #e8f8f2;
+      --orange-soft: #fff4e7;
+      --radius: 18px;
+      --nav-height: 76px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      background: var(--bg);
+    }
+
+    body {
+      min-height: 100vh;
+      padding-bottom: calc(var(--nav-height) + env(safe-area-inset-bottom));
+      background: var(--bg);
+      color: var(--ink);
+      font-family: Inter, system-ui, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button {
+      font: inherit;
+      cursor: pointer;
+    }
+
+    button:focus-visible,
+    a:focus-visible,
+    select:focus-visible {
+      outline: 3px solid #8db5ff;
+      outline-offset: 3px;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .wrap {
+      width: min(100%, 1080px);
+      margin-inline: auto;
+    }
+
+    .page {
+      padding: 20px 17px 24px;
+    }
+
+    /* Header */
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(255,255,255,.94);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .topbar-inner {
+      width: min(100%, 1080px);
+      min-height: 72px;
+      margin: auto;
+      padding: 12px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .brand-logo {
+      width: 40px;
+      height: 40px;
+      display: grid;
+      place-items: center;
+      border-radius: 13px;
+      background: var(--blue);
+      color: white;
+      font-size: 21px;
+      font-weight: 800;
+    }
+
+    .brand-name {
+      font-size: 15px;
+      font-weight: 800;
+      letter-spacing: -.4px;
+    }
+
+    .brand-sub {
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 10px;
+    }
+
+    .desktop-nav {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .desktop-nav a {
+      padding: 11px 13px;
+      border-radius: 10px;
+      color: #69778b;
+      font-size: 12px;
+      font-weight: 650;
+      transition: .18s ease;
+    }
+
+    .desktop-nav a:hover,
+    .desktop-nav a.active {
+      background: var(--blue-soft);
+      color: var(--blue-dark);
+    }
+
+    .profile-button {
+      display: grid;
+      place-items: center;
+      width: 40px;
+      height: 40px;
+      overflow: hidden;
+      flex: 0 0 40px;
+      border: 1px solid var(--line);
+      border-radius: 50%;
+      background: var(--surface-soft);
+      color: var(--blue-dark);
+    }
+
+    .profile-button img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .profile-button i {
+      font-size: 19px;
+    }
+
+    /* Greeting */
+
+    .greeting {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 14px;
+      margin: 9px 0 23px;
+    }
+
+    .eyebrow {
+      color: var(--blue);
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin-top: 8px;
+      font-size: clamp(24px, 4vw, 32px);
+      font-weight: 800;
+      letter-spacing: -1.1px;
+      line-height: 1.2;
+    }
+
+    .greeting p {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.65;
+    }
+
+    /* Selected course */
+
+    .selected-course {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 23px;
+      padding: 15px;
+      border: 1px solid #dce8fb;
+      border-radius: var(--radius);
+      background: #edf4ff;
+    }
+
+    .selected-course-copy {
+      min-width: 0;
+    }
+
+    .selected-course h2 {
+      margin-top: 6px;
+      font-size: 15px;
+      font-weight: 750;
+      line-height: 1.45;
+    }
+
+    .selected-course p {
+      margin-top: 4px;
+      color: #6f8099;
+      font-size: 11px;
+      line-height: 1.5;
+    }
+
+    .course-select {
+      max-width: 145px;
+      min-width: 95px;
+      padding: 10px 27px 10px 10px;
+      border: 1px solid #d4e2f7;
+      border-radius: 10px;
+      background: white;
+      color: var(--blue-dark);
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    /* Sections */
+
+    .section {
+      margin-top: 27px;
+    }
+
+    .section-heading {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 13px;
+    }
+
+    .section-title {
+      font-size: 17px;
+      font-weight: 800;
+      letter-spacing: -.45px;
+    }
+
+    .section-subtitle {
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.5;
+    }
+
+    .text-link {
+      flex-shrink: 0;
+      padding: 8px 0;
+      border: 0;
+      background: transparent;
+      color: var(--blue-dark);
+      font-size: 11px;
+      font-weight: 750;
+    }
+
+    /* Daily study summary */
+
+    .daily-card {
+      padding: 17px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+    }
+
+    .daily-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .daily-top strong {
+      font-size: 13px;
+    }
+
+    .daily-date {
+      color: var(--muted);
+      font-size: 10px;
+    }
+
+    .daily-card p {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.6;
+    }
+
+    .daily-shortcuts {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0,1fr));
+      gap: 9px;
+      margin-top: 15px;
+    }
+
+    .shortcut {
+      min-height: 83px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: center;
+      gap: 9px;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 13px;
+      background: white;
+      text-align: left;
+      transition: background .18s, border-color .18s;
+    }
+
+    .shortcut:hover {
+      border-color: #c7dafa;
+      background: #f9fbff;
+    }
+
+    .shortcut i {
+      color: var(--blue);
+      font-size: 20px;
+    }
+
+    .shortcut span {
+      font-size: 10px;
+      font-weight: 700;
+      line-height: 1.4;
+    }
+
+    /* Course cards */
+
+    .course-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap: 12px;
+    }
+
+    .course-card {
+      min-width: 0;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: white;
+      transition: transform .18s, box-shadow .18s;
+    }
+
+    .course-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 9px 24px #243b5b0a;
+    }
+
+    .course-image {
+      position: relative;
+      aspect-ratio: 16/9;
+      overflow: hidden;
+      display: grid;
+      place-items: center;
+      background: #edf3fc;
+      color: var(--blue);
+    }
+
+    .course-image img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .course-image i {
+      font-size: 31px;
+    }
+
+    .course-content {
+      padding: 12px;
+    }
+
+    .course-title {
+      font-size: 12px;
+      font-weight: 800;
+      line-height: 1.5;
+      overflow-wrap: anywhere;
+    }
+
+    .course-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-top: 8px;
+    }
+
+    .tag {
+      padding: 5px 7px;
+      border-radius: 7px;
+      background: #f1f5fa;
+      color: #65758a;
+      font-size: 9px;
+      line-height: 1.4;
+    }
+
+    .course-action {
+      width: 100%;
+      min-height: 37px;
+      margin-top: 12px;
+      padding: 8px;
+      border: 0;
+      border-radius: 9px;
+      background: var(--blue-soft);
+      color: var(--blue-dark);
+      font-size: 10px;
+      font-weight: 800;
+    }
+
+    .course-action.primary {
+      background: var(--blue);
+      color: white;
+    }
+
+    /* Live class */
+
+    .live-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .live-card {
+      display: grid;
+      grid-template-columns: 66px minmax(0,1fr) auto;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 15px;
+      background: white;
+    }
+
+    .live-icon {
+      width: 66px;
+      height: 66px;
+      display: grid;
+      place-items: center;
+      border-radius: 12px;
+      background: var(--blue-soft);
+      color: var(--blue);
+    }
+
+    .live-icon img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: inherit;
+    }
+
+    .live-icon i {
+      font-size: 24px;
+    }
+
+    .live-info {
+      min-width: 0;
+    }
+
+    .live-info h3 {
+      font-size: 12px;
+      font-weight: 750;
+      line-height: 1.45;
+      overflow-wrap: anywhere;
+    }
+
+    .live-info p {
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 10px;
+      line-height: 1.5;
+    }
+
+    .live-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      margin-bottom: 5px;
+      color: var(--green);
+      font-size: 9px;
+      font-weight: 800;
+    }
+
+    .live-status.upcoming {
+      color: #b87921;
+    }
+
+    .live-button {
+      min-height: 35px;
+      padding: 0 10px;
+      border: 0;
+      border-radius: 9px;
+      background: var(--blue);
+      color: white;
+      font-size: 10px;
+      font-weight: 750;
+    }
+
+    .live-button:disabled {
+      cursor: default;
+      background: #eef1f6;
+      color: #8490a2;
+    }
+
+    /* Continue learning */
+
+    .continue-card {
+      display: flex;
+      align-items: center;
+      gap: 13px;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 15px;
+      background: white;
+    }
+
+    .continue-icon {
+      width: 52px;
+      height: 52px;
+      display: grid;
+      place-items: center;
+      flex: 0 0 52px;
+      border-radius: 13px;
+      background: var(--green-soft);
+      color: var(--green);
+    }
+
+    .continue-icon i {
+      font-size: 23px;
+    }
+
+    .continue-info {
+      min-width: 0;
+      flex: 1;
+    }
+
+    .continue-info h3 {
+      font-size: 12px;
+      font-weight: 750;
+      line-height: 1.5;
+    }
+
+    .continue-info p {
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 10px;
+      line-height: 1.5;
+    }
+
+    .continue-button {
+      margin-top: 9px;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      color: var(--blue-dark);
+      font-size: 10px;
+      font-weight: 800;
+    }
+
+    /* Empty states */
+
+    .empty {
+      padding: 23px 15px;
+      border: 1px dashed #dce4ef;
+      border-radius: 15px;
+      background: white;
+      color: var(--muted);
+      text-align: center;
+      font-size: 11px;
+      line-height: 1.7;
+    }
+
+    .empty i {
+      display: block;
+      margin-bottom: 7px;
+      color: #94a9c6;
+      font-size: 24px;
+    }
+
+    .empty a {
+      display: inline-block;
+      margin-top: 8px;
+      color: var(--blue-dark);
+      font-weight: 750;
+    }
+
+    .skeleton {
+      height: 95px;
+      border-radius: 14px;
+      background: linear-gradient(90deg,#edf1f7 25%,#f8faff 50%,#edf1f7 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.3s infinite;
+    }
+
+    @keyframes shimmer {
+      to { background-position: -200% 0; }
+    }
+
+    /* AI card */
+
+    .ai-card {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 13px;
+      padding: 17px;
+      border: 1px solid #dbe7fa;
+      border-radius: 17px;
+      background: #edf4ff;
+      text-align: left;
+    }
+
+    .ai-icon {
+      width: 45px;
+      height: 45px;
+      display: grid;
+      place-items: center;
+      flex: 0 0 45px;
+      border-radius: 13px;
+      background: white;
+      color: var(--blue);
+      font-size: 23px;
+    }
+
+    .ai-copy {
+      min-width: 0;
+      flex: 1;
+    }
+
+    .ai-copy strong {
+      display: block;
+      font-size: 13px;
+    }
+
+    .ai-copy span {
+      display: block;
+      margin-top: 5px;
+      color: #697e9c;
+      font-size: 10px;
+      line-height: 1.6;
+    }
+
+    .ai-arrow {
+      color: var(--blue);
+      font-size: 20px;
+    }
+
+    /* Bottom navigation */
+
+    .bottom-nav {
+      position: fixed;
+      z-index: 100;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      padding: 8px 10px calc(8px + env(safe-area-inset-bottom));
+      border-top: 1px solid var(--line);
+      background: rgba(255,255,255,.96);
+      backdrop-filter: blur(15px);
+    }
+
+    .bottom-inner {
+      width: min(100%, 520px);
+      margin: auto;
+      display: grid;
+      grid-template-columns: repeat(5,1fr);
+      gap: 3px;
+    }
+
+    .nav-item {
+      min-height: 51px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      border-radius: 11px;
+      color: #8a96a8;
+      font-size: 9px;
+      font-weight: 700;
+    }
+
+    .nav-item i {
+      font-size: 20px;
+    }
+
+    .nav-item.active {
+      background: var(--blue-soft);
+      color: var(--blue-dark);
+    }
+
+    /* Loading and errors */
+
+    .loader {
+      position: fixed;
+      inset: 0;
+      z-index: 999;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      background: var(--bg);
+      color: var(--blue);
+    }
+
+    .loader-logo {
+      width: 52px;
+      height: 52px;
+      display: grid;
+      place-items: center;
+      border-radius: 16px;
+      background: var(--blue);
+      color: white;
+      font-size: 25px;
+      font-weight: 800;
+    }
+
+    .loader strong {
+      color: var(--ink);
+      font-size: 16px;
+      letter-spacing: 2px;
+    }
+
+    .loader span {
+      color: var(--muted);
+      font-size: 10px;
+    }
+
+    .error-screen {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: var(--bg);
+      text-align: center;
+    }
+
+    .error-screen h2 {
+      font-size: 21px;
+    }
+
+    .error-screen p {
+      max-width: 350px;
+      margin: 10px 0 18px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.7;
+    }
+
+    .primary-button {
+      padding: 12px 17px;
+      border: 0;
+      border-radius: 10px;
+      background: var(--blue);
+      color: white;
+      font-size: 12px;
+      font-weight: 750;
+    }
+
+    .toast {
+      position: fixed;
+      z-index: 200;
+      bottom: calc(var(--nav-height) + 12px);
+      left: 50%;
+      transform: translateX(-50%);
+      width: max-content;
+      max-width: calc(100% - 28px);
+      padding: 12px 15px;
+      border-radius: 11px;
+      background: #1d2a40;
+      color: white;
+      font-size: 11px;
+      box-shadow: 0 8px 25px #17233820;
+    }
+
+    @media (min-width: 700px) {
+      .page {
+        padding: 27px 25px 36px;
+      }
+
+      .course-grid {
+        grid-template-columns: repeat(3,minmax(0,1fr));
+      }
+
+      .daily-shortcuts {
+        grid-template-columns: repeat(3,minmax(0,1fr));
+      }
+
+      .bottom-nav {
+        display: none;
+      }
+
+      body {
+        padding-bottom: 20px;
+      }
+    }
+
+    @media (max-width: 699px) {
+      .desktop-nav {
+        display: none;
+      }
+    }
+
+    @media (max-width: 420px) {
+      .page {
+        padding-inline: 12px;
+      }
+
+      .topbar-inner {
+        padding-inline: 12px;
+      }
+
+      .brand-name {
+        font-size: 13px;
+      }
+
+      .brand-sub {
+        font-size: 9px;
+      }
+
+      .selected-course {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .course-select {
+        max-width: none;
+        width: 100%;
+      }
+
+      .live-card {
+        grid-template-columns: 48px minmax(0,1fr);
+      }
+
+      .live-icon {
+        width: 48px;
+        height: 48px;
+      }
+
+      .live-button {
+        grid-column: 2;
+        justify-self: start;
+      }
+
+      .daily-shortcuts {
+        grid-template-columns: repeat(3,minmax(0,1fr));
+      }
+
+      .shortcut {
+        padding: 9px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: .01ms !important;
+        transition-duration: .01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+  </style>
 </head>
 
 <body>
-<!-- The app stays hidden until authentication and page data checks finish. -->
-<div id="loadingScreen" role="status" aria-live="polite">
-  <img class="loader-logo" src="../logo.png" alt="Zenova Educations"
-       onerror="this.style.display='none'">
-  <div class="loader-ring"></div>
-  <div class="loader-message" id="loaderMessage">Preparing your learning space...</div>
-</div>
+  <div id="loader" class="loader" role="status">
+    <div class="loader-logo">Z</div>
+    <strong>ZENOVA</strong>
+    <span>Preparing your learning space</span>
+  </div>
 
-<div id="app">
-  <header class="header">
-    <div class="container header-inner">
-      <a class="brand" href="./index.html" aria-label="Zenova home">
-        <img src="../logo.png" alt="Zenova logo"
-             onerror="this.style.display='none'">
-        <div>
-          <div class="brand-name">Zenova</div>
-          <div class="brand-sub">Educations</div>
-        </div>
-      </a>
+  <div id="app" class="hidden">
+    <header class="topbar">
+      <div class="topbar-inner">
+        <a class="brand" href="./" aria-label="Zenova Home">
+          <span class="brand-logo">Z</span>
+          <span>
+            <span class="brand-name" style="display:block">ZENOVA</span>
+            <span class="brand-sub" style="display:block">Educations</span>
+          </span>
+        </a>
 
-      <nav class="main-nav" aria-label="Main navigation">
-        <a class="nav-link active" href="./index.html">Home</a>
-        <a class="nav-link" href="./courses/index.html">Courses</a>
-        <a class="nav-link" href="./live/index.html">Live Classes</a>
-        <a class="nav-link" href="./revision/index.html">Revision</a>
-        <a class="nav-link" href="./tests/index.html">Tests</a>
-      </nav>
+        <nav class="desktop-nav" aria-label="Main navigation">
+          <a href="./" class="active" aria-current="page">Home</a>
+          <a href="./courses/">Courses</a>
+          <a href="./live/">Live</a>
+          <a href="./revision/">Revision</a>
+          <a href="./profile/">Profile</a>
+        </nav>
 
-      <div class="header-actions">
-        <button class="icon-button" id="notificationButton"
-                aria-label="Open notifications" title="Notifications">
-          ♧
-          <span class="notification-dot" id="notificationCount">0</span>
-        </button>
-        <button class="avatar" id="profileButton" aria-label="Open profile">S</button>
-      </div>
-    </div>
-  </header>
-
-  <main class="container">
-    <section class="welcome-row">
-      <div>
-        <div class="eyebrow">YOUR LEARNING SPACE</div>
-        <h1 id="welcomeTitle">Welcome back!</h1>
-        <p class="subtitle" id="welcomeSubtitle">
-          Everything you need for your next learning session.
-        </p>
-      </div>
-      <div class="date-pill"><span>◷</span><span id="todayDate"></span></div>
-    </section>
-
-    <section class="hero">
-      <div class="hero-content">
-        <div class="hero-label">YOUR NEXT MILESTONE STARTS HERE</div>
-        <h2>Learn better.<br>Achieve more.</h2>
-        <p>Continue your preparation with your enrolled courses, live classes and daily practice.</p>
-        <a class="hero-button" href="./courses/index.html">
-          Explore courses <span>→</span>
+        <a id="profileShortcut" class="profile-button" href="./profile/" aria-label="My profile">
+          <i class="ri-user-3-line"></i>
         </a>
       </div>
-      <div class="hero-art" aria-hidden="true">✦</div>
-    </section>
+    </header>
 
-    <section class="section" id="purchasedSection">
-      <div class="section-heading">
+    <main class="page wrap">
+      <section class="greeting">
         <div>
-          <h2>My Learning</h2>
-          <p>Courses you have access to</p>
+          <span id="greeting" class="eyebrow">YOUR LEARNING SPACE</span>
+          <h1>Hello, <span id="studentName">Student</span></h1>
+          <p>Small steps today. Strong results tomorrow.</p>
         </div>
-        <a class="text-link" href="./courses/index.html">My courses →</a>
-      </div>
-      <div id="purchasedCourses" class="purchased-grid">
-        <div class="empty-state">
-          <div class="empty-icon">📚</div>
-          <h3>Loading your courses</h3>
-          <p>Checking your enrollment...</p>
-        </div>
-      </div>
-    </section>
+      </section>
 
-    <section class="section" id="availableSection">
-      <div class="section-heading">
-        <div>
-          <h2>Available for You</h2>
-          <p>Discover other courses you can join</p>
+      <section class="selected-course" aria-label="Selected course">
+        <div class="selected-course-copy">
+          <span class="eyebrow">CURRENTLY LEARNING</span>
+          <h2 id="selectedCourseName">Loading your course...</h2>
+          <p id="selectedCourseMeta">Your enrolled course and learning resources.</p>
         </div>
-        <div class="carousel-controls" id="carouselControls">
-          <button class="carousel-arrow" id="prevCourse" aria-label="Previous course">←</button>
-          <button class="carousel-arrow" id="nextCourse" aria-label="Next course">→</button>
+        <select id="courseSelector" class="course-select" aria-label="Choose an enrolled course">
+          <option value="">Loading courses...</option>
+        </select>
+      </section>
+
+      <section class="section" aria-labelledby="todayTitle">
+        <div class="section-heading">
+          <div>
+            <h2 class="section-title" id="todayTitle">Your day</h2>
+            <p class="section-subtitle">Your learning shortcuts, all in one place.</p>
+          </div>
+          <span id="todayDate" class="daily-date"></span>
         </div>
-      </div>
-      <div id="availableCourses" class="carousel-wrap">
-        <div class="carousel-track" id="availableTrack">
-          <div class="empty-state" style="width:100%">
-            <div class="empty-icon">✨</div>
-            <h3>Finding courses for you</h3>
-            <p>Available courses will appear here.</p>
+
+        <div class="daily-card">
+          <div class="daily-top">
+            <strong>Keep moving forward</strong>
+            <i class="ri-sun-line" style="color:var(--blue);font-size:20px"></i>
+          </div>
+          <p id="dailyMessage">Choose a lesson and make progress today.</p>
+
+          <div class="daily-shortcuts">
+            <a class="shortcut" href="./revision/" id="revisionShortcut">
+              <i class="ri-book-open-line"></i>
+              <span>Revision</span>
+            </a>
+            <a class="shortcut" href="./tests/">
+              <i class="ri-file-list-3-line"></i>
+              <span>Practice tests</span>
+            </a>
+            <a class="shortcut" href="./ai/?mode=doubt">
+              <i class="ri-question-answer-line"></i>
+              <span>Ask a doubt</span>
+            </a>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
 
-    <section class="section">
-      <div class="section-heading">
-        <div>
-          <h2>Quick Access</h2>
-          <p>Your everyday learning tools</p>
+      <section class="section" aria-labelledby="myCoursesTitle">
+        <div class="section-heading">
+          <div>
+            <h2 class="section-title" id="myCoursesTitle">My courses</h2>
+            <p class="section-subtitle">Courses available to your account.</p>
+          </div>
+          <a class="text-link" href="./courses/">All courses <i class="ri-arrow-right-line"></i></a>
         </div>
-      </div>
-      <div class="quick-grid">
-        <a class="quick-card" href="./live/index.html">
-          <div class="quick-icon">▶</div>
-          <div><strong>Live Classes</strong><small>Attend scheduled classes</small></div>
+        <div id="myCourses" class="course-grid">
+          <div class="skeleton"></div>
+          <div class="skeleton"></div>
+        </div>
+      </section>
+
+      <section class="section" aria-labelledby="liveTitle">
+        <div class="section-heading">
+          <div>
+            <h2 class="section-title" id="liveTitle">Live classes</h2>
+            <p class="section-subtitle">Classes for your selected course.</p>
+          </div>
+          <a class="text-link" href="./live/">View all <i class="ri-arrow-right-line"></i></a>
+        </div>
+        <div id="liveList" class="live-list">
+          <div class="skeleton"></div>
+        </div>
+      </section>
+
+      <section class="section" aria-labelledby="continueTitle">
+        <div class="section-heading">
+          <div>
+            <h2 class="section-title" id="continueTitle">Continue learning</h2>
+            <p class="section-subtitle">Pick up with a lesson from your course.</p>
+          </div>
+        </div>
+        <div id="continueCard">
+          <div class="skeleton"></div>
+        </div>
+      </section>
+
+      <section class="section">
+        <a class="ai-card" href="./ai/">
+          <span class="ai-icon"><i class="ri-sparkling-2-line"></i></span>
+          <span class="ai-copy">
+            <strong>Learn with Zenova AI</strong>
+            <span>Get help understanding concepts and preparing for exams.</span>
+          </span>
+          <i class="ri-arrow-right-line ai-arrow"></i>
         </a>
-        <a class="quick-card" href="./revision/index.html">
-          <div class="quick-icon">↻</div>
-          <div><strong>Revision</strong><small>Revise concepts and chapters</small></div>
+      </section>
+    </main>
+
+    <nav class="bottom-nav" aria-label="Mobile navigation">
+      <div class="bottom-inner">
+        <a class="nav-item active" href="./" aria-current="page">
+          <i class="ri-home-5-line"></i><span>Home</span>
         </a>
-        <a class="quick-card" href="./tests/index.html">
-          <div class="quick-icon">✓</div>
-          <div><strong>Practice Tests</strong><small>Test your preparation</small></div>
+        <a class="nav-item" href="./courses/">
+          <i class="ri-book-2-line"></i><span>Courses</span>
         </a>
-        <a class="quick-card" href="./profile/index.html">
-          <div class="quick-icon">♙</div>
-          <div><strong>My Profile</strong><small>View your student details</small></div>
+        <a class="nav-item" href="./live/">
+          <i class="ri-live-line"></i><span>Live</span>
         </a>
-      </div>
-    </section>
-
-    <section class="section" id="notificationsSection">
-      <div class="section-heading">
-        <div>
-          <h2>Notifications <span id="notificationHeadingCount"></span></h2>
-          <p>Updates and important announcements</p>
-        </div>
-        <button class="text-link" id="markAllRead">Mark all read</button>
-      </div>
-      <div class="notice-list" id="notificationList">
-        <div class="empty-state">
-          <div class="empty-icon">🔔</div>
-          <h3>Checking for updates</h3>
-          <p>Your notifications will appear here.</p>
-        </div>
-      </div>
-    </section>
-
-    <div id="pageError" class="error-message" role="status"></div>
-  </main>
-
-  <footer class="footer">
-    <div class="container">© <span id="year"></span> Zenova Educations · Learn with purpose.</div>
-  </footer>
-
-  <nav class="mobile-nav" aria-label="Mobile navigation">
-    <a class="active" href="./index.html"><span>⌂</span><span>Home</span></a>
-    <a href="./courses/index.html"><span>▦</span><span>Courses</span></a>
-    <a href="./live/index.html"><span>▶</span><span>Live</span></a>
-    <a href="./revision/index.html"><span>↻</span><span>Revision</span></a>
-    <a href="./profile/index.html"><span>♙</span><span>Profile</span></a>
-  </nav>
-</div>
-
-<script type="module">
-import { auth, db } from "../firebase/firebase-config.js";
-import { onAuthStateChanged } from
-  "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
-import {
-  collection, getDocs, query, where
-} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
-
-const $ = id => document.getElementById(id);
-const state = {
-  user: null,
-  purchased: [],
-  available: [],
-  notifications: [],
-  slideIndex: 0,
-  slideTimer: null,
-  dismissedLoader: false
-};
-
-const LOADER_TIMEOUT_MS = 18000;
-
-function showError(message) {
-  $("pageError").textContent = message || "";
-}
-
-function hideLoader() {
-  if (state.dismissedLoader) return;
-  state.dismissedLoader = true;
-  $("loadingScreen").classList.add("hidden");
-  $("app").classList.add("ready");
-}
-
-function showLoader(message) {
-  $("loaderMessage").textContent = message;
-}
-
-function goToLogin() {
-  const next = window.location.pathname + window.location.search;
-  window.location.replace("../login/index.html?next=" + encodeURIComponent(next));
-}
-
-function safeText(value, fallback = "") {
-  return typeof value === "string" && value.trim()
-    ? value.trim()
-    : fallback;
-}
-
-function escapeHTML(value) {
-  return String(value ?? "").replace(/[&<>"']/g, ch => ({
-    "&": "&amp;", "<": "&lt;", ">": "&gt;",
-    '"': "&quot;", "'": "&#39;"
-  })[ch]);
-}
-
-function getCourseName(course) {
-  return safeText(course.title || course.name || course.courseName, "Course");
-}
-
-function getCourseId(course, docId) {
-  return safeText(course.courseId || course.id || docId, docId);
-}
-
-function getCourseDescription(course) {
-  return safeText(
-    course.description || course.subtitle || course.medium,
-    "Structured lessons and practice to support your preparation."
-  );
-}
-
-function getCourseIcon(course) {
-  const text = (
-    (course.title || course.name || "") + " " +
-    (course.subject || "")
-  ).toLowerCase();
-
-  if (text.includes("math")) return "📐";
-  if (text.includes("science")) return "🔬";
-  if (text.includes("neet")) return "🧬";
-  if (text.includes("kcet")) return "🎓";
-  if (text.includes("english")) return "📘";
-  if (text.includes("kannada")) return "📚";
-  return "🎯";
-}
-
-function isApproved(enrollment) {
-  const status = String(
-    enrollment.status ||
-    enrollment.enrollmentStatus ||
-    enrollment.paymentStatus ||
-    ""
-  ).toLowerCase();
-
-  return [
-    "approved", "active", "paid", "enrolled", "success"
-  ].includes(status);
-}
-
-function enrollmentCourseId(enrollment) {
-  return safeText(
-    enrollment.courseId ||
-    enrollment.courseID ||
-    enrollment.batchId ||
-    enrollment.course_id
-  );
-}
-
-function isPublicCourse(course) {
-  if (course.isPublished === false || course.published === false) return false;
-  if (course.isActive === false || course.active === false) return false;
-  if (course.isPublic === false) return false;
-  return true;
-}
-
-function renderPurchasedCourses() {
-  const root = $("purchasedCourses");
-  const courses = state.purchased;
-
-  if (!courses.length) {
-    root.innerHTML = `
-      <div class="empty-state" style="grid-column:1/-1">
-        <div class="empty-icon">📘</div>
-        <h3>No enrolled courses found</h3>
-        <p>Once your enrollment is approved, your course will appear here.</p>
-        <div style="margin-top:16px">
-          <a class="primary-button" href="./courses/index.html">Explore courses →</a>
-        </div>
-      </div>`;
-    return;
-  }
-
-  root.innerHTML = courses.map(course => `
-    <article class="course-card">
-      <div class="course-top">
-        <div class="course-icon">${escapeHTML(course.icon)}</div>
-        <div class="course-info">
-          <h3>${escapeHTML(course.name)}</h3>
-          <p>${escapeHTML(course.description)}</p>
-          <div class="status">Enrolled</div>
-        </div>
-      </div>
-      <div class="course-footer">
-        <span class="course-meta">Your course</span>
-        <a class="primary-button"
-           href="./course/index.html?id=${encodeURIComponent(course.id)}">
-          Continue learning →
+        <a class="nav-item" href="./revision/">
+          <i class="ri-book-open-line"></i><span>Revision</span>
+        </a>
+        <a class="nav-item" href="./profile/">
+          <i class="ri-user-3-line"></i><span>Profile</span>
         </a>
       </div>
-    </article>
-  `).join("");
-}
+    </nav>
+  </div>
 
-function renderAvailableCourses() {
-  const track = $("availableTrack");
-  const controls = $("carouselControls");
-  const courses = state.available;
+  <div id="errorScreen" class="error-screen hidden">
+    <h2>We couldn't load your home</h2>
+    <p id="errorMessage">Please check your connection and try again.</p>
+    <button id="retryButton" class="primary-button" type="button">Try again</button>
+  </div>
 
-  if (!courses.length) {
-    $("availableSection").style.display = "none";
-    if (state.purchased.length) return;
+  <div id="toast" class="toast hidden" role="status"></div>
 
-    track.innerHTML = `
-      <div class="empty-state" style="width:100%">
-        <div class="empty-icon">✨</div>
-        <h3>No additional courses available</h3>
-        <p>Check again later for new courses.</p>
-      </div>`;
-    return;
-  }
+  <script type="module">
+    import { auth, db } from "../firebase/firebase-config.js";
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+    import {
+      collection,
+      doc,
+      getDoc,
+      getDocs,
+      query,
+      where
+    } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
-  $("availableSection").style.display = "";
-  controls.style.display = courses.length > 1 ? "flex" : "none";
+    const $ = id => document.getElementById(id);
 
-  track.innerHTML = courses.map(course => `
-    <article class="available-card">
-      <div class="available-banner">
-        <span class="big-icon">${escapeHTML(course.icon)}</span>
-        <span class="course-tag">AVAILABLE</span>
-      </div>
-      <div class="available-body">
-        <h3>${escapeHTML(course.name)}</h3>
-        <p>${escapeHTML(course.description)}</p>
-        <div class="available-bottom">
-          <span class="price">${escapeHTML(course.price || "View details")}</span>
-          <a class="primary-button"
-             href="./courses/index.html?id=${encodeURIComponent(course.id)}">
-            View course →
-          </a>
-        </div>
-      </div>
-    </article>
-  `).join("");
+    const state = {
+      user: null,
+      student: null,
+      courses: [],
+      enrollments: [],
+      enrolledCourses: [],
+      selectedCourse: null,
+      contents: [],
+      liveClasses: []
+    };
 
-  state.slideIndex = 0;
-  track.scrollLeft = 0;
-  restartCarousel();
-}
+    let authHandled = false;
 
-function getVisibleCards() {
-  if (window.innerWidth <= 620) return 1;
-  if (window.innerWidth <= 900) return 2;
-  return 3;
-}
+    const text = value => String(value ?? "");
 
-function moveCarousel(direction = 1) {
-  const track = $("availableTrack");
-  const cards = track.querySelectorAll(".available-card");
-  if (cards.length <= 1) return;
+    function esc(value) {
+      return text(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
 
-  const visible = getVisibleCards();
-  const maxStart = Math.max(0, cards.length - visible);
+    function enrollmentCourseId(enrollment) {
+      return String(
+        enrollment.crmCourseId ||
+        enrollment.courseId ||
+        enrollment.courseID ||
+        enrollment.batchId ||
+        ""
+      );
+    }
 
-  state.slideIndex += direction;
-  if (state.slideIndex > maxStart) state.slideIndex = 0;
-  if (state.slideIndex < 0) state.slideIndex = maxStart;
+    function courseName(course) {
+      return course?.courseName || course?.name || course?.title || "Zenova course";
+    }
 
-  const card = cards[state.slideIndex];
-  if (card) {
-    track.scrollTo({ left: card.offsetLeft - track.offsetLeft, behavior: "smooth" });
-  }
-}
+    function isEnrollmentActive(enrollment) {
+      const status = String(enrollment.status || enrollment.enrollmentStatus || "").toLowerCase();
 
-function restartCarousel() {
-  if (state.slideTimer) clearInterval(state.slideTimer);
-  const count = state.available.length;
+      // Some legacy enrollment records have no status field.
+      return !status || [
+        "approved",
+        "active",
+        "paid",
+        "enrolled",
+        "success",
+        "completed"
+      ].includes(status);
+    }
 
-  if (count > 1) {
-    state.slideTimer = setInterval(() => {
-      if (document.visibilityState === "visible") moveCarousel(1);
-    }, 3000);
-  }
-}
+    function legacyCourseAccess(course) {
+      const student = state.student || {};
+      const uid = state.user?.uid || "";
 
-$("prevCourse").addEventListener("click", () => {
-  moveCarousel(-1);
-  restartCarousel();
-});
+      const lists = [
+        student.purchasedCourseIds,
+        student.enrolledCourseIds,
+        student.courseIds,
+        student.purchasedCourses,
+        student.enrolledCourses
+      ];
 
-$("nextCourse").addEventListener("click", () => {
-  moveCarousel(1);
-  restartCarousel();
-});
+      for (const list of lists) {
+        if (!Array.isArray(list)) continue;
 
-$("availableTrack").addEventListener("mouseenter", () => {
-  if (state.slideTimer) clearInterval(state.slideTimer);
-});
+        if (list.some(item => {
+          const id = typeof item === "object"
+            ? (item.courseId || item.id || item.crmCourseId)
+            : item;
 
-$("availableTrack").addEventListener("mouseleave", restartCarousel);
-
-window.addEventListener("resize", () => {
-  state.slideIndex = 0;
-  const track = $("availableTrack");
-  track.scrollTo({ left: 0, behavior: "auto" });
-});
-
-function renderNotifications() {
-  const list = $("notificationList");
-  const notifications = state.notifications;
-
-  const unread = notifications.filter(item => !(
-    item.data.isRead === true ||
-    item.data.read === true ||
-    item.data.status === "read"
-  )).length;
-
-  $("notificationCount").textContent = unread > 99 ? "99+" : String(unread);
-  $("notificationCount").style.display = unread ? "flex" : "none";
-  $("notificationHeadingCount").textContent = unread ? `(${unread})` : "";
-
-  if (!notifications.length) {
-    list.innerHTML = `
-      <div class="empty-state">
-        <div class="empty-icon">🔔</div>
-        <h3>You're all caught up</h3>
-        <p>New class schedules and announcements will appear here.</p>
-      </div>`;
-    return;
-  }
-
-  list.innerHTML = notifications.map(item => {
-    const data = item.data;
-    const isRead = data.isRead === true || data.read === true ||
-                   data.status === "read";
-
-    return `
-      <article class="notice-item ${isRead ? "" : "unread"}">
-        <div class="notice-icon">🔔</div>
-        <div class="notice-copy">
-          <h3>${escapeHTML(safeText(data.title, "Zenova update"))}</h3>
-          <p>${escapeHTML(safeText(data.message || data.body || data.description,
-                                  "Please open Zenova for more information."))}</p>
-          <div class="notice-time">${escapeHTML(
-            safeText(data.createdAtText || data.date || "", "Announcement")
-          )}</div>
-        </div>
-      </article>`;
-  }).join("");
-}
-
-async function readCollection(collectionName) {
-  try {
-    const snapshot = await getDocs(collection(db, collectionName));
-    return snapshot.docs.map(doc => ({
-      id: doc.id,
-      data: doc.data()
-    }));
-  } catch (error) {
-    console.warn(`Could not read ${collectionName}:`, error.code || error.message);
-    return null;
-  }
-}
-
-async function loadCourses(user) {
-  showLoader("Loading your courses...");
-
-  const [courseRows, enrollmentRows] = await Promise.all([
-    readCollection("zen2Courses"),
-    (async () => {
-      try {
-        const q = query(
-          collection(db, "studentEnrollments"),
-          where("studentUid", "==", user.uid)
-        );
-        const snap = await getDocs(q);
-        return snap.docs.map(doc => ({ id: doc.id, data: doc.data() }));
-      } catch (error) {
-        console.warn("Enrollment lookup failed:", error.code || error.message);
-        return null;
+          return String(id) === String(course.id);
+        })) return true;
       }
-    })()
-  ]);
 
-  if (courseRows === null || enrollmentRows === null) {
-    showError(
-      "Some course information could not be loaded. Check the Firestore collection names, fields and security rules."
-    );
-  }
+      const status = String(
+        course.studentAccess?.[uid] ||
+        course.enrollments?.[uid]?.status ||
+        ""
+      ).toLowerCase();
 
-  const courses = (courseRows || []).map(row => ({
-    id: getCourseId(row.data, row.id),
-    ...row.data,
-    name: getCourseName(row.data),
-    description: getCourseDescription(row.data),
-    icon: getCourseIcon(row.data)
-  }));
+      return ["approved", "active", "paid", "enrolled", "success"].includes(status);
+    }
 
-  const approvedEnrollments = (enrollmentRows || [])
-    .filter(row => isApproved(row.data));
+    function isEnrolled(course) {
+      if (!course) return false;
 
-  const enrolledIds = new Set(
-    approvedEnrollments.map(row => enrollmentCourseId(row.data)).filter(Boolean)
-  );
+      return state.enrollments.some(enrollment =>
+        isEnrollmentActive(enrollment) &&
+        enrollmentCourseId(enrollment) === String(course.id)
+      ) || legacyCourseAccess(course);
+    }
 
-  state.purchased = courses.filter(course =>
-    enrolledIds.has(course.id) ||
-    approvedEnrollments.some(row =>
-      row.id === course.id ||
-      row.data.courseDocumentId === course.id
-    )
-  );
+    async function loadStudent() {
+      const ref = doc(db, "zen2Students", state.user.uid);
+      const snapshot = await getDoc(ref);
+      state.student = snapshot.exists() ? snapshot.data() : {};
+    }
 
-  /*
-   * Important:
-   * The code expects zen2Courses and studentEnrollments.
-   * If the real app uses other collection names or field names,
-   * update this mapping to the actual production schema.
-   */
-  const purchasedIds = new Set(state.purchased.map(course => course.id));
+    async function loadEnrollments() {
+      const snapshot = await getDocs(
+        query(
+          collection(db, "studentEnrollments"),
+          where("studentUid", "==", state.user.uid)
+        )
+      );
 
-  state.available = courses.filter(course =>
-    isPublicCourse(course) && !purchasedIds.has(course.id)
-  );
+      state.enrollments = snapshot.docs.map(item => ({
+        id: item.id,
+        ...item.data()
+      }));
+    }
 
-  renderPurchasedCourses();
-  renderAvailableCourses();
-}
+    async function loadCourses() {
+      const snapshot = await getDocs(collection(db, "zen2Courses"));
 
-async function loadNotifications(user) {
-  /*
-   * Notification schema can differ between projects.
-   * This assumes zen2Notifications and either studentUid or userUid.
-   */
-  let rows = await readCollection("zen2Notifications");
+      state.courses = snapshot.docs
+        .map(item => ({ id: item.id, ...item.data() }))
+        .filter(course => {
+          const status = String(course.status || "").toLowerCase();
 
-  if (rows === null) {
-    $("notificationList").innerHTML = `
-      <div class="empty-state">
-        <div class="empty-icon">🔔</div>
-        <h3>Notifications unavailable</h3>
-        <p>Check the notification collection and Firestore permissions.</p>
-      </div>`;
-    return;
-  }
+          return course.isPublished !== false &&
+            course.published !== false &&
+            !["draft", "archived", "deleted"].includes(status);
+        });
 
-  state.notifications = rows.filter(row => {
-    const data = row.data;
-    const recipient = data.studentUid || data.userUid || data.uid;
-    const audience = String(data.audience || data.target || "").toLowerCase();
+      state.enrolledCourses = state.courses.filter(isEnrolled);
 
-    return !recipient ||
-      recipient === user.uid ||
-      audience === "all" ||
-      audience === "students";
-  }).sort((a, b) => {
-    const timeA = a.data.createdAt?.seconds || 0;
-    const timeB = b.data.createdAt?.seconds || 0;
-    return timeB - timeA;
-  });
+      const savedId = localStorage.getItem("zenovaSelectedCourseId");
 
-  renderNotifications();
-}
+      state.selectedCourse =
+        state.enrolledCourses.find(course => course.id === savedId) ||
+        state.enrolledCourses[0] ||
+        null;
 
-function setUserDetails(user) {
-  const displayName = safeText(user.displayName, "Student");
-  const firstName = displayName.split(/\s+/)[0];
+      renderCourseSelector();
+      renderCourses();
+      renderDailyMessage();
+    }
 
-  $("welcomeTitle").textContent = `Welcome back, ${firstName}!`;
-  $("welcomeSubtitle").textContent =
-    "Ready to make progress on your learning goals today?";
-  $("profileButton").textContent = firstName.charAt(0).toUpperCase();
-}
+    function renderCourseSelector() {
+      const selector = $("courseSelector");
 
-$("todayDate").textContent = new Intl.DateTimeFormat("en-IN", {
-  weekday: "short",
-  day: "numeric",
-  month: "short",
-  year: "numeric"
-}).format(new Date());
+      if (!state.enrolledCourses.length) {
+        selector.innerHTML = `<option value="">No enrolled courses</option>`;
+        selector.disabled = true;
 
-$("year").textContent = new Date().getFullYear();
+        $("selectedCourseName").textContent = "Explore Zenova courses";
+        $("selectedCourseMeta").textContent =
+          "Choose a course and complete the enrollment process to begin learning.";
 
-$("notificationButton").addEventListener("click", () => {
-  $("notificationsSection").scrollIntoView({ behavior: "smooth" });
-});
+        return;
+      }
 
-$("profileButton").addEventListener("click", () => {
-  window.location.href = "./profile/index.html";
-});
+      selector.disabled = false;
 
-$("markAllRead").addEventListener("click", () => {
-  /*
-   * This only changes the current display.
-   * Persisting read status requires updating each notification document
-   * using the real notification schema and permitted Firestore rules.
-   */
-  state.notifications = state.notifications.map(item => ({
-    ...item,
-    data: { ...item.data, isRead: true }
-  }));
-  renderNotifications();
-});
+      selector.innerHTML = state.enrolledCourses.map(course => `
+        <option value="${esc(course.id)}"
+          ${course.id === state.selectedCourse?.id ? "selected" : ""}>
+          ${esc(courseName(course))}
+        </option>
+      `).join("");
 
-let authHandled = false;
+      renderSelectedCourse();
+    }
 
-const authTimeout = setTimeout(() => {
-  if (!authHandled) {
-    showLoader("Authentication is taking longer than expected...");
-    hideLoader();
-    showError("Could not verify your login. Please refresh the page or sign in again.");
-  }
-}, LOADER_TIMEOUT_MS);
+    function renderSelectedCourse() {
+      const course = state.selectedCourse;
 
-const unsubscribe = onAuthStateChanged(auth, async user => {
-  if (authHandled) return;
-  authHandled = true;
-  clearTimeout(authTimeout);
-  unsubscribe();
+      $("selectedCourseName").textContent = course
+        ? courseName(course)
+        : "Explore Zenova courses";
 
-  if (!user) {
-    goToLogin();
-    return;
-  }
+      $("selectedCourseMeta").textContent = course
+        ? [
+            course.classDisplayName || course.className,
+            course.board,
+            course.academicYear
+          ].filter(Boolean).join(" · ") || "Your enrolled course"
+        : "Discover a course that matches your learning goals.";
+    }
 
-  state.user = user;
+    function renderDailyMessage() {
+      const name = state.student?.name ||
+        state.student?.fullName ||
+        state.user?.displayName ||
+        "Student";
 
-  try {
-    setUserDetails(user);
-    showLoader("Loading your learning space...");
+      $("studentName").textContent = name.trim().split(/\s+/)[0];
 
-    await Promise.all([
-      loadCourses(user),
-      loadNotifications(user)
-    ]);
+      const hour = new Date().getHours();
 
-    hideLoader();
-  } catch (error) {
-    console.error("Home page initialization failed:", error);
-    showError("We couldn't load all your information. Please refresh and try again.");
-    hideLoader();
-  }
-});
-</script>
+      $("greeting").textContent =
+        hour < 12 ? "GOOD MORNING" :
+        hour < 17 ? "GOOD AFTERNOON" : "GOOD EVENING";
+
+      $("todayDate").textContent = new Date().toLocaleDateString("en-IN", {
+        weekday: "short",
+        day: "numeric",
+        month: "short"
+      });
+
+      $("dailyMessage").textContent = state.selectedCourse
+        ? `Your ${courseName(state.selectedCourse)} learning space is ready. Continue a lesson or review an upcoming class.`
+        : "Explore the available courses and enroll to unlock your learning space.";
+    }
+
+    function renderCourses() {
+      const container = $("myCourses");
+
+      if (!state.courses.length) {
+        container.innerHTML = `
+          <div class="empty" style="grid-column:1/-1">
+            <i class="ri-book-open-line"></i>
+            No published courses are available right now.
+          </div>`;
+        return;
+      }
+
+      container.innerHTML = state.courses.map(course => {
+        const name = courseName(course);
+        const enrolled = isEnrolled(course);
+        const image = course.thumbnailUrl ||
+          course.imageUrl ||
+          course.coverImageUrl ||
+          "";
+
+        const metadata = [
+          course.classDisplayName || course.className,
+          course.board,
+          course.academicYear
+        ].filter(Boolean);
+
+        return `
+          <article class="course-card">
+            <div class="course-image">
+              ${image
+                ? `<img src="${esc(image)}" alt="${esc(name)}" loading="lazy">`
+                : `<i class="ri-graduation-cap-line"></i>`}
+            </div>
+            <div class="course-content">
+              <h3 class="course-title">${esc(name)}</h3>
+
+              <div class="course-meta">
+                ${metadata.map(item => `<span class="tag">${esc(item)}</span>`).join("")}
+                <span class="tag">${enrolled ? "Enrolled" : "Available"}</span>
+              </div>
+
+              <button class="course-action ${enrolled ? "primary" : ""}"
+                type="button"
+                data-course-action="${esc(course.id)}">
+                ${enrolled ? "Continue learning" : "View course"}
+                <i class="ri-arrow-right-line"></i>
+              </button>
+            </div>
+          </article>`;
+      }).join("");
+
+      container.querySelectorAll("[data-course-action]").forEach(button => {
+        button.addEventListener("click", () => {
+          const id = button.dataset.courseAction;
+          const course = state.courses.find(item => item.id === id);
+
+          if (!course) return;
+
+          if (isEnrolled(course)) {
+            selectCourse(course);
+            window.location.href = `./study/?courseId=${encodeURIComponent(id)}`;
+          } else {
+            window.location.href =
+              `./batchdetails/?courseId=${encodeURIComponent(id)}`;
+          }
+        });
+      });
+    }
+
+    async function selectCourse(course) {
+      state.selectedCourse = course;
+      localStorage.setItem("zenovaSelectedCourseId", course.id);
+
+      renderCourseSelector();
+      renderSelectedCourse();
+      renderDailyMessage();
+
+      await Promise.all([
+        loadCourseContents(),
+        loadLiveClasses()
+      ]);
+    }
+
+    async function loadCourseContents() {
+      const container = $("continueCard");
+      const course = state.selectedCourse;
+
+      if (!course || !isEnrolled(course)) {
+        container.innerHTML = `
+          <div class="empty">
+            <i class="ri-book-open-line"></i>
+            Enroll in a course to access your learning content.
+            <br><a href="./courses/">Explore courses</a>
+          </div>`;
+        return;
+      }
+
+      try {
+        const snapshot = await getDocs(
+          query(
+            collection(db, "zen2Content"),
+            where("courseId", "==", course.id)
+          )
+        );
+
+        state.contents = snapshot.docs
+          .map(item => ({ id: item.id, ...item.data() }))
+          .sort((a, b) =>
+            Number(a.order ?? a.priority ?? 9999) -
+            Number(b.order ?? b.priority ?? 9999)
+          );
+
+        renderContinueLearning();
+      } catch (error) {
+        console.error("Could not load course content:", error);
+
+        container.innerHTML = `
+          <div class="empty">
+            <i class="ri-wifi-off-line"></i>
+            We couldn't load your lessons right now.
+            Please try again later.
+          </div>`;
+      }
+    }
+
+    function renderContinueLearning() {
+      const container = $("continueCard");
+      const content = state.contents[0];
+      const course = state.selectedCourse;
+
+      if (!content) {
+        container.innerHTML = `
+          <div class="empty">
+            <i class="ri-play-circle-line"></i>
+            No published lesson is available for this course yet.
+          </div>`;
+        return;
+      }
+
+      const title = content.title ||
+        content.contentTitle ||
+        content.name ||
+        "Continue your lesson";
+
+      const chapterId = content.chapterId || "";
+      const subjectId = content.subjectId || "";
+
+      container.innerHTML = `
+        <article class="continue-card">
+          <div class="continue-icon">
+            <i class="ri-play-circle-line"></i>
+          </div>
+          <div class="continue-info">
+            <h3>${esc(title)}</h3>
+            <p>${esc(courseName(course))}</p>
+            <button class="continue-button" id="continueButton" type="button">
+              Open lesson <i class="ri-arrow-right-line"></i>
+            </button>
+          </div>
+        </article>`;
+
+      $("continueButton").addEventListener("click", () => {
+        const params = new URLSearchParams({
+          courseId: course.id,
+          contentId: content.id,
+          chapterId,
+          subjectId
+        });
+
+        window.location.href = `./chapterdetails/?${params.toString()}`;
+      });
+    }
+
+    function parseDateTime(item) {
+      const date = item.scheduledDate || item.date || "";
+      const time = item.scheduledTime || item.time || "00:00";
+
+      if (!date) return null;
+
+      const value = new Date(`${date}T${time}`);
+
+      return Number.isNaN(value.getTime()) ? null : value;
+    }
+
+    function formatDateTime(date) {
+      return date.toLocaleString("en-IN", {
+        day: "numeric",
+        month: "short",
+        hour: "numeric",
+        minute: "2-digit"
+      });
+    }
+
+    async function loadLiveClasses() {
+      const container = $("liveList");
+      const course = state.selectedCourse;
+
+      if (!course || !isEnrolled(course)) {
+        container.innerHTML = `
+          <div class="empty">
+            <i class="ri-live-line"></i>
+            Enroll in a course to see its scheduled classes.
+            <br><a href="./courses/">Explore courses</a>
+          </div>`;
+        return;
+      }
+
+      try {
+        const snapshot = await getDocs(
+          query(
+            collection(db, "liveClasses"),
+            where("active", "==", true)
+          )
+        );
+
+        const enrolledIds = new Set(
+          state.enrolledCourses.map(item => String(item.id))
+        );
+
+        const enrolledNames = new Set(
+          state.enrolledCourses.map(item =>
+            normalize(item.courseName || item.name || item.title)
+          )
+        );
+
+        const matching = snapshot.docs
+          .map(item => ({ id: item.id, ...item.data() }))
+          .filter(item => {
+            const courseId = String(
+              item.courseId ||
+              item.crmCourseId ||
+              item.batchId ||
+              item.courseID ||
+              ""
+            );
+
+            const className = normalize(
+              item.courseName || item.batchName || item.courseTitle
+            );
+
+            // The homepage shows only classes for the selected course.
+            if (courseId) return courseId === String(course.id);
+
+            // Legacy fallback when a class has no course ID.
+            if (className) {
+              return className === normalize(courseName(course)) &&
+                enrolledNames.has(className);
+            }
+
+            return false;
+          });
+
+        const now = Date.now();
+
+        matching.sort((a, b) => {
+          const da = parseDateTime(a)?.getTime() ?? Infinity;
+          const db = parseDateTime(b)?.getTime() ?? Infinity;
+
+          const aLive = String(a.status || "").toLowerCase() === "live";
+          const bLive = String(b.status || "").toLowerCase() === "live";
+
+          if (aLive !== bLive) return aLive ? -1 : 1;
+
+          return Math.abs(da - now) - Math.abs(db - now);
+        });
+
+        state.liveClasses = matching;
+        renderLiveClasses(matching.slice(0, 3));
+      } catch (error) {
+        console.error("Could not load live classes:", error);
+
+        container.innerHTML = `
+          <div class="empty">
+            <i class="ri-error-warning-line"></i>
+            Live classes couldn't be loaded. Please try again later.
+          </div>`;
+      }
+    }
+
+    function renderLiveClasses(classes) {
+      const container = $("liveList");
+
+      if (!classes.length) {
+        container.innerHTML = `
+          <div class="empty">
+            <i class="ri-calendar-check-line"></i>
+            No scheduled classes were found for this course.
+            <br><a href="./live/">View live classes</a>
+          </div>`;
+        return;
+      }
+
+      container.innerHTML = classes.map(item => {
+        const scheduled = parseDateTime(item);
+        const status = String(item.status || "").toLowerCase();
+        const isLive = status === "live" || item.isLive === true;
+        const isEnded = status === "ended" || item.ended === true;
+        const future = scheduled && scheduled.getTime() > Date.now();
+
+        const title = item.title || item.classTitle || "Live class";
+
+        const details = [
+          item.subjectName,
+          item.chapterName,
+          item.teacherName || item.facultyName
+        ].filter(Boolean).join(" · ");
+
+        const image = item.thumbnailUrl || item.imageUrl || "";
+
+        let label = "Upcoming";
+        if (isLive) label = "LIVE NOW";
+        else if (isEnded) label = "Ended";
+        else if (future && scheduled) label = formatDateTime(scheduled);
+
+        const canJoin = isLive && !isEnded;
+
+        return `
+          <article class="live-card">
+            <div class="live-icon">
+              ${image
+                ? `<img src="${esc(image)}" alt="" loading="lazy">`
+                : `<i class="ri-live-line"></i>`}
+            </div>
+
+            <div class="live-info">
+              <span class="live-status ${!isLive ? "upcoming" : ""}">
+                ${isLive ? "● LIVE NOW" : esc(label)}
+              </span>
+              <h3>${esc(title)}</h3>
+              <p>${esc(details || courseName(state.selectedCourse))}</p>
+            </div>
+
+            <button class="live-button"
+              type="button"
+              data-live-id="${esc(item.id)}"
+              ${canJoin ? "" : "disabled"}>
+              ${canJoin ? "Join" : isEnded ? "Ended" : "Scheduled"}
+            </button>
+          </article>`;
+      }).join("");
+
+      container.querySelectorAll("[data-live-id]").forEach(button => {
+        button.addEventListener("click", () => {
+          const item = state.liveClasses.find(
+            liveClass => liveClass.id === button.dataset.liveId
+          );
+
+          if (!item) return;
+
+          // The existing live page is responsible for access checks and playback.
+          const params = new URLSearchParams({
+            courseId: state.selectedCourse.id,
+            liveClassId: item.id
+          });
+
+          window.location.href = `./live/?${params.toString()}`;
+        });
+      });
+    }
+
+    function normalize(value) {
+      return String(value || "").trim().toUpperCase().replace(/\s+/g, " ");
+    }
+
+    function showApp() {
+      $("app").classList.remove("hidden");
+      $("loader").classList.add("hidden");
+    }
+
+    function showError(message) {
+      $("loader").classList.add("hidden");
+      $("errorScreen").classList.remove("hidden");
+      $("errorMessage").textContent = message;
+      $("retryButton").onclick = () => window.location.reload();
+    }
+
+    $("courseSelector").addEventListener("change", async event => {
+      const course = state.enrolledCourses.find(
+        item => item.id === event.target.value
+      );
+
+      if (course) await selectCourse(course);
+    });
+
+    onAuthStateChanged(auth, async user => {
+      if (!user) {
+        window.location.replace("../login/");
+        return;
+      }
+
+      if (authHandled) return;
+      authHandled = true;
+      state.user = user;
+
+      try {
+        await loadStudent();
+        await loadEnrollments();
+        await loadCourses();
+
+        renderSelectedCourse();
+
+        await Promise.all([
+          loadCourseContents(),
+          loadLiveClasses()
+        ]);
+
+        showApp();
+      } catch (error) {
+        console.error("ZENOVA HOME:", error);
+
+        const message =
+          error?.code === "permission-denied"
+            ? "Zenova could not access the required student data. Please check your account permissions."
+            : "We couldn't load your learning dashboard. Please try again.";
+
+        showError(message);
+      }
+    });
+  </script>
 </body>
 </html>
