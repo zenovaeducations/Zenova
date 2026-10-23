@@ -368,7 +368,26 @@
       grid-template-columns: repeat(2, minmax(0,1fr));
       gap: 12px;
     }
+/* My Courses: horizontal slider */
+.course-slider {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
 
+.course-slider::-webkit-scrollbar {
+  display: none;
+}
+
+.course-slider .course-card {
+  flex: 0 0 100%;
+  min-width: 0;
+  scroll-snap-align: start;
+}
     .course-card {
       min-width: 0;
       overflow: hidden;
@@ -988,18 +1007,33 @@
       </section>
 
       <section class="section" aria-labelledby="myCoursesTitle">
-        <div class="section-heading">
-          <div>
-            <h2 class="section-title" id="myCoursesTitle">My courses</h2>
-            <p class="section-subtitle">Courses available to your account.</p>
-          </div>
-          <a class="text-link" href="./courses/">All courses <i class="ri-arrow-right-line"></i></a>
-        </div>
-        <div id="myCourses" class="course-grid">
-          <div class="skeleton"></div>
-          <div class="skeleton"></div>
-        </div>
-      </section>
+  <div class="section-heading">
+    <div>
+      <h2 class="section-title" id="myCoursesTitle">My courses</h2>
+      <p class="section-subtitle">Your purchased and approved courses.</p>
+    </div>
+  </div>
+
+  <div id="myCourses" class="course-slider">
+    <div class="skeleton"></div>
+  </div>
+</section>
+
+<section class="section" aria-labelledby="availableCoursesTitle">
+  <div class="section-heading">
+    <div>
+      <h2 class="section-title" id="availableCoursesTitle">Available courses</h2>
+      <p class="section-subtitle">Explore courses you haven't enrolled in yet.</p>
+    </div>
+    <a class="text-link" href="./courses/">
+      All courses <i class="ri-arrow-right-line"></i>
+    </a>
+  </div>
+
+  <div id="availableCourses" class="course-grid">
+    <div class="skeleton"></div>
+  </div>
+</section>
 
       <section class="section" aria-labelledby="liveTitle">
         <div class="section-heading">
@@ -1290,73 +1324,138 @@
     }
 
     function renderCourses() {
-      const container = $("myCourses");
+  const myCourses = state.enrolledCourses;
+  const availableCourses = state.courses.filter(
+    course => !isEnrolled(course)
+  );
 
-      if (!state.courses.length) {
-        container.innerHTML = `
-          <div class="empty" style="grid-column:1/-1">
-            <i class="ri-book-open-line"></i>
-            No published courses are available right now.
-          </div>`;
-        return;
+  renderCourseCards(myCourses, "myCourses", true);
+  renderCourseCards(availableCourses, "availableCourses", false);
+
+  startMyCoursesSlider();
+}
+
+function renderCourseCards(courses, containerId, enrolledList) {
+  const container = $(containerId);
+
+  if (!courses.length) {
+    container.innerHTML = enrolledList
+      ? `
+        <div class="empty" style="width:100%">
+          <i class="ri-book-open-line"></i>
+          You haven't enrolled in a course yet.
+          <br><a href="./courses/">Explore available courses</a>
+        </div>
+      `
+      : `
+        <div class="empty" style="grid-column:1/-1;width:100%">
+          <i class="ri-check-double-line"></i>
+          You've explored all currently available courses.
+        </div>
+      `;
+    return;
+  }
+
+  container.innerHTML = courses.map(course => {
+    const name = courseName(course);
+    const image = course.thumbnailUrl ||
+      course.imageUrl ||
+      course.coverImageUrl ||
+      "";
+
+    const metadata = [
+      course.classDisplayName || course.className,
+      course.board,
+      course.academicYear
+    ].filter(Boolean);
+
+    return `
+      <article class="course-card">
+        <div class="course-image">
+          ${image
+            ? `<img src="${esc(image)}" alt="${esc(name)}" loading="lazy">`
+            : `<i class="ri-graduation-cap-line"></i>`}
+        </div>
+
+        <div class="course-content">
+          <h3 class="course-title">${esc(name)}</h3>
+
+          <div class="course-meta">
+            ${metadata.map(item =>
+              `<span class="tag">${esc(item)}</span>`
+            ).join("")}
+            <span class="tag">
+              ${enrolledList ? "Enrolled" : "Available"}
+            </span>
+          </div>
+
+          <button
+            class="course-action ${enrolledList ? "primary" : ""}"
+            type="button"
+            data-course-action="${esc(course.id)}">
+            ${enrolledList ? "Continue learning" : "View course"}
+            <i class="ri-arrow-right-line"></i>
+          </button>
+        </div>
+      </article>
+    `;
+  }).join("");
+
+  container.querySelectorAll("[data-course-action]").forEach(button => {
+    button.addEventListener("click", () => {
+      const id = button.dataset.courseAction;
+      const course = state.courses.find(item => item.id === id);
+
+      if (!course) return;
+
+      if (isEnrolled(course)) {
+        selectCourse(course);
+        window.location.href =
+          `./study/?courseId=${encodeURIComponent(id)}`;
+      } else {
+        window.location.href =
+          `./batchdetails/?courseId=${encodeURIComponent(id)}`;
       }
+    });
+  });
+}
 
-      container.innerHTML = state.courses.map(course => {
-        const name = courseName(course);
-        const enrolled = isEnrolled(course);
-        const image = course.thumbnailUrl ||
-          course.imageUrl ||
-          course.coverImageUrl ||
-          "";
+let myCoursesSliderTimer = null;
 
-        const metadata = [
-          course.classDisplayName || course.className,
-          course.board,
-          course.academicYear
-        ].filter(Boolean);
+function startMyCoursesSlider() {
+  const slider = $("myCourses");
 
-        return `
-          <article class="course-card">
-            <div class="course-image">
-              ${image
-                ? `<img src="${esc(image)}" alt="${esc(name)}" loading="lazy">`
-                : `<i class="ri-graduation-cap-line"></i>`}
-            </div>
-            <div class="course-content">
-              <h3 class="course-title">${esc(name)}</h3>
+  if (myCoursesSliderTimer) {
+    clearInterval(myCoursesSliderTimer);
+    myCoursesSliderTimer = null;
+  }
 
-              <div class="course-meta">
-                ${metadata.map(item => `<span class="tag">${esc(item)}</span>`).join("")}
-                <span class="tag">${enrolled ? "Enrolled" : "Available"}</span>
-              </div>
+  slider.scrollLeft = 0;
 
-              <button class="course-action ${enrolled ? "primary" : ""}"
-                type="button"
-                data-course-action="${esc(course.id)}">
-                ${enrolled ? "Continue learning" : "View course"}
-                <i class="ri-arrow-right-line"></i>
-              </button>
-            </div>
-          </article>`;
-      }).join("");
+  const cards = slider.querySelectorAll(".course-card");
 
-      container.querySelectorAll("[data-course-action]").forEach(button => {
-        button.addEventListener("click", () => {
-          const id = button.dataset.courseAction;
-          const course = state.courses.find(item => item.id === id);
+  // One course stays fixed. No automatic sliding is needed.
+  if (cards.length <= 1) return;
 
-          if (!course) return;
+  myCoursesSliderTimer = setInterval(() => {
+    const currentCards = slider.querySelectorAll(".course-card");
 
-          if (isEnrolled(course)) {
-            selectCourse(course);
-            window.location.href = `./study/?courseId=${encodeURIComponent(id)}`;
-          } else {
-            window.location.href =
-              `./batchdetails/?courseId=${encodeURIComponent(id)}`;
-          }
-        });
-      });
+    if (currentCards.length <= 1) {
+      clearInterval(myCoursesSliderTimer);
+      myCoursesSliderTimer = null;
+      return;
     }
+
+    const atLastCard =
+      slider.scrollLeft + slider.clientWidth >=
+      slider.scrollWidth - 10;
+
+    slider.scrollTo({
+      left: atLastCard ? 0 : slider.scrollLeft + slider.clientWidth,
+      behavior: "smooth"
+    });
+  }, 3000);
+}
 
     async function selectCourse(course) {
       state.selectedCourse = course;
