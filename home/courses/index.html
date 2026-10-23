@@ -1,38 +1,1125 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#111114"><title>Courses | Zenova Educations</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f7f9fc">
+<title>Revision | Zenova Educations</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.css" rel="stylesheet">
+
 <style>
-:root{--purple:#7048d8;--purple2:#5933bf;--ink:#151519;--muted:#85838d;--paper:#f7f7fa;--line:#e6e3ec;--navy:#111114;--white:#fff;--green:#16845d;--shadow:0 12px 35px #24164b0b}*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.5 Inter,system-ui,-apple-system,"Segoe UI",sans-serif}button,input,select{font:inherit}button,a{-webkit-tap-highlight-color:transparent}a{color:inherit;text-decoration:none}.topbar{min-height:112px;background:#111114;color:#fff;display:flex;align-items:center;padding:20px max(20px,calc((100% - 1240px)/2));gap:15px;position:sticky;top:0;z-index:10;box-shadow:0 6px 25px #0002}.logo{width:62px;height:62px;flex:0 0 62px;display:grid;place-items:center;background:#f0eaff;border-radius:20px;color:#6340bf;font-size:34px;font-weight:900}.brand{font-weight:900;letter-spacing:-.5px;font-size:clamp(17px,2vw,25px);line-height:1.25}.brand small{display:block;font-size:clamp(10px,1.3vw,14px);letter-spacing:2.6px;color:#c8c4d0;font-weight:500;margin-top:7px}.spacer{flex:1}.navlink{color:#e5e0f4;font-weight:700;font-size:13px;padding:10px 13px;border-radius:10px}.navlink:hover{background:#ffffff12}.navbtn{background:#fff;color:var(--navy);padding:10px 14px;border-radius:11px;font-weight:800;font-size:13px}.avatar{width:54px;height:54px;flex:0 0 54px;border:3px solid #9b7be9;border-radius:50%;display:grid;place-items:center;background:#694c42;color:#fff;font-size:25px;font-weight:700}.wrap{max-width:1240px;margin:auto;padding:25px 22px 76px}.page-intro{margin:0 0 24px}.eyebrow{font-size:12px;font-weight:900;letter-spacing:2.5px;text-transform:uppercase;color:var(--purple)}.page-intro h1{font-size:clamp(30px,4vw,42px);letter-spacing:-1.5px;line-height:1.1;margin:8px 0 8px}.page-intro p{margin:0;color:var(--muted);font-size:clamp(14px,2vw,17px)}.banner{display:block;width:100%;height:auto;max-height:none;object-fit:contain;object-position:center;border-radius:20px;background:#111114;box-shadow:0 12px 30px #24164b12;margin:0 0 28px}.banner-fallback{display:none;min-height:115px;border-radius:20px;margin:0 0 28px;padding:22px 25px;color:white;background:linear-gradient(110deg,#17131f,#483080 60%,#8c6ae8);align-items:center}.banner-fallback strong{display:block;font-size:clamp(22px,4vw,36px);line-height:1.1}.banner-fallback span{display:block;margin-top:7px;color:#e6ddff;font-size:14px}.toolbar{display:flex;align-items:center;gap:12px;margin:30px 0 20px;flex-wrap:wrap}.heading{flex:1;min-width:180px}.heading h2{font-size:25px;letter-spacing:-.8px;margin:0}.heading p{margin:3px 0 0;color:var(--muted);font-size:13px}.searchbox{position:relative;min-width:min(100%,260px);max-width:350px;flex:1}.searchbox input{width:100%;padding:13px 14px 13px 42px;border:1px solid var(--line);border-radius:13px;background:white;outline:none}.searchbox input:focus{border-color:#a18be6;box-shadow:0 0 0 3px #7048d814}.search-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#8c879d}.filter{padding:12px 13px;border:1px solid var(--line);border-radius:13px;background:#fff;color:#454153;max-width:170px;outline:none}.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px}.card{background:#fff;border:1px solid var(--line);border-radius:20px;overflow:hidden;box-shadow:var(--shadow);display:flex;flex-direction:column;min-width:0;transition:transform .18s,box-shadow .18s}.card:hover{transform:translateY(-3px);box-shadow:0 18px 42px #24164b12}.cover{width:100%;aspect-ratio:16/9;background:linear-gradient(135deg,#21183e,#7653d8);position:relative;overflow:hidden;display:grid;place-items:center;color:#fff}.cover img{display:block;width:100%;height:100%;object-fit:contain;object-position:center;background:#18152a}.cover.no-image img{display:none}.cover-fallback{position:absolute;inset:0;display:flex;align-items:flex-end;padding:18px;background:linear-gradient(135deg,#21183e,#7653d8);color:#fff}.cover-fallback strong{font-size:20px;line-height:1.2;max-width:90%}.cover.has-image .cover-fallback{display:none}.cover-tag,.course-tag,.course-badge{display:none!important}.cardbody{padding:19px;display:flex;flex-direction:column;flex:1}.card h3{font-size:19px;line-height:1.3;letter-spacing:-.5px;margin:0 0 10px;overflow-wrap:anywhere}.description{font-size:13px;color:var(--muted);margin:0 0 14px;line-height:1.6;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;min-height:62px}.chips{display:flex;gap:7px;flex-wrap:wrap;margin:0 0 17px}.chip{background:#f4f1fb;color:#6a5a8d;border-radius:9px;padding:6px 9px;font-size:11px;font-weight:700}.price-row{display:flex;align-items:baseline;gap:9px;margin-top:auto;padding-top:4px}.price{font-size:23px;letter-spacing:-.6px;font-weight:900}.old-price{color:#9a96a5;text-decoration:line-through;font-size:13px}.price-label{color:var(--muted);font-size:11px;margin-left:auto}.actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:17px}.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:12px;padding:12px 10px;font-weight:850;font-size:13px;border:1px solid transparent;cursor:pointer;transition:.15s;min-width:0}.btn:active{transform:scale(.98)}.btn-primary{background:var(--purple);color:white}.btn-primary:hover{background:var(--purple2)}.btn-outline{background:white;border-color:#dcd5ee;color:#5d3ab4}.btn-outline:hover{background:#f8f5ff;border-color:#b6a4e8}.state{grid-column:1/-1;padding:40px 20px;text-align:center;background:white;border:1px dashed #d9d4e7;border-radius:18px;color:var(--muted)}.state strong{display:block;color:var(--ink);font-size:17px;margin-bottom:6px}.state button{margin-top:15px}.spinner{width:28px;height:28px;border:3px solid #e5def8;border-top-color:var(--purple);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 12px}@keyframes spin{to{transform:rotate(360deg)}}.error-note{background:#fff0f1;color:#9c2636;border:1px solid #ffd6db;border-radius:12px;padding:13px 15px;font-size:12px;margin-bottom:18px;display:none}.foot{padding:25px 10px 0;text-align:center;color:#8a8798;font-size:11px}.hidden{display:none!important}@media(max-width:950px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.wrap{padding-top:25px}}@media(max-width:600px){.topbar{min-height:104px;padding:17px 20px;gap:13px}.logo{width:58px;height:58px;flex-basis:58px;border-radius:19px;font-size:32px}.brand{font-size:19px;letter-spacing:-.6px}.brand small{font-size:10px;letter-spacing:2px;margin-top:6px}.navlink{display:none}.avatar{width:54px;height:54px;flex-basis:54px}.wrap{padding:24px 13px 45px}.page-intro{margin-bottom:19px}.page-intro h1{font-size:32px;letter-spacing:-1.1px}.banner{width:100%;height:auto;border-radius:15px;margin-bottom:24px}.banner-fallback{min-height:95px;border-radius:15px;margin-bottom:24px;padding:17px}.toolbar{margin:23px 0 15px;gap:9px}.heading{flex-basis:100%}.heading h2{font-size:23px}.searchbox{max-width:none;min-width:0}.filter{max-width:145px}.grid{grid-template-columns:1fr;gap:16px}.card{border-radius:18px}.cover{aspect-ratio:16/9}.cardbody{padding:16px}.card h3{font-size:18px}.description{min-height:0}.actions{gap:8px}.btn{padding:12px 8px;font-size:12px}.price{font-size:22px}}
+:root {
+  --bg:#f7f9fc;
+  --surface:#fff;
+  --surface-soft:#f0f5fb;
+  --ink:#172338;
+  --muted:#7b8799;
+  --line:#e7edf5;
+  --blue:#3978e8;
+  --blue-dark:#245fc9;
+  --blue-soft:#eaf2ff;
+  --green:#159b78;
+  --green-soft:#e8f8f2;
+  --radius:18px;
+  --nav-height:76px;
+}
+
+* { box-sizing:border-box; margin:0; padding:0; }
+html { scroll-behavior:smooth; background:var(--bg); }
+body {
+  min-height:100vh;
+  padding-bottom:calc(var(--nav-height) + env(safe-area-inset-bottom));
+  background:var(--bg);
+  color:var(--ink);
+  font-family:Inter,system-ui,sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+a { color:inherit; text-decoration:none; }
+button { font:inherit; cursor:pointer; }
+button:focus-visible,a:focus-visible {
+  outline:3px solid #8db5ff;
+  outline-offset:3px;
+}
+.hidden { display:none!important; }
+
+.wrap { width:min(100%,1080px); margin:auto; }
+.page { padding:22px 17px 35px; }
+
+/* Same header theme as Home */
+.topbar {
+  position:sticky;
+  top:0;
+  z-index:50;
+  background:rgba(255,255,255,.94);
+  backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--line);
+}
+.topbar-inner {
+  width:min(100%,1080px);
+  min-height:72px;
+  margin:auto;
+  padding:12px 18px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:18px;
+}
+.brand { display:flex; align-items:center; gap:10px; min-width:0; }
+.brand-logo {
+  width:40px; height:40px; flex:0 0 40px;
+  display:grid; place-items:center;
+  border-radius:13px;
+  background:var(--blue); color:white;
+  font-size:21px; font-weight:800;
+}
+.brand-name { font-size:15px; font-weight:800; letter-spacing:-.4px; }
+.brand-sub { margin-top:3px; color:var(--muted); font-size:10px; }
+.desktop-nav { display:flex; align-items:center; gap:5px; }
+.desktop-nav a {
+  padding:11px 13px; border-radius:10px;
+  color:#69778b; font-size:12px; font-weight:650;
+}
+.desktop-nav a:hover,.desktop-nav a.active {
+  background:var(--blue-soft); color:var(--blue-dark);
+}
+.profile-button {
+  width:40px; height:40px; flex:0 0 40px;
+  display:grid; place-items:center;
+  border:1px solid var(--line); border-radius:50%;
+  background:var(--surface-soft); color:var(--blue-dark);
+}
+.profile-button i { font-size:19px; }
+
+/* Page introduction */
+.intro { margin:8px 0 22px; }
+.eyebrow {
+  color:var(--blue);
+  font-size:10px; font-weight:800;
+  letter-spacing:1.2px; text-transform:uppercase;
+}
+h1 {
+  margin-top:8px;
+  font-size:clamp(25px,4vw,32px);
+  font-weight:800; letter-spacing:-1.1px; line-height:1.2;
+}
+.intro p {
+  margin-top:8px; color:var(--muted);
+  font-size:12px; line-height:1.7;
+}
+
+/* Main enrolled course - prominent */
+.section { margin-top:27px; }
+.section-heading {
+  display:flex; align-items:center;
+  justify-content:space-between; gap:12px;
+  margin-bottom:13px;
+}
+.section-title { font-size:17px; font-weight:800; letter-spacing:-.45px; }
+.section-subtitle {
+  margin-top:5px; color:var(--muted);
+  font-size:11px; line-height:1.6;
+}
+.course-list { display:grid; gap:15px; }
+
+.enrolled-card {
+  overflow:hidden;
+  border:1px solid #dce8fb;
+  border-radius:19px;
+  background:#fff;
+  box-shadow:0 7px 22px #243b5b09;
+}
+.course-cover {
+  min-height:155px;
+  position:relative;
+  display:flex; flex-direction:column;
+  justify-content:flex-end;
+  padding:19px;
+  overflow:hidden;
+  background:linear-gradient(125deg,#1e3c68,#3978e8 72%,#79a8f5);
+  color:#fff;
+}
+.course-cover img {
+  position:absolute; inset:0;
+  width:100%; height:100%; object-fit:cover;
+}
+.course-cover::after {
+  content:""; position:absolute; inset:0;
+  background:linear-gradient(90deg,#122744d9,#12274440);
+}
+.cover-content { position:relative; z-index:1; }
+.enrolled-label {
+  display:inline-flex; align-items:center; gap:5px;
+  padding:6px 9px; border-radius:7px;
+  background:#ffffff24; border:1px solid #ffffff45;
+  font-size:9px; font-weight:800; letter-spacing:.8px;
+}
+.cover-content h3 {
+  margin-top:11px; max-width:600px;
+  font-size:clamp(21px,4vw,28px);
+  font-weight:800; line-height:1.25; letter-spacing:-.6px;
+}
+.cover-content p {
+  margin-top:6px; color:#e6efff; font-size:11px;
+}
+.course-details { padding:17px; }
+.course-meta { display:flex; flex-wrap:wrap; gap:7px; }
+.tag {
+  padding:6px 9px; border-radius:8px;
+  background:#f1f5fa; color:#65758a;
+  font-size:10px; font-weight:650;
+}
+.course-open {
+  width:100%; min-height:44px; margin-top:15px;
+  border:0; border-radius:11px;
+  display:flex; align-items:center; justify-content:center; gap:8px;
+  background:var(--blue); color:white;
+  font-size:12px; font-weight:800;
+}
+.course-open:hover { background:var(--blue-dark); }
+.course-open i { font-size:17px; }
+
+/* Subjects */
+.subject-grid {
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:11px;
+}
+.subject-card {
+  min-width:0; min-height:128px;
+  display:flex; flex-direction:column;
+  align-items:flex-start; text-align:left;
+  padding:15px;
+  border:1px solid var(--line);
+  border-radius:15px;
+  background:#fff; color:var(--ink);
+  transition:border-color .18s,transform .18s;
+}
+.subject-card:hover { border-color:#b9d1fa; transform:translateY(-2px); }
+.subject-icon {
+  width:39px; height:39px; flex:0 0 39px;
+  display:grid; place-items:center;
+  border-radius:12px;
+  background:var(--blue-soft); color:var(--blue);
+  font-size:21px;
+}
+.subject-card strong {
+  margin-top:12px; font-size:12px;
+  font-weight:800; line-height:1.5;
+  overflow-wrap:anywhere;
+}
+.subject-card small { margin-top:4px; color:var(--muted); font-size:10px; }
+
+/* Chapter list */
+.chapter-list { display:grid; gap:10px; }
+.chapter-card {
+  display:flex; align-items:center; gap:12px;
+  padding:14px;
+  border:1px solid var(--line);
+  border-radius:14px;
+  background:#fff;
+}
+.chapter-number {
+  width:43px; height:43px; flex:0 0 43px;
+  display:grid; place-items:center;
+  border-radius:12px;
+  background:var(--blue-soft); color:var(--blue-dark);
+  font-size:12px; font-weight:800;
+}
+.chapter-copy { flex:1; min-width:0; }
+.chapter-copy h3 {
+  font-size:12px; font-weight:800;
+  line-height:1.5; overflow-wrap:anywhere;
+}
+.chapter-copy p { margin-top:4px; color:var(--muted); font-size:10px; }
+.chapter-arrow { color:var(--blue); font-size:20px; }
+
+/* Lesson/content list */
+.lesson-list { display:grid; gap:10px; }
+.lesson-card {
+  display:flex; align-items:center; gap:12px;
+  padding:13px;
+  border:1px solid var(--line); border-radius:14px;
+  background:white;
+}
+.lesson-icon {
+  width:45px; height:45px; flex:0 0 45px;
+  display:grid; place-items:center;
+  border-radius:12px; background:var(--green-soft);
+  color:var(--green); font-size:22px;
+}
+.lesson-copy { min-width:0; flex:1; }
+.lesson-copy h3 { font-size:12px; font-weight:750; line-height:1.5; overflow-wrap:anywhere; }
+.lesson-copy p { margin-top:4px; color:var(--muted); font-size:10px; line-height:1.5; }
+.lesson-open {
+  border:0; border-radius:9px;
+  padding:10px 12px; background:var(--blue-soft);
+  color:var(--blue-dark); font-size:10px; font-weight:800;
+}
+
+/* Breadcrumb and back */
+.back-row { margin:0 0 19px; }
+.back-button {
+  display:inline-flex; align-items:center; gap:7px;
+  padding:9px 12px;
+  border:1px solid var(--line); border-radius:10px;
+  background:white; color:var(--blue-dark);
+  font-size:11px; font-weight:750;
+}
+.back-button i { font-size:17px; }
+.breadcrumb {
+  display:flex; flex-wrap:wrap; align-items:center;
+  gap:7px; margin-top:13px;
+  color:var(--muted); font-size:10px;
+}
+.breadcrumb button {
+  border:0; background:transparent;
+  color:var(--blue-dark); font-weight:700;
+}
+.breadcrumb i { color:#aab4c3; }
+
+/* Loading and empty states */
+.empty {
+  padding:25px 17px;
+  border:1px dashed #dce4ef; border-radius:15px;
+  background:white; color:var(--muted);
+  text-align:center; font-size:11px; line-height:1.7;
+}
+.empty i { display:block; margin-bottom:8px; color:#94a9c6; font-size:26px; }
+.empty strong { display:block; margin-bottom:5px; color:var(--ink); font-size:13px; }
+.skeleton {
+  height:120px; border-radius:15px;
+  background:linear-gradient(90deg,#edf1f7 25%,#f8faff 50%,#edf1f7 75%);
+  background-size:200% 100%; animation:shimmer 1.3s infinite;
+}
+@keyframes shimmer { to { background-position:-200% 0; } }
+
+.error-screen,.loader {
+  position:fixed; inset:0; z-index:999;
+  display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  padding:24px; background:var(--bg); text-align:center;
+}
+.loader { color:var(--blue); gap:12px; }
+.loader-logo {
+  width:52px; height:52px; display:grid; place-items:center;
+  border-radius:16px; background:var(--blue);
+  color:white; font-size:25px; font-weight:800;
+}
+.loader strong { color:var(--ink); font-size:16px; letter-spacing:2px; }
+.loader span { color:var(--muted); font-size:10px; }
+.spinner {
+  width:25px; height:25px;
+  border:3px solid #dce8fb; border-top-color:var(--blue);
+  border-radius:50%; animation:spin .8s linear infinite;
+}
+@keyframes spin { to { transform:rotate(360deg); } }
+.error-screen h2 { font-size:21px; }
+.error-screen p { max-width:350px; margin:10px 0 18px; color:var(--muted); font-size:12px; line-height:1.7; }
+.primary-button {
+  padding:12px 17px; border:0; border-radius:10px;
+  background:var(--blue); color:white; font-size:12px; font-weight:750;
+}
+
+/* Same mobile navigation as Home */
+.bottom-nav {
+  position:fixed; z-index:100; right:0; bottom:0; left:0;
+  padding:8px 10px calc(8px + env(safe-area-inset-bottom));
+  border-top:1px solid var(--line);
+  background:rgba(255,255,255,.96); backdrop-filter:blur(15px);
+}
+.bottom-inner {
+  width:min(100%,520px); margin:auto;
+  display:grid; grid-template-columns:repeat(5,1fr); gap:3px;
+}
+.nav-item {
+  min-height:51px; display:flex; flex-direction:column;
+  align-items:center; justify-content:center; gap:4px;
+  border-radius:11px; color:#8a96a8;
+  font-size:9px; font-weight:700;
+}
+.nav-item i { font-size:20px; }
+.nav-item.active { background:var(--blue-soft); color:var(--blue-dark); }
+
+@media(min-width:700px) {
+  body { padding-bottom:20px; }
+  .page { padding:27px 25px 40px; }
+  .subject-grid { grid-template-columns:repeat(3,minmax(0,1fr)); }
+  .bottom-nav { display:none; }
+}
+@media(max-width:699px) {
+  .desktop-nav { display:none; }
+}
+@media(max-width:420px) {
+  .page { padding-inline:12px; }
+  .topbar-inner { padding-inline:12px; }
+  .brand-name { font-size:13px; }
+  .brand-sub { font-size:9px; }
+  .course-cover { min-height:140px; }
+  .subject-card { padding:12px; }
+  .lesson-card { gap:9px; padding:10px; }
+  .lesson-open { padding:9px; }
+}
+@media(prefers-reduced-motion:reduce) {
+  *,*::before,*::after {
+    animation-duration:.01ms!important;
+    transition-duration:.01ms!important;
+    scroll-behavior:auto!important;
+  }
+}
 </style>
 </head>
+
 <body>
-<header class="topbar"><a class="logo" href="../" aria-label="Zenova Home">Z</a><a class="brand" href="../">Zenova Educations <small>LEARN · PRACTICE · ACHIEVE</small></a><div class="spacer"></div><a class="navlink" href="../">Home</a><a class="navlink" href="../my-batch/">My Batch</a><a class="avatar" href="../profile/" aria-label="Profile">M</a></header>
-<main class="wrap">
-<section class="page-intro"><div class="eyebrow">LEARN · PRACTICE · EXCEL</div><h1>Explore Courses</h1><p>Choose your next step with Zenova Educations.</p></section><img class="banner" id="coursesBanner" src="./coursesbanner.png" alt="Zenova Educations — Your Learning Journey Starts Here"><div class="banner-fallback" id="bannerFallback"><div><strong>Your Learning Journey Starts Here</strong><span>Choose the right course for a brighter future.</span></div></div>
-<div class="toolbar"><div class="heading"><h2>Explore all courses</h2><p id="courseCount">Loading available courses…</p></div><label class="searchbox"><span class="search-icon">⌕</span><input id="searchInput" type="search" placeholder="Search courses, class or medium…" autocomplete="off" aria-label="Search courses"></label><select id="classFilter" class="filter" aria-label="Filter by class"><option value="all">All classes</option><option value="10th">10th Standard</option><option value="1st PUC">1st PUC</option><option value="2nd PUC">2nd PUC</option></select></div>
-<div id="errorNote" class="error-note"></div>
-<section id="courseGrid" class="grid" aria-live="polite"><div class="state"><div class="spinner"></div><strong>Loading courses</strong>Please wait while we load the course catalog.</div></section>
-<div class="foot">© <span id="year"></span> Zenova Educations · Learn with purpose.</div>
-</main>
+<div id="loader" class="loader" role="status">
+  <div class="loader-logo">Z</div>
+  <strong>ZENOVA</strong>
+  <span>Loading your revision space…</span>
+  <div class="spinner"></div>
+</div>
+
+<div id="app" class="hidden">
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand" href="../" aria-label="Zenova Home">
+        <span class="brand-logo">Z</span>
+        <span>
+          <span class="brand-name" style="display:block">ZENOVA</span>
+          <span class="brand-sub" style="display:block">Educations</span>
+        </span>
+      </a>
+
+      <nav class="desktop-nav" aria-label="Main navigation">
+        <a href="../">Home</a>
+        <a href="../courses/">Courses</a>
+        <a href="../live/">Live</a>
+        <a href="./" class="active" aria-current="page">Revision</a>
+        <a href="../profile/">Profile</a>
+      </nav>
+
+      <a class="profile-button" href="../profile/" aria-label="My profile">
+        <i class="ri-user-3-line"></i>
+      </a>
+    </div>
+  </header>
+
+  <main class="page wrap">
+    <section class="intro">
+      <span class="eyebrow">YOUR LEARNING TOOLS</span>
+      <h1>Revision Classes</h1>
+      <p>Revise every subject, strengthen every concept, and prepare with confidence.</p>
+    </section>
+
+    <section id="coursesSection" class="section">
+      <div class="section-heading">
+        <div>
+          <h2 class="section-title">My enrolled courses</h2>
+          <p class="section-subtitle">Your approved courses and revision resources.</p>
+        </div>
+      </div>
+      <div id="courseList" class="course-list">
+        <div class="skeleton"></div>
+      </div>
+    </section>
+
+    <section id="subjectsSection" class="section hidden">
+      <div class="back-row">
+        <button class="back-button" id="backToCourses" type="button">
+          <i class="ri-arrow-left-line"></i> My courses
+        </button>
+        <div class="breadcrumb">
+          <button id="crumbCourses" type="button">My courses</button>
+          <i class="ri-arrow-right-s-line"></i>
+          <span id="crumbCourse"></span>
+        </div>
+      </div>
+
+      <div class="section-heading">
+        <div>
+          <h2 class="section-title">Choose a subject</h2>
+          <p class="section-subtitle">Select a subject to explore its chapters.</p>
+        </div>
+      </div>
+      <div id="subjectGrid" class="subject-grid">
+        <div class="skeleton"></div>
+      </div>
+    </section>
+
+    <section id="chaptersSection" class="section hidden">
+      <div class="back-row">
+        <button class="back-button" id="backToSubjects" type="button">
+          <i class="ri-arrow-left-line"></i> Subjects
+        </button>
+        <div class="breadcrumb">
+          <button id="crumbCourses2" type="button">My courses</button>
+          <i class="ri-arrow-right-s-line"></i>
+          <button id="crumbCourse2" type="button"></button>
+          <i class="ri-arrow-right-s-line"></i>
+          <span id="crumbSubject"></span>
+        </div>
+      </div>
+
+      <div class="section-heading">
+        <div>
+          <h2 class="section-title">Chapters</h2>
+          <p class="section-subtitle">Choose a chapter to see its revision lessons.</p>
+        </div>
+      </div>
+      <div id="chapterList" class="chapter-list"></div>
+    </section>
+
+    <section id="lessonsSection" class="section hidden">
+      <div class="back-row">
+        <button class="back-button" id="backToChapters" type="button">
+          <i class="ri-arrow-left-line"></i> Chapters
+        </button>
+        <div class="breadcrumb">
+          <button id="crumbCourses3" type="button">My courses</button>
+          <i class="ri-arrow-right-s-line"></i>
+          <button id="crumbCourse3" type="button"></button>
+          <i class="ri-arrow-right-s-line"></i>
+          <button id="crumbSubject2" type="button"></button>
+          <i class="ri-arrow-right-s-line"></i>
+          <span id="crumbChapter"></span>
+        </div>
+      </div>
+
+      <div class="section-heading">
+        <div>
+          <h2 class="section-title">Revision lessons</h2>
+          <p class="section-subtitle">Select a lesson to open its learning content.</p>
+        </div>
+      </div>
+      <div id="lessonList" class="lesson-list"></div>
+    </section>
+
+    <div class="section" id="pageMessage"></div>
+  </main>
+
+  <nav class="bottom-nav" aria-label="Mobile navigation">
+    <div class="bottom-inner">
+      <a class="nav-item" href="../">
+        <i class="ri-home-5-line"></i><span>Home</span>
+      </a>
+      <a class="nav-item" href="../courses/">
+        <i class="ri-book-2-line"></i><span>Courses</span>
+      </a>
+      <a class="nav-item" href="../live/">
+        <i class="ri-live-line"></i><span>Live</span>
+      </a>
+      <a class="nav-item active" href="./" aria-current="page">
+        <i class="ri-book-open-line"></i><span>Revision</span>
+      </a>
+      <a class="nav-item" href="../profile/">
+        <i class="ri-user-3-line"></i><span>Profile</span>
+      </a>
+    </div>
+  </nav>
+</div>
+
+<div id="errorScreen" class="error-screen hidden">
+  <div class="loader-logo">Z</div>
+  <h2 style="margin-top:16px">We couldn't load Revision</h2>
+  <p id="errorMessage">Please check your connection and try again.</p>
+  <button id="retryButton" class="primary-button" type="button">Try again</button>
+</div>
+
 <script type="module">
-import { db } from "../../firebase/firebase-config.js";
-import { collection, onSnapshot } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
-const $=id=>document.getElementById(id);
-const state={courses:[],error:null};
-const safe=(v)=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-const first=(...values)=>values.find(v=>v!==undefined&&v!==null&&String(v).trim()!=="")??"";
-const money=value=>{const n=Number(value);return Number.isFinite(n)&&value!==""?new Intl.NumberFormat("en-IN",{style:"currency",currency:"INR",maximumFractionDigits:0}).format(n):""};
-function courseTitle(c){return first(c.title,c.courseName,c.name,c.batchName,c.courseTitle,"Course details") }
-function className(c){return first(c.classDisplayName,c.className,c.classTitle,c.class,c.standard,c.grade)}
-function medium(c){return first(c.medium,c.languageMedium,c.language)}
-function priceInfo(c){const current=first(c.discountedPrice,c.discountPrice,c.finalPrice,c.price,c.fee,c.courseFee);const old=first(c.originalPrice,c.originalFee,c.mrp);const currentN=current!==""&&Number.isFinite(Number(current))?Number(current):null;const oldN=old!==""&&Number.isFinite(Number(old))?Number(old):null;return {current:currentN,old:oldN,showOld:oldN!==null&&currentN!==null&&oldN>currentN}}
-function isPublished(c){const status=String(c.status??"").toUpperCase();return c.active!==false&&status!=="INACTIVE"&&status!=="DRAFT"&&c.published!==false&&c.isPublished!==false}
-function courseCard(c){const title=courseTitle(c),image=first(c.thumbnailUrl,c.imageUrl,c.coverImageUrl,c.thumbnail,c.bannerUrl,c.courseImageUrl);const klass=className(c),med=medium(c),price=priceInfo(c);const description=first(c.description,c.shortDescription,c.tagline,c.subtitle,"Explore course details, learning resources and batch information.");const chips=[klass,med,first(c.academicYear,c.batchYear,c.year),first(c.mode,c.learningMode)].filter(Boolean).slice(0,4);const img=image?`<img src="${safe(image)}" alt="${safe(title)} thumbnail" loading="lazy" referrerpolicy="no-referrer">`:"";return `<article class="card"><div class="cover ${image?"has-image":"no-image"}">${img}<div class="cover-fallback"><strong>${safe(title)}</strong></div></div><div class="cardbody"><h3>${safe(title)}</h3><p class="description">${safe(description)}</p><div class="chips">${chips.map(x=>`<span class="chip">${safe(x)}</span>`).join("")}</div><div class="price-row">${price.current!==null?`<span class="price">${safe(money(price.current))}</span>`:`<span class="price" style="font-size:17px">Fee details</span>`}${price.showOld?`<span class="old-price">${safe(money(price.old))}</span>`:""}<span class="price-label">${price.current===null?"Contact us":"Course fee"}</span></div><div class="actions"><a class="btn btn-primary" href="../checkout/?courseId=${encodeURIComponent(c.id)}" aria-label="Buy ${safe(title)}">Buy Now <span aria-hidden="true">→</span></a><a class="btn btn-outline" href="../batchdetails/?courseId=${encodeURIComponent(c.id)}">Explore <span aria-hidden="true">↗</span></a></div></div></article>`}
-function render(){const search=$("searchInput").value.trim().toLowerCase(),filter=$("classFilter").value;const list=state.courses.filter(isPublished).filter(c=>{const text=[courseTitle(c),c.description,c.shortDescription,className(c),medium(c),c.academicYear,c.batchYear].join(" ").toLowerCase();const matchText=!search||text.includes(search);const cn=className(c).toLowerCase();const matchClass=filter==="all"||cn.includes(filter.toLowerCase())||(filter==="10th"&&/10|sslc/.test(cn));return matchText&&matchClass}).sort((a,b)=>Number(a.order??9999)-Number(b.order??9999));$("courseCount").textContent=`${list.length} course${list.length===1?"":"s"} available`;if(!list.length){$("courseGrid").innerHTML=`<div class="state" style="grid-column:1/-1"><strong>${state.courses.length?"No matching courses":"No courses available yet"}</strong>${state.courses.length?"Try a different search or class filter.":"New courses will appear here when published by Zenova Educations."}${search||filter!=="all"?`<button class="btn btn-outline" id="clearFilters" type="button">Clear filters</button>`:""}</div>`;$("clearFilters")?.addEventListener("click",()=>{$("searchInput").value="";$("classFilter").value="all";render()});return}$("courseGrid").innerHTML=list.map(courseCard).join("");$("courseGrid").querySelectorAll(".cover-tag,.course-tag,.course-badge").forEach(el=>el.remove());$("courseGrid").querySelectorAll(".cover img").forEach(img=>img.addEventListener("error",()=>{const cover=img.closest(".cover");cover?.classList.remove("has-image");cover?.classList.add("no-image");img.remove()},{once:true}));}
-$("searchInput").addEventListener("input",render);$("classFilter").addEventListener("change",render);$("year").textContent=new Date().getFullYear();$("coursesBanner").addEventListener("error",()=>{$("coursesBanner").style.display="none";$("bannerFallback").style.display="flex"},{once:true});
-try{onSnapshot(collection(db,"zen2Courses"),snap=>{state.courses=snap.docs.map(d=>({id:d.id,...d.data()}));$("errorNote").style.display="none";render()},err=>{console.error("Course catalog Firestore error:",err);$("errorNote").style.display="block";$("errorNote").textContent="We couldn't load courses from the database. Please refresh or contact Zenova support. "+(err.code||"");$("courseGrid").innerHTML=`<div class="state" style="grid-column:1/-1"><strong>Courses could not load</strong>Check your connection or Firestore read permissions, then refresh this page.</div>`;$("courseCount").textContent="Unable to load courses"})}catch(err){console.error(err);$("errorNote").style.display="block";$("errorNote").textContent="Course catalog could not start. Check the Firebase configuration and page path.";$("courseGrid").innerHTML=`<div class="state" style="grid-column:1/-1"><strong>Something went wrong</strong>Please refresh and try again.</div>`}
+import { auth, db } from "../firebase/firebase-config.js";
+
+import {
+  onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  query,
+  where
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
+const $ = id => document.getElementById(id);
+
+const state = {
+  user: null,
+  student: null,
+  courses: [],
+  enrollments: [],
+  selectedCourse: null,
+  subjects: [],
+  chapters: [],
+  contents: [],
+  selectedSubject: null,
+  selectedChapter: null
+};
+
+let authHandled = false;
+
+function esc(value) {
+  return String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+function courseName(course) {
+  return course?.courseName ||
+         course?.name ||
+         course?.title ||
+         course?.batchName ||
+         "Zenova course";
+}
+
+function itemName(item, type) {
+  if (type === "subject") {
+    return item.subjectName || item.name || item.displayName || item.title || "Subject";
+  }
+  if (type === "chapter") {
+    return item.chapterName || item.name || item.title || item.chapterTitle || "Chapter";
+  }
+  return item.title || item.contentTitle || item.name || "Revision lesson";
+}
+
+function sortOrder(a, b) {
+  return Number(a.order ?? a.chapterNumber ?? a.priority ?? 9999) -
+         Number(b.order ?? b.chapterNumber ?? b.priority ?? 9999);
+}
+
+function enrollmentCourseId(enrollment) {
+  return String(
+    enrollment.crmCourseId ||
+    enrollment.courseId ||
+    enrollment.courseID ||
+    enrollment.batchId ||
+    ""
+  );
+}
+
+function isEnrollmentActive(enrollment) {
+  const status = String(
+    enrollment.status || enrollment.enrollmentStatus || ""
+  ).toLowerCase();
+
+  // Matches the existing Home-page approach for legacy records.
+  return !status || [
+    "approved", "active", "paid", "enrolled", "success", "completed"
+  ].includes(status);
+}
+
+function hasLegacyAccess(course) {
+  const student = state.student || {};
+  const uid = state.user?.uid || "";
+
+  const lists = [
+    student.purchasedCourseIds,
+    student.enrolledCourseIds,
+    student.courseIds,
+    student.purchasedCourses,
+    student.enrolledCourses
+  ];
+
+  for (const list of lists) {
+    if (!Array.isArray(list)) continue;
+
+    if (list.some(item => {
+      const id = typeof item === "object"
+        ? (item.courseId || item.id || item.crmCourseId)
+        : item;
+      return String(id) === String(course.id);
+    })) {
+      return true;
+    }
+  }
+
+  const status = String(
+    course.studentAccess?.[uid] ||
+    course.enrollments?.[uid]?.status ||
+    ""
+  ).toLowerCase();
+
+  return [
+    "approved", "active", "paid", "purchased", "enrolled", "success", "completed"
+  ].includes(status);
+}
+
+function hasCourseAccess(course) {
+  return state.enrollments.some(enrollment =>
+    isEnrollmentActive(enrollment) &&
+    enrollmentCourseId(enrollment) === String(course.id)
+  ) || hasLegacyAccess(course);
+}
+
+function showError(message) {
+  $("loader").classList.add("hidden");
+  $("app").classList.add("hidden");
+  $("errorScreen").classList.remove("hidden");
+  $("errorMessage").textContent = message;
+}
+
+function showApp() {
+  $("loader").classList.add("hidden");
+  $("app").classList.remove("hidden");
+}
+
+function emptyState(icon, title, message) {
+  return `
+    <div class="empty">
+      <i class="${icon}"></i>
+      <strong>${esc(title)}</strong>
+      ${esc(message)}
+    </div>`;
+}
+
+onAuthStateChanged(auth, async user => {
+  if (!user) {
+    window.location.replace("../login/");
+    return;
+  }
+
+  if (authHandled) return;
+  authHandled = true;
+  state.user = user;
+
+  try {
+    await loadStudent();
+    await loadEnrollments();
+    await loadCourses();
+    showApp();
+  } catch (error) {
+    console.error("Zenova Revision loading error:", error);
+    showError(
+      error?.code === "permission-denied"
+        ? "Zenova cannot read the required student or course data. Please check the existing Firestore permissions."
+        : error.message || "Please refresh and try again."
+    );
+  }
+});
+
+async function loadStudent() {
+  const snapshot = await getDoc(doc(db, "zen2Students", state.user.uid));
+
+  if (!snapshot.exists()) {
+    window.location.replace("../account/onboarding/");
+    throw new Error("Please complete your student profile first.");
+  }
+
+  state.student = snapshot.data();
+
+  if (state.student.onboardingComplete === false) {
+    window.location.replace("../account/onboarding/");
+    throw new Error("Please complete your student profile first.");
+  }
+}
+
+async function loadEnrollments() {
+  const snapshot = await getDocs(
+    query(
+      collection(db, "studentEnrollments"),
+      where("studentUid", "==", state.user.uid)
+    )
+  );
+
+  state.enrollments = snapshot.docs.map(item => ({
+    id: item.id,
+    ...item.data()
+  }));
+}
+
+async function loadCourses() {
+  const snapshot = await getDocs(collection(db, "zen2Courses"));
+
+  const publishedCourses = snapshot.docs
+    .map(item => ({ id: item.id, ...item.data() }))
+    .filter(course => {
+      const status = String(course.status || "").toLowerCase();
+
+      return course.active !== false &&
+        course.published !== false &&
+        course.isPublished !== false &&
+        !["inactive", "draft", "archived", "deleted"].includes(status);
+    });
+
+  // Only approved/enrolled courses are displayed here.
+  state.courses = publishedCourses
+    .filter(hasCourseAccess)
+    .sort(sortOrder);
+
+  renderCourses();
+}
+
+function renderCourses() {
+  const container = $("courseList");
+
+  if (!state.courses.length) {
+    container.innerHTML = emptyState(
+      "ri-book-open-line",
+      "No enrolled courses found",
+      "Your revision courses will appear here after your enrollment or access is approved."
+    );
+    return;
+  }
+
+  container.innerHTML = state.courses.map(course => {
+    const name = courseName(course);
+    const image = course.thumbnailUrl ||
+      course.imageUrl ||
+      course.coverImageUrl ||
+      course.courseImageUrl ||
+      "";
+
+    const metadata = [
+      course.classDisplayName || course.className || course.standard,
+      course.medium || course.languageMedium,
+      course.board,
+      course.academicYear
+    ].filter(Boolean);
+
+    return `
+      <article class="enrolled-card">
+        <div class="course-cover">
+          ${image
+            ? `<img src="${esc(image)}" alt="" loading="lazy">`
+            : ""}
+          <div class="cover-content">
+            <span class="enrolled-label">
+              <i class="ri-check-double-line"></i> ENROLLED COURSE
+            </span>
+            <h3>${esc(name)}</h3>
+            <p>Subjects, chapters and revision lessons</p>
+          </div>
+        </div>
+        <div class="course-details">
+          <div class="course-meta">
+            ${metadata.map(value =>
+              `<span class="tag">${esc(value)}</span>`
+            ).join("")}
+          </div>
+          <button class="course-open" type="button"
+            data-course-id="${esc(course.id)}">
+            Open revision <i class="ri-arrow-right-line"></i>
+          </button>
+        </div>
+      </article>`;
+  }).join("");
+
+  container.querySelectorAll("[data-course-id]").forEach(button => {
+    button.addEventListener("click", async () => {
+      const course = state.courses.find(
+        item => item.id === button.dataset.courseId
+      );
+
+      if (!course || !hasCourseAccess(course)) {
+        alert("You don't have access to this course.");
+        return;
+      }
+
+      state.selectedCourse = course;
+      await loadSubjects();
+    });
+  });
+}
+
+async function loadSubjects() {
+  hideSection("coursesSection");
+  showSection("subjectsSection");
+  hideSection("chaptersSection");
+  hideSection("lessonsSection");
+
+  $("crumbCourse").textContent = courseName(state.selectedCourse);
+  $("subjectGrid").innerHTML = `<div class="skeleton"></div>`;
+
+  try {
+    // Existing collection name found in the uploaded Zenova code.
+    const snapshot = await getDocs(
+      query(
+        collection(db, "zen2Subjects"),
+        where("courseId", "==", state.selectedCourse.id)
+      )
+    );
+
+    state.subjects = snapshot.docs
+      .map(item => ({ id: item.id, ...item.data() }))
+      .filter(item => item.active !== false)
+      .sort(sortOrder);
+
+    renderSubjects();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  } catch (error) {
+    console.error("Revision subjects error:", error);
+    $("subjectGrid").innerHTML = emptyState(
+      "ri-wifi-off-line",
+      "Subjects could not load",
+      "Please check Firestore read permissions and try again."
+    );
+  }
+}
+
+function renderSubjects() {
+  const container = $("subjectGrid");
+
+  if (!state.subjects.length) {
+    container.innerHTML = emptyState(
+      "ri-book-open-line",
+      "No subjects available",
+      "Subjects for this course have not been added yet."
+    );
+    return;
+  }
+
+  const icons = [
+    "ri-calculator-line",
+    "ri-flask-line",
+    "ri-book-open-line",
+    "ri-translate-2",
+    "ri-earth-line",
+    "ri-lightbulb-line"
+  ];
+
+  container.innerHTML = state.subjects.map((subject, index) => `
+    <button class="subject-card" type="button"
+      data-subject-id="${esc(subject.id)}">
+      <span class="subject-icon">
+        <i class="${icons[index % icons.length]}"></i>
+      </span>
+      <strong>${esc(itemName(subject, "subject"))}</strong>
+      <small>View chapters <i class="ri-arrow-right-line"></i></small>
+    </button>
+  `).join("");
+
+  container.querySelectorAll("[data-subject-id]").forEach(button => {
+    button.addEventListener("click", async () => {
+      state.selectedSubject = state.subjects.find(
+        item => item.id === button.dataset.subjectId
+      );
+      await loadChapters();
+    });
+  });
+}
+
+async function loadChapters() {
+  hideSection("subjectsSection");
+  showSection("chaptersSection");
+  hideSection("lessonsSection");
+
+  $("crumbCourse2").textContent = courseName(state.selectedCourse);
+  $("crumbSubject").textContent = itemName(state.selectedSubject, "subject");
+  $("chapterList").innerHTML = `<div class="skeleton"></div>`;
+
+  try {
+    const snapshot = await getDocs(
+      query(
+        collection(db, "zen2Chapters"),
+        where("courseId", "==", state.selectedCourse.id),
+        where("subjectId", "==", state.selectedSubject.id)
+      )
+    );
+
+    state.chapters = snapshot.docs
+      .map(item => ({ id: item.id, ...item.data() }))
+      .filter(item => item.active !== false)
+      .sort(sortOrder);
+
+    renderChapters();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  } catch (error) {
+    console.error("Revision chapters error:", error);
+    $("chapterList").innerHTML = emptyState(
+      "ri-wifi-off-line",
+      "Chapters could not load",
+      "Please check Firestore read permissions and try again."
+    );
+  }
+}
+
+function renderChapters() {
+  const container = $("chapterList");
+
+  if (!state.chapters.length) {
+    container.innerHTML = emptyState(
+      "ri-book-2-line",
+      "No chapters available",
+      "Chapters for this subject have not been added yet."
+    );
+    return;
+  }
+
+  container.innerHTML = state.chapters.map((chapter, index) => {
+    const number = chapter.chapterNumber ?? chapter.order ?? index + 1;
+
+    return `
+      <button class="chapter-card" type="button"
+        data-chapter-id="${esc(chapter.id)}">
+        <span class="chapter-number">${esc(number)}</span>
+        <span class="chapter-copy">
+          <h3>${esc(itemName(chapter, "chapter"))}</h3>
+          <p>Open chapter revision lessons</p>
+        </span>
+        <i class="ri-arrow-right-s-line chapter-arrow"></i>
+      </button>`;
+  }).join("");
+
+  container.querySelectorAll("[data-chapter-id]").forEach(button => {
+    button.addEventListener("click", async () => {
+      state.selectedChapter = state.chapters.find(
+        item => item.id === button.dataset.chapterId
+      );
+      await loadLessons();
+    });
+  });
+}
+
+async function loadLessons() {
+  hideSection("chaptersSection");
+  showSection("lessonsSection");
+
+  $("crumbCourse3").textContent = courseName(state.selectedCourse);
+  $("crumbSubject2").textContent = itemName(state.selectedSubject, "subject");
+  $("crumbChapter").textContent = itemName(state.selectedChapter, "chapter");
+  $("lessonList").innerHTML = `<div class="skeleton"></div>`;
+
+  try {
+    const snapshot = await getDocs(
+      query(
+        collection(db, "zen2Content"),
+        where("courseId", "==", state.selectedCourse.id),
+        where("chapterId", "==", state.selectedChapter.id)
+      )
+    );
+
+    state.contents = snapshot.docs
+      .map(item => ({ id: item.id, ...item.data() }))
+      .filter(item => item.active !== false)
+      .sort(sortOrder);
+
+    renderLessons();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  } catch (error) {
+    console.error("Revision lesson error:", error);
+    $("lessonList").innerHTML = emptyState(
+      "ri-wifi-off-line",
+      "Lessons could not load",
+      "Please check Firestore read permissions and try again."
+    );
+  }
+}
+
+function renderLessons() {
+  const container = $("lessonList");
+
+  if (!state.contents.length) {
+    container.innerHTML = emptyState(
+      "ri-play-circle-line",
+      "No revision lessons yet",
+      "Lessons for this chapter have not been added yet."
+    );
+    return;
+  }
+
+  container.innerHTML = state.contents.map(content => {
+    const title = itemName(content, "content");
+    const type = String(
+      content.contentType || content.type || content.videoType || ""
+    ).toLowerCase();
+
+    const icon = type.includes("pdf") || content.pdfUrl || content.fileUrl
+      ? "ri-file-pdf-2-line"
+      : "ri-play-circle-line";
+
+    return `
+      <article class="lesson-card">
+        <span class="lesson-icon"><i class="${icon}"></i></span>
+        <span class="lesson-copy">
+          <h3>${esc(title)}</h3>
+          <p>${esc(content.description || content.subtitle || "Revision lesson")}</p>
+        </span>
+        <button class="lesson-open" type="button"
+          data-content-id="${esc(content.id)}">
+          Open
+        </button>
+      </article>`;
+  }).join("");
+
+  container.querySelectorAll("[data-content-id]").forEach(button => {
+    button.addEventListener("click", () => {
+      // Recheck access before navigating to the lesson.
+      if (!state.selectedCourse || !hasCourseAccess(state.selectedCourse)) {
+        alert("You don't have access to this course.");
+        window.location.replace("../");
+        return;
+      }
+
+      const content = state.contents.find(
+        item => item.id === button.dataset.contentId
+      );
+
+      if (!content) return;
+
+      const params = new URLSearchParams({
+        courseId: state.selectedCourse.id,
+        subjectId: state.selectedSubject.id,
+        chapterId: state.selectedChapter.id,
+        contentId: content.id
+      });
+
+      // Uses the existing chapter-details route from the Home page.
+      window.location.href = `../chapterdetails/?${params.toString()}`;
+    });
+  });
+}
+
+function showSection(id) {
+  $(id).classList.remove("hidden");
+}
+
+function hideSection(id) {
+  $(id).classList.add("hidden");
+}
+
+/* Back buttons and breadcrumbs */
+$("backToCourses").addEventListener("click", () => {
+  hideSection("subjectsSection");
+  hideSection("chaptersSection");
+  hideSection("lessonsSection");
+  showSection("coursesSection");
+  window.scrollTo({ top: 0, behavior: "smooth" });
+});
+
+$("backToSubjects").addEventListener("click", () => {
+  hideSection("chaptersSection");
+  hideSection("lessonsSection");
+  showSection("subjectsSection");
+  window.scrollTo({ top: 0, behavior: "smooth" });
+});
+
+$("backToChapters").addEventListener("click", () => {
+  hideSection("lessonsSection");
+  showSection("chaptersSection");
+  window.scrollTo({ top: 0, behavior: "smooth" });
+});
+
+function goCourses() {
+  $("backToCourses").click();
+}
+function goSubjects() {
+  $("backToSubjects").click();
+}
+
+$("crumbCourses").addEventListener("click", goCourses);
+$("crumbCourses2").addEventListener("click", goCourses);
+$("crumbCourses3").addEventListener("click", goCourses);
+
+$("crumbCourse2").addEventListener("click", goSubjects);
+$("crumbCourse3").addEventListener("click", goSubjects);
+$("crumbSubject2").addEventListener("click", goSubjects);
+
+$("retryButton").addEventListener("click", () => window.location.reload());
 </script>
-</body></html>
+</body>
+</html>
