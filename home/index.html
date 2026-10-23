@@ -13,6 +13,154 @@
   <link href="https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.css" rel="stylesheet">
 
   <style>
+    
+/* SSLC Exam Countdown — Zenova theme */
+.exam-countdown {
+  margin: 20px 0 26px;
+  padding: 20px;
+  background: linear-gradient(145deg, #ffffff, #f3f7ff);
+  border: 1px solid #dce7f8;
+  border-radius: 22px;
+  box-shadow: 0 5px 20px rgba(36, 95, 201, 0.045);
+  overflow: hidden;
+}
+
+.countdown-heading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.countdown-icon {
+  width: 46px;
+  height: 46px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 15px;
+  background: #eaf2ff;
+  color: #3978e8;
+  font-size: 23px;
+}
+
+.countdown-title {
+  min-width: 0;
+}
+
+.countdown-label {
+  color: #3978e8;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1.3px;
+}
+
+.countdown-title h2 {
+  margin: 5px 0;
+  color: #172338;
+  font-size: 18px;
+  font-weight: 850;
+  letter-spacing: -0.5px;
+}
+
+.countdown-title p {
+  margin: 0;
+  color: #7b8799;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.countdown-units {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 9px;
+}
+
+.countdown-unit {
+  min-width: 0;
+  padding: 13px 4px;
+  background: #eaf2ff;
+  border: 1px solid #e0eaff;
+  border-radius: 13px;
+  text-align: center;
+}
+
+.countdown-unit strong {
+  display: block;
+  color: #245fc9;
+  font-size: clamp(20px, 5vw, 29px);
+  line-height: 1.2;
+  font-weight: 850;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.8px;
+}
+
+.countdown-unit span {
+  display: block;
+  margin-top: 6px;
+  color: #647b9d;
+  font-size: 9px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.countdown-ms-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 17px;
+  color: #7b8799;
+  font-size: 11px;
+}
+
+.countdown-ms-row strong {
+  color: #3978e8;
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+}
+
+.countdown-progress-track {
+  height: 5px;
+  margin-top: 13px;
+  background: #e3ebf8;
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.countdown-progress-fill {
+  height: 100%;
+  width: 0%;
+  background: #3978e8;
+  border-radius: inherit;
+  transition: width 0.5s ease;
+}
+
+.countdown-footer {
+  margin: 12px 0 0;
+  color: #7b8799;
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+@media (max-width: 380px) {
+  .exam-countdown {
+    padding: 15px;
+  }
+
+  .countdown-units {
+    gap: 5px;
+  }
+
+  .countdown-unit {
+    padding: 11px 2px;
+  }
+
+  .countdown-unit span {
+    font-size: 8px;
+  }
+}
     :root {
       --bg: #f7f9fc;
       --surface: #ffffff;
@@ -973,6 +1121,51 @@
         </select>
       </section>
 
+<!-- SSLC Exam Countdown -->
+<section class="exam-countdown" id="examCountdown">
+  <div class="countdown-heading">
+    <div class="countdown-icon">
+      <i class="ri-alarm-line"></i>
+    </div>
+    <div class="countdown-title">
+      <span class="countdown-label">IMPORTANT DATE</span>
+      <h2>SSLC Exam Countdown</h2>
+      <p>Tentative exam date · 22 March 2027</p>
+    </div>
+  </div>
+
+  <div class="countdown-units">
+    <div class="countdown-unit">
+      <strong id="cdDays">---</strong>
+      <span>Days</span>
+    </div>
+    <div class="countdown-unit">
+      <strong id="cdHours">--</strong>
+      <span>Hours</span>
+    </div>
+    <div class="countdown-unit">
+      <strong id="cdMinutes">--</strong>
+      <span>Minutes</span>
+    </div>
+    <div class="countdown-unit">
+      <strong id="cdSeconds">--</strong>
+      <span>Seconds</span>
+    </div>
+  </div>
+
+  <div class="countdown-ms-row">
+    <span>Milliseconds</span>
+    <strong id="cdMilliseconds">---</strong>
+  </div>
+
+  <div class="countdown-progress-track">
+    <div class="countdown-progress-fill" id="cdProgress"></div>
+  </div>
+
+  <p class="countdown-footer" id="cdMessage">
+    Every second counts. Keep preparing!
+  </p>
+</section>
       <section class="section" aria-labelledby="todayTitle">
         <div class="section-heading">
           <div>
@@ -1806,6 +1999,92 @@ function startMyCoursesSlider() {
         showError(message);
       }
     });
+    
+/* Zenova SSLC exam countdown
+   Target: 22 March 2027, 10:00 AM Indian Standard Time
+*/
+(() => {
+  const targetTime = new Date(
+    "2027-03-22T10:00:00+05:30"
+  ).getTime();
+
+  // Used for a simple visual progress indicator.
+  // Adjust the start date if you want a different progress period.
+  const progressStart = new Date(
+    "2026-10-23T00:00:00+05:30"
+  ).getTime();
+
+  const $cd = id => document.getElementById(id);
+
+  const daysEl = $cd("cdDays");
+  const hoursEl = $cd("cdHours");
+  const minutesEl = $cd("cdMinutes");
+  const secondsEl = $cd("cdSeconds");
+  const millisecondsEl = $cd("cdMilliseconds");
+  const messageEl = $cd("cdMessage");
+  const progressEl = $cd("cdProgress");
+
+  // If the countdown HTML isn't on this page, do nothing.
+  if (
+    !daysEl || !hoursEl || !minutesEl ||
+    !secondsEl || !millisecondsEl
+  ) return;
+
+  let timerId = null;
+
+  function updateCountdown() {
+    const now = Date.now();
+    const remaining = targetTime - now;
+
+    if (remaining <= 0) {
+      daysEl.textContent = "0";
+      hoursEl.textContent = "00";
+      minutesEl.textContent = "00";
+      secondsEl.textContent = "00";
+      millisecondsEl.textContent = "000";
+
+      if (messageEl) {
+        messageEl.textContent =
+          "The scheduled exam start time has arrived. Follow official KSEAB announcements.";
+      }
+
+      if (progressEl) progressEl.style.width = "100%";
+
+      if (timerId !== null) {
+        clearInterval(timerId);
+        timerId = null;
+      }
+      return;
+    }
+
+    const days = Math.floor(remaining / 86400000);
+    const hours = Math.floor((remaining % 86400000) / 3600000);
+    const minutes = Math.floor((remaining % 3600000) / 60000);
+    const seconds = Math.floor((remaining % 60000) / 1000);
+    const milliseconds = Math.floor(remaining % 1000);
+
+    daysEl.textContent = String(days);
+    hoursEl.textContent = String(hours).padStart(2, "0");
+    minutesEl.textContent = String(minutes).padStart(2, "0");
+    secondsEl.textContent = String(seconds).padStart(2, "0");
+    millisecondsEl.textContent = String(milliseconds).padStart(3, "0");
+
+    if (progressEl) {
+      const total = targetTime - progressStart;
+      const elapsed = now - progressStart;
+      const percentage = total > 0
+        ? Math.max(0, Math.min(100, (elapsed / total) * 100))
+        : 0;
+
+      progressEl.style.width = percentage + "%";
+    }
+  }
+
+  updateCountdown();
+
+  // Refresh 10 times per second so milliseconds visibly change.
+  timerId = setInterval(updateCountdown, 100);
+})();
   </script>
 </body>
 </html>
