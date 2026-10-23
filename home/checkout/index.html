@@ -1,89 +1,836 @@
+
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Checkout · Zenova Educations</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f7f9fc">
+<title>Checkout | Zenova Educations</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.css" rel="stylesheet">
+
 <style>
-:root{--ink:#17151d;--muted:#777281;--line:#e9e5f0;--lav:#7650d6;--lav-light:#f0eaff;--bg:#f6f5f9;--white:#fff;--green:#16835b;--danger:#a83232}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;padding-bottom:calc(78px + env(safe-area-inset-bottom))}button,input{font:inherit}
-/* Shared Zenova home header and bottom navigation */
-.header{background:#17151d;color:#fff;padding:18px 18px 21px;border-radius:0 0 26px 26px}.header-inner{max-width:1100px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:14px}.brand-group{display:flex;align-items:center;gap:11px;min-width:0}.brand-mark{width:42px;height:42px;border-radius:14px;background:#b7a0ff;color:#30205d;display:grid;place-items:center;font-size:21px;font-weight:900;flex-shrink:0}.brand-name{font-size:16px;font-weight:900;line-height:1.2}.brand-sub{font-size:10px;color:#bdb8c8;margin-top:4px;letter-spacing:1.4px;text-transform:uppercase}.profile-link{width:44px;height:44px;border:2px solid #a58be8;background:#292532;color:#fff;border-radius:50%;display:grid;place-items:center;text-decoration:none;font-size:20px}.page-title{max-width:1100px;margin:17px auto 0;padding:0 16px;display:flex;align-items:center;gap:10px}.page-title button{border:1px solid #494450;background:#292532;color:white;border-radius:10px;padding:8px 11px}.page-title h1{font-size:21px;font-weight:850;margin:0}.bottom-nav{position:fixed;z-index:1000;left:0;right:0;bottom:0;min-height:66px;padding:8px 12px calc(8px + env(safe-area-inset-bottom));background:#fff;border-top:1px solid #e9e6ef;display:flex;justify-content:center;box-shadow:0 -6px 24px #21163808}.nav-inner{width:min(100%,700px);display:grid;grid-template-columns:repeat(4,1fr);gap:5px}.nav-item{position:relative;border:0;background:transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;border-radius:13px;color:#8b8795;font-size:9px;font-weight:750;min-height:52px;text-decoration:none}.nav-item .nav-icon{font-size:21px;line-height:1}.nav-item.active{background:#f0eaff;color:#6040b5}.nav-item.active:before{content:"";width:18px;height:3px;border-radius:5px;background:#7650d6;position:absolute;top:2px}.top{background:#111114;color:#fff;padding:16px max(16px,calc((100vw - 760px)/2));display:flex;align-items:center;gap:12px}.logo{width:42px;height:42px;display:grid;place-items:center;border-radius:12px;background:#eee8ff;color:#6040b5;font-weight:900;font-size:20px}.brand{font-weight:800;letter-spacing:.06em}.brand small{display:block;color:#c5c2cd;font-size:10px;letter-spacing:.15em;margin-top:3px}.back{margin-left:auto;border:1px solid #414047;background:transparent;color:#fff;border-radius:10px;padding:9px 12px;cursor:pointer}.wrap{max-width:760px;margin:18px auto 28px;padding:0 16px}.intro{margin:0 0 18px}.eyebrow{color:var(--lav);font-size:11px;font-weight:800;letter-spacing:.12em}.intro h1{font-size:clamp(26px,5vw,34px);margin:6px 0}.intro p{margin:0;color:var(--muted);font-size:14px}.card{background:#fff;border:1px solid var(--line);border-radius:20px;padding:20px;margin:14px 0;box-shadow:0 4px 18px #24154a08}.card h2{font-size:17px;margin:0 0 16px}.course{display:flex;align-items:center;gap:14px}.cover{width:104px;height:88px;flex:0 0 104px;border-radius:13px;background:linear-gradient(135deg,#e7dcff,#f8f5ff);display:grid;place-items:center;overflow:hidden;color:var(--lav);font-size:28px}.cover img{width:100%;height:100%;object-fit:cover}.course h3{font-size:17px;margin:0 0 6px}.course p{font-size:13px;color:var(--muted);margin:3px 0}.pill{display:inline-block;background:var(--lav-light);color:#6040b5;padding:5px 8px;border-radius:7px;font-size:11px;font-weight:800;margin-bottom:7px}.field{display:grid;gap:7px;margin:14px 0}.field label{font-size:11px;color:var(--muted);font-weight:800;letter-spacing:.06em}.field input{width:100%;padding:13px 14px;border:1px solid var(--line);border-radius:11px;outline:none;background:#fff;color:var(--ink)}.field input:focus{border-color:var(--lav);box-shadow:0 0 0 3px #7650d61a}.field input[readonly]{background:#f8f7fb;color:#514b5d}.profile-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:15px 0}.profile-detail{min-width:0;border:1px solid var(--line);border-radius:11px;padding:12px}.profile-detail span{display:block;color:var(--muted);font-size:10px;font-weight:800;letter-spacing:.05em;margin-bottom:6px}.profile-detail b{display:block;font-size:13px;overflow-wrap:anywhere}.profile-edit{display:inline-block;color:var(--lav);font-size:13px;font-weight:800;text-decoration:none;margin-top:6px}.hint{font-size:12px;color:var(--muted);line-height:1.5}.line{height:1px;background:var(--line);margin:14px 0}.row{display:flex;justify-content:space-between;align-items:center;gap:14px;margin:12px 0;font-size:14px}.row span{color:var(--muted)}.total{font-weight:850;font-size:19px}.total strong{color:var(--lav);font-size:24px}.secure{display:flex;gap:11px;align-items:flex-start;background:#f4fbf7;border:1px solid #dcefe4;border-radius:12px;padding:13px;color:#226d4e;font-size:12px;line-height:1.5}.primary{width:100%;display:flex;align-items:center;justify-content:center;gap:9px;background:var(--lav);color:#fff;border:0;border-radius:13px;padding:15px;font-weight:800;cursor:pointer}.primary:disabled{opacity:.55;cursor:not-allowed}.notice{display:none;padding:12px 14px;border-radius:11px;font-size:13px;line-height:1.5;margin:12px 0}.notice.show{display:block}.notice.error{background:#fff0f0;color:var(--danger)}.notice.info{background:#f0eaff;color:#6040b5}.loading{padding:60px 20px;text-align:center;color:var(--muted)}.spinner{width:28px;height:28px;border:3px solid #e8e0fa;border-top-color:var(--lav);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 12px}@keyframes spin{to{transform:rotate(360deg)}}.bottom{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--line);padding:12px max(16px,calc((100vw - 760px)/2));display:flex;align-items:center;gap:12px;z-index:3}.bottom .amount{flex:1;min-width:0}.bottom small{display:block;color:var(--muted);font-size:11px}.bottom strong{font-size:20px}.bottom button{width:auto;min-width:180px}.hidden{display:none!important}@media(max-width:520px){.wrap{margin-top:18px}.card{padding:16px;border-radius:17px}.bottom button{min-width:0;flex:1}.course{align-items:flex-start}.cover{width:82px;height:82px;flex-basis:82px}.top{padding:12px 16px}}
+:root{
+  --bg:#f7f9fc;
+  --surface:#fff;
+  --surface-soft:#f0f5fb;
+  --ink:#172338;
+  --muted:#7b8799;
+  --line:#e7edf5;
+  --blue:#3978e8;
+  --blue-dark:#245fc9;
+  --blue-soft:#eaf2ff;
+  --green:#159b78;
+  --green-soft:#e8f8f2;
+  --orange-soft:#fff4e7;
+  --radius:18px;
+  --bottom:70px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--ink);
+  font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;
+  padding-bottom:calc(var(--bottom) + 100px + env(safe-area-inset-bottom));
+  -webkit-font-smoothing:antialiased;
+}
+button,input{font:inherit}
+button,a{-webkit-tap-highlight-color:transparent}
+a{color:inherit}
+.hidden{display:none!important}
+
+/* Header */
+.header{
+  position:sticky;top:0;z-index:100;
+  background:rgba(255,255,255,.94);
+  backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--line);
+}
+.header-inner{
+  max-width:1000px;margin:auto;padding:13px 18px;
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+}
+.brand-group{display:flex;align-items:center;gap:11px;min-width:0}
+.brand-mark{
+  width:42px;height:42px;flex-shrink:0;
+  border-radius:14px;background:var(--blue);color:white;
+  display:grid;place-items:center;font-size:23px;font-weight:900;
+  box-shadow:0 5px 12px #3978e825;
+}
+.brand-name{font-size:15px;font-weight:850;letter-spacing:-.4px}
+.brand-sub{font-size:10px;color:var(--muted);margin-top:4px;letter-spacing:1.4px}
+.profile-link{
+  width:40px;height:40px;border-radius:50%;
+  display:grid;place-items:center;text-decoration:none;
+  background:var(--blue-soft);color:var(--blue);font-size:20px;
+}
+.page-heading{
+  max-width:760px;margin:auto;padding:17px 18px 0;
+  display:flex;align-items:center;gap:12px;
+}
+.back-btn{
+  width:39px;height:39px;border:1px solid var(--line);
+  background:var(--surface);border-radius:12px;color:var(--ink);
+  display:grid;place-items:center;font-size:20px;cursor:pointer;
+}
+.page-heading h1{font-size:21px;letter-spacing:-.6px;margin:0;font-weight:850}
+.heading-sub{font-size:12px;color:var(--muted);margin-top:4px}
+
+/* Main layout */
+.wrap{max-width:760px;margin:20px auto 30px;padding:0 16px}
+.intro{margin:0 2px 20px}
+.eyebrow{
+  display:inline-flex;align-items:center;gap:6px;
+  color:var(--blue);font-size:10px;font-weight:800;letter-spacing:1.3px;
+  text-transform:uppercase;
+}
+.intro h2{font-size:clamp(24px,5vw,31px);letter-spacing:-1px;margin:8px 0}
+.intro p{font-size:13px;color:var(--muted);line-height:1.7;margin:0;max-width:560px}
+.card{
+  background:var(--surface);border:1px solid var(--line);
+  border-radius:var(--radius);padding:19px;margin:14px 0;
+  box-shadow:0 3px 14px #243a5705;
+}
+.card-heading{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.card-icon{
+  width:36px;height:36px;border-radius:12px;
+  display:grid;place-items:center;background:var(--blue-soft);
+  color:var(--blue);font-size:18px;flex-shrink:0;
+}
+.card h3{font-size:15px;font-weight:800;letter-spacing:-.25px;margin:0}
+.card-subtitle{font-size:11px;color:var(--muted);margin-top:4px;line-height:1.5}
+
+/* Selected batch */
+.course{display:flex;align-items:center;gap:14px;min-width:0}
+.cover{
+  width:100px;height:90px;flex:0 0 100px;
+  border-radius:14px;background:var(--blue-soft);color:var(--blue);
+  display:grid;place-items:center;font-size:30px;overflow:hidden;
+}
+.cover img{width:100%;height:100%;object-fit:cover}
+.course-info{min-width:0}
+.pill{
+  display:inline-flex;background:var(--blue-soft);color:var(--blue);
+  padding:5px 8px;border-radius:7px;font-size:9px;font-weight:800;
+  letter-spacing:.5px;margin-bottom:7px;
+}
+.course h4{font-size:16px;font-weight:800;letter-spacing:-.4px;margin:0 0 6px;overflow-wrap:anywhere}
+.course p{font-size:12px;line-height:1.6;color:var(--muted);margin:3px 0}
+
+/* Student information */
+.field{display:grid;gap:7px;margin:13px 0}
+.field label,.detail-label{
+  font-size:9px;color:var(--muted);font-weight:800;letter-spacing:.8px;
+}
+.field input{
+  width:100%;padding:12px 13px;border:1px solid var(--line);
+  border-radius:11px;outline:none;background:var(--surface-soft);
+  color:var(--ink);font-size:13px;min-width:0;
+}
+.field input:focus{border-color:var(--blue);box-shadow:0 0 0 3px #3978e818}
+.field input[readonly]{color:#43516a}
+.profile-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin:14px 0}
+.profile-detail{
+  min-width:0;background:#fbfcfe;border:1px solid var(--line);
+  border-radius:12px;padding:12px;
+}
+.profile-detail b{
+  display:block;font-size:12px;font-weight:750;margin-top:7px;
+  overflow-wrap:anywhere;line-height:1.5;
+}
+.profile-edit{
+  display:inline-flex;align-items:center;gap:6px;margin-top:10px;
+  text-decoration:none;color:var(--blue);font-size:12px;font-weight:800;
+}
+.hint{font-size:11px;line-height:1.7;color:var(--muted);margin:8px 0}
+
+/* Fee summary */
+.summary-row{
+  display:flex;justify-content:space-between;align-items:center;
+  gap:14px;margin:15px 0;font-size:13px;
+}
+.summary-row span{color:var(--muted)}
+.summary-row b{text-align:right;font-weight:750}
+.summary-divider{height:1px;background:var(--line);margin:16px 0}
+.total-row{align-items:center}
+.total-row span{font-size:14px;font-weight:800;color:var(--ink)}
+.total-row strong{font-size:23px;letter-spacing:-.7px;color:var(--blue);text-align:right}
+.secure{
+  display:flex;gap:11px;align-items:flex-start;
+  background:var(--green-soft);border:1px solid #d5f0e6;
+  border-radius:13px;padding:13px;color:#187657;
+  font-size:11px;line-height:1.7;
+}
+.secure i{font-size:20px;flex-shrink:0}
+.secure b{font-size:12px}
+
+/* Request button and notices */
+.primary{
+  width:100%;min-height:49px;display:flex;align-items:center;
+  justify-content:center;gap:9px;background:var(--blue);color:white;
+  border:0;border-radius:13px;padding:14px 18px;font-weight:800;
+  font-size:13px;cursor:pointer;transition:background .2s,transform .2s;
+}
+.primary:hover{background:var(--blue-dark)}
+.primary:active{transform:scale(.99)}
+.primary:disabled{opacity:.6;cursor:not-allowed}
+.notice{
+  display:none;padding:13px 14px;border-radius:12px;
+  font-size:12px;line-height:1.7;margin:12px 0;
+  overflow-wrap:anywhere;
+}
+.notice.show{display:block}
+.notice.error{background:#fff0f0;color:#a83232;border:1px solid #f5dada}
+.notice.info{background:var(--blue-soft);color:#245fc9;border:1px solid #d9e7ff}
+.notice.success{background:var(--green-soft);color:#187657;border:1px solid #d5f0e6}
+
+/* Fixed checkout bar */
+.checkout-bar{
+  position:fixed;z-index:90;bottom:calc(var(--bottom) + env(safe-area-inset-bottom));
+  left:0;right:0;background:rgba(255,255,255,.97);
+  backdrop-filter:blur(14px);border-top:1px solid var(--line);
+  padding:11px 16px;
+}
+.checkout-bar-inner{
+  max-width:728px;margin:auto;display:flex;align-items:center;gap:14px;
+}
+.bar-amount{min-width:0;flex:1}
+.bar-amount small{display:block;color:var(--muted);font-size:10px;margin-bottom:3px}
+.bar-amount strong{display:block;font-size:19px;letter-spacing:-.5px}
+.bar-amount .bar-caption{font-size:10px;color:var(--muted);margin-top:3px}
+.bar-button{width:auto;min-width:165px;flex-shrink:0}
+
+/* Bottom navigation */
+.bottom-nav{
+  position:fixed;z-index:110;left:0;right:0;bottom:0;
+  min-height:var(--bottom);padding:6px 10px calc(6px + env(safe-area-inset-bottom));
+  background:rgba(255,255,255,.97);backdrop-filter:blur(15px);
+  border-top:1px solid var(--line);
+}
+.nav-inner{
+  max-width:600px;margin:auto;display:grid;grid-template-columns:repeat(5,1fr);gap:5px;
+}
+.nav-item{
+  position:relative;min-height:51px;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:4px;text-decoration:none;
+  color:var(--muted);border-radius:12px;font-size:9px;font-weight:750;
+}
+.nav-item i{font-size:20px;line-height:1}
+.nav-item.active{background:var(--blue-soft);color:var(--blue)}
+
+/* Loading */
+.loading-screen{
+  min-height:65vh;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;text-align:center;padding:30px;
+}
+.loading-logo{
+  width:58px;height:58px;background:var(--blue);color:white;
+  display:grid;place-items:center;border-radius:19px;font-size:29px;
+  font-weight:900;box-shadow:0 8px 24px #3978e826;margin-bottom:15px;
+}
+.loading-brand{font-size:15px;font-weight:900;letter-spacing:2px}
+.loading-sub{font-size:10px;letter-spacing:2px;color:var(--muted);margin-top:5px}
+.spinner{
+  width:27px;height:27px;border:3px solid #dce8fb;border-top-color:var(--blue);
+  border-radius:50%;animation:spin .8s linear infinite;margin-top:22px;
+}
+.loading-message{font-size:12px;color:var(--muted);margin-top:12px}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+@media(min-width:700px){
+  .wrap{margin-top:24px}
+  .card{padding:22px}
+}
+@media(max-width:480px){
+  .header-inner{padding:11px 15px}
+  .page-heading{padding:15px 15px 0}
+  .wrap{padding:0 12px;margin-top:16px}
+  .card{padding:15px;border-radius:16px}
+  .cover{width:78px;height:80px;flex-basis:78px}
+  .course{gap:11px}
+  .course h4{font-size:14px}
+  .profile-grid{gap:8px}
+  .profile-detail{padding:10px}
+  .checkout-bar{padding:10px 12px}
+  .checkout-bar-inner{gap:10px}
+  .bar-button{min-width:0;width:auto;padding:13px 12px;flex:1}
+  .bar-amount strong{font-size:17px}
+}
 </style>
 </head>
+
 <body>
-<header class="header"><div class="header-inner"><div class="brand-group"><div class="brand-mark">Z</div><div><div class="brand-name">ZENOVA</div><div class="brand-sub">EDUCATIONS</div></div></div><a class="profile-link" href="../profile/" aria-label="Profile">♙</a></div></header><div class="page-title"><button id="backBtn" type="button" aria-label="Go back">←</button><h1>Checkout</h1></div>
-<div id="loading" class="loading"><div class="spinner"></div>Loading your checkout…</div>
+
+<header class="header">
+  <div class="header-inner">
+    <a href="../" class="brand-group" style="text-decoration:none">
+      <div class="brand-mark">Z</div>
+      <div>
+        <div class="brand-name">Zenova Educations</div>
+        <div class="brand-sub">LEARN · PRACTICE · ACHIEVE</div>
+      </div>
+    </a>
+    <a class="profile-link" href="../profile/" aria-label="Profile">
+      <i class="ri-user-3-line"></i>
+    </a>
+  </div>
+</header>
+
+<div class="page-heading">
+  <button id="backBtn" class="back-btn" type="button" aria-label="Go back">
+    <i class="ri-arrow-left-line"></i>
+  </button>
+  <div>
+    <h1>Checkout</h1>
+    <div class="heading-sub">Review your batch and request access</div>
+  </div>
+</div>
+
+<div id="loading" class="loading-screen">
+  <div class="loading-logo">Z</div>
+  <div class="loading-brand">ZENOVA</div>
+  <div class="loading-sub">EDUCATIONS</div>
+  <div class="spinner"></div>
+  <div class="loading-message">Loading your checkout...</div>
+</div>
+
 <main id="main" class="wrap hidden">
-  <section class="intro"><div class="eyebrow">BATCH ENROLLMENT</div><h1>Request course access</h1><p>Review your selected batch and submit an access request. The Zenova team will review it and approve access from the admin panel.</p></section>
-  <div id="notice" class="notice"></div>
-  <section class="card"><h2>Your selected batch</h2><div class="course"><div class="cover" id="cover">Z</div><div><span class="pill" id="tag">ZENOVA COURSE</span><h3 id="courseName">Selected batch</h3><p id="courseSubtitle">Course details</p><p id="courseMeta"></p></div></div></section>
-  <section class="card"><h2>Student profile</h2><p class="hint">These details are loaded from your signed-in account and Zenova student profile.</p><div class="field"><label for="studentName">STUDENT NAME</label><input id="studentName" autocomplete="name" placeholder="Student name" maxlength="100" readonly></div><div class="field"><label for="studentEmail">EMAIL ADDRESS</label><input id="studentEmail" type="email" autocomplete="email" placeholder="Email address" readonly></div><div class="field"><label for="studentPhone">MOBILE NUMBER</label><input id="studentPhone" type="tel" autocomplete="tel" placeholder="Not available" readonly></div><div class="profile-grid"><div class="profile-detail"><span>STUDENT CODE</span><b id="studentCode">—</b></div><div class="profile-detail"><span>CLASS</span><b id="studentClass">—</b></div><div class="profile-detail"><span>MEDIUM</span><b id="studentMedium">—</b></div><div class="profile-detail"><span>SCHOOL</span><b id="studentSchool">—</b></div><div class="profile-detail"><span>DISTRICT</span><b id="studentDistrict">—</b></div><div class="profile-detail"><span>VILLAGE</span><b id="studentVillage">—</b></div></div><p class="hint">If any details are incorrect, update your profile before completing enrollment.</p><a class="profile-edit" href="../profile/">View or update profile →</a></section>
-  <section class="card"><h2>Enrollment summary</h2><div class="row"><span>Batch fee</span><b id="fee">—</b></div><div class="row"><span>Discount</span><b id="discount">—</b></div><div class="line"></div><div class="row total"><span>Course fee</span><strong id="total">—</strong></div><div class="secure" style="margin-top:16px"><span>✓</span><div><b>Admin-reviewed access</b><br>No online payment is collected on this page. Submit your request and the Zenova team will review it. Access is enabled only after approval.</div></div></section>
-  <section class="card"><h2>Request access</h2><p class="hint">By submitting, you confirm that your student and course details are correct. Your request will be sent to the Zenova enrollment admin. A request alone does not unlock course content.</p><button id="requestBtn" class="primary" type="button">Request Access →</button><p id="requestHelp" class="hint" style="margin-bottom:0;margin-top:10px">You can return to this page to check the request status.</p></section>
+
+  <section class="intro">
+    <div class="eyebrow"><i class="ri-shield-check-line"></i> BATCH ENROLLMENT</div>
+    <h2>Almost ready to start!</h2>
+    <p>Review your selected batch and student details. Submit your access request to the Zenova team for approval.</p>
+  </section>
+
+  <div id="notice" class="notice" role="status" aria-live="polite"></div>
+
+  <section class="card">
+    <div class="card-heading">
+      <div class="card-icon"><i class="ri-book-open-line"></i></div>
+      <div>
+        <h3>Your selected batch</h3>
+        <div class="card-subtitle">Check that you selected the correct course.</div>
+      </div>
+    </div>
+    <div class="course">
+      <div class="cover" id="cover">Z</div>
+      <div class="course-info">
+        <span class="pill" id="tag">ZENOVA COURSE</span>
+        <h4 id="courseName">Selected batch</h4>
+        <p id="courseSubtitle">Course details</p>
+        <p id="courseMeta"></p>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="card-heading">
+      <div class="card-icon"><i class="ri-user-3-line"></i></div>
+      <div>
+        <h3>Student profile</h3>
+        <div class="card-subtitle">Your registered student information</div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="studentName">STUDENT NAME</label>
+      <input id="studentName" autocomplete="name" placeholder="Student name" maxlength="100" readonly>
+    </div>
+    <div class="field">
+      <label for="studentEmail">EMAIL ADDRESS</label>
+      <input id="studentEmail" type="email" autocomplete="email" placeholder="Email address" readonly>
+    </div>
+    <div class="field">
+      <label for="studentPhone">MOBILE NUMBER</label>
+      <input id="studentPhone" type="tel" autocomplete="tel" placeholder="Not available" readonly>
+    </div>
+
+    <div class="profile-grid">
+      <div class="profile-detail"><span class="detail-label">STUDENT CODE</span><b id="studentCode">—</b></div>
+      <div class="profile-detail"><span class="detail-label">CLASS</span><b id="studentClass">—</b></div>
+      <div class="profile-detail"><span class="detail-label">MEDIUM</span><b id="studentMedium">—</b></div>
+      <div class="profile-detail"><span class="detail-label">SCHOOL</span><b id="studentSchool">—</b></div>
+      <div class="profile-detail"><span class="detail-label">DISTRICT</span><b id="studentDistrict">—</b></div>
+      <div class="profile-detail"><span class="detail-label">VILLAGE</span><b id="studentVillage">—</b></div>
+    </div>
+
+    <p class="hint">If your information is incorrect, update your profile before requesting enrollment.</p>
+    <a class="profile-edit" href="../profile/">
+      <i class="ri-edit-line"></i> View or update profile
+      <i class="ri-arrow-right-line"></i>
+    </a>
+  </section>
+
+  <section class="card">
+    <div class="card-heading">
+      <div class="card-icon"><i class="ri-receipt-line"></i></div>
+      <div>
+        <h3>Enrollment summary</h3>
+        <div class="card-subtitle">Review the displayed course fee.</div>
+      </div>
+    </div>
+
+    <div class="summary-row">
+      <span>Batch fee</span>
+      <b id="fee">—</b>
+    </div>
+    <div class="summary-row">
+      <span>Discount</span>
+      <b id="discount">—</b>
+    </div>
+    <div class="summary-divider"></div>
+    <div class="summary-row total-row">
+      <span>Final course fee</span>
+      <strong id="total">—</strong>
+    </div>
+
+    <div class="secure" style="margin-top:17px">
+      <i class="ri-shield-check-line"></i>
+      <div>
+        <b>Admin-reviewed enrollment</b><br>
+        This page does not collect online payments. Your access request will be reviewed by the Zenova team. Course access is enabled only after approval.
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="card-heading">
+      <div class="card-icon"><i class="ri-checkbox-circle-line"></i></div>
+      <div>
+        <h3>Request course access</h3>
+        <div class="card-subtitle">One step closer to your learning journey.</div>
+      </div>
+    </div>
+
+    <p class="hint">
+      By submitting this request, you confirm that your student and course details are correct. A request does not itself unlock course content.
+    </p>
+
+    <button id="requestBtn" class="primary" type="button">
+      Request Access <i class="ri-arrow-right-line"></i>
+    </button>
+    <p id="requestHelp" class="hint" style="margin-bottom:0;margin-top:12px">
+      Your request will be sent to the Zenova enrollment admin.
+    </p>
+  </section>
 </main>
 
-<nav class="bottom-nav" aria-label="Main navigation"><div class="nav-inner"><a href="../" class="nav-item"><span class="nav-icon">⌂</span><span>Home</span></a><a href="../live/" class="nav-item"><span class="nav-icon">◉</span><span>Live</span></a><a href="../revision/" class="nav-item"><span class="nav-icon">▤</span><span>Revision</span></a><a href="../profile/" class="nav-item"><span class="nav-icon">♙</span><span>Profile</span></a></div></nav>
+<div id="checkoutBar" class="checkout-bar hidden">
+  <div class="checkout-bar-inner">
+    <div class="bar-amount">
+      <small>Final course fee</small>
+      <strong id="barTotal">—</strong>
+      <div class="bar-caption">Payment handled separately, if applicable</div>
+    </div>
+    <button id="barRequestBtn" class="primary bar-button" type="button">
+      Request Access <i class="ri-arrow-right-line"></i>
+    </button>
+  </div>
+</div>
+
+<nav class="bottom-nav" aria-label="Main navigation">
+  <div class="nav-inner">
+    <a href="../" class="nav-item">
+      <i class="ri-home-5-line"></i><span>Home</span>
+    </a>
+    <a href="../courses/" class="nav-item active">
+      <i class="ri-book-open-line"></i><span>Courses</span>
+    </a>
+    <a href="../live/" class="nav-item">
+      <i class="ri-live-line"></i><span>Live</span>
+    </a>
+    <a href="../revision/" class="nav-item">
+      <i class="ri-file-list-3-line"></i><span>Revision</span>
+    </a>
+    <a href="../profile/" class="nav-item">
+      <i class="ri-user-3-line"></i><span>Profile</span>
+    </a>
+  </div>
+</nav>
+
 <script type="module">
 import {auth,db} from "../../firebase/firebase-config.js";
 import {onAuthStateChanged} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
-import {doc,getDoc,collection,query,where,getDocs,addDoc,serverTimestamp} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
-const $=id=>document.getElementById(id);
-const params=new URLSearchParams(location.search);const courseId=params.get('courseId');let currentUser=null;let batch=null;let price=null;let currentStudent={};let existingRequest=null;
-function money(v){const n=Number(v);return Number.isFinite(n)?new Intl.NumberFormat('en-IN',{style:'currency',currency:'INR',maximumFractionDigits:0}).format(n):'—'}
-function notice(msg,type='info'){const el=$('notice');el.textContent=msg;el.className='notice show '+type}
-function showError(msg){$('loading').classList.add('hidden');$('main').classList.remove('hidden');notice(msg,'error')}
-$('backBtn').addEventListener('click',()=>{if(history.length>1)history.back();else location.href='../batchdetails/?courseId='+encodeURIComponent(courseId||'')});
-$('requestBtn').addEventListener('click',submitAccessRequest);
-onAuthStateChanged(auth,async user=>{if(!user){location.replace('../../login/');return}currentUser=user;if(!courseId){showError('No batch was selected. Return to Batch Details and tap Buy Now again.');return}try{const results=await Promise.allSettled([getDoc(doc(db,'zen2Courses',courseId)),getDoc(doc(db,'zen2Students',user.uid))]);const courseResult=results[0];if(courseResult.status!=='fulfilled')throw courseResult.reason;const snap=courseResult.value;if(!snap.exists()){showError('This batch could not be found.');return}batch=snap.data();const studentResult=results[1];currentStudent=studentResult.status==='fulfilled'&&studentResult.value.exists()?studentResult.value.data():{};render(currentStudent);if(studentResult.status!=='fulfilled')console.warn('Student profile could not be loaded:',studentResult.reason);await loadExistingRequest();}catch(e){console.error('Checkout load error:',e);showError('Could not load checkout details. Check Firebase permissions and try again.')}});
-async function loadExistingRequest(){
-  try {
-    const q=query(collection(db,'courseEnrollmentRequests'),where('studentUid','==',currentUser.uid),where('courseId','==',courseId));
-    const snap=await getDocs(q);
-    const list=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>{const av=a.createdAt?.toMillis?.()||0,bv=b.createdAt?.toMillis?.()||0;return bv-av});
-    existingRequest=list.find(r=>!['REJECTED','CANCELLED'].includes(String(r.status||'').toUpperCase()))||null;
-    updateRequestButton();
-  } catch(e) { console.warn('Could not check existing request status:',e); }
+import {
+  doc,getDoc,collection,query,where,getDocs,addDoc,serverTimestamp
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
+const $ = id => document.getElementById(id);
+const params = new URLSearchParams(location.search);
+const courseId = params.get("courseId");
+
+let currentUser = null;
+let batch = null;
+let price = null;
+let discountAmount = 0;
+let finalPrice = null;
+let currentStudent = {};
+let existingRequest = null;
+
+function money(value){
+  const n = Number(value);
+  return Number.isFinite(n)
+    ? new Intl.NumberFormat("en-IN",{
+        style:"currency",currency:"INR",maximumFractionDigits:0
+      }).format(n)
+    : "—";
 }
-function updateRequestButton(){
-  const btn=$('requestBtn'); const help=$('requestHelp');
-  if(!btn)return;
-  const status=String(existingRequest?.status||'').toUpperCase();
-  if(status==='APPROVED'){btn.textContent='✓ Access Approved';btn.disabled=true;help.textContent='Your access has been approved. Open your course from Home to start studying.';notice('Your request is approved. Your course access has been granted.','info');}
-  else if(existingRequest && !['REJECTED','CANCELLED'].includes(status)){btn.textContent='Request Submitted ✓';btn.disabled=true;help.textContent='Your request is awaiting review by the Zenova team.';notice('Your access request is already submitted and is awaiting admin review.','info');}
-  else {btn.textContent='Request Access →';btn.disabled=false;}
+
+function first(...values){
+  return values.find(v =>
+    v !== undefined && v !== null && String(v).trim() !== ""
+  ) ?? "—";
 }
-async function submitAccessRequest(){
-  if(!currentUser||!batch||!courseId)return;
-  if(existingRequest && !['REJECTED','CANCELLED'].includes(String(existingRequest.status||'').toUpperCase())){updateRequestButton();return;}
-  const btn=$('requestBtn');btn.disabled=true;btn.textContent='Submitting request…';
+
+function notice(message,type="info"){
+  const el = $("notice");
+  el.textContent = message;
+  el.className = "notice show " + type;
+}
+
+function showError(message){
+  $("loading").classList.add("hidden");
+  $("main").classList.remove("hidden");
+  $("checkoutBar").classList.add("hidden");
+  notice(message,"error");
+}
+
+function goToBatchDetails(){
+  location.href = "../batchdetails/?courseId=" + encodeURIComponent(courseId || "");
+}
+
+$("backBtn").addEventListener("click",()=>{
+  if(history.length > 1) history.back();
+  else goToBatchDetails();
+});
+
+$("requestBtn").addEventListener("click",submitAccessRequest);
+$("barRequestBtn").addEventListener("click",submitAccessRequest);
+
+onAuthStateChanged(auth,async user=>{
+  if(!user){
+    location.replace("../../login/");
+    return;
+  }
+
+  currentUser = user;
+
+  if(!courseId){
+    showError("No batch was selected. Return to Batch Details and tap Buy Now again.");
+    return;
+  }
+
   try{
-    const s=currentStudent||{};
-    const courseName=first(batch.courseName,batch.name,batch.title,batch.batchName,'Zenova Batch');
-    const finalPrice=Number(price);
-    const payload={
-      studentUid:currentUser.uid, studentName:first(s.name,s.fullName,currentUser.displayName),
-      email:first(s.email,currentUser.email), phone:first(s.phone,s.phoneNumber,s.mobile,currentUser.phoneNumber),
-      studentCode:first(s.crmStudentId,s.studentId,s.studentCode), dateOfBirth:first(s.dateOfBirth,s.dob), gender:first(s.gender),
-      className:first(s.className,s.crmClass,s.class), board:first(s.board,s.educationBoard), medium:first(s.medium,s.languageMedium),
-      school:first(s.schoolName,s.school), district:first(s.district), taluk:first(s.taluk), gramPanchayat:first(s.gramPanchayat), village:first(s.village,s.villageName),
-      courseId, crmCourseId:courseId, courseName, courseCode:first(batch.courseCode,batch.code,courseId),
-      courseClass:first(batch.classDisplayName,batch.className,s.className,s.classDisplayName),
-      courseBoard:first(batch.board), courseMedium:first(batch.medium,batch.languageMedium), selectedLanguage:first(s.medium,s.languageMedium,batch.medium),
-      coursePrice:Number.isFinite(finalPrice)?finalPrice:0, discount:Number(batch.discountAmount||0), finalPrice:Number.isFinite(finalPrice)?finalPrice:0,
-      paymentStatus:'MANUAL_PAYMENT_PENDING', status:'PENDING', accessGranted:false,
-      requestSource:'STUDENT_CHECKOUT', createdAt:serverTimestamp(), updatedAt:serverTimestamp()
-    };
-    const ref=await addDoc(collection(db,'courseEnrollmentRequests'),payload);
-    existingRequest={id:ref.id,...payload,status:'PENDING'};
+    const results = await Promise.allSettled([
+      getDoc(doc(db,"zen2Courses",courseId)),
+      getDoc(doc(db,"zen2Students",user.uid))
+    ]);
+
+    const courseResult = results[0];
+
+    if(courseResult.status !== "fulfilled"){
+      throw courseResult.reason;
+    }
+
+    const courseSnap = courseResult.value;
+
+    if(!courseSnap.exists()){
+      showError("This batch could not be found. Please return to the courses page.");
+      return;
+    }
+
+    batch = courseSnap.data();
+
+    const studentResult = results[1];
+    currentStudent =
+      studentResult.status === "fulfilled" && studentResult.value.exists()
+        ? studentResult.value.data()
+        : {};
+
+    render(currentStudent);
+
+    if(studentResult.status !== "fulfilled"){
+      console.warn("Student profile could not be loaded:",studentResult.reason);
+    }
+
+    await loadExistingRequest();
+
+  }catch(error){
+    console.error("Checkout load error:",error);
+    showError("Could not load checkout details. Check Firebase permissions and try again.");
+  }
+});
+
+async function loadExistingRequest(){
+  try{
+    const q = query(
+      collection(db,"courseEnrollmentRequests"),
+      where("studentUid","==",currentUser.uid),
+      where("courseId","==",courseId)
+    );
+
+    const snap = await getDocs(q);
+
+    const requests = snap.docs.map(d=>({
+      id:d.id,...d.data()
+    })).sort((a,b)=>{
+      const aTime = a.createdAt?.toMillis?.() || 0;
+      const bTime = b.createdAt?.toMillis?.() || 0;
+      return bTime-aTime;
+    });
+
+    existingRequest = requests.find(r =>
+      !["REJECTED","CANCELLED"].includes(
+        String(r.status || "").toUpperCase()
+      )
+    ) || null;
+
     updateRequestButton();
-    notice('Your request has been sent to the Zenova team. Access will be available after admin approval.','info');
-  }catch(e){
-    console.error('Access request submit failed:',e);
-    notice(e?.code==='permission-denied'?'Firebase rules do not allow this student to submit an enrollment request. Ask the administrator to update the courseEnrollmentRequests rules.':'Could not submit your request. Please try again.','error');
-    btn.disabled=false;btn.textContent='Request Access →';
+
+  }catch(error){
+    console.warn("Could not check existing request status:",error);
   }
 }
-function first(...values){return values.find(v=>v!==undefined&&v!==null&&String(v).trim()!=='')||'—'}
-function render(student={}){const name=first(batch.name,batch.title,batch.courseName,batch.batchName,'Zenova Batch');const image=first(batch.thumbnailUrl,batch.imageUrl,batch.thumbnail,batch.bannerUrl,'');price=batch.price??batch.fee??batch.courseFee??null;const numeric=price!==null&&price!==''&&Number.isFinite(Number(price))?Number(price):null;$('courseName').textContent=name;$('courseSubtitle').textContent=first(batch.shortDescription,batch.tagline,'SSLC · 10th Standard');$('courseMeta').textContent=[batch.medium,batch.mode,batch.duration].filter(Boolean).join(' · ');$('tag').textContent=first(batch.tag,batch.medium,'ZENOVA COURSE');if(image!=='—'){const img=document.createElement('img');img.src=image;img.alt='Batch cover';img.onerror=()=>img.remove();$('cover').replaceChildren(img)}$('fee').textContent=numeric===null?'Contact institute':money(numeric);$('discount').textContent='₹0';$('total').textContent=numeric===null?'To be confirmed':money(numeric);$('studentName').value=first(student.name,student.fullName,currentUser.displayName);$('studentEmail').value=first(student.email,currentUser.email);$('studentPhone').value=first(student.phone,student.phoneNumber,student.mobile,currentUser.phoneNumber);$('studentCode').textContent=first(student.crmStudentId,student.studentId,student.studentCode);$('studentClass').textContent=first(student.className,student.crmClass,student.class);$('studentMedium').textContent=first(student.medium,student.languageMedium);$('studentSchool').textContent=first(student.schoolName,student.school);$('studentDistrict').textContent=first(student.district);$('studentVillage').textContent=first(student.village,student.villageName);$('loading').classList.add('hidden');$('main').classList.remove('hidden');if(numeric===null)notice('The batch fee is not available as a valid number in the course record. Please contact the institute before paying.','info')}
+
+function updateRequestButton(){
+  const buttons = [$("requestBtn"),$("barRequestBtn")];
+  const help = $("requestHelp");
+
+  const status = String(existingRequest?.status || "").toUpperCase();
+
+  if(status === "APPROVED"){
+    buttons.forEach(btn=>{
+      btn.innerHTML = '<i class="ri-check-line"></i> Access Approved';
+      btn.disabled = true;
+    });
+
+    help.textContent =
+      "Your access has been approved. Open your course from Home to start studying.";
+
+    notice("Your request is approved. Your course access has been granted.","success");
+
+  }else if(existingRequest){
+    buttons.forEach(btn=>{
+      btn.innerHTML = '<i class="ri-time-line"></i> Request Submitted';
+      btn.disabled = true;
+    });
+
+    help.textContent =
+      "Your request is awaiting review by the Zenova team.";
+
+    notice("Your access request has already been submitted and is awaiting admin review.","info");
+
+  }else{
+    buttons.forEach(btn=>{
+      btn.innerHTML = 'Request Access <i class="ri-arrow-right-line"></i>';
+      btn.disabled = false;
+    });
+
+    help.textContent =
+      "Your request will be sent to the Zenova enrollment admin.";
+  }
+}
+
+async function submitAccessRequest(){
+  if(!currentUser || !batch || !courseId) return;
+
+  if(existingRequest &&
+     !["REJECTED","CANCELLED"].includes(
+       String(existingRequest.status || "").toUpperCase()
+     )){
+    updateRequestButton();
+    return;
+  }
+
+  const buttons = [$("requestBtn"),$("barRequestBtn")];
+
+  buttons.forEach(btn=>{
+    btn.disabled = true;
+    btn.textContent = "Submitting request...";
+  });
+
+  try{
+    const student = currentStudent || {};
+
+    const courseName = first(
+      batch.courseName,batch.name,batch.title,batch.batchName,"Zenova Batch"
+    );
+
+    const calculatedPrice = Number.isFinite(finalPrice) ? finalPrice : 0;
+
+    const payload = {
+      studentUid:currentUser.uid,
+      studentName:first(student.name,student.fullName,currentUser.displayName),
+      email:first(student.email,currentUser.email),
+      phone:first(student.phone,student.phoneNumber,student.mobile,currentUser.phoneNumber),
+
+      studentCode:first(student.crmStudentId,student.studentId,student.studentCode),
+      dateOfBirth:first(student.dateOfBirth,student.dob),
+      gender:first(student.gender),
+
+      className:first(student.className,student.crmClass,student.class),
+      board:first(student.board,student.educationBoard),
+      medium:first(student.medium,student.languageMedium),
+      school:first(student.schoolName,student.school),
+      district:first(student.district),
+      taluk:first(student.taluk),
+      gramPanchayat:first(student.gramPanchayat),
+      village:first(student.village,student.villageName),
+
+      courseId:courseId,
+      crmCourseId:courseId,
+      courseName:courseName,
+      courseCode:first(batch.courseCode,batch.code,courseId),
+
+      courseClass:first(
+        batch.classDisplayName,batch.className,
+        student.className,student.classDisplayName
+      ),
+      courseBoard:first(batch.board),
+      courseMedium:first(batch.medium,batch.languageMedium),
+      selectedLanguage:first(student.medium,student.languageMedium,batch.medium),
+
+      coursePrice:Number.isFinite(price) ? price : 0,
+      discount:discountAmount,
+      finalPrice:calculatedPrice,
+
+      paymentStatus:"MANUAL_PAYMENT_PENDING",
+      status:"PENDING",
+      accessGranted:false,
+
+      requestSource:"STUDENT_CHECKOUT",
+      createdAt:serverTimestamp(),
+      updatedAt:serverTimestamp()
+    };
+
+    const ref = await addDoc(
+      collection(db,"courseEnrollmentRequests"),
+      payload
+    );
+
+    existingRequest = {
+      id:ref.id,
+      ...payload,
+      status:"PENDING"
+    };
+
+    updateRequestButton();
+
+    notice(
+      "Your request has been sent to the Zenova team. Access will be available after admin approval.",
+      "success"
+    );
+
+  }catch(error){
+    console.error("Access request submit failed:",error);
+
+    notice(
+      error?.code === "permission-denied"
+        ? "Firebase rules do not allow this student to submit an enrollment request. Ask the administrator to check the courseEnrollmentRequests rules."
+        : "Could not submit your request. Please try again.",
+      "error"
+    );
+
+    buttons.forEach(btn=>{
+      btn.disabled = false;
+      btn.innerHTML = 'Request Access <i class="ri-arrow-right-line"></i>';
+    });
+  }
+}
+
+function render(student={}){
+  const name = first(
+    batch.name,batch.title,batch.courseName,batch.batchName,"Zenova Batch"
+  );
+
+  const image = first(
+    batch.thumbnailUrl,batch.imageUrl,batch.thumbnail,batch.bannerUrl,""
+  );
+
+  const rawPrice = batch.price ?? batch.fee ?? batch.courseFee ?? null;
+  price = rawPrice !== null && rawPrice !== "" && Number.isFinite(Number(rawPrice))
+    ? Number(rawPrice)
+    : null;
+
+  discountAmount = Math.max(0,Number(batch.discountAmount || 0));
+
+  if(price !== null){
+    discountAmount = Math.min(discountAmount,price);
+    finalPrice = Math.max(0,price-discountAmount);
+  }else{
+    finalPrice = null;
+  }
+
+  $("courseName").textContent = name;
+  $("courseSubtitle").textContent = first(
+    batch.shortDescription,batch.tagline,"SSLC · 10th Standard"
+  );
+
+  $("courseMeta").textContent = [
+    batch.medium,batch.mode,batch.duration
+  ].filter(Boolean).join(" · ");
+
+  $("tag").textContent = first(batch.tag,batch.medium,"ZENOVA COURSE");
+
+  if(image && image !== "—"){
+    const img = document.createElement("img");
+    img.src = image;
+    img.alt = "Batch cover";
+    img.onerror = ()=>{ $("cover").replaceChildren(document.createTextNode("Z")); };
+    $("cover").replaceChildren(img);
+  }
+
+  $("fee").textContent = price === null ? "Contact institute" : money(price);
+  $("discount").textContent = price === null
+    ? "—"
+    : discountAmount > 0 ? "−" + money(discountAmount) : money(0);
+
+  $("total").textContent = finalPrice === null
+    ? "To be confirmed"
+    : money(finalPrice);
+
+  $("barTotal").textContent = finalPrice === null
+    ? "To be confirmed"
+    : money(finalPrice);
+
+  $("studentName").value = first(
+    student.name,student.fullName,currentUser.displayName
+  );
+  $("studentEmail").value = first(student.email,currentUser.email);
+  $("studentPhone").value = first(
+    student.phone,student.phoneNumber,student.mobile,currentUser.phoneNumber
+  );
+
+  $("studentCode").textContent = first(
+    student.crmStudentId,student.studentId,student.studentCode
+  );
+  $("studentClass").textContent = first(
+    student.className,student.crmClass,student.class
+  );
+  $("studentMedium").textContent = first(
+    student.medium,student.languageMedium
+  );
+  $("studentSchool").textContent = first(student.schoolName,student.school);
+  $("studentDistrict").textContent = first(student.district);
+  $("studentVillage").textContent = first(student.village,student.villageName);
+
+  $("loading").classList.add("hidden");
+  $("main").classList.remove("hidden");
+  $("checkoutBar").classList.remove("hidden");
+
+  if(price === null){
+    notice(
+      "The batch fee is not available as a valid number in the course record. Please contact the institute before proceeding.",
+      "info"
+    );
+  }
+}
 </script>
+
 </body>
 </html>
