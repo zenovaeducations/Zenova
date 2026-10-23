@@ -1,0 +1,278 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Support | Zenova Educations</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.css" rel="stylesheet">
+
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: #F7F9FC;
+  color: #172338;
+  min-height: 100vh;
+}
+
+header {
+  height: 68px;
+  padding: 0 20px;
+  background: #FFFFFF;
+  border-bottom: 1px solid #E7EDF5;
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.back-btn {
+  width: 40px;
+  height: 40px;
+  border: 1px solid #E7EDF5;
+  background: #FFFFFF;
+  border-radius: 12px;
+  color: #172338;
+  font-size: 21px;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+
+.back-btn:hover {
+  background: #EAF2FF;
+  color: #3978E8;
+}
+
+.brand {
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+.brand span {
+  color: #3978E8;
+}
+
+main {
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 30px 20px 40px;
+}
+
+.heading {
+  margin-bottom: 25px;
+}
+
+.heading .eyebrow {
+  color: #3978E8;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 10px;
+}
+
+.heading h1 {
+  font-size: 29px;
+  letter-spacing: -1px;
+  margin-bottom: 10px;
+}
+
+.heading p {
+  color: #7B8799;
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.card {
+  background: #FFFFFF;
+  border: 1px solid #E7EDF5;
+  border-radius: 17px;
+  padding: 19px;
+  margin-bottom: 13px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  text-decoration: none;
+  color: inherit;
+  transition: transform .18s ease, border-color .18s ease;
+}
+
+a.card:hover {
+  transform: translateY(-2px);
+  border-color: #C6D9FF;
+}
+
+.icon {
+  width: 49px;
+  height: 49px;
+  flex-shrink: 0;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  font-size: 25px;
+}
+
+.whatsapp .icon {
+  background: #E5F8EC;
+  color: #20A45A;
+}
+
+.phone .icon {
+  background: #EAF2FF;
+  color: #3978E8;
+}
+
+.email .icon {
+  background: #F0EBFF;
+  color: #7854D7;
+}
+
+.instagram .icon {
+  background: #FCEAF2;
+  color: #D84A83;
+}
+
+.info {
+  flex: 1;
+  min-width: 0;
+}
+
+.info h2 {
+  font-size: 15px;
+  font-weight: 650;
+  margin-bottom: 6px;
+}
+
+.info p {
+  font-size: 12px;
+  color: #7B8799;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.arrow {
+  color: #9AA5B5;
+  font-size: 20px;
+}
+
+.whatsapp .info p {
+  color: #208A4E;
+}
+
+.note {
+  margin-top: 22px;
+  text-align: center;
+  font-size: 12px;
+  color: #8A96A8;
+  line-height: 1.7;
+}
+
+footer {
+  text-align: center;
+  padding: 15px 20px 25px;
+  color: #9AA5B5;
+  font-size: 11px;
+}
+
+@media (max-width: 380px) {
+  main { padding: 25px 15px; }
+  .heading h1 { font-size: 26px; }
+  .card { padding: 15px; gap: 11px; }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <button class="back-btn" onclick="goBack()" aria-label="Go to previous page">
+    <i class="ri-arrow-left-line"></i>
+  </button>
+  <div class="brand">zenova <span>educations</span></div>
+</header>
+
+<main>
+  <section class="heading">
+    <div class="eyebrow">We're here to help</div>
+    <h1>How can we help you?</h1>
+    <p>Have a question or facing an issue? Contact our support team using any of the options below.</p>
+  </section>
+
+  <a class="card whatsapp"
+     href="https://wa.me/919591711820?text=Sir%20!%20I%20need%20a%20help"
+     target="_blank" rel="noopener noreferrer">
+    <div class="icon"><i class="ri-whatsapp-fill"></i></div>
+    <div class="info">
+      <h2>WhatsApp Support</h2>
+      <p>Sir ! I need a help</p>
+    </div>
+    <i class="ri-arrow-right-up-line arrow"></i>
+  </a>
+
+  <a class="card phone" href="tel:+919591711820">
+    <div class="icon"><i class="ri-phone-fill"></i></div>
+    <div class="info">
+      <h2>Call Us</h2>
+      <p>+91 95917 11820</p>
+    </div>
+    <i class="ri-arrow-right-up-line arrow"></i>
+  </a>
+
+  <a class="card email"
+     href="mailto:zenovaeducations@gmail.com">
+    <div class="icon"><i class="ri-mail-fill"></i></div>
+    <div class="info">
+      <h2>Email Support</h2>
+      <p>zenovaeducations@gmail.com</p>
+    </div>
+    <i class="ri-arrow-right-up-line arrow"></i>
+  </a>
+
+  <a class="card instagram"
+     href="https://www.instagram.com/zenovaeducations/"
+     target="_blank" rel="noopener noreferrer">
+    <div class="icon"><i class="ri-instagram-line"></i></div>
+    <div class="info">
+      <h2>Instagram</h2>
+      <p>@zenovaeducations</p>
+    </div>
+    <i class="ri-arrow-right-up-line arrow"></i>
+  </a>
+
+  <p class="note">
+    Zenova Educations Support<br>
+    We're happy to assist you with your learning journey.
+  </p>
+</main>
+
+<footer>
+  © 2026 Zenova Educations. All rights reserved.
+</footer>
+
+<script>
+function goBack() {
+  // Return to the actual previous page when available.
+  if (window.history.length > 1 && document.referrer) {
+    window.history.back();
+  } else {
+    // Fallback when support.html was opened directly.
+    window.location.href = "/";
+  }
+}
+</script>
+
+</body>
+</html>
