@@ -1,0 +1,1290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#f7f9fc">
+<title>Student CRM | Zenova Educations</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.css" rel="stylesheet">
+
+<style>
+:root{
+  --bg:#f7f9fc;
+  --surface:#fff;
+  --soft:#f0f5fb;
+  --ink:#172338;
+  --muted:#7b8799;
+  --line:#e7edf5;
+  --blue:#3978e8;
+  --blue-dark:#245fc9;
+  --blue-soft:#eaf2ff;
+  --green:#159b78;
+  --green-soft:#e8f8f2;
+  --red:#d64545;
+  --red-soft:#fff0f0;
+  --orange:#ad6a13;
+  --orange-soft:#fff4e7;
+  --radius:16px;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;background:var(--bg);color:var(--ink);
+  font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;
+  font-size:13px;-webkit-font-smoothing:antialiased
+}
+button,input,select,textarea{font:inherit}
+button,a{-webkit-tap-highlight-color:transparent}
+button{cursor:pointer}
+a{color:inherit;text-decoration:none}
+.hidden{display:none!important}
+.muted{color:var(--muted)}
+.small{font-size:11px}
+.wrap{max-width:1500px;margin:auto;padding:22px}
+.header{
+  position:sticky;top:0;z-index:30;background:#ffffffed;
+  backdrop-filter:blur(14px);border-bottom:1px solid var(--line)
+}
+.header-inner{
+  max-width:1500px;margin:auto;padding:12px 22px;
+  display:flex;align-items:center;justify-content:space-between;gap:16px
+}
+.brand{display:flex;align-items:center;gap:11px}
+.brand-logo{
+  width:42px;height:42px;border-radius:13px;background:var(--blue);
+  color:white;display:grid;place-items:center;font-size:22px;font-weight:900
+}
+.brand-name{font-size:15px;font-weight:850}
+.brand-sub{font-size:9px;letter-spacing:1.5px;color:var(--muted);margin-top:4px}
+.admin-badge{
+  display:flex;align-items:center;gap:7px;padding:9px 12px;
+  border-radius:11px;background:var(--blue-soft);color:var(--blue);
+  font-size:11px;font-weight:800
+}
+.page-head{
+  display:flex;justify-content:space-between;align-items:flex-start;
+  flex-wrap:wrap;gap:14px;margin-bottom:22px
+}
+.page-head h1{font-size:27px;letter-spacing:-1px;margin:0 0 7px}
+.page-head p{margin:0;color:var(--muted);line-height:1.6}
+.btn{
+  border:1px solid var(--line);border-radius:11px;padding:10px 14px;
+  display:inline-flex;align-items:center;justify-content:center;gap:7px;
+  background:white;color:var(--ink);font-weight:750;font-size:12px
+}
+.btn:hover{border-color:#c9d8f1}
+.btn-primary{background:var(--blue);border-color:var(--blue);color:white}
+.btn-primary:hover{background:var(--blue-dark)}
+.btn-danger{background:var(--red-soft);color:var(--red);border-color:#f4d6d6}
+.btn-success{background:var(--green-soft);color:var(--green);border-color:#d1eee3}
+.btn:disabled{opacity:.55;cursor:not-allowed}
+.stats{
+  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:14px;margin-bottom:22px
+}
+.stat{
+  background:white;border:1px solid var(--line);border-radius:var(--radius);
+  padding:18px;min-width:0
+}
+.stat-top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.stat-label{font-size:11px;color:var(--muted);font-weight:650}
+.stat-icon{
+  width:35px;height:35px;border-radius:11px;background:var(--blue-soft);
+  color:var(--blue);display:grid;place-items:center;font-size:19px
+}
+.stat-value{font-size:28px;font-weight:850;letter-spacing:-1px;margin-top:12px}
+.stat-note{font-size:10px;color:var(--muted);margin-top:5px}
+.panel{
+  background:white;border:1px solid var(--line);border-radius:var(--radius);
+  margin-bottom:18px;overflow:hidden
+}
+.panel-head{
+  padding:17px 18px;border-bottom:1px solid var(--line);
+  display:flex;align-items:center;justify-content:space-between;
+  flex-wrap:wrap;gap:12px
+}
+.panel-head h2{font-size:15px;margin:0;font-weight:850}
+.panel-body{padding:18px}
+.tabs{
+  display:flex;gap:5px;overflow-x:auto;padding:5px;
+  background:#edf2f8;border-radius:13px;margin-bottom:18px
+}
+.tab{
+  white-space:nowrap;border:0;background:transparent;color:var(--muted);
+  padding:11px 15px;border-radius:10px;font-size:12px;font-weight:800
+}
+.tab.active{background:white;color:var(--blue);box-shadow:0 2px 8px #1723380b}
+.toolbar{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-bottom:15px}
+.search{
+  flex:1;min-width:200px;position:relative
+}
+.search i{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:17px}
+.search input{
+  width:100%;padding:12px 13px 12px 39px;border:1px solid var(--line);
+  background:#fbfcfe;border-radius:11px;outline:none
+}
+.search input:focus,.control:focus{border-color:var(--blue);box-shadow:0 0 0 3px #3978e817}
+.control{
+  width:100%;min-width:0;padding:11px 12px;border:1px solid var(--line);
+  border-radius:10px;background:white;color:var(--ink);outline:none
+}
+.toolbar select{width:auto;min-width:145px}
+.table-wrap{width:100%;overflow-x:auto}
+table{width:100%;border-collapse:collapse;white-space:nowrap}
+th{
+  background:#f8fafd;color:var(--muted);font-size:10px;
+  letter-spacing:.5px;text-align:left;padding:13px 14px;
+  border-bottom:1px solid var(--line)
+}
+td{padding:13px 14px;border-bottom:1px solid #eef2f7;vertical-align:middle}
+tbody tr:hover{background:#fbfcff}
+tbody tr:last-child td{border-bottom:0}
+.student-name{font-weight:800;font-size:12px}
+.student-email{font-size:10px;color:var(--muted);margin-top:4px}
+.code{
+  display:inline-block;background:var(--blue-soft);color:var(--blue);
+  padding:5px 8px;border-radius:7px;font-size:10px;font-weight:850
+}
+.pill{
+  display:inline-flex;align-items:center;gap:5px;border-radius:30px;
+  padding:5px 9px;font-size:10px;font-weight:800
+}
+.pill.green{background:var(--green-soft);color:var(--green)}
+.pill.blue{background:var(--blue-soft);color:var(--blue)}
+.pill.orange{background:var(--orange-soft);color:var(--orange)}
+.pill.red{background:var(--red-soft);color:var(--red)}
+.row-actions{display:flex;align-items:center;gap:6px}
+.icon-btn{
+  width:33px;height:33px;border:1px solid var(--line);border-radius:9px;
+  background:white;display:grid;place-items:center;font-size:17px;color:var(--blue)
+}
+.icon-btn:hover{background:var(--blue-soft)}
+.empty{text-align:center;padding:35px 15px;color:var(--muted)}
+.empty i{font-size:32px;display:block;margin-bottom:9px}
+.pagination{
+  display:flex;align-items:center;justify-content:space-between;
+  flex-wrap:wrap;gap:12px;padding:14px 18px;border-top:1px solid var(--line)
+}
+.pagination-buttons{display:flex;gap:7px}
+.pagination button:disabled{opacity:.4;cursor:not-allowed}
+.detail-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.detail-box{background:#fbfcfe;border:1px solid var(--line);border-radius:12px;padding:13px;min-width:0}
+.detail-box label{display:block;font-size:10px;color:var(--muted);font-weight:750;margin-bottom:7px}
+.detail-box div{font-size:12px;font-weight:700;overflow-wrap:anywhere}
+.section-label{
+  font-size:12px;font-weight:850;margin:22px 0 12px;
+  padding-bottom:9px;border-bottom:1px solid var(--line)
+}
+.overlay{
+  position:fixed;inset:0;background:#13203970;z-index:100;
+  display:flex;align-items:center;justify-content:center;padding:16px;
+  overflow-y:auto
+}
+.modal{
+  width:min(100%,900px);max-height:92vh;overflow:auto;background:white;
+  border-radius:19px;box-shadow:0 25px 100px #13203930
+}
+.modal.small-modal{width:min(100%,470px)}
+.modal-head{
+  position:sticky;top:0;z-index:2;background:white;border-bottom:1px solid var(--line);
+  padding:17px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px
+}
+.modal-head h2{font-size:17px;margin:0}
+.close-btn{
+  border:1px solid var(--line);background:white;width:34px;height:34px;
+  border-radius:9px;font-size:19px;display:grid;place-items:center
+}
+.modal-content{padding:20px}
+.modal-foot{
+  position:sticky;bottom:0;background:white;border-top:1px solid var(--line);
+  padding:14px 20px;display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap
+}
+.form-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}
+.field{min-width:0}
+.field label{display:block;color:#59677d;font-size:10px;font-weight:800;margin-bottom:7px}
+.field .control{font-size:12px}
+.field textarea{min-height:85px;resize:vertical}
+.checkline{display:flex;align-items:center;gap:8px;margin-top:14px;color:var(--ink)}
+.message{padding:12px 14px;border-radius:11px;margin-bottom:15px;font-size:12px;line-height:1.6}
+.message.error{background:var(--red-soft);color:var(--red)}
+.message.info{background:var(--blue-soft);color:var(--blue-dark)}
+.message.success{background:var(--green-soft);color:var(--green)}
+.login-screen{
+  min-height:100vh;display:grid;place-items:center;padding:22px
+}
+.login-card{
+  width:min(100%,430px);background:white;border:1px solid var(--line);
+  border-radius:22px;padding:30px;box-shadow:0 12px 45px #243a5709
+}
+.login-card h1{font-size:23px;letter-spacing:-.7px;margin:20px 0 8px}
+.login-card p{font-size:12px;line-height:1.7;color:var(--muted)}
+.login-card .btn{width:100%;margin-top:10px}
+.loading{text-align:center;padding:45px 15px;color:var(--muted)}
+.spinner{
+  width:28px;height:28px;border:3px solid #dce8fb;border-top-color:var(--blue);
+  border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 12px
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+.toast{
+  position:fixed;bottom:20px;right:20px;z-index:200;
+  max-width:min(400px,calc(100vw - 40px));padding:13px 16px;
+  background:#172338;color:white;border-radius:12px;box-shadow:0 8px 30px #17233825;
+  font-size:12px;line-height:1.6
+}
+@media(max-width:900px){
+  .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .detail-grid,.form-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:600px){
+  .wrap{padding:14px}
+  .header-inner{padding:11px 14px}
+  .page-head h1{font-size:23px}
+  .stats{gap:9px}
+  .stat{padding:13px}
+  .stat-value{font-size:24px}
+  .detail-grid,.form-grid{grid-template-columns:1fr}
+  .panel-body{padding:12px}
+  .panel-head{padding:14px}
+  .modal-content{padding:14px}
+  .modal-head,.modal-foot{padding:14px}
+  .tabs{margin-bottom:13px}
+  .tab{padding:10px 12px}
+}
+</style>
+</head>
+
+<body>
+
+<!-- Login and authorization -->
+<div id="loginScreen" class="login-screen">
+  <div class="login-card">
+    <div class="brand">
+      <div class="brand-logo">Z</div>
+      <div>
+        <div class="brand-name">Zenova Educations</div>
+        <div class="brand-sub">ADMIN STUDENT CRM</div>
+      </div>
+    </div>
+    <h1>Student management</h1>
+    <p>Sign in with your authorized administrator account to manage student records and enrollment requests.</p>
+    <div id="loginMessage" class="message info hidden"></div>
+    <button id="loginBtn" class="btn btn-primary">
+      <i class="ri-google-fill"></i> Continue with Google
+    </button>
+    <p class="small">Only Firebase-authorized administrators should have access.</p>
+  </div>
+</div>
+
+<!-- Main CRM -->
+<div id="app" class="hidden">
+  <header class="header">
+    <div class="header-inner">
+      <div class="brand">
+        <div class="brand-logo">Z</div>
+        <div>
+          <div class="brand-name">Zenova Educations</div>
+          <div class="brand-sub">STUDENT CRM</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <div class="admin-badge"><i class="ri-shield-user-line"></i> Administrator</div>
+        <button id="refreshBtn" class="icon-btn" title="Refresh data"><i class="ri-refresh-line"></i></button>
+        <button id="logoutBtn" class="icon-btn" title="Sign out"><i class="ri-logout-box-r-line"></i></button>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div class="page-head">
+      <div>
+        <h1>Student CRM</h1>
+        <p>Manage student information, ZNV codes, courses and enrollment approvals.</p>
+      </div>
+      <button class="btn btn-primary" id="addStudentBtn">
+        <i class="ri-user-add-line"></i> Add student
+      </button>
+    </div>
+
+    <div id="globalMessage" class="message hidden"></div>
+
+    <section class="stats">
+      <div class="stat">
+        <div class="stat-top">
+          <span class="stat-label">Total students</span>
+          <span class="stat-icon"><i class="ri-group-line"></i></span>
+        </div>
+        <div class="stat-value" id="statStudents">—</div>
+        <div class="stat-note">Student records loaded</div>
+      </div>
+      <div class="stat">
+        <div class="stat-top">
+          <span class="stat-label">Pending requests</span>
+          <span class="stat-icon"><i class="ri-time-line"></i></span>
+        </div>
+        <div class="stat-value" id="statPending">—</div>
+        <div class="stat-note">Awaiting your decision</div>
+      </div>
+      <div class="stat">
+        <div class="stat-top">
+          <span class="stat-label">Approved requests</span>
+          <span class="stat-icon"><i class="ri-checkbox-circle-line"></i></span>
+        </div>
+        <div class="stat-value" id="statApproved">—</div>
+        <div class="stat-note">Requests marked approved</div>
+      </div>
+      <div class="stat">
+        <div class="stat-top">
+          <span class="stat-label">Missing ZNV codes</span>
+          <span class="stat-icon"><i class="ri-id-card-line"></i></span>
+        </div>
+        <div class="stat-value" id="statNoCode">—</div>
+        <div class="stat-note">Students without a code</div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-body">
+        <div class="tabs">
+          <button class="tab active" data-tab="students">All Students</button>
+          <button class="tab" data-tab="requests">Enrollment Requests</button>
+          <button class="tab" data-tab="courses">Courses</button>
+        </div>
+
+        <section id="studentsView">
+          <div class="toolbar">
+            <div class="search">
+              <i class="ri-search-line"></i>
+              <input id="studentSearch" placeholder="Search name, code, email, phone, school or village">
+            </div>
+            <select id="districtFilter" class="control">
+              <option value="">All districts</option>
+            </select>
+            <select id="mediumFilter" class="control">
+              <option value="">All mediums</option>
+              <option>Kannada</option>
+              <option>English</option>
+            </select>
+            <button id="exportBtn" class="btn"><i class="ri-download-2-line"></i> Export CSV</button>
+          </div>
+          <div id="studentTableArea">
+            <div class="loading"><div class="spinner"></div>Loading students...</div>
+          </div>
+        </section>
+
+        <section id="requestsView" class="hidden">
+          <div class="toolbar">
+            <div class="search">
+              <i class="ri-search-line"></i>
+              <input id="requestSearch" placeholder="Search student, course, code or phone">
+            </div>
+            <select id="requestStatusFilter" class="control">
+              <option value="">All statuses</option>
+              <option value="PENDING">Pending</option>
+              <option value="APPROVED">Approved</option>
+              <option value="REJECTED">Declined</option>
+            </select>
+          </div>
+          <div id="requestTableArea">
+            <div class="loading"><div class="spinner"></div>Loading enrollment requests...</div>
+          </div>
+        </section>
+
+        <section id="coursesView" class="hidden">
+          <div class="toolbar">
+            <div class="search">
+              <i class="ri-search-line"></i>
+              <input id="courseSearch" placeholder="Search course or batch">
+            </div>
+          </div>
+          <div id="courseTableArea">
+            <div class="loading"><div class="spinner"></div>Loading courses...</div>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <p class="muted small">
+      Student records are sensitive. Only authorized administrators should use this portal.
+      Confirm payment separately before granting paid-course access.
+    </p>
+  </main>
+</div>
+
+<!-- Student detail/edit modal -->
+<div id="studentModal" class="overlay hidden">
+  <div class="modal">
+    <div class="modal-head">
+      <div>
+        <h2 id="studentModalTitle">Student profile</h2>
+        <div class="muted small" id="studentModalSub"></div>
+      </div>
+      <button class="close-btn" data-close="studentModal"><i class="ri-close-line"></i></button>
+    </div>
+    <div class="modal-content">
+      <div id="studentModalMessage" class="message hidden"></div>
+      <form id="studentForm">
+        <input type="hidden" id="editUid">
+        <div class="section-label">Identity and contact</div>
+        <div class="form-grid">
+          <div class="field"><label>Full name</label><input class="control" id="fName" maxlength="120"></div>
+          <div class="field"><label>Email address</label><input class="control" id="fEmail" type="email"></div>
+          <div class="field"><label>Phone number</label><input class="control" id="fPhone" type="tel"></div>
+          <div class="field"><label>Alternative phone</label><input class="control" id="fAltPhone" type="tel"></div>
+          <div class="field"><label>ZNV / student code</label><input class="control" id="fCode" maxlength="40" placeholder="e.g. ZNV2701"></div>
+          <div class="field"><label>Date of birth</label><input class="control" id="fDob" type="date"></div>
+          <div class="field"><label>Gender</label>
+            <select class="control" id="fGender">
+              <option value="">Not specified</option><option>Male</option><option>Female</option><option>Other</option>
+            </select>
+          </div>
+          <div class="field"><label>Firebase UID</label><input class="control" id="fUid" readonly></div>
+        </div>
+
+        <div class="section-label">Academic information</div>
+        <div class="form-grid">
+          <div class="field"><label>Class</label><input class="control" id="fClass"></div>
+          <div class="field"><label>Board</label><input class="control" id="fBoard"></div>
+          <div class="field"><label>Medium</label>
+            <select class="control" id="fMedium">
+              <option value="">Not specified</option><option>Kannada</option><option>English</option>
+            </select>
+          </div>
+          <div class="field"><label>School name</label><input class="control" id="fSchool"></div>
+          <div class="field"><label>School code (if used)</label><input class="control" id="fSchoolCode"></div>
+          <div class="field"><label>Academic year</label><input class="control" id="fAcademicYear"></div>
+        </div>
+
+        <div class="section-label">Location information</div>
+        <div class="form-grid">
+          <div class="field"><label>District</label><input class="control" id="fDistrict"></div>
+          <div class="field"><label>Taluk</label><input class="control" id="fTaluk"></div>
+          <div class="field"><label>Gram Panchayat</label><input class="control" id="fGp"></div>
+          <div class="field"><label>Village</label><input class="control" id="fVillage"></div>
+          <div class="field"><label>Full address</label><input class="control" id="fAddress"></div>
+          <div class="field"><label>PIN code</label><input class="control" id="fPin" inputmode="numeric"></div>
+        </div>
+
+        <div class="section-label">Learning preferences</div>
+        <div class="form-grid">
+          <div class="field"><label>Tough subject 1</label><input class="control" id="fTough1"></div>
+          <div class="field"><label>Tough subject 2</label><input class="control" id="fTough2"></div>
+          <div class="field"><label>Tough subject 3</label><input class="control" id="fTough3"></div>
+          <div class="field"><label>Parent / guardian name</label><input class="control" id="fParent"></div>
+          <div class="field"><label>Parent / guardian phone</label><input class="control" id="fParentPhone" type="tel"></div>
+          <div class="field"><label>Onboarding status</label>
+            <select class="control" id="fOnboarding">
+              <option value="">Not specified</option><option value="true">Completed</option><option value="false">Incomplete</option>
+            </select>
+          </div>
+        </div>
+        <div class="field" style="margin-top:14px">
+          <label>Admin notes</label>
+          <textarea class="control" id="fNotes" rows="3" placeholder="Internal notes about this student"></textarea>
+        </div>
+        <p class="muted small">Only fields defined in this form are changed by this editor. Existing unrelated student fields are preserved.</p>
+      </form>
+
+      <div class="section-label">Course enrollments and requests</div>
+      <div id="studentEnrollmentsArea" class="muted small">Select a student to view enrollment records.</div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn" data-close="studentModal">Cancel</button>
+      <button class="btn btn-primary" id="saveStudentBtn"><i class="ri-save-line"></i> Save student</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add student modal -->
+<div id="addStudentModal" class="overlay hidden">
+  <div class="modal small-modal">
+    <div class="modal-head">
+      <h2>Add student record</h2>
+      <button class="close-btn" data-close="addStudentModal"><i class="ri-close-line"></i></button>
+    </div>
+    <div class="modal-content">
+      <div class="message info">Create a CRM record for an existing Firebase student UID. This does not create a Firebase Authentication account.</div>
+      <form id="addStudentForm">
+        <div class="field"><label>Firebase UID (required)</label><input id="newUid" class="control" required placeholder="Exact Firebase Auth UID"></div>
+        <div class="field"><label>Student name</label><input id="newName" class="control" required></div>
+        <div class="field"><label>Email</label><input id="newEmail" class="control" type="email"></div>
+        <div class="field"><label>Phone</label><input id="newPhone" class="control" type="tel"></div>
+        <div class="field"><label>ZNV code</label><input id="newCode" class="control" placeholder="Optional"></div>
+      </form>
+    </div>
+    <div class="modal-foot">
+      <button class="btn" data-close="addStudentModal">Cancel</button>
+      <button class="btn btn-primary" id="createStudentBtn">Create record</button>
+    </div>
+  </div>
+</div>
+
+<!-- Enrollment decision modal -->
+<div id="decisionModal" class="overlay hidden">
+  <div class="modal small-modal">
+    <div class="modal-head">
+      <h2 id="decisionTitle">Review enrollment</h2>
+      <button class="close-btn" data-close="decisionModal"><i class="ri-close-line"></i></button>
+    </div>
+    <div class="modal-content">
+      <div id="decisionDetails" class="message info"></div>
+      <div id="declineReasonWrap" class="field hidden">
+        <label>Reason for declining</label>
+        <textarea id="declineReason" class="control" rows="3" placeholder="Explain why this request is declined"></textarea>
+      </div>
+      <p class="muted small">Approval updates the request record. Confirm any required payment and verify your app's access logic before granting course access.</p>
+    </div>
+    <div class="modal-foot">
+      <button class="btn" data-close="decisionModal">Cancel</button>
+      <button id="confirmDecisionBtn" class="btn btn-primary">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast hidden"></div>
+
+<script type="module">
+import {auth,db} from "../firebase/firebase-config.js";
+import {
+  onAuthStateChanged,
+  GoogleAuthProvider,
+  signInWithPopup,
+  signOut
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+
+import {
+  collection,doc,getDoc,getDocs,query,where,
+  setDoc,updateDoc,serverTimestamp
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
+const $ = id => document.getElementById(id);
+
+let currentUser = null;
+let students = [];
+let requests = [];
+let courses = [];
+let activeStudent = null;
+let pendingDecision = null;
+let studentPage = 1;
+const pageSize = 20;
+let toastTimer = null;
+
+function esc(value){
+  return String(value ?? "").replace(/[&<>"']/g,ch=>({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  }[ch]));
+}
+function val(...values){
+  return values.find(v=>v!==undefined && v!==null && String(v).trim()!=="") ?? "";
+}
+function statusText(status){
+  const s=String(status||"PENDING").toUpperCase();
+  if(s==="APPROVED")return "Approved";
+  if(s==="REJECTED"||s==="DECLINED")return "Declined";
+  if(s==="CANCELLED")return "Cancelled";
+  return s==="PENDING"?"Pending":s;
+}
+function statusClass(status){
+  const s=String(status||"PENDING").toUpperCase();
+  if(s==="APPROVED")return "green";
+  if(s==="REJECTED"||s==="DECLINED"||s==="CANCELLED")return "red";
+  if(s==="PENDING")return "orange";
+  return "blue";
+}
+function pill(status){
+  return `<span class="pill ${statusClass(status)}">${esc(statusText(status))}</span>`;
+}
+function notify(message,type="success"){
+  const t=$("toast");
+  t.textContent=message;
+  t.classList.remove("hidden");
+  t.style.background=type==="error"?"#a83232":type==="info"?"#245fc9":"#172338";
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>t.classList.add("hidden"),4000);
+}
+function showGlobal(message,type="info"){
+  const el=$("globalMessage");
+  el.textContent=message;
+  el.className="message "+type;
+  el.classList.remove("hidden");
+}
+function hideGlobal(){$("globalMessage").classList.add("hidden");}
+function showLoginMessage(message){
+  $("loginMessage").textContent=message;
+  $("loginMessage").classList.remove("hidden");
+}
+function getName(s){
+  return val(s.name,s.fullName,s.displayName,s.studentName,"Unnamed student");
+}
+function getCode(s){
+  return val(s.znvCode,s.studentCode,s.crmStudentId,s.studentId,s.znvStudentCode);
+}
+function getPhone(s){
+  return val(s.phone,s.phoneNumber,s.mobile,s.mobileNumber);
+}
+function getEmail(s){
+  return val(s.email,s.emailAddress);
+}
+function getDistrict(s){return val(s.district,s.districtName);}
+function getMedium(s){return val(s.medium,s.languageMedium);}
+function getCourseName(r){
+  return val(r.courseName,r.batchName,r.courseTitle,r.courseId,"Unknown course");
+}
+function getUid(s){return val(s.uid,s.id,s.studentUid);}
+function findStudent(uid){
+  return students.find(s=>getUid(s)===uid || s.id===uid);
+}
+function openModal(id){$(id).classList.remove("hidden");}
+function closeModal(id){$(id).classList.add("hidden");}
+
+document.querySelectorAll("[data-close]").forEach(btn=>{
+  btn.addEventListener("click",()=>closeModal(btn.dataset.close));
+});
+document.querySelectorAll(".overlay").forEach(overlay=>{
+  overlay.addEventListener("click",e=>{
+    if(e.target===overlay)overlay.classList.add("hidden");
+  });
+});
+document.querySelectorAll(".tab").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+    document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
+    btn.classList.add("active");
+    $("studentsView").classList.toggle("hidden",btn.dataset.tab!=="students");
+    $("requestsView").classList.toggle("hidden",btn.dataset.tab!=="requests");
+    $("coursesView").classList.toggle("hidden",btn.dataset.tab!=="courses");
+  });
+});
+
+$("loginBtn").addEventListener("click",async()=>{
+  try{
+    const provider=new GoogleAuthProvider();
+    await signInWithPopup(auth,provider);
+  }catch(e){
+    console.error(e);
+    showLoginMessage("Login failed: "+(e.message||"Please try again."));
+  }
+});
+$("logoutBtn").addEventListener("click",async()=>{
+  try{await signOut(auth);location.reload();}
+  catch(e){notify("Could not sign out: "+e.message,"error");}
+});
+$("refreshBtn").addEventListener("click",loadAll);
+$("studentSearch").addEventListener("input",()=>{studentPage=1;renderStudents();});
+$("districtFilter").addEventListener("change",()=>{studentPage=1;renderStudents();});
+$("mediumFilter").addEventListener("change",()=>{studentPage=1;renderStudents();});
+$("requestSearch").addEventListener("input",renderRequests);
+$("requestStatusFilter").addEventListener("change",renderRequests);
+$("courseSearch").addEventListener("input",renderCourses);
+$("exportBtn").addEventListener("click",exportStudents);
+$("addStudentBtn").addEventListener("click",()=>openModal("addStudentModal"));
+$("createStudentBtn").addEventListener("click",createStudent);
+$("saveStudentBtn").addEventListener("click",saveStudent);
+$("confirmDecisionBtn").addEventListener("click",confirmDecision);
+
+onAuthStateChanged(auth,async user=>{
+  currentUser=user;
+  if(!user){
+    $("loginScreen").classList.remove("hidden");
+    $("app").classList.add("hidden");
+    return;
+  }
+
+  try{
+    // Requires admins/{uid} to exist and be readable by this user.
+    const adminSnap=await getDoc(doc(db,"admins",user.uid));
+
+    if(!adminSnap.exists() ||
+       adminSnap.data().active===false ||
+       adminSnap.data().role!=="admin"){
+      $("loginScreen").classList.remove("hidden");
+      $("app").classList.add("hidden");
+      showLoginMessage("This Google account is not authorized for the CRM. Ask the Firebase administrator to grant admin access.");
+      await signOut(auth);
+      return;
+    }
+
+    $("loginScreen").classList.add("hidden");
+    $("app").classList.remove("hidden");
+    await loadAll();
+
+  }catch(e){
+    console.error("Admin authorization failed:",e);
+    $("loginScreen").classList.remove("hidden");
+    $("app").classList.add("hidden");
+    showLoginMessage("Could not verify admin access. Check Firebase rules and the admins collection.");
+  }
+});
+
+async function loadAll(){
+  hideGlobal();
+  $("studentTableArea").innerHTML='<div class="loading"><div class="spinner"></div>Loading students...</div>';
+  $("requestTableArea").innerHTML='<div class="loading"><div class="spinner"></div>Loading requests...</div>';
+  $("courseTableArea").innerHTML='<div class="loading"><div class="spinner"></div>Loading courses...</div>';
+
+  try{
+    const [studentSnap,requestSnap,courseSnap]=await Promise.all([
+      getDocs(collection(db,"zen2Students")),
+      getDocs(collection(db,"courseEnrollmentRequests")),
+      getDocs(collection(db,"zen2Courses"))
+    ]);
+
+    students=studentSnap.docs.map(d=>({id:d.id,...d.data()}));
+    requests=requestSnap.docs.map(d=>({id:d.id,...d.data()}));
+    courses=courseSnap.docs.map(d=>({id:d.id,...d.data()}));
+
+    updateStats();
+    populateDistrictFilter();
+    renderStudents();
+    renderRequests();
+    renderCourses();
+
+  }catch(e){
+    console.error("CRM load failed:",e);
+    showGlobal("Could not load CRM data. Check Firestore collection names and admin read permissions. "+(e.message||""),"error");
+    $("studentTableArea").innerHTML='<div class="empty">Student data could not be loaded.</div>';
+    $("requestTableArea").innerHTML='<div class="empty">Enrollment requests could not be loaded.</div>';
+    $("courseTableArea").innerHTML='<div class="empty">Course data could not be loaded.</div>';
+  }
+}
+
+function updateStats(){
+  $("statStudents").textContent=students.length;
+  $("statPending").textContent=requests.filter(r=>String(r.status||"PENDING").toUpperCase()==="PENDING").length;
+  $("statApproved").textContent=requests.filter(r=>String(r.status||"").toUpperCase()==="APPROVED").length;
+  $("statNoCode").textContent=students.filter(s=>!getCode(s)).length;
+}
+function populateDistrictFilter(){
+  const select=$("districtFilter");
+  const current=select.value;
+  const values=[...new Set(students.map(getDistrict).filter(Boolean))].sort();
+  select.innerHTML='<option value="">All districts</option>'+
+    values.map(v=>`<option value="${esc(v)}">${esc(v)}</option>`).join("");
+  select.value=values.includes(current)?current:"";
+}
+
+function renderStudents(){
+  const term=$("studentSearch").value.trim().toLowerCase();
+  const district=$("districtFilter").value;
+  const medium=$("mediumFilter").value.toLowerCase();
+
+  const filtered=students.filter(s=>{
+    const searchable=[
+      getName(s),getCode(s),getEmail(s),getPhone(s),
+      getDistrict(s),s.taluk,s.village,s.villageName,
+      s.school,s.schoolName,s.className,s.studentUid
+    ].join(" ").toLowerCase();
+
+    return (!term||searchable.includes(term)) &&
+      (!district||getDistrict(s)===district) &&
+      (!medium||getMedium(s).toLowerCase()===medium);
+  });
+
+  const pages=Math.max(1,Math.ceil(filtered.length/pageSize));
+  studentPage=Math.min(studentPage,pages);
+  const start=(studentPage-1)*pageSize;
+  const page=filtered.slice(start,start+pageSize);
+
+  if(!page.length){
+    $("studentTableArea").innerHTML='<div class="empty"><i class="ri-user-search-line"></i>No students match your search.</div>';
+    return;
+  }
+
+  $("studentTableArea").innerHTML=`
+    <div class="table-wrap"><table>
+      <thead><tr>
+        <th>STUDENT</th><th>ZNV CODE</th><th>PHONE</th>
+        <th>CLASS / MEDIUM</th><th>DISTRICT / VILLAGE</th><th>ONBOARDING</th><th>ACTIONS</th>
+      </tr></thead>
+      <tbody>
+      ${page.map(s=>{
+        const uid=getUid(s);
+        const onboarding=s.onboardingCompleted===true || s.onboardingComplete===true || s.onboardingCompleted==="true";
+        return `<tr>
+          <td><div class="student-name">${esc(getName(s))}</div>
+            <div class="student-email">${esc(getEmail(s)||"No email")}</div></td>
+          <td>${getCode(s)?`<span class="code">${esc(getCode(s))}</span>`:'<span class="pill red">Not assigned</span>'}</td>
+          <td>${esc(getPhone(s)||"—")}</td>
+          <td>${esc(val(s.className,s.class,s.crmClass,"—"))}<div class="student-email">${esc(getMedium(s)||"Medium not set")}</div></td>
+          <td>${esc(getDistrict(s)||"—")}<div class="student-email">${esc(val(s.village,s.villageName,""))}</div></td>
+          <td>${onboarding?'<span class="pill green">Completed</span>':'<span class="pill orange">Check profile</span>'}</td>
+          <td><div class="row-actions">
+            <button class="icon-btn" title="Open and edit" data-edit-student="${esc(uid||s.id)}"><i class="ri-edit-line"></i></button>
+          </div></td>
+        </tr>`;
+      }).join("")}
+      </tbody>
+    </table></div>
+    <div class="pagination">
+      <span class="muted small">Showing ${start+1}–${Math.min(start+pageSize,filtered.length)} of ${filtered.length} students</span>
+      <div class="pagination-buttons">
+        <button class="btn" id="prevPage" ${studentPage<=1?"disabled":""}>Previous</button>
+        <button class="btn" id="nextPage" ${studentPage>=pages?"disabled":""}>Next</button>
+      </div>
+    </div>`;
+
+  $("prevPage")?.addEventListener("click",()=>{studentPage--;renderStudents();});
+  $("nextPage")?.addEventListener("click",()=>{studentPage++;renderStudents();});
+  document.querySelectorAll("[data-edit-student]").forEach(btn=>{
+    btn.addEventListener("click",()=>openStudent(btn.dataset.editStudent));
+  });
+}
+
+function renderRequests(){
+  const term=$("requestSearch").value.trim().toLowerCase();
+  const statusFilter=$("requestStatusFilter").value;
+
+  const filtered=requests.filter(r=>{
+    const status=String(r.status||"PENDING").toUpperCase();
+    const student=findStudent(r.studentUid);
+    const search=[
+      r.studentName,r.email,r.phone,r.studentCode,r.courseName,r.courseId,
+      getName(student||{}),getCode(student||{}),getPhone(student||{})
+    ].join(" ").toLowerCase();
+
+    return (!term||search.includes(term)) &&
+      (!statusFilter||status===statusFilter||
+        (statusFilter==="REJECTED"&&status==="DECLINED"));
+  }).sort((a,b)=>{
+    const at=a.createdAt?.toMillis?.()||0;
+    const bt=b.createdAt?.toMillis?.()||0;
+    return bt-at;
+  });
+
+  if(!filtered.length){
+    $("requestTableArea").innerHTML='<div class="empty"><i class="ri-inbox-line"></i>No enrollment requests found.</div>';
+    return;
+  }
+
+  $("requestTableArea").innerHTML=`
+    <div class="table-wrap"><table>
+      <thead><tr><th>STUDENT</th><th>COURSE / BATCH</th><th>FEE</th><th>PAYMENT</th><th>STATUS</th><th>REQUESTED</th><th>ACTIONS</th></tr></thead>
+      <tbody>${filtered.map(r=>{
+        const s=findStudent(r.studentUid);
+        const name=val(r.studentName,getName(s||{}),"Unknown student");
+        const code=val(r.studentCode,getCode(s||{}));
+        const date=r.createdAt?.toDate?.()?.toLocaleDateString("en-IN")||"—";
+        const fee=Number(r.finalPrice??r.coursePrice);
+        const feeText=Number.isFinite(fee)?"₹"+fee.toLocaleString("en-IN"):"—";
+        const status=String(r.status||"PENDING").toUpperCase();
+        const pending=status==="PENDING";
+        return `<tr>
+          <td><div class="student-name">${esc(name)}</div><div class="student-email">${esc(code||r.email||r.phone||"")}</div></td>
+          <td><div class="student-name">${esc(getCourseName(r))}</div><div class="student-email">${esc(r.courseId||"")}</div></td>
+          <td>${esc(feeText)}</td>
+          <td>${pill(r.paymentStatus||"UNKNOWN")}</td>
+          <td>${pill(status)}</td>
+          <td>${esc(date)}</td>
+          <td><div class="row-actions">
+            <button class="icon-btn" title="Open student" data-request-student="${esc(r.studentUid||"")}"><i class="ri-user-line"></i></button>
+            ${pending?`
+              <button class="icon-btn" title="Approve request" data-decision="approve" data-id="${esc(r.id)}"><i class="ri-check-line"></i></button>
+              <button class="icon-btn" title="Decline request" data-decision="decline" data-id="${esc(r.id)}"><i class="ri-close-line"></i></button>
+            `:""}
+          </div></td>
+        </tr>`;
+      }).join("")}</tbody>
+    </table></div>`;
+
+  document.querySelectorAll("[data-decision]").forEach(btn=>{
+    btn.addEventListener("click",()=>openDecision(btn.dataset.id,btn.dataset.decision));
+  });
+  document.querySelectorAll("[data-request-student]").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+      if(btn.dataset.requestStudent)openStudent(btn.dataset.requestStudent);
+      else notify("This request has no student UID recorded.","error");
+    });
+  });
+}
+
+function renderCourses(){
+  const term=$("courseSearch").value.trim().toLowerCase();
+  const filtered=courses.filter(c=>
+    [c.name,c.title,c.courseName,c.batchName,c.courseCode,c.medium,c.mode,c.id]
+      .join(" ").toLowerCase().includes(term)
+  );
+
+  if(!filtered.length){
+    $("courseTableArea").innerHTML='<div class="empty"><i class="ri-book-open-line"></i>No courses found.</div>';
+    return;
+  }
+
+  $("courseTableArea").innerHTML=`
+    <div class="table-wrap"><table>
+      <thead><tr><th>COURSE</th><th>COURSE ID</th><th>CLASS</th><th>MEDIUM</th><th>MODE</th><th>FEE</th><th>REQUESTS</th></tr></thead>
+      <tbody>${filtered.map(c=>{
+        const fee=Number(c.price??c.fee??c.courseFee);
+        const count=requests.filter(r=>r.courseId===c.id).length;
+        return `<tr>
+          <td><div class="student-name">${esc(val(c.name,c.title,c.courseName,c.batchName,"Untitled course"))}</div><div class="student-email">${esc(val(c.shortDescription,c.tagline,""))}</div></td>
+          <td><span class="code">${esc(c.id)}</span></td>
+          <td>${esc(val(c.className,c.class,"—"))}</td>
+          <td>${esc(val(c.medium,c.languageMedium,"—"))}</td>
+          <td>${esc(val(c.mode,c.batchMode,"—"))}</td>
+          <td>${Number.isFinite(fee)?"₹"+fee.toLocaleString("en-IN"):"—"}</td>
+          <td>${count}</td>
+        </tr>`;
+      }).join("")}</tbody>
+    </table></div>`;
+}
+
+function put(id,value){
+  $(id).value=value===undefined||value===null?"":String(value);
+}
+function setSelect(id,value){
+  const el=$(id);
+  const v=value===undefined||value===null?"":String(value);
+  if([...el.options].some(o=>o.value===v))el.value=v;
+  else el.value="";
+}
+
+async function openStudent(uid){
+  let student=findStudent(uid);
+  if(!student){
+    try{
+      const snap=await getDoc(doc(db,"zen2Students",uid));
+      if(snap.exists())student={id:snap.id,...snap.data()};
+    }catch(e){
+      notify("Could not load this student: "+e.message,"error");
+      return;
+    }
+  }
+
+  if(!student){
+    notify("Student record not found.","error");
+    return;
+  }
+
+  activeStudent=student;
+  $("studentModalTitle").textContent=getName(student);
+  $("studentModalSub").textContent="UID: "+getUid(student);
+
+  put("editUid",getUid(student));
+  put("fUid",getUid(student));
+  put("fName",val(student.name,student.fullName,student.displayName,student.studentName));
+  put("fEmail",getEmail(student));
+  put("fPhone",getPhone(student));
+  put("fAltPhone",val(student.alternativePhone,student.parentPhone));
+  put("fCode",getCode(student));
+  put("fDob",val(student.dateOfBirth,student.dob));
+  setSelect("fGender",student.gender);
+  put("fClass",val(student.className,student.crmClass,student.class));
+  put("fBoard",val(student.board,student.educationBoard));
+  setSelect("fMedium",getMedium(student));
+  put("fSchool",val(student.schoolName,student.school));
+  put("fSchoolCode",student.schoolCode);
+  put("fAcademicYear",student.academicYear);
+  put("fDistrict",getDistrict(student));
+  put("fTaluk",student.taluk);
+  put("fGp",student.gramPanchayat);
+  put("fVillage",val(student.village,student.villageName));
+  put("fAddress",student.address);
+  put("fPin",val(student.pinCode,student.pincode));
+  put("fTough1",val(student.toughSubject1,student.toughSubjects?.[0]));
+  put("fTough2",val(student.toughSubject2,student.toughSubjects?.[1]));
+  put("fTough3",val(student.toughSubject3,student.toughSubjects?.[2]));
+  put("fParent",val(student.parentName,student.guardianName));
+  put("fParentPhone",val(student.parentPhone,student.guardianPhone));
+  const onboard=student.onboardingCompleted??student.onboardingComplete;
+  setSelect("fOnboarding",onboard===true?"true":onboard===false?"false":"");
+  put("fNotes",student.adminNotes||"");
+
+  $("studentModalMessage").classList.add("hidden");
+  $("studentEnrollmentsArea").innerHTML='<div class="loading"><div class="spinner"></div>Loading enrollment history...</div>';
+  openModal("studentModal");
+  await renderStudentEnrollments(student);
+}
+
+async function renderStudentEnrollments(student){
+  const uid=getUid(student);
+  const matched=requests.filter(r=>r.studentUid===uid);
+
+  if(!matched.length){
+    $("studentEnrollmentsArea").innerHTML='<div class="empty">No enrollment requests recorded for this student.</div>';
+    return;
+  }
+
+  $("studentEnrollmentsArea").innerHTML=`
+    <div class="table-wrap"><table>
+      <thead><tr><th>COURSE</th><th>FEE</th><th>PAYMENT</th><th>REQUEST STATUS</th><th>ACCESS FLAG</th></tr></thead>
+      <tbody>${matched.map(r=>{
+        const n=Number(r.finalPrice??r.coursePrice);
+        return `<tr>
+          <td>${esc(getCourseName(r))}</td>
+          <td>${Number.isFinite(n)?"₹"+n.toLocaleString("en-IN"):"—"}</td>
+          <td>${pill(r.paymentStatus||"UNKNOWN")}</td>
+          <td>${pill(r.status||"PENDING")}</td>
+          <td>${r.accessGranted===true?'<span class="pill green">Granted flag</span>':'<span class="pill orange">Not granted</span>'}</td>
+        </tr>`;
+      }).join("")}</tbody>
+    </table></div>`;
+}
+
+function formMessage(message,type="error"){
+  const el=$("studentModalMessage");
+  el.textContent=message;
+  el.className="message "+type;
+  el.classList.remove("hidden");
+}
+
+async function saveStudent(){
+  const uid=$("editUid").value.trim();
+  if(!uid||!activeStudent){
+    notify("No student selected.","error");
+    return;
+  }
+
+  const code=$("fCode").value.trim();
+  if(code){
+    const duplicate=students.find(s=>getUid(s)!==uid&&getCode(s).toLowerCase()===code.toLowerCase());
+    if(duplicate){
+      formMessage("This ZNV/student code is already assigned to another student.");
+      return;
+    }
+  }
+
+  const old=activeStudent;
+  const onboardingValue=$("fOnboarding").value;
+  const updates={
+    name:$("fName").value.trim(),
+    fullName:$("fName").value.trim(),
+    email:$("fEmail").value.trim(),
+    phone:$("fPhone").value.trim(),
+    alternativePhone:$("fAltPhone").value.trim(),
+    znvCode:code,
+    studentCode:code,
+    dateOfBirth:$("fDob").value,
+    gender:$("fGender").value,
+    className:$("fClass").value.trim(),
+    board:$("fBoard").value.trim(),
+    medium:$("fMedium").value,
+    schoolName:$("fSchool").value.trim(),
+    schoolCode:$("fSchoolCode").value.trim(),
+    academicYear:$("fAcademicYear").value.trim(),
+    district:$("fDistrict").value.trim(),
+    taluk:$("fTaluk").value.trim(),
+    gramPanchayat:$("fGp").value.trim(),
+    village:$("fVillage").value.trim(),
+    address:$("fAddress").value.trim(),
+    pinCode:$("fPin").value.trim(),
+    toughSubject1:$("fTough1").value.trim(),
+    toughSubject2:$("fTough2").value.trim(),
+    toughSubject3:$("fTough3").value.trim(),
+    toughSubjects:[$("fTough1").value.trim(),$("fTough2").value.trim(),$("fTough3").value.trim()].filter(Boolean),
+    parentName:$("fParent").value.trim(),
+    parentPhone:$("fParentPhone").value.trim(),
+    adminNotes:$("fNotes").value.trim(),
+    updatedAt:serverTimestamp(),
+    updatedBy:currentUser.uid
+  };
+
+  if(onboardingValue!==""){
+    updates.onboardingCompleted=onboardingValue==="true";
+  }
+
+  $("saveStudentBtn").disabled=true;
+  $("saveStudentBtn").textContent="Saving...";
+
+  try{
+    // Merge preserves fields not included in this form.
+    await setDoc(doc(db,"zen2Students",uid),updates,{merge:true});
+
+    activeStudent={...old,...updates,id:uid,uid};
+    const index=students.findIndex(s=>getUid(s)===uid||s.id===uid);
+    if(index>=0)students[index]={...students[index],...updates,id:students[index].id};
+    else students.push(activeStudent);
+
+    updateStats();
+    populateDistrictFilter();
+    renderStudents();
+    $("studentModalTitle").textContent=getName(activeStudent);
+    $("studentModalSub").textContent="UID: "+uid;
+    notify("Student details saved.");
+    closeModal("studentModal");
+
+  }catch(e){
+    console.error(e);
+    formMessage("Could not save student. Check Firestore rules and field permissions. "+e.message);
+  }finally{
+    $("saveStudentBtn").disabled=false;
+    $("saveStudentBtn").innerHTML='<i class="ri-save-line"></i> Save student';
+  }
+}
+
+async function createStudent(){
+  const uid=$("newUid").value.trim();
+  const name=$("newName").value.trim();
+  const email=$("newEmail").value.trim();
+  const phone=$("newPhone").value.trim();
+  const code=$("newCode").value.trim();
+
+  if(!uid||!name){
+    notify("Firebase UID and student name are required.","error");
+    return;
+  }
+  if(students.some(s=>getUid(s)===uid||s.id===uid)){
+    notify("A student record with this UID already exists.","error");
+    return;
+  }
+  if(code&&students.some(s=>getCode(s).toLowerCase()===code.toLowerCase())){
+    notify("This student code is already in use.","error");
+    return;
+  }
+
+  $("createStudentBtn").disabled=true;
+
+  try{
+    const existing=await getDoc(doc(db,"zen2Students",uid));
+    if(existing.exists()){
+      notify("A record already exists at that UID. Refresh the directory.","error");
+      return;
+    }
+
+    await setDoc(doc(db,"zen2Students",uid),{
+      uid,name,fullName:name,email,phone,
+      znvCode:code,studentCode:code,
+      onboardingCompleted:false,
+      createdAt:serverTimestamp(),
+      updatedAt:serverTimestamp(),
+      createdBy:currentUser.uid
+    });
+
+    $("addStudentForm").reset();
+    closeModal("addStudentModal");
+    await loadAll();
+    notify("Student record created. This does not create a login account.");
+
+  }catch(e){
+    console.error(e);
+    notify("Could not create student record: "+e.message,"error");
+  }finally{
+    $("createStudentBtn").disabled=false;
+  }
+}
+
+function openDecision(id,action){
+  const request=requests.find(r=>r.id===id);
+  if(!request){notify("Request not found.","error");return;}
+
+  pendingDecision={id,action,request};
+  const approving=action==="approve";
+
+  $("decisionTitle").textContent=approving?"Approve enrollment request":"Decline enrollment request";
+  $("decisionDetails").textContent=
+    "Student: "+val(request.studentName,request.studentUid,"Unknown")+
+    " | Course: "+getCourseName(request)+
+    " | Current status: "+statusText(request.status);
+
+  $("declineReasonWrap").classList.toggle("hidden",approving);
+  $("declineReason").value="";
+  $("confirmDecisionBtn").className="btn "+(approving?"btn-success":"btn-danger");
+  $("confirmDecisionBtn").textContent=approving?"Approve request":"Decline request";
+  openModal("decisionModal");
+}
+
+async function confirmDecision(){
+  if(!pendingDecision)return;
+
+  const {id,action,request}=pendingDecision;
+  const approving=action==="approve";
+  const reason=$("declineReason").value.trim();
+
+  if(!approving&&!reason){
+    notify("Please provide a reason for declining.","error");
+    return;
+  }
+
+  // Do not claim payment was verified. Check the recorded payment status.
+  const paymentStatus=String(request.paymentStatus||"").toUpperCase();
+  const paymentVerified=["PAID","VERIFIED","SUCCESS","COMPLETED"].includes(paymentStatus);
+
+  if(approving && Number(request.finalPrice??request.coursePrice)>0 && !paymentVerified){
+    const proceed=confirm(
+      "This request does not have a recognised verified payment status. Approving may affect access depending on your app's logic. Confirm that payment has been checked separately before proceeding."
+    );
+    if(!proceed)return;
+  }
+
+  $("confirmDecisionBtn").disabled=true;
+  $("confirmDecisionBtn").textContent="Saving...";
+
+  try{
+    const updates={
+      status:approving?"APPROVED":"REJECTED",
+      accessGranted:approving && paymentVerified,
+      reviewedAt:serverTimestamp(),
+      reviewedBy:currentUser.uid,
+      updatedAt:serverTimestamp()
+    };
+
+    if(approving){
+      updates.reviewNote="Approved by admin";
+    }else{
+      updates.declineReason=reason;
+      updates.reviewNote=reason;
+    }
+
+    await updateDoc(doc(db,"courseEnrollmentRequests",id),updates);
+
+    const idx=requests.findIndex(r=>r.id===id);
+    if(idx>=0)requests[idx]={...requests[idx],...updates,status:updates.status};
+
+    updateStats();
+    renderRequests();
+    renderCourses();
+
+    if(activeStudent)await renderStudentEnrollments(activeStudent);
+
+    closeModal("decisionModal");
+    notify(approving
+      ? "Enrollment request approved. Verify that your existing app grants access through the correct enrollment record."
+      : "Enrollment request declined.");
+
+  }catch(e){
+    console.error(e);
+    notify("Could not update the request. Check Firestore rules. "+e.message,"error");
+  }finally{
+    $("confirmDecisionBtn").disabled=false;
+    pendingDecision=null;
+  }
+}
+
+function exportStudents(){
+  const term=$("studentSearch").value.trim().toLowerCase();
+  const district=$("districtFilter").value;
+  const medium=$("mediumFilter").value.toLowerCase();
+
+  const filtered=students.filter(s=>{
+    const text=[getName(s),getCode(s),getEmail(s),getPhone(s),getDistrict(s),
+      s.taluk,s.village,s.villageName,s.schoolName,s.school].join(" ").toLowerCase();
+    return (!term||text.includes(term))&&
+      (!district||getDistrict(s)===district)&&
+      (!medium||getMedium(s).toLowerCase()===medium);
+  });
+
+  const columns=[
+    ["Name",getName],["ZNV Code",getCode],["Email",getEmail],["Phone",getPhone],
+    ["Class",s=>val(s.className,s.class,s.crmClass)],
+    ["Board",s=>val(s.board,s.educationBoard)],["Medium",getMedium],
+    ["School",s=>val(s.schoolName,s.school)],["District",getDistrict],
+    ["Taluk",s=>s.taluk],["Gram Panchayat",s=>s.gramPanchayat],
+    ["Village",s=>val(s.village,s.villageName)],["Firebase UID",getUid]
+  ];
+
+  const csvCell=v=>'"'+String(v??"").replace(/"/g,'""')+'"';
+  const csv=[
+    columns.map(c=>csvCell(c[0])).join(","),
+    ...filtered.map(s=>columns.map(c=>csvCell(c[1](s))).join(","))
+  ].join("\r\n");
+
+  const blob=new Blob(["\uFEFF"+csv],{type:"text/csv;charset=utf-8;"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=url;
+  a.download="zenova-students.csv";
+  a.click();
+  URL.revokeObjectURL(url);
+}
+</script>
+</body>
+</html>
