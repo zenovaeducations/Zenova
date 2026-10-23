@@ -1,0 +1,927 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f7f9fc">
+  <title>Zenova Educations | Courses</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.css" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg:#f7f9fc;
+      --surface:#fff;
+      --surface-soft:#f0f5fb;
+      --ink:#172338;
+      --muted:#7b8799;
+      --line:#e7edf5;
+      --blue:#3978e8;
+      --blue-dark:#245fc9;
+      --blue-soft:#eaf2ff;
+      --green:#159b78;
+      --green-soft:#e8f8f2;
+      --orange-soft:#fff4e7;
+      --radius:18px;
+      --nav-height:76px;
+    }
+
+    * { box-sizing:border-box; margin:0; padding:0; }
+    html { scroll-behavior:smooth; background:var(--bg); }
+    body {
+      min-height:100vh;
+      padding-bottom:calc(var(--nav-height) + env(safe-area-inset-bottom));
+      background:var(--bg);
+      color:var(--ink);
+      font-family:Inter,system-ui,sans-serif;
+      -webkit-font-smoothing:antialiased;
+    }
+    button,a { font:inherit; }
+    button { cursor:pointer; }
+    a { color:inherit; text-decoration:none; }
+    img { display:block; max-width:100%; }
+    .hidden { display:none!important; }
+    .wrap { width:min(100%,1080px); margin-inline:auto; }
+
+    /* Keep the same Home-page header */
+    .topbar {
+      position:sticky;
+      top:0;
+      z-index:50;
+      background:rgba(255,255,255,.94);
+      backdrop-filter:blur(16px);
+      border-bottom:1px solid var(--line);
+    }
+    .topbar-inner {
+      width:min(100%,1080px);
+      min-height:72px;
+      margin:auto;
+      padding:12px 18px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:18px;
+    }
+    .brand { display:flex; align-items:center; gap:10px; min-width:0; }
+    .brand-logo {
+      width:43px;
+      height:43px;
+      flex:0 0 43px;
+      display:grid;
+      place-items:center;
+      border-radius:14px;
+      background:var(--blue);
+      color:white;
+      font-size:23px;
+      font-weight:900;
+      box-shadow:0 6px 16px #3978e82b;
+    }
+    .brand-name { font-size:15px; font-weight:900; letter-spacing:.5px; }
+    .brand-sub { margin-top:3px; color:var(--muted); font-size:10px; font-weight:600; }
+    .desktop-nav { display:flex; align-items:center; gap:5px; }
+    .desktop-nav a {
+      padding:10px 12px;
+      border-radius:11px;
+      color:#66748a;
+      font-size:12px;
+      font-weight:700;
+    }
+    .desktop-nav a:hover,
+    .desktop-nav a.active { background:var(--blue-soft); color:var(--blue-dark); }
+    .profile-button {
+      width:42px;
+      height:42px;
+      display:grid;
+      place-items:center;
+      border:1px solid var(--line);
+      border-radius:50%;
+      background:white;
+      color:var(--ink);
+      font-size:20px;
+      flex:0 0 42px;
+    }
+
+    .page { padding:24px 17px 28px; }
+
+    .page-heading {
+      display:flex;
+      align-items:flex-end;
+      justify-content:space-between;
+      gap:14px;
+      margin-bottom:24px;
+    }
+    .eyebrow {
+      display:block;
+      color:var(--blue);
+      font-size:10px;
+      font-weight:900;
+      letter-spacing:1.5px;
+      text-transform:uppercase;
+      margin-bottom:8px;
+    }
+    h1 { font-size:clamp(25px,4vw,34px); line-height:1.2; letter-spacing:-1.2px; font-weight:900; }
+    .page-description { margin-top:8px; color:var(--muted); font-size:13px; line-height:1.7; }
+
+    .section { margin-top:30px; }
+    .section-heading {
+      display:flex;
+      align-items:flex-end;
+      justify-content:space-between;
+      gap:12px;
+      margin-bottom:15px;
+    }
+    .section-title { font-size:20px; font-weight:900; letter-spacing:-.5px; }
+    .section-subtitle { color:var(--muted); font-size:12px; line-height:1.6; margin-top:5px; }
+
+    .count-pill {
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding:7px 10px;
+      border-radius:99px;
+      background:var(--blue-soft);
+      color:var(--blue-dark);
+      font-size:11px;
+      font-weight:800;
+      white-space:nowrap;
+    }
+
+    /* Large enrolled course */
+    .enrolled-list,.available-list { display:grid; gap:18px; }
+
+    .course-card {
+      min-width:0;
+      overflow:hidden;
+      border:1px solid var(--line);
+      border-radius:20px;
+      background:var(--surface);
+      box-shadow:0 5px 22px #203b6010;
+    }
+    .course-image-wrap {
+      position:relative;
+      width:100%;
+      aspect-ratio:16/7;
+      min-height:165px;
+      max-height:330px;
+      overflow:hidden;
+      background:linear-gradient(135deg,#eaf2ff,#dbe8ff);
+    }
+    .course-image {
+      width:100%;
+      height:100%;
+      object-fit:cover;
+    }
+    .image-placeholder {
+      position:absolute;
+      inset:0;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      align-items:center;
+      gap:8px;
+      color:var(--blue-dark);
+      background:linear-gradient(135deg,#eaf2ff,#dbe8ff);
+    }
+    .image-placeholder i { font-size:42px; }
+    .image-placeholder span { font-size:12px; font-weight:800; }
+    .image-placeholder.hidden { display:none!important; }
+
+    .enrolled-badge {
+      position:absolute;
+      top:13px;
+      left:13px;
+      z-index:2;
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding:8px 11px;
+      border:1px solid #ffffffa8;
+      border-radius:99px;
+      background:#fff;
+      color:var(--green);
+      font-size:11px;
+      font-weight:900;
+      box-shadow:0 3px 12px #0000000d;
+    }
+
+    .course-body { padding:20px; }
+    .course-topline {
+      display:flex;
+      flex-wrap:wrap;
+      align-items:center;
+      gap:7px;
+      margin-bottom:12px;
+    }
+    .tag {
+      display:inline-flex;
+      align-items:center;
+      gap:5px;
+      border-radius:8px;
+      padding:7px 9px;
+      background:var(--surface-soft);
+      color:#52627a;
+      font-size:10px;
+      font-weight:800;
+    }
+    .tag.medium { background:var(--blue-soft); color:var(--blue-dark); }
+    .tag.active { background:var(--green-soft); color:var(--green); }
+
+    .course-title { font-size:clamp(19px,3vw,25px); font-weight:900; line-height:1.35; letter-spacing:-.6px; overflow-wrap:anywhere; }
+    .course-description { margin-top:9px; color:var(--muted); font-size:12px; line-height:1.8; }
+
+    .course-meta {
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:10px;
+      margin-top:18px;
+    }
+    .meta-box {
+      min-width:0;
+      padding:12px;
+      border:1px solid var(--line);
+      border-radius:13px;
+      background:#fbfcfe;
+    }
+    .meta-label {
+      display:flex;
+      align-items:center;
+      gap:6px;
+      color:var(--muted);
+      font-size:10px;
+      font-weight:700;
+    }
+    .meta-label i { color:var(--blue); font-size:14px; }
+    .meta-value { margin-top:7px; font-size:12px; line-height:1.5; font-weight:800; overflow-wrap:anywhere; }
+    .fee-value { color:var(--blue-dark); font-size:16px; }
+
+    .course-footer {
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:14px;
+      padding-top:17px;
+      margin-top:17px;
+      border-top:1px solid var(--line);
+    }
+    .course-footer-note { color:var(--muted); font-size:10px; line-height:1.5; }
+    .course-actions { display:flex; flex-wrap:wrap; gap:9px; }
+    .btn {
+      min-height:43px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      padding:0 16px;
+      border:1px solid transparent;
+      border-radius:12px;
+      font-size:12px;
+      font-weight:900;
+      transition:transform .15s,background .15s;
+      white-space:nowrap;
+    }
+    .btn:active { transform:scale(.98); }
+    .btn-primary { background:var(--blue); color:white; }
+    .btn-primary:hover { background:var(--blue-dark); }
+    .btn-outline { border-color:var(--line); background:white; color:var(--ink); }
+    .btn-outline:hover { background:var(--surface-soft); }
+    .btn-study { background:var(--green); color:white; }
+    .btn-study:hover { background:#0d805f; }
+
+    .empty {
+      padding:34px 20px;
+      border:1px dashed #ccd7e6;
+      border-radius:18px;
+      background:#fff;
+      text-align:center;
+    }
+    .empty i { display:block; font-size:34px; color:var(--blue); margin-bottom:10px; }
+    .empty h3 { font-size:15px; font-weight:900; }
+    .empty p { max-width:390px; margin:8px auto 0; color:var(--muted); font-size:12px; line-height:1.7; }
+    .empty .btn { margin-top:15px; }
+
+    .skeleton {
+      height:310px;
+      border-radius:20px;
+      background:linear-gradient(90deg,#eef2f8 25%,#f8faff 40%,#eef2f8 60%);
+      background-size:300% 100%;
+      animation:shimmer 1.3s infinite;
+    }
+    @keyframes shimmer { to { background-position:-150% 0; } }
+
+    .error-message {
+      padding:15px;
+      border-radius:12px;
+      background:#fff0f0;
+      color:#a33333;
+      font-size:12px;
+      line-height:1.7;
+      overflow-wrap:anywhere;
+    }
+
+    /* Same fixed bottom navigation as the student Home */
+    .bottom-nav {
+      position:fixed;
+      left:0;
+      right:0;
+      bottom:0;
+      z-index:100;
+      padding:8px 12px calc(8px + env(safe-area-inset-bottom));
+      border-top:1px solid var(--line);
+      background:rgba(255,255,255,.96);
+      backdrop-filter:blur(18px);
+    }
+    .nav-inner {
+      width:min(100%,600px);
+      margin:auto;
+      display:grid;
+      grid-template-columns:repeat(4,minmax(0,1fr));
+      gap:5px;
+    }
+    .nav-item {
+      min-height:52px;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      gap:4px;
+      border-radius:12px;
+      color:#8290a4;
+      font-size:10px;
+      font-weight:800;
+    }
+    .nav-item i { font-size:21px; }
+    .nav-item.active { color:var(--blue); background:var(--blue-soft); }
+
+    .toast {
+      position:fixed;
+      z-index:200;
+      left:50%;
+      bottom:calc(var(--nav-height) + 16px);
+      transform:translateX(-50%);
+      max-width:calc(100% - 28px);
+      padding:12px 15px;
+      border-radius:12px;
+      background:#172338;
+      color:#fff;
+      font-size:12px;
+      box-shadow:0 8px 25px #0002;
+    }
+
+    @media(min-width:700px) {
+      .page { padding:30px 25px; }
+      .course-image-wrap { aspect-ratio:16/6; }
+      .course-body { padding:25px; }
+      .course-meta { grid-template-columns:repeat(4,minmax(0,1fr)); }
+      .course-card { border-radius:22px; }
+    }
+    @media(max-width:760px) {
+      .desktop-nav { display:none; }
+    }
+    @media(max-width:480px) {
+      .page { padding:21px 12px 25px; }
+      .topbar-inner { padding:10px 13px; }
+      .page-heading { align-items:flex-start; }
+      .course-image-wrap { aspect-ratio:16/9; min-height:145px; }
+      .course-body { padding:15px; }
+      .course-meta { gap:8px; }
+      .meta-box { padding:10px; }
+      .course-footer { align-items:stretch; flex-direction:column; }
+      .course-actions { display:grid; grid-template-columns:1fr 1fr; }
+      .course-actions .btn { padding:0 10px; }
+      .course-actions .btn-study { grid-column:1/-1; }
+      .course-footer-note { font-size:10px; }
+    }
+    @media(prefers-reduced-motion:reduce) {
+      *,*::before,*::after {
+        animation-duration:.01ms!important;
+        transition-duration:.01ms!important;
+        scroll-behavior:auto!important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div id="loader" style="position:fixed;inset:0;z-index:999;background:#f7f9fc;display:grid;place-items:center;color:#3978e8;font-weight:900;letter-spacing:2px">
+    ZENOVA · LOADING COURSES
+  </div>
+
+  <div id="app" class="hidden">
+    <header class="topbar">
+      <div class="topbar-inner">
+        <a class="brand" href="../" aria-label="Zenova Home">
+          <span class="brand-logo">Z</span>
+          <span>
+            <span class="brand-name">ZENOVA</span>
+            <span class="brand-sub">Educations</span>
+          </span>
+        </a>
+
+        <nav class="desktop-nav" aria-label="Main navigation">
+          <a href="../">Home</a>
+          <a href="./" class="active" aria-current="page">Courses</a>
+          <a href="../live/">Live</a>
+          <a href="../revision/">Revision</a>
+          <a href="../profile/">Profile</a>
+        </nav>
+
+        <a class="profile-button" href="../profile/" aria-label="My profile">
+          <i class="ri-user-3-line"></i>
+        </a>
+      </div>
+    </header>
+
+    <main class="page wrap">
+      <section class="page-heading">
+        <div>
+          <span class="eyebrow">YOUR LEARNING JOURNEY</span>
+          <h1>Courses</h1>
+          <p class="page-description">Your enrolled batch first, followed by all available courses.</p>
+        </div>
+      </section>
+
+      <section class="section" aria-labelledby="enrolledHeading">
+        <div class="section-heading">
+          <div>
+            <h2 class="section-title" id="enrolledHeading">My Enrolled Course</h2>
+            <p class="section-subtitle">Your active learning access.</p>
+          </div>
+          <span class="count-pill" id="enrolledCount">Loading…</span>
+        </div>
+        <div id="enrolledList" class="enrolled-list">
+          <div class="skeleton"></div>
+        </div>
+      </section>
+
+      <section class="section" aria-labelledby="availableHeading">
+        <div class="section-heading">
+          <div>
+            <h2 class="section-title" id="availableHeading">Explore Courses</h2>
+            <p class="section-subtitle">Explore other batches available for enrollment.</p>
+          </div>
+          <span class="count-pill" id="availableCount">Loading…</span>
+        </div>
+        <div id="availableList" class="available-list">
+          <div class="skeleton"></div>
+        </div>
+      </section>
+    </main>
+
+    <nav class="bottom-nav" aria-label="Main navigation">
+      <div class="nav-inner">
+        <a href="../" class="nav-item"><i class="ri-home-5-line"></i><span>Home</span></a>
+        <a href="../live/" class="nav-item"><i class="ri-live-line"></i><span>Live</span></a>
+        <a href="../revision/" class="nav-item"><i class="ri-book-open-line"></i><span>Revision</span></a>
+        <a href="../profile/" class="nav-item"><i class="ri-user-3-line"></i><span>Profile</span></a>
+      </div>
+    </nav>
+  </div>
+
+  <div id="toast" class="toast hidden" role="status"></div>
+
+  <script type="module">
+    // Existing Firebase project and configuration — do not replace.
+    import { auth, db } from "../../firebase/firebase-config.js";
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+    import {
+      collection, doc, getDoc, getDocs, query, where
+    } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
+    const $ = id => document.getElementById(id);
+    const state = {
+      user:null,
+      student:{},
+      courses:[],
+      enrollments:[],
+      enrolledCourses:[],
+      availableCourses:[]
+    };
+
+    const first = (...values) => values.find(v =>
+      v !== undefined && v !== null && String(v).trim() !== ""
+    ) ?? "";
+
+    const str = value => String(value ?? "");
+
+    function safe(value) {
+      return str(value).replace(/[&<>"']/g, char => ({
+        "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+      }[char]));
+    }
+
+    function courseTitle(course) {
+      return str(first(
+        course.batchName,
+        course.courseName,
+        course.title,
+        course.name,
+        course.displayName,
+        course.programName,
+        "Course"
+      ));
+    }
+
+    function className(course) {
+      return str(first(
+        course.className,
+        course.classDisplayName,
+        course.standard,
+        course.grade,
+        course.class,
+        course.courseClass,
+        course.level,
+        "Class not specified"
+      ));
+    }
+
+    function medium(course) {
+      const raw = str(first(
+        course.medium,
+        course.languageMedium,
+        course.instructionMedium,
+        course.teachingMedium,
+        course.courseMedium,
+        course.language,
+        course.mediumName
+      )).trim();
+
+      if (!raw) return "Medium not specified";
+
+      const normalized = raw.toLowerCase();
+      if (normalized.includes("kannada") || normalized.includes("ಕನ್ನಡ")) {
+        return "Kannada Medium";
+      }
+      if (normalized.includes("english") || normalized.includes("ಇಂಗ್ಲಿಷ್")) {
+        return "English Medium";
+      }
+      return raw;
+    }
+
+    function courseImage(course) {
+      return str(first(
+        course.thumbnailUrl,
+        course.thumbnailURL,
+        course.imageUrl,
+        course.coverImageUrl,
+        course.thumbnail,
+        course.bannerUrl,
+        course.courseImageUrl,
+        course.image,
+        course.photoURL
+      ));
+    }
+
+    function description(course) {
+      return str(first(
+        course.description,
+        course.shortDescription,
+        course.tagline,
+        course.subtitle,
+        "Explore the batch details, course schedule and learning resources."
+      ));
+    }
+
+    function priceInfo(course) {
+      const value = first(
+        course.discountPrice,
+        course.offerPrice,
+        course.salePrice,
+        course.price,
+        course.courseFee,
+        course.fee,
+        course.amount,
+        course.fees
+      );
+
+      if (value === "") return "Contact for fee";
+
+      const number = Number(value);
+      return Number.isFinite(number)
+        ? new Intl.NumberFormat("en-IN", {
+            style:"currency",
+            currency:"INR",
+            maximumFractionDigits:0
+          }).format(number)
+        : str(value);
+    }
+
+    function formatDate(value) {
+      if (value === undefined || value === null || value === "") {
+        return "Not specified";
+      }
+
+      let date;
+      if (typeof value?.toDate === "function") {
+        date = value.toDate();
+      } else if (typeof value === "object" && value.seconds) {
+        date = new Date(value.seconds * 1000);
+      } else if (typeof value === "number") {
+        date = new Date(value);
+      } else {
+        const raw = str(value).trim();
+        // Avoid interpreting a year like "2026" as a date.
+        if (/^\d{4}$/.test(raw)) return raw;
+        date = new Date(raw);
+      }
+
+      if (!date || Number.isNaN(date.getTime())) return str(value);
+
+      return date.toLocaleDateString("en-IN", {
+        day:"numeric",
+        month:"short",
+        year:"numeric"
+      });
+    }
+
+    function startDate(course) {
+      return first(
+        course.startDate,
+        course.batchStartDate,
+        course.courseStartDate,
+        course.startAt,
+        course.startsAt,
+        course.fromDate,
+        course.validFrom,
+        course.batchStart
+      );
+    }
+
+    function endDate(course) {
+      return first(
+        course.endDate,
+        course.batchEndDate,
+        course.courseEndDate,
+        course.endAt,
+        course.endsAt,
+        course.toDate,
+        course.validUntil,
+        course.batchEnd
+      );
+    }
+
+    function isPublished(course) {
+      const status = str(course.status).toLowerCase();
+      return course.active !== false &&
+        course.published !== false &&
+        course.isPublished !== false &&
+        !["inactive","draft","archived","deleted","unpublished"].includes(status);
+    }
+
+    function enrollmentCourseId(enrollment) {
+      return str(first(
+        enrollment.courseId,
+        enrollment.courseID,
+        enrollment.batchId,
+        enrollment.programId,
+        enrollment.courseRefId
+      ));
+    }
+
+    function isEnrollmentActive(enrollment) {
+      const status = str(first(
+        enrollment.status,
+        enrollment.enrollmentStatus,
+        enrollment.paymentStatus
+      )).toLowerCase();
+
+      // If a status exists, only recognized approved/paid states count.
+      if (status) {
+        return [
+          "approved","active","paid","enrolled","success",
+          "completed","confirmed"
+        ].includes(status);
+      }
+
+      // Legacy records without a status are accepted only if they
+      // have an identifiable course ID.
+      return Boolean(enrollmentCourseId(enrollment));
+    }
+
+    function legacyCourseAccess(course) {
+      const student = state.student || {};
+      const uid = state.user?.uid || "";
+
+      for (const key of [
+        "purchasedCourseIds",
+        "enrolledCourseIds",
+        "courseIds",
+        "purchasedCourses",
+        "enrolledCourses"
+      ]) {
+        const list = student[key];
+        if (!Array.isArray(list)) continue;
+
+        if (list.some(item => {
+          const id = typeof item === "object"
+            ? first(item.courseId, item.id, item.courseID, item.batchId)
+            : item;
+          return str(id) === str(course.id);
+        })) return true;
+      }
+
+      const status = str(first(
+        course.studentAccess?.[uid],
+        course.enrollments?.[uid]?.status
+      )).toLowerCase();
+
+      return [
+        "approved","active","paid","enrolled","success","completed"
+      ].includes(status);
+    }
+
+    function isEnrolled(course) {
+      return state.enrollments.some(enrollment =>
+        isEnrollmentActive(enrollment) &&
+        enrollmentCourseId(enrollment) === str(course.id)
+      ) || legacyCourseAccess(course);
+    }
+
+    function courseDatesMarkup(course) {
+      return `
+        <div class="meta-box">
+          <div class="meta-label"><i class="ri-calendar-check-line"></i> Start date</div>
+          <div class="meta-value">${safe(formatDate(startDate(course)))}</div>
+        </div>
+        <div class="meta-box">
+          <div class="meta-label"><i class="ri-calendar-event-line"></i> End date</div>
+          <div class="meta-value">${safe(formatDate(endDate(course)))}</div>
+        </div>`;
+    }
+
+    function courseCard(course, enrolled = false) {
+      const title = courseTitle(course);
+      const image = courseImage(course);
+      const med = medium(course);
+      const klass = className(course);
+      const id = encodeURIComponent(course.id);
+      const courseDescription = description(course);
+
+      const imageMarkup = image
+        ? `<img class="course-image" src="${safe(image)}" alt="${safe(title)}" loading="lazy"
+             onerror="this.remove();this.nextElementSibling.classList.remove('hidden')">
+           <div class="image-placeholder hidden"><i class="ri-book-open-line"></i><span>${safe(title)}</span></div>`
+        : `<div class="image-placeholder"><i class="ri-book-open-line"></i><span>${safe(title)}</span></div>`;
+
+      const dates = courseDatesMarkup(course);
+
+      return `
+        <article class="course-card">
+          <div class="course-image-wrap">
+            ${imageMarkup}
+            ${enrolled ? `<span class="enrolled-badge"><i class="ri-checkbox-circle-fill"></i> Enrolled</span>` : ""}
+          </div>
+
+          <div class="course-body">
+            <div class="course-topline">
+              <span class="tag"><i class="ri-graduation-cap-line"></i>${safe(klass)}</span>
+              <span class="tag medium"><i class="ri-translate-2"></i>${safe(med)}</span>
+              ${enrolled ? `<span class="tag active"><i class="ri-shield-check-line"></i> Access available</span>` : ""}
+            </div>
+
+            <h3 class="course-title">${safe(title)}</h3>
+            <p class="course-description">${safe(courseDescription)}</p>
+
+            <div class="course-meta">
+              <div class="meta-box">
+                <div class="meta-label"><i class="ri-booklet-line"></i> Batch name</div>
+                <div class="meta-value">${safe(title)}</div>
+              </div>
+              <div class="meta-box">
+                <div class="meta-label"><i class="ri-global-line"></i> Medium</div>
+                <div class="meta-value">${safe(med)}</div>
+              </div>
+              ${dates}
+              <div class="meta-box">
+                <div class="meta-label"><i class="ri-price-tag-3-line"></i> Course fee</div>
+                <div class="meta-value fee-value">${safe(priceInfo(course))}</div>
+              </div>
+            </div>
+
+            <div class="course-footer">
+              <div class="course-footer-note">
+                ${enrolled
+                  ? "Your enrollment is listed on this account."
+                  : "View the complete batch details before enrolling."}
+              </div>
+
+              <div class="course-actions">
+                ${enrolled
+                  ? `<a class="btn btn-study" href="../revision/">
+                       <i class="ri-book-open-line"></i> Study Now
+                     </a>`
+                  : `<a class="btn btn-primary" href="../checkout/?courseId=${id}">
+                       Enroll Now <i class="ri-arrow-right-line"></i>
+                     </a>
+                     <a class="btn btn-outline" href="../batchdetails/?courseId=${id}">
+                       Explore <i class="ri-arrow-up-right-line"></i>
+                     </a>`
+                }
+              </div>
+            </div>
+          </div>
+        </article>`;
+    }
+
+    function render() {
+      const enrolled = state.courses.filter(isEnrolled);
+      const available = state.courses.filter(course => !isEnrolled(course));
+
+      state.enrolledCourses = enrolled;
+      state.availableCourses = available;
+
+      $("enrolledCount").textContent = `${enrolled.length} course${enrolled.length === 1 ? "" : "s"}`;
+      $("availableCount").textContent = `${available.length} available`;
+
+      $("enrolledList").innerHTML = enrolled.length
+        ? enrolled.map(course => courseCard(course, true)).join("")
+        : `
+          <div class="empty">
+            <i class="ri-book-open-line"></i>
+            <h3>No enrolled course found</h3>
+            <p>Once your enrollment is approved and recorded in Firestore, your course will appear here with its thumbnail and Study Now button.</p>
+          </div>`;
+
+      $("availableList").innerHTML = available.length
+        ? available.map(course => courseCard(course, false)).join("")
+        : `
+          <div class="empty">
+            <i class="ri-checkbox-circle-line"></i>
+            <h3>You're all caught up</h3>
+            <p>There are no other published courses available to display right now.</p>
+          </div>`;
+    }
+
+    async function loadStudent(user) {
+      const snap = await getDoc(doc(db, "zen2Students", user.uid));
+      state.student = snap.exists() ? snap.data() : {};
+    }
+
+    async function loadEnrollments(user) {
+      // Existing enrollment collection. Try the known student UID field.
+      const result = await getDocs(query(
+        collection(db, "studentEnrollments"),
+        where("studentUid", "==", user.uid)
+      ));
+
+      state.enrollments = result.docs.map(item => ({
+        id:item.id,
+        ...item.data()
+      }));
+    }
+
+    async function loadCourses() {
+      const snapshot = await getDocs(collection(db, "zen2Courses"));
+
+      state.courses = snapshot.docs
+        .map(item => ({ id:item.id, ...item.data() }))
+        .filter(isPublished)
+        .sort((a,b) =>
+          Number(a.order ?? a.priority ?? 9999) -
+          Number(b.order ?? b.priority ?? 9999)
+        );
+    }
+
+    function showError(error) {
+      console.error("ZENOVA COURSES:", error);
+
+      const message = str(error?.message || error);
+      $("enrolledList").innerHTML = `
+        <div class="error-message">
+          We couldn't load your courses. Check your internet connection and Firestore read permissions, then refresh this page.
+          <br><br><strong>Details:</strong> ${safe(message)}
+        </div>`;
+      $("availableList").innerHTML = "";
+      $("enrolledCount").textContent = "Unavailable";
+      $("availableCount").textContent = "Unavailable";
+    }
+
+    let authHandled = false;
+
+    onAuthStateChanged(auth, async user => {
+      if (!user) {
+        window.location.replace("../../login/");
+        return;
+      }
+      if (authHandled) return;
+      authHandled = true;
+      state.user = user;
+
+      try {
+        await loadStudent(user);
+        await loadEnrollments(user);
+        await loadCourses();
+        render();
+      } catch (error) {
+        showError(error);
+      } finally {
+        $("loader").classList.add("hidden");
+        $("app").classList.remove("hidden");
+      }
+    });
+  </script>
+</body>
+</html>
