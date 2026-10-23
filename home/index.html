@@ -382,7 +382,19 @@
       transform: translateY(-2px);
       box-shadow: 0 9px 24px #243b5b0a;
     }
+@media(min-width:900px){
+  .course-list{
+    display:flex;
+    overflow-x:auto;
+    overflow-y:hidden;
+    scroll-snap-type:x mandatory;
+  }
 
+  .course-card{
+    flex:0 0 360px;
+    width:360px;
+  }
+}
     .course-image {
       position: relative;
       aspect-ratio: 16/9;
@@ -1289,74 +1301,146 @@
         : "Explore the available courses and enroll to unlock your learning space.";
     }
 
-    function renderCourses() {
-      const container = $("myCourses");
+   
+function renderCourses() {
+  const container = $("myBatchesList");
 
-      if (!state.courses.length) {
-        container.innerHTML = `
-          <div class="empty" style="grid-column:1/-1">
-            <i class="ri-book-open-line"></i>
-            No published courses are available right now.
-          </div>`;
-        return;
-      }
+  // My Courses must contain purchased/approved courses only.
+  const purchasedCourses = state.purchasedCourses || [];
 
-      container.innerHTML = state.courses.map(course => {
-        const name = courseName(course);
-        const enrolled = isEnrolled(course);
-        const image = course.thumbnailUrl ||
-          course.imageUrl ||
-          course.coverImageUrl ||
-          "";
+  if (!purchasedCourses.length) {
+    container.innerHTML = `
+      <div class="empty">
+        <i class="ri-book-open-line"></i>
+        <strong>You haven't enrolled in a course yet.</strong>
+        <br>
+        Explore available courses to get started.
+        <br>
+        <button
+          class="btn btn-primary"
+          id="exploreCoursesFromHome"
+          type="button"
+          style="margin-top:12px"
+        >
+          Explore courses
+          <i class="ri-arrow-right-line"></i>
+        </button>
+      </div>
+    `;
 
-        const metadata = [
-          course.classDisplayName || course.className,
-          course.board,
-          course.academicYear
-        ].filter(Boolean);
+    $("exploreCoursesFromHome")?.addEventListener("click", () => {
+      window.location.href = "./courses/";
+    });
 
-        return `
-          <article class="course-card">
-            <div class="course-image">
-              ${image
-                ? `<img src="${esc(image)}" alt="${esc(name)}" loading="lazy">`
-                : `<i class="ri-graduation-cap-line"></i>`}
-            </div>
-            <div class="course-content">
-              <h3 class="course-title">${esc(name)}</h3>
+    return;
+  }
 
-              <div class="course-meta">
-                ${metadata.map(item => `<span class="tag">${esc(item)}</span>`).join("")}
-                <span class="tag">${enrolled ? "Enrolled" : "Available"}</span>
-              </div>
+  container.innerHTML = purchasedCourses.map(course => {
+    const name =
+      course.courseName ||
+      course.name ||
+      course.title ||
+      "Zenova Course";
 
-              <button class="course-action ${enrolled ? "primary" : ""}"
-                type="button"
-                data-course-action="${esc(course.id)}">
-                ${enrolled ? "Continue learning" : "View course"}
-                <i class="ri-arrow-right-line"></i>
-              </button>
-            </div>
-          </article>`;
-      }).join("");
+    const className =
+      course.classDisplayName ||
+      course.className ||
+      state.student?.classDisplayName ||
+      "";
 
-      container.querySelectorAll("[data-course-action]").forEach(button => {
-        button.addEventListener("click", () => {
-          const id = button.dataset.courseAction;
-          const course = state.courses.find(item => item.id === id);
+    const board = course.board || "";
+    const year = course.academicYear || "";
+    const image =
+      course.thumbnailUrl ||
+      course.imageUrl ||
+      course.coverImageUrl ||
+      "";
 
-          if (!course) return;
-
-          if (isEnrolled(course)) {
-            selectCourse(course);
-            window.location.href = `./study/?courseId=${encodeURIComponent(id)}`;
-          } else {
-            window.location.href =
-              `./batchdetails/?courseId=${encodeURIComponent(id)}`;
+    return `
+      <article
+        class="course-card"
+        data-course-card="${esc(course.id)}"
+      >
+        <div class="course-cover">
+          ${
+            image
+              ? `<img
+                  src="${esc(image)}"
+                  alt="${esc(name)} thumbnail"
+                  loading="lazy"
+                  onerror="this.remove()"
+                >`
+              : ""
           }
+        </div>
+
+        <div class="course-body">
+          <div class="course-title">${esc(name)}</div>
+
+          <div class="course-meta">
+            ${className ? `<span>${esc(className)}</span>` : ""}
+            ${board ? `<span>${esc(board)}</span>` : ""}
+            ${year ? `<span>${esc(year)}</span>` : ""}
+          </div>
+
+          <div class="course-actions">
+            <button
+              class="btn btn-primary"
+              data-start-course="${esc(course.id)}"
+              type="button"
+            >
+              <i class="ri-book-open-fill"></i>
+              Study Now
+            </button>
+          </div>
+        </div>
+      </article>
+    `;
+  }).join("");
+
+  // Open the selected purchased course.
+  container.querySelectorAll("[data-start-course]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const courseId = btn.dataset.startCourse;
+
+      if (state.purchasedCourses.length > 1) {
+        showBatchPicker();
+      } else {
+        window.location.href =
+          `./study/?courseId=${encodeURIComponent(courseId)}`;
+      }
+    });
+  });
+}
+  // Auto-slide only when there are multiple purchased courses.
+  if (container._courseSlideTimer) {
+    clearInterval(container._courseSlideTimer);
+    container._courseSlideTimer = null;
+  }
+
+  if (purchasedCourses.length > 1) {
+    container._courseSlideTimer = setInterval(() => {
+      const firstCard = container.querySelector(".course-card");
+
+      if (!firstCard) return;
+
+      const cardWidth =
+        firstCard.getBoundingClientRect().width + 12;
+
+      const atEnd =
+        container.scrollLeft + container.clientWidth >=
+        container.scrollWidth - 5;
+
+      if (atEnd) {
+        container.scrollTo({ left: 0, behavior: "smooth" });
+      } else {
+        container.scrollBy({
+          left: cardWidth,
+          behavior: "smooth"
         });
-      });
-    }
+      }
+    }, 3000);
+  }
 
     async function selectCourse(course) {
       state.selectedCourse = course;
