@@ -1,26 +1,1265 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#111114">
+<title>Live Classes | Zenova Educations</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.css" rel="stylesheet">
+
+<style>
+:root{
+  --bg:#f7f7fa;
+  --white:#fff;
+  --ink:#17151d;
+  --muted:#777381;
+  --line:#e9e6ef;
+  --purple:#7650d6;
+  --purple-dark:#6040b5;
+  --lav:#eee8ff;
+  --lav-light:#f7f3ff;
+  --red:#e34252;
+  --red-light:#fff0f1;
+  --green:#128463;
+  --green-light:#e8f8f2;
+  --amber:#a96809;
+  --amber-light:#fff5df;
+  --bottom:78px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;background:var(--bg)}
+body{
+  margin:0;background:var(--bg);color:var(--ink);
+  font-family:Inter,system-ui,-apple-system,sans-serif;
+  -webkit-font-smoothing:antialiased;
+  padding-bottom:calc(var(--bottom) + env(safe-area-inset-bottom))
+}
+button,input{font:inherit}
+button,a{-webkit-tap-highlight-color:transparent}
+button{cursor:pointer}
+a{color:inherit;text-decoration:none}
+.hidden{display:none!important}
+button:focus-visible,a:focus-visible,input:focus-visible{
+  outline:3px solid #b7a0f4;outline-offset:3px
+}
+
+/* Brand header */
+.header{
+  background:#111114;color:white;
+  padding:18px 17px 23px;border-radius:0 0 26px 26px;
+}
+.header-inner{
+  width:min(100%,920px);margin:auto;
+  display:flex;align-items:center;justify-content:space-between;gap:14px;
+}
+.brand{display:flex;align-items:center;gap:11px;min-width:0}
+.brand-mark{
+  width:46px;height:46px;flex:0 0 46px;
+  display:grid;place-items:center;border-radius:15px;
+  background:var(--lav);color:var(--purple-dark);
+  font-size:24px;font-weight:900;
+}
+.brand-copy{min-width:0}
+.brand-name{font-size:16px;font-weight:900;letter-spacing:-.3px}
+.brand-sub{
+  margin-top:4px;color:#bdb8c8;font-size:10px;
+  letter-spacing:1.3px;text-transform:uppercase
+}
+.profile{
+  width:46px;height:46px;flex:0 0 46px;
+  display:grid;place-items:center;overflow:hidden;
+  border:2px solid #a58be8;border-radius:50%;
+  background:#292532;color:white;
+}
+.profile img{width:100%;height:100%;object-fit:cover}
+.profile img[hidden]{display:none}
+
+/* Main layout */
+.page{width:min(100%,920px);margin:auto;padding:20px 15px 35px}
+.intro{
+  position:relative;overflow:hidden;
+  margin-bottom:23px;padding:23px 20px;
+  border-radius:22px;background:#111114;color:white;
+  box-shadow:0 10px 28px #20153b12;
+}
+.intro:after{
+  content:"";position:absolute;width:190px;height:190px;
+  right:-72px;top:-100px;border-radius:50%;
+  background:radial-gradient(circle,#7650d666,transparent 70%);
+  pointer-events:none;
+}
+.eyebrow{
+  color:var(--purple);font-size:9px;font-weight:900;
+  letter-spacing:1.6px;text-transform:uppercase;
+}
+.intro .eyebrow{color:#c8b5ff}
+.intro h1{
+  position:relative;z-index:1;margin:9px 0 0;
+  font-size:clamp(27px,5vw,35px);font-weight:900;
+  letter-spacing:-1.2px;line-height:1.18
+}
+.intro p{
+  position:relative;z-index:1;max-width:460px;
+  margin:9px 0 0;color:#d0cbd8;font-size:12px;line-height:1.7
+}
+.intro-bottom{
+  position:relative;z-index:1;display:flex;flex-wrap:wrap;
+  gap:8px;margin-top:17px
+}
+.intro-chip{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:8px 10px;border:1px solid #ffffff22;
+  border-radius:10px;background:#ffffff0b;color:#e7e0f7;
+  font-size:10px;font-weight:700
+}
+.intro-chip i{font-size:14px;color:#c8b5ff}
+
+/* Quick live status */
+.live-banner{
+  display:flex;align-items:center;gap:12px;
+  margin-bottom:25px;padding:14px;
+  border:1px solid #eadfff;border-radius:16px;
+  background:linear-gradient(110deg,#f1eaff,#fff 80%);
+}
+.live-dot{
+  width:40px;height:40px;flex:0 0 40px;
+  display:grid;place-items:center;border-radius:13px;
+  background:var(--purple);color:white;font-size:20px
+}
+.live-banner-copy{flex:1;min-width:0}
+.live-banner-copy strong{display:block;font-size:12px;font-weight:850}
+.live-banner-copy span{
+  display:block;margin-top:4px;color:var(--muted);
+  font-size:10px;line-height:1.5
+}
+.live-counter{
+  min-width:29px;height:29px;padding:0 8px;
+  display:grid;place-items:center;border-radius:9px;
+  background:white;color:var(--purple-dark);
+  font-size:11px;font-weight:900
+}
+
+/* Sections */
+.section{margin-top:26px;scroll-margin-top:16px}
+.section-heading{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:12px;margin-bottom:13px
+}
+.section-heading h2{
+  margin:5px 0 0;font-size:18px;font-weight:900;letter-spacing:-.5px
+}
+.section-heading p{
+  margin:5px 0 0;color:var(--muted);font-size:11px;line-height:1.5
+}
+.count{
+  min-width:28px;height:27px;padding:0 8px;
+  display:grid;place-items:center;border-radius:9px;
+  background:var(--lav);color:var(--purple-dark);
+  font-size:10px;font-weight:900
+}
+
+/* Live-now featured card */
+.class-list{display:grid;grid-template-columns:1fr;gap:12px}
+.class-card{
+  overflow:hidden;background:white;
+  border:1px solid var(--line);border-radius:18px;
+  box-shadow:0 5px 20px #21163806
+}
+.class-card.is-live{border-color:#efc6cb}
+.class-card.is-live .class-top{
+  background:linear-gradient(120deg,#fff5f5,#fff 80%)
+}
+.class-top{padding:16px 16px 13px}
+.class-title-row{
+  display:flex;align-items:flex-start;justify-content:space-between;gap:10px
+}
+.class-title{
+  margin:0;font-size:15px;font-weight:850;
+  letter-spacing:-.3px;line-height:1.45;overflow-wrap:anywhere
+}
+.class-subtitle{
+  margin-top:5px;color:var(--muted);font-size:11px;line-height:1.55
+}
+.status{
+  flex-shrink:0;display:inline-flex;align-items:center;gap:5px;
+  padding:6px 8px;border-radius:8px;
+  background:#f0edf5;color:#777181;
+  font-size:9px;font-weight:900;letter-spacing:.3px
+}
+.status i{font-size:12px}
+.status.live{background:var(--red-light);color:#c72e3d}
+.status.upcoming{background:var(--lav);color:var(--purple-dark)}
+.status.ended{background:#f0edf5;color:#777181}
+.status.completed{background:var(--green-light);color:var(--green)}
+.status-dot{
+  width:6px;height:6px;border-radius:50%;background:currentColor
+}
+.class-meta{
+  display:flex;flex-wrap:wrap;gap:8px;margin-top:13px
+}
+.meta-pill{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:7px 9px;border:1px solid #efedf4;
+  border-radius:9px;background:#faf9fc;
+  color:#655f71;font-size:10px;font-weight:650;line-height:1.4
+}
+.meta-pill i{font-size:14px;color:var(--purple)}
+.class-footer{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:12px;padding:12px 16px;
+  border-top:1px solid #f0edf4
+}
+.provider{
+  color:#777181;font-size:9px;font-weight:850;
+  letter-spacing:.45px;text-transform:uppercase
+}
+.provider.zoom{color:#3657c8}
+.provider.zenova{color:var(--purple-dark)}
+.action{
+  min-height:40px;padding:0 14px;
+  display:inline-flex;align-items:center;justify-content:center;gap:7px;
+  border:0;border-radius:11px;
+  background:var(--purple);color:white;
+  font-size:10px;font-weight:900;white-space:nowrap;
+  box-shadow:0 5px 14px #7042c71c;
+}
+.action:hover{background:#5e36bd}
+.action i{font-size:15px}
+.action.join{background:var(--red);box-shadow:0 5px 14px #e342521c}
+.action.watch{background:#292532}
+.action:disabled{cursor:not-allowed;opacity:.55;box-shadow:none}
+.class-footer .provider{max-width:55%;line-height:1.5}
+
+/* Calendar */
+.calendar{
+  padding:12px;border:1px solid var(--line);
+  border-radius:17px;background:white
+}
+.calendar-controls{
+  display:grid;grid-template-columns:40px minmax(0,1fr) 40px;
+  align-items:center;gap:10px
+}
+.date-arrow{
+  width:40px;height:40px;border:1px solid #e6ddfa;
+  border-radius:12px;background:var(--lav);
+  color:var(--purple-dark);font-size:22px
+}
+.date-current{text-align:center;min-width:0}
+.date-current span{
+  display:block;color:#8a8495;font-size:8px;
+  font-weight:900;letter-spacing:1px
+}
+.date-current strong{
+  display:block;margin-top:4px;font-size:13px;font-weight:850
+}
+.date-input-wrap{margin-top:12px}
+.date-input-wrap input{
+  width:100%;height:42px;padding:0 12px;
+  border:1px solid var(--line);border-radius:11px;
+  background:#faf9fc;color:var(--ink);font-size:12px
+}
+.date-results{display:grid;gap:10px;margin-top:12px}
+
+/* Date class list */
+.date-class{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:13px;padding:14px;
+  border:1px solid var(--line);border-radius:14px;background:white
+}
+.date-class-main{min-width:0;flex:1}
+.date-class-title{font-size:12px;font-weight:850;line-height:1.5}
+.date-class-info{
+  margin-top:5px;color:var(--muted);font-size:10px;line-height:1.7
+}
+.date-class-action{flex-shrink:0}
+
+/* Subjects */
+.subject-grid{
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px
+}
+.subject-card{
+  min-width:0;display:flex;align-items:center;gap:10px;
+  padding:13px 11px;border:1px solid var(--line);
+  border-radius:15px;background:white;text-align:left;
+  transition:border-color .15s,transform .15s
+}
+.subject-card:hover{border-color:#cbbcf2;transform:translateY(-1px)}
+.subject-icon{
+  width:38px;height:38px;flex:0 0 38px;
+  display:grid;place-items:center;border-radius:12px;
+  background:var(--lav);color:var(--purple-dark);
+  font-size:15px;font-weight:900
+}
+.subject-info{min-width:0;flex:1}
+.subject-info strong{
+  display:block;overflow:hidden;text-overflow:ellipsis;
+  white-space:nowrap;font-size:11px;font-weight:850
+}
+.subject-info span{
+  display:block;margin-top:4px;color:var(--muted);font-size:9px
+}
+.subject-arrow{color:#aaa3b4;font-size:17px}
+
+/* Subject history */
+.history-section{
+  padding-top:4px;border-top:1px solid var(--line)
+}
+.history-header{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:12px;margin-bottom:13px
+}
+.history-header h2{
+  margin:5px 0 0;font-size:18px;font-weight:900;letter-spacing:-.5px
+}
+.close-button{
+  min-height:35px;padding:0 12px;border:1px solid var(--line);
+  border-radius:10px;background:white;color:#6e6879;
+  font-size:10px;font-weight:800
+}
+.history-list{display:grid;gap:10px}
+.history-card{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:14px;border:1px solid var(--line);border-radius:14px;background:white
+}
+.history-card-main{min-width:0;flex:1}
+.history-title{font-size:12px;font-weight:850;line-height:1.5}
+.history-info{margin-top:5px;color:var(--muted);font-size:10px;line-height:1.7}
+
+/* States */
+.empty{
+  min-height:135px;padding:23px 16px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  border:1px dashed #dcd4ea;border-radius:16px;background:white;text-align:center
+}
+.empty-icon{
+  width:40px;height:40px;display:grid;place-items:center;
+  margin-bottom:10px;border-radius:13px;
+  background:var(--lav);color:var(--purple-dark);font-size:20px
+}
+.empty strong{font-size:12px;font-weight:850}
+.empty p{max-width:310px;margin:6px 0 0;color:var(--muted);font-size:10px;line-height:1.7}
+.state{
+  min-height:210px;padding:25px;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;text-align:center;
+  border:1px solid var(--line);border-radius:18px;background:white
+}
+.state .spinner{margin-bottom:13px}
+.state h2{margin:0;font-size:15px;font-weight:900}
+.state p{max-width:360px;margin:8px 0 16px;color:var(--muted);font-size:11px;line-height:1.7}
+.retry{
+  min-height:40px;padding:0 17px;border:0;border-radius:11px;
+  background:var(--purple);color:white;font-size:11px;font-weight:850
+}
+.spinner{
+  width:27px;height:27px;border:3px solid #e8e0fb;
+  border-top-color:var(--purple);border-radius:50%;
+  animation:spin .8s linear infinite
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+.toast{
+  position:fixed;left:50%;bottom:calc(var(--bottom) + 15px);z-index:700;
+  max-width:calc(100% - 32px);padding:12px 16px;
+  border:1px solid #423650;border-radius:13px;
+  background:#211d2b;color:white;font-size:11px;line-height:1.5;
+  opacity:0;pointer-events:none;transform:translate(-50%,12px);
+  transition:opacity .2s,transform .2s
+}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+
+/* Five-item navigation */
+.bottom-nav{
+  position:fixed;z-index:500;left:0;right:0;bottom:0;
+  padding:8px 10px calc(8px + env(safe-area-inset-bottom));
+  border-top:1px solid var(--line);background:#ffffffef;
+  backdrop-filter:blur(16px)
+}
+.bottom-inner{
+  width:min(100%,520px);margin:auto;
+  display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px
+}
+.nav-item{
+  position:relative;min-width:0;min-height:49px;
+  display:flex;flex-direction:column;align-items:center;
+  justify-content:center;gap:4px;border-radius:12px;
+  color:#8b8795;font-size:9px;font-weight:750
+}
+.nav-item i{font-size:20px;line-height:1}
+.nav-item.active{background:var(--lav);color:var(--purple-dark)}
+.nav-item.active:before{
+  content:"";position:absolute;top:3px;left:50%;
+  width:17px;height:3px;border-radius:5px;
+  transform:translateX(-50%);background:var(--purple)
+}
+
+@media(min-width:700px){
+  body{padding-bottom:100px}
+  .header{padding:18px 24px 23px}
+  .page{padding:26px 25px 35px}
+  .intro{padding:28px}
+  .live-banner{padding:17px}
+  .class-list{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .subject-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .bottom-nav{
+    left:50%;right:auto;bottom:12px;
+    width:min(100% - 32px,520px);
+    transform:translateX(-50%);
+    border:1px solid var(--line);border-radius:19px;
+    padding:8px;box-shadow:0 12px 35px #18111f18
+  }
+  .bottom-inner{max-width:none}
+  .nav-item{min-height:48px}
+}
+@media(max-width:420px){
+  .header{padding:16px 13px 21px}
+  .page{padding:16px 11px 28px}
+  .intro{padding:20px 16px}
+  .class-top{padding:14px 12px 12px}
+  .class-footer{padding:11px 12px}
+  .class-title{font-size:13px}
+  .status{font-size:8px;padding:5px 6px}
+  .meta-pill{font-size:9px;padding:6px 7px}
+  .subject-grid{gap:8px}
+  .subject-card{padding:11px 8px;gap:8px}
+  .subject-icon{width:33px;height:33px;flex-basis:33px}
+  .subject-info strong{font-size:10px}
+  .date-class{align-items:flex-start;flex-direction:column}
+  .date-class-action,.date-class-action .action{width:100%}
+  .history-card{align-items:flex-start}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*:before,*:after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
+}
+</style>
+</head>
+
+<body>
+
+<header class="header">
+  <div class="header-inner">
+    <a class="brand" href="../" aria-label="Zenova Home">
+      <span class="brand-mark">Z</span>
+      <span class="brand-copy">
+        <span class="brand-name">Zenova Educations</span>
+        <span class="brand-sub">Learn · Practice · Achieve</span>
+      </span>
+    </a>
+    <a class="profile" href="../profile/" aria-label="Student profile">
+      <img id="profilePhoto" alt="Profile" hidden>
+      <span id="profileInitial">Z</span>
+    </a>
+  </div>
+</header>
+
+<main class="page">
+
+  <section id="loadingState" class="state" role="status">
+    <div class="spinner"></div>
+    <h2>Preparing your classroom</h2>
+    <p>Loading your batch and scheduled classes.</p>
+  </section>
+
+  <section id="errorState" class="state hidden" role="alert">
+    <div class="empty-icon"><i class="ri-error-warning-line"></i></div>
+    <h2 id="errorTitle">Unable to load classes</h2>
+    <p id="errorText">Please try again.</p>
+    <button id="retryButton" class="retry" type="button">Try Again</button>
+  </section>
+
+  <div id="liveApp" class="hidden">
+
+    <section class="intro">
+      <span class="eyebrow">YOUR CLASSROOM</span>
+      <h1>Live Classes</h1>
+      <p>Join your scheduled classes and revisit previous lessons from your batch.</p>
+      <div class="intro-bottom">
+        <span class="intro-chip"><i class="ri-graduation-cap-line"></i><span id="batchLabel">Your Batch</span></span>
+        <span class="intro-chip"><i class="ri-calendar-check-line"></i><span id="todayLabel">Today's Schedule</span></span>
+      </div>
+    </section>
+
+    <section class="live-banner" aria-live="polite">
+      <div class="live-dot"><i class="ri-live-line"></i></div>
+      <div class="live-banner-copy">
+        <strong id="liveSummary">Your classroom is ready</strong>
+        <span id="liveSummaryDetail">Checking your scheduled classes.</span>
+      </div>
+      <span id="liveCount" class="live-counter">0</span>
+    </section>
+
+    <section class="section" id="todaySection">
+      <div class="section-heading">
+        <div>
+          <span class="eyebrow">YOUR SCHEDULE</span>
+          <h2>Today's Classes</h2>
+          <p id="todayDate"></p>
+        </div>
+        <span class="count" id="todayCount">0</span>
+      </div>
+      <div id="todayClasses" class="class-list"></div>
+      <div id="todayEmpty" class="empty hidden">
+        <div class="empty-icon"><i class="ri-calendar-line"></i></div>
+        <strong>No classes scheduled today</strong>
+        <p>Check another date below to see your upcoming classes.</p>
+      </div>
+    </section>
+
+    <section class="section" id="calendarSection">
+      <div class="section-heading">
+        <div>
+          <span class="eyebrow">CLASS CALENDAR</span>
+          <h2>Browse by Date</h2>
+          <p>Find classes scheduled on another day.</p>
+        </div>
+      </div>
+
+      <div class="calendar">
+        <div class="calendar-controls">
+          <button class="date-arrow" id="previousDate" type="button" aria-label="Previous day"><i class="ri-arrow-left-s-line"></i></button>
+          <div class="date-current">
+            <span>SELECTED DATE</span>
+            <strong id="selectedDateText">Today</strong>
+          </div>
+          <button class="date-arrow" id="nextDate" type="button" aria-label="Next day"><i class="ri-arrow-right-s-line"></i></button>
+        </div>
+        <div class="date-input-wrap">
+          <input id="datePicker" type="date" aria-label="Choose class date">
+        </div>
+      </div>
+
+      <div id="selectedDateClasses" class="date-results"></div>
+      <div id="selectedDateEmpty" class="empty hidden">
+        <div class="empty-icon"><i class="ri-calendar-close-line"></i></div>
+        <strong>No classes on this date</strong>
+        <p>There are no scheduled classes for the selected date.</p>
+      </div>
+    </section>
+
+    <section class="section" id="subjectsSection">
+      <div class="section-heading">
+        <div>
+          <span class="eyebrow">YOUR BATCH</span>
+          <h2>All Subjects</h2>
+          <p>Select a subject to view its previous classes.</p>
+        </div>
+        <span class="count" id="subjectCount">0</span>
+      </div>
+      <div id="subjectGrid" class="subject-grid"></div>
+      <div id="subjectsEmpty" class="empty hidden">
+        <div class="empty-icon"><i class="ri-book-open-line"></i></div>
+        <strong>No subjects available</strong>
+        <p>Subjects assigned to your batch will appear here.</p>
+      </div>
+    </section>
+
+    <section id="subjectHistorySection" class="section history-section hidden">
+      <div class="history-header">
+        <div>
+          <span class="eyebrow">SUBJECT HISTORY</span>
+          <h2 id="historySubjectName">Previous Classes</h2>
+        </div>
+        <button id="closeHistory" class="close-button" type="button">Close</button>
+      </div>
+      <div id="subjectHistory" class="history-list"></div>
+      <div id="historyEmpty" class="empty hidden">
+        <div class="empty-icon"><i class="ri-video-line"></i></div>
+        <strong>No previous classes</strong>
+        <p>No ended classes are available for this subject yet.</p>
+      </div>
+    </section>
+
+  </div>
+</main>
+
 <nav class="bottom-nav" aria-label="Main navigation">
-  <button type="button" data-nav="../../home/">
-    <span class="nav-icon"><i class="ri-home-5-line"></i></span>
-    <span>Home</span>
-  </button>
-
-  <button type="button" data-nav="../courses/">
-    <span class="nav-icon"><i class="ri-book-2-line"></i></span>
-    <span>Courses</span>
-  </button>
-
-  <button type="button" class="active" data-nav="../live/" aria-current="page">
-    <span class="nav-icon"><i class="ri-live-line"></i></span>
-    <span>Live</span>
-  </button>
-
-  <button type="button" data-nav="../revision/">
-    <span class="nav-icon"><i class="ri-book-open-line"></i></span>
-    <span>Revision</span>
-  </button>
-
-  <button type="button" data-nav="../profile/">
-    <span class="nav-icon"><i class="ri-user-3-line"></i></span>
-    <span>Profile</span>
-  </button>
+  <div class="bottom-inner">
+    <a class="nav-item" href="../"><i class="ri-home-5-line"></i><span>Home</span></a>
+    <a class="nav-item" href="../courses/"><i class="ri-book-2-line"></i><span>Courses</span></a>
+    <a class="nav-item active" href="./" aria-current="page"><i class="ri-live-line"></i><span>Live</span></a>
+    <a class="nav-item" href="../revision/"><i class="ri-book-open-line"></i><span>Revision</span></a>
+    <a class="nav-item" href="../profile/"><i class="ri-user-3-line"></i><span>Profile</span></a>
+  </div>
 </nav>
+
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+<script type="module">
+import { auth, db } from "../../firebase/firebase-config.js";
+
+import {
+  onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+
+import {
+  doc,
+  getDoc,
+  collection,
+  getDocs,
+  query,
+  where
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
+const $ = id => document.getElementById(id);
+
+const state = {
+  user: null,
+  student: null,
+  course: null,
+  classes: [],
+  subjects: [],
+  selectedDate: todayString(),
+  loading: false
+};
+
+let authHandled = false;
+
+const safe = value => String(value ?? "").replace(/[&<>"']/g, c => ({
+  "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+}[c]));
+
+const first = (...values) =>
+  values.find(v => v !== undefined && v !== null && String(v).trim() !== "") ?? "";
+
+function showLoading() {
+  $("loadingState").classList.remove("hidden");
+  $("errorState").classList.add("hidden");
+  $("liveApp").classList.add("hidden");
+}
+
+function showApp() {
+  $("loadingState").classList.add("hidden");
+  $("errorState").classList.add("hidden");
+  $("liveApp").classList.remove("hidden");
+}
+
+function showError(message, title = "Unable to load classes") {
+  $("loadingState").classList.add("hidden");
+  $("liveApp").classList.add("hidden");
+  $("errorState").classList.remove("hidden");
+  $("errorTitle").textContent = title;
+  $("errorText").textContent = message;
+}
+
+function toast(message) {
+  const el = $("toast");
+  el.textContent = message;
+  el.classList.add("show");
+  clearTimeout(toast.timer);
+  toast.timer = setTimeout(() => el.classList.remove("show"), 2600);
+}
+
+function studentClass(data) {
+  return first(data.className, data.class, data.standard, data.grade, data.targetClass);
+}
+
+function courseClass(data) {
+  return first(
+    data.className, data.courseClass, data.targetClass,
+    data.standard, data.grade, data.crmClass
+  );
+}
+
+function normalizeClass(value) {
+  const v = String(value || "").trim().toLowerCase().replace(/[\s_-]+/g, "");
+  if (["10","10th","class10","10thstandard"].includes(v)) return "10th";
+  if (["9","9th","class9","9thstandard"].includes(v)) return "9th";
+  if (["8","8th","class8","8thstandard"].includes(v)) return "8th";
+  if (v.includes("1stpuc") || v.includes("puc1")) return "1stpuc";
+  if (v.includes("2ndpuc") || v.includes("puc2")) return "2ndpuc";
+  return v;
+}
+
+function activeStatus(data) {
+  if (data.active === false || data.isActive === false || data.published === false) return false;
+  const status = String(data.status || "").toLowerCase();
+  return !["inactive","deleted","archived","draft","cancelled"].includes(status);
+}
+
+function courseMatchesClass(course, classValue) {
+  const target = normalizeClass(classValue);
+  return !!target && normalizeClass(courseClass(course)) === target;
+}
+
+function belongsToCourse(item, course) {
+  if (item.courseId) return String(item.courseId) === String(course.id);
+
+  const batchId = first(item.batchId, item.courseID);
+  if (batchId) return String(batchId) === String(course.id);
+
+  const classValue = first(item.courseClass, item.className, item.standard);
+  return !!classValue && normalizeClass(classValue) === normalizeClass(courseClass(course));
+}
+
+function startMillis(item) {
+  const value = item.startDateTime;
+
+  if (value && typeof value.toMillis === "function") return value.toMillis();
+  if (value && typeof value.seconds === "number") return value.seconds * 1000;
+
+  const date = first(item.scheduledDate, item.startDate, item.date);
+  const time = first(item.scheduledTime, item.startTime, item.time);
+  if (!date || !time) return 0;
+
+  const dateText = String(date).trim();
+  const timeText = String(time).trim();
+
+  // ISO timestamp already includes date and time.
+  if (dateText.includes("T")) {
+    const parsed = new Date(dateText);
+    return Number.isNaN(parsed.getTime()) ? 0 : parsed.getTime();
+  }
+
+  // Support "7:30 PM" and "19:30" in the schedule fields.
+  let hours, minutes;
+  const twelve = timeText.match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
+  const twentyFour = timeText.match(/^(\d{1,2}):(\d{2})$/);
+
+  if (twelve) {
+    hours = Number(twelve[1]) % 12;
+    if (twelve[3].toUpperCase() === "PM") hours += 12;
+    minutes = Number(twelve[2]);
+  } else if (twentyFour) {
+    hours = Number(twentyFour[1]);
+    minutes = Number(twentyFour[2]);
+  } else {
+    return 0;
+  }
+
+  if (hours > 23 || minutes > 59) return 0;
+
+  return new Date(`${dateText}T${String(hours).padStart(2,"0")}:${String(minutes).padStart(2,"0")}:00+05:30`).getTime();
+}
+
+function endMillis(item) {
+  const value = item.endDateTime;
+  if (value && typeof value.toMillis === "function") return value.toMillis();
+  if (value && typeof value.seconds === "number") return value.seconds * 1000;
+
+  const date = first(item.endDate, item.scheduledDate, item.startDate, item.date);
+  const time = first(item.endTime);
+  if (!date || !time) return 0;
+
+  return parseTimeOnDate(date, time);
+}
+
+function parseTimeOnDate(date, time) {
+  const raw = String(time).trim();
+  let hours, minutes;
+  const twelve = raw.match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
+  const twentyFour = raw.match(/^(\d{1,2}):(\d{2})$/);
+
+  if (twelve) {
+    hours = Number(twelve[1]) % 12;
+    if (twelve[3].toUpperCase() === "PM") hours += 12;
+    minutes = Number(twelve[2]);
+  } else if (twentyFour) {
+    hours = Number(twentyFour[1]);
+    minutes = Number(twentyFour[2]);
+  } else return 0;
+
+  const result = new Date(`${date}T${String(hours).padStart(2,"0")}:${String(minutes).padStart(2,"0")}:00+05:30`).getTime();
+  return Number.isNaN(result) ? 0 : result;
+}
+
+function statusOf(item) {
+  const start = startMillis(item);
+  if (!start) return { key:"unknown", label:"TIME NOT SET" };
+
+  let end = endMillis(item);
+  if (!end || end <= start) end = start + 2 * 60 * 60 * 1000;
+
+  const now = Date.now();
+
+  if (now < start) return { key:"upcoming", label:"UPCOMING" };
+  if (now <= end) return { key:"live", label:"LIVE NOW" };
+  return { key:"ended", label:"ENDED" };
+}
+
+function hasRecording(item) {
+  return Boolean(
+    item.recordingUrl ||
+    item.recordedUrl ||
+    item.replayUrl ||
+    item.recordedVideoUrl ||
+    item.recordingVideoUrl ||
+    (item.videoUrl && item.liveType === "RECORDED_VIDEO") ||
+    item.recordingContentId
+  );
+}
+
+function provider(item) {
+  const type = String(item.liveType || "").toUpperCase();
+  if (type === "ZOOM") return "Zoom Classroom";
+  if (type === "YOUTUBE_LIVE") return "YouTube Live";
+  if (type === "RECORDED_VIDEO") return "Recorded Class";
+  if (type === "EXTERNAL_VIDEO") return "Live Class";
+  return "Zenova Live";
+}
+
+function dateInIndia(millis) {
+  if (!millis) return "";
+  const parts = new Intl.DateTimeFormat("en-CA", {
+    timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit"
+  }).formatToParts(new Date(millis));
+  const v = {};
+  parts.forEach(p => { if (p.type !== "literal") v[p.type] = p.value; });
+  return `${v.year}-${v.month}-${v.day}`;
+}
+
+function todayString() {
+  return dateInIndia(Date.now());
+}
+
+function shiftDate(date, amount) {
+  const [y,m,d] = date.split("-").map(Number);
+  const value = new Date(Date.UTC(y,m-1,d + amount,12));
+  return `${value.getUTCFullYear()}-${String(value.getUTCMonth()+1).padStart(2,"0")}-${String(value.getUTCDate()).padStart(2,"0")}`;
+}
+
+function dateLabel(date, options = {}) {
+  const [y,m,d] = date.split("-").map(Number);
+  const value = new Date(Date.UTC(y,m-1,d,12));
+  return new Intl.DateTimeFormat("en-IN", {
+    timeZone:"UTC",
+    weekday:options.short ? "short" : "long",
+    day:"numeric",month:options.short ? "short" : "long",
+    year:options.year === false ? undefined : "numeric"
+  }).format(value);
+}
+
+function timeLabel(millis) {
+  if (!millis) return "Time not set";
+  return new Intl.DateTimeFormat("en-IN", {
+    hour:"numeric",minute:"2-digit",hour12:true,timeZone:"Asia/Kolkata"
+  }).format(new Date(millis));
+}
+
+function timeRange(item) {
+  const start = startMillis(item);
+  if (!start) return "Time not set";
+  const end = endMillis(item);
+  return end > start ? `${timeLabel(start)} – ${timeLabel(end)}` : timeLabel(start);
+}
+
+function classDate(item) {
+  return dateInIndia(startMillis(item));
+}
+
+function sortedByStart(items) {
+  return [...items].sort((a,b) => startMillis(a) - startMillis(b));
+}
+
+function subjectName(subject) {
+  return first(
+    subject.name, subject.subjectName, subject.subject_name,
+    subject.title, subject.displayName, subject.label,
+    subject.nameEnglish, subject.subjectNameEnglish,
+    subject.englishName, subject.nameKannada, subject.subjectNameKannada,
+    "Subject"
+  );
+}
+
+function safeInitial(text) {
+  return String(text || "Z").trim().charAt(0).toUpperCase() || "Z";
+}
+
+function updateProfile() {
+  const student = state.student || {};
+  const name = String(first(
+    student.name,student.studentName,state.user?.displayName,"Zenova"
+  ));
+  $("profileInitial").textContent = safeInitial(name);
+
+  const photo = first(
+    student.photoURL,student.photoUrl,student.profilePhotoUrl,state.user?.photoURL
+  );
+
+  if (photo) {
+    $("profilePhoto").src = photo;
+    $("profilePhoto").hidden = false;
+    $("profileInitial").hidden = true;
+    $("profilePhoto").onerror = () => {
+      $("profilePhoto").hidden = true;
+      $("profileInitial").hidden = false;
+    };
+  }
+}
+
+async function loadPage() {
+  showLoading();
+
+  const studentSnap = await getDoc(doc(db,"zen2Students",state.user.uid));
+  if (!studentSnap.exists()) {
+    throw new Error("Your student profile was not found. Please contact your administrator.");
+  }
+
+  state.student = { id:studentSnap.id, ...studentSnap.data() };
+  updateProfile();
+
+  const courseSnap = await getDocs(collection(db,"zen2Courses"));
+  const courses = courseSnap.docs
+    .map(d => ({id:d.id,...d.data()}))
+    .filter(activeStatus);
+
+  // Prefer the explicitly assigned course ID, then batch ID, then class match.
+  const assignedId = first(
+    state.student.courseId,
+    state.student.batchId,
+    state.student.zenovaCourseId
+  );
+
+  let course = assignedId
+    ? courses.find(c => String(c.id) === String(assignedId))
+    : null;
+
+  if (!course) {
+    const classValue = studentClass(state.student);
+    if (classValue) course = courses.find(c => courseMatchesClass(c,classValue));
+  }
+
+  // If there is no student course assignment, try an approved enrollment record.
+  if (!course) {
+    try {
+      const enrollSnap = await getDocs(query(
+        collection(db,"studentEnrollments"),
+        where("studentUid","==",state.user.uid)
+      ));
+
+      const activeEnrollment = enrollSnap.docs
+        .map(d => ({id:d.id,...d.data()}))
+        .find(e => {
+          const status = String(e.status || e.enrollmentStatus || "").toLowerCase();
+          return e.accessGranted !== false &&
+            (e.accessGranted === true ||
+             ["active","approved","paid","enrolled","success"].includes(status));
+        });
+
+      const enrollmentCourseId = activeEnrollment &&
+        first(activeEnrollment.courseId,activeEnrollment.batchId,activeEnrollment.crmCourseId);
+
+      if (enrollmentCourseId) {
+        course = courses.find(c => String(c.id) === String(enrollmentCourseId)) || null;
+      }
+    } catch (e) {
+      console.warn("Enrollment lookup did not complete:",e);
+    }
+  }
+
+  if (!course) {
+    throw new Error("We couldn't identify your assigned batch. Please check your course enrollment with your administrator.");
+  }
+
+  state.course = course;
+
+  const [liveSnap,subjectSnap] = await Promise.all([
+    getDocs(collection(db,"liveClasses")),
+    getDocs(collection(db,"zen2Subjects"))
+  ]);
+
+  state.classes = liveSnap.docs
+    .map(d => ({id:d.id,...d.data()}))
+    .filter(activeStatus)
+    .filter(item => belongsToCourse(item,course))
+    .sort((a,b) => startMillis(a)-startMillis(b));
+
+  state.subjects = subjectSnap.docs
+    .map(d => ({id:d.id,...d.data()}))
+    .filter(s => String(s.courseId || "") === String(course.id))
+    .filter(activeStatus)
+    .sort((a,b) => Number(a.order ?? 9999)-Number(b.order ?? 9999));
+
+  state.selectedDate = todayString();
+  $("datePicker").value = state.selectedDate;
+
+  const batchName = first(
+    course.batchName,course.courseName,course.title,course.name,courseClass(course),"Your Batch"
+  );
+  $("batchLabel").textContent = batchName;
+  $("todayLabel").textContent = dateLabel(state.selectedDate,{short:true,year:false});
+
+  renderAll();
+  showApp();
+}
+
+function renderAll() {
+  renderToday();
+  renderDate();
+  renderSubjects();
+  updateLiveSummary();
+}
+
+function updateLiveSummary() {
+  const today = todayString();
+  const liveNow = state.classes.filter(c =>
+    classDate(c) === today && statusOf(c).key === "live"
+  );
+  const upcoming = state.classes.filter(c =>
+    classDate(c) === today && statusOf(c).key === "upcoming"
+  );
+
+  $("liveCount").textContent = String(liveNow.length);
+  $("liveSummary").textContent = liveNow.length
+    ? `${liveNow.length} class${liveNow.length === 1 ? "" : "es"} live now`
+    : upcoming.length
+      ? `${upcoming.length} upcoming class${upcoming.length === 1 ? "" : "es"} today`
+      : "No class live right now";
+
+  $("liveSummaryDetail").textContent = liveNow.length
+    ? "Your live classroom is ready. Join only classes that are currently live."
+    : upcoming.length
+      ? `Next class: ${timeLabel(startMillis(upcoming[0]))}.`
+      : "Check the schedule below for other dates and previous recordings.";
+
+  $("todayLabel").textContent = dateLabel(today,{short:true,year:false});
+}
+
+function statusBadge(item) {
+  const s = statusOf(item);
+  const cls = s.key === "live" ? "live" : s.key === "upcoming" ? "upcoming" : "ended";
+  const icon = s.key === "live" ? "ri-radio-button-line" :
+    s.key === "upcoming" ? "ri-time-line" : "ri-check-line";
+  return `<span class="status ${cls}"><i class="${icon}"></i>${safe(s.label)}</span>`;
+}
+
+function classMeta(item) {
+  const teacher = first(item.teacherName,item.facultyName);
+  const chapter = first(item.chapterName);
+  const date = classDate(item);
+  return `
+    <div class="class-meta">
+      <span class="meta-pill"><i class="ri-time-line"></i>${safe(timeRange(item))}</span>
+      ${teacher ? `<span class="meta-pill"><i class="ri-user-3-line"></i>${safe(teacher)}</span>` : ""}
+      ${chapter ? `<span class="meta-pill"><i class="ri-book-open-line"></i>${safe(chapter)}</span>` : ""}
+      ${date ? `<span class="meta-pill"><i class="ri-calendar-line"></i>${safe(dateLabel(date,{short:true}))}</span>` : ""}
+    </div>`;
+}
+
+function actionFor(item) {
+  const status = statusOf(item);
+  if (status.key === "live") {
+    return `<button type="button" class="action join" data-join="${safe(item.id)}"><i class="ri-live-line"></i> Join Class</button>`;
+  }
+
+  if (status.key === "ended" && hasRecording(item)) {
+    return `<button type="button" class="action watch" data-recording="${safe(item.id)}"><i class="ri-play-circle-line"></i> Watch Recording</button>`;
+  }
+
+  if (status.key === "upcoming") {
+    return `<button type="button" class="action" disabled><i class="ri-time-line"></i> Starts ${safe(timeLabel(startMillis(item)))}</button>`;
+  }
+
+  return `<span class="provider">Recording unavailable</span>`;
+}
+
+function renderClassCard(item) {
+  const status = statusOf(item);
+  const title = first(item.title,item.classTitle,item.name,"Live Class");
+  const subject = first(item.subjectName,item.subjectTitle,"Class");
+  const providerClass = String(item.liveType || "").toUpperCase() === "ZOOM" ? "zoom" : "zenova";
+
+  return `
+    <article class="class-card ${status.key === "live" ? "is-live" : ""}">
+      <div class="class-top">
+        <div class="class-title-row">
+          <div>
+            <h3 class="class-title">${safe(title)}</h3>
+            <div class="class-subtitle">${safe(subject)}</div>
+          </div>
+          ${statusBadge(item)}
+        </div>
+        ${classMeta(item)}
+      </div>
+      <div class="class-footer">
+        <span class="provider ${providerClass}">${safe(provider(item))}</span>
+        ${actionFor(item)}
+      </div>
+    </article>`;
+}
+
+function renderToday() {
+  const today = todayString();
+  const list = sortedByStart(state.classes.filter(c => classDate(c) === today));
+  $("todayDate").textContent = dateLabel(today,{short:true});
+  $("todayCount").textContent = String(list.length);
+
+  $("todayClasses").innerHTML = list.map(renderClassCard).join("");
+  $("todayEmpty").classList.toggle("hidden",list.length > 0);
+}
+
+function renderDateCard(item) {
+  const title = first(item.title,item.classTitle,item.name,"Live Class");
+  const subject = first(item.subjectName,item.subjectTitle,"Subject");
+  const teacher = first(item.teacherName,item.facultyName,"");
+  const chapter = first(item.chapterName,"");
+
+  return `
+    <article class="date-class">
+      <div class="date-class-main">
+        <div class="class-title-row">
+          <div class="date-class-title">${safe(title)}</div>
+          ${statusBadge(item)}
+        </div>
+        <div class="date-class-info">
+          ${safe(subject)}${chapter ? ` · ${safe(chapter)}` : ""}<br>
+          ${teacher ? `${safe(teacher)} · ` : ""}${safe(timeRange(item))}
+        </div>
+      </div>
+      <div class="date-class-action">${actionFor(item)}</div>
+    </article>`;
+}
+
+function renderDate() {
+  const date = state.selectedDate;
+  $("selectedDateText").textContent = dateLabel(date,{short:true});
+  const list = sortedByStart(state.classes.filter(c => classDate(c) === date));
+
+  $("selectedDateClasses").innerHTML = list.map(renderDateCard).join("");
+  $("selectedDateEmpty").classList.toggle("hidden",list.length > 0);
+}
+
+function renderSubjects() {
+  $("subjectCount").textContent = String(state.subjects.length);
+  $("subjectGrid").innerHTML = state.subjects.map(subject => {
+    const name = subjectName(subject);
+    const count = state.classes.filter(c =>
+      String(c.subjectId || "") === String(subject.id)
+    ).length;
+
+    return `
+      <button type="button" class="subject-card" data-subject-id="${safe(subject.id)}">
+        <span class="subject-icon">${safe(safeInitial(name))}</span>
+        <span class="subject-info">
+          <strong>${safe(name)}</strong>
+          <span>${count} class${count === 1 ? "" : "es"}</span>
+        </span>
+        <i class="ri-arrow-right-s-line subject-arrow"></i>
+      </button>`;
+  }).join("");
+
+  $("subjectsEmpty").classList.toggle("hidden",state.subjects.length > 0);
+}
+
+function renderHistory(subjectId) {
+  const subject = state.subjects.find(s => String(s.id) === String(subjectId));
+  if (!subject) return;
+
+  const list = state.classes
+    .filter(c => String(c.subjectId || "") === String(subjectId))
+    .filter(c => statusOf(c).key === "ended")
+    .sort((a,b) => startMillis(b)-startMillis(a));
+
+  $("historySubjectName").textContent = subjectName(subject);
+  $("subjectHistory").innerHTML = list.map(item => {
+    const title = first(item.title,item.classTitle,item.name,"Live Class");
+    const date = classDate(item);
+    const teacher = first(item.teacherName,item.facultyName,"Faculty");
+
+    return `
+      <article class="history-card">
+        <div class="history-card-main">
+          <div class="history-title">${safe(title)}</div>
+          <div class="history-info">
+            ${safe(first(item.chapterName,subjectName(subject)))}<br>
+            ${safe(teacher)} · ${safe(date ? dateLabel(date,{short:true}) : "Date unavailable")} · ${safe(timeRange(item))}
+          </div>
+        </div>
+        ${hasRecording(item)
+          ? `<button type="button" class="action watch" data-recording="${safe(item.id)}"><i class="ri-play-line"></i> Watch</button>`
+          : `<span class="provider">No recording</span>`}
+      </article>`;
+  }).join("");
+
+  $("historyEmpty").classList.toggle("hidden",list.length > 0);
+  $("subjectHistorySection").classList.remove("hidden");
+  $("subjectHistorySection").scrollIntoView({behavior:"smooth",block:"start"});
+}
+
+function openLiveClass(id) {
+  const item = state.classes.find(c => String(c.id) === String(id));
+  if (!item) return toast("Live class not found.");
+
+  if (statusOf(item).key !== "live") {
+    return toast("This class is not live right now.");
+  }
+
+  // Keep the existing Live Class player route.
+  location.href = `../liveclass/?liveClassId=${encodeURIComponent(id)}`;
+}
+
+function openRecording(id) {
+  const item = state.classes.find(c => String(c.id) === String(id));
+  if (!item || !hasRecording(item)) return toast("Recording is not available yet.");
+
+  // Keep the existing recorded-video player route.
+  location.href = `../videoplayer/?liveClassId=${encodeURIComponent(id)}`;
+}
+
+/* Controls */
+$("datePicker").addEventListener("change",event => {
+  if (!event.target.value) return;
+  state.selectedDate = event.target.value;
+  renderDate();
+});
+
+$("previousDate").addEventListener("click",() => {
+  state.selectedDate = shiftDate(state.selectedDate,-1);
+  $("datePicker").value = state.selectedDate;
+  renderDate();
+});
+
+$("nextDate").addEventListener("click",() => {
+  state.selectedDate = shiftDate(state.selectedDate,1);
+  $("datePicker").value = state.selectedDate;
+  renderDate();
+});
+
+$("closeHistory").addEventListener("click",() => {
+  $("subjectHistorySection").classList.add("hidden");
+});
+
+$("retryButton").addEventListener("click",() => location.reload());
+
+document.addEventListener("click",event => {
+  const join = event.target.closest("[data-join]");
+  if (join) return openLiveClass(join.dataset.join);
+
+  const recording = event.target.closest("[data-recording]");
+  if (recording) return openRecording(recording.dataset.recording);
+
+  const subject = event.target.closest("[data-subject-id]");
+  if (subject) return renderHistory(subject.dataset.subjectId);
+});
+
+onAuthStateChanged(auth,async user => {
+  if (!user) {
+    location.replace("../../login/");
+    return;
+  }
+
+  if (authHandled) return;
+  authHandled = true;
+  state.user = user;
+
+  try {
+    await loadPage();
+  } catch (error) {
+    console.error("Zenova Live page error:",error);
+    const message = error?.code === "permission-denied"
+      ? "Firestore denied access. Check read permissions for zen2Students, zen2Courses, liveClasses, and zen2Subjects."
+      : (error.message || "Please check your connection and try again.");
+    showError(message);
+  }
+});
+
+// Update status labels and the live summary while this page remains open.
+setInterval(() => {
+  if (!state.course || $("liveApp").classList.contains("hidden")) return;
+  renderAll();
+},30000);
+</script>
+</body>
+</html>
