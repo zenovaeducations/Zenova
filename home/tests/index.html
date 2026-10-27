@@ -1,1600 +1,1091 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Zenova | Student Test Portal</title>
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet">
-
-  <style>
-    :root {
-      --blue: #3978e8;
-      --blue-dark: #2459b5;
-      --bg: #f5f7fb;
-      --text: #17243a;
-      --muted: #667085;
-      --border: #e4e9f2;
-      --green: #16865c;
-      --red: #dc3545;
-    }
-
-    * { box-sizing: border-box; }
-
-    body {
-      margin: 0;
-      background: var(--bg);
-      color: var(--text);
-      font-family: Inter, Arial, sans-serif;
-    }
-
-    button, input, textarea {
-      font: inherit;
-    }
-
-    button {
-      cursor: pointer;
-    }
-
-    .topbar {
-      position: sticky;
-      top: 0;
-      z-index: 10;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 15px 5%;
-      background: white;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      font-weight: 800;
-      font-size: 20px;
-    }
-
-    .brand-icon {
-      width: 42px;
-      height: 42px;
-      display: grid;
-      place-items: center;
-      border-radius: 12px;
-      background: var(--blue);
-      color: white;
-      font-size: 24px;
-    }
-
-    .account {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      color: var(--muted);
-      font-size: 13px;
-    }
-
-    .avatar {
-      width: 38px;
-      height: 38px;
-      border-radius: 50%;
-      display: grid;
-      place-items: center;
-      background: #e8f0ff;
-      color: var(--blue);
-      font-weight: 700;
-    }
-
-    .container {
-      width: min(1150px, 92%);
-      margin: 28px auto;
-    }
-
-    .welcome {
-      padding: 30px;
-      color: white;
-      border-radius: 22px;
-      background: linear-gradient(120deg, #2459b5, #528cf4);
-      margin-bottom: 24px;
-    }
-
-    .welcome h1 {
-      font-size: clamp(23px, 4vw, 34px);
-      margin: 0 0 10px;
-    }
-
-    .welcome p {
-      margin: 0;
-      opacity: .9;
-      line-height: 1.6;
-    }
-
-    .stats {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 16px;
-      margin-bottom: 30px;
-    }
-
-    .stat, .panel, .test-card {
-      background: white;
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 21px;
-    }
-
-    .stat-label {
-      color: var(--muted);
-      font-size: 13px;
-    }
-
-    .stat-number {
-      font-size: 30px;
-      font-weight: 800;
-      margin-top: 10px;
-    }
-
-    .section-heading {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-      margin: 24px 0 16px;
-    }
-
-    .section-heading h2 {
-      font-size: 21px;
-      margin: 0;
-    }
-
-    .filters {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-
-    .filter {
-      border: 1px solid var(--border);
-      background: white;
-      padding: 9px 14px;
-      border-radius: 20px;
-      color: var(--muted);
-    }
-
-    .filter.active {
-      color: var(--blue);
-      border-color: var(--blue);
-      background: #edf3ff;
-    }
-
-    .test-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 16px;
-    }
-
-    .test-card {
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-    }
-
-    .test-top {
-      display: flex;
-      align-items: flex-start;
-      gap: 13px;
-    }
-
-    .subject-icon {
-      flex: 0 0 48px;
-      height: 48px;
-      display: grid;
-      place-items: center;
-      border-radius: 13px;
-      background: #eaf1ff;
-      color: var(--blue);
-      font-size: 24px;
-    }
-
-    .test-title {
-      font-weight: 700;
-      margin: 3px 0 7px;
-    }
-
-    .test-subtitle {
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 1.7;
-    }
-
-    .status {
-      display: inline-flex;
-      align-items: center;
-      padding: 6px 10px;
-      border-radius: 20px;
-      background: #e9f8ef;
-      color: var(--green);
-      font-size: 12px;
-      font-weight: 600;
-      white-space: nowrap;
-    }
-
-    .status.upcoming {
-      background: #fff4df;
-      color: #996300;
-    }
-
-    .status.closed {
-      background: #f2f4f7;
-      color: #667085;
-    }
-
-    .primary, .secondary, .danger {
-      padding: 12px 16px;
-      border-radius: 10px;
-      border: 0;
-      font-weight: 600;
-    }
-
-    .primary {
-      color: white;
-      background: var(--blue);
-    }
-
-    .primary:hover { background: var(--blue-dark); }
-
-    .secondary {
-      color: var(--text);
-      background: #eef1f6;
-    }
-
-    .danger {
-      background: #fff0f0;
-      color: var(--red);
-    }
-
-    button:disabled {
-      cursor: not-allowed;
-      opacity: .5;
-    }
-
-    .full { width: 100%; }
-
-    .hidden { display: none !important; }
-
-    .notice {
-      border-radius: 10px;
-      padding: 13px 15px;
-      background: #edf3ff;
-      color: #2459b5;
-      font-size: 13px;
-      line-height: 1.6;
-    }
-
-    .error {
-      background: #fff0f0;
-      color: #a61b29;
-    }
-
-    .empty {
-      grid-column: 1 / -1;
-      padding: 45px 20px;
-      text-align: center;
-      color: var(--muted);
-      background: white;
-      border: 1px dashed #ccd4e2;
-      border-radius: 16px;
-    }
-
-    /* Examination screen */
-
-    .exam-layout {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) 280px;
-      gap: 20px;
-    }
-
-    .exam-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      margin-bottom: 18px;
-    }
-
-    .timer {
-      background: #fff0f0;
-      color: #c02735;
-      padding: 11px 15px;
-      border-radius: 10px;
-      font-weight: 800;
-      font-size: 18px;
-      white-space: nowrap;
-    }
-
-    .question-number {
-      color: var(--blue);
-      font-size: 13px;
-      font-weight: 700;
-      margin-bottom: 15px;
-    }
-
-    .question-text {
-      font-size: 20px;
-      line-height: 1.7;
-      font-weight: 600;
-      white-space: pre-wrap;
-      overflow-wrap: anywhere;
-      margin-bottom: 22px;
-    }
-
-    .options {
-      display: grid;
-      gap: 12px;
-    }
-
-    .option {
-      display: flex;
-      align-items: flex-start;
-      gap: 12px;
-      padding: 15px;
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      cursor: pointer;
-      line-height: 1.6;
-    }
-
-    .option:has(input:checked) {
-      border-color: var(--blue);
-      background: #f0f5ff;
-    }
-
-    .option input {
-      margin-top: 5px;
-      accent-color: var(--blue);
-    }
-
-    .answer-box {
-      width: 100%;
-      min-height: 180px;
-      padding: 15px;
-      resize: vertical;
-      border: 1px solid #cfd7e6;
-      border-radius: 12px;
-      outline: none;
-      line-height: 1.7;
-    }
-
-    .answer-box:focus {
-      border-color: var(--blue);
-      box-shadow: 0 0 0 3px #3978e81a;
-    }
-
-    .question-actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 22px;
-    }
-
-    .question-actions button { flex: 1; }
-
-    .palette {
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 8px;
-      margin: 16px 0;
-    }
-
-    .palette button {
-      height: 39px;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      background: white;
-    }
-
-    .palette button.current {
-      border: 2px solid var(--blue);
-      color: var(--blue);
-      font-weight: 800;
-    }
-
-    .palette button.answered {
-      background: #dff6e8;
-      border-color: #a5e1bc;
-    }
-
-    .palette button.review {
-      background: #fff1d4;
-      border-color: #f1d18b;
-    }
-
-    .legend {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      color: var(--muted);
-      font-size: 11px;
-    }
-
-    .legend span {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-    }
-
-    .legend i {
-      width: 10px;
-      height: 10px;
-      display: inline-block;
-      border-radius: 3px;
-      background: #dff6e8;
-    }
-
-    .legend .yellow { background: #fff1d4; }
-    .legend .blue { background: #edf3ff; }
-
-    .save-status {
-      color: var(--muted);
-      font-size: 12px;
-      margin-top: 13px;
-    }
-
-    .bottom-bar {
-      position: sticky;
-      bottom: 0;
-      background: white;
-      border-top: 1px solid var(--border);
-      padding: 12px 5%;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .signin-panel {
-      max-width: 460px;
-      margin: 65px auto;
-      text-align: center;
-    }
-
-    .signin-panel h2 { margin-bottom: 10px; }
-
-    .signin-panel p {
-      color: var(--muted);
-      line-height: 1.7;
-    }
-
-    .spinner {
-      width: 25px;
-      height: 25px;
-      border: 3px solid #dfe8f8;
-      border-top-color: var(--blue);
-      border-radius: 50%;
-      animation: spin .8s linear infinite;
-      margin: 0 auto;
-    }
-
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    @media (max-width: 760px) {
-      .container { margin: 18px auto; }
-      .welcome { padding: 23px; }
-      .stats { gap: 9px; }
-      .stat { padding: 14px; }
-      .stat-number { font-size: 24px; }
-      .test-grid { grid-template-columns: 1fr; }
-      .exam-layout { grid-template-columns: 1fr; }
-      .exam-sidebar { order: -1; }
-      .palette { grid-template-columns: repeat(8, 1fr); }
-      .question-text { font-size: 18px; }
-      .account .student-name { display: none; }
-      .section-heading { align-items: flex-start; flex-direction: column; }
-      .exam-header { align-items: flex-start; }
-      .timer { font-size: 15px; }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zenova | Student Tests</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet">
+
+<style>
+:root {
+  --blue:#3978e8;
+  --blue-dark:#2459b5;
+  --bg:#f5f7fb;
+  --text:#17243a;
+  --muted:#667085;
+  --border:#e4e9f2;
+  --green:#16865c;
+  --red:#c02735;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,Arial,sans-serif}
+button,textarea{font:inherit}
+button{cursor:pointer}
+button:disabled{opacity:.55;cursor:not-allowed}
+.hidden{display:none!important}
+header{background:white;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:5}
+.header-inner{max-width:1150px;margin:auto;padding:13px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand{display:flex;align-items:center;gap:11px;font-weight:800;font-size:19px}
+.logo{width:42px;height:42px;background:var(--blue);color:white;border-radius:12px;display:grid;place-items:center;font-size:23px}
+.brand small{display:block;color:var(--muted);font-size:10px;font-weight:500;margin-top:3px}
+.user-info{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:13px}
+.avatar{width:36px;height:36px;border-radius:50%;background:#e8f0ff;color:var(--blue);display:grid;place-items:center;font-weight:700}
+main{max-width:1150px;width:92%;margin:25px auto 50px}
+.panel,.stat,.test-card{background:white;border:1px solid var(--border);border-radius:16px;padding:21px}
+.hero{padding:28px;border-radius:20px;color:white;background:linear-gradient(120deg,#2459b5,#528cf4);margin-bottom:20px}
+.hero h1{font-size:clamp(23px,4vw,34px);margin:0 0 9px}
+.hero p{line-height:1.7;margin:0;opacity:.92}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:13px;margin:20px 0 28px}
+.stat-label{color:var(--muted);font-size:13px}
+.stat-number{font-size:29px;font-weight:800;margin-top:9px}
+.section-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:22px 0 15px}
+h2{font-size:21px;margin:0}
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:17px}
+.btn,.filter{border:1px solid var(--border);border-radius:10px;padding:11px 15px;background:white;color:var(--text);font-weight:600}
+.filter{border-radius:22px;font-size:13px;padding:9px 13px}
+.filter.active{background:#edf3ff;border-color:var(--blue);color:var(--blue)}
+.primary{background:var(--blue);color:white;border:0}
+.primary:hover{background:var(--blue-dark)}
+.secondary{background:#eef1f6}
+.danger{background:#fff0f0;color:var(--red);border:0}
+.full{width:100%}
+.test-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}
+.test-card{display:flex;flex-direction:column;gap:14px}
+.test-top{display:flex;gap:12px;align-items:flex-start}
+.subject-icon{flex:0 0 46px;height:46px;border-radius:12px;background:#eaf1ff;color:var(--blue);display:grid;place-items:center;font-size:23px}
+.test-title{font-weight:700;margin:3px 0 7px}
+.muted{color:var(--muted);font-size:13px;line-height:1.75}
+.status{display:inline-block;padding:6px 9px;border-radius:20px;background:#e9f8ef;color:var(--green);font-size:11px;font-weight:700;white-space:nowrap}
+.status.upcoming{background:#fff4df;color:#996300}
+.status.done{background:#eef1f6;color:#667085}
+.notice{padding:13px 15px;border-radius:11px;background:#edf3ff;color:#2459b5;font-size:13px;line-height:1.7;margin-bottom:16px;overflow-wrap:anywhere}
+.notice.error{background:#fff0f0;color:#a61b29}
+.empty{text-align:center;padding:35px 18px;border:1px dashed #ccd4e2;border-radius:15px;background:white;color:var(--muted);grid-column:1/-1}
+.spinner{width:27px;height:27px;border:3px solid #dfe8f8;border-top-color:var(--blue);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 12px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.exam-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:17px}
+.timer{background:#fff0f0;color:var(--red);padding:12px 15px;border-radius:10px;font-size:18px;font-weight:800;white-space:nowrap}
+.exam-layout{display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:18px}
+.question-number{font-size:12px;color:var(--blue);font-weight:800;margin-bottom:14px}
+.question-text{font-size:20px;line-height:1.8;font-weight:600;white-space:pre-wrap;overflow-wrap:anywhere;margin-bottom:20px}
+.options{display:grid;gap:11px}
+.option{display:flex;gap:12px;padding:14px;border:1px solid var(--border);border-radius:11px;line-height:1.7;cursor:pointer;overflow-wrap:anywhere}
+.option:has(input:checked){background:#f0f5ff;border-color:var(--blue)}
+.option input{margin-top:6px;accent-color:var(--blue);flex-shrink:0}
+.answer{width:100%;min-height:175px;padding:14px;border:1px solid #cfd7e6;border-radius:11px;line-height:1.8;resize:vertical;outline:none}
+.answer:focus{border-color:var(--blue);box-shadow:0 0 0 3px #3978e81a}
+.question-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:22px}
+.question-actions button{flex:1}
+.palette{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:15px 0}
+.palette button{height:39px;border:1px solid var(--border);border-radius:8px;background:white}
+.palette button.current{border:2px solid var(--blue);color:var(--blue);font-weight:800}
+.palette button.answered{background:#dff6e8;border-color:#a5e1bc}
+.palette button.review{background:#fff1d4;border-color:#f1d18b}
+.save-status{font-size:12px;color:var(--muted);margin-top:13px;line-height:1.6}
+footer{padding:18px;text-align:center;color:var(--muted);font-size:12px}
+@media(max-width:760px){
+ main{margin-top:16px}
+ .hero{padding:22px}
+ .stats{gap:8px}
+ .stat{padding:13px}
+ .stat-number{font-size:24px}
+ .test-grid,.exam-layout{grid-template-columns:1fr}
+ .exam-sidebar{order:-1}
+ .palette{grid-template-columns:repeat(8,1fr)}
+ .question-text{font-size:18px}
+ .section-head{align-items:flex-start}
+ .user-name{display:none}
+ .exam-head{align-items:flex-start}
+}
+</style>
 </head>
 
 <body>
-  <header class="topbar">
+<header>
+  <div class="header-inner">
     <div class="brand">
-      <div class="brand-icon"><i class="ri-graduation-cap-line"></i></div>
-      <div>
-        ZENOVA
-        <div style="font-size:11px;color:#667085;font-weight:500;margin-top:3px">
-          Student Portal
-        </div>
-      </div>
+      <div class="logo"><i class="ri-graduation-cap-line"></i></div>
+      <div>ZENOVA<small>STUDENT EXAMINATION PORTAL</small></div>
     </div>
-
-    <div class="account">
-      <span class="student-name" id="studentName">Checking login...</span>
+    <div class="user-info">
+      <span id="userName" class="user-name">Loading student...</span>
       <div class="avatar" id="avatar">Z</div>
-      <button id="signOutBtn" class="secondary hidden">Sign out</button>
+      <button class="btn secondary" id="logoutBtn">Sign out</button>
     </div>
-  </header>
+  </div>
+</header>
 
-  <main class="container">
-    <section id="loadingScreen" class="panel" style="text-align:center;padding:45px">
-      <div class="spinner"></div>
-      <p style="color:#667085">Connecting to Zenova...</p>
-    </section>
+<main>
+  <section id="loadingScreen" class="panel" style="text-align:center;padding:40px">
+    <div class="spinner"></div>
+    Connecting to Zenova...
+  </section>
 
-    <section id="signInScreen" class="panel signin-panel hidden">
-      <div class="brand-icon" style="margin:0 auto 18px">
-        <i class="ri-lock-line"></i>
+  <section id="errorScreen" class="panel hidden">
+    <h2>We couldn't load your account</h2>
+    <p id="errorText" class="muted"></p>
+    <button id="retryBtn" class="btn primary">Try again</button>
+    <button id="loginBtn" class="btn secondary">Go to login</button>
+  </section>
+
+  <section id="dashboard" class="hidden">
+    <div class="hero">
+      <h1 id="welcome">Welcome to Zenova!</h1>
+      <p>Practise consistently, understand your progress and prepare with confidence.</p>
+    </div>
+
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-label">Available / upcoming</div>
+        <div class="stat-number" id="availableCount">0</div>
       </div>
-      <h2>Student login required</h2>
-      <p>Please sign in through the existing Zenova student app. Your verified account is required to view and attend tests.</p>
-      <button class="primary full" id="backToLoginBtn">Open Zenova login</button>
-    </section>
-
-    <section id="dashboard" class="hidden">
-      <div class="welcome">
-        <h1 id="welcomeTitle">Welcome to Zenova!</h1>
-        <p>Every test is an opportunity to improve. Stay consistent and track your learning progress.</p>
+      <div class="stat">
+        <div class="stat-label">Submitted</div>
+        <div class="stat-number" id="completedCount">0</div>
       </div>
+      <div class="stat">
+        <div class="stat-label">In progress</div>
+        <div class="stat-number" id="progressCount">0</div>
+      </div>
+    </div>
 
-      <div class="stats">
-        <div class="stat">
-          <div class="stat-label">Upcoming / available</div>
-          <div class="stat-number" id="upcomingCount">0</div>
+    <div class="section-head">
+      <h2>My examinations</h2>
+      <button class="btn secondary" id="refreshBtn"><i class="ri-refresh-line"></i> Refresh</button>
+    </div>
+
+    <div class="filters">
+      <button class="filter active" data-filter="all">All</button>
+      <button class="filter" data-filter="available">Available</button>
+      <button class="filter" data-filter="upcoming">Upcoming</button>
+      <button class="filter" data-filter="progress">In progress</button>
+      <button class="filter" data-filter="completed">Submitted</button>
+    </div>
+
+    <div id="dashboardMessage" class="notice hidden"></div>
+    <div id="testGrid" class="test-grid"></div>
+  </section>
+
+  <section id="examScreen" class="hidden">
+    <div class="exam-head">
+      <div>
+        <button class="btn secondary" id="exitBtn"><i class="ri-arrow-left-line"></i> Dashboard</button>
+        <h2 id="examTitle" style="margin:13px 0 6px">Examination</h2>
+        <div class="muted" id="examSubtitle"></div>
+      </div>
+      <div id="timer" class="timer">--:--</div>
+    </div>
+
+    <div class="notice">
+      Your answers are saved while you work. If you refresh the page, you can resume your attempt.
+      The examination deadline is enforced by the portal and must also be enforced by your server rules/backend.
+    </div>
+
+    <div class="exam-layout">
+      <section class="panel">
+        <div class="question-number" id="questionNumber"></div>
+        <div class="question-text" id="questionText"></div>
+        <div id="questionBody"></div>
+
+        <div class="question-actions">
+          <button class="btn secondary" id="prevBtn">← Previous</button>
+          <button class="btn secondary" id="reviewBtn">Mark for review</button>
+          <button class="btn primary" id="nextBtn">Next →</button>
         </div>
-        <div class="stat">
-          <div class="stat-label">Completed tests</div>
-          <div class="stat-number" id="completedCount">0</div>
-        </div>
-        <div class="stat">
-          <div class="stat-label">In progress</div>
-          <div class="stat-number" id="progressCount">0</div>
-        </div>
-      </div>
+        <div class="save-status" id="saveStatus">Answers are saved automatically.</div>
+      </section>
 
-      <div class="section-heading">
-        <h2>My examinations</h2>
-        <button class="secondary" id="refreshBtn">
-          <i class="ri-refresh-line"></i> Refresh
-        </button>
-      </div>
+      <aside class="panel exam-sidebar">
+        <strong>Questions</strong>
+        <div id="palette" class="palette"></div>
+        <div class="muted" id="answerSummary"></div>
+        <button class="btn primary full" id="submitBtn" style="margin-top:17px">Submit examination</button>
+      </aside>
+    </div>
+  </section>
 
-      <div class="filters">
-        <button class="filter active" data-filter="all">All tests</button>
-        <button class="filter" data-filter="available">Available</button>
-        <button class="filter" data-filter="upcoming">Upcoming</button>
-        <button class="filter" data-filter="progress">In progress</button>
-        <button class="filter" data-filter="completed">Completed</button>
-      </div>
+  <section id="resultScreen" class="panel hidden" style="text-align:center;padding:40px 20px">
+    <div class="logo" style="margin:0 auto 16px;background:#e1f8e9;color:#16865c">
+      <i class="ri-check-double-line"></i>
+    </div>
+    <h2>Submission received</h2>
+    <p id="resultText" class="muted"></p>
+    <button class="btn primary" id="resultBackBtn">Back to examinations</button>
+  </section>
+</main>
 
-      <div id="dashboardMessage" class="notice hidden" style="margin-top:16px"></div>
-      <div id="testGrid" class="test-grid" style="margin-top:18px"></div>
-    </section>
+<footer>© Zenova Educations · Learn · Practise · Improve</footer>
 
-    <section id="examScreen" class="hidden">
-      <div class="exam-header">
-        <div>
-          <button class="secondary" id="exitExamBtn">
-            <i class="ri-arrow-left-line"></i> Exit test
-          </button>
-          <h2 id="examTitle" style="margin:15px 0 5px">Examination</h2>
-          <div id="examSubtitle" class="test-subtitle"></div>
-        </div>
-        <div class="timer" id="timer">00:00</div>
-      </div>
+<script type="module">
+import { auth, db } from "../../firebase/firebase-config.js";
 
-      <div class="notice" style="margin-bottom:18px">
-        Your answers are saved as you work. Do not close the page until submission is confirmed.
-        Switching tabs may be recorded as an activity event.
-      </div>
+import {
+  onAuthStateChanged,
+  signOut
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
 
-      <div class="exam-layout">
-        <section class="panel">
-          <div id="questionNumber" class="question-number"></div>
-          <div id="questionText" class="question-text"></div>
-          <div id="questionBody"></div>
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  query,
+  where,
+  limit,
+  setDoc,
+  updateDoc,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
-          <div class="question-actions">
-            <button class="secondary" id="previousBtn">
-              <i class="ri-arrow-left-line"></i> Previous
-            </button>
-            <button class="secondary" id="reviewBtn">
-              <i class="ri-bookmark-line"></i> Mark for review
-            </button>
-            <button class="primary" id="nextBtn">
-              Next <i class="ri-arrow-right-line"></i>
-            </button>
-          </div>
+const $ = id => document.getElementById(id);
 
-          <div id="saveStatus" class="save-status">Answers will be saved automatically.</div>
-        </section>
+const state = {
+  user: null,
+  student: null,
+  tests: [],
+  filter: "all",
+  activeTest: null,
+  questions: [],
+  attemptRef: null,
+  attemptId: null,
+  answers: {},
+  review: new Set(),
+  questionIndex: 0,
+  deadline: 0,
+  timer: null,
+  saveQueue: Promise.resolve(),
+  submitting: false,
+  pendingAnswerWrites: new Map(),
+  visibilityHandler: null
+};
 
-        <aside class="panel exam-sidebar">
-          <strong>Question palette</strong>
-          <div id="palette" class="palette"></div>
-          <div class="legend">
-            <span><i></i> Answered</span>
-            <span><i class="yellow"></i> Review</span>
-            <span><i class="blue"></i> Current</span>
-          </div>
+const screens = [
+  "loadingScreen", "errorScreen", "dashboard",
+  "examScreen", "resultScreen"
+];
 
-          <div style="border-top:1px solid #e4e9f2;margin:20px 0"></div>
-          <div class="test-subtitle" id="questionSummary"></div>
+function showScreen(id) {
+  screens.forEach(name => $(name).classList.toggle("hidden", name !== id));
+}
 
-          <button class="primary full" id="submitBtn" style="margin-top:18px">
-            Submit examination
-          </button>
-        </aside>
-      </div>
-    </section>
+function esc(value = "") {
+  return String(value).replace(/[&<>"']/g, ch => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;",
+    '"': "&quot;", "'": "&#39;"
+  })[ch]);
+}
 
-    <section id="resultScreen" class="panel hidden" style="text-align:center;padding:40px 20px">
-      <div class="brand-icon" style="margin:0 auto 18px;background:#e1f8e9;color:#16865c">
-        <i class="ri-check-double-line"></i>
-      </div>
-      <h2>Submission received</h2>
-      <p id="resultMessage" style="color:#667085;line-height:1.7">
-        Your answers have been submitted.
-      </p>
-      <button class="primary" id="backDashboardBtn">Back to my tests</button>
-    </section>
-  </main>
+function normal(value) {
+  return String(value ?? "").trim();
+}
 
-  <footer class="bottom-bar">
-    <span style="font-size:12px;color:#667085">© Zenova Educations</span>
-    <span style="font-size:12px;color:#667085">Learn. Practise. Improve.</span>
-  </footer>
+function getDate(value) {
+  if (!value) return null;
+  if (typeof value.toDate === "function") return value.toDate();
+  if (value instanceof Date) return value;
+  if (typeof value === "number") return new Date(value);
+  if (typeof value === "string") {
+    const d = new Date(value);
+    return Number.isNaN(d.getTime()) ? null : d;
+  }
+  if (typeof value.seconds === "number") {
+    return new Date(value.seconds * 1000);
+  }
+  return null;
+}
 
-  <script type="module">
-    import { auth, db } from "../../firebase/firebase-config.js";
+function formatDate(value) {
+  const d = getDate(value);
+  if (!d) return "Not specified";
+  return d.toLocaleString("en-IN", {
+    dateStyle: "medium",
+    timeStyle: "short"
+  });
+}
 
-    import {
-      onAuthStateChanged,
-      signOut
-    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+function getStart(test) {
+  return getDate(test.availableFrom || test.startAt || test.startTime);
+}
 
-    import {
-      collection,
-      doc,
-      getDoc,
-      getDocs,
-      query,
-      where,
-      orderBy,
-      limit,
-      setDoc,
-      updateDoc,
-      serverTimestamp,
-      Timestamp
-    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+function getEnd(test) {
+  return getDate(test.availableUntil || test.endAt || test.endTime);
+}
 
-    const $ = id => document.getElementById(id);
+function getDuration(test) {
+  const n = Number(test.durationMinutes || 30);
+  return Number.isFinite(n) && n > 0 ? n : 30;
+}
 
-    const screens = [
-      "loadingScreen", "signInScreen", "dashboard",
-      "examScreen", "resultScreen"
-    ];
+function isPublished(test) {
+  return ["scheduled", "published", "active"].includes(
+    normal(test.status).toLowerCase()
+  );
+}
 
-    let currentUser = null;
-    let studentRecord = null;
-    let tests = [];
-    let currentFilter = "all";
+function statusOf(test) {
+  const attempt = test.myAttempt;
 
-    let activeTest = null;
-    let activeQuestions = [];
-    let activeAttemptId = null;
-    let activeAttemptRef = null;
-    let answers = {};
-    let reviewQuestions = new Set();
-    let currentQuestionIndex = 0;
-    let timerInterval = null;
-    let saveQueue = Promise.resolve();
-    let submissionInProgress = false;
-    let deadlineMs = 0;
-    let visibilityListenerInstalled = false;
+  if (attempt && ["submitted", "evaluated"].includes(attempt.status)) {
+    return "completed";
+  }
 
-    function showScreen(id) {
-      screens.forEach(screen => $(screen).classList.toggle("hidden", screen !== id));
-    }
+  if (attempt && attempt.status === "inProgress") {
+    return "progress";
+  }
 
-    function escapeHTML(value = "") {
-      return String(value).replace(/[&<>"']/g, char => ({
-        "&": "&amp;",
-        "<": "&lt;",
-        ">": "&gt;",
-        '"': "&quot;",
-        "'": "&#39;"
-      })[char]);
-    }
+  if (!isPublished(test)) return "closed";
 
-    function dateFrom(value) {
-      if (!value) return null;
-      if (typeof value.toDate === "function") return value.toDate();
-      if (value instanceof Date) return value;
-      if (typeof value === "number") return new Date(value);
-      if (typeof value === "string") {
-        const parsed = new Date(value);
-        return Number.isNaN(parsed.getTime()) ? null : parsed;
-      }
-      if (value.seconds) return new Date(value.seconds * 1000);
-      return null;
-    }
+  const now = Date.now();
+  const start = getStart(test);
+  const end = getEnd(test);
 
-    function formatDate(value) {
-      const date = dateFrom(value);
-      if (!date) return "Not specified";
-      return date.toLocaleString("en-IN", {
-        dateStyle: "medium",
-        timeStyle: "short"
-      });
-    }
+  if (start && now < start.getTime()) return "upcoming";
+  if (end && now >= end.getTime()) return "closed";
 
-    function getTestWindow(test) {
-      const start = dateFrom(
-        test.startAt || test.startTime || test.availableFrom || test.scheduledAt
-      );
-      const end = dateFrom(
-        test.endAt || test.endTime || test.availableUntil || test.deadline
-      );
+  return "available";
+}
 
-      return { start, end };
-    }
+function studentCanSeeTest(test) {
+  if (!isPublished(test)) return false;
 
-    function getTestStatus(test) {
-      const attempt = test.myAttempt;
-      if (attempt?.status === "submitted" || attempt?.status === "evaluated") {
-        return "completed";
-      }
-      if (attempt?.status === "inProgress") {
-        return "progress";
-      }
+  // Admin can optionally restrict a test to specific Firebase UIDs.
+  const assigned = test.studentUids || test.assignedUids;
+  if (Array.isArray(assigned) && assigned.length &&
+      !assigned.includes(state.user.uid)) {
+    return false;
+  }
 
-      const { start, end } = getTestWindow(test);
-      const now = Date.now();
+  // Apply course targeting only if both IDs are present.
+  const studentCourse = state.student?.courseId ||
+                        state.student?.courseID ||
+                        state.student?.assignedCourseId;
 
-      if (start && now < start.getTime()) return "upcoming";
-      if (end && now > end.getTime()) return "closed";
+  if (test.courseId && studentCourse &&
+      String(test.courseId) !== String(studentCourse)) {
+    return false;
+  }
 
-      if (test.status === "draft" || test.published === false) return "closed";
-      if (test.status === "closed" || test.status === "archived") return "closed";
+  return true;
+}
 
-      if (start || end || test.status === "published" || test.published === true) {
-        return "available";
-      }
+function showError(message) {
+  $("errorText").textContent = message;
+  showScreen("errorScreen");
+}
 
-      // Do not expose tests with no clear published/availability state.
-      return "closed";
-    }
+async function loadStudentProfile(user) {
+  // This is the student collection used by the existing Zenova app.
+  const ref = doc(db, "zen2Students", user.uid);
+  const snapshot = await getDoc(ref);
 
-    function getTestDuration(test) {
-      const value = Number(test.durationMinutes || test.duration || 0);
-      return value > 0 ? value : 30;
-    }
+  if (!snapshot.exists()) {
+    throw new Error(
+      "Your Zenova student profile was not found at zen2Students/" +
+      user.uid +
+      ". Sign in using the account linked to your student profile."
+    );
+  }
 
-    function testIsVisibleToStudent(test) {
-      if (test.published === false || test.status === "draft") return false;
-      if (test.status === "archived") return false;
+  const data = snapshot.data();
 
-      const assignedTo = test.studentUids || test.assignedUids;
-      if (Array.isArray(assignedTo) && assignedTo.length > 0) {
-        return assignedTo.includes(currentUser.uid);
-      }
+  if (data.onboardingComplete === false ||
+      data.onboardingCompleted === false) {
+    throw new Error("Please complete your Zenova student profile first.");
+  }
 
-      // Optional course-level targeting. Add a verified course ID to the
-      // student profile if the app uses course-specific tests.
-      const courseId = studentRecord?.courseId || studentRecord?.courseID;
-      if (test.courseId && courseId && test.courseId !== courseId) return false;
+  state.student = { id: snapshot.id, ...data };
 
-      return true;
-    }
+  const name = state.student.name ||
+               state.student.studentName ||
+               state.student.fullName ||
+               user.displayName ||
+               "Student";
 
-    async function findStudentRecord(user) {
-      // Adapt this lookup to the actual Zenova student schema.
-      // Do not trust a student code or phone number typed into the browser
-      // as the only proof of identity.
-      const knownPaths = [
-        `zen2students/${user.uid}`,
-        `students/${user.uid}`
-      ];
+  $("userName").textContent = name;
+  $("avatar").textContent = name.trim().charAt(0).toUpperCase();
+  $("welcome").textContent = `Welcome back, ${name.split(" ")[0]}!`;
+}
 
-      for (const path of knownPaths) {
-        const snapshot = await getDoc(doc(db, path));
-        if (snapshot.exists()) {
-          return { id: snapshot.id, ...snapshot.data() };
-        }
-      }
+async function getAttempt(testId) {
+  // Each student has a predictable attempt document ID.
+  // This avoids querying every student's attempts.
+  const attemptId = `${testId}_${state.user.uid}`;
+  const ref = doc(db, "examAttempts", attemptId);
+  const snapshot = await getDoc(ref);
 
-      // Search by the authenticated user's email only if your Firestore
-      // rules allow the signed-in student to read their own matching record.
-      if (user.email) {
-        for (const collectionName of ["zen2students", "students"]) {
-          try {
-            const q = query(
-              collection(db, collectionName),
-              where("email", "==", user.email),
-              limit(2)
-            );
-            const snapshot = await getDocs(q);
-            if (!snapshot.empty) {
-              const match = snapshot.docs.find(d => {
-                const data = d.data();
-                return data.uid === user.uid || data.authUid === user.uid;
-              });
-              if (match) return { id: match.id, ...match.data() };
-            }
-          } catch (error) {
-            console.warn("Student record lookup not available:", collectionName);
-          }
-        }
-      }
+  return snapshot.exists()
+    ? { id: snapshot.id, ref, ...snapshot.data() }
+    : { id: attemptId, ref, status: "notStarted" };
+}
 
-      return null;
-    }
+async function loadDashboard() {
+  $("testGrid").innerHTML =
+    '<div class="empty"><div class="spinner"></div>Loading examinations...</div>';
 
-    async function loadTests() {
-      $("testGrid").innerHTML = `
-        <div class="empty">
-          <div class="spinner"></div>
-          <p>Loading your examinations...</p>
-        </div>
-      `;
+  const testSnapshot = await getDocs(collection(db, "examTests"));
+  const availableTests = testSnapshot.docs
+    .map(item => ({ id: item.id, ...item.data() }))
+    .filter(studentCanSeeTest);
 
+  // Read only this student's attempt for each published test.
+  const withAttempts = await Promise.all(
+    availableTests.map(async test => {
       try {
-        const snapshot = await getDocs(collection(db, "examTests"));
-        const fetchedTests = snapshot.docs
-          .map(d => ({ id: d.id, ...d.data() }))
-          .filter(testIsVisibleToStudent);
-
-        const attemptsQuery = query(
-          collection(db, "examAttempts"),
-          where("studentUid", "==", currentUser.uid)
-        );
-
-        let attempts = [];
-        try {
-          const attemptSnapshot = await getDocs(attemptsQuery);
-          attempts = attemptSnapshot.docs.map(d => ({
-            id: d.id,
-            ...d.data()
-          }));
-        } catch (error) {
-          console.warn("Attempt list unavailable:", error);
-        }
-
-        const attemptsByTest = new Map();
-        attempts.forEach(attempt => {
-          const old = attemptsByTest.get(attempt.testId);
-          if (!old || (attempt.updatedAt?.seconds || 0) > (old.updatedAt?.seconds || 0)) {
-            attemptsByTest.set(attempt.testId, attempt);
-          }
-        });
-
-        tests = fetchedTests.map(test => ({
-          ...test,
-          myAttempt: attemptsByTest.get(test.id) || null
-        }));
-
-        const statuses = tests.map(getTestStatus);
-        $("upcomingCount").textContent = statuses.filter(s =>
-          s === "available" || s === "upcoming"
-        ).length;
-        $("completedCount").textContent = statuses.filter(s => s === "completed").length;
-        $("progressCount").textContent = statuses.filter(s => s === "progress").length;
-
-        renderTests();
+        const attempt = await getAttempt(test.id);
+        return { ...test, myAttempt: attempt.status === "notStarted" ? null : attempt };
       } catch (error) {
-        console.error(error);
-        $("testGrid").innerHTML = `
-          <div class="empty">
-            <h3>Unable to load examinations</h3>
-            <p>Check your Firestore rules and the examTests collection.</p>
-            <p style="font-size:12px">${escapeHTML(error.message)}</p>
-            <button class="primary" id="retryLoadBtn">Try again</button>
-          </div>
-        `;
-        $("retryLoadBtn")?.addEventListener("click", loadTests);
+        console.warn("Attempt read failed:", test.id, error.code || error.message);
+        return { ...test, myAttempt: null };
       }
-    }
+    })
+  );
 
-    function renderTests() {
-      const grid = $("testGrid");
-      let filtered = tests.filter(test => {
-        const status = getTestStatus(test);
-        if (currentFilter === "all") return status !== "closed";
-        return status === currentFilter;
-      });
+  state.tests = withAttempts;
 
-      filtered.sort((a, b) => {
-        const priority = { progress: 0, available: 1, upcoming: 2, completed: 3, closed: 4 };
-        return priority[getTestStatus(a)] - priority[getTestStatus(b)];
-      });
+  const statuses = state.tests.map(statusOf);
+  $("availableCount").textContent =
+    statuses.filter(s => ["available", "upcoming"].includes(s)).length;
+  $("completedCount").textContent =
+    statuses.filter(s => s === "completed").length;
+  $("progressCount").textContent =
+    statuses.filter(s => s === "progress").length;
 
-      if (!filtered.length) {
-        grid.innerHTML = `
-          <div class="empty">
-            <i class="ri-file-list-3-line" style="font-size:36px"></i>
-            <h3>No tests in this section</h3>
-            <p>Scheduled examinations will appear here when published by your teacher.</p>
-          </div>
-        `;
-        return;
-      }
+  renderTests();
+}
 
-      grid.innerHTML = filtered.map(test => {
-        const status = getTestStatus(test);
-        const duration = getTestDuration(test);
-        const marks = test.totalMarks ?? test.maxMarks ?? "—";
-        const count = test.questionCount ?? test.totalQuestions ?? "—";
-        const subject = test.subjectName || test.subject || "General Test";
-        const chapter = test.chapterName || test.chapter || test.title || "Chapter test";
-        const { start, end } = getTestWindow(test);
+function renderTests() {
+  const list = state.tests.filter(test => {
+    const status = statusOf(test);
+    if (state.filter === "all") return status !== "closed";
+    return status === state.filter;
+  });
 
-        const statusLabel = {
-          available: "Available",
-          upcoming: "Upcoming",
-          progress: "In progress",
-          completed: "Submitted",
-          closed: "Closed"
-        }[status];
+  const priority = {
+    progress: 0, available: 1, upcoming: 2, completed: 3, closed: 4
+  };
 
-        let buttonText = "Start test";
-        let disabled = false;
+  list.sort((a, b) => priority[statusOf(a)] - priority[statusOf(b)]);
 
-        if (status === "upcoming") {
-          buttonText = "Not open yet";
-          disabled = true;
-        } else if (status === "completed") {
-          buttonText = "View submission";
-        } else if (status === "closed") {
-          buttonText = "Test closed";
-          disabled = true;
-        } else if (status === "progress") {
-          buttonText = "Resume test";
-        }
+  if (!list.length) {
+    $("testGrid").innerHTML = `
+      <div class="empty">
+        <i class="ri-file-list-3-line" style="font-size:35px"></i>
+        <h3>No examinations here</h3>
+        <p>Published tests will appear here when scheduled by Zenova.</p>
+      </div>`;
+    return;
+  }
 
-        const buttonAction = status === "completed"
-          ? `viewSubmission('${test.id}')`
-          : `startTest('${test.id}')`;
+  $("testGrid").innerHTML = list.map(test => {
+    const status = statusOf(test);
+    const start = getStart(test);
+    const end = getEnd(test);
+    const duration = getDuration(test);
+    const totalQuestions = test.totalQuestions ?? "—";
+    const totalMarks = test.totalMarks ?? "—";
 
-        return `
-          <article class="test-card">
-            <div class="test-top">
-              <div class="subject-icon"><i class="ri-book-open-line"></i></div>
-              <div style="flex:1;min-width:0">
-                <div class="test-title">${escapeHTML(subject)}</div>
-                <div class="test-subtitle">${escapeHTML(chapter)}</div>
-              </div>
-              <span class="status ${status === "upcoming" ? "upcoming" : ""} ${status === "closed" ? "closed" : ""}">
-                ${statusLabel}
-              </span>
-            </div>
-            <div class="test-subtitle">
-              <div><i class="ri-time-line"></i> ${duration} minutes</div>
-              <div><i class="ri-question-line"></i> ${escapeHTML(count)} questions</div>
-              <div><i class="ri-medal-line"></i> ${escapeHTML(marks)} marks</div>
-              ${start ? `<div><i class="ri-calendar-line"></i> Opens: ${escapeHTML(formatDate(start))}</div>` : ""}
-              ${end ? `<div><i class="ri-calendar-check-line"></i> Closes: ${escapeHTML(formatDate(end))}</div>` : ""}
-            </div>
-            <button class="primary full"
-              ${disabled ? "disabled" : ""}
-              onclick="${buttonAction}">
-              ${buttonText}
-            </button>
-          </article>
-        `;
-      }).join("");
-    }
-
-    window.startTest = async function(testId) {
-      const test = tests.find(t => t.id === testId);
-      if (!test) return;
-
-      const status = getTestStatus(test);
-      if (!["available", "progress"].includes(status)) {
-        alert("This test is not available to start.");
-        return;
-      }
-
-      const { start, end } = getTestWindow(test);
-      const now = Date.now();
-
-      if (start && now < start.getTime()) {
-        alert("This test has not opened yet.");
-        return;
-      }
-
-      if (end && now >= end.getTime()) {
-        alert("The submission deadline has passed.");
-        return;
-      }
-
-      if (status === "completed") {
-        alert("You have already submitted this test.");
-        return;
-      }
-
-      const confirmed = confirm(
-        `Start ${test.title || test.subjectName || "this examination"}?\n\n` +
-        `Duration: ${getTestDuration(test)} minutes\n` +
-        `Questions: ${test.questionCount ?? test.totalQuestions ?? "As configured"}\n\n` +
-        `Your timer begins when the attempt is started.`
-      );
-
-      if (!confirmed) return;
-
-      try {
-        showScreen("loadingScreen");
-
-        activeTest = test;
-
-        const attemptId = `${testId}_${currentUser.uid}`;
-        activeAttemptId = attemptId;
-        activeAttemptRef = doc(db, "examAttempts", attemptId);
-
-        const attemptSnapshot = await getDoc(activeAttemptRef);
-        let attemptData;
-
-        if (attemptSnapshot.exists()) {
-          attemptData = attemptSnapshot.data();
-
-          if (["submitted", "evaluated"].includes(attemptData.status)) {
-            alert("This test has already been submitted.");
-            showScreen("dashboard");
-            await loadTests();
-            return;
-          }
-
-          answers = attemptData.answers || {};
-          reviewQuestions = new Set(attemptData.reviewQuestions || []);
-          deadlineMs = Number(attemptData.deadlineMs || 0);
-        } else {
-          // Load questions before starting so an empty test cannot be started.
-          const questionSnapshot = await getDocs(
-            collection(db, "examTests", testId, "questions")
-          );
-
-          activeQuestions = questionSnapshot.docs.map(d => ({
-            id: d.id,
-            ...d.data()
-          }));
-
-          activeQuestions.sort((a, b) =>
-            Number(a.order ?? a.questionNumber ?? 0) -
-            Number(b.order ?? b.questionNumber ?? 0)
-          );
-
-          if (!activeQuestions.length) {
-            alert("Questions have not been added to this test yet.");
-            showScreen("dashboard");
-            return;
-          }
-
-          const durationMs = getTestDuration(test) * 60 * 1000;
-          deadlineMs = Math.min(
-            now + durationMs,
-            end ? end.getTime() : Number.MAX_SAFE_INTEGER
-          );
-
-          attemptData = {
-            testId,
-            studentUid: currentUser.uid,
-            studentName: studentRecord?.name || currentUser.displayName || "",
-            status: "inProgress",
-            answers: {},
-            reviewQuestions: [],
-            startedAt: serverTimestamp(),
-            deadlineMs,
-            questionCount: activeQuestions.length,
-            createdAt: serverTimestamp(),
-            updatedAt: serverTimestamp()
-          };
-
-          await setDoc(activeAttemptRef, attemptData);
-          answers = {};
-          reviewQuestions = new Set();
-        }
-
-        // Reload questions for a resumed attempt too.
-        if (!activeQuestions.length) {
-          const questionSnapshot = await getDocs(
-            collection(db, "examTests", testId, "questions")
-          );
-
-          activeQuestions = questionSnapshot.docs.map(d => ({
-            id: d.id,
-            ...d.data()
-          }));
-
-          activeQuestions.sort((a, b) =>
-            Number(a.order ?? a.questionNumber ?? 0) -
-            Number(b.order ?? b.questionNumber ?? 0)
-          );
-        }
-
-        if (!activeQuestions.length) {
-          throw new Error("No questions were found for this test.");
-        }
-
-        if (!deadlineMs || Date.now() >= deadlineMs) {
-          alert("The test deadline has passed. Please contact your teacher.");
-          showScreen("dashboard");
-          return;
-        }
-
-        currentQuestionIndex = 0;
-        submissionInProgress = false;
-        renderExam();
-        showScreen("examScreen");
-        startTimer();
-        installVisibilityListener();
-      } catch (error) {
-        console.error(error);
-        alert("Could not start the test: " + error.message);
-        showScreen("dashboard");
-      }
+    const labels = {
+      available: "Available",
+      upcoming: "Upcoming",
+      progress: "In progress",
+      completed: "Submitted",
+      closed: "Closed"
     };
 
-    function getQuestionType(question) {
-      const raw = String(question.type || question.questionType || "mcq").toLowerCase();
+    const action = status === "completed" ? "view" : "start";
+    const buttonText = {
+      available: "Start test",
+      upcoming: "Not open yet",
+      progress: "Resume test",
+      completed: "View submission",
+      closed: "Closed"
+    }[status];
 
-      if (["mcq", "multiple_choice", "multiple-choice", "objective"].includes(raw)) {
-        return "mcq";
-      }
-      if (raw.includes("short")) return "short";
-      if (raw.includes("long")) return "long";
-      if (raw.includes("written") || raw.includes("subjective")) return "written";
-      return "written";
-    }
+    const disabled = ["upcoming", "closed"].includes(status);
 
-    function getQuestionOptions(question) {
-      let options = question.options || question.choices || [];
+    return `
+      <article class="test-card">
+        <div class="test-top">
+          <div class="subject-icon"><i class="ri-book-open-line"></i></div>
+          <div style="flex:1;min-width:0">
+            <div class="test-title">${esc(test.title || test.subjectName || "Zenova Test")}</div>
+            <div class="muted">
+              ${esc(test.courseName || "")}
+              ${test.subjectName ? " · " + esc(test.subjectName) : ""}
+              ${test.chapterName ? "<br>" + esc(test.chapterName) : ""}
+            </div>
+          </div>
+          <span class="status ${status === "upcoming" ? "upcoming" : ""} ${status === "completed" ? "done" : ""}">
+            ${labels[status]}
+          </span>
+        </div>
 
-      // Accept options saved as a comma-separated string by the admin form.
-      if (typeof options === "string") {
-        options = options.split(",").map(s => s.trim()).filter(Boolean);
-      }
+        <div class="muted">
+          <div><i class="ri-time-line"></i> ${duration} minutes</div>
+          <div><i class="ri-question-line"></i> ${esc(totalQuestions)} questions</div>
+          <div><i class="ri-medal-line"></i> ${esc(totalMarks)} marks</div>
+          ${start ? `<div><i class="ri-calendar-line"></i> Opens: ${esc(formatDate(start))}</div>` : ""}
+          ${end ? `<div><i class="ri-calendar-check-line"></i> Closes: ${esc(formatDate(end))}</div>` : ""}
+        </div>
 
-      if (Array.isArray(options)) {
-        return options.map(option =>
-          typeof option === "string"
-            ? option
-            : String(option.text ?? option.label ?? "")
-        );
-      }
+        <button class="btn primary full" data-action="${action}" data-test-id="${esc(test.id)}" ${disabled ? "disabled" : ""}>
+          ${buttonText}
+        </button>
+      </article>`;
+  }).join("");
 
-      if (options && typeof options === "object") {
-        return Object.keys(options)
-          .sort()
-          .map(key => String(options[key]));
-      }
+  $("testGrid").querySelectorAll("[data-test-id]").forEach(button => {
+    button.addEventListener("click", () => {
+      const test = state.tests.find(t => t.id === button.dataset.testId);
+      if (!test) return;
 
-      return [];
-    }
-
-    function renderExam() {
-      const question = activeQuestions[currentQuestionIndex];
-      if (!question) return;
-
-      $("examTitle").textContent =
-        activeTest.title || activeTest.subjectName || "Examination";
-
-      $("examSubtitle").textContent =
-        `${activeTest.subjectName || activeTest.subject || "Subject"} · ` +
-        `${activeQuestions.length} questions`;
-
-      $("questionNumber").textContent =
-        `QUESTION ${currentQuestionIndex + 1} OF ${activeQuestions.length}`;
-
-      $("questionText").textContent =
-        question.question || question.questionText || question.text || "";
-
-      const type = getQuestionType(question);
-      const saved = answers[question.id];
-      const body = $("questionBody");
-
-      if (type === "mcq") {
-        const options = getQuestionOptions(question);
-        const selected = saved?.selectedOption;
-
-        body.innerHTML = `<div class="options">${
-          options.map((option, index) => `
-            <label class="option">
-              <input
-                type="radio"
-                name="mcqAnswer"
-                value="${index}"
-                ${String(selected) === String(index) ? "checked" : ""}
-              >
-              <span><strong>${String.fromCharCode(65 + index)}.</strong>
-                ${escapeHTML(option)}
-              </span>
-            </label>
-          `).join("")
-        }</div>`;
-
-        body.querySelectorAll('input[name="mcqAnswer"]').forEach(input => {
-          input.addEventListener("change", () => {
-            saveAnswer(question.id, {
-              selectedOption: Number(input.value)
-            });
-          });
-        });
+      if (button.dataset.action === "view") {
+        viewSubmission(test);
       } else {
-        const text = saved?.textAnswer || "";
-
-        body.innerHTML = `
-          <label for="writtenAnswer" style="display:block;font-weight:600;margin-bottom:10px">
-            Your answer
-          </label>
-          <textarea
-            id="writtenAnswer"
-            class="answer-box"
-            lang="kn"
-            placeholder="Type your answer here in Kannada or English..."
-            spellcheck="true"
-          >${escapeHTML(text)}</textarea>
-          <p class="test-subtitle">
-            You can type in Kannada or English. This answer will be evaluated by your teacher.
-          </p>
-        `;
-
-        const textarea = $("writtenAnswer");
-        let debounce = null;
-
-        textarea.addEventListener("input", () => {
-          $("saveStatus").textContent = "Saving your answer...";
-          clearTimeout(debounce);
-          debounce = setTimeout(() => {
-            saveAnswer(question.id, { textAnswer: textarea.value });
-          }, 450);
-        });
-
-        textarea.addEventListener("blur", () => {
-          saveAnswer(question.id, { textAnswer: textarea.value });
-        });
+        startTest(test);
       }
+    });
+  });
+}
 
-      $("previousBtn").disabled = currentQuestionIndex === 0;
-      $("nextBtn").textContent = currentQuestionIndex === activeQuestions.length - 1
-        ? "Last question"
-        : "Next →";
+function getQuestionType(question) {
+  const type = normal(question.type || question.questionType || "mcq").toLowerCase();
+  if (["mcq", "multiple_choice", "multiple-choice", "objective"].includes(type)) return "mcq";
+  if (type.includes("short")) return "short";
+  if (type.includes("long")) return "long";
+  return "written";
+}
 
-      $("reviewBtn").innerHTML = reviewQuestions.has(question.id)
-        ? '<i class="ri-bookmark-fill"></i> Remove review mark'
-        : '<i class="ri-bookmark-line"></i> Mark for review';
+function getOptions(question) {
+  let options = question.options || question.choices || [];
 
-      renderPalette();
-      updateQuestionSummary();
+  if (typeof options === "string") {
+    options = options.split(/\n|,/).map(s => s.trim()).filter(Boolean);
+  }
+
+  if (Array.isArray(options)) {
+    return options.map(option => {
+      if (typeof option === "string") return option;
+      return String(option.label ?? option.text ?? option.value ?? "");
+    });
+  }
+
+  if (options && typeof options === "object") {
+    return Object.values(options).map(option =>
+      typeof option === "string"
+        ? option
+        : String(option.label ?? option.text ?? "")
+    );
+  }
+
+  return [];
+}
+
+async function loadQuestions(testId) {
+  const snapshot = await getDocs(
+    collection(db, "examTests", testId, "questions")
+  );
+
+  const questions = snapshot.docs.map(item => ({
+    id: item.id,
+    ...item.data()
+  }));
+
+  questions.sort((a, b) => Number(a.order || 0) - Number(b.order || 0));
+
+  if (!questions.length) {
+    throw new Error("This test has no questions. Please contact your teacher.");
+  }
+
+  // These documents are expected to contain only student-safe question data.
+  // The admin page stores answer keys in a separate answerKeys subcollection.
+  return questions;
+}
+
+async function startTest(test) {
+  const status = statusOf(test);
+  if (!["available", "progress"].includes(status)) {
+    alert("This examination is not available to start.");
+    return;
+  }
+
+  const start = getStart(test);
+  const end = getEnd(test);
+  const now = Date.now();
+
+  if (start && now < start.getTime()) {
+    alert("This examination has not opened yet.");
+    return;
+  }
+
+  if (end && now >= end.getTime()) {
+    alert("The availability window has closed.");
+    return;
+  }
+
+  if (status === "available" &&
+      !confirm(
+        `Start "${test.title || test.subjectName || "this test"}"?\n\n` +
+        `Duration: ${getDuration(test)} minutes\n` +
+        `Questions: ${test.totalQuestions ?? "As configured"}`
+      )) {
+    return;
+  }
+
+  showScreen("loadingScreen");
+
+  try {
+    state.activeTest = test;
+    state.questions = await loadQuestions(test.id);
+
+    const attempt = await getAttempt(test.id);
+
+    if (["submitted", "evaluated"].includes(attempt.status)) {
+      alert("This examination has already been submitted.");
+      showScreen("dashboard");
+      return;
     }
 
-    function isAnswered(question) {
-      const answer = answers[question.id];
-      if (!answer) return false;
-      if (answer.selectedOption !== undefined && answer.selectedOption !== null) return true;
-      return typeof answer.textAnswer === "string" && answer.textAnswer.trim().length > 0;
-    }
+    state.attemptId = attempt.id;
+    state.attemptRef = attempt.ref;
+    state.answers = attempt.answers || {};
+    state.review = new Set(attempt.reviewQuestions || []);
+    state.submitting = false;
 
-    function renderPalette() {
-      $("palette").innerHTML = activeQuestions.map((question, index) => {
-        const classes = [
-          index === currentQuestionIndex ? "current" : "",
-          isAnswered(question) ? "answered" : "",
-          reviewQuestions.has(question.id) ? "review" : ""
-        ].filter(Boolean).join(" ");
+    if (attempt.status === "inProgress") {
+      state.deadline = Number(attempt.deadlineMs || 0);
+    } else {
+      const durationDeadline = now + getDuration(test) * 60 * 1000;
+      state.deadline = end
+        ? Math.min(durationDeadline, end.getTime())
+        : durationDeadline;
 
-        return `<button class="${classes}" data-index="${index}">${index + 1}</button>`;
-      }).join("");
-
-      $("palette").querySelectorAll("button").forEach(button => {
-        button.addEventListener("click", () => {
-          currentQuestionIndex = Number(button.dataset.index);
-          renderExam();
-        });
-      });
-    }
-
-    function updateQuestionSummary() {
-      const answered = activeQuestions.filter(isAnswered).length;
-      $("questionSummary").textContent =
-        `${answered} of ${activeQuestions.length} answered\n\n` +
-        `${activeQuestions.length - answered} unanswered\n` +
-        `${reviewQuestions.size} marked for review`;
-      $("questionSummary").style.whiteSpace = "pre-line";
-    }
-
-    function saveAnswer(questionId, patch) {
-      if (!activeAttemptRef || submissionInProgress) return;
-
-      answers[questionId] = {
-        ...(answers[questionId] || {}),
-        ...patch,
-        updatedAtLocal: Date.now()
-      };
-
-      $("saveStatus").textContent = "Saving...";
-
-      // Serialize writes so rapid edits do not overwrite newer answers.
-      saveQueue = saveQueue.then(async () => {
-        if (submissionInProgress || !activeAttemptRef) return;
-
-        await updateDoc(activeAttemptRef, {
-          [`answers.${questionId}`]: {
-            ...answers[questionId],
-            updatedAtLocal: Date.now()
-          },
-          updatedAt: serverTimestamp()
-        });
-
-        $("saveStatus").textContent = "All changes saved.";
-        renderPalette();
-        updateQuestionSummary();
-      }).catch(error => {
-        console.error("Answer save failed:", error);
-        $("saveStatus").textContent =
-          "Save failed. Check your connection and contact your teacher if it continues.";
-      });
-    }
-
-    function startTimer() {
-      clearInterval(timerInterval);
-
-      const tick = async () => {
-        const remaining = deadlineMs - Date.now();
-
-        if (remaining <= 0) {
-          $("timer").textContent = "00:00";
-          clearInterval(timerInterval);
-          await submitExam(true);
-          return;
-        }
-
-        const totalSeconds = Math.floor(remaining / 1000);
-        const hours = Math.floor(totalSeconds / 3600);
-        const minutes = Math.floor((totalSeconds % 3600) / 60);
-        const seconds = totalSeconds % 60;
-
-        $("timer").textContent = hours > 0
-          ? `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`
-          : `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
-
-        $("timer").style.color = remaining < 60000 ? "#c02735" : "#c02735";
-      };
-
-      tick();
-      timerInterval = setInterval(tick, 1000);
-    }
-
-    function installVisibilityListener() {
-      if (visibilityListenerInstalled) return;
-      visibilityListenerInstalled = true;
-
-      document.addEventListener("visibilitychange", async () => {
-        if (!activeAttemptRef || submissionInProgress) return;
-
-        try {
-          await updateDoc(activeAttemptRef, {
-            lastVisibilityEvent: document.hidden ? "hidden" : "visible",
-            lastVisibilityAt: serverTimestamp(),
-            updatedAt: serverTimestamp()
-          });
-        } catch (error) {
-          console.warn("Visibility event could not be saved.", error);
-        }
-      });
-    }
-
-    async function saveReviewState() {
-      if (!activeAttemptRef) return;
-
-      await updateDoc(activeAttemptRef, {
-        reviewQuestions: [...reviewQuestions],
+      await setDoc(state.attemptRef, {
+        testId: test.id,
+        studentUid: state.user.uid,
+        studentName: state.student.name ||
+                     state.student.studentName ||
+                     state.user.displayName ||
+                     "",
+        status: "inProgress",
+        answers: {},
+        reviewQuestions: [],
+        startedAt: serverTimestamp(),
+        deadlineMs: state.deadline,
+        questionCount: state.questions.length,
+        createdAt: serverTimestamp(),
         updatedAt: serverTimestamp()
       });
     }
 
-    async function submitExam(autoSubmit = false) {
-      if (!activeAttemptRef || submissionInProgress) return;
-
-      if (!autoSubmit) {
-        const unanswered = activeQuestions.filter(q => !isAnswered(q)).length;
-
-        const message = unanswered
-          ? `You have ${unanswered} unanswered question(s). Submit anyway?`
-          : "Are you sure you want to submit your examination?";
-
-        if (!confirm(message)) return;
-      }
-
-      submissionInProgress = true;
-      $("submitBtn").disabled = true;
-      $("submitBtn").textContent = "Submitting...";
-
-      try {
-        await saveQueue;
-
-        // Refresh the current answer state from the attempt's local object.
-        // The server must independently validate the actual deadline.
-        await updateDoc(activeAttemptRef, {
-          status: "submitted",
-          answers,
-          reviewQuestions: [...reviewQuestions],
-          submittedAt: serverTimestamp(),
-          autoSubmitted: autoSubmit,
-          updatedAt: serverTimestamp()
-        });
-
-        clearInterval(timerInterval);
-        activeAttemptRef = null;
-        activeAttemptId = null;
-        activeQuestions = [];
-        activeTest = null;
-
-        $("resultMessage").textContent = autoSubmit
-          ? "Time is up. Your examination has been submitted."
-          : "Your answers have been submitted successfully. Written answers may be evaluated by your teacher.";
-
-        showScreen("resultScreen");
-      } catch (error) {
-        console.error(error);
-        submissionInProgress = false;
-        $("submitBtn").disabled = false;
-        $("submitBtn").textContent = "Submit examination";
-        alert(
-          "Submission failed. Your answers may still be saved. Check your internet connection and try again."
-        );
-      }
+    if (!state.deadline || Date.now() >= state.deadline) {
+      alert("This attempt has reached its deadline.");
+      showScreen("dashboard");
+      await loadDashboard();
+      return;
     }
 
-    window.viewSubmission = async function(testId) {
-      const attemptId = `${testId}_${currentUser.uid}`;
+    state.questionIndex = 0;
+    $("examTitle").textContent = test.title || test.subjectName || "Examination";
+    $("examSubtitle").textContent =
+      `${test.subjectName || "Subject"} · ${state.questions.length} questions`;
 
-      try {
-        const snapshot = await getDoc(doc(db, "examAttempts", attemptId));
+    renderQuestion();
+    showScreen("examScreen");
+    startTimer();
+    recordVisibilityEvent();
+  } catch (error) {
+    console.error("ZENOVA TEST START ERROR:", error);
+    showError(`${error.code ? error.code + ": " : ""}${error.message}`);
+  }
+}
 
-        if (!snapshot.exists()) {
-          alert("Submission details could not be found.");
-          return;
-        }
+function answered(question) {
+  const answer = state.answers[question.id];
+  if (!answer) return false;
 
-        const data = snapshot.data();
+  if (answer.selectedOption !== undefined &&
+      answer.selectedOption !== null) return true;
 
-        $("resultMessage").textContent =
-          `Status: ${data.status || "submitted"}. ` +
-          `Your answers are saved. Marks will be shown according to the teacher's result-release settings.`;
+  return typeof answer.textAnswer === "string" &&
+         answer.textAnswer.trim().length > 0;
+}
 
-        showScreen("resultScreen");
-      } catch (error) {
-        alert("Unable to load submission: " + error.message);
-      }
-    };
+function renderQuestion() {
+  const question = state.questions[state.questionIndex];
+  if (!question) return;
 
-    $("previousBtn").addEventListener("click", () => {
-      if (currentQuestionIndex > 0) {
-        currentQuestionIndex--;
-        renderExam();
-      }
-    });
+  $("questionNumber").textContent =
+    `QUESTION ${state.questionIndex + 1} OF ${state.questions.length}`;
+  $("questionText").textContent =
+    question.text || question.question || question.questionText || "";
 
-    $("nextBtn").addEventListener("click", () => {
-      if (currentQuestionIndex < activeQuestions.length - 1) {
-        currentQuestionIndex++;
-        renderExam();
-      }
-    });
+  const type = getQuestionType(question);
+  const answer = state.answers[question.id] || {};
+  const body = $("questionBody");
 
-    $("reviewBtn").addEventListener("click", async () => {
-      const question = activeQuestions[currentQuestionIndex];
-      if (!question) return;
+  if (type === "mcq") {
+    const options = getOptions(question);
 
-      if (reviewQuestions.has(question.id)) {
-        reviewQuestions.delete(question.id);
-      } else {
-        reviewQuestions.add(question.id);
-      }
+    body.innerHTML = `<div class="options">${
+      options.map((option, index) => `
+        <label class="option">
+          <input type="radio" name="mcq" value="${index}"
+            ${Number(answer.selectedOption) === index ? "checked" : ""}>
+          <span><strong>${String.fromCharCode(65 + index)}.</strong>
+            ${esc(option)}
+          </span>
+        </label>
+      `).join("")
+    }</div>`;
 
-      try {
-        await saveReviewState();
-      } catch (error) {
-        console.error("Review mark save failed:", error);
-      }
-
-      renderExam();
-    });
-
-    $("submitBtn").addEventListener("click", () => submitExam(false));
-
-    $("exitExamBtn").addEventListener("click", () => {
-      const leave = confirm(
-        "Leave the examination screen? Your current attempt will remain in progress and the timer will continue."
-      );
-
-      if (!leave) return;
-
-      clearInterval(timerInterval);
-      showScreen("dashboard");
-      loadTests();
-    });
-
-    $("backDashboardBtn").addEventListener("click", async () => {
-      showScreen("dashboard");
-      await loadTests();
-    });
-
-    $("refreshBtn").addEventListener("click", loadTests);
-
-    document.querySelectorAll(".filter").forEach(button => {
-      button.addEventListener("click", () => {
-        document.querySelectorAll(".filter").forEach(b => b.classList.remove("active"));
-        button.classList.add("active");
-        currentFilter = button.dataset.filter;
-        renderTests();
+    body.querySelectorAll('input[name="mcq"]').forEach(input => {
+      input.addEventListener("change", () => {
+        saveAnswer(question.id, { selectedOption: Number(input.value) });
       });
     });
+  } else {
+    body.innerHTML = `
+      <label for="writtenAnswer" style="display:block;font-weight:600;margin-bottom:10px">
+        Your answer
+      </label>
+      <textarea id="writtenAnswer" class="answer" lang="kn"
+        placeholder="Type your answer in Kannada or English..."
+        spellcheck="true">${esc(answer.textAnswer || "")}</textarea>
+      <p class="muted">Your written answer will be saved for teacher evaluation.</p>`;
 
-    $("signOutBtn").addEventListener("click", async () => {
-      if (activeAttemptRef && !submissionInProgress) {
-        const leave = confirm(
-          "Sign out? Your attempt will remain in progress and the deadline will continue."
-        );
-        if (!leave) return;
-      }
+    const textarea = $("writtenAnswer");
+    let debounce;
 
-      try {
-        await signOut(auth);
-        window.location.href = "../index.html";
-      } catch (error) {
-        alert("Unable to sign out: " + error.message);
-      }
+    textarea.addEventListener("input", () => {
+      $("saveStatus").textContent = "Saving answer...";
+      clearTimeout(debounce);
+      debounce = setTimeout(() => {
+        saveAnswer(question.id, { textAnswer: textarea.value });
+      }, 400);
     });
 
-    $("backToLoginBtn").addEventListener("click", () => {
-      window.location.href = "../index.html";
+    textarea.addEventListener("blur", () => {
+      clearTimeout(debounce);
+      saveAnswer(question.id, { textAnswer: textarea.value });
+    });
+  }
+
+  $("prevBtn").disabled = state.questionIndex === 0;
+  $("nextBtn").textContent =
+    state.questionIndex === state.questions.length - 1 ? "Last question" : "Next →";
+
+  $("reviewBtn").textContent = state.review.has(question.id)
+    ? "Remove review mark"
+    : "Mark for review";
+
+  renderPalette();
+  updateSummary();
+}
+
+function renderPalette() {
+  $("palette").innerHTML = state.questions.map((question, index) => {
+    const classes = [
+      index === state.questionIndex ? "current" : "",
+      answered(question) ? "answered" : "",
+      state.review.has(question.id) ? "review" : ""
+    ].filter(Boolean).join(" ");
+
+    return `<button class="${classes}" data-index="${index}">${index + 1}</button>`;
+  }).join("");
+
+  $("palette").querySelectorAll("button").forEach(button => {
+    button.addEventListener("click", () => {
+      state.questionIndex = Number(button.dataset.index);
+      renderQuestion();
+    });
+  });
+}
+
+function updateSummary() {
+  const count = state.questions.filter(answered).length;
+  $("answerSummary").textContent =
+    `${count} answered\n${state.questions.length - count} unanswered\n${state.review.size} marked for review`;
+  $("answerSummary").style.whiteSpace = "pre-line";
+}
+
+function saveAnswer(questionId, patch) {
+  if (!state.attemptRef || state.submitting) return;
+
+  state.answers[questionId] = {
+    ...(state.answers[questionId] || {}),
+    ...patch
+  };
+
+  // Serialize answer writes to avoid out-of-order saves.
+  state.saveQueue = state.saveQueue.then(async () => {
+    if (!state.attemptRef || state.submitting) return;
+
+    await updateDoc(state.attemptRef, {
+      [`answers.${questionId}`]: state.answers[questionId],
+      updatedAt: serverTimestamp()
     });
 
-    onAuthStateChanged(auth, async user => {
-      currentUser = user;
+    $("saveStatus").textContent = "All changes saved.";
+    renderPalette();
+    updateSummary();
+  }).catch(error => {
+    console.error("ZENOVA ANSWER SAVE ERROR:", error);
+    $("saveStatus").textContent =
+      `Could not save your answer (${error.code || error.message}). Please retry.`;
+  });
+}
 
-      if (!user) {
-        $("studentName").textContent = "Not signed in";
-        $("signOutBtn").classList.add("hidden");
-        showScreen("signInScreen");
-        return;
-      }
+async function saveReview() {
+  if (!state.attemptRef) return;
 
-      $("signOutBtn").classList.remove("hidden");
-      $("studentName").textContent = user.displayName || user.email || "Student";
-      $("avatar").textContent = (user.displayName || user.email || "Z")
-        .trim().charAt(0).toUpperCase();
+  await updateDoc(state.attemptRef, {
+    reviewQuestions: [...state.review],
+    updatedAt: serverTimestamp()
+  });
+}
 
-      $("welcomeTitle").textContent =
-        `Welcome back, ${(user.displayName || "Student").split(" ")[0]}!`;
+function startTimer() {
+  clearInterval(state.timer);
 
-      try {
-        studentRecord = await findStudentRecord(user);
+  const tick = async () => {
+    const remaining = state.deadline - Date.now();
 
-        if (!studentRecord) {
-          showScreen("dashboard");
-          $("dashboardMessage").classList.remove("hidden");
-          $("dashboardMessage").classList.add("error");
-          $("dashboardMessage").textContent =
-            "Your authenticated account is not linked to a student record yet. Please contact Zenova support to link your student profile.";
-          $("testGrid").innerHTML = "";
-          return;
-        }
+    if (remaining <= 0) {
+      $("timer").textContent = "00:00";
+      clearInterval(state.timer);
+      await submitTest(true);
+      return;
+    }
 
-        await loadTests();
-        showScreen("dashboard");
-      } catch (error) {
-        console.error(error);
-        showScreen("dashboard");
-        $("dashboardMessage").classList.remove("hidden");
-        $("dashboardMessage").classList.add("error");
-        $("dashboardMessage").textContent =
-          "Your student profile could not be loaded. Check the student collection permissions.";
-      }
+    const total = Math.floor(remaining / 1000);
+    const h = Math.floor(total / 3600);
+    const m = Math.floor((total % 3600) / 60);
+    const s = total % 60;
+
+    $("timer").textContent = h > 0
+      ? `${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`
+      : `${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
+  };
+
+  tick();
+  state.timer = setInterval(tick, 1000);
+}
+
+function recordVisibilityEvent() {
+  if (state.visibilityHandler) return;
+
+  state.visibilityHandler = async () => {
+    if (!state.attemptRef || state.submitting) return;
+
+    try {
+      await updateDoc(state.attemptRef, {
+        lastVisibilityEvent: document.hidden ? "hidden" : "visible",
+        lastVisibilityAt: serverTimestamp(),
+        updatedAt: serverTimestamp()
+      });
+    } catch (error) {
+      console.warn("Visibility event could not be saved:", error.code || error.message);
+    }
+  };
+
+  document.addEventListener("visibilitychange", state.visibilityHandler);
+}
+
+async function submitTest(autoSubmit = false) {
+  if (!state.attemptRef || state.submitting) return;
+
+  if (!autoSubmit) {
+    const unansweredCount = state.questions.filter(q => !answered(q)).length;
+    const message = unansweredCount
+      ? `${unansweredCount} question(s) are unanswered. Submit anyway?`
+      : "Are you sure you want to submit your examination?";
+
+    if (!confirm(message)) return;
+  }
+
+  state.submitting = true;
+  $("submitBtn").disabled = true;
+  $("submitBtn").textContent = "Submitting...";
+
+  try {
+    // Wait for previously queued answer writes to finish.
+    await state.saveQueue;
+
+    // The backend must independently enforce the deadline and attempt ownership.
+    await updateDoc(state.attemptRef, {
+      status: "submitted",
+      answers: state.answers,
+      reviewQuestions: [...state.review],
+      submittedAt: serverTimestamp(),
+      autoSubmitted: autoSubmit,
+      updatedAt: serverTimestamp()
     });
-  </script>
+
+    clearInterval(state.timer);
+    state.attemptRef = null;
+    state.activeTest = null;
+    state.questions = [];
+    state.answers = {};
+    state.review.clear();
+
+    $("resultText").textContent = autoSubmit
+      ? "Time is up. Your submission has been recorded."
+      : "Your answers have been submitted. Written answers will be marked by your teacher.";
+
+    showScreen("resultScreen");
+  } catch (error) {
+    console.error("ZENOVA SUBMISSION ERROR:", error);
+    state.submitting = false;
+    $("submitBtn").disabled = false;
+    $("submitBtn").textContent = "Submit examination";
+
+    alert(
+      `Submission failed: ${error.code || error.message}. ` +
+      "Check your internet connection and try again."
+    );
+  }
+}
+
+async function viewSubmission(test) {
+  try {
+    const attempt = await getAttempt(test.id);
+
+    if (!attempt || attempt.status === "notStarted") {
+      alert("Submission not found.");
+      return;
+    }
+
+    $("resultText").textContent =
+      `Status: ${attempt.status}. Results and marks are shown according to your teacher's release settings.`;
+
+    showScreen("resultScreen");
+  } catch (error) {
+    alert(`Could not load submission: ${error.code || error.message}`);
+  }
+}
+
+$("prevBtn").addEventListener("click", () => {
+  if (state.questionIndex > 0) {
+    state.questionIndex--;
+    renderQuestion();
+  }
+});
+
+$("nextBtn").addEventListener("click", () => {
+  if (state.questionIndex < state.questions.length - 1) {
+    state.questionIndex++;
+    renderQuestion();
+  }
+});
+
+$("reviewBtn").addEventListener("click", async () => {
+  const question = state.questions[state.questionIndex];
+  if (!question) return;
+
+  if (state.review.has(question.id)) state.review.delete(question.id);
+  else state.review.add(question.id);
+
+  try {
+    await saveReview();
+  } catch (error) {
+    console.error("Review mark save failed:", error);
+  }
+
+  renderQuestion();
+});
+
+$("submitBtn").addEventListener("click", () => submitTest(false));
+
+$("exitBtn").addEventListener("click", async () => {
+  if (!confirm("Leave this test? Your attempt remains in progress and the timer continues.")) {
+    return;
+  }
+
+  clearInterval(state.timer);
+  showScreen("dashboard");
+  await loadDashboard();
+});
+
+$("refreshBtn").addEventListener("click", async () => {
+  try {
+    await loadDashboard();
+  } catch (error) {
+    showError(`${error.code || ""} ${error.message}`);
+  }
+});
+
+$("resultBackBtn").addEventListener("click", async () => {
+  showScreen("dashboard");
+  await loadDashboard();
+});
+
+document.querySelectorAll("[data-filter]").forEach(button => {
+  button.addEventListener("click", () => {
+    document.querySelectorAll("[data-filter]").forEach(item =>
+      item.classList.remove("active")
+    );
+    button.classList.add("active");
+    state.filter = button.dataset.filter;
+    renderTests();
+  });
+});
+
+$("retryBtn").addEventListener("click", async () => {
+  showScreen("loadingScreen");
+  await initializeStudent();
+});
+
+$("loginBtn").addEventListener("click", () => {
+  window.location.href = "../../login/";
+});
+
+$("logoutBtn").addEventListener("click", async () => {
+  if (state.attemptRef &&
+      !confirm("Your test is still in progress. Sign out anyway?")) {
+    return;
+  }
+
+  try {
+    await signOut(auth);
+    window.location.href = "../../login/";
+  } catch (error) {
+    alert(`Could not sign out: ${error.message}`);
+  }
+});
+
+async function initializeStudent() {
+  if (!state.user) {
+    showError("You are not signed in. Please log in to Zenova.");
+    return;
+  }
+
+  try {
+    await loadStudentProfile(state.user);
+    await loadDashboard();
+    showScreen("dashboard");
+  } catch (error) {
+    console.error("ZENOVA STUDENT TEST PORTAL:", error.code, error.message);
+    showError(
+      `${error.code ? error.code + ": " : ""}${error.message}`
+    );
+  }
+}
+
+onAuthStateChanged(auth, async user => {
+  state.user = user;
+
+  if (!user) {
+    showError("You are not signed in. Please log in to Zenova.");
+    return;
+  }
+
+  await initializeStudent();
+});
+</script>
 </body>
 </html>
