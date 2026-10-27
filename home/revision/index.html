@@ -706,14 +706,14 @@ async function loadStudent() {
   const snapshot = await getDoc(doc(db, "zen2Students", state.user.uid));
 
   if (!snapshot.exists()) {
-    window.location.replace("../account/onboarding/");
+    window.location.replace("/account/onboarding/");
     throw new Error("Please complete your student profile first.");
   }
 
   state.student = snapshot.data();
 
   if (state.student.onboardingComplete === false) {
-    window.location.replace("../account/onboarding/");
+    window.location.replace(/account/onboarding/");
     throw new Error("Please complete your student profile first.");
   }
 }
