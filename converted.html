@@ -1,0 +1,668 @@
+<p>&lt;!DOCTYPE html&gt;</p>
+<p>&lt;html lang="en"&gt;</p>
+<p>&lt;head&gt;</p>
+<p>&lt;meta charset="UTF-8"&gt;</p>
+<p>&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</p>
+<p>&lt;title&gt;Zenova Educations | SSLC Mathematics&lt;/title&gt;</p>
+<p>&lt;!-- Mathematical equation rendering --&gt;</p>
+<p>&lt;script&gt;</p>
+<p>&nbsp; window.MathJax = {</p>
+<p>&nbsp; &nbsp; tex: { inlineMath: [['\\(', '\\)'], ['$', '$']] },</p>
+<p>&nbsp; &nbsp; startup: { typeset: true }</p>
+<p>&nbsp; };</p>
+<p>&lt;/script&gt;</p>
+<p>&lt;script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"&gt;&lt;/script&gt;</p>
+<p>&lt;style&gt;</p>
+<p>:root {</p>
+<p>&nbsp; --blue: #3978E8;</p>
+<p>&nbsp; --dark: #12396F;</p>
+<p>&nbsp; --light: #EAF2FF;</p>
+<p>&nbsp; --bg: #F7F9FC;</p>
+<p>&nbsp; --text: #172338;</p>
+<p>&nbsp; --muted: #7B8799;</p>
+<p>&nbsp; --green: #159B78;</p>
+<p>&nbsp; --border: #DCE7F7;</p>
+<p>}</p>
+<p>* { box-sizing: border-box; }</p>
+<p>body {</p>
+<p>&nbsp; margin: 0;</p>
+<p>&nbsp; background: #E7EDF5;</p>
+<p>&nbsp; color: var(--text);</p>
+<p>&nbsp; font-family: "Segoe UI", Arial, sans-serif;</p>
+<p>}</p>
+<p>.app {</p>
+<p>&nbsp; width: min(1500px, 100%);</p>
+<p>&nbsp; margin: auto;</p>
+<p>&nbsp; background: white;</p>
+<p>&nbsp; min-height: 100vh;</p>
+<p>&nbsp; display: flex;</p>
+<p>&nbsp; flex-direction: column;</p>
+<p>}</p>
+<p>header {</p>
+<p>&nbsp; display: flex;</p>
+<p>&nbsp; align-items: center;</p>
+<p>&nbsp; justify-content: space-between;</p>
+<p>&nbsp; gap: 16px;</p>
+<p>&nbsp; padding: 18px 26px;</p>
+<p>&nbsp; border-bottom: 3px solid #B9D6FF;</p>
+<p>&nbsp; background: white;</p>
+<p>&nbsp; flex-wrap: wrap;</p>
+<p>}</p>
+<p>.brand {</p>
+<p>&nbsp; display: flex;</p>
+<p>&nbsp; align-items: center;</p>
+<p>&nbsp; gap: 10px;</p>
+<p>&nbsp; color: var(--dark);</p>
+<p>&nbsp; font-size: 21px;</p>
+<p>&nbsp; font-weight: 800;</p>
+<p>}</p>
+<p>.logo {</p>
+<p>&nbsp; width: 43px;</p>
+<p>&nbsp; height: 43px;</p>
+<p>&nbsp; border-radius: 12px;</p>
+<p>&nbsp; display: grid;</p>
+<p>&nbsp; place-items: center;</p>
+<p>&nbsp; background: var(--blue);</p>
+<p>&nbsp; color: white;</p>
+<p>&nbsp; font-size: 29px;</p>
+<p>}</p>
+<p>.subtitle {</p>
+<p>&nbsp; color: var(--muted);</p>
+<p>&nbsp; font-size: 12px;</p>
+<p>&nbsp; margin-top: 3px;</p>
+<p>}</p>
+<p>.header-tag {</p>
+<p>&nbsp; color: var(--blue);</p>
+<p>&nbsp; font-weight: 700;</p>
+<p>&nbsp; font-size: 14px;</p>
+<p>}</p>
+<p>main { padding: 22px; flex: 1; }</p>
+<p>.lesson-heading {</p>
+<p>&nbsp; display: flex;</p>
+<p>&nbsp; align-items: center;</p>
+<p>&nbsp; justify-content: space-between;</p>
+<p>&nbsp; gap: 12px;</p>
+<p>&nbsp; flex-wrap: wrap;</p>
+<p>&nbsp; margin-bottom: 18px;</p>
+<p>}</p>
+<p>.lesson-heading h1 {</p>
+<p>&nbsp; color: var(--dark);</p>
+<p>&nbsp; font-size: clamp(20px, 3vw, 30px);</p>
+<p>&nbsp; margin: 0 0 7px;</p>
+<p>}</p>
+<p>.lesson-heading p {</p>
+<p>&nbsp; margin: 0;</p>
+<p>&nbsp; color: var(--muted);</p>
+<p>&nbsp; font-size: 14px;</p>
+<p>}</p>
+<p>.pill {</p>
+<p>&nbsp; padding: 10px 15px;</p>
+<p>&nbsp; border-radius: 30px;</p>
+<p>&nbsp; background: var(--light);</p>
+<p>&nbsp; color: var(--blue);</p>
+<p>&nbsp; font-weight: 700;</p>
+<p>&nbsp; font-size: 13px;</p>
+<p>}</p>
+<p>.question {</p>
+<p>&nbsp; padding: 20px;</p>
+<p>&nbsp; background: linear-gradient(110deg, #EAF2FF, #F9FBFF);</p>
+<p>&nbsp; border: 1px solid #BBD5FF;</p>
+<p>&nbsp; border-radius: 16px;</p>
+<p>&nbsp; margin-bottom: 18px;</p>
+<p>}</p>
+<p>.question-label {</p>
+<p>&nbsp; color: var(--blue);</p>
+<p>&nbsp; font-weight: 800;</p>
+<p>&nbsp; font-size: 13px;</p>
+<p>&nbsp; margin-bottom: 13px;</p>
+<p>}</p>
+<p>.question-equation {</p>
+<p>&nbsp; text-align: center;</p>
+<p>&nbsp; font-size: clamp(19px, 3vw, 28px);</p>
+<p>&nbsp; font-weight: 600;</p>
+<p>&nbsp; overflow-x: auto;</p>
+<p>&nbsp; padding: 8px 0;</p>
+<p>}</p>
+<p>.grid {</p>
+<p>&nbsp; display: grid;</p>
+<p>&nbsp; grid-template-columns: minmax(0, 1fr) minmax(260px, 0.68fr);</p>
+<p>&nbsp; gap: 18px;</p>
+<p>}</p>
+<p>.panel {</p>
+<p>&nbsp; border: 1px solid var(--border);</p>
+<p>&nbsp; border-radius: 16px;</p>
+<p>&nbsp; overflow: hidden;</p>
+<p>&nbsp; background: white;</p>
+<p>}</p>
+<p>.panel-title {</p>
+<p>&nbsp; background: var(--dark);</p>
+<p>&nbsp; color: white;</p>
+<p>&nbsp; padding: 15px 18px;</p>
+<p>&nbsp; font-weight: 800;</p>
+<p>&nbsp; font-size: 17px;</p>
+<p>}</p>
+<p>.panel-content { padding: 20px; }</p>
+<p>.step {</p>
+<p>&nbsp; display: none;</p>
+<p>&nbsp; animation: reveal 0.55s ease both;</p>
+<p>}</p>
+<p>.step.active { display: block; }</p>
+<p>@keyframes reveal {</p>
+<p>&nbsp; from { opacity: 0; transform: translateY(12px); }</p>
+<p>&nbsp; to { opacity: 1; transform: translateY(0); }</p>
+<p>}</p>
+<p>.step-number {</p>
+<p>&nbsp; display: inline-block;</p>
+<p>&nbsp; padding: 7px 12px;</p>
+<p>&nbsp; color: var(--dark);</p>
+<p>&nbsp; background: var(--light);</p>
+<p>&nbsp; border-radius: 8px;</p>
+<p>&nbsp; font-weight: 800;</p>
+<p>&nbsp; font-size: 13px;</p>
+<p>&nbsp; margin-bottom: 16px;</p>
+<p>}</p>
+<p>.equation {</p>
+<p>&nbsp; text-align: center;</p>
+<p>&nbsp; font-size: clamp(20px, 2.7vw, 29px);</p>
+<p>&nbsp; padding: 18px 4px;</p>
+<p>&nbsp; min-height: 88px;</p>
+<p>&nbsp; display: flex;</p>
+<p>&nbsp; align-items: center;</p>
+<p>&nbsp; justify-content: center;</p>
+<p>&nbsp; overflow-x: auto;</p>
+<p>}</p>
+<p>.explanation {</p>
+<p>&nbsp; background: #FFF6DF;</p>
+<p>&nbsp; color: #5D4A1D;</p>
+<p>&nbsp; border-radius: 10px;</p>
+<p>&nbsp; padding: 14px 16px;</p>
+<p>&nbsp; line-height: 1.65;</p>
+<p>&nbsp; font-size: 15px;</p>
+<p>&nbsp; margin-top: 12px;</p>
+<p>}</p>
+<p>.step-counter {</p>
+<p>&nbsp; color: var(--muted);</p>
+<p>&nbsp; font-size: 13px;</p>
+<p>&nbsp; margin-top: 18px;</p>
+<p>&nbsp; text-align: center;</p>
+<p>}</p>
+<p>.side-card {</p>
+<p>&nbsp; border: 1px solid var(--border);</p>
+<p>&nbsp; border-radius: 12px;</p>
+<p>&nbsp; margin-bottom: 15px;</p>
+<p>&nbsp; overflow: hidden;</p>
+<p>}</p>
+<p>.side-title {</p>
+<p>&nbsp; padding: 12px 15px;</p>
+<p>&nbsp; background: var(--light);</p>
+<p>&nbsp; color: var(--dark);</p>
+<p>&nbsp; font-weight: 800;</p>
+<p>}</p>
+<p>.side-body {</p>
+<p>&nbsp; padding: 15px;</p>
+<p>&nbsp; font-size: 14px;</p>
+<p>&nbsp; line-height: 1.9;</p>
+<p>}</p>
+<p>.identity {</p>
+<p>&nbsp; padding: 8px 0;</p>
+<p>&nbsp; border-bottom: 1px solid #EDF1F7;</p>
+<p>}</p>
+<p>.identity:last-child { border-bottom: 0; }</p>
+<p>.tip {</p>
+<p>&nbsp; background: #FFF0EF;</p>
+<p>&nbsp; border-color: #FFD5D1;</p>
+<p>}</p>
+<p>.tip .side-title {</p>
+<p>&nbsp; background: #FFE2DF;</p>
+<p>&nbsp; color: #B72D25;</p>
+<p>}</p>
+<p>.tip-list {</p>
+<p>&nbsp; padding-left: 20px;</p>
+<p>&nbsp; margin: 0;</p>
+<p>}</p>
+<p>.final-result {</p>
+<p>&nbsp; background: #E2F8E9;</p>
+<p>&nbsp; color: #126C3B;</p>
+<p>&nbsp; padding: 16px;</p>
+<p>&nbsp; border-radius: 12px;</p>
+<p>&nbsp; text-align: center;</p>
+<p>&nbsp; font-weight: 800;</p>
+<p>&nbsp; font-size: 20px;</p>
+<p>&nbsp; margin-top: 20px;</p>
+<p>}</p>
+<p>.controls {</p>
+<p>&nbsp; position: sticky;</p>
+<p>&nbsp; bottom: 0;</p>
+<p>&nbsp; background: #10233F;</p>
+<p>&nbsp; color: white;</p>
+<p>&nbsp; padding: 14px 20px;</p>
+<p>&nbsp; z-index: 5;</p>
+<p>}</p>
+<p>.progress-info {</p>
+<p>&nbsp; display: flex;</p>
+<p>&nbsp; justify-content: space-between;</p>
+<p>&nbsp; gap: 10px;</p>
+<p>&nbsp; font-size: 12px;</p>
+<p>&nbsp; color: #D6E4FA;</p>
+<p>&nbsp; margin-bottom: 10px;</p>
+<p>}</p>
+<p>.progress-track {</p>
+<p>&nbsp; height: 6px;</p>
+<p>&nbsp; background: #53647C;</p>
+<p>&nbsp; border-radius: 10px;</p>
+<p>&nbsp; overflow: hidden;</p>
+<p>&nbsp; margin-bottom: 14px;</p>
+<p>}</p>
+<p>.progress-fill {</p>
+<p>&nbsp; height: 100%;</p>
+<p>&nbsp; width: 0%;</p>
+<p>&nbsp; background: #398DFF;</p>
+<p>&nbsp; transition: width 0.4s;</p>
+<p>}</p>
+<p>.buttons {</p>
+<p>&nbsp; display: flex;</p>
+<p>&nbsp; justify-content: center;</p>
+<p>&nbsp; align-items: center;</p>
+<p>&nbsp; gap: 10px;</p>
+<p>&nbsp; flex-wrap: wrap;</p>
+<p>}</p>
+<p>button, select {</p>
+<p>&nbsp; font: inherit;</p>
+<p>&nbsp; cursor: pointer;</p>
+<p>}</p>
+<p>.btn {</p>
+<p>&nbsp; border: 1px solid #60738E;</p>
+<p>&nbsp; background: #203956;</p>
+<p>&nbsp; color: white;</p>
+<p>&nbsp; border-radius: 9px;</p>
+<p>&nbsp; padding: 10px 15px;</p>
+<p>&nbsp; font-weight: 700;</p>
+<p>}</p>
+<p>.btn:hover { background: #315578; }</p>
+<p>.btn.primary {</p>
+<p>&nbsp; background: var(--blue);</p>
+<p>&nbsp; border-color: var(--blue);</p>
+<p>}</p>
+<p>.btn.primary:hover { background: #245FC9; }</p>
+<p>.btn:disabled {</p>
+<p>&nbsp; opacity: 0.4;</p>
+<p>&nbsp; cursor: not-allowed;</p>
+<p>}</p>
+<p>.speed {</p>
+<p>&nbsp; background: #203956;</p>
+<p>&nbsp; border: 1px solid #60738E;</p>
+<p>&nbsp; color: white;</p>
+<p>&nbsp; padding: 10px;</p>
+<p>&nbsp; border-radius: 9px;</p>
+<p>}</p>
+<p>footer {</p>
+<p>&nbsp; padding: 16px;</p>
+<p>&nbsp; text-align: center;</p>
+<p>&nbsp; font-size: 12px;</p>
+<p>&nbsp; color: var(--muted);</p>
+<p>&nbsp; border-top: 1px solid var(--border);</p>
+<p>}</p>
+<p>@media (max-width: 850px) {</p>
+<p>&nbsp; main { padding: 13px; }</p>
+<p>&nbsp; .grid { grid-template-columns: 1fr; }</p>
+<p>&nbsp; header { padding: 13px; }</p>
+<p>&nbsp; .panel-content { padding: 14px; }</p>
+<p>&nbsp; .controls { padding: 12px 8px; }</p>
+<p>&nbsp; .btn { padding: 10px 12px; }</p>
+<p>}</p>
+<p>@media (prefers-reduced-motion: reduce) {</p>
+<p>&nbsp; *, *::before, *::after {</p>
+<p>&nbsp; &nbsp; animation-duration: 0.01ms !important;</p>
+<p>&nbsp; &nbsp; transition-duration: 0.01ms !important;</p>
+<p>&nbsp; }</p>
+<p>}</p>
+<p>&lt;/style&gt;</p>
+<p>&lt;/head&gt;</p>
+<p>&lt;body&gt;</p>
+<p>&lt;div class="app"&gt;</p>
+<p>&lt;header&gt;</p>
+<p>&nbsp; &lt;div class="brand"&gt;</p>
+<p>&nbsp; &nbsp; &lt;div class="logo"&gt;Z&lt;/div&gt;</p>
+<p>&nbsp; &nbsp; &lt;div&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; Zenova Educations</p>
+<p>&nbsp; &nbsp; &nbsp; &lt;div class="subtitle"&gt;Learn · Practice · Excel&lt;/div&gt;</p>
+<p>&nbsp; &nbsp; &lt;/div&gt;</p>
+<p>&nbsp; &lt;/div&gt;</p>
+<p>&nbsp; &lt;div class="header-tag"&gt;SSLC MATHEMATICS · 2026–27&lt;/div&gt;</p>
+<p>&lt;/header&gt;</p>
+<p>&lt;main&gt;</p>
+<p>&nbsp; &lt;div class="lesson-heading"&gt;</p>
+<p>&nbsp; &nbsp; &lt;div&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &lt;h1&gt;Introduction to Trigonometry&lt;/h1&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &lt;p&gt;Chapter 8 · Karnataka SSLC Mathematics&lt;/p&gt;</p>
+<p>&nbsp; &nbsp; &lt;/div&gt;</p>
+<p>&nbsp; &nbsp; &lt;div class="pill"&gt;EXERCISE 8.3 · Q. 4(i)&lt;/div&gt;</p>
+<p>&nbsp; &lt;/div&gt;</p>
+<p>&nbsp; &lt;section class="question"&gt;</p>
+<p>&nbsp; &nbsp; &lt;div class="question-label"&gt;TODAY'S CHALLENGE · PROVE THE IDENTITY&lt;/div&gt;</p>
+<p>&nbsp; &nbsp; &lt;div class="question-equation"&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; \[</p>
+<p>&nbsp; &nbsp; &nbsp; (\cosec\theta-\cot\theta)^2</p>
+<p>&nbsp; &nbsp; &nbsp; =\frac{1-\cos\theta}{1+\cos\theta}</p>
+<p>&nbsp; &nbsp; &nbsp; \]</p>
+<p>&nbsp; &nbsp; &lt;/div&gt;</p>
+<p>&nbsp; &lt;/section&gt;</p>
+<p>&nbsp; &lt;div class="grid"&gt;</p>
+<p>&nbsp; &nbsp; &lt;section class="panel"&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &lt;div class="panel-title"&gt;▶ Guided Solution&lt;/div&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &lt;div class="panel-content"&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &lt;div class="step active"&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;span class="step-number"&gt;STEP 1 · START&lt;/span&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;div class="equation"&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; \[</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; \text{LHS}=(\cosec\theta-\cot\theta)^2</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; \]</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;/div&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;div class="explanation"&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Teacher: We need to prove that the left-hand side equals the right-hand side. We will simplify only the LHS.</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;/div&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &lt;/div&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &lt;div class="step"&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;span class="step-number"&gt;STEP 2 · USE IDENTITIES&lt;/span&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;div class="equation"&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; \[</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; =\left(</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; \frac{1}{\sin\theta}</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; -\frac{\cos\theta}{\sin\theta}</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; \right)^2</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; \]</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;/div&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;div class="explanation"&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Teacher: Recall that cosec theta is one divided by sin theta, and cot theta is cos theta divided by sin theta. Substitute these values.</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;/div&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &lt;/div&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &lt;div class="step"&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;span class="step-number"&gt;STEP 3 · COMMON DENOMINATOR&lt;/span&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;div class="equation"&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; \[</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; =\left(\frac{1-\cos\theta}{\sin\theta}\right)^2</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; \]</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;/div&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;div class="explanation"&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Teacher: Both fractions have the same denominator. Subtract their numerators, keeping sin theta as the denominator.</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;/div&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &lt;/div&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &lt;div class="step"&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;span class="step-number"&gt;STEP 4 · SQUARE&lt;/span&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;div class="equation"&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; \[</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; =\frac{(1-\cos\theta)^2}{\sin^2\theta}</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; \]</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;/div&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;div class="explanation"&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Teacher: When we square a fraction, we square both the numerator and the denominator.</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;/div&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &lt;/div&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &lt;div class="step"&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;span class="step-number"&gt;STEP 5 · PYTHAGOREAN IDENTITY&lt;/span&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;div class="equation"&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; \[</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; =\frac{(1-\cos\theta)^2}{1-\cos^2\theta}</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; \]</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;/div&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;div class="explanation"&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Teacher: We know that sin squared theta equals one minus cos squared theta. Substitute this identity in the denominator.</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;/div&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &lt;/div&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &lt;div class="step"&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;span class="step-number"&gt;STEP 6 · FACTORISE&lt;/span&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;div class="equation"&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; \[</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; =\frac{(1-\cos\theta)^2}</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; {(1-\cos\theta)(1+\cos\theta)}</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; \]</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;/div&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;div class="explanation"&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Teacher: Use the difference of squares formula: one minus cos squared theta equals (one minus cos theta) multiplied by (one plus cos theta).</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;/div&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &lt;/div&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &lt;div class="step"&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;span class="step-number"&gt;STEP 7 · CANCEL THE COMMON FACTOR&lt;/span&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;div class="equation"&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; \[</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; =\frac{1-\cos\theta}{1+\cos\theta}</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; =\text{RHS}</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; \]</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;/div&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;div class="explanation"&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Teacher: Cancel the common factor one minus cos theta from the numerator and denominator. The result is exactly the RHS.</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;/div&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;div class="final-result"&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ✓ Hence Proved!</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;/div&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &lt;/div&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &lt;div class="step-counter" id="stepCounter"&gt;Step 1 of 7&lt;/div&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &lt;/div&gt;</p>
+<p>&nbsp; &nbsp; &lt;/section&gt;</p>
+<p>&nbsp; &nbsp; &lt;aside&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &lt;div class="side-card"&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &lt;div class="side-title"&gt;Key Identities Used&lt;/div&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &lt;div class="side-body"&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;div class="identity"&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; \(\displaystyle \cosec\theta=\frac1{\sin\theta}\)</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;/div&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;div class="identity"&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; \(\displaystyle \cot\theta=\frac{\cos\theta}{\sin\theta}\)</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;/div&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;div class="identity"&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; \(\displaystyle \sin^2\theta=1-\cos^2\theta\)</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;/div&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;div class="identity"&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; \(\displaystyle 1-\cos^2\theta=(1-\cos\theta)(1+\cos\theta)\)</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;/div&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &lt;/div&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &lt;/div&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &lt;div class="side-card tip"&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &lt;div class="side-title"&gt;Important Exam Tips&lt;/div&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &lt;div class="side-body"&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;ol class="tip-list"&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;li&gt;Start with one side only.&lt;/li&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;li&gt;Convert ratios into sin and cos.&lt;/li&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;li&gt;Use identities carefully.&lt;/li&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;li&gt;Factorise before cancelling.&lt;/li&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;li&gt;Write “Hence proved” at the end.&lt;/li&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;/ol&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &lt;/div&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &lt;/div&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &lt;div class="side-card"&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &lt;div class="side-title"&gt;Learning Progress&lt;/div&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &lt;div class="side-body"&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;div id="progressText"&gt;0% completed&lt;/div&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;div class="progress-track" style="background:#EAF2FF;margin-top:10px"&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;div class="progress-fill" id="sideProgress"&gt;&lt;/div&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;/div&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;p style="color:#7B8799"&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Follow every step before moving to the next one.</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;/p&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &lt;/div&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &lt;/div&gt;</p>
+<p>&nbsp; &nbsp; &lt;/aside&gt;</p>
+<p>&nbsp; &lt;/div&gt;</p>
+<p>&lt;/main&gt;</p>
+<p>&lt;div class="controls"&gt;</p>
+<p>&nbsp; &lt;div class="progress-info"&gt;</p>
+<p>&nbsp; &nbsp; &lt;span id="controlStep"&gt;STEP 1 / 7&lt;/span&gt;</p>
+<p>&nbsp; &nbsp; &lt;span id="timer"&gt;00:00&lt;/span&gt;</p>
+<p>&nbsp; &lt;/div&gt;</p>
+<p>&nbsp; &lt;div class="progress-track"&gt;</p>
+<p>&nbsp; &nbsp; &lt;div class="progress-fill" id="mainProgress"&gt;&lt;/div&gt;</p>
+<p>&nbsp; &lt;/div&gt;</p>
+<p>&nbsp; &lt;div class="buttons"&gt;</p>
+<p>&nbsp; &nbsp; &lt;button class="btn" id="prevBtn" onclick="previousStep()"&gt;◀ Previous&lt;/button&gt;</p>
+<p>&nbsp; &nbsp; &lt;button class="btn primary" id="playBtn" onclick="togglePlay()"&gt;▶ Play&lt;/button&gt;</p>
+<p>&nbsp; &nbsp; &lt;button class="btn" id="nextBtn" onclick="nextStep()"&gt;Next ▶&lt;/button&gt;</p>
+<p>&nbsp; &nbsp; &lt;button class="btn" onclick="restartLesson()"&gt;↺ Restart&lt;/button&gt;</p>
+<p>&nbsp; &nbsp; &lt;button class="btn" id="voiceBtn" onclick="toggleVoice()"&gt;🔊 Voice: Off&lt;/button&gt;</p>
+<p>&nbsp; &nbsp; &lt;select class="speed" id="speedSelect" aria-label="Playback speed"&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &lt;option value="7000"&gt;0.5×&lt;/option&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &lt;option value="5000" selected&gt;1×&lt;/option&gt;</p>
+<p>&nbsp; &nbsp; &nbsp; &lt;option value="3000"&gt;1.5×&lt;/option&gt;</p>
+<p>&nbsp; &nbsp; &lt;/select&gt;</p>
+<p>&nbsp; &lt;/div&gt;</p>
+<p>&lt;/div&gt;</p>
+<p>&lt;footer&gt;</p>
+<p>&nbsp; Zenova Educations · Learn · Practice · Excel</p>
+<p>&nbsp; &lt;br&gt;Interactive SSLC Mathematics lesson</p>
+<p>&lt;/footer&gt;</p>
+<p>&lt;/div&gt;</p>
+<p>&lt;script&gt;</p>
+<p>const steps = [...document.querySelectorAll(".step")];</p>
+<p>let currentStep = 0;</p>
+<p>let playing = false;</p>
+<p>let voiceEnabled = false;</p>
+<p>let timerStarted = Date.now();</p>
+<p>let elapsedBeforePause = 0;</p>
+<p>let intervalId = null;</p>
+<p>let clockId = null;</p>
+<p>const playBtn = document.getElementById("playBtn");</p>
+<p>const voiceBtn = document.getElementById("voiceBtn");</p>
+<p>const narration = [</p>
+<p>&nbsp; "Step one. We start with the left-hand side. Our goal is to prove that it equals the right-hand side.",</p>
+<p>&nbsp; "Step two. Cosecant theta equals one divided by sine theta. Cotangent theta equals cosine theta divided by sine theta. Substitute these identities.",</p>
+<p>&nbsp; "Step three. Both fractions have the same denominator. Subtract their numerators.",</p>
+<p>&nbsp; "Step four. Square the numerator and the denominator.",</p>
+<p>&nbsp; "Step five. Use the identity sine squared theta equals one minus cosine squared theta.",</p>
+<p>&nbsp; "Step six. Factorise one minus cosine squared theta into one minus cosine theta multiplied by one plus cosine theta.",</p>
+<p>&nbsp; "Step seven. Cancel the common factor one minus cosine theta. We obtain the right-hand side. Hence proved."</p>
+<p>];</p>
+<p>function renderStep() {</p>
+<p>&nbsp; steps.forEach((step, i) =&gt; {</p>
+<p>&nbsp; &nbsp; step.classList.toggle("active", i === currentStep);</p>
+<p>&nbsp; });</p>
+<p>&nbsp; const percent = ((currentStep + 1) / steps.length) * 100;</p>
+<p>&nbsp; document.getElementById("stepCounter").textContent =</p>
+<p>&nbsp; &nbsp; `Step ${currentStep + 1} of ${steps.length}`;</p>
+<p>&nbsp; document.getElementById("controlStep").textContent =</p>
+<p>&nbsp; &nbsp; `STEP ${currentStep + 1} / ${steps.length}`;</p>
+<p>&nbsp; document.getElementById("mainProgress").style.width = percent + "%";</p>
+<p>&nbsp; document.getElementById("sideProgress").style.width = percent + "%";</p>
+<p>&nbsp; document.getElementById("progressText").textContent =</p>
+<p>&nbsp; &nbsp; Math.round(percent) + "% completed";</p>
+<p>&nbsp; document.getElementById("prevBtn").disabled = currentStep === 0;</p>
+<p>&nbsp; document.getElementById("nextBtn").disabled =</p>
+<p>&nbsp; &nbsp; currentStep === steps.length - 1;</p>
+<p>&nbsp; if (window.MathJax &amp;&amp; MathJax.typesetPromise) {</p>
+<p>&nbsp; &nbsp; MathJax.typesetPromise([steps[currentStep]]).catch(console.error);</p>
+<p>&nbsp; }</p>
+<p>}</p>
+<p>function speakCurrentStep() {</p>
+<p>&nbsp; if (!voiceEnabled || !("speechSynthesis" in window)) return;</p>
+<p>&nbsp; speechSynthesis.cancel();</p>
+<p>&nbsp; const utterance = new SpeechSynthesisUtterance(</p>
+<p>&nbsp; &nbsp; narration[currentStep]</p>
+<p>&nbsp; );</p>
+<p>&nbsp; utterance.lang = "en-IN";</p>
+<p>&nbsp; utterance.rate = 0.9;</p>
+<p>&nbsp; utterance.pitch = 1;</p>
+<p>&nbsp; utterance.onend = () =&gt; {</p>
+<p>&nbsp; &nbsp; if (playing &amp;&amp; currentStep &lt; steps.length - 1) {</p>
+<p>&nbsp; &nbsp; &nbsp; intervalId = setTimeout(nextStep, 700);</p>
+<p>&nbsp; &nbsp; } else if (playing) {</p>
+<p>&nbsp; &nbsp; &nbsp; stopPlayback();</p>
+<p>&nbsp; &nbsp; }</p>
+<p>&nbsp; };</p>
+<p>&nbsp; speechSynthesis.speak(utterance);</p>
+<p>}</p>
+<p>function nextStep() {</p>
+<p>&nbsp; if (currentStep &lt; steps.length - 1) {</p>
+<p>&nbsp; &nbsp; currentStep++;</p>
+<p>&nbsp; &nbsp; renderStep();</p>
+<p>&nbsp; &nbsp; if (playing) {</p>
+<p>&nbsp; &nbsp; &nbsp; if (voiceEnabled) {</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; speakCurrentStep();</p>
+<p>&nbsp; &nbsp; &nbsp; } else {</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; clearTimeout(intervalId);</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; intervalId = setTimeout(</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; nextStep,</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Number(document.getElementById("speedSelect").value)</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; );</p>
+<p>&nbsp; &nbsp; &nbsp; }</p>
+<p>&nbsp; &nbsp; }</p>
+<p>&nbsp; } else {</p>
+<p>&nbsp; &nbsp; stopPlayback();</p>
+<p>&nbsp; }</p>
+<p>}</p>
+<p>function previousStep() {</p>
+<p>&nbsp; stopPlayback();</p>
+<p>&nbsp; currentStep = Math.max(0, currentStep - 1);</p>
+<p>&nbsp; renderStep();</p>
+<p>}</p>
+<p>function togglePlay() {</p>
+<p>&nbsp; if (playing) {</p>
+<p>&nbsp; &nbsp; stopPlayback();</p>
+<p>&nbsp; &nbsp; return;</p>
+<p>&nbsp; }</p>
+<p>&nbsp; if (currentStep === steps.length - 1) {</p>
+<p>&nbsp; &nbsp; currentStep = 0;</p>
+<p>&nbsp; &nbsp; renderStep();</p>
+<p>&nbsp; }</p>
+<p>&nbsp; playing = true;</p>
+<p>&nbsp; playBtn.textContent = "⏸ Pause";</p>
+<p>&nbsp; if (voiceEnabled) {</p>
+<p>&nbsp; &nbsp; speakCurrentStep();</p>
+<p>&nbsp; } else {</p>
+<p>&nbsp; &nbsp; intervalId = setTimeout(</p>
+<p>&nbsp; &nbsp; &nbsp; nextStep,</p>
+<p>&nbsp; &nbsp; &nbsp; Number(document.getElementById("speedSelect").value)</p>
+<p>&nbsp; &nbsp; );</p>
+<p>&nbsp; }</p>
+<p>}</p>
+<p>function stopPlayback() {</p>
+<p>&nbsp; playing = false;</p>
+<p>&nbsp; clearTimeout(intervalId);</p>
+<p>&nbsp; playBtn.textContent = "▶ Play";</p>
+<p>&nbsp; if ("speechSynthesis" in window) {</p>
+<p>&nbsp; &nbsp; speechSynthesis.cancel();</p>
+<p>&nbsp; }</p>
+<p>}</p>
+<p>function restartLesson() {</p>
+<p>&nbsp; stopPlayback();</p>
+<p>&nbsp; currentStep = 0;</p>
+<p>&nbsp; elapsedBeforePause = 0;</p>
+<p>&nbsp; timerStarted = Date.now();</p>
+<p>&nbsp; renderStep();</p>
+<p>&nbsp; updateClock();</p>
+<p>}</p>
+<p>function toggleVoice() {</p>
+<p>&nbsp; voiceEnabled = !voiceEnabled;</p>
+<p>&nbsp; voiceBtn.textContent = voiceEnabled</p>
+<p>&nbsp; &nbsp; ? "🔊 Voice: On"</p>
+<p>&nbsp; &nbsp; : "🔊 Voice: Off";</p>
+<p>&nbsp; if (voiceEnabled &amp;&amp; !("speechSynthesis" in window)) {</p>
+<p>&nbsp; &nbsp; voiceEnabled = false;</p>
+<p>&nbsp; &nbsp; voiceBtn.textContent = "Voice unavailable";</p>
+<p>&nbsp; &nbsp; alert("Text-to-speech is not supported by this browser.");</p>
+<p>&nbsp; &nbsp; return;</p>
+<p>&nbsp; }</p>
+<p>&nbsp; if (playing) {</p>
+<p>&nbsp; &nbsp; clearTimeout(intervalId);</p>
+<p>&nbsp; &nbsp; if (voiceEnabled) {</p>
+<p>&nbsp; &nbsp; &nbsp; speakCurrentStep();</p>
+<p>&nbsp; &nbsp; } else {</p>
+<p>&nbsp; &nbsp; &nbsp; speechSynthesis.cancel();</p>
+<p>&nbsp; &nbsp; &nbsp; intervalId = setTimeout(</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; nextStep,</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; Number(document.getElementById("speedSelect").value)</p>
+<p>&nbsp; &nbsp; &nbsp; );</p>
+<p>&nbsp; &nbsp; }</p>
+<p>&nbsp; }</p>
+<p>}</p>
+<p>function updateClock() {</p>
+<p>&nbsp; const elapsed = elapsedBeforePause +</p>
+<p>&nbsp; &nbsp; Math.floor((Date.now() - timerStarted) / 1000);</p>
+<p>&nbsp; const minutes = String(Math.floor(elapsed / 60)).padStart(2, "0");</p>
+<p>&nbsp; const seconds = String(elapsed % 60).padStart(2, "0");</p>
+<p>&nbsp; document.getElementById("timer").textContent =</p>
+<p>&nbsp; &nbsp; `${minutes}:${seconds}`;</p>
+<p>}</p>
+<p>setInterval(updateClock, 1000);</p>
+<p>renderStep();</p>
+<p>updateClock();</p>
+<p>&lt;/script&gt;</p>
+<p>&lt;/body&gt;</p>
+<p>&lt;/html&gt;</p>
