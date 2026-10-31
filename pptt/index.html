@@ -4,8 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Zenova Educations | Geography Chapter 25</title>
+<title>Zenova Educations | SSLC Geography</title>
 
 <style>
 * {
@@ -14,32 +13,24 @@
     box-sizing: border-box;
 }
 
-html, body {
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-}
-
 body {
-    background: #0b1425;
-    font-family: Arial, sans-serif;
+    width: 100%;
+    height: 100vh;
+    background: #101827;
     display: flex;
     align-items: center;
     justify-content: center;
+    overflow: hidden;
+    font-family: "Times New Roman", serif;
 }
-
-/* MAIN PRESENTATION */
 
 .presentation {
     position: relative;
     width: min(100vw, 177.7778vh);
     aspect-ratio: 16 / 9;
-    background: #ffffff;
+    background: white;
     overflow: hidden;
-    box-shadow: 0 15px 60px rgba(0,0,0,0.35);
 }
-
-/* SLIDES */
 
 .slide {
     position: absolute;
@@ -48,51 +39,316 @@ body {
     height: 100%;
     display: none;
     overflow: hidden;
-    background: #ffffff;
 }
 
 .slide.active {
     display: block;
 }
 
-/* IMAGE FILLS SLIDE WITHOUT CROPPING */
-
-.slide img {
-    display: block;
+.background {
+    position: absolute;
+    inset: 0;
     width: 100%;
     height: 100%;
-    object-fit: contain;
-    object-position: center;
-    user-select: none;
-    -webkit-user-drag: none;
+    object-fit: fill;
+    z-index: 0;
 }
 
-/* CONTROL BAR */
+/* COMMON BRAND HEADER */
+
+.brand {
+    position: absolute;
+    top: 5.2%;
+    left: 4.5%;
+    z-index: 2;
+    color: #245fc9;
+    font-family: Arial, sans-serif;
+    font-weight: 800;
+    font-size: clamp(13px, 2.1vw, 30px);
+    letter-spacing: -1px;
+}
+
+.brand span {
+    display: block;
+    font-size: 0.30em;
+    letter-spacing: 0.48em;
+    margin-top: 3px;
+}
+
+.course-label {
+    position: absolute;
+    top: 15%;
+    left: 4.5%;
+    z-index: 2;
+    color: #243b60;
+    font-family: Arial, sans-serif;
+    font-size: clamp(7px, 0.95vw, 14px);
+    letter-spacing: 0.13em;
+    font-weight: 600;
+}
+
+.page-number {
+    position: absolute;
+    top: 5%;
+    right: 4.5%;
+    z-index: 2;
+    font-family: Arial, sans-serif;
+    color: #17345c;
+    font-size: clamp(12px, 1.7vw, 24px);
+}
+
+.chapter-tag {
+    display: inline-block;
+    background: #2866c5;
+    color: white;
+    font-family: Arial, sans-serif;
+    font-weight: bold;
+    letter-spacing: 0.18em;
+    padding: 0.45em 0.8em;
+    font-size: clamp(9px, 1.15vw, 17px);
+    margin-bottom: 2%;
+}
+
+.heading {
+    color: #10213e;
+    font-family: "Times New Roman", serif;
+    font-weight: bold;
+    line-height: 0.98;
+    letter-spacing: -0.025em;
+}
+
+.blue-line {
+    width: 65px;
+    height: 3px;
+    background: #2866c5;
+    margin-top: 3%;
+    margin-bottom: 3%;
+}
+
+/* SLIDE 1 */
+
+.slide1-content {
+    position: absolute;
+    z-index: 2;
+    left: 4.5%;
+    top: 23%;
+    width: 43%;
+    color: #142440;
+}
+
+.slide1-content h1 {
+    font-size: clamp(27px, 5.1vw, 76px);
+    line-height: 0.98;
+    margin-top: 2%;
+}
+
+.slide1-subtitle {
+    font-family: Arial, sans-serif;
+    color: #30415d;
+    font-size: clamp(8px, 1.05vw, 15px);
+    letter-spacing: 0.12em;
+    line-height: 1.7;
+    margin-top: 3%;
+    font-weight: 600;
+}
+
+/* SLIDE 2 */
+
+.slide2-content {
+    position: absolute;
+    z-index: 2;
+    left: 4.5%;
+    top: 21%;
+    width: 48%;
+    height: 74%;
+    display: flex;
+    flex-direction: column;
+    gap: 2.2%;
+}
+
+.slide-title {
+    font-size: clamp(22px, 3.7vw, 53px);
+    line-height: 0.98;
+    color: #10213e;
+    margin-bottom: 1%;
+}
+
+.definition {
+    background: rgba(255,255,255,0.94);
+    border: 1px solid #d5e4f7;
+    border-radius: 12px;
+    padding: 3%;
+    color: #253650;
+    font-family: Arial, sans-serif;
+    font-size: clamp(8px, 1.05vw, 14px);
+    line-height: 1.45;
+    box-shadow: 0 3px 12px rgba(30,60,100,0.06);
+}
+
+.definition strong {
+    color: #245fc9;
+    font-size: 1.12em;
+}
+
+.factor-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3%;
+    flex: 1;
+    min-height: 0;
+}
+
+.factor-card {
+    border-radius: 12px;
+    padding: 5%;
+    background: rgba(255,255,255,0.94);
+    border: 1px solid #dce5ed;
+    overflow: hidden;
+    font-family: Arial, sans-serif;
+}
+
+.factor-card h3 {
+    font-size: clamp(10px, 1.25vw, 17px);
+    margin-bottom: 5%;
+}
+
+.factor-card ul {
+    padding-left: 1.2em;
+    font-size: clamp(7px, 0.88vw, 12px);
+    line-height: 1.55;
+    color: #182536;
+}
+
+.natural {
+    background: rgba(245,251,240,0.96);
+    border-color: #cce2c1;
+}
+.natural h3 { color: #347a2d; }
+
+.economic {
+    background: rgba(255,247,237,0.96);
+    border-color: #f3d5b6;
+}
+.economic h3 { color: #c65d0c; }
+
+.social {
+    background: rgba(249,243,255,0.96);
+    border-color: #ddc9ef;
+}
+.social h3 { color: #7135a8; }
+
+.other {
+    background: rgba(255,242,242,0.96);
+    border-color: #efcccc;
+}
+.other h3 { color: #ae3333; }
+
+/* SLIDE 3 */
+
+.slide3-content {
+    position: absolute;
+    z-index: 2;
+    left: 4.5%;
+    top: 20%;
+    width: 49%;
+    height: 75%;
+    display: flex;
+    flex-direction: column;
+    gap: 3%;
+}
+
+.slide3-title {
+    font-size: clamp(25px, 4.1vw, 59px);
+    line-height: 0.98;
+}
+
+.info-card {
+    background: rgba(255,255,255,0.94);
+    border-radius: 13px;
+    padding: 3.5%;
+    border: 1px solid #dce5ed;
+    font-family: Arial, sans-serif;
+    color: #1c2938;
+}
+
+.info-card h3 {
+    font-size: clamp(11px, 1.45vw, 20px);
+    margin-bottom: 2%;
+}
+
+.info-card ul {
+    padding-left: 1.3em;
+    font-size: clamp(8px, 1.02vw, 14px);
+    line-height: 1.55;
+}
+
+.green-card {
+    background: rgba(246,251,241,0.96);
+    border-color: #d3e5c8;
+}
+
+.green-card h3 {
+    color: #347a2d;
+}
+
+.orange-card {
+    background: rgba(255,247,236,0.96);
+    border-color: #f3d7b4;
+}
+
+.orange-card h3 {
+    color: #a85a14;
+}
+
+.stat-strip {
+    background: rgba(255,255,255,0.96);
+    border: 1px solid #d5e3f4;
+    border-radius: 12px;
+    padding: 2.5%;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    gap: 3%;
+    font-family: Arial, sans-serif;
+    text-align: center;
+}
+
+.stat-strip strong {
+    color: #245fc9;
+    font-size: clamp(13px, 2vw, 27px);
+}
+
+.stat-strip small {
+    color: #35445b;
+    font-size: clamp(7px, 0.85vw, 12px);
+}
+
+/* CONTROLS */
 
 .controls {
     position: fixed;
     bottom: 20px;
     left: 50%;
     transform: translateX(-50%);
+    z-index: 100;
     display: flex;
     align-items: center;
-    gap: 15px;
-    background: rgba(12, 22, 40, 0.9);
-    color: #ffffff;
-    padding: 10px 18px;
-    border-radius: 50px;
-    z-index: 100;
-    transition: opacity 0.25s ease;
+    gap: 12px;
+    padding: 9px 14px;
+    border-radius: 40px;
+    background: rgba(12,22,40,0.93);
+    color: white;
+    font-family: Arial, sans-serif;
 }
 
 .controls button {
     background: #3978e8;
-    color: #ffffff;
+    color: white;
     border: none;
-    padding: 9px 17px;
-    border-radius: 30px;
-    font-size: 14px;
+    border-radius: 25px;
+    padding: 9px 15px;
     cursor: pointer;
+    font-size: 13px;
 }
 
 .controls button:hover {
@@ -105,83 +361,31 @@ body {
 }
 
 #counter {
-    font-size: 14px;
+    font-size: 13px;
     white-space: nowrap;
 }
 
-/* FULLSCREEN */
-
-body.fullscreen-mode .presentation {
-    width: min(100vw, 177.7778vh);
-    max-height: 100vh;
-}
-
-body.fullscreen-mode .controls {
+body.fullscreen .controls {
     opacity: 0;
+    transition: opacity .2s;
 }
 
-body.fullscreen-mode .controls:hover {
+body.fullscreen .controls:hover {
     opacity: 1;
 }
 
-/* MOBILE */
+/* SMALL SCREEN */
 
-@media (max-width: 600px) {
+@media(max-width: 600px) {
     .controls {
-        bottom: 12px;
-        gap: 8px;
-        padding: 8px 12px;
+        bottom: 8px;
+        gap: 5px;
+        padding: 6px 9px;
     }
 
     .controls button {
-        padding: 8px 12px;
-        font-size: 12px;
-    }
-
-    #counter {
-        font-size: 12px;
-    }
-}
-
-@media print {
-    @page {
-        size: 16in 9in;
-        margin: 0;
-    }
-
-    html, body {
-        width: 16in;
-        height: auto;
-        overflow: visible;
-        background: white;
-    }
-
-    .presentation {
-        width: 16in;
-        height: auto;
-        aspect-ratio: auto;
-        box-shadow: none;
-        overflow: visible;
-        display: block;
-    }
-
-    .slide,
-    .slide.active {
-        position: relative;
-        display: block;
-        width: 16in;
-        height: 9in;
-        break-after: page;
-        page-break-after: always;
-    }
-
-    .slide:last-child {
-        break-after: auto;
-        page-break-after: auto;
-    }
-
-    .controls {
-        display: none;
+        padding: 7px 9px;
+        font-size: 10px;
     }
 }
 </style>
@@ -189,77 +393,251 @@ body.fullscreen-mode .controls:hover {
 
 <body>
 
-<!-- PRESENTATION -->
+<div class="presentation">
 
-<main class="presentation" id="presentation">
+    <!-- ================= SLIDE 1 ================= -->
 
-    <!-- SLIDE 1 -->
     <section class="slide active">
-        <img
-            src="1.png"
-            alt="Chapter 25 - India Land Use and Agriculture"
-            draggable="false"
-        >
+
+        <img class="background" src="1.png" alt="">
+
+        <div class="brand">
+            ZENOVA
+            <span>EDUCATIONS</span>
+        </div>
+
+        <div class="course-label">
+            SSLC 2026–27 &nbsp; | &nbsp;
+            SOCIAL SCIENCE &nbsp; | &nbsp; GEOGRAPHY
+        </div>
+
+        <div class="page-number">01 / 16</div>
+
+        <div class="slide1-content">
+
+            <div class="chapter-tag">CHAPTER 25</div>
+
+            <h1 class="heading">
+                India –<br>
+                Land Use and<br>
+                Agriculture
+            </h1>
+
+            <div class="blue-line"></div>
+
+            <p class="slide1-subtitle">
+                LAND USE &nbsp; | &nbsp;
+                AGRICULTURE &nbsp; | &nbsp;
+                CROPPING PATTERN &nbsp; | &nbsp;
+                MAJOR CROPS
+            </p>
+
+        </div>
     </section>
 
-    <!-- SLIDE 2 -->
+
+    <!-- ================= SLIDE 2 ================= -->
+
     <section class="slide">
-        <img
-            src="2.png"
-            alt="Meaning and Factors Affecting Land Use"
-            draggable="false"
-        >
+
+        <img class="background" src="2.png" alt="">
+
+        <div class="brand">
+            ZENOVA
+            <span>EDUCATIONS</span>
+        </div>
+
+        <div class="course-label">
+            SSLC 2026–27 &nbsp; | &nbsp;
+            SOCIAL SCIENCE &nbsp; | &nbsp; GEOGRAPHY
+        </div>
+
+        <div class="page-number">02 / 16</div>
+
+        <div class="slide2-content">
+
+            <div>
+                <div class="chapter-tag">LAND USE</div>
+
+                <h2 class="heading slide-title">
+                    Meaning and Factors<br>
+                    Affecting Land Use
+                </h2>
+
+                <div class="blue-line"></div>
+            </div>
+
+            <div class="definition">
+                <strong>Land Use:</strong>
+                The way in which land is used for agriculture,
+                forests, settlements, industries and other
+                human activities.
+            </div>
+
+            <div class="factor-grid">
+
+                <div class="factor-card natural">
+                    <h3>Natural Factors</h3>
+                    <ul>
+                        <li>Landforms – plains, plateaus and hills</li>
+                        <li>Climate – temperature and rainfall</li>
+                        <li>Soil type and fertility</li>
+                    </ul>
+                </div>
+
+                <div class="factor-card economic">
+                    <h3>Economic Factors</h3>
+                    <ul>
+                        <li>Size of land holdings</li>
+                        <li>Population and demand for food</li>
+                        <li>Market facilities</li>
+                        <li>Occupation and income</li>
+                    </ul>
+                </div>
+
+                <div class="factor-card social">
+                    <h3>Social Factors</h3>
+                    <ul>
+                        <li>People's attitudes and traditions</li>
+                        <li>Social conditions</li>
+                        <li>Cultural and religious practices</li>
+                    </ul>
+                </div>
+
+                <div class="factor-card other">
+                    <h3>Other Factors</h3>
+                    <ul>
+                        <li>Technology and irrigation</li>
+                        <li>Human skill and capability</li>
+                        <li>Land ownership and policies</li>
+                    </ul>
+                </div>
+
+            </div>
+        </div>
     </section>
 
-    <!-- SLIDE 3 -->
+
+    <!-- ================= SLIDE 3 ================= -->
+
     <section class="slide">
-        <img
-            src="3.png"
-            alt="Types of Land Use - Net Sown Area and Forest Land"
-            draggable="false"
-        >
+
+        <img class="background" src="3.png" alt="">
+
+        <div class="brand">
+            ZENOVA
+            <span>EDUCATIONS</span>
+        </div>
+
+        <div class="course-label">
+            SSLC 2026–27 &nbsp; | &nbsp;
+            SOCIAL SCIENCE &nbsp; | &nbsp; GEOGRAPHY
+        </div>
+
+        <div class="page-number">03 / 16</div>
+
+        <div class="slide3-content">
+
+            <div>
+                <div class="chapter-tag">
+                    TYPES OF LAND USE – PART 1
+                </div>
+
+                <h2 class="heading slide3-title">
+                    Net Sown Area<br>
+                    and Forest Land
+                </h2>
+
+                <div class="blue-line"></div>
+            </div>
+
+            <div class="info-card green-card">
+                <h3>Net Sown Area</h3>
+                <ul>
+                    <li>Area under crops or cultivated land.</li>
+                    <li>It is an important type of land use.</li>
+                    <li>India is the second largest country in the world
+                        in terms of cultivated area, after the USA.</li>
+                    <li>Punjab, Haryana, West Bengal, Uttar Pradesh
+                        and Bihar have more than 60% of their
+                        total area under cultivation.</li>
+                </ul>
+            </div>
+
+            <div class="info-card orange-card">
+                <h3>Forest Land</h3>
+                <ul>
+                    <li>Area under forests.</li>
+                    <li>Forest cover in India: 21.71% of the total
+                        geographical area.</li>
+                    <li>In 1950–51, it was 16.2%.</li>
+                    <li>National Forest Policy aims to maintain
+                        33% of the land under forest cover.</li>
+                </ul>
+            </div>
+
+            <div class="stat-strip">
+                <div>
+                    <small>1950–51</small><br>
+                    <strong>16.2%</strong>
+                </div>
+
+                <div>
+                    <strong>→</strong>
+                </div>
+
+                <div>
+                    <small>Present</small><br>
+                    <strong>21.71%</strong>
+                </div>
+
+                <div>
+                    <small>National Forest Policy Target</small><br>
+                    <strong>33%</strong>
+                </div>
+            </div>
+
+        </div>
     </section>
 
-</main>
+</div>
+
 
 <!-- NAVIGATION -->
 
-<div class="controls" id="controls">
+<div class="controls">
 
     <button id="prevBtn" onclick="previousSlide()">
-        &#8592; Previous
+        ← Previous
     </button>
 
     <span id="counter">1 / 3</span>
 
     <button id="nextBtn" onclick="nextSlide()">
-        Next &#8594;
+        Next →
     </button>
 
-    <button onclick="toggleFullscreen()" title="Fullscreen">
-        &#9974;
+    <button onclick="toggleFullscreen()">
+        ⛶
     </button>
 
 </div>
 
+
 <script>
 
 const slides = document.querySelectorAll(".slide");
-
 let currentSlide = 0;
 
 function showSlide(index) {
 
-    if (index < 0 || index >= slides.length) {
-        return;
-    }
+    if (index < 0 || index >= slides.length) return;
 
     slides.forEach(slide => {
         slide.classList.remove("active");
     });
 
     currentSlide = index;
-
     slides[currentSlide].classList.add("active");
 
     document.getElementById("counter").textContent =
@@ -280,24 +658,30 @@ function previousSlide() {
     showSlide(currentSlide - 1);
 }
 
-/* KEYBOARD CONTROLS */
+function toggleFullscreen() {
 
-document.addEventListener("keydown", function(event) {
+    if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen();
+    } else {
+        document.exitFullscreen();
+    }
+}
 
-    if (
-        event.key === "ArrowRight" ||
-        event.key === "PageDown" ||
-        event.key === " "
-    ) {
+document.addEventListener("fullscreenchange", () => {
+    document.body.classList.toggle(
+        "fullscreen",
+        !!document.fullscreenElement
+    );
+});
+
+document.addEventListener("keydown", event => {
+
+    if (event.key === "ArrowRight" || event.key === " ") {
         event.preventDefault();
         nextSlide();
     }
 
-    if (
-        event.key === "ArrowLeft" ||
-        event.key === "PageUp"
-    ) {
-        event.preventDefault();
+    if (event.key === "ArrowLeft") {
         previousSlide();
     }
 
@@ -313,57 +697,6 @@ document.addEventListener("keydown", function(event) {
         showSlide(slides.length - 1);
     }
 });
-
-/* FULLSCREEN */
-
-function toggleFullscreen() {
-
-    if (!document.fullscreenElement) {
-
-        document.documentElement.requestFullscreen()
-            .catch(error => {
-                console.error("Fullscreen error:", error);
-            });
-
-    } else {
-
-        document.exitFullscreen();
-    }
-}
-
-document.addEventListener("fullscreenchange", function() {
-
-    document.body.classList.toggle(
-        "fullscreen-mode",
-        !!document.fullscreenElement
-    );
-});
-
-/* TOUCH SWIPE */
-
-let touchStartX = 0;
-
-document.addEventListener("touchstart", function(event) {
-    touchStartX = event.changedTouches[0].screenX;
-}, { passive: true });
-
-document.addEventListener("touchend", function(event) {
-
-    const touchEndX = event.changedTouches[0].screenX;
-    const difference = touchStartX - touchEndX;
-
-    if (Math.abs(difference) > 60) {
-
-        if (difference > 0) {
-            nextSlide();
-        } else {
-            previousSlide();
-        }
-    }
-
-}, { passive: true });
-
-/* INITIALIZE */
 
 showSlide(0);
 
