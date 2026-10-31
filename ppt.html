@@ -4,6 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Zenova Educations | Slide 01</title>
 
 <style>
@@ -17,8 +18,7 @@ html, body {
     width: 100%;
     height: 100%;
     overflow: hidden;
-    background: #111;
-    font-family: Arial, Helvetica, sans-serif;
+    background: #e9edf2;
 }
 
 /* 16:9 PRESENTATION CANVAS */
@@ -27,9 +27,11 @@ html, body {
     position: absolute;
     width: min(100vw, 177.7778vh);
     height: min(100vh, 56.25vw);
+
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
+
     aspect-ratio: 16 / 9;
     overflow: hidden;
 
@@ -37,109 +39,140 @@ html, body {
     background-size: 100% 100%;
     background-position: center;
     background-repeat: no-repeat;
-    color: #10243e;
+
+    container-type: inline-size;
 }
 
-/* BRAND */
+/* ZENOVA BRAND */
 
 .brand {
     position: absolute;
-    top: 5%;
     left: 4.2%;
+    top: 4.7%;
+
+    color: #15539a;
+    font-family: Arial, sans-serif;
 }
 
-.brand h2 {
-    font-size: clamp(15px, 2.2vw, 38px);
+.brand-main {
+    font-size: 2.15cqw;
     font-weight: 800;
-    letter-spacing: 1px;
-    color: #205b9d;
+    letter-spacing: -0.045em;
+    line-height: 1;
 }
 
-.brand p {
-    font-size: clamp(7px, 0.85vw, 15px);
-    letter-spacing: 5px;
-    color: #52647a;
-    margin-top: 2px;
+.brand-sub {
+    margin-top: 0.35cqw;
+    font-size: 0.72cqw;
+    letter-spacing: 0.48em;
+    font-weight: 500;
 }
 
-/* COURSE DETAILS */
+/* SUBJECT LINE */
 
-.course {
-    position: absolute;
-    top: 14.5%;
-    left: 4.2%;
-    font-size: clamp(8px, 1.1vw, 19px);
-    letter-spacing: 2px;
-    color: #536174;
-}
-
-/* CHAPTER LABEL */
-
-.chapter {
-    position: absolute;
-    top: 24%;
-    left: 4.4%;
-    background: #3978c7;
-    color: white;
-    padding: 0.55% 1.1%;
-    font-size: clamp(9px, 1.3vw, 22px);
-    font-weight: 700;
-    letter-spacing: 4px;
-}
-
-/* MAIN TITLE */
-
-.heading {
+.course-info {
     position: absolute;
     left: 4.2%;
-    top: 30.5%;
-    width: 44%;
-}
+    top: 14.3%;
 
-.heading h1 {
-    font-family: Georgia, "Times New Roman", serif;
-    font-size: clamp(35px, 6.6vw, 108px);
-    line-height: 0.99;
-    font-weight: 700;
-    letter-spacing: -3px;
-    color: #102744;
-}
+    color: #34465f;
 
-/* SMALL BLUE DIVIDER */
-
-.line {
-    position: absolute;
-    left: 4.4%;
-    top: 69.8%;
-    width: 5.2%;
-    height: 4px;
-    background: #3978c7;
-}
-
-/* CHAPTER TOPICS */
-
-.topics {
-    position: absolute;
-    left: 4.4%;
-    top: 73.5%;
-    font-size: clamp(7px, 1.05vw, 17px);
-    letter-spacing: 2px;
-    color: #59616b;
-    white-space: nowrap;
+    font-family: Arial, sans-serif;
+    font-size: 1.08cqw;
+    font-weight: 400;
+    letter-spacing: 0.115em;
 }
 
 /* SLIDE NUMBER */
 
 .slide-number {
     position: absolute;
-    top: 4.5%;
-    right: 4%;
-    font-size: clamp(12px, 1.7vw, 27px);
-    color: #173451;
+    right: 4.1%;
+    top: 4.8%;
+
+    color: #142d4b;
+
+    font-family: Arial, sans-serif;
+    font-size: 1.45cqw;
     font-weight: 400;
-    letter-spacing: 1px;
+    letter-spacing: 0.02em;
 }
 
+/* CHAPTER BADGE */
+
+.chapter-label {
+    position: absolute;
+    left: 4.4%;
+    top: 23.5%;
+
+    background: #286bc1;
+    color: #ffffff;
+
+    padding: 0.48cqw 1.05cqw;
+
+    font-family: Arial, sans-serif;
+    font-size: 1.27cqw;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    line-height: 1.15;
+}
+
+/* MAIN TITLE */
+
+.main-title {
+    position: absolute;
+    left: 4.1%;
+    top: 30.2%;
+
+    width: 43%;
+
+    color: #102744;
+
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 6.65cqw;
+    font-weight: 700;
+    line-height: 0.94;
+    letter-spacing: -0.065em;
+}
+
+/* BLUE LINE */
+
+.title-line {
+    position: absolute;
+    left: 4.45%;
+    top: 67.8%;
+
+    width: 5.2%;
+    height: 0.42%;
+
+    background: #286bc1;
+}
+
+/* BOTTOM KEYWORDS */
+
+.topics {
+    position: absolute;
+    left: 4.45%;
+    top: 71.7%;
+
+    color: #555e69;
+
+    font-family: Arial, sans-serif;
+    font-size: 1.02cqw;
+    font-weight: 400;
+    letter-spacing: 0.105em;
+    white-space: nowrap;
+}
+
+/* FULLSCREEN SUPPORT */
+
+@media (display-mode: fullscreen) {
+    .slide {
+        width: 100vw;
+        height: 56.25vw;
+        max-height: 100vh;
+    }
+}
 </style>
 </head>
 
@@ -147,41 +180,46 @@ html, body {
 
 <main class="slide">
 
+    <!-- BRAND -->
     <header class="brand">
-        <h2>ZENOVA</h2>
-        <p>EDUCATIONS</p>
+        <div class="brand-main">ZENOVA</div>
+        <div class="brand-sub">EDUCATIONS</div>
     </header>
 
-    <div class="course">
+    <!-- COURSE -->
+    <div class="course-info">
         SSLC 2026–27 &nbsp; | &nbsp;
         SOCIAL SCIENCE &nbsp; | &nbsp;
         HISTORY
     </div>
 
-    <div class="chapter">
+    <!-- PAGE NUMBER -->
+    <div class="slide-number">
+        01 / 12
+    </div>
+
+    <!-- CHAPTER -->
+    <div class="chapter-label">
         CHAPTER 1 – PART 2
     </div>
 
-    <section class="heading">
-        <h1>
-            The First<br>
-            War of Indian<br>
-            Independence
-        </h1>
-    </section>
+    <!-- TITLE -->
+    <h1 class="main-title">
+        The First<br>
+        War of Indian<br>
+        Independence
+    </h1>
 
-    <div class="line"></div>
+    <!-- ACCENT -->
+    <div class="title-line"></div>
 
+    <!-- TOPICS -->
     <div class="topics">
         CAUSES &nbsp; | &nbsp;
         COURSE &nbsp; | &nbsp;
         LEADERS &nbsp; | &nbsp;
         RESULTS &nbsp; | &nbsp;
         SIGNIFICANCE
-    </div>
-
-    <div class="slide-number">
-        01 / 12
     </div>
 
 </main>
