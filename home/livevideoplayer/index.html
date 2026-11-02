@@ -1,423 +1,1378 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#F7F9FC">
+<title>Zenova Classroom</title>
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
-    >
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.css" rel="stylesheet">
 
-    <title>ZENOVA | Live Class</title>
+<style>
+:root {
+ --bg:#F7F9FC;
+ --white:#fff;
+ --soft:#F0F5FB;
+ --blue:#3978E8;
+ --dark:#245FC9;
+ --light:#EAF2FF;
+ --text:#172338;
+ --muted:#7B8799;
+ --border:#E7EDF5;
+ --green:#159B78;
+ --red:#E34D59;
+ --orange:#D28A27;
+}
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+*{box-sizing:border-box;margin:0;padding:0}
 
-    <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700&display=swap"
-        rel="stylesheet"
-    >
+body{
+ background:var(--bg);
+ color:var(--text);
+ font-family:Inter,Arial,sans-serif;
+ padding-bottom:30px;
+}
 
-    <link rel="stylesheet" href="./livevideoplayer.css">
+button,input,textarea{font:inherit}
+button{cursor:pointer}
+
+.header{
+ position:sticky;
+ top:0;
+ z-index:20;
+ background:white;
+ border-bottom:1px solid var(--border);
+}
+
+.header-inner{
+ max-width:1100px;
+ margin:auto;
+ padding:13px 17px;
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+}
+
+.back{
+ display:flex;
+ align-items:center;
+ gap:9px;
+ border:0;
+ background:white;
+ color:var(--text);
+ font-weight:700;
+ font-size:12px;
+}
+
+.back i{font-size:22px;color:var(--blue)}
+
+.brand{
+ font-size:15px;
+ font-weight:800;
+ color:var(--dark);
+ letter-spacing:.5px;
+}
+
+.live-badge{
+ display:flex;
+ align-items:center;
+ gap:6px;
+ background:#FDEBED;
+ color:var(--red);
+ padding:7px 10px;
+ border-radius:8px;
+ font-size:10px;
+ font-weight:800;
+}
+
+.dot{
+ width:7px;
+ height:7px;
+ background:var(--red);
+ border-radius:50%;
+ animation:pulse 1.2s infinite;
+}
+
+@keyframes pulse{
+ 50%{opacity:.25}
+}
+
+.container{
+ max-width:1000px;
+ margin:auto;
+ padding:17px;
+}
+
+.player-shell{
+ background:#101827;
+ border-radius:17px;
+ overflow:hidden;
+ position:relative;
+}
+
+video{
+ width:100%;
+ display:block;
+ aspect-ratio:16/9;
+ background:#101827;
+ object-fit:contain;
+}
+
+.video-message{
+ position:absolute;
+ inset:0;
+ display:flex;
+ flex-direction:column;
+ align-items:center;
+ justify-content:center;
+ gap:10px;
+ color:white;
+ text-align:center;
+ padding:20px;
+ background:#101827;
+}
+
+.video-message i{font-size:40px;color:#8FB7FF}
+.video-message strong{font-size:15px}
+.video-message span{font-size:11px;color:#B8C3D4}
+
+.player-live{
+ position:absolute;
+ top:13px;
+ left:13px;
+ z-index:3;
+ pointer-events:none;
+}
+
+.player-live span{
+ display:inline-flex;
+ align-items:center;
+ gap:6px;
+ background:#E34D59;
+ color:white;
+ padding:7px 10px;
+ border-radius:6px;
+ font-size:10px;
+ font-weight:800;
+}
+
+.info{
+ background:white;
+ border:1px solid var(--border);
+ border-radius:15px;
+ padding:17px;
+ margin-top:15px;
+}
+
+.subject-label{
+ color:var(--blue);
+ font-size:10px;
+ font-weight:800;
+ letter-spacing:1px;
+}
+
+h1{
+ font-size:22px;
+ line-height:1.35;
+ margin-top:7px;
+}
+
+.subtitle{
+ color:var(--muted);
+ font-size:11px;
+ margin-top:7px;
+ line-height:1.6;
+}
+
+.info-grid{
+ display:grid;
+ grid-template-columns:repeat(2,1fr);
+ gap:12px;
+ margin-top:17px;
+ padding-top:14px;
+ border-top:1px solid var(--border);
+}
+
+.info-item span{
+ display:block;
+ color:var(--muted);
+ font-size:9px;
+ margin-bottom:5px;
+}
+
+.info-item strong{font-size:11px}
+
+.progress-panel{
+ background:white;
+ border:1px solid var(--border);
+ border-radius:13px;
+ padding:14px;
+ margin-top:13px;
+}
+
+.progress-head{
+ display:flex;
+ justify-content:space-between;
+ gap:10px;
+ font-size:11px;
+ font-weight:700;
+}
+
+.progress-track{
+ height:7px;
+ border-radius:20px;
+ background:var(--soft);
+ overflow:hidden;
+ margin-top:10px;
+}
+
+.progress-fill{
+ height:100%;
+ width:0;
+ background:var(--blue);
+ border-radius:20px;
+ transition:width .3s;
+}
+
+.section{
+ margin-top:22px;
+}
+
+.section-title{
+ font-size:15px;
+ font-weight:800;
+ margin-bottom:12px;
+}
+
+.interactions{
+ display:grid;
+ grid-template-columns:repeat(3,1fr);
+ gap:9px;
+}
+
+.interaction{
+ border:1px solid var(--border);
+ background:white;
+ border-radius:13px;
+ padding:14px 7px;
+ display:flex;
+ flex-direction:column;
+ align-items:center;
+ gap:8px;
+ color:var(--text);
+}
+
+.interaction i{font-size:24px;color:var(--blue)}
+.interaction span{font-size:10px;font-weight:700}
+
+.interaction.selected{
+ border-color:var(--blue);
+ background:var(--light);
+}
+
+.interaction.warning i{color:var(--orange)}
+.interaction.warning.selected{background:#FFF5E5;border-color:var(--orange)}
+
+.interaction:disabled{
+ opacity:.5;
+ cursor:not-allowed;
+}
+
+.question-panel{
+ background:white;
+ border:1px solid var(--border);
+ border-radius:14px;
+ padding:15px;
+ margin-top:12px;
+}
+
+.question-panel h3{font-size:13px}
+.question-panel p{
+ color:var(--muted);
+ font-size:11px;
+ line-height:1.7;
+ margin-top:7px;
+}
+
+.btn{
+ min-height:43px;
+ padding:0 15px;
+ border:0;
+ border-radius:10px;
+ font-size:11px;
+ font-weight:800;
+ display:inline-flex;
+ align-items:center;
+ justify-content:center;
+ gap:8px;
+}
+
+.primary{background:var(--blue);color:white}
+.secondary{background:var(--light);color:var(--dark)}
+.outline{background:white;border:1px solid var(--border);color:var(--text)}
+.full{width:100%}
+
+.test-card{
+ background:linear-gradient(120deg,#EAF2FF,#FFFFFF);
+ border:1px solid #DCE8FB;
+ border-radius:15px;
+ padding:17px;
+ margin-top:12px;
+}
+
+.test-card h3{font-size:15px}
+.test-card p{
+ color:var(--muted);
+ font-size:11px;
+ line-height:1.7;
+ margin:7px 0 13px;
+}
+
+.chat-box{
+ display:none;
+ margin-top:12px;
+ background:white;
+ border:1px solid var(--border);
+ border-radius:14px;
+ padding:14px;
+}
+
+.chat-box.open{display:block}
+.chat-box textarea{
+ width:100%;
+ min-height:90px;
+ padding:12px;
+ border:1px solid var(--border);
+ border-radius:10px;
+ resize:vertical;
+ font-size:12px;
+ outline:none;
+}
+
+.notice{
+ font-size:10px;
+ color:var(--muted);
+ line-height:1.6;
+ margin-top:12px;
+}
+
+.toast{
+ position:fixed;
+ bottom:20px;
+ left:50%;
+ transform:translateX(-50%);
+ background:#172338;
+ color:white;
+ padding:12px 17px;
+ border-radius:10px;
+ font-size:11px;
+ z-index:100;
+ display:none;
+ max-width:90%;
+ text-align:center;
+}
+
+.toast.show{display:block}
+
+.modal{
+ display:none;
+ position:fixed;
+ inset:0;
+ background:#0008;
+ z-index:100;
+ align-items:center;
+ justify-content:center;
+ padding:20px;
+}
+
+.modal.show{display:flex}
+
+.modal-card{
+ width:100%;
+ max-width:360px;
+ background:white;
+ border-radius:16px;
+ padding:20px;
+}
+
+.modal-card h3{font-size:16px}
+.modal-card p{
+ color:var(--muted);
+ font-size:12px;
+ line-height:1.7;
+ margin:10px 0 18px;
+}
+
+.modal-actions{display:flex;gap:9px}
+
+@media(max-width:500px){
+ .container{padding:12px}
+ h1{font-size:19px}
+ .info-grid{gap:9px}
+ .interaction{padding:12px 4px}
+}
+</style>
 </head>
 
 <body>
 
-<header class="topbar">
+<header class="header">
+ <div class="header-inner">
+  <button class="back" id="backButton">
+   <i class="ri-arrow-left-line"></i>
+   Back to Classes
+  </button>
 
-    <button
-        id="backButton"
-        class="back-button"
-        type="button"
-    >
-        <span class="back-icon">‹</span>
-        <span>Back</span>
-    </button>
+  <div class="brand">ZENOVA</div>
 
-    <div class="brand">
-
-        <div class="brand-title">
-            ZENOVA
-        </div>
-
-        <div class="brand-live">
-            <span></span>
-            LIVE CLASS
-        </div>
-
-    </div>
-
-    <div class="top-space"></div>
-
+  <div id="headerStatus" class="live-badge" style="visibility:hidden">
+   <span class="dot"></span> LIVE
+  </div>
+ </div>
 </header>
 
-<main>
-
-    <!-- LOADING -->
-
-    <section
-        id="loading"
-        class="loading-screen"
-    >
-
-        <div class="loader"></div>
-
-        <p>
-            Connecting to live class...
-        </p>
-
-    </section>
-
-    <!-- ERROR -->
-
-    <section
-        id="error"
-        class="error-screen hidden"
-    >
-
-        <div class="error-icon">
-            !
-        </div>
-
-        <h2>
-            Unable to join live class
-        </h2>
-
-        <p id="errorText">
-            Something went wrong.
-        </p>
-
-        <button
-            id="errorBack"
-            class="dark-button"
-            type="button"
-        >
-            Go Back
-        </button>
-
-    </section>
-
-    <!-- LIVE APP -->
-
-    <section
-        id="liveApp"
-        class="live-app hidden"
-    >
-
-        <!-- =================================================
-             PLAYER
-        ================================================== -->
-
-        <div
-            id="player"
-            class="player"
-        >
-
-            <div
-                id="stage"
-                class="stage"
-            >
-
-                <!-- HTML VIDEO -->
-
-                <video
-                    id="liveVideo"
-                    class="live-video hidden"
-                    playsinline
-                    autoplay
-                    muted
-                    preload="none"
-                ></video>
-
-                <!-- YOUTUBE -->
-
-                <div
-                    id="youtubeContainer"
-                    class="youtube-container hidden"
-                ></div>
-
-                <!-- PLAYER LOADING -->
-
-                <div
-                    id="playerLoading"
-                    class="player-loading"
-                >
-
-                    <div class="player-spinner"></div>
-
-                    <span>
-                        Connecting...
-                    </span>
-
-                </div>
-
-                <!-- CENTER PLAY -->
-
-                <button
-                    id="centerPlay"
-                    class="center-play hidden"
-                    type="button"
-                >
-                    ▶
-                </button>
-
-                <!-- ZENOVA LOGO -->
-
-                <div class="video-logo">
-
-                    <div class="logo-circle">
-                        Z
-                    </div>
-
-                    <span>
-                        ZENOVA
-                    </span>
-
-                </div>
-
-                <!-- LIVE BADGE -->
-
-                <div
-                    id="liveBadge"
-                    class="live-badge"
-                >
-
-                    <span class="live-dot"></span>
-
-                    LIVE
-
-                </div>
-
-                <!-- STUDENT WATERMARK -->
-
-                <div
-                    id="watermark"
-                    class="watermark"
-                >
-
-                    <strong id="studentName">
-                        Student
-                    </strong>
-
-                    <span id="studentPhone">
-                        XXXXX
-                    </span>
-
-                    <small>
-                        ZENOVA • LIVE
-                    </small>
-
-                </div>
-
-                <!-- CONTROLS -->
-
-                <div
-                    id="controls"
-                    class="controls"
-                >
-
-                    <div class="controls-row">
-
-                        <div class="controls-left">
-
-                            <button
-                                id="playButton"
-                                class="control"
-                                type="button"
-                            >
-                                ▶
-                            </button>
-
-                            <button
-                                id="muteButton"
-                                class="control"
-                                type="button"
-                            >
-                                🔊
-                            </button>
-
-                            <span
-                                id="liveTime"
-                                class="live-time"
-                            >
-                                LIVE
-                            </span>
-
-                        </div>
-
-                        <div class="controls-right">
-
-                            <button
-                                id="fullscreenButton"
-                                class="control fullscreen"
-                                type="button"
-                            >
-                                ⛶
-                            </button>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-        <!-- =================================================
-             INFORMATION
-        ================================================== -->
-
-        <section class="class-information">
-
-            <div class="live-status">
-
-                <span class="status-pill">
-                    <span></span>
-                    LIVE NOW
-                </span>
-
-                <span
-                    id="classTime"
-                    class="class-time"
-                ></span>
-
-            </div>
-
-            <h1 id="classTitle">
-                Live Class
-            </h1>
-
-            <div
-                id="classHierarchy"
-                class="hierarchy"
-            >
-                Batch • Subject • Chapter
-            </div>
-
-            <div class="faculty">
-
-                <div
-                    id="facultyAvatar"
-                    class="faculty-avatar"
-                >
-                    Z
-                </div>
-
-                <div>
-
-                    <span>
-                        Faculty
-                    </span>
-
-                    <strong id="facultyName">
-                        Faculty
-                    </strong>
-
-                </div>
-
-            </div>
-
-            <div
-                id="descriptionBox"
-                class="description hidden"
-            >
-
-                <h2>
-                    About this class
-                </h2>
-
-                <p id="description"></p>
-
-            </div>
-
-        </section>
-
-        <!-- =================================================
-             LIVE CLASS INFORMATION
-        ================================================== -->
-
-        <section class="session-info">
-
-            <div class="session-item">
-
-                <span class="session-label">
-                    CLASS
-                </span>
-
-                <strong id="sessionTitle">
-                    Live Class
-                </strong>
-
-            </div>
-
-            <div class="session-item">
-
-                <span class="session-label">
-                    DATE
-                </span>
-
-                <strong id="sessionDate">
-                    —
-                </strong>
-
-            </div>
-
-            <div class="session-item">
-
-                <span class="session-label">
-                    TIME
-                </span>
-
-                <strong id="sessionTime">
-                    —
-                </strong>
-
-            </div>
-
-        </section>
-
-        <!-- =================================================
-             LIVE NOTICE
-        ================================================== -->
-
-        <section class="live-notice">
-
-            <div class="notice-icon">
-                ●
-            </div>
-
-            <div>
-
-                <strong>
-                    You are watching a live class
-                </strong>
-
-                <p>
-                    This class is currently being streamed live.
-                    The seek controls are disabled during the live session.
-                </p>
-
-            </div>
-
-        </section>
-
-    </section>
+<main class="container">
+
+ <div class="player-shell">
+
+  <video
+   id="video"
+   playsinline
+   preload="auto"
+   controls
+   controlsList="nodownload"
+  ></video>
+
+  <div class="player-live" id="playerLive" style="display:none">
+   <span><span class="dot"></span> LIVE CLASS</span>
+  </div>
+
+  <div class="video-message" id="videoMessage">
+   <i class="ri-video-line"></i>
+   <strong>Loading your classroom...</strong>
+   <span>Please wait.</span>
+  </div>
+
+ </div>
+
+ <section class="info">
+  <div class="subject-label" id="subjectName">SUBJECT</div>
+
+  <h1 id="classTitle">Loading class...</h1>
+
+  <p class="subtitle" id="chapterName">
+   Loading chapter information...
+  </p>
+
+  <div class="info-grid">
+   <div class="info-item">
+    <span>FACULTY</span>
+    <strong id="teacherName">--</strong>
+   </div>
+
+   <div class="info-item">
+    <span>CLASS TIME</span>
+    <strong id="classTime">--</strong>
+   </div>
+
+   <div class="info-item">
+    <span>COURSE</span>
+    <strong id="courseName">--</strong>
+   </div>
+
+   <div class="info-item">
+    <span>CLASS STATUS</span>
+    <strong id="classStatus">Loading</strong>
+   </div>
+  </div>
+ </section>
+
+ <section class="progress-panel">
+  <div class="progress-head">
+   <span>Your learning progress</span>
+   <span id="progressText">0%</span>
+  </div>
+
+  <div class="progress-track">
+   <div class="progress-fill" id="progressFill"></div>
+  </div>
+
+  <p class="notice" id="watchTimeText">
+   Your actual playback time will be recorded.
+  </p>
+ </section>
+
+ <section class="section">
+  <div class="section-title">Classroom Interaction</div>
+
+  <div class="interactions">
+
+   <button class="interaction" id="raiseHand">
+    <i class="ri-hand"></i>
+    <span>Raise Hand</span>
+   </button>
+
+   <button class="interaction" id="askTeacher">
+    <i class="ri-message-3-line"></i>
+    <span>Ask Teacher</span>
+   </button>
+
+   <button class="interaction" id="understood">
+    <i class="ri-checkbox-circle-line"></i>
+    <span>I Understood</span>
+   </button>
+
+   <button class="interaction warning" id="reExplain">
+    <i class="ri-refresh-line"></i>
+    <span>Re-explain</span>
+   </button>
+
+  </div>
+
+  <div class="chat-box" id="chatBox">
+   <h3 style="font-size:13px;margin-bottom:10px">Ask your teacher</h3>
+
+   <textarea id="questionText" placeholder="Type your doubt or question..."></textarea>
+
+   <button class="btn primary full" id="sendQuestion" style="margin-top:10px">
+    Send Question
+   </button>
+  </div>
+ </section>
+
+ <section class="section">
+  <div class="section-title">Post-Class Assessment</div>
+
+  <div class="test-card">
+   <h3>Test your understanding</h3>
+   <p>
+    Complete the questions assigned by your teacher after this class.
+    Your attempts, marks, correct answers and time taken will be saved.
+   </p>
+
+   <button class="btn primary full" id="testButton">
+    <i class="ri-file-list-3-line"></i>
+    Open Post-Class Test
+   </button>
+  </div>
+ </section>
+
+ <p class="notice">
+  Your classroom activity is recorded for learning progress and attendance.
+  Watch time measures active playback, not physical attention.
+ </p>
 
 </main>
 
-<div
-    id="toast"
-    class="toast hidden"
-></div>
+<div class="toast" id="toast"></div>
 
-<script src="https://www.youtube.com/iframe_api"></script>
+<div class="modal" id="leaveModal">
+ <div class="modal-card">
+  <h3>Leave this classroom?</h3>
+  <p id="leaveMessage">
+   Your current session will be saved before leaving.
+  </p>
 
-<script
-    type="module"
-    src="./livevideoplayer.js"
-></script>
+  <div class="modal-actions">
+   <button class="btn outline" id="stayButton" style="flex:1">
+    Stay
+   </button>
 
+   <button class="btn primary" id="confirmLeave" style="flex:1">
+    Leave Class
+   </button>
+  </div>
+ </div>
+</div>
+
+<script type="module">
+
+import {auth,db} from "../../firebase/firebase-config.js";
+
+import {
+ onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+
+import {
+ doc,
+ getDoc,
+ addDoc,
+ updateDoc,
+ collection,
+ serverTimestamp,
+ increment
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
+
+/* =====================================
+   CONFIGURATION
+===================================== */
+
+const params = new URLSearchParams(location.search);
+
+const classId = params.get("liveClassId") || params.get("classId");
+const requestedMode = params.get("mode") || "recorded";
+
+const HEARTBEAT_MS = 15000;
+
+let user = null;
+let student = {};
+let classData = {};
+let sessionRef = null;
+
+let liveMode = false;
+let sessionStarted = false;
+let sessionClosed = false;
+let handRaised = false;
+
+let lastVideoTime = 0;
+let lastHeartbeat = 0;
+let totalWatched = 0;
+let currentEventPosition = 0;
+let interactionState = {};
+
+const video = document.getElementById("video");
+
+const $ = id => document.getElementById(id);
+
+function esc(value){
+ return String(value ?? "").replace(/[&<>"']/g,c=>({
+  "&":"&amp;",
+  "<":"&lt;",
+  ">":"&gt;",
+  '"':"&quot;",
+  "'":"&#039;"
+ })[c]);
+}
+
+function first(...values){
+ return values.find(v=>v!==undefined && v!==null && String(v).trim()!=="") ?? "";
+}
+
+function notify(message){
+ $("toast").textContent=message;
+ $("toast").classList.add("show");
+
+ setTimeout(()=> $("toast").classList.remove("show"),2800);
+}
+
+function parseDate(value){
+ if(!value)return null;
+ if(typeof value.toDate==="function")return value.toDate();
+ if(value instanceof Date)return value;
+
+ const d=new Date(value);
+ return Number.isNaN(d.getTime())?null:d;
+}
+
+function getScheduledStart(c){
+ const date=first(c.scheduledDate,c.date,c.classDate);
+ const time=first(c.scheduledTime,c.time,"00:00");
+
+ if(!date)return null;
+
+ const d=new Date(`${date}T${time}`);
+
+ return Number.isNaN(d.getTime())?null:d;
+}
+
+function getVideoUrl(){
+ return first(
+  classData.recordingUrl,
+  classData.recordedVideoUrl,
+  classData.playbackUrl,
+  classData.videoUrl,
+  classData.streamUrl,
+  classData.studentJoinUrl,
+  classData.joinUrl
+ );
+}
+
+function isZoom(){
+ return first(
+  classData.liveType,
+  classData.mode,
+  classData.streamType
+ ).toLowerCase().includes("zoom");
+}
+
+function isYouTube(){
+ return first(
+  classData.liveType,
+  classData.mode,
+  classData.streamType
+ ).toLowerCase().includes("youtube");
+}
+
+function formatSeconds(value){
+ const seconds=Math.max(0,Math.floor(value||0));
+ const h=Math.floor(seconds/3600);
+ const m=Math.floor((seconds%3600)/60);
+ const s=seconds%60;
+
+ return h
+  ? `${h}h ${m}m`
+  : `${m}m ${s}s`;
+}
+
+
+/* =====================================
+   STUDENT ACCESS VALIDATION
+===================================== */
+
+function hasCourseAccess(c){
+ const courseId=String(first(
+  c.courseId,
+  c.crmCourseId,
+  c.courseID,
+  c.batchId
+ ));
+
+ const arrays=[
+  student.purchasedCourseIds,
+  student.enrolledCourseIds,
+  student.courseIds,
+  student.purchasedCourses,
+  student.enrolledCourses
+ ];
+
+ for(const arr of arrays){
+  if(Array.isArray(arr) && arr.some(item=>{
+   const id=typeof item==="object"
+    ? first(item.courseId,item.id,item.crmCourseId)
+    : item;
+
+   return String(id)===courseId;
+  })){
+   return true;
+  }
+ }
+
+ return false;
+}
+
+async function validateEnrollment(){
+ const id=String(first(
+  classData.courseId,
+  classData.crmCourseId,
+  classData.courseID,
+  classData.batchId
+ ));
+
+ if(!id)return false;
+
+ if(hasCourseAccess(classData))return true;
+
+ const enrollmentSnap=await getDoc(
+  doc(db,"studentEnrollments",user.uid+"_"+id)
+ ).catch(()=>null);
+
+ if(enrollmentSnap?.exists()){
+  const e=enrollmentSnap.data();
+  const status=String(first(e.status,e.enrollmentStatus)).toLowerCase();
+
+  if(e.accessGranted===true ||
+   ["active","approved","paid","purchased","enrolled","success","completed"].includes(status)){
+   return true;
+  }
+ }
+
+ return false;
+}
+
+
+/* =====================================
+   SESSION TRACKING
+===================================== */
+
+async function createSession(){
+ sessionRef=await addDoc(
+  collection(db,"livePlaybackSessions"),
+  {
+   studentUid:user.uid,
+   studentName:first(student.name,student.studentName,user.displayName),
+   studentCode:first(student.studentCode,student.znvCode,student.code),
+
+   classId,
+   courseId:first(classData.courseId,classData.crmCourseId),
+   batchId:first(classData.batchId,classData.courseId),
+
+   subjectName:first(classData.subjectName,classData.subject),
+   chapterName:first(classData.chapterName,classData.chapter),
+   classTitle:first(classData.title,classData.classTitle),
+
+   mode:liveMode?"live":"recorded",
+
+   joinedAt:serverTimestamp(),
+   lastHeartbeat:serverTimestamp(),
+
+   totalWatchSeconds:0,
+   lastPosition:0,
+   rejoinCount:0,
+
+   sessionStatus:"active",
+   completionPercentage:0
+  }
+ );
+
+ sessionStarted=true;
+ sessionClosed=false;
+ lastHeartbeat=Date.now();
+}
+
+async function recordEvent(type,extra={}){
+ if(!sessionRef || sessionClosed)return;
+
+ try{
+  await addDoc(collection(db,"liveWatchEvents"),{
+   studentUid:user.uid,
+   studentCode:first(student.studentCode,student.znvCode,student.code),
+   classId,
+   sessionId:sessionRef.id,
+   eventType:type,
+   videoPosition:Number(video.currentTime||0),
+   timestamp:serverTimestamp(),
+   ...extra
+  });
+ }catch(error){
+  console.error("Event write failed:",error);
+ }
+}
+
+async function updateSession(extra={}){
+ if(!sessionRef || sessionClosed)return;
+
+ try{
+  await updateDoc(sessionRef,{
+   lastHeartbeat:serverTimestamp(),
+   lastPosition:Number(video.currentTime||0),
+   totalWatchSeconds:Math.floor(totalWatched),
+   completionPercentage:video.duration
+    ? Math.min(100,Math.round(video.currentTime/video.duration*100))
+    : 0,
+   ...extra
+  });
+ }catch(error){
+  console.error("Session update failed:",error);
+ }
+}
+
+async function closeSession(reason){
+ if(!sessionRef || sessionClosed)return;
+
+ sessionClosed=true;
+
+ await updateSession({
+  sessionStatus:reason,
+  exitedAt:serverTimestamp(),
+  totalWatchSeconds:Math.floor(totalWatched),
+  lastPosition:Number(video.currentTime||0)
+ });
+
+ await recordEvent("session_exit",{
+  exitReason:reason
+ }).catch(()=>{});
+}
+
+
+/* =====================================
+   WATCH TIME TRACKING
+===================================== */
+
+function updateProgress(){
+ const duration=video.duration || 0;
+ const position=video.currentTime || 0;
+
+ const percentage=duration
+  ? Math.min(100,Math.round(position/duration*100))
+  : 0;
+
+ $("progressText").textContent=percentage+"%";
+ $("progressFill").style.width=percentage+"%";
+
+ $("watchTimeText").textContent=
+  "Your recorded active watch time: "+formatSeconds(totalWatched);
+}
+
+video.addEventListener("timeupdate",()=>{
+ const now=video.currentTime;
+
+ if(
+  !video.paused &&
+  !video.ended &&
+  document.visibilityState==="visible" &&
+  lastVideoTime>0
+ ){
+  const difference=now-lastVideoTime;
+
+  if(difference>0 && difference<=3){
+   totalWatched+=difference;
+  }
+ }
+
+ lastVideoTime=now;
+ updateProgress();
+});
+
+video.addEventListener("play",async()=>{
+ lastVideoTime=video.currentTime;
+
+ await recordEvent("play");
+ await updateSession({sessionStatus:"active"});
+});
+
+video.addEventListener("pause",async()=>{
+ await recordEvent("pause");
+ await updateSession({sessionStatus:"paused"});
+});
+
+video.addEventListener("ended",async()=>{
+ await recordEvent("video_completed");
+ await updateSession({
+  sessionStatus:"video_completed",
+  completionPercentage:100
+ });
+
+ notify("Class recording completed.");
+});
+
+document.addEventListener("visibilitychange",async()=>{
+ if(document.visibilityState==="hidden"){
+  await recordEvent("page_hidden");
+  await updateSession({sessionStatus:"background"});
+ }else{
+  await recordEvent("page_visible");
+  await updateSession({sessionStatus:"active"});
+
+  if(liveMode){
+   syncLivePosition();
+  }
+ }
+});
+
+window.addEventListener("pagehide",()=>{
+ if(sessionRef && !sessionClosed){
+  updateSession({
+   sessionStatus:"interrupted",
+   lastPosition:video.currentTime,
+   totalWatchSeconds:Math.floor(totalWatched)
+  });
+ }
+});
+
+setInterval(async()=>{
+ if(!sessionRef || sessionClosed)return;
+
+ if(
+  !video.paused &&
+  document.visibilityState==="visible"
+ ){
+  await recordEvent("heartbeat");
+ }
+
+ await updateSession();
+},HEARTBEAT_MS);
+
+
+/* =====================================
+   LIVE SYNCHRONIZATION
+===================================== */
+
+function syncLivePosition(){
+ if(!liveMode)return;
+
+ const start=getScheduledStart(classData);
+ if(!start)return;
+
+ const elapsed=Math.max(0,(Date.now()-start.getTime())/1000);
+
+ if(video.readyState>=1 && Math.abs(video.currentTime-elapsed)>4){
+  video.currentTime=elapsed;
+ }
+
+ if(video.duration && elapsed>=video.duration){
+  $("videoMessage").style.display="flex";
+  $("videoMessage").innerHTML=`
+   <i class="ri-checkbox-circle-line"></i>
+   <strong>Live class has ended</strong>
+   <span>Waiting for the recording to be published.</span>
+  `;
+
+  video.pause();
+ }
+}
+
+video.addEventListener("loadedmetadata",()=>{
+ if(liveMode){
+  syncLivePosition();
+ }
+});
+
+video.addEventListener("seeking",()=>{
+ if(!liveMode)return;
+
+ const start=getScheduledStart(classData);
+ if(!start)return;
+
+ const elapsed=Math.max(0,(Date.now()-start.getTime())/1000);
+
+ if(Math.abs(video.currentTime-elapsed)>3){
+  video.currentTime=elapsed;
+  notify("Seeking is disabled during the live class.");
+ }
+});
+
+video.addEventListener("ratechange",()=>{
+ if(liveMode && video.playbackRate!==1){
+  video.playbackRate=1;
+  notify("Playback speed is fixed during live classes.");
+ }
+});
+
+setInterval(()=>{
+ if(liveMode && !video.paused){
+  syncLivePosition();
+ }
+},3000);
+
+
+/* =====================================
+   CLASS INFORMATION
+===================================== */
+
+function renderClass(){
+ const subject=first(classData.subjectName,classData.subject,"Subject");
+ const chapter=first(classData.chapterName,classData.chapterTitle,classData.chapter,"Chapter");
+ const title=first(classData.title,classData.classTitle,"Class");
+ const teacher=first(classData.teacherName,classData.facultyName,classData.faculty,"Zenova Faculty");
+
+ $("subjectName").textContent=subject.toUpperCase();
+ $("classTitle").textContent=title;
+ $("chapterName").textContent=chapter;
+ $("teacherName").textContent=teacher;
+ $("courseName").textContent=first(classData.courseName,classData.batchName,"Zenova Course");
+
+ const start=first(classData.scheduledTime,classData.time,"--");
+ $("classTime").textContent=start;
+
+ $("classStatus").textContent=liveMode?"LIVE NOW":"RECORDING";
+
+ if(liveMode){
+  $("playerLive").style.display="block";
+  $("headerStatus").style.visibility="visible";
+
+  video.controls=false;
+  video.playbackRate=1;
+  video.controlsList="nodownload noplaybackrate nofullscreen";
+ }else{
+  $("playerLive").style.display="none";
+  $("headerStatus").style.visibility="hidden";
+
+  video.controls=true;
+  video.controlsList="nodownload";
+ }
+}
+
+
+/* =====================================
+   VIDEO LOADING
+===================================== */
+
+async function loadVideo(){
+ const type=first(
+  classData.liveType,
+  classData.mode,
+  classData.streamType
+ ).toLowerCase();
+
+ if(isZoom()){
+  $("videoMessage").innerHTML=`
+   <i class="ri-video-chat-line"></i>
+   <strong>Zoom classroom</strong>
+   <span>Open your Zoom meeting to attend.</span>
+   <button class="btn primary" id="zoomButton">Join Zoom</button>
+  `;
+
+  $("zoomButton").onclick=()=>{
+   const url=first(classData.zoomJoinUrl,classData.studentJoinUrl,classData.joinUrl);
+   if(url)window.open(url,"_blank","noopener,noreferrer");
+  };
+
+  return;
+ }
+
+ if(isYouTube()){
+  const url=first(classData.youtubeLiveUrl,classData.studentJoinUrl,classData.joinUrl);
+
+  $("videoMessage").innerHTML=`
+   <i class="ri-youtube-line"></i>
+   <strong>YouTube Live Class</strong>
+   <span>Open the teacher's YouTube live stream.</span>
+   <button class="btn primary" id="youtubeButton">Open YouTube Live</button>
+  `;
+
+  $("youtubeButton").onclick=()=>{
+   if(url)window.open(url,"_blank","noopener,noreferrer");
+  };
+
+  return;
+ }
+
+ const url=liveMode
+  ? first(classData.videoUrl,classData.streamUrl,classData.recordingUrl,classData.playbackUrl)
+  : first(classData.recordingUrl,classData.playbackUrl,classData.videoUrl,classData.recordedVideoUrl,classData.streamUrl);
+
+ if(!url){
+  $("videoMessage").innerHTML=`
+   <i class="ri-video-off-line"></i>
+   <strong>Video not available</strong>
+   <span>Your teacher has not published a video URL yet.</span>
+  `;
+  return;
+ }
+
+ $("videoMessage").style.display="none";
+ video.src=url;
+ video.load();
+
+ if(liveMode){
+  video.addEventListener("canplay",()=>{
+   video.play().catch(()=>{
+    notify("Tap the video to start playback.");
+   });
+  },{once:true});
+ }
+}
+
+
+/* =====================================
+   CLASSROOM INTERACTIONS
+===================================== */
+
+async function saveInteraction(type,data={}){
+ if(!sessionRef){
+  notify("Classroom session is not ready.");
+  return;
+ }
+
+ try{
+  await addDoc(collection(db,"liveClassInteractions"),{
+   studentUid:user.uid,
+   studentName:first(student.name,student.studentName,user.displayName),
+   studentCode:first(student.studentCode,student.znvCode,student.code),
+   classId,
+   sessionId:sessionRef.id,
+   interactionType:type,
+   timestamp:serverTimestamp(),
+   videoPosition:Number(video.currentTime||0),
+   ...data
+  });
+
+  await recordEvent(type,data);
+
+ }catch(error){
+  console.error(error);
+  notify("Unable to save your response.");
+ }
+}
+
+$("raiseHand").addEventListener("click",async()=>{
+ if(!liveMode){
+  notify("Raise Hand is available during live classes.");
+  return;
+ }
+
+ handRaised=!handRaised;
+
+ $("raiseHand").classList.toggle("selected",handRaised);
+ $("raiseHand").querySelector("span").textContent=
+  handRaised?"Lower Hand":"Raise Hand";
+
+ await saveInteraction(handRaised?"hand_raised":"hand_lowered");
+
+ notify(handRaised?"Your hand has been raised.":"Your hand has been lowered.");
+});
+
+$("understood").addEventListener("click",async()=>{
+ await saveInteraction("understood");
+
+ $("understood").classList.add("selected");
+ $("reExplain").classList.remove("selected");
+
+ notify("Your response has been recorded.");
+});
+
+$("reExplain").addEventListener("click",async()=>{
+ await saveInteraction("re_explain_requested");
+
+ $("reExplain").classList.add("selected");
+ $("understood").classList.remove("selected");
+
+ notify("Your re-explanation request has been recorded.");
+});
+
+$("askTeacher").addEventListener("click",()=>{
+ $("chatBox").classList.toggle("open");
+ $("questionText").focus();
+});
+
+$("sendQuestion").addEventListener("click",async()=>{
+ const message=$("questionText").value.trim();
+
+ if(!message){
+  notify("Please type your question first.");
+  return;
+ }
+
+ await saveInteraction("teacher_question",{
+  message
+ });
+
+ $("questionText").value="";
+ $("chatBox").classList.remove("open");
+
+ notify("Your question has been sent to your teacher.");
+});
+
+
+/* =====================================
+   TEST PAGE NAVIGATION
+===================================== */
+
+$("testButton").addEventListener("click",()=>{
+ const url=new URL("../livetest/index.html",location.href);
+
+ url.searchParams.set("classId",classId);
+
+ location.href=url.toString();
+});
+
+
+/* =====================================
+   BACK BUTTON
+===================================== */
+
+function showLeaveDialog(){
+ $("leaveMessage").textContent=liveMode
+  ?"You are leaving an active class. Your attendance and watch activity will be saved."
+  :"Your playback progress will be saved.";
+
+ $("leaveModal").classList.add("show");
+}
+
+$("backButton").addEventListener("click",showLeaveDialog);
+
+$("stayButton").addEventListener("click",()=>{
+ $("leaveModal").classList.remove("show");
+});
+
+$("confirmLeave").addEventListener("click",async()=>{
+ $("confirmLeave").disabled=true;
+
+ await recordEvent("student_left_class");
+ await closeSession("left");
+
+ window.location.href="../live/";
+});
+
+
+/* =====================================
+   INITIALIZE
+===================================== */
+
+async function initialize(currentUser){
+ user=currentUser;
+
+ if(!classId){
+  throw new Error("Missing class ID.");
+ }
+
+ const studentSnap=await getDoc(
+  doc(db,"zen2Students",user.uid)
+ );
+
+ if(!studentSnap.exists()){
+  throw new Error("Student profile not found.");
+ }
+
+ student=studentSnap.data();
+
+ const classSnap=await getDoc(
+  doc(db,"liveClasses",classId)
+ );
+
+ if(!classSnap.exists()){
+  throw new Error("Class not found.");
+ }
+
+ classData=classSnap.data();
+
+ if(classData.active===false || classData.published===false){
+  throw new Error("This class is not available.");
+ }
+
+ const allowed=await validateEnrollment();
+
+ if(!allowed){
+  throw new Error("You do not have access to this class.");
+ }
+
+ const status=String(classData.status||"").toLowerCase();
+
+ liveMode=
+  requestedMode==="live" &&
+  (
+   classData.isLive===true ||
+   status==="live" ||
+   status==="live now"
+  );
+
+ if(requestedMode==="live" && !liveMode){
+  notify("This class is no longer live. Opening its recording.");
+ }
+
+ renderClass();
+
+ await createSession();
+
+ await recordEvent("session_join",{
+  mode:liveMode?"live":"recorded"
+ });
+
+ if(Number(classData.viewerCount||0)>=0){
+  await updateDoc(doc(db,"liveClasses",classId),{
+   totalSessionJoins:increment(1)
+  }).catch(()=>{});
+ }
+
+ await loadVideo();
+}
+
+onAuthStateChanged(auth,async currentUser=>{
+ if(!currentUser){
+  location.href="../login/";
+  return;
+ }
+
+ try{
+  await initialize(currentUser);
+ }catch(error){
+  console.error("ZENOVA PLAYER ERROR:",error);
+
+  $("videoMessage").style.display="flex";
+  $("videoMessage").innerHTML=`
+   <i class="ri-error-warning-line"></i>
+   <strong>Unable to open classroom</strong>
+   <span>${esc(error.message)}</span>
+   <button class="btn primary" onclick="location.href='../live/'">
+    Back to Classes
+   </button>
+  `;
+ }
+});
+
+</script>
 </body>
 </html>
