@@ -994,6 +994,397 @@ body.fullscreen .controls:hover {
 <!-- ================= END SLIDE 3 ================= -->
 
 
+<!-- ==================== SLIDE 4 ==================== -->
+
+<section class="slide">
+
+    <img class="slide-bg" src="4.png" alt="">
+
+    <div class="page-number">04 / 24</div>
+
+    <div style="
+        position:absolute;
+        inset:5% 3% 5%;
+        z-index:2;
+        display:flex;
+        flex-direction:column;
+        gap:2%;
+        overflow:hidden;
+    ">
+
+        <!-- TITLE -->
+
+        <div style="flex-shrink:0;">
+            <h1 style="
+                font-family:Georgia,serif;
+                font-size:clamp(23px,3.2vw,45px);
+                color:#14264a;
+                line-height:1.1;
+            ">
+                Trigonometric Ratios in a Right Triangle
+            </h1>
+
+            <h2 style="
+                font-family:'Noto Sans Kannada',sans-serif;
+                font-size:clamp(17px,2.2vw,31px);
+                color:#70249a;
+                line-height:1.35;
+                margin-top:5px;
+            ">
+                ಲಂಬಕೋನ ತ್ರಿಭುಜದಲ್ಲಿನ ತ್ರಿಕೋನಮಿತಿಯ ಅನುಪಾತಗಳು
+            </h2>
+
+            <div style="
+                width:65px;
+                height:4px;
+                background:#1763b8;
+                border-radius:5px;
+                margin-top:8px;
+            "></div>
+        </div>
+
+        <!-- THREE MAIN SECTIONS -->
+
+        <div style="
+            display:grid;
+            grid-template-columns:1.05fr 0.9fr 1.05fr;
+            gap:2%;
+            align-items:center;
+            flex:1;
+            min-height:0;
+        ">
+
+            <!-- LEFT: TRIANGLE INFORMATION -->
+
+            <div style="
+                background:rgba(255,255,255,.95);
+                border:1px solid #cbdff8;
+                border-radius:15px;
+                padding:13px;
+                font-family:Georgia,serif;
+            ">
+
+                <div style="
+                    background:#1763b8;
+                    color:white;
+                    border-radius:25px;
+                    padding:9px;
+                    text-align:center;
+                    font-size:clamp(11px,1.3vw,18px);
+                    font-weight:bold;
+                ">
+                    Consider a right triangle ABC
+                </div>
+
+                <p style="
+                    font-family:'Noto Sans Kannada',sans-serif;
+                    text-align:center;
+                    color:#70249a;
+                    font-size:clamp(10px,1.1vw,15px);
+                    margin:12px 0;
+                ">
+                    ABC ಎಂಬ ಲಂಬಕೋನ ತ್ರಿಭುಜವನ್ನು ಪರಿಗಣಿಸಿ.
+                </p>
+
+                <div style="
+                    font-size:clamp(11px,1.2vw,17px);
+                    line-height:1.65;
+                    color:#14264a;
+                ">
+                    <p>🔵 ∠B = 90°</p>
+                    <p>🔵 AC = Hypotenuse (ಕರ್ಣ)</p>
+                    <p>🔵 BC = Adjacent side (ಸನ್ನಿಹಿತ ಬಾಹು)</p>
+                    <p>🔵 AB = Opposite side (ಎದುರಿನ ಬಾಹು)</p>
+                </div>
+
+            </div>
+
+
+            <!-- CENTER: RIGHT TRIANGLE DIAGRAM -->
+
+            <div style="
+                display:flex;
+                align-items:center;
+                justify-content:center;
+                min-width:0;
+            ">
+
+                <svg viewBox="0 0 340 300"
+                     width="100%"
+                     xmlns="http://www.w3.org/2000/svg">
+
+                    <!-- Triangle -->
+
+                    <polygon
+                        points="55,45 55,245 285,245"
+                        fill="#b9dcff"
+                        fill-opacity="0.65"
+                        stroke="#1763b8"
+                        stroke-width="4"
+                    />
+
+                    <!-- Right angle -->
+
+                    <path
+                        d="M55 215 H85 V245"
+                        fill="none"
+                        stroke="#1763b8"
+                        stroke-width="3"
+                    />
+
+                    <!-- Theta -->
+
+                    <path
+                        d="M285 245 L250 245 A35 35 0 0 0 258 222 Z"
+                        fill="#ffc928"
+                    />
+
+                    <text x="254" y="232"
+                          font-size="19"
+                          font-weight="bold"
+                          fill="#14264a">θ</text>
+
+                    <!-- Points -->
+
+                    <circle cx="55" cy="45" r="5" fill="#14264a"/>
+                    <circle cx="55" cy="245" r="5" fill="#14264a"/>
+                    <circle cx="285" cy="245" r="5" fill="#14264a"/>
+
+                    <!-- Vertex labels -->
+
+                    <g fill="#14264a"
+                       font-size="20"
+                       font-weight="bold">
+                        <text x="30" y="32">A</text>
+                        <text x="28" y="270">B</text>
+                        <text x="294" y="270">C</text>
+                    </g>
+
+                    <!-- Side labels -->
+
+                    <g fill="#14264a"
+                       font-size="15"
+                       font-weight="bold">
+                        <text x="10" y="140">AB</text>
+                        <text x="10" y="158" font-size="11">Opposite</text>
+
+                        <text x="145" y="270">BC</text>
+                        <text x="145" y="288" font-size="11">Adjacent</text>
+
+                        <text x="170" y="115">AC</text>
+                        <text x="170" y="133" font-size="11">Hypotenuse</text>
+                    </g>
+
+                </svg>
+
+            </div>
+
+
+            <!-- RIGHT: DEFINITION -->
+
+            <div style="
+                background:rgba(255,250,233,.96);
+                border:1px solid #f3d58a;
+                border-radius:15px;
+                padding:15px;
+                font-family:Georgia,serif;
+            ">
+
+                <h3 style="
+                    background:#1763b8;
+                    color:white;
+                    text-align:center;
+                    padding:9px;
+                    border-radius:25px;
+                    font-size:clamp(12px,1.4vw,19px);
+                ">
+                    Trigonometric Ratios
+                </h3>
+
+                <h4 style="
+                    font-family:'Noto Sans Kannada',sans-serif;
+                    text-align:center;
+                    color:#70249a;
+                    font-size:clamp(11px,1.2vw,16px);
+                    margin:10px 0;
+                ">
+                    ತ್ರಿಕೋನಮಿತಿಯ ಅನುಪಾತಗಳು
+                </h4>
+
+                <p style="
+                    font-size:clamp(10px,1.15vw,16px);
+                    line-height:1.5;
+                    color:#14264a;
+                ">
+                    The ratios of the sides of a right triangle
+                    with respect to an acute angle (θ) are
+                    called trigonometric ratios.
+                </p>
+
+                <p style="
+                    font-family:'Noto Sans Kannada',sans-serif;
+                    font-size:clamp(10px,1.05vw,14px);
+                    line-height:1.6;
+                    color:#70249a;
+                    margin-top:12px;
+                ">
+                    ಲಂಬಕೋನ ತ್ರಿಭುಜದ ಬಾಹುಗಳ ಅನುಪಾತಗಳನ್ನು,
+                    ತೀಕ್ಷ್ಣ ಕೋನ (θ) ಗೆ ಸಂಬಂಧಿಸಿದಂತೆ
+                    ತ್ರಿಕೋನಮಿತಿಯ ಅನುಪಾತಗಳು ಎನ್ನುತ್ತಾರೆ.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- SIX FORMULA CARDS -->
+
+        <div style="
+            display:grid;
+            grid-template-columns:repeat(6,minmax(0,1fr));
+            gap:8px;
+            flex-shrink:0;
+            padding:9px;
+            background:rgba(255,255,255,.96);
+            border:1px solid #a9d4ff;
+            border-radius:15px;
+        ">
+
+            <!-- SIN -->
+
+            <div style="
+                background:#e5f3ff;
+                border:1px solid #acd7fa;
+                border-radius:10px;
+                padding:10px 3px;
+                text-align:center;
+            ">
+                <strong style="font-size:clamp(13px,1.5vw,20px);">
+                    sin θ
+                </strong>
+                <p style="font-size:clamp(9px,1vw,13px);margin-top:5px;">
+                    Opposite<br>Hypotenuse
+                </p>
+                <div style="border-top:1px solid #333;margin:5px auto;width:70%;"></div>
+                <strong style="font-size:clamp(12px,1.4vw,19px);">
+                    AB / AC
+                </strong>
+            </div>
+
+            <!-- COS -->
+
+            <div style="
+                background:#eaf8ed;
+                border:1px solid #b9e2c0;
+                border-radius:10px;
+                padding:10px 3px;
+                text-align:center;
+            ">
+                <strong style="font-size:clamp(13px,1.5vw,20px);">
+                    cos θ
+                </strong>
+                <p style="font-size:clamp(9px,1vw,13px);margin-top:5px;">
+                    Adjacent<br>Hypotenuse
+                </p>
+                <div style="border-top:1px solid #333;margin:5px auto;width:70%;"></div>
+                <strong style="font-size:clamp(12px,1.4vw,19px);">
+                    BC / AC
+                </strong>
+            </div>
+
+            <!-- TAN -->
+
+            <div style="
+                background:#fff0f0;
+                border:1px solid #f3c4c4;
+                border-radius:10px;
+                padding:10px 3px;
+                text-align:center;
+            ">
+                <strong style="font-size:clamp(13px,1.5vw,20px);">
+                    tan θ
+                </strong>
+                <p style="font-size:clamp(9px,1vw,13px);margin-top:5px;">
+                    Opposite<br>Adjacent
+                </p>
+                <div style="border-top:1px solid #333;margin:5px auto;width:70%;"></div>
+                <strong style="font-size:clamp(12px,1.4vw,19px);">
+                    AB / BC
+                </strong>
+            </div>
+
+            <!-- COSEC -->
+
+            <div style="
+                background:#f0edff;
+                border:1px solid #d1c5fa;
+                border-radius:10px;
+                padding:10px 3px;
+                text-align:center;
+            ">
+                <strong style="font-size:clamp(13px,1.5vw,20px);">
+                    cosec θ
+                </strong>
+                <p style="font-size:clamp(9px,1vw,13px);margin-top:5px;">
+                    Hypotenuse<br>Opposite
+                </p>
+                <div style="border-top:1px solid #333;margin:5px auto;width:70%;"></div>
+                <strong style="font-size:clamp(12px,1.4vw,19px);">
+                    AC / AB
+                </strong>
+            </div>
+
+            <!-- SEC -->
+
+            <div style="
+                background:#fff3e8;
+                border:1px solid #f4d0ad;
+                border-radius:10px;
+                padding:10px 3px;
+                text-align:center;
+            ">
+                <strong style="font-size:clamp(13px,1.5vw,20px);">
+                    sec θ
+                </strong>
+                <p style="font-size:clamp(9px,1vw,13px);margin-top:5px;">
+                    Hypotenuse<br>Adjacent
+                </p>
+                <div style="border-top:1px solid #333;margin:5px auto;width:70%;"></div>
+                <strong style="font-size:clamp(12px,1.4vw,19px);">
+                    AC / BC
+                </strong>
+            </div>
+
+            <!-- COT -->
+
+            <div style="
+                background:#e6f4ff;
+                border:1px solid #b5dafa;
+                border-radius:10px;
+                padding:10px 3px;
+                text-align:center;
+            ">
+                <strong style="font-size:clamp(13px,1.5vw,20px);">
+                    cot θ
+                </strong>
+                <p style="font-size:clamp(9px,1vw,13px);margin-top:5px;">
+                    Adjacent<br>Opposite
+                </p>
+                <div style="border-top:1px solid #333;margin:5px auto;width:70%;"></div>
+                <strong style="font-size:clamp(12px,1.4vw,19px);">
+                    BC / AB
+                </strong>
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- ================= END SLIDE 4 ================= -->
+
 <!-- ADD MORE SLIDE BLOCKS HERE -->
 
 </main>
