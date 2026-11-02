@@ -1940,850 +1940,572 @@ background-position:center;
 
 </section>
 <!-- =============== END SLIDE 06 =============== -->
-<!-- ==================== SLIDE 7 ==================== -->
+
+    <!-- ================= SLIDE 7 : TEXTBOOK EXAMPLE 1 ================= -->
+
 <section class="slide" id="slide-7">
-  <style>
-    #slide-7 {
-      background: linear-gradient(135deg, #f7f9fc 0%, #eaf2ff 100%) center/cover no-repeat;
-      color: #172338;
-      padding: 4.2% 5.2%;
-      overflow: hidden;
-      font-family: inherit;
-    }
 
-    #slide-7 .s7-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 2.5%;
-    }
+<style>
+#slide-7 {
+  background: linear-gradient(135deg, #f7f9fc 0%, #eaf2ff 100%);
+  color: #172338;
+  padding: 3.5% 5%;
+  box-sizing: border-box;
+  overflow: hidden;
+  font-family: 'Inter', 'Noto Sans Kannada', sans-serif;
+}
 
-    #slide-7 .s7-brand {
-      font-size: clamp(10px, 1.05vw, 15px);
-      font-weight: 800;
-      letter-spacing: 2px;
-      color: #245fc9;
-    }
+#slide-7 .s7-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2%;
+}
 
-    #slide-7 .s7-number {
-      font-size: clamp(10px, .9vw, 13px);
-      color: #62718a;
-      font-weight: 700;
-    }
+#slide-7 .s7-brand {
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  color: #245fc9;
+}
 
-    #slide-7 .s7-chapter {
-      font-size: clamp(9px, .85vw, 13px);
-      color: #62718a;
-      font-weight: 700;
-      letter-spacing: 1px;
-      margin-bottom: 1%;
-    }
+#slide-7 .s7-chapter {
+  font-size: 11px;
+  color: #62718a;
+  text-align: right;
+  line-height: 1.7;
+}
 
-    #slide-7 .s7-title {
-      font-size: clamp(25px, 3.1vw, 45px);
-      line-height: 1.12;
-      font-weight: 850;
-      color: #172338;
-      margin: 0;
-    }
+#slide-7 .s7-heading {
+  margin-bottom: 2%;
+}
 
-    #slide-7 .s7-kannada {
-      font-size: clamp(17px, 1.8vw, 25px);
-      color: #7650bd;
-      font-weight: 750;
-      margin-top: 0.7%;
-    }
+#slide-7 .s7-kicker {
+  color: #3978e8;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  margin-bottom: 8px;
+}
 
-    #slide-7 .s7-intro {
-      font-size: clamp(12px, 1.15vw, 16px);
-      color: #62718a;
-      margin-top: 1.5%;
-      line-height: 1.5;
-    }
+#slide-7 h2 {
+  font-size: clamp(25px, 3vw, 42px);
+  line-height: 1.15;
+  margin: 0;
+  color: #172338;
+}
 
-    #slide-7 .s7-cards {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 2.5%;
-      margin-top: 4%;
-    }
+#slide-7 .s7-kannada {
+  color: #7252b5;
+  font-size: clamp(16px, 1.7vw, 22px);
+  font-weight: 700;
+  margin-top: 7px;
+}
 
-    #slide-7 .s7-card {
-      background: rgba(255,255,255,.94);
-      border: 1px solid #dce5f1;
-      border-radius: 22px;
-      padding: 5% 6%;
-      min-height: 225px;
-      box-shadow: 0 12px 30px rgba(31,65,115,.07);
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-    }
+#slide-7 .s7-given {
+  background: #172d50;
+  color: white;
+  border-radius: 16px;
+  padding: 13px 22px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 2% 0;
+}
 
-    #slide-7 .s7-label {
-      color: #245fc9;
-      font-size: clamp(11px, 1vw, 14px);
-      font-weight: 800;
-      letter-spacing: 1px;
-      margin-bottom: 5%;
-    }
+#slide-7 .s7-given-label {
+  font-size: 13px;
+  font-weight: 700;
+  opacity: .85;
+}
 
-    #slide-7 .s7-formula {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 12px;
-      font-size: clamp(25px, 3vw, 42px);
-      font-weight: 850;
-      color: #172338;
-      white-space: nowrap;
-    }
+#slide-7 .s7-given-value {
+  font-size: 25px;
+  font-weight: 800;
+}
 
-    #slide-7 .s7-equals {
-      color: #3978e8;
-    }
+#slide-7 .s7-content {
+  display: grid;
+  grid-template-columns: 0.95fr 1.05fr;
+  gap: 3%;
+  align-items: stretch;
+}
 
-    #slide-7 .s7-frac {
-      display: inline-flex;
-      flex-direction: column;
-      align-items: center;
-      line-height: 1.25;
-      font-size: .82em;
-    }
+#slide-7 .s7-panel {
+  background: rgba(255,255,255,.92);
+  border: 1px solid #dce5f1;
+  border-radius: 18px;
+  padding: 18px 22px;
+  box-shadow: 0 8px 25px rgba(23,35,56,.06);
+}
 
-    #slide-7 .s7-frac span:first-child {
-      border-bottom: 2px solid #245fc9;
-      padding: 0 9px 4px;
-    }
+#slide-7 .s7-panel h3 {
+  font-size: 16px;
+  margin: 0 0 12px;
+  color: #245fc9;
+}
 
-    #slide-7 .s7-frac span:last-child {
-      padding-top: 4px;
-    }
+#slide-7 .s7-triangle {
+  width: 100%;
+  height: 185px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 
-    #slide-7 .s7-kannada-label {
-      text-align: center;
-      color: #7650bd;
-      font-size: clamp(12px, 1.15vw, 16px);
-      font-weight: 700;
-      margin-top: 7%;
-    }
+#slide-7 .s7-explain {
+  font-size: 14px;
+  line-height: 1.6;
+  color: #62718a;
+  margin-top: 8px;
+}
 
-    #slide-7 .s7-note {
-      background: #172f59;
-      color: white;
-      border-radius: 16px;
-      padding: 2.1% 3%;
-      margin-top: 3%;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 20px;
-    }
+#slide-7 .s7-step {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 0;
+  border-bottom: 1px solid #edf1f7;
+  font-size: 15px;
+}
 
-    #slide-7 .s7-note strong {
-      font-size: clamp(12px, 1.1vw, 16px);
-    }
+#slide-7 .s7-step:last-child {
+  border-bottom: none;
+}
 
-    #slide-7 .s7-note span {
-      color: #d6e5ff;
-      font-size: clamp(11px, 1vw, 14px);
-      text-align: right;
-    }
+#slide-7 .s7-number {
+  width: 25px;
+  height: 25px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: #eaf2ff;
+  color: #245fc9;
+  display: grid;
+  place-items: center;
+  font-weight: 800;
+  font-size: 12px;
+}
 
-    @media (max-width: 650px) {
-      #slide-7 .s7-cards {
-        gap: 12px;
-      }
+#slide-7 .s7-equation {
+  font-weight: 800;
+  color: #172338;
+}
 
-      #slide-7 .s7-card {
-        min-height: 170px;
-        padding: 8% 4%;
-      }
+#slide-7 .s7-answer {
+  margin-top: 2%;
+  background: #ffffff;
+  border: 1px solid #dce5f1;
+  border-radius: 16px;
+  padding: 13px 20px;
+}
 
-      #slide-7 .s7-formula {
-        gap: 6px;
-        font-size: clamp(18px, 4vw, 27px);
-      }
+#slide-7 .s7-answer-title {
+  color: #245fc9;
+  font-weight: 800;
+  font-size: 13px;
+  margin-bottom: 9px;
+}
 
-      #slide-7 .s7-note {
-        flex-direction: column;
-        align-items: flex-start;
-      }
+#slide-7 .s7-ratios {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+}
 
-      #slide-7 .s7-note span {
-        text-align: left;
-      }
-    }
-  </style>
+#slide-7 .s7-ratio {
+  background: #f1f6ff;
+  border-radius: 10px;
+  text-align: center;
+  padding: 10px 4px;
+}
 
-  <div class="s7-top">
-    <div class="s7-brand">ZENOVA EDUCATIONS</div>
-    <div class="s7-number">07 / 24</div>
-  </div>
+#slide-7 .s7-ratio strong {
+  display: block;
+  color: #245fc9;
+  font-size: 14px;
+  margin-bottom: 5px;
+}
 
+#slide-7 .s7-ratio span {
+  font-size: 19px;
+  font-weight: 900;
+  color: #172338;
+}
+
+#slide-7 .s7-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1.5%;
+  font-size: 10px;
+  color: #62718a;
+  letter-spacing: .5px;
+}
+
+#slide-7 .s7-footer strong {
+  color: #245fc9;
+}
+
+@media (max-width: 700px) {
+  #slide-7 { padding: 4%; overflow-y: auto; }
+  #slide-7 .s7-content { grid-template-columns: 1fr; }
+  #slide-7 .s7-triangle { height: 140px; }
+  #slide-7 .s7-ratios { grid-template-columns: repeat(3, 1fr); }
+}
+</style>
+
+<div class="s7-top">
+  <div class="s7-brand">ZENOVA EDUCATIONS</div>
   <div class="s7-chapter">
-    MATHEMATICS / ಗಣಿತ
-    <br>
+    MATHEMATICS / ಗಣಿತ<br>
     CHAPTER 8 : INTRODUCTION TO TRIGONOMETRY
-    <br>
-    ಅಧ್ಯಾಯ 8 : ತ್ರಿಕೋನಮಿತಿಯ ಪರಿಚಯ
   </div>
+</div>
 
-  <h1 class="s7-title">Quotient Relationships</h1>
-  <div class="s7-kannada">ಭಾಗಲಬ್ಧ ಸಂಬಂಧಗಳು</div>
+<div class="s7-heading">
+  <div class="s7-kicker">TEXTBOOK EXAMPLE 1 · SOLVED</div>
+  <h2>Find the Other Trigonometric Ratios</h2>
+  <div class="s7-kannada">ಉಳಿದ ತ್ರಿಕೋನಮಿತಿಯ ಅನುಪಾತಗಳನ್ನು ಕಂಡುಹಿಡಿಯಿರಿ</div>
+</div>
 
-  <p class="s7-intro">
-    The quotient of two trigonometric ratios gives another
-    trigonometric ratio.
-    <br>
-    ಎರಡು ತ್ರಿಕೋನಮಿತಿಯ ಅನುಪಾತಗಳ ಭಾಗಲಬ್ಧವು ಮತ್ತೊಂದು
-    ತ್ರಿಕೋನಮಿತಿಯ ಅನುಪಾತವನ್ನು ನೀಡುತ್ತದೆ.
-  </p>
+<div class="s7-given">
+  <div>
+    <div class="s7-given-label">GIVEN / ನೀಡಿರುವುದು</div>
+    <div style="font-size:13px;margin-top:4px;">If tan A = 4/3, find the other ratios.</div>
+  </div>
+  <div class="s7-given-value">tan A = ⁴⁄₃</div>
+</div>
 
-  <div class="s7-cards">
+<div class="s7-content">
 
-    <!-- TAN IDENTITY -->
-    <div class="s7-card">
-      <div class="s7-label">RELATIONSHIP 01</div>
+  <div class="s7-panel">
+    <h3>Step 1 — Identify the sides</h3>
 
-      <div class="s7-formula">
-        tan θ
-        <span class="s7-equals">=</span>
-        <span class="s7-frac">
-          <span>sin θ</span>
-          <span>cos θ</span>
-        </span>
-      </div>
-
-      <div class="s7-kannada-label">
-        ಟ್ಯಾನ್ θ = ಸೈನ್ θ / ಕಾಸ್ θ
-      </div>
+    <div class="s7-triangle">
+      <svg viewBox="0 0 320 190" width="100%" height="100%">
+        <polygon points="65,150 245,150 245,30"
+          fill="#eaf2ff" stroke="#245fc9" stroke-width="3"/>
+        <path d="M225 150 L225 130 L245 130"
+          fill="none" stroke="#172338" stroke-width="2"/>
+        <path d="M105 150 A40 40 0 0 0 102 126"
+          fill="none" stroke="#7252b5" stroke-width="2"/>
+        <text x="84" y="139" fill="#7252b5" font-size="15" font-weight="bold">A</text>
+        <text x="145" y="173" fill="#245fc9" font-size="14" font-weight="bold">Adjacent = 3</text>
+        <text x="253" y="94" fill="#245fc9" font-size="13" font-weight="bold">Opposite</text>
+        <text x="253" y="110" fill="#245fc9" font-size="13" font-weight="bold">= 4</text>
+        <text x="135" y="77" fill="#172338" font-size="14" font-weight="bold"
+          transform="rotate(-34 135 77)">Hypotenuse = 5</text>
+      </svg>
     </div>
 
-    <!-- COT IDENTITY -->
-    <div class="s7-card">
-      <div class="s7-label">RELATIONSHIP 02</div>
+    <div class="s7-explain">
+      Since tan A = Opposite / Adjacent = 4/3,<br>
+      take opposite side = 4 units and adjacent side = 3 units.
+      <br><br>
+      <strong style="color:#172338;">ಕರ್ಣವನ್ನು ಕಂಡುಹಿಡಿಯಲು ಪೈಥಾಗರಸ್ ಪ್ರಮೇಯವನ್ನು ಬಳಸಿ.</strong>
+    </div>
+  </div>
 
-      <div class="s7-formula">
-        cot θ
-        <span class="s7-equals">=</span>
-        <span class="s7-frac">
-          <span>cos θ</span>
-          <span>sin θ</span>
-        </span>
-      </div>
+  <div class="s7-panel">
+    <h3>Step 2 — Apply Pythagoras Theorem</h3>
 
-      <div class="s7-kannada-label">
-        ಕಾಟ್ θ = ಕಾಸ್ θ / ಸೈನ್ θ
-      </div>
+    <div class="s7-step">
+      <div class="s7-number">1</div>
+      <div>Hypotenuse² = 4² + 3²</div>
     </div>
 
+    <div class="s7-step">
+      <div class="s7-number">2</div>
+      <div class="s7-equation">= 16 + 9 = 25</div>
+    </div>
+
+    <div class="s7-step">
+      <div class="s7-number">3</div>
+      <div class="s7-equation">Hypotenuse = √25 = 5</div>
+    </div>
+
+    <div class="s7-explain">
+      Therefore, the three sides are:
+      <br>
+      Opposite = 4, Adjacent = 3, Hypotenuse = 5.
+      <br><br>
+      <strong style="color:#7252b5;">ಎದುರು ಬಾಹು = 4, ಪಕ್ಕದ ಬಾಹು = 3, ಕರ್ಣ = 5.</strong>
+    </div>
   </div>
 
-  <div class="s7-note">
-    <strong>REMEMBER / ನೆನಪಿಡಿ</strong>
-    <span>
-      tan θ = sin θ ÷ cos θ
-      &nbsp; | &nbsp;
-      cot θ = cos θ ÷ sin θ
-    </span>
+</div>
+
+<div class="s7-answer">
+  <div class="s7-answer-title">FINAL ANSWERS — THE OTHER FIVE RATIOS</div>
+
+  <div class="s7-ratios">
+    <div class="s7-ratio">
+      <strong>sin A</strong>
+      <span>⁴⁄₅</span>
+    </div>
+    <div class="s7-ratio">
+      <strong>cos A</strong>
+      <span>³⁄₅</span>
+    </div>
+    <div class="s7-ratio">
+      <strong>cosec A</strong>
+      <span>⁵⁄₄</span>
+    </div>
+    <div class="s7-ratio">
+      <strong>sec A</strong>
+      <span>⁵⁄₃</span>
+    </div>
+    <div class="s7-ratio">
+      <strong>cot A</strong>
+      <span>³⁄₄</span>
+    </div>
   </div>
+</div>
+
+<div class="s7-footer">
+  <span>CHAPTER 8 · MATHEMATICS / ಗಣಿತ</span>
+  <strong>ZENOVA EDUCATIONS</strong>
+  <span>07 / 24</span>
+</div>
+
 </section>
+
 <!-- ================= END SLIDE 7 ================= -->
-    <!-- ==================== SLIDE 8 ==================== -->
+    
+  <!-- ================= SLIDE 8 ================= -->
 <section class="slide" id="slide-8">
-  <style>
-    #slide-8 {
-      background: linear-gradient(135deg, #f7f9fc, #eaf2ff);
-      color: #172338;
-      padding: 4.2% 5.2%;
-      overflow: hidden;
-      font-family: inherit;
-    }
+<style>
+#slide-8 {
+  background: linear-gradient(110deg,rgba(247,249,252,.96),rgba(234,242,255,.94)),url('8.png') center/cover;
+  color:#172338;padding:3.2% 4.5%;box-sizing:border-box;overflow:hidden;
+  font-family:Inter,'Noto Sans Kannada',sans-serif;
+}
+#slide-8 .top{display:flex;justify-content:space-between;align-items:center}
+#slide-8 .brand{font-size:13px;font-weight:900;letter-spacing:2px;color:#245fc9}
+#slide-8 .chapter{text-align:right;font-size:10px;color:#62718a;line-height:1.6}
+#slide-8 .kicker{font-size:11px;font-weight:800;letter-spacing:2px;color:#3978e8;margin-top:2%}
+#slide-8 h2{font-size:clamp(25px,2.8vw,39px);margin:5px 0;color:#172338}
+#slide-8 .kn{font-size:17px;color:#7252b5;font-weight:700;margin-bottom:2%}
+#slide-8 .examples{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+#slide-8 .panel{background:#fff;border:1px solid #dce5f1;border-radius:17px;padding:16px 19px;box-shadow:0 7px 20px #1723380b;min-width:0}
+#slide-8 h3{font-size:15px;color:#245fc9;margin:0 0 9px}
+#slide-8 .question{font-size:14px;font-weight:700;line-height:1.5;margin-bottom:10px}
+#slide-8 .equation{background:#f1f6ff;border-radius:10px;padding:9px 12px;margin:7px 0;font-size:15px;font-weight:700;line-height:1.55}
+#slide-8 .small{font-size:12px;line-height:1.5;color:#62718a}
+#slide-8 .result{background:#172d50;color:white;padding:10px 13px;border-radius:10px;margin-top:10px;font-size:14px;font-weight:800;text-align:center}
+#slide-8 .knsmall{color:#7252b5;font-size:12px;font-weight:700;margin-top:5px}
+#slide-8 .footer{display:flex;justify-content:space-between;margin-top:2%;font-size:10px;color:#62718a}
+#slide-8 .footer strong{color:#245fc9}
+@media(max-width:700px){#slide-8{overflow-y:auto;padding:4%}#slide-8 .examples{grid-template-columns:1fr}}
+</style>
 
-    #slide-8 .s8-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 2.5%;
-    }
+<div class="top">
+  <div class="brand">ZENOVA EDUCATIONS</div>
+  <div class="chapter">MATHEMATICS / ಗಣಿತ<br>CHAPTER 8 : INTRODUCTION TO TRIGONOMETRY</div>
+</div>
 
-    #slide-8 .s8-brand {
-      color: #245fc9;
-      font-size: clamp(10px, 1.05vw, 15px);
-      font-weight: 800;
-      letter-spacing: 2px;
-    }
+<div class="kicker">TEXTBOOK EXAMPLES 2 & 3</div>
+<h2>Equal Angles & Trigonometric Expressions</h2>
+<div class="kn">ಸಮ ಸೈನ್ ಮೌಲ್ಯಗಳು ಮತ್ತು ತ್ರಿಕೋನಮಿತಿಯ ಅಭಿವ್ಯಕ್ತಿಗಳು</div>
 
-    #slide-8 .s8-number {
-      color: #62718a;
-      font-size: clamp(10px, .9vw, 13px);
-      font-weight: 700;
-    }
+<div class="examples">
 
-    #slide-8 .s8-chapter {
-      color: #62718a;
-      font-size: clamp(9px, .85vw, 13px);
-      font-weight: 700;
-      line-height: 1.6;
-      letter-spacing: .5px;
-    }
-
-    #slide-8 .s8-title {
-      color: #172338;
-      font-size: clamp(25px, 3vw, 43px);
-      font-weight: 850;
-      line-height: 1.15;
-      margin: 1.5% 0 .5%;
-    }
-
-    #slide-8 .s8-kannada {
-      color: #7650bd;
-      font-size: clamp(17px, 1.7vw, 24px);
-      font-weight: 750;
-    }
-
-    #slide-8 .s8-intro {
-      color: #62718a;
-      font-size: clamp(12px, 1.1vw, 16px);
-      line-height: 1.5;
-      margin-top: 1.5%;
-    }
-
-    #slide-8 .s8-main {
-      display: grid;
-      grid-template-columns: 1.1fr .9fr;
-      gap: 3%;
-      margin-top: 3%;
-      align-items: stretch;
-    }
-
-    #slide-8 .s8-panel {
-      background: rgba(255,255,255,.95);
-      border: 1px solid #dce5f1;
-      border-radius: 20px;
-      padding: 4%;
-      box-shadow: 0 10px 28px rgba(31,65,115,.06);
-    }
-
-    #slide-8 .s8-panel-title {
-      color: #245fc9;
-      font-size: clamp(12px, 1.1vw, 16px);
-      font-weight: 800;
-      margin-bottom: 4%;
-    }
-
-    #slide-8 .s8-example {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
-
-    #slide-8 .s8-triangle {
-      background: #f4f7fc;
-      border-radius: 14px;
-      padding: 12px;
-      text-align: center;
-    }
-
-    #slide-8 .s8-triangle svg {
-      width: 100%;
-      max-height: 145px;
-    }
-
-    #slide-8 .s8-triangle strong {
-      display: block;
-      color: #172338;
-      font-size: clamp(12px, 1vw, 15px);
-      margin-top: 5px;
-    }
-
-    #slide-8 .s8-triangle small {
-      display: block;
-      color: #62718a;
-      font-size: clamp(10px, .85vw, 12px);
-      margin-top: 4px;
-    }
-
-    #slide-8 .s8-ratio {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      gap: 15px;
-    }
-
-    #slide-8 .s8-formula {
-      background: #f4f7fc;
-      border: 1px solid #e0e8f4;
-      border-radius: 13px;
-      padding: 13px 16px;
-      font-size: clamp(17px, 1.5vw, 22px);
-      font-weight: 800;
-      text-align: center;
-      color: #172338;
-    }
-
-    #slide-8 .s8-formula span {
-      color: #245fc9;
-    }
-
-    #slide-8 .s8-note {
-      margin-top: 2.5%;
-      background: #172f59;
-      color: white;
-      border-radius: 15px;
-      padding: 2% 3%;
-      display: flex;
-      justify-content: space-between;
-      gap: 15px;
-      align-items: center;
-    }
-
-    #slide-8 .s8-note strong {
-      font-size: clamp(12px, 1.1vw, 16px);
-    }
-
-    #slide-8 .s8-note span {
-      color: #d6e5ff;
-      font-size: clamp(11px, 1vw, 14px);
-      text-align: right;
-    }
-
-    @media(max-width:650px) {
-      #slide-8 .s8-main {
-        grid-template-columns: 1fr;
-        gap: 12px;
-      }
-
-      #slide-8 .s8-triangle svg {
-        max-height: 90px;
-      }
-
-      #slide-8 .s8-note {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-
-      #slide-8 .s8-note span {
-        text-align: left;
-      }
-    }
-  </style>
-
-  <div class="s8-top">
-    <div class="s8-brand">ZENOVA EDUCATIONS</div>
-    <div class="s8-number">08 / 24</div>
-  </div>
-
-  <div class="s8-chapter">
-    MATHEMATICS / ಗಣಿತ
-    <br>
-    CHAPTER 8 : INTRODUCTION TO TRIGONOMETRY
-    <br>
-    ಅಧ್ಯಾಯ 8 : ತ್ರಿಕೋನಮಿತಿಯ ಪರಿಚಯ
-  </div>
-
-  <h1 class="s8-title">Ratios of the Same Angle</h1>
-  <div class="s8-kannada">ಒಂದೇ ಕೋನದ ಅನುಪಾತಗಳು</div>
-
-  <p class="s8-intro">
-    The trigonometric ratios of an angle remain the same
-    for similar right-angled triangles.
-    <br>
-    ಸಮರೂಪ ಲಂಬಕೋನ ತ್ರಿಭುಜಗಳಲ್ಲಿ ಒಂದೇ ಕೋನದ ತ್ರಿಕೋನಮಿತಿಯ
-    ಅನುಪಾತಗಳು ಒಂದೇ ಆಗಿರುತ್ತವೆ.
-  </p>
-
-  <div class="s8-main">
-
-    <div class="s8-panel">
-      <div class="s8-panel-title">
-        SAME ANGLE θ / ಒಂದೇ ಕೋನ θ
-      </div>
-
-      <div class="s8-example">
-
-        <div class="s8-triangle">
-          <svg viewBox="0 0 180 140">
-            <polygon points="25,115 25,35 145,115"
-              fill="#dceaff" stroke="#245fc9" stroke-width="3"/>
-            <path d="M25 99 L41 99 L41 115"
-              fill="none" stroke="#172338" stroke-width="2"/>
-            <path d="M125 115 A20 20 0 0 0 132 102"
-              fill="none" stroke="#7650bd" stroke-width="2"/>
-            <text x="50" y="72" font-size="12" fill="#172338">6</text>
-            <text x="80" y="132" font-size="12" fill="#172338">8</text>
-            <text x="95" y="58" font-size="12" fill="#172338">10</text>
-            <text x="112" y="106" font-size="12" fill="#7650bd">θ</text>
-          </svg>
-          <strong>Triangle 1</strong>
-          <small>Opposite = 6, Adjacent = 8</small>
-        </div>
-
-        <div class="s8-triangle">
-          <svg viewBox="0 0 180 140">
-            <polygon points="25,115 25,35 145,115"
-              fill="#e8e1ff" stroke="#7650bd" stroke-width="3"/>
-            <path d="M25 99 L41 99 L41 115"
-              fill="none" stroke="#172338" stroke-width="2"/>
-            <path d="M125 115 A20 20 0 0 0 132 102"
-              fill="none" stroke="#245fc9" stroke-width="2"/>
-            <text x="50" y="72" font-size="12" fill="#172338">12</text>
-            <text x="80" y="132" font-size="12" fill="#172338">16</text>
-            <text x="95" y="58" font-size="12" fill="#172338">20</text>
-            <text x="112" y="106" font-size="12" fill="#245fc9">θ</text>
-          </svg>
-          <strong>Triangle 2</strong>
-          <small>Opposite = 12, Adjacent = 16</small>
-        </div>
-
-      </div>
+  <div class="panel">
+    <h3>EXAMPLE 2 — PROOF</h3>
+    <div class="question">
+      If ∠B and ∠Q are acute angles such that
+      sin B = sin Q, prove that ∠B = ∠Q.
     </div>
 
-    <div class="s8-panel s8-ratio">
-      <div class="s8-panel-title">
-        COMPARE THE RATIOS / ಅನುಪಾತಗಳನ್ನು ಹೋಲಿಸಿ
-      </div>
+    <div class="small">Given / ನೀಡಿರುವುದು</div>
+    <div class="equation">sin B = sin Q</div>
 
-      <div class="s8-formula">
-        sin θ = <span>6 / 10 = 12 / 20</span>
-      </div>
+    <div class="small">Using the definitions:</div>
+    <div class="equation">
+      AC / AB = PR / PQ
+    </div>
+    <div class="equation">
+      AC / PR = AB / PQ = k
+    </div>
+    <div class="small">
+      By Pythagoras theorem, the third corresponding sides are also proportional:
+    </div>
+    <div class="equation">
+      BC / QR = k
+    </div>
+    <div class="small">
+      Therefore, by SSS similarity criterion:
+      ΔACB ~ ΔPRQ
+    </div>
+    <div class="result">∠B = ∠Q  ✓</div>
+    <div class="knsmall">ಎರಡು ತೀಕ್ಷ್ಣ ಕೋನಗಳ ಸೈನ್ ಮೌಲ್ಯಗಳು ಸಮವಾಗಿದ್ದರೆ, ಕೋನಗಳೂ ಸಮವಾಗಿರುತ್ತವೆ.</div>
+  </div>
 
-      <div class="s8-formula">
-        cos θ = <span>8 / 10 = 16 / 20</span>
-      </div>
-
-      <div class="s8-formula">
-        tan θ = <span>6 / 8 = 12 / 16</span>
-      </div>
+  <div class="panel">
+    <h3>EXAMPLE 3 — EVALUATION</h3>
+    <div class="question">
+      In ΔACB, right-angled at C, AB = 29 units,
+      BC = 21 units and ∠ABC = θ. Find:
     </div>
 
+    <div class="equation">
+      (i) cos²θ + sin²θ
+    </div>
+    <div class="equation">
+      (ii) cos²θ − sin²θ
+    </div>
+
+    <div class="small">First, find AC using Pythagoras:</div>
+    <div class="equation">
+      AC = √(29² − 21²)<br>
+      = √(841 − 441) = 20
+    </div>
+
+    <div class="equation">
+      sin θ = 20/29<br>
+      cos θ = 21/29
+    </div>
+
+    <div class="small">Substitute the values:</div>
+    <div class="equation">
+      (i) (21/29)² + (20/29)² = 1
+    </div>
+    <div class="equation">
+      (ii) (21/29)² − (20/29)²<br>
+      = (441 − 400)/841 = 41/841
+    </div>
+
+    <div class="result">
+      Answers: (i) 1 &nbsp; | &nbsp; (ii) 41/841
+    </div>
   </div>
 
-  <div class="s8-note">
-    <strong>KEY IDEA / ಮುಖ್ಯ ಅಂಶ</strong>
-    <span>
-      Triangle size changes, but the angle θ remains the same.
-      Its trigonometric ratios remain unchanged.
-    </span>
-  </div>
+</div>
+
+<div class="footer">
+  <span>CHAPTER 8 · MATHEMATICS / ಗಣಿತ</span>
+  <strong>ZENOVA EDUCATIONS</strong>
+  <span>08 / 24</span>
+</div>
 </section>
 <!-- ================= END SLIDE 8 ================= -->
-    <!-- ==================== SLIDE 9 ==================== -->
+   <!-- ================= SLIDE 9 ================= -->
 <section class="slide" id="slide-9">
-  <style>
-    #slide-9 {
-      background: linear-gradient(135deg, #f7f9fc, #eaf2ff);
-      color: #172338;
-      padding: 3.8% 5%;
-      overflow: hidden;
-      font-family: inherit;
-    }
+<style>
+#slide-9 {
+  background:linear-gradient(110deg,rgba(247,249,252,.96),rgba(234,242,255,.94)),url('9.png') center/cover;
+  color:#172338;padding:3.2% 4.5%;box-sizing:border-box;overflow:hidden;
+  font-family:Inter,'Noto Sans Kannada',sans-serif;
+}
+#slide-9 .top{display:flex;justify-content:space-between;align-items:center}
+#slide-9 .brand{font-size:13px;font-weight:900;letter-spacing:2px;color:#245fc9}
+#slide-9 .chapter{text-align:right;font-size:10px;color:#62718a;line-height:1.6}
+#slide-9 .kicker{font-size:11px;font-weight:800;letter-spacing:2px;color:#3978e8;margin-top:2%}
+#slide-9 h2{font-size:clamp(25px,2.8vw,39px);margin:5px 0;color:#172338}
+#slide-9 .kn{font-size:17px;color:#7252b5;font-weight:700;margin-bottom:2%}
+#slide-9 .examples{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+#slide-9 .panel{background:#fff;border:1px solid #dce5f1;border-radius:17px;padding:16px 19px;box-shadow:0 7px 20px #1723380b;min-width:0}
+#slide-9 h3{font-size:15px;color:#245fc9;margin:0 0 9px}
+#slide-9 .question{font-size:14px;font-weight:700;line-height:1.5;margin-bottom:10px}
+#slide-9 .equation{background:#f1f6ff;border-radius:10px;padding:9px 12px;margin:7px 0;font-size:15px;font-weight:700;line-height:1.55}
+#slide-9 .small{font-size:12px;line-height:1.5;color:#62718a}
+#slide-9 .result{background:#172d50;color:white;padding:10px 13px;border-radius:10px;margin-top:10px;font-size:14px;font-weight:800;text-align:center}
+#slide-9 .knsmall{color:#7252b5;font-size:12px;font-weight:700;margin-top:5px}
+#slide-9 .footer{display:flex;justify-content:space-between;margin-top:2%;font-size:10px;color:#62718a}
+#slide-9 .footer strong{color:#245fc9}
+@media(max-width:700px){#slide-9{overflow-y:auto;padding:4%}#slide-9 .examples{grid-template-columns:1fr}}
+</style>
 
-    #slide-9 .s9-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 2%;
-    }
+<div class="top">
+  <div class="brand">ZENOVA EDUCATIONS</div>
+  <div class="chapter">MATHEMATICS / ಗಣಿತ<br>CHAPTER 8 : INTRODUCTION TO TRIGONOMETRY</div>
+</div>
 
-    #slide-9 .s9-brand {
-      color: #245fc9;
-      font-size: clamp(10px, 1vw, 15px);
-      font-weight: 800;
-      letter-spacing: 2px;
-    }
+<div class="kicker">TEXTBOOK EXAMPLES 4 & 5</div>
+<h2>Verification & Finding Sides</h2>
+<div class="kn">ಸಮೀಕರಣದ ಪರಿಶೀಲನೆ ಮತ್ತು ಬಾಹುಗಳ ಉದ್ದ ಕಂಡುಹಿಡಿಯುವುದು</div>
 
-    #slide-9 .s9-number {
-      color: #62718a;
-      font-size: clamp(10px, .9vw, 13px);
-      font-weight: 700;
-    }
+<div class="examples">
 
-    #slide-9 .s9-chapter {
-      color: #62718a;
-      font-size: clamp(9px, .82vw, 12px);
-      font-weight: 700;
-      line-height: 1.5;
-    }
-
-    #slide-9 .s9-title {
-      color: #172338;
-      font-size: clamp(23px, 2.7vw, 39px);
-      font-weight: 850;
-      line-height: 1.12;
-      margin: 1.2% 0 .5%;
-    }
-
-    #slide-9 .s9-kannada {
-      color: #7650bd;
-      font-size: clamp(16px, 1.5vw, 22px);
-      font-weight: 750;
-    }
-
-    #slide-9 .s9-intro {
-      color: #62718a;
-      font-size: clamp(11px, 1vw, 15px);
-      line-height: 1.5;
-      margin-top: 1%;
-    }
-
-    #slide-9 .s9-content {
-      display: grid;
-      grid-template-columns: .9fr 1.1fr;
-      gap: 2.5%;
-      margin-top: 2.5%;
-      align-items: stretch;
-    }
-
-    #slide-9 .s9-panel {
-      background: white;
-      border: 1px solid #dce5f1;
-      border-radius: 18px;
-      padding: 4%;
-      box-shadow: 0 9px 25px rgba(31,65,115,.06);
-    }
-
-    #slide-9 .s9-panel-title {
-      color: #245fc9;
-      font-size: clamp(11px, 1vw, 15px);
-      font-weight: 800;
-      margin-bottom: 3%;
-    }
-
-    #slide-9 .s9-diagram {
-      width: 100%;
-      max-height: 260px;
-      display: block;
-    }
-
-    #slide-9 .s9-diagram-note {
-      color: #62718a;
-      text-align: center;
-      font-size: clamp(10px, .9vw, 13px);
-      margin-top: 2%;
-    }
-
-    #slide-9 .s9-given {
-      background: #f1f6ff;
-      border-radius: 12px;
-      padding: 3% 4%;
-      margin-bottom: 3%;
-      font-size: clamp(12px, 1.05vw, 15px);
-      line-height: 1.6;
-    }
-
-    #slide-9 .s9-step {
-      display: flex;
-      gap: 12px;
-      align-items: flex-start;
-      padding: 2.2% 0;
-      border-bottom: 1px solid #edf1f7;
-    }
-
-    #slide-9 .s9-step:last-child {
-      border-bottom: none;
-    }
-
-    #slide-9 .s9-step-number {
-      flex: 0 0 25px;
-      height: 25px;
-      border-radius: 50%;
-      background: #245fc9;
-      color: white;
-      display: grid;
-      place-items: center;
-      font-size: 12px;
-      font-weight: 800;
-    }
-
-    #slide-9 .s9-step-content {
-      flex: 1;
-      font-size: clamp(12px, 1.05vw, 15px);
-      line-height: 1.5;
-    }
-
-    #slide-9 .s9-equation {
-      color: #172338;
-      font-weight: 800;
-      font-size: clamp(14px, 1.3vw, 19px);
-      margin-top: 3px;
-    }
-
-    #slide-9 .s9-result {
-      background: #172f59;
-      color: white;
-      border-radius: 15px;
-      padding: 2% 3%;
-      margin-top: 2.5%;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 15px;
-    }
-
-    #slide-9 .s9-result strong {
-      font-size: clamp(12px, 1.05vw, 15px);
-    }
-
-    #slide-9 .s9-result span {
-      color: #d6e5ff;
-      font-size: clamp(12px, 1.1vw, 16px);
-      font-weight: 700;
-    }
-
-    @media(max-width:650px) {
-      #slide-9 .s9-content {
-        grid-template-columns: 1fr;
-        gap: 10px;
-      }
-
-      #slide-9 .s9-diagram {
-        max-height: 130px;
-      }
-
-      #slide-9 .s9-result {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-    }
-  </style>
-
-  <div class="s9-top">
-    <div class="s9-brand">ZENOVA EDUCATIONS</div>
-    <div class="s9-number">09 / 24</div>
-  </div>
-
-  <div class="s9-chapter">
-    MATHEMATICS / ಗಣಿತ
-    <br>
-    CHAPTER 8 : INTRODUCTION TO TRIGONOMETRY
-    <br>
-    ಅಧ್ಯಾಯ 8 : ತ್ರಿಕೋನಮಿತಿಯ ಪರಿಚಯ
-  </div>
-
-  <h1 class="s9-title">Using Pythagoras Theorem</h1>
-  <div class="s9-kannada">ಪೈಥಾಗರಸ್ ಪ್ರಮೇಯದ ಬಳಕೆ</div>
-
-  <p class="s9-intro">
-    When two sides of a right-angled triangle are known,
-    we can find the third side using Pythagoras theorem.
-    <br>
-    ಲಂಬಕೋನ ತ್ರಿಭುಜದ ಎರಡು ಬಾಹುಗಳು ತಿಳಿದಿದ್ದರೆ,
-    ಪೈಥಾಗರಸ್ ಪ್ರಮೇಯದಿಂದ ಮೂರನೇ ಬಾಹುವನ್ನು ಕಂಡುಹಿಡಿಯಬಹುದು.
-  </p>
-
-  <div class="s9-content">
-
-    <!-- TRIANGLE -->
-    <div class="s9-panel">
-      <div class="s9-panel-title">
-        UNDERSTAND THE TRIANGLE / ತ್ರಿಭುಜವನ್ನು ಅರ್ಥಮಾಡಿಕೊಳ್ಳಿ
-      </div>
-
-      <svg class="s9-diagram" viewBox="0 0 320 250">
-        <polygon points="45,205 45,45 275,205"
-          fill="#dceaff"
-          stroke="#245fc9"
-          stroke-width="3"/>
-
-        <path d="M45 183 L67 183 L67 205"
-          fill="none"
-          stroke="#172338"
-          stroke-width="2.5"/>
-
-        <path d="M235 205 A40 40 0 0 0 242 182"
-          fill="none"
-          stroke="#7650bd"
-          stroke-width="3"/>
-
-        <text x="18" y="125" fill="#245fc9"
-          font-size="17" font-weight="bold">k</text>
-
-        <text x="155" y="230" fill="#245fc9"
-          font-size="17" font-weight="bold">2√2 k</text>
-
-        <text x="155" y="105" fill="#7650bd"
-          font-size="17" font-weight="bold">3k</text>
-
-        <text x="250" y="195" fill="#7650bd"
-          font-size="18" font-weight="bold">A</text>
-
-        <text x="28" y="225" fill="#172338"
-          font-size="15" font-weight="bold">B</text>
-
-        <text x="280" y="225" fill="#172338"
-          font-size="15" font-weight="bold">C</text>
-      </svg>
-
-      <div class="s9-diagram-note">
-        BC : AC = 1 : 3
-        <br>
-        BC = k, AC = 3k
-      </div>
+  <div class="panel">
+    <h3>EXAMPLE 4 — VERIFICATION</h3>
+    <div class="question">
+      In a right triangle ABC, right-angled at B,
+      if tan A = 1, verify that:
     </div>
 
-    <!-- SOLUTION -->
-    <div class="s9-panel">
-      <div class="s9-panel-title">
-        STEP-BY-STEP SOLUTION / ಹಂತ ಹಂತದ ಪರಿಹಾರ
-      </div>
+    <div class="equation">2 sin A cos A = 1</div>
 
-      <div class="s9-given">
-        <strong>Given / ಕೊಟ್ಟಿರುವುದು:</strong>
-        <br>
-        BC : AC = 1 : 3
-        <br>
-        Let BC = k and AC = 3k.
-      </div>
-
-      <div class="s9-step">
-        <div class="s9-step-number">1</div>
-        <div class="s9-step-content">
-          Apply Pythagoras theorem:
-          <div class="s9-equation">
-            AB² = AC² − BC²
-          </div>
-        </div>
-      </div>
-
-      <div class="s9-step">
-        <div class="s9-step-number">2</div>
-        <div class="s9-step-content">
-          Substitute the known sides:
-          <div class="s9-equation">
-            = (3k)² − k²
-          </div>
-        </div>
-      </div>
-
-      <div class="s9-step">
-        <div class="s9-step-number">3</div>
-        <div class="s9-step-content">
-          Simplify:
-          <div class="s9-equation">
-            = 9k² − k² = 8k²
-          </div>
-        </div>
-      </div>
-
-      <div class="s9-step">
-        <div class="s9-step-number">4</div>
-        <div class="s9-step-content">
-          Therefore:
-          <div class="s9-equation">
-            AB = 2√2 k
-          </div>
-        </div>
-      </div>
+    <div class="small">Given / ನೀಡಿರುವುದು</div>
+    <div class="equation">
+      tan A = BC / AB = 1<br>
+      Therefore, BC = AB = k
     </div>
 
+    <div class="small">By Pythagoras theorem:</div>
+    <div class="equation">
+      AC = √(k² + k²) = k√2
+    </div>
+
+    <div class="small">Find the ratios:</div>
+    <div class="equation">
+      sin A = 1/√2<br>
+      cos A = 1/√2
+    </div>
+
+    <div class="small">Substitute into the expression:</div>
+    <div class="equation">
+      2 sin A cos A<br>
+      = 2 × 1/√2 × 1/√2
+    </div>
+
+    <div class="result">= 1  ✓ VERIFIED</div>
+    <div class="knsmall">ಕೊಟ್ಟಿರುವ ಸಮೀಕರಣವು ಸರಿ ಎಂದು ಪರಿಶೀಲಿಸಲಾಗಿದೆ.</div>
   </div>
 
-  <div class="s9-result">
-    <strong>THIRD SIDE FOUND / ಮೂರನೇ ಬಾಹು ದೊರೆಯಿತು</strong>
-    <span>AB = 2√2 k</span>
+  <div class="panel">
+    <h3>EXAMPLE 5 — FINDING SIDES</h3>
+    <div class="question">
+      In ΔOPQ, right-angled at P, OP = 7 cm
+      and OQ − PQ = 1 cm. Find sin Q and cos Q.
+    </div>
+
+    <div class="small">Let PQ = x. Then OQ = x + 1.</div>
+    <div class="equation">
+      By Pythagoras theorem:<br>
+      OQ² = OP² + PQ²
+    </div>
+    <div class="equation">
+      (x + 1)² = 7² + x²
+    </div>
+    <div class="equation">
+      x² + 2x + 1 = 49 + x²
+    </div>
+    <div class="equation">
+      2x = 48<br>
+      x = 24
+    </div>
+
+    <div class="small">Therefore, the sides are:</div>
+    <div class="equation">
+      PQ = 24 cm<br>
+      OQ = 25 cm<br>
+      OP = 7 cm
+    </div>
+
+    <div class="result">
+      sin Q = 7/25 &nbsp; | &nbsp; cos Q = 24/25
+    </div>
+    <div class="knsmall">ಕೋನ Q ಗೆ ಎದುರು ಬಾಹು = 7, ಪಕ್ಕದ ಬಾಹು = 24, ಕರ್ಣ = 25.</div>
   </div>
+
+</div>
+
+<div class="footer">
+  <span>CHAPTER 8 · MATHEMATICS / ಗಣಿತ</span>
+  <strong>ZENOVA EDUCATIONS</strong>
+  <span>09 / 24</span>
+</div>
 </section>
 <!-- ================= END SLIDE 9 ================= -->
 <!-- ADD MORE SLIDE BLOCKS HERE -->
