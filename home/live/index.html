@@ -3,1583 +3,1251 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#F7F9FC">
-<title>Live Classes | Zenova Educations</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#ffffff">
+<title>Zenova — Live Classes</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
 
 <style>
-:root {
-  --bg:#F7F9FC;
-  --white:#FFFFFF;
-  --soft:#F0F5FB;
-  --blue:#3978E8;
-  --dark:#245FC9;
-  --light:#EAF2FF;
-  --text:#172338;
-  --muted:#7B8799;
-  --border:#E7EDF5;
-  --green:#159B78;
-  --red:#E34D59;
-  --orange:#D28A27;
-}
-
-* { box-sizing:border-box; margin:0; padding:0; }
-
-body {
-  background:var(--bg);
-  color:var(--text);
-  font-family:Inter,Arial,sans-serif;
-  padding-bottom:85px;
-}
-
-button,input,select { font:inherit; }
-button { cursor:pointer; }
-a { color:inherit; text-decoration:none; }
-
-.container {
-  width:min(1100px,100%);
-  margin:auto;
-  padding:22px 18px;
-}
-
-.header {
-  background:white;
-  border-bottom:1px solid var(--border);
-  position:sticky;
-  top:0;
-  z-index:20;
-}
-
-.header-inner {
-  max-width:1100px;
-  margin:auto;
-  padding:13px 18px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-}
-
-.brand {
-  display:flex;
-  align-items:center;
-  gap:10px;
-}
-
-.logo {
-  width:42px;
-  height:42px;
-  border-radius:13px;
-  background:var(--blue);
-  color:white;
-  display:grid;
-  place-items:center;
-  font-size:22px;
-  font-weight:800;
-}
-
-.brand-name { font-weight:800; font-size:16px; }
-.brand-sub { color:var(--muted); font-size:10px; margin-top:3px; }
-
-.profile {
-  width:40px;
-  height:40px;
-  border:1px solid var(--border);
-  border-radius:50%;
-  background:var(--soft);
-  color:var(--dark);
-  display:grid;
-  place-items:center;
-  font-size:20px;
-}
-
-.greeting { margin:12px 0 20px; }
-.eyebrow {
-  color:var(--blue);
-  font-size:10px;
-  font-weight:800;
-  letter-spacing:1px;
-}
-
-h1 {
-  font-size:28px;
-  margin-top:8px;
-  letter-spacing:-1px;
-}
-
-.muted {
-  color:var(--muted);
-  font-size:12px;
-  line-height:1.7;
-  margin-top:6px;
-}
-
-.hero {
-  background:linear-gradient(120deg,#EAF2FF,#FFFFFF);
-  border:1px solid #DCE8FB;
-  border-radius:18px;
-  padding:20px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:15px;
-  margin-bottom:25px;
-}
-
-.hero h2 { font-size:17px; margin-top:6px; }
-.hero p { color:var(--muted); font-size:11px; margin-top:7px; line-height:1.6; }
-
-.hero-icon {
-  width:55px;
-  height:55px;
-  border-radius:16px;
-  background:white;
-  display:grid;
-  place-items:center;
-  color:var(--blue);
-  font-size:28px;
-  flex-shrink:0;
-}
-
-.section { margin-top:28px; }
-
-.section-head {
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:10px;
-  margin-bottom:14px;
-}
-
-.section-head h2 { font-size:17px; font-weight:800; }
-.section-head p { font-size:11px; color:var(--muted); margin-top:5px; }
-
-.small-count {
-  padding:7px 10px;
-  border-radius:8px;
-  background:var(--light);
-  color:var(--dark);
-  font-size:10px;
-  font-weight:800;
-}
-
-.date-panel {
-  background:white;
-  border:1px solid var(--border);
-  border-radius:16px;
-  padding:15px;
-}
-
-.date-controls {
-  display:flex;
-  align-items:center;
-  gap:10px;
-  flex-wrap:wrap;
-}
-
-.date-controls input {
-  min-height:42px;
-  padding:0 12px;
-  border:1px solid var(--border);
-  border-radius:10px;
-  background:white;
-  color:var(--text);
-  font-size:12px;
-}
-
-.date-shortcuts {
-  display:flex;
-  gap:7px;
-  margin-top:13px;
-  overflow-x:auto;
-  padding-bottom:4px;
-}
-
-.date-chip {
-  min-width:65px;
-  padding:10px 8px;
-  border:1px solid var(--border);
-  border-radius:11px;
-  background:white;
-  text-align:center;
-  color:var(--muted);
-  flex-shrink:0;
-}
-
-.date-chip strong { display:block; font-size:15px; color:var(--text); }
-.date-chip span { display:block; font-size:9px; margin-top:4px; }
-
-.date-chip.active {
-  background:var(--blue);
-  border-color:var(--blue);
-  color:white;
-}
-
-.date-chip.active strong,
-.date-chip.active span { color:white; }
-
-.subject-grid {
-  display:grid;
-  grid-template-columns:repeat(3,minmax(0,1fr));
-  gap:12px;
-}
-
-.subject-card {
-  background:white;
-  border:1px solid var(--border);
-  border-radius:15px;
-  padding:15px 12px;
-  text-align:left;
-  min-width:0;
-  transition:.2s;
-}
-
-.subject-card:hover,
-.subject-card.active {
-  border-color:var(--blue);
-  background:var(--light);
-}
-
-.subject-icon {
-  width:39px;
-  height:39px;
-  border-radius:11px;
-  background:var(--light);
-  color:var(--dark);
-  display:grid;
-  place-items:center;
-  font-size:20px;
-  margin-bottom:11px;
-}
-
-.subject-card strong {
-  display:block;
-  font-size:11px;
-  line-height:1.4;
-}
-
-.subject-card span {
-  display:block;
-  margin-top:5px;
-  color:var(--muted);
-  font-size:9px;
-}
-
-.toolbar {
-  display:flex;
-  gap:9px;
-  margin-bottom:13px;
-  flex-wrap:wrap;
-}
-
-.search {
-  flex:1;
-  min-width:180px;
-  height:43px;
-  border:1px solid var(--border);
-  border-radius:11px;
-  padding:0 13px;
-  background:white;
-  font-size:11px;
-  outline:none;
-}
-
-.select {
-  min-height:43px;
-  border:1px solid var(--border);
-  border-radius:11px;
-  padding:0 12px;
-  background:white;
-  color:var(--text);
-  font-size:11px;
-}
-
-.class-list {
-  display:grid;
-  gap:12px;
-}
-
-.class-card {
-  background:white;
-  border:1px solid var(--border);
-  border-radius:15px;
-  padding:14px;
-  display:grid;
-  grid-template-columns:65px minmax(0,1fr);
-  gap:12px;
-  align-items:center;
-}
-
-.class-icon {
-  height:65px;
-  border-radius:12px;
-  background:var(--light);
-  display:grid;
-  place-items:center;
-  color:var(--blue);
-  font-size:25px;
-  overflow:hidden;
-}
-
-.class-icon img {
-  width:100%;
-  height:100%;
-  object-fit:cover;
-}
-
-.class-info { min-width:0; }
-.class-info h3 { font-size:13px; line-height:1.5; }
-.class-info p { color:var(--muted); font-size:10px; margin-top:5px; line-height:1.6; }
-
-.class-meta {
-  display:flex;
-  flex-wrap:wrap;
-  gap:8px;
-  align-items:center;
-  margin-top:8px;
-}
-
-.status {
-  display:inline-flex;
-  padding:5px 8px;
-  border-radius:6px;
-  font-size:9px;
-  font-weight:800;
-  background:var(--soft);
-  color:var(--muted);
-}
-
-.status.live { background:#FDEBED; color:var(--red); }
-.status.upcoming { background:#FFF5E5; color:var(--orange); }
-.status.recorded { background:#E8F8F2; color:var(--green); }
-
-.class-actions {
-  grid-column:1/-1;
-  display:flex;
-  gap:8px;
-}
-
-.btn {
-  min-height:40px;
-  padding:0 15px;
-  border:0;
-  border-radius:10px;
-  font-size:11px;
-  font-weight:750;
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  gap:7px;
-}
-
-.primary { background:var(--blue); color:white; flex:1; }
-.secondary { background:var(--light); color:var(--dark); }
-.btn:disabled { background:#EEF1F6; color:#8995A6; cursor:not-allowed; }
-
-.empty {
-  padding:28px 15px;
-  border:1px dashed var(--border);
-  border-radius:14px;
-  background:white;
-  text-align:center;
-  color:var(--muted);
-  font-size:11px;
-  line-height:1.7;
-}
-
-.empty i { font-size:28px; display:block; margin-bottom:8px; }
-
-.test-summary {
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:10px;
-  margin-bottom:14px;
-}
-
-.summary-card {
-  background:white;
-  border:1px solid var(--border);
-  border-radius:13px;
-  padding:13px;
-}
-
-.summary-card strong { display:block; font-size:21px; }
-.summary-card span { color:var(--muted); font-size:9px; }
-
-.test-list { display:grid; gap:10px; }
-
-.test-row {
-  background:white;
-  border:1px solid var(--border);
-  border-radius:13px;
-  padding:13px;
-}
-
-.test-row strong { font-size:12px; }
-.test-row p { color:var(--muted); font-size:10px; margin-top:5px; }
-
-.test-marks {
-  color:var(--dark);
-  font-size:13px;
-  font-weight:800;
-}
-
-.tabs {
-  position:fixed;
-  bottom:0;
-  left:0;
-  right:0;
-  z-index:30;
-  background:white;
-  border-top:1px solid var(--border);
-  padding:8px 7px calc(8px + env(safe-area-inset-bottom));
-}
-
-.tabs-inner {
-  max-width:550px;
-  margin:auto;
-  display:grid;
-  grid-template-columns:repeat(5,1fr);
-}
-
-.tab {
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  gap:4px;
-  color:var(--muted);
-  font-size:9px;
-  padding:6px 2px;
-}
-
-.tab i { font-size:20px; }
-.tab.active { color:var(--blue); font-weight:800; }
-
-.loader {
-  min-height:100vh;
-  display:grid;
-  place-items:center;
-  color:var(--blue);
-  font-weight:800;
-}
-
-.hidden { display:none!important; }
-
-@media(min-width:700px) {
-  .subject-grid { grid-template-columns:repeat(6,minmax(0,1fr)); }
-  .class-card {
-    grid-template-columns:75px minmax(0,1fr) 150px;
-  }
-  .class-actions { grid-column:auto; }
-  .class-icon { height:75px; }
-}
-
-@media(max-width:420px) {
-  .container { padding:17px 12px; }
-  .subject-grid { gap:8px; }
-  .subject-card { padding:12px 9px; }
-  .subject-card strong { font-size:10px; }
-  .test-summary { gap:6px; }
-  .summary-card { padding:10px; }
-  .summary-card strong { font-size:18px; }
+*{box-sizing:border-box}
+:root{--text:#171717;--muted:#777;--border:#e9e9e9;--red:#d62828;--blue:#2563eb;--green:#16803c}
+body{margin:0;background:#fafafa;color:var(--text);font-family:Inter,Arial,sans-serif;padding-bottom:85px}
+button,input{font:inherit}
+button{cursor:pointer}
+.hidden{display:none!important}
+.topbar{height:64px;position:sticky;top:0;z-index:10;background:#ffffffed;backdrop-filter:blur(15px);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 18px}
+.back{width:38px;height:38px;border:0;border-radius:50%;background:#f2f2f2;font-size:22px}
+.brand{text-align:center;font-family:Poppins,sans-serif;font-size:16px;font-weight:800;letter-spacing:1.5px}
+.brand small{display:block;font:700 8px Inter;color:#999;letter-spacing:1.5px}
+.top-space{width:38px}
+.page{width:min(1000px,calc(100% - 32px));margin:28px auto 45px}
+.intro{margin-bottom:30px}
+.eyebrow{font-size:9px;font-weight:800;letter-spacing:1.7px;color:#999}
+h1{font:700 29px Poppins;margin:7px 0}
+.intro p{font-size:13px;color:var(--muted);line-height:1.6;margin:0}
+.section{margin-bottom:38px}
+.heading{display:flex;justify-content:space-between;align-items:end;gap:12px;margin-bottom:14px}
+.heading h2{font:700 19px Poppins;margin:0}
+.heading p{font-size:11px;color:#888;margin:5px 0 0}
+.class-list{display:grid;gap:12px}
+.class-card{background:white;border:1px solid var(--border);border-radius:15px;padding:17px;box-shadow:0 3px 12px #00000005}
+.class-card.live{border-color:#efbcbc}
+.card-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+.card-title{font:700 15px Poppins;margin:0}
+.card-subtitle{font-size:11px;color:#777;margin-top:5px}
+.status{flex-shrink:0;padding:6px 10px;border-radius:30px;background:#f1f1f1;color:#777;font-size:9px;font-weight:800;letter-spacing:.5px}
+.status.live{background:#fff0f0;color:var(--red)}
+.status.upcoming{background:#eef4ff;color:var(--blue)}
+.status.ended{background:#eaf7ee;color:var(--green)}
+.details{display:flex;flex-wrap:wrap;gap:8px 16px;margin-top:14px;color:#777;font-size:10px}
+.action-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:15px;padding-top:13px;border-top:1px solid #f0f0f0}
+.provider{font-size:9px;color:#888;font-weight:700}
+.action{min-height:38px;padding:0 16px;border:0;border-radius:9px;background:#111;color:white;font-size:10px;font-weight:800}
+.action.live-btn{background:var(--red)}
+.action:disabled{opacity:.5;cursor:not-allowed}
+.date-box{display:grid;grid-template-columns:42px 1fr auto 42px;align-items:center;gap:10px;padding:12px;background:white;border:1px solid var(--border);border-radius:14px}
+.date-arrow{height:40px;border:0;border-radius:9px;background:#f2f2f2;font-size:23px}
+.date-title small{display:block;color:#999;font-size:8px;font-weight:800;letter-spacing:1px;margin-bottom:4px}
+.date-title strong{font:600 13px Poppins}
+#datePicker{height:40px;max-width:145px;border:1px solid #ddd;border-radius:8px;padding:0 8px;background:white;font-size:11px}
+.date-list{display:grid;gap:10px;margin-top:12px}
+.date-card{display:flex;justify-content:space-between;align-items:center;gap:12px;background:white;border:1px solid var(--border);border-radius:12px;padding:14px}
+.date-card strong{font:700 12px Poppins}
+.date-card p{font-size:10px;color:#777;line-height:1.6;margin:5px 0 0}
+.subject-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px}
+.subject-card{display:flex;align-items:center;gap:12px;text-align:left;background:white;border:1px solid var(--border);border-radius:13px;padding:13px}
+.subject-icon{width:38px;height:38px;border-radius:10px;background:#f2f2f2;display:grid;place-items:center;font:800 12px Poppins}
+.subject-card strong{font-size:12px}
+.subject-card small{display:block;color:#999;font-size:9px;margin-top:4px}
+.history-list{display:grid;gap:10px}
+.history-card{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px;background:white;border:1px solid var(--border);border-radius:12px}
+.history-card strong{font:700 12px Poppins}
+.history-card p{font-size:10px;color:#777;margin:5px 0 0}
+.empty{padding:27px;text-align:center;background:white;border:1px dashed #ddd;border-radius:13px;color:#888;font-size:11px;line-height:1.6}
+.error{padding:18px;background:#fff2f2;border:1px solid #f0caca;border-radius:12px;color:#a22;font-size:12px}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;height:66px;z-index:20;background:#fff;border-top:1px solid var(--border);display:flex;justify-content:space-around;align-items:center}
+.bottom-nav a{font-size:10px;color:#777;text-decoration:none;text-align:center;flex:1}
+.bottom-nav a.active{color:#111;font-weight:800}
+.bottom-nav span{display:block;font-size:19px;margin-bottom:3px}
+.toast{position:fixed;bottom:82px;left:50%;transform:translateX(-50%);background:#171717;color:white;padding:11px 17px;border-radius:9px;font-size:11px;z-index:50;display:none;max-width:90%;text-align:center}
+.toast.show{display:block}
+@media(max-width:550px){
+ .page{margin-top:22px}
+ h1{font-size:25px}
+ .date-box{grid-template-columns:35px 1fr auto 35px;gap:6px;padding:8px}
+ .date-arrow{height:36px}
+ #datePicker{max-width:118px;font-size:10px}
+ .class-card{padding:14px}
+ .action{padding:0 12px}
 }
 </style>
 </head>
 
 <body>
 
-<div id="loader" class="loader">ZENOVA · Loading your classroom...</div>
-
-<div id="app" class="hidden">
-
-<header class="header">
-  <div class="header-inner">
-    <a href="../" class="brand">
-      <div class="logo">Z</div>
-      <div>
-        <div class="brand-name">ZENOVA</div>
-        <div class="brand-sub">EDUCATIONS</div>
-      </div>
-    </a>
-    <a href="../profile/" class="profile">
-      <i class="ri-user-3-line"></i>
-    </a>
-  </div>
+<header class="topbar">
+    <button class="back" id="backButton" aria-label="Go back">‹</button>
+    <div class="brand">ZENOVA<small>LIVE LEARNING</small></div>
+    <div class="top-space"></div>
 </header>
 
-<main class="container">
+<main class="page">
 
-  <section class="greeting">
-    <span class="eyebrow">YOUR LEARNING CENTRE</span>
-    <h1 id="welcomeTitle">Hello, Student!</h1>
-    <p class="muted">Attend classes, revise chapters and track your performance.</p>
-  </section>
+    <section class="intro">
+        <span class="eyebrow">YOUR CLASSROOM</span>
+        <h1>Live Classes</h1>
+        <p>Attend your scheduled classes, join live sessions and watch recordings after class.</p>
+    </section>
 
-  <section class="hero">
-    <div>
-      <span class="eyebrow">ZENOVA CLASSROOM</span>
-      <h2>Learn. Practise. Improve.</h2>
-      <p>Your classes, recordings and tests are organised in one place.</p>
-    </div>
-    <div class="hero-icon"><i class="ri-graduation-cap-line"></i></div>
-  </section>
-
-  <!-- DATE WISE CLASSES -->
-
-  <section class="section" id="dateSection">
-    <div class="section-head">
-      <div>
-        <h2>Classes by Date</h2>
-        <p>Select a date to view its classes and recordings.</p>
-      </div>
-      <span class="small-count" id="dateClassCount">0 Classes</span>
+    <div id="loadingState" class="empty">Loading your classes...</div>
+    <div id="errorState" class="error hidden">
+        <div id="errorText"></div>
+        <button class="action" id="retryButton" style="margin-top:12px">TRY AGAIN</button>
     </div>
 
-    <div class="date-panel">
-      <div class="date-controls">
-        <input type="date" id="selectedDate">
-        <button class="btn secondary" id="todayButton" type="button">
-          Today
-        </button>
-      </div>
-      <div class="date-shortcuts" id="dateShortcuts"></div>
+    <div id="liveApp" class="hidden">
+
+        <section class="section">
+            <div class="heading">
+                <div>
+                    <h2>Today's Classes</h2>
+                    <p id="todayDate"></p>
+                </div>
+                <span class="provider" id="connectionState">● CONNECTED</span>
+            </div>
+            <div id="todayClasses" class="class-list"></div>
+            <div id="todayEmpty" class="empty hidden">No classes scheduled for today.</div>
+        </section>
+
+        <section class="section">
+            <div class="heading">
+                <div>
+                    <h2>Class Schedule</h2>
+                    <p>Choose a date to view your classes.</p>
+                </div>
+            </div>
+
+            <div class="date-box">
+                <button class="date-arrow" id="previousDate">‹</button>
+                <div class="date-title">
+                    <small>SELECTED DATE</small>
+                    <strong id="selectedDateText"></strong>
+                </div>
+                <input type="date" id="datePicker">
+                <button class="date-arrow" id="nextDate">›</button>
+            </div>
+
+            <div id="selectedDateClasses" class="date-list"></div>
+            <div id="selectedDateEmpty" class="empty hidden" style="margin-top:12px">No classes found for this date.</div>
+        </section>
+
+        <section class="section">
+            <div class="heading">
+                <div>
+                    <h2>Subjects</h2>
+                    <p>Choose a subject to see its previous classes.</p>
+                </div>
+            </div>
+            <div id="subjectGrid" class="subject-grid"></div>
+            <div id="subjectsEmpty" class="empty hidden">No subjects found for your course.</div>
+        </section>
+
+        <section class="section hidden" id="subjectHistorySection">
+            <div class="heading">
+                <div>
+                    <h2 id="historySubjectName">Previous Classes</h2>
+                    <p>Completed classes for this subject.</p>
+                </div>
+                <button class="action" id="closeHistory">CLOSE</button>
+            </div>
+            <div id="subjectHistory" class="history-list"></div>
+            <div id="historyEmpty" class="empty hidden">No previous classes found.</div>
+        </section>
+
     </div>
-
-    <div class="section" style="margin-top:17px">
-      <div class="section-head">
-        <div>
-          <h2 id="selectedDateTitle">Classes for today</h2>
-          <p id="selectedDateSubtitle">All available subjects</p>
-        </div>
-      </div>
-      <div id="dateClassList" class="class-list">
-        <div class="empty">Loading classes...</div>
-      </div>
-    </div>
-  </section>
-
-  <!-- SUBJECT CARDS -->
-
-  <section class="section" id="subjectSection">
-    <div class="section-head">
-      <div>
-        <h2>Explore Your Subjects</h2>
-        <p>Select a subject to browse its chapters and classes.</p>
-      </div>
-    </div>
-
-    <div class="subject-grid" id="subjectGrid"></div>
-  </section>
-
-  <!-- CHAPTER AND SUBJECT LIBRARY -->
-
-  <section class="section" id="librarySection">
-    <div class="section-head">
-      <div>
-        <h2 id="libraryTitle">Class Library</h2>
-        <p id="librarySubtitle">Browse your available classes.</p>
-      </div>
-      <button id="clearSubject" class="btn secondary" type="button">
-        Clear
-      </button>
-    </div>
-
-    <div class="toolbar">
-      <input
-        id="searchInput"
-        class="search"
-        type="search"
-        placeholder="Search chapter, class or teacher..."
-      >
-      <select id="chapterFilter" class="select">
-        <option value="">All chapters</option>
-      </select>
-    </div>
-
-    <div id="libraryList" class="class-list">
-      <div class="empty">Loading class library...</div>
-    </div>
-  </section>
-
-  <!-- TEST DASHBOARD -->
-
-  <section class="section" id="testSection">
-    <div class="section-head">
-      <div>
-        <h2>My Tests & Results</h2>
-        <p>Check your attempted tests, marks and performance.</p>
-      </div>
-      <span class="small-count">MY RESULTS</span>
-    </div>
-
-    <div class="test-summary">
-      <div class="summary-card">
-        <strong id="totalAttempts">0</strong>
-        <span>Attempts</span>
-      </div>
-      <div class="summary-card">
-        <strong id="averageMarks">--</strong>
-        <span>Average score</span>
-      </div>
-      <div class="summary-card">
-        <strong id="completedTests">0</strong>
-        <span>Completed</span>
-      </div>
-    </div>
-
-    <div class="toolbar">
-      <select id="testSubjectFilter" class="select" style="width:100%">
-        <option value="">All subjects</option>
-        <option value="Kannada">Kannada</option>
-        <option value="English">English</option>
-        <option value="Hindi">Hindi</option>
-        <option value="Mathematics">Mathematics</option>
-        <option value="Science">Science</option>
-        <option value="Social Science">Social Science</option>
-      </select>
-    </div>
-
-    <div id="testList" class="test-list">
-      <div class="empty">Loading your test history...</div>
-    </div>
-  </section>
-
 </main>
 
-<nav class="tabs">
-  <div class="tabs-inner">
-    <a href="../" class="tab">
-      <i class="ri-home-5-line"></i><span>Home</span>
-    </a>
-    <a href="#dateSection" class="tab active">
-      <i class="ri-live-line"></i><span>Classes</span>
-    </a>
-    <a href="#subjectSection" class="tab">
-      <i class="ri-book-open-line"></i><span>Subjects</span>
-    </a>
-    <a href="#testSection" class="tab">
-      <i class="ri-file-list-3-line"></i><span>My Tests</span>
-    </a>
-    <a href="../profile/" class="tab">
-      <i class="ri-user-line"></i><span>Profile</span>
-    </a>
-  </div>
+<nav class="bottom-nav">
+    <a href="../../home/"><span>⌂</span>Home</a>
+    <a href="../live/" class="active"><span>◉</span>Live</a>
+    <a href="../revision/"><span>▤</span>Revision</a>
+    <a href="../profile/"><span>♙</span>Profile</a>
 </nav>
 
-</div>
+<div id="toast" class="toast"></div>
 
 <script type="module">
-
 import { auth, db } from "../../firebase/firebase-config.js";
 
 import {
-  onAuthStateChanged
+    onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
 
 import {
-  collection,
-  doc,
-  getDoc,
-  getDocs,
-  query,
-  where
+    doc,
+    getDoc,
+    collection,
+    getDocs,
+    onSnapshot
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
 
-/* --------------------------------
+/* =========================================================
    CONFIGURATION
--------------------------------- */
+========================================================= */
 
-const SUBJECTS = [
-  {name:"Kannada",icon:"ri-translate-2"},
-  {name:"English",icon:"ri-book-2-line"},
-  {name:"Hindi",icon:"ri-translate"},
-  {name:"Mathematics",icon:"ri-calculator-line"},
-  {name:"Science",icon:"ri-flask-line"},
-  {name:"Social Science",icon:"ri-earth-line"}
-];
+const DEFAULT_CLASS_DURATION_MINUTES = 60;
+const INDIA_TIME_ZONE = "Asia/Kolkata";
+
+let currentUser = null;
+let student = null;
+let studentCourse = null;
+
+let allClasses = [];
+let allSubjects = [];
+
+let selectedDate = getTodayString();
+let unsubscribeLiveClasses = null;
+let unsubscribeSubjects = null;
+
+let clockInterval = null;
+
+
+/* =========================================================
+   DOM
+========================================================= */
 
 const $ = id => document.getElementById(id);
 
-const state = {
-  user:null,
-  student:{},
-  courses:[],
-  enrollments:[],
-  classes:[],
-  tests:[],
-  selectedSubject:"",
-  selectedDate:"",
-  selectedChapter:""
-};
+const loadingState = $("loadingState");
+const errorState = $("errorState");
+const errorText = $("errorText");
+const liveApp = $("liveApp");
+
+const todayClasses = $("todayClasses");
+const todayEmpty = $("todayEmpty");
+const todayDate = $("todayDate");
+
+const datePicker = $("datePicker");
+const selectedDateText = $("selectedDateText");
+const selectedDateClasses = $("selectedDateClasses");
+const selectedDateEmpty = $("selectedDateEmpty");
+
+const subjectGrid = $("subjectGrid");
+const subjectsEmpty = $("subjectsEmpty");
+
+const subjectHistorySection = $("subjectHistorySection");
+const historySubjectName = $("historySubjectName");
+const subjectHistory = $("subjectHistory");
+const historyEmpty = $("historyEmpty");
 
 
-/* --------------------------------
-   HELPERS
--------------------------------- */
+/* =========================================================
+   AUTHENTICATION
+========================================================= */
 
-function esc(value) {
-  return String(value ?? "").replace(/[&<>"']/g, c => ({
-    "&":"&amp;",
-    "<":"&lt;",
-    ">":"&gt;",
-    '"':"&quot;",
-    "'":"&#039;"
-  })[c]);
-}
+onAuthStateChanged(auth, async user => {
 
-function first(...values) {
-  return values.find(v =>
-    v !== undefined && v !== null && String(v).trim() !== ""
-  ) ?? "";
-}
+    stopListeners();
 
-function normal(value) {
-  return String(value || "").trim().toLowerCase().replace(/\s+/g," ");
-}
-
-function todayISO() {
-  const d = new Date();
-  const offset = d.getTimezoneOffset();
-  return new Date(d.getTime() - offset * 60000).toISOString().slice(0,10);
-}
-
-function parseDate(value) {
-  if (!value) return null;
-
-  if (typeof value.toDate === "function") {
-    return value.toDate();
-  }
-
-  if (value instanceof Date) return value;
-
-  if (typeof value === "number") {
-    return new Date(value);
-  }
-
-  const d = new Date(value);
-  return Number.isNaN(d.getTime()) ? null : d;
-}
-
-function classDate(c) {
-  const raw = first(c.scheduledDate,c.date,c.classDate);
-  if (!raw) return "";
-
-  if (typeof raw === "string") return raw.slice(0,10);
-
-  const d = parseDate(raw);
-  if (!d) return "";
-
-  const offset = d.getTimezoneOffset();
-  return new Date(d.getTime()-offset*60000).toISOString().slice(0,10);
-}
-
-function classTime(c) {
-  return first(c.scheduledTime,c.time,"");
-}
-
-function formatDate(date) {
-  if (!date) return "Date not announced";
-
-  const d = new Date(date + "T00:00:00");
-
-  return d.toLocaleDateString("en-IN",{
-    weekday:"long",
-    day:"2-digit",
-    month:"long",
-    year:"numeric"
-  });
-}
-
-function formatTime(c) {
-  const time = classTime(c);
-  if (!time) return "Time not announced";
-
-  const d = new Date(`2000-01-01T${time}`);
-  if (Number.isNaN(d.getTime())) return time;
-
-  return d.toLocaleTimeString("en-IN",{
-    hour:"numeric",
-    minute:"2-digit"
-  });
-}
-
-function classStatus(c) {
-  const s = normal(c.status);
-
-  if (c.ended === true || ["ended","completed"].includes(s)) {
-    return "ended";
-  }
-
-  if (c.isLive === true || ["live","live now"].includes(s)) {
-    return "live";
-  }
-
-  const date = classDate(c);
-  const time = classTime(c);
-
-  if (date) {
-    const scheduled = new Date(`${date}T${time || "00:00"}`);
-
-    if (scheduled.getTime() > Date.now()) return "upcoming";
-  }
-
-  // A past scheduled time does not prove that the class ended.
-  // A class is treated as recorded only when a recording is available.
-  if (recordingUrl(c) || c.recordingPublished === true) {
-    return "recorded";
-  }
-
-  return "ended";
-}
-
-function recordingUrl(c) {
-  return first(
-    c.recordingUrl,
-    c.playbackUrl,
-    c.videoUrl,
-    c.recordedVideoUrl,
-    c.streamUrl
-  );
-}
-
-function liveUrl(c) {
-  return first(
-    c.studentJoinUrl,
-    c.joinUrl,
-    c.meetingUrl,
-    c.youtubeLiveUrl,
-    c.zoomJoinUrl
-  );
-}
-
-function subjectName(c) {
-  return first(c.subjectName,c.subject,c.subjectTitle);
-}
-
-function chapterName(c) {
-  return first(c.chapterName,c.chapterTitle,c.chapter);
-}
-
-function titleOf(c) {
-  return first(c.title,c.classTitle,c.name,"Class");
-}
-
-
-/* --------------------------------
-   COURSE ACCESS
--------------------------------- */
-
-function courseIsEnrolled(course) {
-  const courseId = String(course.id);
-
-  const lists = [
-    state.student.purchasedCourseIds,
-    state.student.enrolledCourseIds,
-    state.student.courseIds,
-    state.student.purchasedCourses,
-    state.student.enrolledCourses
-  ];
-
-  for (const list of lists) {
-    if (Array.isArray(list) && list.some(item => {
-      const id = typeof item === "object"
-        ? first(item.courseId,item.id,item.crmCourseId)
-        : item;
-
-      return String(id) === courseId;
-    })) {
-      return true;
+    if (!user) {
+        window.location.href = "../../login/";
+        return;
     }
-  }
 
-  return state.enrollments.some(e => {
-    const id = String(first(
-      e.courseId,
-      e.crmCourseId,
-      e.courseID,
-      e.batchId
-    ));
+    currentUser = user;
 
-    const status = normal(first(e.status,e.enrollmentStatus));
+    try {
+        await loadPage();
+    } catch (error) {
+        console.error("ZENOVA LIVE PAGE ERROR:", error);
+        showError(error.message || "Unable to load your classes.");
+    }
+});
 
-    return id === courseId &&
-      e.accessGranted !== false &&
-      (
-        e.accessGranted === true ||
-        ["active","approved","paid","purchased","enrolled","success","completed"].includes(status)
-      );
-  });
+
+/* =========================================================
+   LOAD STUDENT AND COURSE
+========================================================= */
+
+async function loadPage() {
+
+    showLoading();
+
+    const studentRef = doc(db, "zen2Students", currentUser.uid);
+    const studentSnap = await getDoc(studentRef);
+
+    if (!studentSnap.exists()) {
+        throw new Error("Your student profile was not found.");
+    }
+
+    student = {
+        id: studentSnap.id,
+        ...studentSnap.data()
+    };
+
+    const className = getStudentClass(student);
+
+    const coursesSnap = await getDocs(collection(db, "zen2Courses"));
+
+    const courses = coursesSnap.docs
+        .map(d => ({ id: d.id, ...d.data() }))
+        .filter(c => c.active !== false);
+
+    // Prefer the student's explicitly assigned course.
+    const directCourseId = student.courseId || student.batchId || "";
+
+    studentCourse = courses.find(c => c.id === directCourseId);
+
+    // Otherwise match the student's class/standard.
+    if (!studentCourse && className) {
+        studentCourse = courses.find(c =>
+            normalizeClass(getCourseClass(c)) === normalizeClass(className)
+        );
+    }
+
+    if (!studentCourse) {
+        throw new Error("No matching course or batch was found for your student profile.");
+    }
+
+    selectedDate = getTodayString();
+    datePicker.value = selectedDate;
+
+    showApp();
+
+    // Real-time Firebase listeners start here.
+    listenToLiveClasses();
+    listenToSubjects();
+
+    // Recalculate time-based statuses even if Firebase does not change.
+    if (clockInterval) clearInterval(clockInterval);
+
+    clockInterval = setInterval(() => {
+        renderAll();
+    }, 1000);
 }
 
-function classBelongsToStudent(c) {
-  const id = String(first(
-    c.courseId,
-    c.crmCourseId,
-    c.courseID,
-    c.batchId
-  ));
 
-  const name = normal(first(
-    c.courseName,
-    c.batchName,
-    c.courseTitle
-  ));
+/* =========================================================
+   REAL-TIME LIVE CLASS LISTENER
+========================================================= */
 
-  const enrolled = state.courses.filter(courseIsEnrolled);
+function listenToLiveClasses() {
 
-  if (!enrolled.length) return false;
+    if (unsubscribeLiveClasses) {
+        unsubscribeLiveClasses();
+    }
 
-  if (id) {
-    return enrolled.some(course => String(course.id) === id);
-  }
+    $("connectionState").textContent = "● CONNECTING";
 
-  if (name) {
-    return enrolled.some(course =>
-      normal(first(course.courseName,course.title,course.name)) === name
+    unsubscribeLiveClasses = onSnapshot(
+        collection(db, "liveClasses"),
+
+        snapshot => {
+
+            allClasses = snapshot.docs
+                .map(d => ({
+                    id: d.id,
+                    ...d.data()
+                }))
+                .filter(item => item.active !== false)
+                .filter(item => belongsToCourse(item, studentCourse));
+
+            $("connectionState").textContent = "● LIVE UPDATES ON";
+
+            renderAll();
+
+        },
+
+        error => {
+
+            console.error("LIVE CLASSES LISTENER ERROR:", error);
+
+            $("connectionState").textContent = "● CONNECTION ERROR";
+
+            showToast("Unable to receive live class updates. Check your connection.");
+        }
     );
-  }
-
-  return false;
 }
 
 
-/* --------------------------------
-   SUBJECT CARDS
--------------------------------- */
+/* =========================================================
+   REAL-TIME SUBJECT LISTENER
+========================================================= */
+
+function listenToSubjects() {
+
+    if (unsubscribeSubjects) {
+        unsubscribeSubjects();
+    }
+
+    unsubscribeSubjects = onSnapshot(
+        collection(db, "zen2Subjects"),
+
+        snapshot => {
+
+            allSubjects = snapshot.docs
+                .map(d => ({
+                    id: d.id,
+                    ...d.data()
+                }))
+                .filter(item => item.courseId === studentCourse.id)
+                .filter(item => item.active !== false)
+                .sort((a, b) => getSubjectName(a).localeCompare(getSubjectName(b)));
+
+            renderSubjects();
+
+        },
+
+        error => {
+            console.error("SUBJECT LISTENER ERROR:", error);
+            showToast("Unable to load subjects.");
+        }
+    );
+}
+
+
+function stopListeners() {
+
+    if (unsubscribeLiveClasses) {
+        unsubscribeLiveClasses();
+        unsubscribeLiveClasses = null;
+    }
+
+    if (unsubscribeSubjects) {
+        unsubscribeSubjects();
+        unsubscribeSubjects = null;
+    }
+
+    if (clockInterval) {
+        clearInterval(clockInterval);
+        clockInterval = null;
+    }
+}
+
+
+/* =========================================================
+   RENDER ALL SECTIONS
+========================================================= */
+
+function renderAll() {
+
+    if (!studentCourse) return;
+
+    renderToday();
+    renderSelectedDate();
+    renderSubjects();
+}
+
+
+/* =========================================================
+   TODAY'S CLASSES
+========================================================= */
+
+function renderToday() {
+
+    const today = getTodayString();
+
+    todayDate.textContent = formatLongDate(today);
+
+    const classes = getClassesForDate(today);
+
+    if (!classes.length) {
+        todayClasses.innerHTML = "";
+        todayEmpty.classList.remove("hidden");
+        return;
+    }
+
+    todayEmpty.classList.add("hidden");
+
+    todayClasses.innerHTML = classes
+        .map(item => createClassCard(item))
+        .join("");
+}
+
+
+/* =========================================================
+   DATE SELECTOR
+========================================================= */
+
+datePicker.addEventListener("change", () => {
+
+    if (!datePicker.value) return;
+
+    selectedDate = datePicker.value;
+    renderSelectedDate();
+
+});
+
+$("previousDate").addEventListener("click", () => {
+
+    selectedDate = shiftDate(selectedDate, -1);
+    datePicker.value = selectedDate;
+    renderSelectedDate();
+
+});
+
+$("nextDate").addEventListener("click", () => {
+
+    selectedDate = shiftDate(selectedDate, 1);
+    datePicker.value = selectedDate;
+    renderSelectedDate();
+
+});
+
+
+function renderSelectedDate() {
+
+    selectedDateText.textContent = formatLongDate(selectedDate);
+
+    const classes = getClassesForDate(selectedDate);
+
+    if (!classes.length) {
+        selectedDateClasses.innerHTML = "";
+        selectedDateEmpty.classList.remove("hidden");
+        return;
+    }
+
+    selectedDateEmpty.classList.add("hidden");
+
+    selectedDateClasses.innerHTML = classes
+        .map(item => createDateCard(item))
+        .join("");
+}
+
+
+/* =========================================================
+   CLASS CARD
+========================================================= */
+
+function createClassCard(item) {
+
+    const status = getClassStatus(item);
+
+    let button = "";
+
+    if (status.status === "LIVE") {
+
+        button = `
+            <button class="action live-btn"
+                data-open-live="${escapeAttr(item.id)}">
+                JOIN LIVE CLASS
+            </button>
+        `;
+
+    } else if (status.status === "ENDED" && hasRecording(item)) {
+
+        button = `
+            <button class="action"
+                data-open-recording="${escapeAttr(item.id)}">
+                WATCH RECORDING
+            </button>
+        `;
+
+    } else if (status.status === "UPCOMING") {
+
+        button = `<span class="provider">Starts at ${escapeHtml(formatTime(item))}</span>`;
+
+    } else {
+
+        button = `<span class="provider">Recording not available yet</span>`;
+
+    }
+
+    return `
+        <article class="class-card ${status.status === "LIVE" ? "live" : ""}">
+
+            <div class="card-top">
+                <div>
+                    <h3 class="card-title">
+                        ${escapeHtml(item.title || "Live Class")}
+                    </h3>
+
+                    <div class="card-subtitle">
+                        ${escapeHtml(item.subjectName || "Subject")}
+                        ${item.chapterName ? " · " + escapeHtml(item.chapterName) : ""}
+                    </div>
+                </div>
+
+                <span class="status ${status.status.toLowerCase()}">
+                    ${status.label}
+                </span>
+            </div>
+
+            <div class="details">
+                <span>🕒 ${escapeHtml(formatTimeRange(item))}</span>
+                <span>👨‍🏫 ${escapeHtml(item.teacherName || item.facultyName || "Faculty")}</span>
+            </div>
+
+            <div class="action-row">
+                <span class="provider">${escapeHtml(getProvider(item))}</span>
+                ${button}
+            </div>
+
+        </article>
+    `;
+}
+
+
+function createDateCard(item) {
+
+    const status = getClassStatus(item);
+
+    let action = "";
+
+    if (status.status === "LIVE") {
+        action = `
+            <button class="action live-btn"
+                data-open-live="${escapeAttr(item.id)}">
+                JOIN LIVE
+            </button>
+        `;
+    } else if (status.status === "ENDED" && hasRecording(item)) {
+        action = `
+            <button class="action"
+                data-open-recording="${escapeAttr(item.id)}">
+                WATCH
+            </button>
+        `;
+    } else {
+        action = `<span class="status ${status.status.toLowerCase()}">${status.label}</span>`;
+    }
+
+    return `
+        <article class="date-card">
+            <div>
+                <strong>${escapeHtml(item.title || "Live Class")}</strong>
+                <p>
+                    ${escapeHtml(item.subjectName || "Subject")}
+                    ${item.chapterName ? " · " + escapeHtml(item.chapterName) : ""}
+                    <br>
+                    ${escapeHtml(item.teacherName || item.facultyName || "Faculty")}
+                    · ${escapeHtml(formatTimeRange(item))}
+                </p>
+            </div>
+            ${action}
+        </article>
+    `;
+}
+
+
+/* =========================================================
+   SUBJECTS AND PREVIOUS CLASSES
+========================================================= */
 
 function renderSubjects() {
-  $("subjectGrid").innerHTML = SUBJECTS.map(subject => {
-    const count = state.classes.filter(c =>
-      normal(subjectName(c)) === normal(subject.name)
-    ).length;
 
-    const active = state.selectedSubject === subject.name;
-
-    return `
-      <button
-        class="subject-card ${active ? "active" : ""}"
-        type="button"
-        data-subject="${esc(subject.name)}"
-      >
-        <div class="subject-icon">
-          <i class="${subject.icon}"></i>
-        </div>
-        <strong>${esc(subject.name)}</strong>
-        <span>${count} classes available</span>
-      </button>
-    `;
-  }).join("");
-
-  document.querySelectorAll("[data-subject]").forEach(button => {
-    button.addEventListener("click",() => {
-      state.selectedSubject = button.dataset.subject;
-      state.selectedChapter = "";
-
-      $("chapterFilter").value = "";
-
-      renderSubjects();
-      renderChapterFilter();
-      renderLibrary();
-
-      $("librarySection").scrollIntoView({behavior:"smooth"});
-    });
-  });
-}
-
-
-/* --------------------------------
-   DATE SELECTOR
--------------------------------- */
-
-function renderDateShortcuts() {
-  const dates = [];
-
-  for (let i=6;i>=0;i--) {
-    const d = new Date();
-    d.setDate(d.getDate()-i);
-
-    const offset = d.getTimezoneOffset();
-    const iso = new Date(d.getTime()-offset*60000).toISOString().slice(0,10);
-
-    dates.push({
-      iso,
-      day:d.toLocaleDateString("en-IN",{weekday:"short"}),
-      number:d.getDate()
-    });
-  }
-
-  $("dateShortcuts").innerHTML = dates.map(d => `
-    <button
-      type="button"
-      class="date-chip ${state.selectedDate===d.iso?"active":""}"
-      data-date="${d.iso}"
-    >
-      <strong>${d.number}</strong>
-      <span>${d.day}</span>
-    </button>
-  `).join("");
-
-  document.querySelectorAll("[data-date]").forEach(button => {
-    button.addEventListener("click",() => {
-      state.selectedDate = button.dataset.date;
-      $("selectedDate").value = state.selectedDate;
-      renderDateShortcuts();
-      renderDateClasses();
-    });
-  });
-}
-
-
-/* --------------------------------
-   CLASS CARD
--------------------------------- */
-
-function classCard(c) {
-  const status = classStatus(c);
-  const image = first(c.thumbnailUrl,c.imageUrl,c.coverImageUrl);
-
-  const isZoom =
-    normal(first(c.liveType,c.mode,c.streamType)).includes("zoom");
-
-  const canPlayLive = status === "live" && Boolean(liveUrl(c));
-  const canPlayRecording =
-    (status === "recorded" || status === "ended") &&
-    Boolean(recordingUrl(c));
-
-  let buttonText = "Not available yet";
-  let disabled = true;
-
-  if (status === "live" && canPlayLive) {
-    buttonText = "Join Live Class";
-    disabled = false;
-  } else if (canPlayRecording) {
-    buttonText = "Watch Recording";
-    disabled = false;
-  } else if (status === "upcoming") {
-    buttonText = "Upcoming Class";
-  } else if (status === "ended") {
-    buttonText = "Recording Pending";
-  }
-
-  const statusLabel = {
-    live:"LIVE NOW",
-    upcoming:"UPCOMING",
-    recorded:"RECORDING AVAILABLE",
-    ended:"COMPLETED"
-  }[status];
-
-  return `
-    <article class="class-card">
-      <div class="class-icon">
-        ${image
-          ? `<img src="${esc(image)}" alt="" onerror="this.remove()">`
-          : `<i class="ri-play-circle-line"></i>`
-        }
-      </div>
-
-      <div class="class-info">
-        <span class="status ${status}">
-          ${esc(statusLabel)}
-        </span>
-
-        <h3>${esc(titleOf(c))}</h3>
-
-        <p>
-          ${esc(subjectName(c))}
-          ${chapterName(c) ? " · "+esc(chapterName(c)) : ""}
-          ${first(c.teacherName,c.facultyName)
-            ? " · "+esc(first(c.teacherName,c.facultyName))
-            : ""}
-        </p>
-
-        <div class="class-meta">
-          <span style="font-size:10px;color:var(--muted)">
-            <i class="ri-calendar-line"></i>
-            ${esc(classDate(c))}
-          </span>
-
-          <span style="font-size:10px;color:var(--muted)">
-            <i class="ri-time-line"></i>
-            ${esc(formatTime(c))}
-          </span>
-        </div>
-      </div>
-
-      <div class="class-actions">
-        <button
-          class="btn primary"
-          type="button"
-          data-open-class="${esc(c.id)}"
-          ${disabled?"disabled":""}
-        >
-          <i class="ri-play-circle-line"></i>
-          ${esc(buttonText)}
-        </button>
-      </div>
-    </article>
-  `;
-}
-
-
-/* --------------------------------
-   OPEN CLASS
--------------------------------- */
-
-function openClass(classId) {
-  const c = state.classes.find(x => x.id === classId);
-  if (!c) return;
-
-  const status = classStatus(c);
-
-  const type = normal(first(
-    c.liveType,
-    c.mode,
-    c.streamType
-  ));
-
-  // Zoom opens the meeting link directly.
-  if (type.includes("zoom")) {
-    const url = liveUrl(c);
-
-    if (url) {
-      window.open(url,"_blank","noopener,noreferrer");
+    if (!allSubjects.length) {
+        subjectGrid.innerHTML = "";
+        subjectsEmpty.classList.remove("hidden");
+        return;
     }
 
-    return;
-  }
+    subjectsEmpty.classList.add("hidden");
 
-  let mode = "recorded";
+    subjectGrid.innerHTML = allSubjects.map(subject => {
 
-  if (status === "live") mode = "live";
+        const name = getSubjectName(subject);
 
-  if (status === "recorded" || status === "ended") {
-    mode = "recorded";
-  }
+        return `
+            <button class="subject-card"
+                data-subject-id="${escapeAttr(subject.id)}">
 
-  const playerURL = new URL(
-    "../livevideoplayer/index.html",
-    window.location.href
-  );
+                <span class="subject-icon">
+                    ${escapeHtml(name.substring(0, 2).toUpperCase())}
+                </span>
 
-  playerURL.searchParams.set("liveClassId",classId);
-  playerURL.searchParams.set("mode",mode);
+                <span>
+                    <strong>${escapeHtml(name)}</strong>
+                    <small>View previous classes</small>
+                </span>
 
-  window.location.href = playerURL.toString();
+            </button>
+        `;
+
+    }).join("");
 }
 
 
-/* --------------------------------
-   DATE-WISE CLASSES
--------------------------------- */
+function showSubjectHistory(subjectId) {
 
-function renderDateClasses() {
-  const selected = state.selectedDate;
+    const subject = allSubjects.find(s => s.id === subjectId);
 
-  const classes = state.classes
-    .filter(c => classDate(c) === selected)
-    .sort((a,b) => classTime(a).localeCompare(classTime(b)));
+    if (!subject) return;
 
-  $("dateClassCount").textContent = `${classes.length} Classes`;
-  $("selectedDateTitle").textContent = formatDate(selected);
-  $("selectedDateSubtitle").textContent =
-    "Classes from all six subjects";
+    const history = allClasses
+        .filter(item => item.subjectId === subjectId)
+        .filter(item => getClassStatus(item).status === "ENDED")
+        .sort((a, b) => getStartMillis(b) - getStartMillis(a));
 
-  if (!classes.length) {
-    $("dateClassList").innerHTML = `
-      <div class="empty">
-        <i class="ri-calendar-event-line"></i>
-        <strong>No classes on this date</strong>
-        There are no classes available for the selected date.
-      </div>
-    `;
-    return;
-  }
+    historySubjectName.textContent = getSubjectName(subject);
 
-  $("dateClassList").innerHTML = classes.map(classCard).join("");
+    subjectHistorySection.classList.remove("hidden");
 
-  attachClassButtons($("dateClassList"));
-}
+    if (!history.length) {
+        subjectHistory.innerHTML = "";
+        historyEmpty.classList.remove("hidden");
+    } else {
+        historyEmpty.classList.add("hidden");
 
+        subjectHistory.innerHTML = history.map(item => `
+            <article class="history-card">
+                <div>
+                    <strong>${escapeHtml(item.title || "Class")}</strong>
+                    <p>
+                        ${escapeHtml(item.chapterName || item.subjectName || "")}
+                        · ${escapeHtml(formatLongDate(getClassDate(item)))}
+                        · ${escapeHtml(formatTime(item))}
+                    </p>
+                </div>
 
-/* --------------------------------
-   CHAPTER FILTER
--------------------------------- */
+                ${
+                    hasRecording(item)
+                    ? `<button class="action" data-open-recording="${escapeAttr(item.id)}">WATCH</button>`
+                    : `<span class="provider">No recording</span>`
+                }
+            </article>
+        `).join("");
+    }
 
-function renderChapterFilter() {
-  const list = state.classes.filter(c =>
-    !state.selectedSubject ||
-    normal(subjectName(c)) === normal(state.selectedSubject)
-  );
-
-  const chapters = [...new Set(
-    list.map(chapterName).filter(Boolean)
-  )].sort();
-
-  $("chapterFilter").innerHTML =
-    `<option value="">All chapters</option>` +
-    chapters.map(chapter => `
-      <option value="${esc(chapter)}">${esc(chapter)}</option>
-    `).join("");
-}
-
-
-/* --------------------------------
-   SUBJECT LIBRARY
--------------------------------- */
-
-function renderLibrary() {
-  const term = $("searchInput").value.trim().toLowerCase();
-  const chapter = $("chapterFilter").value;
-
-  let list = state.classes.filter(c => {
-    const subjectMatch =
-      !state.selectedSubject ||
-      normal(subjectName(c)) === normal(state.selectedSubject);
-
-    const chapterMatch =
-      !chapter || chapterName(c) === chapter;
-
-    const searchText = [
-      titleOf(c),
-      subjectName(c),
-      chapterName(c),
-      c.teacherName,
-      c.facultyName
-    ].join(" ").toLowerCase();
-
-    return subjectMatch &&
-      chapterMatch &&
-      (!term || searchText.includes(term));
-  });
-
-  list.sort((a,b) => {
-    const da = classDate(a);
-    const db = classDate(b);
-
-    return db.localeCompare(da);
-  });
-
-  $("libraryTitle").textContent =
-    state.selectedSubject
-      ? state.selectedSubject + " Classes"
-      : "All Subject Classes";
-
-  $("librarySubtitle").textContent =
-    `${list.length} available class records`;
-
-  if (!list.length) {
-    $("libraryList").innerHTML = `
-      <div class="empty">
-        <i class="ri-video-line"></i>
-        <strong>No classes found</strong>
-        No matching classes or recordings are available.
-      </div>
-    `;
-    return;
-  }
-
-  $("libraryList").innerHTML = list.map(classCard).join("");
-
-  attachClassButtons($("libraryList"));
-}
-
-function attachClassButtons(container) {
-  container.querySelectorAll("[data-open-class]").forEach(button => {
-    button.addEventListener("click",() => {
-      openClass(button.dataset.openClass);
+    subjectHistorySection.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
     });
-  });
 }
 
 
-/* --------------------------------
-   TEST HISTORY
--------------------------------- */
+$("closeHistory").addEventListener("click", () => {
+    subjectHistorySection.classList.add("hidden");
+});
 
-function getTestMarks(test) {
-  return Number(first(
-    test.percentage,
-    test.scorePercentage,
-    test.marksObtained,
-    test.score,
-    0
-  ));
-}
 
-function renderTests() {
-  const subject = $("testSubjectFilter").value;
+/* =========================================================
+   BUTTON ACTIONS
+========================================================= */
 
-  const list = state.tests.filter(t => {
-    const name = normal(first(
-      t.subjectName,
-      t.subject,
-      t.subjectTitle
-    ));
+document.addEventListener("click", event => {
 
-    return !subject || name === normal(subject);
-  });
+    const liveButton = event.target.closest("[data-open-live]");
 
-  const completed = state.tests.filter(t =>
-    ["submitted","completed","evaluated"].includes(
-      normal(t.status)
-    )
-  );
+    if (liveButton) {
+        openClass(liveButton.dataset.openLive, "live");
+        return;
+    }
 
-  const total = completed.length;
+    const recordingButton = event.target.closest("[data-open-recording]");
 
-  const average = total
-    ? Math.round(
-        completed.reduce((sum,t) => sum + getTestMarks(t),0) / total
-      )
-    : 0;
+    if (recordingButton) {
+        openClass(recordingButton.dataset.openRecording, "recording");
+        return;
+    }
 
-  $("totalAttempts").textContent = state.tests.length;
-  $("completedTests").textContent = total;
-  $("averageMarks").textContent = total ? average+"%" : "--";
+    const subjectButton = event.target.closest("[data-subject-id]");
 
-  if (!list.length) {
-    $("testList").innerHTML = `
-      <div class="empty">
-        <i class="ri-file-list-3-line"></i>
-        <strong>No test attempts yet</strong>
-        Your attempted tests and marks will appear here.
-      </div>
-    `;
-    return;
-  }
+    if (subjectButton) {
+        showSubjectHistory(subjectButton.dataset.subjectId);
+    }
+});
 
-  $("testList").innerHTML = list.map(test => {
-    const marks = first(
-      test.marksObtained,
-      test.score,
-      test.percentage
-    );
 
-    const date = parseDate(
-      test.submittedAt || test.createdAt || test.startedAt
-    );
+function openClass(classId, requestedMode) {
 
-    const subjectName = first(
-      test.subjectName,
-      test.subject,
-      "Subject"
-    );
+    const item = allClasses.find(c => c.id === classId);
 
-    const chapter = first(
-      test.chapterName,
-      test.chapterTitle,
-      "Chapter not specified"
-    );
+    if (!item) {
+        showToast("Class not found.");
+        return;
+    }
 
-    const testName = first(
-      test.testTitle,
-      test.title,
-      test.testName,
-      "Chapter Test"
-    );
+    // Recalculate status immediately before navigation.
+    const status = getClassStatus(item);
 
-    return `
-      <article class="test-row">
-        <div style="display:flex;justify-content:space-between;gap:10px">
-          <strong>${esc(testName)}</strong>
-          <span class="test-marks">
-            ${marks !== "" ? esc(marks) : "--"}
-          </span>
-        </div>
+    if (requestedMode === "live" && status.status !== "LIVE") {
+        showToast("This class is not live right now.");
+        renderAll();
+        return;
+    }
 
-        <p>
-          ${esc(subjectName)} · ${esc(chapter)}
-        </p>
+    if (requestedMode === "recording") {
 
-        <p>
-          Status: ${esc(first(test.status,"Attempt recorded"))}
-          ${date ? " · "+esc(date.toLocaleDateString("en-IN")) : ""}
-        </p>
+        if (status.status !== "ENDED") {
+            showToast("Recording access is available after the scheduled class ends.");
+            return;
+        }
 
-        <p>
-          Correct: ${esc(first(test.correct,test.correctCount,0))}
-          · Wrong: ${esc(first(test.wrong,test.wrongCount,0))}
-          · Time: ${esc(first(test.totalTimeSeconds,test.timeTakenSeconds,"--"))}
-          ${test.totalTimeSeconds || test.timeTakenSeconds ? " seconds" : ""}
-        </p>
-      </article>
-    `;
-  }).join("");
+        if (!hasRecording(item)) {
+            showToast("Recording is not available yet.");
+            return;
+        }
+    }
+
+    const mode = requestedMode === "live" ? "live" : "recording";
+
+    // Both parameter names are included for compatibility with
+    // existing Zenova player versions.
+    const params = new URLSearchParams({
+        classId: classId,
+        liveClassId: classId,
+        mode: mode
+    });
+
+    window.location.href = `../livevideoplayer/?${params.toString()}`;
 }
 
 
-/* --------------------------------
-   LOAD FIREBASE DATA
--------------------------------- */
+/* =========================================================
+   CLASS STATUS — ONE SOURCE OF TRUTH
+========================================================= */
 
-async function loadStudent(user) {
-  state.user = user;
+function getClassStatus(item) {
 
-  const [
-    studentSnap,
-    enrollmentSnap,
-    courseSnap,
-    classSnap
-  ] = await Promise.all([
-    getDoc(doc(db,"zen2Students",user.uid)),
+    const now = Date.now();
+    const start = getStartMillis(item);
+    const end = getEndMillis(item);
 
-    getDocs(query(
-      collection(db,"studentEnrollments"),
-      where("studentUid","==",user.uid)
-    )),
+    if (!start) {
+        return { status: "UPCOMING", label: "TIME NOT SET" };
+    }
 
-    getDocs(collection(db,"zen2Courses")),
+    if (now < start) {
+        return { status: "UPCOMING", label: "UPCOMING" };
+    }
 
-    getDocs(collection(db,"liveClasses"))
-  ]);
+    // The end time is exclusive:
+    // exactly at the end time, the class is no longer LIVE.
+    if (now >= start && now < end) {
+        return { status: "LIVE", label: "● LIVE NOW" };
+    }
 
-  state.student = studentSnap.exists()
-    ? studentSnap.data()
-    : {};
-
-  state.enrollments = enrollmentSnap.docs.map(d => ({
-    id:d.id,
-    ...d.data()
-  }));
-
-  state.courses = courseSnap.docs.map(d => ({
-    id:d.id,
-    ...d.data()
-  }));
-
-  state.classes = classSnap.docs
-    .map(d => ({id:d.id,...d.data()}))
-    .filter(c =>
-      c.active !== false &&
-      c.published !== false &&
-      !["deleted","archived","inactive"].includes(normal(c.status))
-    )
-    .filter(classBelongsToStudent);
-
-  $("welcomeTitle").textContent =
-    "Hello, " +
-    first(
-      state.student.name,
-      state.student.studentName,
-      user.displayName,
-      "Student"
-    ) + "!";
-
-  // Load attempts separately so a test permission error
-  // does not prevent students from seeing their classes.
-  try {
-    const attemptsSnap = await getDocs(query(
-      collection(db,"liveTestAttempts"),
-      where("studentUid","==",user.uid)
-    ));
-
-    state.tests = attemptsSnap.docs.map(d => ({
-      id:d.id,
-      ...d.data()
-    }));
-
-  } catch (error) {
-    console.warn("Live test history could not be loaded:",error);
-    state.tests = [];
-    $("testList").innerHTML = `
-      <div class="empty">
-        Test history is temporarily unavailable.
-      </div>
-    `;
-  }
-
-  renderSubjects();
-  renderChapterFilter();
-  renderDateShortcuts();
-  renderDateClasses();
-  renderLibrary();
-  renderTests();
-
-  $("app").classList.remove("hidden");
-  $("loader").classList.add("hidden");
+    return { status: "ENDED", label: "CLASS ENDED" };
 }
 
 
-/* --------------------------------
-   EVENT LISTENERS
--------------------------------- */
+/* =========================================================
+   DATE/TIME PARSING
+========================================================= */
 
-$("selectedDate").value = todayISO();
-state.selectedDate = todayISO();
+function getStartMillis(item) {
 
-$("selectedDate").addEventListener("change",() => {
-  state.selectedDate = $("selectedDate").value;
-  renderDateShortcuts();
-  renderDateClasses();
+    const timestamp = timestampToMillis(item.startDateTime);
+
+    if (timestamp) return timestamp;
+
+    const combined = parseDateAndTime(
+        item.scheduledDate || item.startDate,
+        item.scheduledTime || item.startTime
+    );
+
+    if (combined) return combined;
+
+    return 0;
+}
+
+
+function getEndMillis(item) {
+
+    const timestamp = timestampToMillis(item.endDateTime);
+
+    if (timestamp) return timestamp;
+
+    const explicitEnd = parseDateAndTime(
+        item.endDate || item.scheduledDate || item.startDate,
+        item.endTime
+    );
+
+    if (explicitEnd) return explicitEnd;
+
+    const start = getStartMillis(item);
+
+    if (!start) return 0;
+
+    const duration = Number(
+        item.durationMinutes ||
+        item.classDurationMinutes ||
+        item.duration ||
+        item.durationInMinutes ||
+        DEFAULT_CLASS_DURATION_MINUTES
+    );
+
+    const safeDuration = duration > 0 ? duration : DEFAULT_CLASS_DURATION_MINUTES;
+
+    return start + safeDuration * 60 * 1000;
+}
+
+
+function timestampToMillis(value) {
+
+    if (!value) return 0;
+
+    if (typeof value.toMillis === "function") {
+        return value.toMillis();
+    }
+
+    if (typeof value.seconds === "number") {
+        return value.seconds * 1000;
+    }
+
+    if (typeof value === "number") {
+        return value;
+    }
+
+    if (typeof value === "string") {
+        const parsed = new Date(value).getTime();
+        return Number.isFinite(parsed) ? parsed : 0;
+    }
+
+    return 0;
+}
+
+
+function parseDateAndTime(date, time) {
+
+    if (!date || !time) return 0;
+
+    const cleanTime = String(time).trim();
+
+    // Supports 09:30, 09:30:00 and 9:30 AM.
+    let normalizedTime = cleanTime;
+
+    const ampm = cleanTime.match(/^(\d{1,2}):(\d{2})(?::(\d{2}))?\s*(AM|PM)$/i);
+
+    if (ampm) {
+        let hour = Number(ampm[1]);
+        const minute = ampm[2];
+        const second = ampm[3] || "00";
+        const period = ampm[4].toUpperCase();
+
+        if (period === "PM" && hour !== 12) hour += 12;
+        if (period === "AM" && hour === 12) hour = 0;
+
+        normalizedTime = `${String(hour).padStart(2, "0")}:${minute}:${second}`;
+    }
+
+    if (/^\d{1,2}:\d{2}$/.test(normalizedTime)) {
+        normalizedTime += ":00";
+    }
+
+    const result = new Date(
+        `${date}T${normalizedTime}+05:30`
+    ).getTime();
+
+    return Number.isFinite(result) ? result : 0;
+}
+
+
+/* =========================================================
+   RECORDING CHECK
+========================================================= */
+
+function hasRecording(item) {
+
+    return Boolean(
+        item.recordingUrl ||
+        item.recordedUrl ||
+        item.replayUrl ||
+        item.recordedVideoUrl ||
+        item.recordingVideoUrl ||
+        item.recordingContentId ||
+        (
+            item.videoUrl &&
+            String(item.liveType || "").toUpperCase() === "RECORDED_VIDEO"
+        )
+    );
+}
+
+
+/* =========================================================
+   COURSE FILTER
+========================================================= */
+
+function belongsToCourse(item, course) {
+
+    if (!course) return false;
+
+    const classCourseId =
+        item.courseId ||
+        item.crmCourseId ||
+        item.courseID ||
+        item.batchId ||
+        "";
+
+    if (classCourseId) {
+        return classCourseId === course.id;
+    }
+
+    const className =
+        item.courseClass ||
+        item.className ||
+        item.standard ||
+        "";
+
+    return normalizeClass(className) ===
+        normalizeClass(getCourseClass(course));
+}
+
+
+function getStudentClass(data) {
+
+    return (
+        data.className ||
+        data.class ||
+        data.standard ||
+        data.grade ||
+        data.targetClass ||
+        ""
+    );
+}
+
+
+function getCourseClass(data) {
+
+    return (
+        data.className ||
+        data.courseClass ||
+        data.targetClass ||
+        data.standard ||
+        data.grade ||
+        data.crmClass ||
+        ""
+    );
+}
+
+
+function normalizeClass(value) {
+
+    return String(value || "")
+        .trim()
+        .toLowerCase()
+        .replace(/\s+/g, "")
+        .replace("standard", "")
+        .replace("class", "");
+}
+
+
+/* =========================================================
+   DATE FILTERS AND FORMATTING
+========================================================= */
+
+function getClassesForDate(dateString) {
+
+    return allClasses
+        .filter(item => getClassDate(item) === dateString)
+        .sort((a, b) => getStartMillis(a) - getStartMillis(b));
+}
+
+
+function getClassDate(item) {
+
+    const millis = getStartMillis(item);
+
+    if (!millis) return "";
+
+    return new Intl.DateTimeFormat("en-CA", {
+        timeZone: INDIA_TIME_ZONE,
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit"
+    }).format(new Date(millis));
+}
+
+
+function getTodayString() {
+
+    return new Intl.DateTimeFormat("en-CA", {
+        timeZone: INDIA_TIME_ZONE,
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit"
+    }).format(new Date());
+}
+
+
+function shiftDate(dateString, amount) {
+
+    const [year, month, day] = dateString.split("-").map(Number);
+
+    const date = new Date(Date.UTC(year, month - 1, day + amount));
+
+    return [
+        date.getUTCFullYear(),
+        String(date.getUTCMonth() + 1).padStart(2, "0"),
+        String(date.getUTCDate()).padStart(2, "0")
+    ].join("-");
+}
+
+
+function formatLongDate(dateString) {
+
+    if (!dateString) return "Date unavailable";
+
+    const [year, month, day] = dateString.split("-").map(Number);
+
+    const date = new Date(Date.UTC(year, month - 1, day));
+
+    return new Intl.DateTimeFormat("en-IN", {
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+        timeZone: "UTC"
+    }).format(date);
+}
+
+
+function formatTime(item) {
+
+    const millis = getStartMillis(item);
+
+    if (!millis) return "--";
+
+    return new Intl.DateTimeFormat("en-IN", {
+        hour: "numeric",
+        minute: "2-digit",
+        hour12: true,
+        timeZone: INDIA_TIME_ZONE
+    }).format(new Date(millis));
+}
+
+
+function formatTimeRange(item) {
+
+    const start = getStartMillis(item);
+    const end = getEndMillis(item);
+
+    if (!start || !end) return "Time unavailable";
+
+    const formatter = new Intl.DateTimeFormat("en-IN", {
+        hour: "numeric",
+        minute: "2-digit",
+        hour12: true,
+        timeZone: INDIA_TIME_ZONE
+    });
+
+    return `${formatter.format(new Date(start))} – ${formatter.format(new Date(end))}`;
+}
+
+
+/* =========================================================
+   SUBJECT AND PROVIDER HELPERS
+========================================================= */
+
+function getSubjectName(subject) {
+
+    return (
+        subject.name ||
+        subject.subjectName ||
+        subject.subject_name ||
+        subject.title ||
+        subject.displayName ||
+        subject.label ||
+        "Subject"
+    );
+}
+
+
+function getProvider(item) {
+
+    const type = String(item.liveType || item.provider || "").toUpperCase();
+
+    if (type.includes("ZOOM")) return "ZOOM CLASSROOM";
+    if (type.includes("YOUTUBE")) return "YOUTUBE LIVE";
+    if (type.includes("RECORDED")) return "RECORDED CLASS";
+
+    return "ZENOVA LIVE CLASS";
+}
+
+
+/* =========================================================
+   UI STATES
+========================================================= */
+
+function showLoading() {
+
+    loadingState.classList.remove("hidden");
+    errorState.classList.add("hidden");
+    liveApp.classList.add("hidden");
+}
+
+
+function showApp() {
+
+    loadingState.classList.add("hidden");
+    errorState.classList.add("hidden");
+    liveApp.classList.remove("hidden");
+}
+
+
+function showError(message) {
+
+    loadingState.classList.add("hidden");
+    liveApp.classList.add("hidden");
+    errorState.classList.remove("hidden");
+
+    errorText.textContent = message;
+}
+
+
+function showToast(message) {
+
+    const toast = $("toast");
+
+    toast.textContent = message;
+    toast.classList.add("show");
+
+    setTimeout(() => {
+        toast.classList.remove("show");
+    }, 2800);
+}
+
+
+/* =========================================================
+   SAFE HTML
+========================================================= */
+
+function escapeHtml(value) {
+
+    return String(value ?? "").replace(/[&<>"']/g, char => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;"
+    })[char]);
+}
+
+
+function escapeAttr(value) {
+    return escapeHtml(value);
+}
+
+
+/* =========================================================
+   NAVIGATION AND RETRY
+========================================================= */
+
+$("backButton").addEventListener("click", () => {
+
+    if (window.history.length > 1) {
+        window.history.back();
+    } else {
+        window.location.href = "../../home/";
+    }
+
 });
 
-$("todayButton").addEventListener("click",() => {
-  state.selectedDate = todayISO();
-  $("selectedDate").value = state.selectedDate;
-  renderDateShortcuts();
-  renderDateClasses();
-});
 
-$("searchInput").addEventListener("input",renderLibrary);
+$("retryButton").addEventListener("click", async () => {
 
-$("chapterFilter").addEventListener("change",() => {
-  renderLibrary();
-});
+    try {
+        stopListeners();
+        await loadPage();
+    } catch (error) {
+        console.error(error);
+        showError(error.message || "Unable to load classes.");
+    }
 
-$("clearSubject").addEventListener("click",() => {
-  state.selectedSubject = "";
-  state.selectedChapter = "";
-
-  $("searchInput").value = "";
-  $("chapterFilter").value = "";
-
-  renderSubjects();
-  renderChapterFilter();
-  renderLibrary();
-});
-
-$("testSubjectFilter").addEventListener("change",renderTests);
-
-
-/* --------------------------------
-   AUTHENTICATION
--------------------------------- */
-
-let authHandled = false;
-
-onAuthStateChanged(auth,async user => {
-  if (authHandled) return;
-  authHandled = true;
-
-  if (!user) {
-    window.location.replace("../login/");
-    return;
-  }
-
-  try {
-    await loadStudent(user);
-  } catch (error) {
-    console.error("ZENOVA STUDENT LIVE PAGE:",error);
-
-    $("loader").innerHTML = `
-      <div style="text-align:center;padding:25px">
-        <i class="ri-wifi-off-line" style="font-size:35px"></i>
-        <p style="margin-top:12px;color:#172338">
-          Unable to load your classes.
-        </p>
-        <button
-          onclick="location.reload()"
-          style="margin-top:15px;padding:12px 20px;border:0;border-radius:10px;background:#3978E8;color:white"
-        >
-          Retry
-        </button>
-      </div>
-    `;
-  }
 });
 
 </script>
