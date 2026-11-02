@@ -1341,96 +1341,70 @@ $("confirmLeave").addEventListener("click",async()=>{
    INITIALIZE
 ===================================== */
 
-async function initialize(currentUser){
- user=currentUser;
+async function initialize(currentUser) {
+  user = currentUser;
 
- if(!classId){
-  throw new Error("Missing class ID.");
- }
+  if (!classId) throw new Error("Missing class ID");
 
- const studentSnap=await getDoc(
-  doc(db,"zen2Students",user.uid)
- );
+  console.log("STEP 1: Loading student profile");
 
- if(!studentSnap.exists()){
-  throw new Error("Student profile not found.");
- }
-
- student=studentSnap.data();
-
- const classSnap=await getDoc(
-  doc(db,"liveClasses",classId)
- );
-
- if(!classSnap.exists()){
-  throw new Error("Class not found.");
- }
-
- classData=classSnap.data();
-
- if(classData.active===false || classData.published===false){
-  throw new Error("This class is not available.");
- }
-
- const allowed=await validateEnrollment();
-
- if(!allowed){
-  throw new Error("You do not have access to this class.");
- }
-
- const status=String(classData.status||"").toLowerCase();
-
- liveMode=
-  requestedMode==="live" &&
-  (
-   classData.isLive===true ||
-   status==="live" ||
-   status==="live now"
+  const studentSnap = await getDoc(
+    doc(db, "zen2Students", user.uid)
   );
 
- if(requestedMode==="live" && !liveMode){
-  notify("This class is no longer live. Opening its recording.");
- }
+  if (!studentSnap.exists()) {
+    throw new Error("Student profile document does not exist");
+  }
 
- renderClass();
+  student = studentSnap.data();
+  console.log("STEP 1 SUCCESS");
 
- await createSession();
+  console.log("STEP 2: Loading individual class");
 
- await recordEvent("session_join",{
-  mode:liveMode?"live":"recorded"
- });
+  const classSnap = await getDoc(
+    doc(db, "liveClasses", classId)
+  );
 
- if(Number(classData.viewerCount||0)>=0){
-  await updateDoc(doc(db,"liveClasses",classId),{
-   totalSessionJoins:increment(1)
-  }).catch(()=>{});
- }
+  if (!classSnap.exists()) {
+    throw new Error("Class document does not exist: " + classId);
+  }
 
- await loadVideo();
+  classData = classSnap.data();
+  console.log("STEP 2 SUCCESS");
+
+  console.log("STEP 3: Checking enrollment");
+
+  const allowed = await validateEnrollment();
+
+  if (!allowed) {
+    throw new Error("No matching approved course enrollment");
+  }
+
+  console.log("STEP 3 SUCCESS");
+
+  console.log("STEP 4: Creating playback session");
+
+  liveMode =
+    requestedMode === "live" &&
+    (
+      classData.isLive === true ||
+      ["live", "live now"].includes(
+        String(classData.status || "").toLowerCase()
+      )
+    );
+
+  renderClass();
+
+  await createSession();
+
+  console.log("STEP 4 SUCCESS");
+
+  console.log("STEP 5: Loading video");
+
+  await loadVideo();
+
+  console.log("PLAYER INITIALIZED SUCCESSFULLY");
 }
-
-onAuthStateChanged(auth,async currentUser=>{
- if(!currentUser){
-  location.href="../login/";
-  return;
- }
-
- try{
-  await initialize(currentUser);
- }catch(error){
-  console.error("ZENOVA PLAYER ERROR:",error);
-
-  $("videoMessage").style.display="flex";
-  $("videoMessage").innerHTML=`
-   <i class="ri-error-warning-line"></i>
-   <strong>Unable to open classroom</strong>
-   <span>${esc(error.message)}</span>
-   <button class="btn primary" onclick="location.href='../live/'">
-    Back to Classes
-   </button>
-  `;
- }
-});
 
 </script>
 </body>
