@@ -596,15 +596,17 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
 
 import {
- doc,
- getDoc,
- addDoc,
- updateDoc,
- collection,
- serverTimestamp,
- increment
+  doc,
+  getDoc,
+  getDocs,
+  addDoc,
+  updateDoc,
+  collection,
+  query,
+  where,
+  serverTimestamp,
+  increment
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
-
 
 /* =====================================
    CONFIGURATION
@@ -753,35 +755,92 @@ function hasCourseAccess(c){
  return false;
 }
 
-async function validateEnrollment(){
- const id=String(first(
-  classData.courseId,
-  classData.crmCourseId,
-  classData.courseID,
-  classData.batchId
- ));
 
- if(!id)return false;
+async function validateEnrollment() {
 
- if(hasCourseAccess(classData))return true;
+  // 1. Check course IDs already stored in student profile
+  const classIds = [
+    classData.courseId,
+    classData.crmCourseId,
+    classData.courseID,
+    classData.batchId
+  ].filter(Boolean).map(String);
 
- const enrollmentSnap=await getDoc(
-  doc(db,"studentEnrollments",user.uid+"_"+id)
- ).catch(()=>null);
+  const studentArrays = [
+    student.purchasedCourseIds,
+    student.enrolledCourseIds,
+    student.courseIds,
+    student.purchasedCourses,
+    student.enrolledCourses
+  ];
 
- if(enrollmentSnap?.exists()){
-  const e=enrollmentSnap.data();
-  const status=String(first(e.status,e.enrollmentStatus)).toLowerCase();
+  for (const arr of studentArrays) {
+    if (!Array.isArray(arr)) continue;
 
-  if(e.accessGranted===true ||
-   ["active","approved","paid","purchased","enrolled","success","completed"].includes(status)){
-   return true;
+    const matched = arr.some(item => {
+      const id = typeof item === "object"
+        ? first(item.courseId, item.id, item.crmCourseId, item.batchId)
+        : item;
+
+      return classIds.includes(String(id));
+    });
+
+    if (matched) return true;
   }
- }
 
- return false;
+  // 2. Use the EXISTING Zenova enrollment lookup
+  const enrollmentQuery = query(
+    collection(db, "studentEnrollments"),
+    where("studentUid", "==", user.uid)
+  );
+
+  const enrollmentSnapshot = await getDocs(enrollmentQuery);
+
+  // 3. Match the class against approved enrollment records
+  for (const enrollmentDoc of enrollmentSnapshot.docs) {
+
+    const enrollment = enrollmentDoc.data();
+
+    const enrollmentIds = [
+      enrollment.courseId,
+      enrollment.crmCourseId,
+      enrollment.courseID,
+      enrollment.batchId
+    ].filter(Boolean).map(String);
+
+    const status = String(
+      first(enrollment.status, enrollment.enrollmentStatus)
+    ).toLowerCase();
+
+    const approvedStatuses = [
+      "active",
+      "approved",
+      "paid",
+      "purchased",
+      "enrolled",
+      "success",
+      "completed"
+    ];
+
+    const approved =
+      enrollment.accessGranted === true ||
+      (
+        enrollment.accessGranted !== false &&
+        approvedStatuses.includes(status)
+      );
+
+    const matches = enrollmentIds.some(id =>
+      classIds.includes(id)
+    );
+
+    if (matches && approved) {
+      return true;
+    }
+  }
+
+  // 4. No matching approved enrollment
+  return false;
 }
-
 
 /* =====================================
    SESSION TRACKING
