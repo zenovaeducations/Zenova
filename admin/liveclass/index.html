@@ -1,0 +1,794 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zenova Admin | Live Classes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.css" rel="stylesheet">
+
+<style>
+:root{
+  --bg:#f7f9fc;--white:#fff;--soft:#f0f5fb;
+  --blue:#3978e8;--dark:#245fc9;--ink:#172338;
+  --muted:#7b8799;--line:#e7edf5;--green:#159b78;
+  --red:#dc4545;--orange:#bd791b;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,Arial,sans-serif}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+.topbar{height:70px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 5%;position:sticky;top:0;z-index:10}
+.brand{display:flex;align-items:center;gap:11px;font-weight:800}
+.logo{width:40px;height:40px;border-radius:12px;background:var(--blue);color:white;display:grid;place-items:center;font-size:21px}
+.brand small{display:block;color:var(--muted);font-size:10px;margin-top:3px;font-weight:500}
+.top-right{font-size:12px;color:var(--muted)}
+.container{width:min(1180px,94%);margin:30px auto 60px}
+.heading{display:flex;justify-content:space-between;align-items:flex-start;gap:15px;margin-bottom:25px}
+.heading h1{font-size:28px;letter-spacing:-.8px;margin:0}
+.heading p{color:var(--muted);font-size:13px;line-height:1.6;margin:8px 0 0}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:13px;margin-bottom:23px}
+.stat,.card,.class-card{background:#fff;border:1px solid var(--line);border-radius:16px}
+.stat{padding:18px}
+.stat-label{font-size:12px;color:var(--muted)}
+.stat-value{font-size:27px;font-weight:800;margin-top:9px}
+.layout{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(300px,.85fr);gap:18px;align-items:start}
+.card{padding:23px;min-width:0}
+.card h2{font-size:17px;margin:0 0 5px}
+.card-sub{font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:22px}
+.section-label{font-size:12px;font-weight:800;color:var(--dark);margin:22px 0 13px;text-transform:uppercase;letter-spacing:.6px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.field{display:flex;flex-direction:column;gap:7px;min-width:0}
+.field.full{grid-column:1/-1}
+label{font-size:12px;font-weight:700;color:#344054}
+input,select,textarea{width:100%;min-height:44px;padding:11px 12px;border:1px solid #dce3ed;border-radius:10px;background:#fff;color:var(--ink);outline:none}
+textarea{min-height:75px;resize:vertical}
+input:focus,select:focus,textarea:focus{border-color:var(--blue);box-shadow:0 0 0 3px #3978e81a}
+.hint{font-size:10px;color:var(--muted);line-height:1.5}
+.mode-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.mode{position:relative;border:1px solid var(--line);border-radius:13px;padding:15px 10px;background:#fff;text-align:left;cursor:pointer;min-height:112px}
+.mode.active{border:2px solid var(--blue);background:#f2f6ff}
+.mode i{font-size:23px;color:var(--blue)}
+.mode strong{display:block;font-size:12px;margin-top:9px}
+.mode span{display:block;color:var(--muted);font-size:10px;margin-top:5px;line-height:1.4}
+.mode input{position:absolute;opacity:0;pointer-events:none}
+.link-panel{padding:15px;background:#f8faff;border:1px solid #e0eafa;border-radius:12px;margin-top:14px}
+.link-panel h3{font-size:13px;margin:0 0 12px}
+.actions{display:flex;gap:9px;margin-top:22px}
+.btn{min-height:43px;padding:0 16px;border:0;border-radius:10px;font-size:12px;font-weight:750}
+.primary{background:var(--blue);color:#fff}
+.primary:hover{background:var(--dark)}
+.secondary{background:var(--soft);color:var(--ink)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.message{display:none;padding:12px 14px;margin-top:15px;border-radius:10px;font-size:12px;line-height:1.6;overflow-wrap:anywhere}
+.message.show{display:block}
+.message.error{background:#fff0f0;color:#ad3030}
+.message.success{background:#e9f8f1;color:#147a58}
+.message.info{background:#edf3ff;color:#2459b5}
+.list-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:25px 0 13px}
+.list-head h2{font-size:18px;margin:0}
+.class-list{display:grid;gap:11px}
+.class-card{padding:16px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:13px;align-items:center}
+.class-title{font-size:13px;font-weight:800}
+.class-detail{font-size:11px;color:var(--muted);line-height:1.7;margin-top:6px}
+.pill{display:inline-flex;padding:5px 9px;border-radius:20px;font-size:10px;font-weight:800;background:#edf3ff;color:var(--dark);margin-bottom:8px}
+.pill.live{background:#e6f7ef;color:#14835d}
+.pill.ended{background:#f1f3f6;color:#667085}
+.pill.scheduled{background:#fff4df;color:#996300}
+.card-actions{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.small-btn{padding:9px 11px;border:0;border-radius:8px;font-size:10px;font-weight:800}
+.go-live{background:#e6f7ef;color:#14835d}
+.end-btn{background:#fff0f0;color:#b83232}
+.delete-btn{background:#f1f3f6;color:#667085}
+.empty{padding:35px 15px;text-align:center;color:var(--muted);font-size:12px;border:1px dashed #d5deea;border-radius:12px;background:#fff}
+.empty i{font-size:28px;display:block;margin-bottom:9px}
+.loading{padding:25px;text-align:center;color:var(--muted);font-size:12px}
+.hidden{display:none!important}
+footer{text-align:center;color:var(--muted);font-size:11px;padding:20px}
+@media(max-width:850px){.layout{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){
+ .topbar{padding:0 15px}.container{margin-top:20px}
+ .heading{flex-direction:column}.heading h1{font-size:24px}
+ .grid{grid-template-columns:1fr}.mode-grid{grid-template-columns:1fr}
+ .mode{min-height:auto;display:flex;align-items:center;gap:12px}
+ .mode strong{margin:0}.mode span{margin-top:3px}
+ .class-card{grid-template-columns:1fr}.card-actions{justify-content:flex-start}
+ .card{padding:17px}
+}
+</style>
+</head>
+
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <div class="logo"><i class="ri-broadcast-line"></i></div>
+    <div>ZENOVA<small>ADMINISTRATION · LIVE CLASS</small></div>
+  </div>
+  <div class="top-right" id="adminName">Checking admin...</div>
+</header>
+
+<main class="container">
+
+  <div class="heading">
+    <div>
+      <h1>Live Class Management</h1>
+      <p>Create, schedule, publish and manage live classes for Zenova students.</p>
+    </div>
+    <button class="btn secondary" id="refreshBtn">
+      <i class="ri-refresh-line"></i> Refresh
+    </button>
+  </div>
+
+  <section class="stats">
+    <div class="stat"><div class="stat-label">Total classes</div><div class="stat-value" id="totalCount">0</div></div>
+    <div class="stat"><div class="stat-label">Scheduled</div><div class="stat-value" id="scheduledCount">0</div></div>
+    <div class="stat"><div class="stat-label">Live now</div><div class="stat-value" id="liveCount">0</div></div>
+    <div class="stat"><div class="stat-label">Completed</div><div class="stat-value" id="endedCount">0</div></div>
+  </section>
+
+  <div class="layout">
+
+    <section class="card">
+      <h2 id="formHeading">Create a live class</h2>
+      <div class="card-sub">Choose the class details and how students will attend.</div>
+
+      <form id="classForm">
+
+        <div class="section-label">01 · Academic details</div>
+        <div class="grid">
+          <div class="field">
+            <label for="course">Course *</label>
+            <select id="course" required><option value="">Loading courses...</option></select>
+          </div>
+          <div class="field">
+            <label for="subject">Subject *</label>
+            <select id="subject" required disabled><option value="">Select subject</option></select>
+          </div>
+          <div class="field full">
+            <label for="chapter">Chapter</label>
+            <select id="chapter" disabled><option value="">Select chapter (optional)</option></select>
+          </div>
+        </div>
+
+        <div class="section-label">02 · Class information</div>
+        <div class="grid">
+          <div class="field full">
+            <label for="title">Class title *</label>
+            <input id="title" required placeholder="Example: Introduction to Trigonometry">
+          </div>
+          <div class="field">
+            <label for="faculty">Faculty / Teacher *</label>
+            <input id="faculty" required placeholder="Teacher name">
+          </div>
+          <div class="field">
+            <label for="duration">Duration (minutes) *</label>
+            <input id="duration" type="number" min="1" value="60" required>
+          </div>
+          <div class="field">
+            <label for="date">Class date *</label>
+            <input id="date" type="date" required>
+          </div>
+          <div class="field">
+            <label for="time">Start time *</label>
+            <input id="time" type="time" required>
+          </div>
+          <div class="field full">
+            <label for="thumbnail">Thumbnail URL (optional)</label>
+            <input id="thumbnail" type="url" placeholder="https://...">
+          </div>
+        </div>
+
+        <div class="section-label">03 · Select class delivery</div>
+
+        <div class="mode-grid">
+          <label class="mode active" data-mode="RECORDED_VIDEO">
+            <input type="radio" name="mode" value="RECORDED_VIDEO" checked>
+            <i class="ri-video-line"></i>
+            <div><strong>Recorded video</strong><span>Play a saved lecture</span></div>
+          </label>
+
+          <label class="mode" data-mode="YOUTUBE_LIVE">
+            <input type="radio" name="mode" value="YOUTUBE_LIVE">
+            <i class="ri-youtube-line"></i>
+            <div><strong>YouTube Live</strong><span>Connect a YouTube stream</span></div>
+          </label>
+
+          <label class="mode" data-mode="ZOOM">
+            <input type="radio" name="mode" value="ZOOM">
+            <i class="ri-video-chat-line"></i>
+            <div><strong>Zoom class</strong><span>Join a Zoom meeting</span></div>
+          </label>
+        </div>
+
+        <div class="link-panel">
+          <h3 id="linkHeading">Recorded video URL</h3>
+          <div class="field">
+            <label for="classUrl">Video / Live / Meeting URL *</label>
+            <input id="classUrl" type="url" required placeholder="https://...">
+            <div class="hint" id="linkHint">Paste a video URL that students can access.</div>
+          </div>
+          <div class="field" id="embedField" style="margin-top:12px">
+            <label for="embedUrl">Optional embed URL</label>
+            <input id="embedUrl" type="url" placeholder="https://www.youtube.com/embed/VIDEO_ID">
+            <div class="hint">Optional. Use an embed URL if you want the student page to show the player inside Zenova.</div>
+          </div>
+        </div>
+
+        <div class="field" style="margin-top:15px">
+          <label for="description">Class description (optional)</label>
+          <textarea id="description" placeholder="Add instructions or details for students..."></textarea>
+        </div>
+
+        <div class="message" id="formMessage"></div>
+
+        <div class="actions">
+          <button class="btn primary" id="saveBtn" type="submit">
+            <i class="ri-calendar-check-line"></i> Create and schedule
+          </button>
+          <button class="btn secondary" id="resetBtn" type="button">Reset</button>
+        </div>
+
+      </form>
+    </section>
+
+    <section class="card">
+      <h2>How students will attend</h2>
+      <div class="card-sub">The selected link is connected to the student Live Classes page.</div>
+
+      <div class="notice" style="background:#edf3ff;padding:15px;border-radius:12px;font-size:12px;line-height:1.8">
+        <strong>Recorded video</strong><br>
+        Students open the recorded lecture link from their live class card.
+        <hr style="border:0;border-top:1px solid #dce7f8;margin:12px 0">
+        <strong>YouTube Live</strong><br>
+        Students open the YouTube live stream using the supplied URL.
+        <hr style="border:0;border-top:1px solid #dce7f8;margin:12px 0">
+        <strong>Zoom</strong><br>
+        Students open the Zoom meeting using the supplied join URL.
+      </div>
+
+      <div class="section-label">Publishing flow</div>
+      <div class="class-detail">
+        1. Create and schedule the class.<br><br>
+        2. The class is saved in Firestore as SCHEDULED.<br><br>
+        3. Click START LIVE when the class begins.<br><br>
+        4. Students see LIVE NOW in their Live Classes page.<br><br>
+        5. Click END CLASS after the session finishes.
+      </div>
+
+      <div class="message show info" style="margin-top:18px">
+        All three options use the same `liveClasses` collection. The Zoom API is not called when creating a class.
+      </div>
+    </section>
+
+  </div>
+
+  <div class="list-head">
+    <div>
+      <h2>Manage live classes</h2>
+      <div class="card-sub" style="margin:5px 0 0">Control the classes already created.</div>
+    </div>
+    <span class="pill" id="listCount">0 classes</span>
+  </div>
+
+  <div id="classList" class="class-list">
+    <div class="loading">Loading classes...</div>
+  </div>
+
+</main>
+
+<footer>Zenova Educations · Live Class Administration</footer>
+
+<script type="module">
+import { auth, db } from "../../firebase/firebase-config.js";
+
+import {
+  onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+
+import {
+  collection, doc, getDoc, getDocs, query, where,
+  addDoc, updateDoc, deleteDoc, serverTimestamp
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
+const $ = id => document.getElementById(id);
+
+const state = {
+  user:null,
+  courses:[],
+  subjects:[],
+  chapters:[],
+  classes:[],
+  editingId:null,
+  mode:"RECORDED_VIDEO"
+};
+
+const COLLECTIONS = {
+  courses:"zen2Courses",
+  subjects:"zen2Subjects",
+  chapters:"zen2Chapters",
+  classes:"liveClasses"
+};
+
+function esc(value=""){
+  return String(value).replace(/[&<>"']/g,c=>({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  }[c]));
+}
+
+function message(text,type="info"){
+  const el=$("formMessage");
+  el.textContent=text;
+  el.className="message show "+type;
+}
+
+function clearMessage(){
+  $("formMessage").className="message";
+  $("formMessage").textContent="";
+}
+
+function setBusy(value){
+  $("saveBtn").disabled=value;
+  $("saveBtn").textContent=value?"Please wait...":(state.editingId?"Update class":"Create and schedule");
+}
+
+function selectedMode(){
+  return document.querySelector('input[name="mode"]:checked')?.value || "RECORDED_VIDEO";
+}
+
+function setMode(mode){
+  state.mode=mode;
+  document.querySelectorAll(".mode").forEach(el=>{
+    el.classList.toggle("active",el.dataset.mode===mode);
+  });
+
+  const settings={
+    RECORDED_VIDEO:{
+      title:"Recorded video URL",
+      placeholder:"https://...",
+      hint:"Paste a video URL that students can access.",
+      embed:true
+    },
+    YOUTUBE_LIVE:{
+      title:"YouTube Live URL",
+      placeholder:"https://www.youtube.com/watch?v=... or https://youtu.be/...",
+      hint:"Paste the YouTube Live watch URL. The stream must be accessible to your students.",
+      embed:true
+    },
+    ZOOM:{
+      title:"Zoom meeting join URL",
+      placeholder:"https://zoom.us/j/...",
+      hint:"Paste the student-facing Zoom join URL. Do not paste the host start URL.",
+      embed:false
+    }
+  }[mode];
+
+  $("linkHeading").textContent=settings.title;
+  $("classUrl").placeholder=settings.placeholder;
+  $("linkHint").textContent=settings.hint;
+  $("embedField").classList.toggle("hidden",!settings.embed);
+}
+
+function resetSelect(id,label){
+  $(id).innerHTML=`<option value="">${label}</option>`;
+  $(id).disabled=true;
+}
+
+async function loadCourses(){
+  const snap=await getDocs(collection(db,COLLECTIONS.courses));
+  state.courses=snap.docs.map(d=>({id:d.id,...d.data()}));
+  state.courses.sort((a,b)=>String(a.courseName||"").localeCompare(String(b.courseName||"")));
+
+  $("course").innerHTML='<option value="">Select course</option>';
+  state.courses.forEach(c=>{
+    const option=document.createElement("option");
+    option.value=c.id;
+    option.textContent=c.courseName||c.name||c.title||"Unnamed course";
+    $("course").appendChild(option);
+  });
+  $("course").disabled=false;
+}
+
+async function loadSubjects(courseId){
+  resetSelect("subject","Select subject");
+  resetSelect("chapter","Select chapter");
+  state.subjects=[];
+  state.chapters=[];
+  if(!courseId)return;
+
+  const q=query(
+    collection(db,COLLECTIONS.subjects),
+    where("courseId","==",courseId)
+  );
+  const snap=await getDocs(q);
+  state.subjects=snap.docs.map(d=>({id:d.id,...d.data()}));
+  state.subjects.sort((a,b)=>Number(a.order||0)-Number(b.order||0));
+
+  state.subjects.forEach(s=>{
+    const option=document.createElement("option");
+    option.value=s.id;
+    option.textContent=s.subjectName||s.name||"Subject";
+    $("subject").appendChild(option);
+  });
+  $("subject").disabled=false;
+}
+
+async function loadChapters(courseId,subjectId){
+  resetSelect("chapter","Select chapter (optional)");
+  state.chapters=[];
+  if(!courseId||!subjectId)return;
+
+  const q=query(
+    collection(db,COLLECTIONS.chapters),
+    where("courseId","==",courseId),
+    where("subjectId","==",subjectId)
+  );
+  const snap=await getDocs(q);
+  state.chapters=snap.docs.map(d=>({id:d.id,...d.data()}));
+  state.chapters.sort((a,b)=>Number(a.chapterNumber||0)-Number(b.chapterNumber||0));
+
+  state.chapters.forEach(c=>{
+    const option=document.createElement("option");
+    option.value=c.id;
+    option.textContent=`Chapter ${c.chapterNumber||""} ${c.chapterName||""}`;
+    $("chapter").appendChild(option);
+  });
+  $("chapter").disabled=false;
+}
+
+function getSelected(list,id){
+  return list.find(x=>x.id===id)||null;
+}
+
+function validHttpUrl(value){
+  try{
+    const url=new URL(value);
+    return url.protocol==="https:"||url.protocol==="http:";
+  }catch{return false;}
+}
+
+function validateModeUrl(mode,url){
+  if(!validHttpUrl(url))return "Enter a valid link beginning with https:// or http://";
+
+  if(mode==="YOUTUBE_LIVE"){
+    const host=new URL(url).hostname.replace(/^www\./,"");
+    if(!["youtube.com","m.youtube.com","youtu.be","youtube-nocookie.com"].includes(host)){
+      return "Please enter a valid YouTube URL.";
+    }
+  }
+
+  if(mode==="ZOOM"){
+    const host=new URL(url).hostname.toLowerCase();
+    if(!host.endsWith("zoom.us")&&!host.endsWith("zoom.com")){
+      return "Please enter a valid Zoom meeting URL.";
+    }
+  }
+
+  return "";
+}
+
+function collectFormData(){
+  const course=getSelected(state.courses,$("course").value);
+  const subject=getSelected(state.subjects,$("subject").value);
+  const chapter=getSelected(state.chapters,$("chapter").value);
+
+  if(!course)throw new Error("Select a course.");
+  if(!subject)throw new Error("Select a subject.");
+  if(!$("title").value.trim())throw new Error("Enter a class title.");
+  if(!$("faculty").value.trim())throw new Error("Enter the faculty name.");
+  if(!$("date").value||!$("time").value)throw new Error("Select the class date and time.");
+
+  const duration=Number($("duration").value);
+  if(!Number.isInteger(duration)||duration<1)throw new Error("Enter a valid duration.");
+
+  const mode=selectedMode();
+  const url=$("classUrl").value.trim();
+  const urlError=validateModeUrl(mode,url);
+  if(urlError)throw new Error(urlError);
+
+  const embed=$("embedUrl").value.trim();
+  if(embed&&!validHttpUrl(embed))throw new Error("Enter a valid embed URL.");
+
+  const now=new Date();
+  const data={
+    title:$("title").value.trim(),
+    classTitle:$("title").value.trim(),
+    faculty:$("faculty").value.trim(),
+    teacherName:$("faculty").value.trim(),
+
+    courseId:course.id,
+    courseName:course.courseName||course.name||course.title||"",
+
+    subjectId:subject.id,
+    subjectName:subject.subjectName||subject.name||"",
+
+    chapterId:chapter?.id||"",
+    chapterNumber:chapter?.chapterNumber||0,
+    chapterName:chapter?.chapterName||"",
+
+    scheduledDate:$("date").value,
+    scheduledTime:$("time").value,
+    duration,
+
+    thumbnailUrl:$("thumbnail").value.trim(),
+    description:$("description").value.trim(),
+
+    liveType:mode,
+    mode,
+    streamType:mode,
+
+    // The student Live page already checks this field.
+    studentJoinUrl:url,
+    joinUrl:url,
+
+    videoUrl:mode==="RECORDED_VIDEO"?url:"",
+    playbackUrl:mode==="RECORDED_VIDEO"?url:"",
+    streamUrl:mode==="YOUTUBE_LIVE"?url:"",
+    youtubeLiveUrl:mode==="YOUTUBE_LIVE"?url:"",
+    zoomJoinUrl:mode==="ZOOM"?url:"",
+
+    embedUrl:embed,
+    status:"SCHEDULED",
+    active:true,
+    published:true,
+    isLive:false,
+    ended:false,
+    accessType:"PAID",
+    updatedAt:serverTimestamp()
+  };
+
+  return data;
+}
+
+async function saveClass(event){
+  event.preventDefault();
+  clearMessage();
+
+  try{
+    const data=collectFormData();
+    setBusy(true);
+
+    if(state.editingId){
+      await updateDoc(doc(db,COLLECTIONS.classes,state.editingId),data);
+      message("Live class updated successfully.","success");
+    }else{
+      data.createdAt=serverTimestamp();
+      data.createdBy=state.user.uid;
+      await addDoc(collection(db,COLLECTIONS.classes),data);
+      message("Live class created and scheduled successfully.","success");
+    }
+
+    resetForm(false);
+    await loadClasses();
+  }catch(error){
+    console.error("LIVE CLASS SAVE ERROR:",error);
+    message(error.message||"Unable to save the class.","error");
+  }finally{
+    setBusy(false);
+  }
+}
+
+function resetForm(clear=true){
+  $("classForm").reset();
+  $("duration").value=60;
+  $("subject").innerHTML='<option value="">Select subject</option>';
+  $("subject").disabled=true;
+  $("chapter").innerHTML='<option value="">Select chapter (optional)</option>';
+  $("chapter").disabled=true;
+  state.editingId=null;
+  setMode("RECORDED_VIDEO");
+  $("formHeading").textContent="Create a live class";
+  $("saveBtn").innerHTML='<i class="ri-calendar-check-line"></i> Create and schedule';
+  if(clear)clearMessage();
+}
+
+function classStatus(c){
+  const s=String(c.status||"").toLowerCase();
+  if(s==="live"||c.isLive===true)return "live";
+  if(s==="ended"||c.ended===true)return "ended";
+  return "scheduled";
+}
+
+function modeName(c){
+  const mode=c.liveType||c.mode||"";
+  return ({
+    RECORDED_VIDEO:"Recorded video",
+    YOUTUBE_LIVE:"YouTube Live",
+    ZOOM:"Zoom class"
+  })[mode]||mode||"Class";
+}
+
+function renderClasses(){
+  const list=[...state.classes].sort((a,b)=>{
+    return `${b.scheduledDate||""} ${b.scheduledTime||""}`
+      .localeCompare(`${a.scheduledDate||""} ${a.scheduledTime||""}`);
+  });
+
+  $("totalCount").textContent=list.length;
+  $("scheduledCount").textContent=list.filter(c=>classStatus(c)==="scheduled").length;
+  $("liveCount").textContent=list.filter(c=>classStatus(c)==="live").length;
+  $("endedCount").textContent=list.filter(c=>classStatus(c)==="ended").length;
+  $("listCount").textContent=`${list.length} classes`;
+
+  if(!list.length){
+    $("classList").innerHTML='<div class="empty"><i class="ri-calendar-event-line"></i>No live classes created yet.</div>';
+    return;
+  }
+
+  $("classList").innerHTML=list.map(c=>{
+    const status=classStatus(c);
+    return `
+      <article class="class-card">
+        <div>
+          <span class="pill ${status}">${status.toUpperCase()}</span>
+          <div class="class-title">${esc(c.title||c.classTitle||"Live class")}</div>
+          <div class="class-detail">
+            ${esc(c.courseName||"")} · ${esc(c.subjectName||"")} ${c.chapterName?"· "+esc(c.chapterName):""}<br>
+            ${esc(c.scheduledDate||"")} · ${esc(c.scheduledTime||"")} · ${Number(c.duration||60)} min<br>
+            Faculty: ${esc(c.faculty||c.teacherName||"Not specified")}<br>
+            Delivery: ${esc(modeName(c))}
+          </div>
+        </div>
+        <div class="card-actions">
+          ${status==="scheduled"?`<button class="small-btn go-live" data-action="start" data-id="${esc(c.id)}">START LIVE</button>`:""}
+          ${status==="live"?`<button class="small-btn end-btn" data-action="end" data-id="${esc(c.id)}">END CLASS</button>`:""}
+          <button class="small-btn" style="background:#edf3ff;color:#245fc9" data-action="edit" data-id="${esc(c.id)}">EDIT</button>
+          <button class="small-btn delete-btn" data-action="delete" data-id="${esc(c.id)}">DELETE</button>
+        </div>
+      </article>`;
+  }).join("");
+
+  $("classList").querySelectorAll("[data-action]").forEach(button=>{
+    button.addEventListener("click",()=>{
+      const item=state.classes.find(c=>c.id===button.dataset.id);
+      if(!item)return;
+      const action=button.dataset.action;
+      if(action==="start")changeStatus(item,"live");
+      if(action==="end")changeStatus(item,"ended");
+      if(action==="edit")editClass(item);
+      if(action==="delete")removeClass(item);
+    });
+  });
+}
+
+async function loadClasses(){
+  $("classList").innerHTML='<div class="loading">Loading live classes...</div>';
+  const snap=await getDocs(collection(db,COLLECTIONS.classes));
+  state.classes=snap.docs.map(d=>({id:d.id,...d.data()}));
+  renderClasses();
+}
+
+async function changeStatus(item,status){
+  const promptText=status==="live"
+    ?"Start this class now? It will appear as LIVE NOW for enrolled students."
+    :"End this class? It will no longer appear as LIVE NOW.";
+
+  if(!confirm(promptText))return;
+
+  try{
+    const data={
+      status,
+      isLive:status==="live",
+      ended:status==="ended",
+      active:true,
+      published:true,
+      updatedAt:serverTimestamp()
+    };
+
+    if(status==="live")data.liveStartedAt=serverTimestamp();
+    if(status==="ended")data.endedAt=serverTimestamp();
+
+    await updateDoc(doc(db,COLLECTIONS.classes,item.id),data);
+    await loadClasses();
+    message(status==="live"?"Class is now LIVE. Students can see it on their Live page.":"Class ended successfully.","success");
+  }catch(error){
+    console.error("STATUS UPDATE ERROR:",error);
+    message(error.message||"Unable to update class status.","error");
+  }
+}
+
+function editClass(item){
+  state.editingId=item.id;
+  $("formHeading").textContent="Edit live class";
+  $("title").value=item.title||item.classTitle||"";
+  $("faculty").value=item.faculty||item.teacherName||"";
+  $("duration").value=item.duration||60;
+  $("date").value=item.scheduledDate||"";
+  $("time").value=item.scheduledTime||"";
+  $("thumbnail").value=item.thumbnailUrl||"";
+  $("description").value=item.description||"";
+
+  $("course").value=item.courseId||"";
+  loadSubjects(item.courseId||"").then(async()=>{
+    $("subject").value=item.subjectId||"";
+    await loadChapters(item.courseId||"",item.subjectId||"");
+    $("chapter").value=item.chapterId||"";
+  });
+
+  const mode=item.liveType||item.mode||"RECORDED_VIDEO";
+  document.querySelector(`input[name="mode"][value="${mode}"]`).checked=true;
+  setMode(mode);
+  $("classUrl").value=item.studentJoinUrl||item.joinUrl||item.videoUrl||item.streamUrl||item.zoomJoinUrl||"";
+  $("embedUrl").value=item.embedUrl||"";
+  $("saveBtn").innerHTML='<i class="ri-save-line"></i> Update class';
+  $("formHeading").textContent="Edit live class";
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+async function removeClass(item){
+  if(!confirm(`Delete "${item.title||"this class"}"? This removes the class record from the student live list.`))return;
+  try{
+    await deleteDoc(doc(db,COLLECTIONS.classes,item.id));
+    await loadClasses();
+    message("Class deleted.","success");
+  }catch(error){
+    console.error(error);
+    message(error.message||"Unable to delete class.","error");
+  }
+}
+
+$("course").addEventListener("change",()=>loadSubjects($("course").value));
+$("subject").addEventListener("change",()=>loadChapters($("course").value,$("subject").value));
+
+document.querySelectorAll('input[name="mode"]').forEach(input=>{
+  input.addEventListener("change",()=>setMode(selectedMode()));
+});
+
+document.querySelectorAll(".mode").forEach(label=>{
+  label.addEventListener("click",()=>{
+    const radio=label.querySelector("input");
+    radio.checked=true;
+    setMode(radio.value);
+  });
+});
+
+$("classForm").addEventListener("submit",saveClass);
+$("resetBtn").addEventListener("click",()=>resetForm());
+$("refreshBtn").addEventListener("click",async()=>{
+  try{await loadClasses()}catch(e){message(e.message,"error")}
+});
+
+async function initialize(user){
+  state.user=user;
+
+  // Admin authorization: admins/{Firebase Auth UID}
+  const adminSnap=await getDoc(doc(db,"admins",user.uid));
+
+  if(!adminSnap.exists()){
+    throw new Error("Your account is not registered in the Zenova admins collection.");
+  }
+
+  const admin=adminSnap.data();
+  if(admin.role!=="admin"||admin.active!==true){
+    throw new Error("Your admin account is inactive or does not have the admin role.");
+  }
+
+  $("adminName").textContent=admin.name||user.displayName||user.email||"Admin";
+
+  await Promise.all([loadCourses(),loadClasses()]);
+  setMode("RECORDED_VIDEO");
+}
+
+onAuthStateChanged(auth,async user=>{
+  if(!user){
+    $("adminName").textContent="Please sign in";
+    $("classList").innerHTML='<div class="empty">Please sign in to the Zenova admin account.</div>';
+    $("classForm").classList.add("hidden");
+    return;
+  }
+
+  try{
+    await initialize(user);
+  }catch(error){
+    console.error("ADMIN LIVE CLASS PAGE:",error);
+    $("adminName").textContent="Access denied";
+    $("classList").innerHTML=`<div class="empty">${esc(error.message)}</div>`;
+    $("classForm").classList.add("hidden");
+  }
+});
+</script>
+
+</body>
+</html>
