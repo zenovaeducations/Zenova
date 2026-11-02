@@ -1,0 +1,772 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#F7F9FC">
+<title>Zenova Post-Class Test</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.css" rel="stylesheet">
+
+<style>
+:root{
+ --bg:#F7F9FC;--white:#fff;--soft:#F0F5FB;
+ --blue:#3978E8;--dark:#245FC9;--light:#EAF2FF;
+ --text:#172338;--muted:#7B8799;--border:#E7EDF5;
+ --green:#159B78;--red:#E34D59;--orange:#D28A27;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);font-family:Inter,Arial,sans-serif;color:var(--text);padding-bottom:35px}
+button{font:inherit;cursor:pointer}
+.header{position:sticky;top:0;background:white;border-bottom:1px solid var(--border);z-index:10}
+.header-inner{max-width:1050px;margin:auto;padding:13px 17px;display:flex;justify-content:space-between;align-items:center}
+.brand{font-size:16px;font-weight:800;color:var(--dark)}
+.back{background:white;border:0;display:flex;align-items:center;gap:8px;font-size:12px;font-weight:750;color:var(--text)}
+.back i{font-size:22px;color:var(--blue)}
+.container{max-width:850px;margin:auto;padding:18px}
+.card{background:white;border:1px solid var(--border);border-radius:15px;padding:18px;margin-bottom:14px}
+.tag{display:inline-flex;padding:6px 9px;border-radius:6px;background:var(--light);color:var(--dark);font-size:9px;font-weight:800;letter-spacing:.5px}
+h1{font-size:22px;line-height:1.4;margin-top:10px}
+h2{font-size:15px}
+.muted{color:var(--muted);font-size:11px;line-height:1.7;margin-top:7px}
+.meta{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:17px;padding-top:14px;border-top:1px solid var(--border)}
+.meta span{display:block;font-size:9px;color:var(--muted);margin-bottom:5px}
+.meta strong{font-size:12px}
+.timer-card{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.timer{font-size:20px;font-weight:800;color:var(--dark);font-variant-numeric:tabular-nums}
+.timer.warning{color:var(--red)}
+.progress{height:7px;background:var(--soft);border-radius:20px;overflow:hidden;margin-top:12px}
+.progress div{height:100%;width:0;background:var(--blue);transition:width .2s}
+.question-head{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.question-number{font-size:11px;font-weight:800;color:var(--blue)}
+.question-text{font-size:16px;font-weight:700;line-height:1.7;margin:19px 0}
+.options{display:grid;gap:10px}
+.option{display:flex;align-items:flex-start;gap:11px;padding:14px;border:1px solid var(--border);border-radius:11px;background:white;text-align:left;width:100%;font-size:12px;line-height:1.6;color:var(--text)}
+.option:hover{border-color:var(--blue)}
+.option.selected{border-color:var(--blue);background:var(--light)}
+.option-letter{width:25px;height:25px;min-width:25px;border-radius:7px;background:var(--soft);display:grid;place-items:center;font-size:10px;font-weight:800;color:var(--dark)}
+.option.selected .option-letter{background:var(--blue);color:white}
+.navigation{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px}
+.btn{min-height:44px;padding:0 15px;border-radius:10px;border:0;font-size:11px;font-weight:800;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+.primary{background:var(--blue);color:white}
+.secondary{background:var(--light);color:var(--dark)}
+.outline{background:white;border:1px solid var(--border);color:var(--text)}
+.full{width:100%}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.question-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:8px;margin-top:14px}
+.q-number{aspect-ratio:1;border:1px solid var(--border);border-radius:8px;background:white;font-size:11px;font-weight:700;color:var(--muted)}
+.q-number.current{background:var(--light);border-color:var(--blue);color:var(--dark)}
+.q-number.answered{background:#E5F6F0;border-color:#BCE7D8;color:var(--green)}
+.q-number.current.answered{background:var(--blue);border-color:var(--blue);color:white}
+.legend{display:flex;gap:15px;flex-wrap:wrap;margin-top:13px;font-size:9px;color:var(--muted)}
+.legend span{display:flex;align-items:center;gap:5px}
+.legend i{width:8px;height:8px;border-radius:3px;display:inline-block;background:var(--soft)}
+.legend .done{background:#BCE7D8}
+.legend .active{background:var(--blue)}
+.result{text-align:center;padding:30px 15px}
+.result i{font-size:55px;color:var(--green)}
+.result h1{margin-top:15px}
+.notice{background:#FFF7E9;border:1px solid #F3E0B9;border-radius:10px;padding:12px;color:#94631D;font-size:10px;line-height:1.7;margin-top:13px}
+#testArea,#resultArea{display:none}
+#loadingArea{text-align:center;padding:50px 15px}
+#loadingArea i{font-size:35px;color:var(--blue)}
+.error{color:var(--red);font-size:12px;line-height:1.7}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#172338;color:white;padding:12px 17px;border-radius:10px;font-size:11px;display:none;z-index:100;text-align:center;max-width:90%}
+.toast.show{display:block}
+@media(max-width:500px){
+ .container{padding:12px}
+ .card{padding:14px}
+ h1{font-size:19px}
+ .question-grid{grid-template-columns:repeat(6,1fr)}
+ .meta{gap:6px}
+ .meta strong{font-size:10px}
+ .question-text{font-size:14px}
+}
+</style>
+</head>
+
+<body>
+
+<header class="header">
+ <div class="header-inner">
+  <button class="back" id="backButton">
+   <i class="ri-arrow-left-line"></i> Back to Classroom
+  </button>
+  <div class="brand">ZENOVA</div>
+  <span style="font-size:10px;font-weight:800;color:#3978E8">ASSESSMENT</span>
+ </div>
+</header>
+
+<main class="container">
+
+ <div id="loadingArea" class="card">
+  <i class="ri-loader-4-line"></i>
+  <h2 style="margin-top:12px">Preparing your test...</h2>
+  <p class="muted">Loading your class questions. Please wait.</p>
+ </div>
+
+ <div id="errorArea" class="card" style="display:none">
+  <h2>Unable to load test</h2>
+  <p id="errorText" class="error" style="margin-top:10px"></p>
+  <button class="btn primary full" style="margin-top:15px" onclick="location.reload()">Try Again</button>
+ </div>
+
+ <section id="testArea">
+
+  <div class="card">
+   <span class="tag">ZENOVA POST-CLASS ASSESSMENT</span>
+   <h1 id="testTitle">Class Assessment</h1>
+   <p class="muted" id="testSubtitle">Subject · Chapter</p>
+
+   <div class="meta">
+    <div>
+     <span>TOTAL QUESTIONS</span>
+     <strong id="totalQuestions">--</strong>
+    </div>
+    <div>
+     <span>TOTAL MARKS</span>
+     <strong id="totalMarks">--</strong>
+    </div>
+    <div>
+     <span>TIME LIMIT</span>
+     <strong id="timeLimit">No limit</strong>
+    </div>
+   </div>
+  </div>
+
+  <div class="card timer-card">
+   <div>
+    <h2>Time remaining</h2>
+    <p class="muted">Your answers are saved as you progress.</p>
+   </div>
+   <div class="timer" id="timer">--:--</div>
+  </div>
+
+  <div class="card">
+   <div class="question-head">
+    <span class="question-number" id="questionNumber">QUESTION 1</span>
+    <span class="muted" id="marksLabel">1 mark</span>
+   </div>
+
+   <div class="progress">
+    <div id="testProgress"></div>
+   </div>
+
+   <div class="question-text" id="questionText"></div>
+
+   <div class="options" id="options"></div>
+
+   <div class="navigation">
+    <button class="btn outline" id="previousButton">
+     <i class="ri-arrow-left-line"></i> Previous
+    </button>
+    <button class="btn primary" id="nextButton">
+     Next <i class="ri-arrow-right-line"></i>
+    </button>
+   </div>
+  </div>
+
+  <div class="card">
+   <h2>Question navigation</h2>
+   <p class="muted">Select any question to visit it.</p>
+   <div class="question-grid" id="questionGrid"></div>
+   <div class="legend">
+    <span><i class="done"></i> Answered</span>
+    <span><i class="active"></i> Current</span>
+    <span><i></i> Not answered</span>
+   </div>
+  </div>
+
+  <div class="card">
+   <h2>Submit your test</h2>
+   <p class="muted" id="answeredSummary">0 of 0 questions answered.</p>
+   <div class="notice">
+    Please check your answers before submitting. Once submitted, you cannot change your responses in this attempt.
+   </div>
+   <button class="btn primary full" id="submitButton" style="margin-top:15px">
+    Submit Test <i class="ri-check-double-line"></i>
+   </button>
+  </div>
+
+ </section>
+
+ <section id="resultArea" class="card result">
+  <i class="ri-checkbox-circle-line"></i>
+  <h1>Test submitted successfully!</h1>
+  <p class="muted" id="resultDescription">
+   Your answers have been saved.
+  </p>
+  <div class="notice" style="text-align:left">
+   Your submission is saved. Marks will appear after the secure answer-key grading process is completed.
+  </div>
+  <button class="btn primary full" style="margin-top:18px" id="backToClass">
+   Return to Classroom
+  </button>
+ </section>
+
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script type="module">
+
+import {auth,db} from "../../firebase/firebase-config.js";
+
+import {onAuthStateChanged} from
+"https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+
+import {
+ doc,getDoc,getDocs,addDoc,setDoc,updateDoc,
+ collection,query,where,serverTimestamp
+} from
+"https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
+/* ==================================
+   CONFIGURATION
+================================== */
+
+const params=new URLSearchParams(location.search);
+const classId=params.get("classId");
+
+let user=null;
+let student={};
+let classData={};
+let questions=[];
+let answers={};
+let currentIndex=0;
+let attemptRef=null;
+let attemptNumber=1;
+let startedAt=null;
+let timerInterval=null;
+let autosaveInterval=null;
+let timeLimitSeconds=0;
+let remainingSeconds=0;
+let totalMarks=0;
+let submitting=false;
+let submitted=false;
+
+const $=id=>document.getElementById(id);
+
+function first(...values){
+ return values.find(v=>v!==undefined&&v!==null&&String(v).trim()!=="")??"";
+}
+
+function toast(message){
+ $("toast").textContent=message;
+ $("toast").classList.add("show");
+ setTimeout(()=>$("toast").classList.remove("show"),2500);
+}
+
+function escapeHTML(value){
+ return String(value??"").replace(/[&<>"']/g,c=>({
+  "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+ })[c]);
+}
+
+function showError(message){
+ $("loadingArea").style.display="none";
+ $("testArea").style.display="none";
+ $("errorArea").style.display="block";
+ $("errorText").textContent=message;
+}
+
+/* ==================================
+   ENROLLMENT CHECK
+================================== */
+
+function profileHasAccess(){
+ const ids=[
+  classData.courseId,classData.crmCourseId,
+  classData.courseID,classData.batchId
+ ].filter(Boolean).map(String);
+
+ const arrays=[
+  student.purchasedCourseIds,
+  student.enrolledCourseIds,
+  student.courseIds,
+  student.purchasedCourses,
+  student.enrolledCourses
+ ];
+
+ return arrays.some(arr=>Array.isArray(arr)&&arr.some(item=>{
+  const id=typeof item==="object"
+   ?first(item.courseId,item.id,item.crmCourseId,item.batchId)
+   :item;
+  return ids.includes(String(id));
+ }));
+}
+
+async function validateEnrollment(){
+ if(profileHasAccess())return true;
+
+ const snap=await getDocs(query(
+  collection(db,"studentEnrollments"),
+  where("studentUid","==",user.uid)
+ ));
+
+ const ids=[
+  classData.courseId,classData.crmCourseId,
+  classData.courseID,classData.batchId
+ ].filter(Boolean).map(String);
+
+ return snap.docs.some(d=>{
+  const e=d.data();
+  const enrollmentIds=[
+   e.courseId,e.crmCourseId,e.courseID,e.batchId
+  ].filter(Boolean).map(String);
+
+  const status=String(first(e.status,e.enrollmentStatus)).toLowerCase();
+
+  const approved=e.accessGranted===true||
+   (e.accessGranted!==false&&[
+    "active","approved","paid","purchased",
+    "enrolled","success","completed"
+   ].includes(status));
+
+  return approved&&enrollmentIds.some(id=>ids.includes(id));
+ });
+}
+
+/* ==================================
+   LOAD QUESTIONS
+================================== */
+
+function normalizeQuestion(d){
+ const q=d.data();
+
+ let rawOptions=q.options||q.choices||q.answers||[];
+
+ if(!Array.isArray(rawOptions)){
+  rawOptions=Object.entries(rawOptions).map(([key,value])=>({
+   id:key,text:value
+  }));
+ }
+
+ const options=rawOptions.map((item,index)=>{
+  if(typeof item==="string"){
+   return {id:String(index),text:item};
+  }
+  return {
+   id:String(first(item.id,item.value,item.key,index)),
+   text:String(first(item.text,item.label,item.value,item.option,""))
+  };
+ });
+
+ return {
+  id:d.id,
+  text:first(q.questionText,q.question,q.text,q.title),
+  options,
+  marks:Number(q.marks||q.mark||1),
+  type:first(q.type,q.questionType,"MCQ"),
+  imageUrl:first(q.imageUrl,q.image),
+  required:q.required!==false
+ };
+}
+
+async function loadQuestions(){
+ const snap=await getDocs(
+  collection(db,"liveClasses",classId,"questions")
+ );
+
+ questions=snap.docs
+  .map(normalizeQuestion)
+  .filter(q=>q.text);
+
+ if(!questions.length){
+  throw new Error("No published questions found for this class.");
+ }
+
+ if(questions.some(q=>!["MCQ","MULTIPLE_CHOICE"].includes(q.type.toUpperCase()))){
+  throw new Error("This test contains a question type not supported by this version. Currently, MCQ questions are supported.");
+ }
+
+ totalMarks=questions.reduce((sum,q)=>sum+q.marks,0);
+}
+
+/* ==================================
+   CREATE ATTEMPT
+================================== */
+
+async function createAttempt(){
+ const previous=await getDocs(query(
+  collection(db,"liveTestAttempts"),
+  where("studentUid","==",user.uid),
+  where("classId","==",classId)
+ ));
+
+ attemptNumber=previous.size+1;
+
+ const duration=Number(first(
+  classData.testDurationMinutes,
+  classData.assessmentDurationMinutes,
+  classData.testSettings?.durationMinutes,
+  0
+ ));
+
+ timeLimitSeconds=duration>0?duration*60:0;
+ remainingSeconds=timeLimitSeconds;
+
+ startedAt=new Date();
+
+ attemptRef=await addDoc(collection(db,"liveTestAttempts"),{
+  studentUid:user.uid,
+  studentName:first(student.name,student.studentName,user.displayName),
+  studentCode:first(student.studentCode,student.znvCode,student.code),
+  classId,
+  courseId:first(classData.courseId,classData.crmCourseId),
+  batchId:first(classData.batchId,classData.courseId),
+  subjectName:first(classData.subjectName,classData.subject),
+  chapterName:first(classData.chapterName,classData.chapterTitle,classData.chapter),
+  classTitle:first(classData.title,classData.classTitle),
+  attemptNumber,
+  totalQuestions:questions.length,
+  totalMarks,
+  marksObtained:null,
+  correct:null,
+  wrong:null,
+  unanswered:questions.length,
+  startedAt:serverTimestamp(),
+  status:"in_progress",
+  answersSaved:0
+ });
+
+}
+
+/* ==================================
+   RENDER TEST
+================================== */
+
+function renderHeader(){
+ $("testTitle").textContent=first(classData.testTitle,classData.title,classData.classTitle,"Class Assessment");
+ $("testSubtitle").textContent=
+  `${first(classData.subjectName,classData.subject,"Subject")} · ${first(classData.chapterName,classData.chapterTitle,classData.chapter,"Chapter")}`;
+
+ $("totalQuestions").textContent=questions.length;
+ $("totalMarks").textContent=totalMarks;
+ $("timeLimit").textContent=timeLimitSeconds
+  ?Math.ceil(timeLimitSeconds/60)+" minutes"
+  :"No limit";
+}
+
+function renderQuestion(){
+ const q=questions[currentIndex];
+ if(!q)return;
+
+ $("questionNumber").textContent=`QUESTION ${currentIndex+1} OF ${questions.length}`;
+ $("marksLabel").textContent=`${q.marks} ${q.marks===1?"mark":"marks"}`;
+ $("questionText").textContent=q.text;
+
+ if(q.imageUrl){
+  const img=document.createElement("img");
+  img.src=q.imageUrl;
+  img.alt="Question illustration";
+  img.style.cssText="max-width:100%;max-height:260px;object-fit:contain;margin-bottom:15px";
+  $("questionText").appendChild(img);
+ }
+
+ $("options").innerHTML="";
+
+ q.options.forEach((option,index)=>{
+  const button=document.createElement("button");
+  button.className="option"+(answers[q.id]===option.id?" selected":"");
+
+  const letter=document.createElement("span");
+  letter.className="option-letter";
+  letter.textContent=String.fromCharCode(65+index);
+
+  const text=document.createElement("span");
+  text.textContent=option.text;
+
+  button.append(letter,text);
+
+  button.addEventListener("click",()=>{
+   if(submitted||submitting)return;
+   answers[q.id]=option.id;
+   renderQuestion();
+   renderNavigation();
+   saveAnswer(q.id,option.id);
+  });
+
+  $("options").appendChild(button);
+ });
+
+ $("previousButton").disabled=currentIndex===0;
+ $("nextButton").textContent=currentIndex===questions.length-1
+  ?"Review answers":"Next";
+
+ $("testProgress").style.width=
+  ((currentIndex+1)/questions.length*100)+"%";
+
+ renderNavigation();
+}
+
+function renderNavigation(){
+ $("questionGrid").innerHTML="";
+
+ questions.forEach((q,index)=>{
+  const button=document.createElement("button");
+  button.className="q-number"+
+   (answers[q.id]!==undefined?" answered":"")+
+   (index===currentIndex?" current":"");
+
+  button.textContent=index+1;
+
+  button.addEventListener("click",()=>{
+   currentIndex=index;
+   renderQuestion();
+  });
+
+  $("questionGrid").appendChild(button);
+ });
+
+ const count=Object.keys(answers).length;
+ $("answeredSummary").textContent=
+  `${count} of ${questions.length} questions answered.`;
+}
+
+/* ==================================
+   SAVE ANSWERS
+================================== */
+
+async function saveAnswer(questionId,answer){
+ if(!attemptRef||submitted)return;
+
+ try{
+  const answerRef=doc(
+   db,"liveTestAttempts",attemptRef.id,"answers",questionId
+  );
+
+  await setDoc(answerRef,{
+   questionId,
+   selectedOptionId:answer,
+   answered:true,
+   updatedAt:serverTimestamp()
+  },{merge:true});
+
+  await updateDoc(attemptRef,{
+   answersSaved:Object.keys(answers).length,
+   lastSavedAt:serverTimestamp()
+  });
+
+ }catch(error){
+  console.error("Answer save error:",error);
+  toast("Answer could not be saved. Please check your internet connection.");
+ }
+}
+
+async function saveAllAnswers(){
+ for(const [questionId,answer] of Object.entries(answers)){
+  const answerRef=doc(
+   db,"liveTestAttempts",attemptRef.id,"answers",questionId
+  );
+
+  await setDoc(answerRef,{
+   questionId,
+   selectedOptionId:answer,
+   answered:true,
+   updatedAt:serverTimestamp()
+  },{merge:true});
+ }
+}
+
+/* ==================================
+   TIMER
+================================== */
+
+function formatTime(seconds){
+ const s=Math.max(0,seconds);
+ const m=Math.floor(s/60);
+ const r=s%60;
+ return String(m).padStart(2,"0")+":"+String(r).padStart(2,"0");
+}
+
+function startTimer(){
+ if(!timeLimitSeconds){
+  $("timer").textContent="No limit";
+  return;
+ }
+
+ function tick(){
+  $("timer").textContent=formatTime(remainingSeconds);
+  $("timer").classList.toggle("warning",remainingSeconds<=60);
+
+  if(remainingSeconds<=0){
+   clearInterval(timerInterval);
+   submitTest(true);
+   return;
+  }
+
+  remainingSeconds--;
+ }
+
+ tick();
+ timerInterval=setInterval(tick,1000);
+}
+
+/* ==================================
+   NAVIGATION
+================================== */
+
+$("previousButton").addEventListener("click",()=>{
+ if(currentIndex>0){
+  currentIndex--;
+  renderQuestion();
+ }
+});
+
+$("nextButton").addEventListener("click",()=>{
+ if(currentIndex<questions.length-1){
+  currentIndex++;
+  renderQuestion();
+ }else{
+  $("questionGrid").scrollIntoView({behavior:"smooth"});
+  toast("Review your answers before submitting.");
+ }
+});
+
+/* ==================================
+   SUBMISSION
+================================== */
+
+async function submitTest(auto=false){
+ if(submitting||submitted)return;
+
+ const unanswered=questions.filter(q=>answers[q.id]===undefined).length;
+
+ if(!auto){
+  const message=unanswered
+   ?`${unanswered} question(s) are unanswered. Submit anyway?`
+   :"Are you sure you want to submit your test?";
+
+  if(!confirm(message))return;
+ }
+
+ submitting=true;
+ $("submitButton").disabled=true;
+ $("submitButton").textContent="Submitting...";
+
+ try{
+  await saveAllAnswers();
+
+  const timeTaken=Math.max(
+   0,Math.floor((Date.now()-startedAt.getTime())/1000)
+  );
+
+  await updateDoc(attemptRef,{
+   status:"submitted",
+   submittedAt:serverTimestamp(),
+   timeTakenSeconds:timeTaken,
+   unanswered,
+   answersSaved:Object.keys(answers).length,
+   marksObtained:null,
+   gradingStatus:"pending",
+   submissionMethod:auto?"auto_timeout":"student"
+  });
+
+  submitted=true;
+
+  clearInterval(timerInterval);
+  clearInterval(autosaveInterval);
+
+  $("testArea").style.display="none";
+  $("resultArea").style.display="block";
+
+  $("resultDescription").textContent=
+   `Your attempt #${attemptNumber} has been submitted. ${Object.keys(answers).length} answers saved. Time taken: ${formatTime(timeTaken)}.`;
+
+ }catch(error){
+  console.error("Submission failed:",error);
+  toast("Submission failed. Your answers have not been confirmed as submitted.");
+  $("submitButton").disabled=false;
+  $("submitButton").textContent="Try Submit Again";
+  submitting=false;
+ }
+}
+
+$("submitButton").addEventListener("click",()=>submitTest(false));
+
+/* ==================================
+   PAGE NAVIGATION
+================================== */
+
+$("backButton").addEventListener("click",()=>{
+ if(submitted){
+  location.href="../live/";
+  return;
+ }
+
+ if(confirm("Are you sure you want to leave? Your test is still in progress.")){
+  location.href="../livevideoplayer/index.html?liveClassId="+encodeURIComponent(classId)+"&mode=recorded";
+ }
+});
+
+$("backToClass").addEventListener("click",()=>{
+ location.href="../livevideoplayer/index.html?liveClassId="+encodeURIComponent(classId)+"&mode=recorded";
+});
+
+/* ==================================
+   INITIALIZE
+================================== */
+
+async function initialize(currentUser){
+ user=currentUser;
+
+ if(!classId)throw new Error("Missing class ID.");
+
+ const studentSnap=await getDoc(doc(db,"zen2Students",user.uid));
+ if(!studentSnap.exists())throw new Error("Student profile not found.");
+ student=studentSnap.data();
+
+ const classSnap=await getDoc(doc(db,"liveClasses",classId));
+ if(!classSnap.exists())throw new Error("Class not found.");
+ classData=classSnap.data();
+
+ if(classData.active===false||classData.published===false){
+  throw new Error("This class is not currently available.");
+ }
+
+ const allowed=await validateEnrollment();
+ if(!allowed)throw new Error("You do not have access to this class.");
+
+ await loadQuestions();
+ await createAttempt();
+
+ renderHeader();
+
+ $("loadingArea").style.display="none";
+ $("testArea").style.display="block";
+
+ renderQuestion();
+ startTimer();
+
+ // Periodically retry saving all currently selected answers.
+ autosaveInterval=setInterval(async()=>{
+  if(!submitted&&!submitting){
+   try{
+    await saveAllAnswers();
+   }catch(error){
+    console.error("Autosave error:",error);
+   }
+  }
+ },20000);
+}
+
+onAuthStateChanged(auth,async currentUser=>{
+ if(!currentUser){
+  location.href="../login/";
+  return;
+ }
+
+ try{
+  await initialize(currentUser);
+ }catch(error){
+  console.error("ZENOVA TEST ERROR:",error);
+  showError(error.message);
+ }
+});
+
+</script>
+</body>
+</html>
