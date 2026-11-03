@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zenova | Q&A Presentation Maker</title>
+<style>
+:root{--bg:#F7F9FC;--white:#fff;--blue:#3978E8;--darkblue:#245FC9;--lightblue:#EAF2FF;--ink:#172338;--muted:#7B8799;--border:#E7EDF5;--green:#159B78;--red:#DC4545;--purple:#7952CC;--shadow:0 8px 28px rgba(23,35,56,.07)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}
+button,input,textarea,select{font:inherit}button{cursor:pointer;border:0}
+.topbar{height:68px;background:#fff;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 max(20px,calc((100vw - 1180px)/2));position:sticky;top:0;z-index:10}
+.brand{display:flex;align-items:center;gap:11px;font-weight:850;letter-spacing:.4px}.logo{width:38px;height:38px;border-radius:12px;background:var(--lightblue);display:grid;place-items:center;color:var(--blue);font-size:20px}.brand small{display:block;font-size:10px;color:var(--muted);letter-spacing:1.4px}
+.authline{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:8px}.dot{width:8px;height:8px;border-radius:50%;background:#f0ad35}.dot.ok{background:var(--green)}
+.wrap{max-width:1180px;margin:28px auto;padding:0 20px 60px}.hero{background:linear-gradient(115deg,#245FC9,#3978E8);color:white;padding:25px 28px;border-radius:20px;box-shadow:0 12px 28px rgba(57,120,232,.16)}.hero h1{margin:0 0 7px;font-size:26px}.hero p{margin:0;color:#e5efff;font-size:14px}
+.tabs{display:flex;gap:8px;margin:22px 0}.tab{padding:11px 18px;border-radius:11px;background:#fff;border:1px solid var(--border);color:var(--muted);font-weight:700}.tab.active{background:var(--lightblue);border-color:#cfe0ff;color:var(--darkblue)}
+.panel{background:#fff;border:1px solid var(--border);border-radius:18px;padding:22px;box-shadow:var(--shadow);margin-bottom:18px}.panel h2{font-size:19px;margin:0 0 5px}.sub{font-size:13px;color:var(--muted);margin:0 0 18px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.field{display:flex;flex-direction:column;gap:7px;margin-bottom:14px}.field.full{grid-column:1/-1}.field label{font-size:12px;font-weight:750;color:#526078}.field input,.field textarea,.field select{width:100%;border:1px solid var(--border);border-radius:11px;padding:12px 13px;background:#fff;color:var(--ink);outline:none}.field input:focus,.field textarea:focus{border-color:#8bb3ff;box-shadow:0 0 0 3px #eaf2ff}.field textarea{min-height:100px;resize:vertical}.btn{padding:11px 16px;border-radius:11px;font-weight:750;background:var(--blue);color:#fff}.btn:hover{background:var(--darkblue)}.btn.secondary{background:var(--lightblue);color:var(--darkblue)}.btn.outline{background:#fff;color:var(--ink);border:1px solid var(--border)}.btn.danger{background:#fff0f0;color:var(--red)}.btn.green{background:var(--green)}.actions{display:flex;gap:9px;flex-wrap:wrap;align-items:center}.rowbetween{display:flex;justify-content:space-between;align-items:center;gap:12px}.notice{padding:12px 14px;background:var(--lightblue);color:var(--darkblue);border-radius:11px;font-size:13px;margin:12px 0}.notice.error{background:#fff0f0;color:var(--red)}.notice.success{background:#e8f7f0;color:#147a5e}.hidden{display:none!important}
+.slide-editor{border:1px solid var(--border);border-radius:15px;padding:16px;margin:14px 0;background:#fcfdff}.slide-editor h3{margin:0;font-size:15px}.slide-editor .field{margin-top:13px}.slide-editor textarea{min-height:74px}.thumb{width:100%;aspect-ratio:16/9;background:#eef3fa center/cover no-repeat;border-radius:10px;border:1px solid var(--border);display:grid;place-items:center;color:var(--muted);font-size:12px}
+.presentation-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:13px}.p-card{border:1px solid var(--border);border-radius:14px;padding:15px;background:white}.p-card h3{margin:0 0 6px;font-size:15px}.p-card p{font-size:12px;color:var(--muted);margin:0 0 12px}.tag{display:inline-block;padding:4px 8px;border-radius:99px;background:var(--lightblue);color:var(--darkblue);font-size:10px;font-weight:800}
+.viewer-toolbar{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:14px}.viewer-stage{background:#e9eef6;border-radius:16px;padding:14px;display:grid;place-items:center}.slide{width:min(100%,1000px);aspect-ratio:16/9;position:relative;overflow:hidden;border-radius:8px;background:#dce5f2 center/cover no-repeat;box-shadow:0 12px 35px rgba(23,35,56,.18);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:6%;text-align:center;color:#fff}
+.slide:before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(9,20,40,.55),rgba(9,20,40,.38));z-index:0}.slide>*{position:relative;z-index:1}.slide-title{position:absolute;top:5%;left:6%;right:6%;font-size:clamp(10px,1.5vw,18px);font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#fff}.slide-question{font-size:clamp(19px,3.2vw,42px);line-height:1.2;font-weight:850;max-width:94%;text-shadow:0 2px 12px rgba(0,0,0,.25);white-space:pre-wrap;overflow-wrap:anywhere}.answer-box{margin-top:4%;padding:2.2% 4%;border-radius:15px;background:rgba(255,255,255,.94);color:#172338;font-size:clamp(16px,2.5vw,32px);font-weight:800;line-height:1.25;max-width:94%;white-space:pre-wrap;overflow-wrap:anywhere;box-shadow:0 5px 18px rgba(0,0,0,.12)}
+.slide-count{font-size:12px;color:var(--muted)}.empty{padding:35px;text-align:center;color:var(--muted);border:1px dashed #cbd7e7;border-radius:14px}
+#toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:#172338;color:#fff;padding:11px 16px;border-radius:11px;font-size:13px;z-index:100;display:none;box-shadow:var(--shadow)}
+@media(max-width:700px){.wrap{padding:0 12px 40px;margin:18px auto}.panel{padding:16px}.grid{grid-template-columns:1fr}.field.full{grid-column:auto}.hero{padding:21px}.hero h1{font-size:22px}.topbar{padding:0 14px}.slide{border-radius:5px}.viewer-stage{padding:5px}}
+@media(orientation:portrait){.landscape-hint{display:block}}
+@media print{.topbar,.hero,.tabs,.viewer-toolbar,.panel:not(#viewerPanel),#toast{display:none!important}.wrap{max-width:none;margin:0;padding:0}.panel{border:0;box-shadow:none;padding:0}.viewer-stage{padding:0;background:white}.slide{width:100vw;max-width:none;box-shadow:none;border-radius:0;print-color-adjust:exact;-webkit-print-color-adjust:exact}}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="brand"><div class="logo">Z</div><div>ZENOVA <small>EDUCATIONS</small></div></div>
+  <div class="authline"><span id="authDot" class="dot"></span><span id="authText">Connecting to Firebase…</span></div>
+</header>
+<main class="wrap">
+  <section class="hero"><h1>Question & Answer Presentation Maker</h1><p>Create beautiful 16:9 classroom slides with a question and answer on the same slide.</p></section>
+  <nav class="tabs">
+    <button class="tab active" data-tab="admin">Admin Panel</button>
+    <button class="tab" data-tab="viewer">Presentation Viewer</button>
+  </nav>
+
+  <section id="adminPanel">
+    <div class="panel">
+      <div class="rowbetween"><div><h2>Create presentation</h2><p class="sub">Enter a title, then add as many question-and-answer slides as needed.</p></div><span class="tag">ADMIN</span></div>
+      <div class="grid">
+        <div class="field"><label for="presentationName">PRESENTATION NAME</label><input id="presentationName" placeholder="e.g. Trigonometry – Important Questions"></div>
+        <div class="field"><label for="presentationBackgroundUrl">PRESENTATION BACKGROUND IMAGE URL (ONE FOR ALL SLIDES)</label><input id="presentationBackgroundUrl" type="url" placeholder="https://example.com/16x9-background.jpg"></div>
+      </div>
+      <div class="notice">Set the background once here. The same 16:9 image will be used on every slide in this presentation.</div>
+      <div class="actions">
+        <button class="btn" id="newPresentationBtn">Create new presentation</button>
+        <button class="btn outline" id="resetEditorBtn">Clear editor</button>
+      </div>
+      <div id="adminMessage"></div>
+    </div>
+    <div id="editorPanel" class="panel hidden">
+      <div class="rowbetween"><div><h2 id="editorHeading">Presentation editor</h2><p class="sub">Choose one background image above; it will be shared by every slide.</p></div><span id="slideCountTag" class="tag">0 SLIDES</span></div>
+      <div id="slidesContainer"></div>
+      <div class="actions">
+        <button class="btn secondary" id="addSlideBtn">＋ Add slide</button>
+        <button class="btn green" id="savePresentationBtn">Save to Firebase</button>
+        <button class="btn outline" id="publishBtn">Publish / Unpublish</button>
+      </div>
+      <div id="saveMessage"></div>
+    </div>
+    <div class="panel">
+      <div class="rowbetween"><div><h2>Saved presentations</h2><p class="sub">Manage presentations stored in your Firebase Firestore database.</p></div><button class="btn outline" id="refreshAdminBtn">Refresh</button></div>
+      <div id="adminPresentationList" class="presentation-list"><div class="empty">Loading presentations…</div></div>
+    </div>
+  </section>
+
+  <section id="viewerPanel" class="hidden">
+    <div class="panel">
+      <h2>Choose a presentation</h2><p class="sub">Published presentations are available to viewers.</p>
+      <div class="field"><label for="presentationSelect">PRESENTATION</label><select id="presentationSelect"><option value="">Loading presentations…</option></select></div>
+    </div>
+    <div class="panel hidden" id="viewerContent">
+      <div class="viewer-toolbar">
+        <div><strong id="viewerTitle">Presentation</strong><div class="slide-count" id="viewerCount">Slide 0 of 0</div></div>
+        <div class="actions">
+          <button class="btn outline" id="prevBtn">← Previous</button>
+          <button class="btn" id="nextBtn">Next →</button>
+          <button class="btn secondary" id="landscapeBtn">⛶ Fullscreen / Landscape</button>
+          <button class="btn green" id="downloadPdfBtn">↓ Download all slides as PDF</button>
+        </div>
+      </div>
+      <div class="viewer-stage" id="viewerStage">
+        <div class="slide" id="slideCanvas">
+          <div class="slide-title" id="slidePresentationTitle"></div>
+          <div class="slide-question" id="slideQuestion"></div>
+          <div class="answer-box" id="slideAnswer"></div>
+        </div>
+      </div>
+      <p class="slide-count" style="text-align:center;margin-top:12px">Tip: Use ← and → arrow keys to change slides. Press Esc to exit fullscreen.</p>
+    </div>
+    <div class="panel" id="viewerEmpty"><div class="empty">Select a presentation to start viewing.</div></div>
+  </section>
+</main>
+<div id="toast"></div>
+
+<script type="module">
+import { auth, db } from "../../firebase/firebase-config.js";
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+import {
+  collection, doc, getDoc, getDocs, addDoc, setDoc, updateDoc, deleteDoc,
+  serverTimestamp, query, where, orderBy
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
+const $ = id => document.getElementById(id);
+const presentationsRef = collection(db, "presentations");
+let currentUser = null;
+let isAdmin = false;
+let editingId = null;
+let editorSlides = [];
+let viewerSlides = [];
+let viewerPresentation = null;
+let viewerIndex = 0;
+let allPresentations = [];
+
+function toast(message){const el=$("toast");el.textContent=message;el.style.display="block";clearTimeout(toast.timer);toast.timer=setTimeout(()=>el.style.display="none",2800)}
+function message(id,text,type="success"){const el=$(id);el.className="notice "+(type==="error"?"error":"success");el.textContent=text}
+function escapeHtml(value=""){return String(value).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function switchTab(tab){
+  document.querySelectorAll(".tab").forEach(b=>b.classList.toggle("active",b.dataset.tab===tab));
+  $("adminPanel").classList.toggle("hidden",tab!=="admin");
+  $("viewerPanel").classList.toggle("hidden",tab!=="viewer");
+  if(tab==="viewer")loadViewerOptions();
+}
+document.querySelectorAll(".tab").forEach(b=>b.addEventListener("click",()=>switchTab(b.dataset.tab)));
+
+onAuthStateChanged(auth, async user=>{
+  currentUser=user; isAdmin=false;
+  if(user){
+    try{const adminSnap=await getDoc(doc(db,"admins",user.uid));isAdmin=adminSnap.exists();}
+    catch(e){console.error("Admin check failed",e)}
+  }
+  $("authDot").classList.toggle("ok",!!user);
+  $("authText").textContent=user?(isAdmin?"Signed in · Admin access":"Signed in · Viewer"): "Not signed in";
+  $("adminPanel").classList.toggle("hidden",!isAdmin);
+  if(!isAdmin){$("adminPanel").innerHTML='<div class="panel"><h2>Admin access required</h2><p class="sub">Sign in with an account whose UID has a document in the Firestore <b>admins</b> collection.</p></div>';}
+  await loadAdminList(); await loadViewerOptions();
+});
+
+function updateSlideCount(){$("slideCountTag").textContent=editorSlides.length+" SLIDES"}
+function renderEditorSlides(){
+  $("slidesContainer").innerHTML="";
+  editorSlides.forEach((s,i)=>{
+    const card=document.createElement("div");card.className="slide-editor";
+    card.innerHTML=`
+      <div class="rowbetween"><h3>Slide ${i+1}</h3><div class="actions">
+      <button class="btn outline" data-action="up" data-i="${i}" ${i===0?"disabled":""}>↑</button>
+      <button class="btn outline" data-action="down" data-i="${i}" ${i===editorSlides.length-1?"disabled":""}>↓</button>
+      <button class="btn danger" data-action="delete" data-i="${i}">Delete</button></div></div>
+      <div class="field"><label>QUESTION</label><textarea data-field="question" data-i="${i}" placeholder="Enter the question">${escapeHtml(s.question||"")}</textarea></div>
+      <div class="field"><label>ANSWER</label><textarea data-field="answer" data-i="${i}" placeholder="Enter the answer">${escapeHtml(s.answer||"")}</textarea></div>
+      <div class="notice">This slide uses the presentation background selected above.</div>`;
+    $("slidesContainer").appendChild(card);
+  });
+  updateSlideCount();
+}
+$("slidesContainer").addEventListener("input",e=>{
+  const i=Number(e.target.dataset.i),field=e.target.dataset.field;if(!field||!editorSlides[i])return;
+  editorSlides[i][field]=e.target.value;
+});
+$("slidesContainer").addEventListener("click",e=>{
+  const b=e.target.closest("button[data-action]");if(!b)return;
+  const i=Number(b.dataset.i),action=b.dataset.action;
+  if(action==="delete")editorSlides.splice(i,1);
+  if(action==="up"&&i>0)[editorSlides[i-1],editorSlides[i]]=[editorSlides[i],editorSlides[i-1]];
+  if(action==="down"&&i<editorSlides.length-1)[editorSlides[i+1],editorSlides[i]]=[editorSlides[i],editorSlides[i+1]];
+  renderEditorSlides();
+});
+$("newPresentationBtn").addEventListener("click",()=>{
+  if(!isAdmin)return toast("Admin access required");
+  const name=$("presentationName").value.trim();if(!name)return message("adminMessage","Enter a presentation name.","error");
+  editingId=null;editorSlides=[];$("presentationBackgroundUrl").value="";$("editorHeading").textContent=name;$("editorPanel").classList.remove("hidden");renderEditorSlides();message("adminMessage","New presentation ready. Add your first slide.");$("saveMessage").textContent="";
+});
+$("resetEditorBtn").addEventListener("click",()=>{$("presentationName").value="";$("presentationBackgroundUrl").value="";editingId=null;editorSlides=[];$("editorPanel").classList.add("hidden");$("adminMessage").textContent="";});
+$("addSlideBtn").addEventListener("click",()=>{editorSlides.push({question:"",answer:"",backgroundImageUrl:"",order:editorSlides.length});renderEditorSlides();});
+$("savePresentationBtn").addEventListener("click",savePresentation);
+$("publishBtn").addEventListener("click",togglePublish);
+$("refreshAdminBtn").addEventListener("click",loadAdminList);
+
+async function savePresentation(){
+  if(!isAdmin||!currentUser)return toast("Admin access required");
+  const name=$("editorHeading").textContent.trim();
+  if(!name)return message("saveMessage","Presentation name is required.","error");
+  if(!editorSlides.length)return message("saveMessage","Add at least one slide before saving.","error");
+  for(let i=0;i<editorSlides.length;i++){
+    const s=editorSlides[i];
+    if(!s.question.trim()||!s.answer.trim())return message("saveMessage",`Slide ${i+1}: question and answer are required.`,"error");
+  }
+  try{
+    let id=editingId;
+    const backgroundImageUrl=$("presentationBackgroundUrl").value.trim();
+  if(backgroundImageUrl&&!/^https?:\/\//i.test(backgroundImageUrl))return message("saveMessage","Background image URL must start with http:// or https://.","error");
+  const data={name,backgroundImageUrl,updatedAt:serverTimestamp(),updatedBy:currentUser.uid,slideCount:editorSlides.length};
+    if(id) await updateDoc(doc(db,"presentations",id),data);
+    else {const ref=await addDoc(presentationsRef,{...data,createdAt:serverTimestamp(),createdBy:currentUser.uid,published:false});id=ref.id;editingId=id;}
+    // Slides are stored as individual documents so a presentation is not limited by a single Firestore document's size.
+    const slidesRef=collection(db,"presentations",id,"slides");
+    const old=await getDocs(slidesRef);
+    const keep=new Set();
+    for(let i=0;i<editorSlides.length;i++){
+      const s=editorSlides[i],slideId=s.id||("slide_"+String(i+1).padStart(4,"0"));
+      keep.add(slideId);
+      await setDoc(doc(db,"presentations",id,"slides",slideId),{
+        question:s.question.trim(),answer:s.answer.trim(),order:i,updatedAt:serverTimestamp()
+      });
+    }
+    for(const oldDoc of old.docs)if(!keep.has(oldDoc.id))await deleteDoc(oldDoc.ref);
+    editorSlides=editorSlides.map((s,i)=>({...s,id:s.id||("slide_"+String(i+1).padStart(4,"0"))}));
+    message("saveMessage","Saved successfully to Firebase Firestore. Presentation ID: "+id);
+    toast("Presentation saved to Firebase");
+    await loadAdminList();await loadViewerOptions();
+  }catch(err){console.error(err);message("saveMessage","Save failed: "+(err.message||"Check Firestore rules and connection."),"error");}
+}
+async function togglePublish(){
+  if(!isAdmin||!editingId)return message("saveMessage","Save the presentation first, then publish it.","error");
+  try{const snap=await getDoc(doc(db,"presentations",editingId));const next=!snap.data()?.published;await updateDoc(doc(db,"presentations",editingId),{published:next,updatedAt:serverTimestamp()});message("saveMessage",next?"Presentation published. It is now visible in the viewer.":"Presentation unpublished.");await loadAdminList();await loadViewerOptions();}
+  catch(e){message("saveMessage","Could not change publish status: "+e.message,"error")}
+}
+async function loadAdminList(){
+  if(!isAdmin){$("adminPresentationList").innerHTML='<div class="empty">Admin sign-in is required to manage presentations.</div>';return;}
+  try{
+    const snap=await getDocs(query(presentationsRef,orderBy("updatedAt","desc")));
+    allPresentations=snap.docs.map(d=>({id:d.id,...d.data()}));
+    renderAdminList();
+  }catch(e){console.error(e);$("adminPresentationList").innerHTML='<div class="empty">Could not load presentations. Check Firestore rules.</div>'}
+}
+function renderAdminList(){
+  if(!allPresentations.length){$("adminPresentationList").innerHTML='<div class="empty">No presentations created yet.</div>';return;}
+  $("adminPresentationList").innerHTML=allPresentations.map(p=>`
+    <article class="p-card"><div class="rowbetween"><span class="tag">${p.published?"PUBLISHED":"DRAFT"}</span><span class="slide-count">${p.slideCount||0} slides</span></div>
+    <h3 style="margin-top:12px">${escapeHtml(p.name)}</h3><p>${escapeHtml(p.id)}</p>
+    <div class="actions"><button class="btn secondary" data-edit="${p.id}">Edit</button><button class="btn outline" data-view="${p.id}">View</button><button class="btn danger" data-delete="${p.id}">Delete</button></div></article>`).join("");
+}
+$("adminPresentationList").addEventListener("click",async e=>{
+  const edit=e.target.closest("[data-edit]")?.dataset.edit,view=e.target.closest("[data-view]")?.dataset.view,del=e.target.closest("[data-delete]")?.dataset.delete;
+  if(edit)await editPresentation(edit);
+  if(view){switchTab("viewer");$("presentationSelect").value=view;await openViewerPresentation(view,true)}
+  if(del&&confirm("Delete this presentation and all its slides? This cannot be undone."))await deletePresentation(del);
+});
+async function editPresentation(id){
+  try{
+    const pSnap=await getDoc(doc(db,"presentations",id));if(!pSnap.exists())throw new Error("Presentation not found");
+    const p=pSnap.data();const ss=await getDocs(query(collection(db,"presentations",id,"slides"),orderBy("order")));
+    editingId=id;$("presentationName").value=p.name||"";$("editorHeading").textContent=p.name||"Presentation";
+    editorSlides=ss.docs.map(d=>({id:d.id,...d.data()}));
+    $("presentationBackgroundUrl").value=p.backgroundImageUrl||editorSlides.find(s=>s.backgroundImageUrl)?.backgroundImageUrl||"";
+    $("editorPanel").classList.remove("hidden");renderEditorSlides();message("adminMessage","Editing saved presentation.");
+    window.scrollTo({top:$("editorPanel").offsetTop-80,behavior:"smooth"});
+  }catch(e){toast("Could not open presentation: "+e.message)}
+}
+async function deletePresentation(id){
+  try{const ss=await getDocs(collection(db,"presentations",id,"slides"));for(const d of ss.docs)await deleteDoc(d.ref);await deleteDoc(doc(db,"presentations",id));toast("Presentation deleted");await loadAdminList();await loadViewerOptions();}
+  catch(e){toast("Delete failed: "+e.message)}
+}
+async function loadViewerOptions(){
+  try{
+    let snap;
+    if(isAdmin)snap=await getDocs(query(presentationsRef,orderBy("updatedAt","desc")));
+    else snap=await getDocs(query(presentationsRef,where("published","==",true)));
+    const list=snap.docs.map(d=>({id:d.id,...d.data()}));
+    $("presentationSelect").innerHTML='<option value="">Select a presentation…</option>'+list.map(p=>`<option value="${p.id}">${escapeHtml(p.name||"Untitled presentation")}</option>`).join("");
+    if(viewerPresentation&&list.some(p=>p.id===viewerPresentation.id))$("presentationSelect").value=viewerPresentation.id;
+  }catch(e){console.error(e);$("presentationSelect").innerHTML='<option value="">Unable to load presentations</option>'}
+}
+$("presentationSelect").addEventListener("change",()=>{if($("presentationSelect").value)openViewerPresentation($("presentationSelect").value);else{$("viewerContent").classList.add("hidden");$("viewerEmpty").classList.remove("hidden")}});
+async function openViewerPresentation(id,allowDraft=false){
+  try{
+    const ps=await getDoc(doc(db,"presentations",id));if(!ps.exists())throw new Error("Presentation not found");
+    const p=ps.data();if(!p.published&&!isAdmin&&!allowDraft)throw new Error("This presentation is not published yet.");
+    const ss=await getDocs(query(collection(db,"presentations",id,"slides"),orderBy("order")));
+    viewerPresentation={id,...p};viewerSlides=ss.docs.map(d=>({id:d.id,...d.data()}));viewerIndex=0;
+    $("viewerTitle").textContent=p.name||"Presentation";$("viewerEmpty").classList.add("hidden");$("viewerContent").classList.remove("hidden");
+    if(!viewerSlides.length)throw new Error("This presentation has no slides.");
+    renderViewerSlide();
+  }catch(e){toast(e.message);$("viewerContent").classList.add("hidden");$("viewerEmpty").classList.remove("hidden");$("viewerEmpty").innerHTML='<div class="empty">'+escapeHtml(e.message)+'</div>'}
+}
+function renderViewerSlide(){
+  const s=viewerSlides[viewerIndex];if(!s)return;
+  $("slidePresentationTitle").textContent=viewerPresentation?.name||"";
+  $("slideQuestion").textContent=s.question||"";
+  $("slideAnswer").textContent=s.answer||"";
+  const url=(viewerPresentation?.backgroundImageUrl||viewerSlides.find(x=>x.backgroundImageUrl)?.backgroundImageUrl||"").trim();
+  $("slideCanvas").style.backgroundImage=url?`url("${url.replace(/["\\]/g,"")} ")`:"linear-gradient(135deg,#245FC9,#3978E8)";
+  $("viewerCount").textContent=`Slide ${viewerIndex+1} of ${viewerSlides.length}`;
+  $("prevBtn").disabled=viewerIndex===0;$("nextBtn").disabled=viewerIndex===viewerSlides.length-1;
+  $("prevBtn").style.opacity=viewerIndex===0?".45":"1";$("nextBtn").style.opacity=viewerIndex===viewerSlides.length-1?".45":"1";
+}
+$("prevBtn").addEventListener("click",()=>{if(viewerIndex>0){viewerIndex--;renderViewerSlide()}});
+$("nextBtn").addEventListener("click",()=>{if(viewerIndex<viewerSlides.length-1){viewerIndex++;renderViewerSlide()}});
+document.addEventListener("keydown",e=>{if($("viewerPanel").classList.contains("hidden"))return;if(e.key==="ArrowRight"&&viewerIndex<viewerSlides.length-1){viewerIndex++;renderViewerSlide()}if(e.key==="ArrowLeft"&&viewerIndex>0){viewerIndex--;renderViewerSlide()}});
+$("landscapeBtn").addEventListener("click",async()=>{
+  const target=$("viewerStage");
+  try{
+    if(!document.fullscreenElement){await target.requestFullscreen();if(screen.orientation?.lock)await screen.orientation.lock("landscape").catch(()=>{});}
+    else{await document.exitFullscreen();if(screen.orientation?.unlock)screen.orientation.unlock();}
+  }catch(e){toast("Fullscreen is unavailable in this browser. Try rotating your device.");}
+});
+document.addEventListener("fullscreenchange",()=>{$("landscapeBtn").textContent=document.fullscreenElement?"✕ Exit fullscreen":"⛶ Fullscreen / Landscape"});
+
+$("downloadPdfBtn").addEventListener("click",downloadAllSlidesPdf);
+function downloadAllSlidesPdf(){
+  if(!viewerPresentation||!viewerSlides.length)return toast("Open a presentation first.");
+  const printWindow=window.open("","_blank");
+  if(!printWindow)return toast("Allow pop-ups to download the PDF.");
+  const title=viewerPresentation.name||"Zenova Presentation";
+  const bg=(viewerPresentation.backgroundImageUrl||viewerSlides.find(x=>x.backgroundImageUrl)?.backgroundImageUrl||"").trim();
+  const safe=(v="")=>String(v).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+  const pages=viewerSlides.map((s,i)=>`
+    <section class="page">
+      ${bg?`<img class="background" src="${safe(bg)}" alt="">`:`<div class="background fallback"></div>`}
+      <div class="shade"></div>
+      <div class="presentation-title">${safe(title)}</div>
+      <div class="content">
+        <div class="question">${safe(s.question||"")}</div>
+        <div class="answer">${safe(s.answer||"")}</div>
+      </div>
+      <div class="page-number">${i+1} / ${viewerSlides.length}</div>
+    </section>`).join("");
+  printWindow.document.open();
+  printWindow.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${safe(title)}</title>
+  <style>
+    @page{size:landscape;margin:0}
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0;background:#fff;font-family:Arial,Helvetica,sans-serif}
+    .page{width:100vw;height:100vh;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;page-break-after:always;break-after:page;background:#245FC9;color:#fff;print-color-adjust:exact;-webkit-print-color-adjust:exact}
+    .page:last-child{page-break-after:auto;break-after:auto}
+    .background{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+    .fallback{background:linear-gradient(135deg,#245FC9,#3978E8)}
+    .shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(9,20,40,.60),rgba(9,20,40,.42))}
+    .presentation-title{position:absolute;z-index:2;top:5%;left:6%;right:6%;text-align:center;font-size:clamp(13px,1.5vw,22px);font-weight:800;letter-spacing:.08em;text-transform:uppercase}
+    .content{position:relative;z-index:2;width:88%;display:flex;flex-direction:column;align-items:center;text-align:center;gap:4vh}
+    .question{font-size:clamp(25px,4vw,58px);line-height:1.18;font-weight:800;overflow-wrap:anywhere;white-space:pre-wrap;text-shadow:0 2px 12px rgba(0,0,0,.25)}
+    .answer{max-width:94%;padding:2.5% 4%;border-radius:18px;background:rgba(255,255,255,.96);color:#172338;font-size:clamp(21px,3vw,42px);line-height:1.22;font-weight:800;overflow-wrap:anywhere;white-space:pre-wrap}
+    .page-number{position:absolute;z-index:2;bottom:3%;right:5%;font-size:13px;color:#fff}
+    @media print{.page{width:100%;height:100%;}}
+  </style></head><body>${pages}
+  <script>
+    window.onload=()=>{const imgs=[...document.images];Promise.all(imgs.map(img=>img.complete?Promise.resolve():new Promise(resolve=>{img.onload=resolve;img.onerror=resolve}))).then(()=>setTimeout(()=>window.print(),500));};
+    window.onafterprint=()=>window.close();
+  <\/script></body></html>`);
+  printWindow.document.close();
+}
+
+</script>
+</body>
+</html>
