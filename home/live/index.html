@@ -1,312 +1,2078 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#f7f9fc">
-  <title>Zenova Educations | Live Classes</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.css" rel="stylesheet">
-  <style>
-    :root{--bg:#f7f9fc;--surface:#fff;--surface-soft:#f0f5fb;--ink:#172338;--muted:#7b8799;--line:#e7edf5;--blue:#3978e8;--blue-dark:#245fc9;--blue-soft:#eaf2ff;--green:#159b78;--green-soft:#e8f8f2;--orange:#b87921;--orange-soft:#fff4e7;--purple:#7952cc;--purple-soft:#f1ebff;--red:#dc4545;--red-soft:#fff0f0;--radius:18px;--nav-height:76px}
-    *{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth;background:var(--bg)}body{min-height:100vh;padding-bottom:calc(var(--nav-height) + env(safe-area-inset-bottom));background:var(--bg);color:var(--ink);font-family:Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}button,input{font:inherit}button{cursor:pointer}a{color:inherit;text-decoration:none}button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid #8db5ff;outline-offset:3px}.hidden{display:none!important}.wrap{width:min(100%,1080px);margin-inline:auto}
-    .topbar{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.95);backdrop-filter:blur(16px);border-bottom:1px solid var(--line)}.topbar-inner{width:min(100%,1080px);min-height:72px;margin:auto;padding:12px 18px;display:flex;align-items:center;justify-content:space-between;gap:18px}.brand{display:flex;align-items:center;gap:10px;min-width:0}.brand-logo{width:40px;height:40px;display:grid;place-items:center;border-radius:13px;background:var(--blue);color:#fff;font-size:21px;font-weight:800}.brand-name{font-size:15px;font-weight:800;letter-spacing:-.4px}.brand-sub{margin-top:3px;color:var(--muted);font-size:10px}.desktop-nav{display:flex;align-items:center;gap:5px}.desktop-nav a{padding:11px 13px;border-radius:10px;color:#69778b;font-size:12px;font-weight:650;transition:.18s ease}.desktop-nav a:hover,.desktop-nav a.active{background:var(--blue-soft);color:var(--blue-dark)}.profile-button{display:grid;place-items:center;width:40px;height:40px;overflow:hidden;flex:0 0 40px;border:1px solid var(--line);border-radius:50%;background:var(--surface-soft);color:var(--blue-dark)}.profile-button img{width:100%;height:100%;object-fit:cover}.profile-button img[hidden]{display:none}.page{width:min(100%,1080px);margin:auto;padding:22px 17px 30px}
-    .intro{margin:7px 0 25px;padding:23px 21px;border:1px solid #dce8fb;border-radius:22px;background:linear-gradient(125deg,#fff 0%,#edf4ff 100%);box-shadow:0 5px 20px rgba(36,95,201,.045)}.eyebrow{display:block;margin-bottom:7px;color:var(--blue);font-size:10px;font-weight:800;letter-spacing:1.3px;text-transform:uppercase}.intro h1{font-size:clamp(25px,4vw,32px);font-weight:800;letter-spacing:-1px;line-height:1.2}.intro p{margin-top:8px;max-width:560px;color:var(--muted);font-size:12px;line-height:1.65}
-    .section{margin-top:28px}.section-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:13px}.section-title{font-size:18px;font-weight:800;letter-spacing:-.45px}.section-subtitle{margin-top:5px;color:var(--muted);font-size:11px;line-height:1.5}.date-label{color:var(--muted);font-size:11px}.today-list,.date-list,.history-list{display:grid;gap:11px}.live-card,.date-class-card,.history-card{padding:15px;border:1px solid var(--line);border-radius:16px;background:#fff;box-shadow:0 3px 12px rgba(23,35,56,.025);transition:border-color .18s,box-shadow .18s}.live-card.live-now{border-color:#bfe8d9}.live-card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:13px}.live-card-title,.date-class-title,.history-title{font-size:13px;font-weight:750;line-height:1.5;overflow-wrap:anywhere}.live-card-subject,.date-class-info,.history-info{margin-top:5px;color:var(--muted);font-size:10px;line-height:1.6}.status-pill{flex-shrink:0;padding:6px 9px;border-radius:30px;background:#f0f2f6;color:#718096;font-size:9px;font-weight:800;letter-spacing:.35px}.status-pill.live{background:var(--green-soft);color:var(--green)}.status-pill.upcoming{background:var(--blue-soft);color:var(--blue-dark)}.status-pill.recording{background:var(--purple-soft);color:var(--purple)}.status-pill.completed{background:#f0f2f6;color:#718096}.status-pill.cancelled{background:var(--red-soft);color:var(--red)}.class-details{display:flex;flex-wrap:wrap;gap:7px 14px;margin-top:12px;color:var(--muted);font-size:10px}.class-action-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:14px;padding-top:12px;border-top:1px solid #f0f3f8}.provider-label{color:var(--muted);font-size:9px;font-weight:700}.action-button{min-height:36px;padding:0 13px;border:0;border-radius:9px;background:var(--blue);color:#fff;font-size:10px;font-weight:750}.action-button.live-button{background:var(--green)}.action-button.watch-button{background:var(--purple)}.action-button:disabled{background:#eef1f6;color:#8490a2;cursor:not-allowed}
-    .date-picker-card{display:grid;grid-template-columns:42px minmax(0,1fr) auto 42px;align-items:center;gap:10px;padding:12px;border:1px solid var(--line);border-radius:15px;background:#fff}.date-arrow{width:40px;height:40px;border:1px solid #dce8fb;border-radius:10px;background:var(--blue-soft);color:var(--blue-dark);font-size:24px}.selected-date span{display:block;margin-bottom:3px;color:var(--muted);font-size:8px;font-weight:800;letter-spacing:1px}.selected-date strong{font-size:13px}#datePicker{width:145px;height:40px;padding:0 9px;border:1px solid #dce4ef;border-radius:9px;background:#fff;color:var(--ink);font-size:10px}.date-class-card{display:flex;align-items:center;justify-content:space-between;gap:14px}.date-class-main{min-width:0}.date-class-action{flex-shrink:0}
-    .subject-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:11px}.subject-card{min-width:0;display:flex;align-items:center;gap:10px;padding:13px 11px;border:1px solid var(--line);border-radius:15px;background:#fff;text-align:left;box-shadow:0 3px 12px rgba(23,35,56,.025);transition:transform .18s,border-color .18s,box-shadow .18s}.subject-card:hover{border-color:#c7dafa;box-shadow:0 8px 22px rgba(36,95,201,.07)}.subject-card:active{transform:scale(.99)}.subject-icon{width:39px;height:39px;flex:0 0 39px;display:grid;place-items:center;border-radius:12px;background:var(--blue-soft);color:var(--blue-dark);font-size:17px;font-weight:800}.subject-copy{min-width:0;flex:1}.subject-copy strong{display:block;font-size:10px;font-weight:750;line-height:1.4;overflow-wrap:anywhere}.subject-copy span{display:block;margin-top:4px;color:var(--muted);font-size:9px}.subject-arrow{color:#9aa8bb;font-size:20px}.history-header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:13px}.history-header h2{font-size:18px;font-weight:800}.close-button{padding:8px 12px;border:1px solid var(--line);border-radius:9px;background:#fff;color:var(--blue-dark);font-size:10px;font-weight:750}.history-card{display:flex;align-items:center;justify-content:space-between;gap:12px}.history-watch{min-height:34px;padding:0 12px;border:0;border-radius:9px;background:var(--purple-soft);color:var(--purple);font-size:9px;font-weight:800}.history-no-recording{color:var(--muted);font-size:9px;font-weight:700;text-align:right}
-    .empty-card{display:flex;flex-direction:column;align-items:center;gap:6px;padding:22px 16px;border:1px dashed #dce4ef;border-radius:15px;background:#fff;color:var(--muted);text-align:center;font-size:11px;line-height:1.6}.empty-icon{width:38px;height:38px;display:grid;place-items:center;margin-bottom:3px;border-radius:12px;background:var(--blue-soft);color:var(--blue);font-size:20px}.empty-card strong{color:var(--ink);font-size:12px}.state-card{width:min(100%,440px);margin:45px auto;padding:27px 20px;border:1px solid var(--line);border-radius:18px;background:#fff;text-align:center;box-shadow:0 6px 22px rgba(23,35,56,.035)}.state-card p{margin-top:12px;color:var(--muted);font-size:12px;line-height:1.6}.spinner{width:31px;height:31px;margin:auto;border:3px solid #dce8fb;border-top-color:var(--blue);border-radius:50%;animation:spin .8s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}.state-icon{width:42px;height:42px;display:grid;place-items:center;margin:0 auto 10px;border-radius:13px;background:var(--red-soft);color:var(--red);font-size:20px;font-weight:800}.error-state h2{font-size:17px}.primary-button{margin-top:16px;padding:11px 17px;border:0;border-radius:10px;background:var(--blue);color:#fff;font-size:11px;font-weight:750}
-    .bottom-nav{position:fixed;z-index:100;right:0;bottom:0;left:0;padding:8px 10px calc(8px + env(safe-area-inset-bottom));border-top:1px solid var(--line);background:rgba(255,255,255,.97);backdrop-filter:blur(15px)}.bottom-inner{width:min(100%,520px);margin:auto;display:grid;grid-template-columns:repeat(5,1fr);gap:3px}.nav-item{min-height:51px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;border-radius:11px;color:#8a96a8;font-size:9px;font-weight:700}.nav-item i{font-size:20px}.nav-item.active{background:var(--blue-soft);color:var(--blue-dark)}.toast{position:fixed;z-index:200;bottom:calc(var(--nav-height) + 12px);left:50%;transform:translateX(-50%);width:max-content;max-width:calc(100% - 28px);padding:12px 15px;border-radius:11px;background:#1d2a40;color:#fff;font-size:11px;box-shadow:0 8px 25px #17233820;opacity:0;pointer-events:none;transition:opacity .2s}.toast.show{opacity:1}
-    @media(min-width:700px){body{padding-bottom:20px}.page{padding:27px 25px 36px}.bottom-nav{display:none}.subject-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
-    @media(max-width:699px){.desktop-nav{display:none}}
-    @media(max-width:480px){.page{padding-inline:12px}.topbar-inner{padding-inline:12px}.subject-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.date-picker-card{grid-template-columns:36px minmax(0,1fr) auto 36px;gap:6px;padding:9px}.date-arrow{width:35px;height:38px}#datePicker{width:123px;font-size:9px}.live-card,.date-class-card,.history-card{padding:12px}.date-class-card{align-items:flex-start;flex-direction:column}.date-class-action{align-self:flex-end}.intro{padding:20px 17px}}
-    @media(max-width:360px){.subject-grid{grid-template-columns:1fr}.status-pill{font-size:8px;padding:5px 7px}.class-action-row{align-items:flex-start;flex-direction:column}.class-action-row>div{align-self:flex-end}}
-    @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#F7F9FC">
+<title>Zenova | Live Class Control Centre</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --bg:#F7F9FC;
+  --white:#FFFFFF;
+  --soft:#F0F5FB;
+  --blue:#3978E8;
+  --dark:#245FC9;
+  --pale:#EAF2FF;
+  --ink:#172338;
+  --muted:#7B8799;
+  --line:#E7EDF5;
+  --green:#159B78;
+  --greenbg:#E8F8F2;
+  --red:#E34D59;
+  --redbg:#FFF0F1;
+  --orange:#D48A27;
+  --orangebg:#FFF5E5;
+  --shadow:0 8px 30px rgba(29,54,91,.055);
+  --radius:16px;
+}
+*{box-sizing:border-box}
+body{
+ margin:0;background:var(--bg);color:var(--ink);
+ font-family:Inter,system-ui,sans-serif;font-size:13px;
+ -webkit-font-smoothing:antialiased
+}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+button:disabled{opacity:.55;cursor:not-allowed}
+.hidden{display:none!important}
+button:focus-visible,input:focus-visible,select:focus-visible{
+ outline:3px solid #a8c7ff;outline-offset:2px
+}
+.app{max-width:1600px;margin:auto;padding:25px}
+.header{
+ display:flex;align-items:center;justify-content:space-between;
+ gap:15px;margin-bottom:25px
+}
+.brand{display:flex;align-items:center;gap:12px}
+.brand-logo{
+ width:45px;height:45px;border-radius:14px;
+ display:grid;place-items:center;background:var(--blue);
+ color:white;font-size:22px;font-weight:800
+}
+.brand h1{font-size:19px;margin:0;letter-spacing:-.5px}
+.brand p{font-size:10px;color:var(--muted);margin:4px 0 0;letter-spacing:1px;font-weight:700}
+.header-right{display:flex;align-items:center;gap:12px}
+.user-info{color:var(--muted);font-size:11px}
+.btn{
+ border:0;border-radius:10px;padding:11px 15px;
+ background:var(--blue);color:white;font-weight:700;
+ transition:.2s
+}
+.btn:hover{background:var(--dark)}
+.btn-light{background:var(--pale);color:var(--dark)}
+.btn-light:hover{background:#dce9ff}
+.btn-white{background:white;border:1px solid var(--line);color:var(--ink)}
+.btn-white:hover{background:var(--soft)}
+.btn-danger{background:var(--redbg);color:var(--red)}
+.btn-danger:hover{background:#ffe1e4}
+.btn-small{padding:8px 11px;font-size:11px}
+.icon-btn{
+ width:36px;height:36px;border:1px solid var(--line);
+ background:white;border-radius:10px;color:var(--ink)
+}
+.section-heading{
+ display:flex;justify-content:space-between;align-items:center;
+ gap:12px;margin-bottom:16px
+}
+.section-heading h2{font-size:16px;margin:0;font-weight:800}
+.section-heading p{font-size:11px;color:var(--muted);margin:5px 0 0}
+.eyebrow{
+ color:var(--blue);font-size:10px;font-weight:800;
+ letter-spacing:1.1px;text-transform:uppercase
+}
+.stats{
+ display:grid;grid-template-columns:repeat(5,minmax(0,1fr));
+ gap:13px;margin-bottom:20px
+}
+.stat{
+ padding:18px;background:white;border:1px solid var(--line);
+ border-radius:var(--radius);box-shadow:var(--shadow)
+}
+.stat-top{display:flex;justify-content:space-between;align-items:center}
+.stat-label{color:var(--muted);font-size:11px;font-weight:600}
+.stat-icon{
+ width:34px;height:34px;border-radius:11px;
+ background:var(--pale);color:var(--blue);
+ display:grid;place-items:center;font-size:16px
+}
+.stat strong{display:block;font-size:27px;margin-top:12px;letter-spacing:-1px}
+.stat-foot{font-size:10px;color:var(--muted);margin-top:5px}
+.main-tabs{
+ display:flex;gap:5px;flex-wrap:wrap;padding:5px;
+ background:#edf2f8;border-radius:12px;margin-bottom:19px;width:fit-content
+}
+.main-tab{
+ border:0;background:transparent;color:#64748b;
+ padding:10px 15px;border-radius:9px;font-weight:700;font-size:11px
+}
+.main-tab.active{background:white;color:var(--dark);box-shadow:0 2px 7px #233b5b12}
+.panel{
+ background:white;border:1px solid var(--line);
+ border-radius:var(--radius);padding:19px;box-shadow:var(--shadow);
+ min-width:0
+}
+.panel-head{
+ display:flex;align-items:center;justify-content:space-between;
+ gap:12px;margin-bottom:15px
+}
+.panel-head h3{font-size:14px;margin:0}
+.panel-head p{font-size:10px;color:var(--muted);margin:5px 0 0}
+.dashboard-grid{
+ display:grid;grid-template-columns:minmax(0,1.3fr) minmax(320px,.7fr);
+ gap:16px
+}
+.class-toolbar{
+ display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin-bottom:14px
+}
+.search{
+ flex:1;min-width:180px;padding:11px 13px;
+ border:1px solid var(--line);border-radius:10px;background:white
+}
+.filter-select{
+ padding:10px 12px;border:1px solid var(--line);
+ background:white;border-radius:10px;color:var(--ink)
+}
+.class-list{display:flex;flex-direction:column;gap:9px;max-height:650px;overflow:auto}
+.class-card{
+ display:flex;gap:12px;align-items:center;padding:11px;
+ border:1px solid var(--line);border-radius:13px;
+ cursor:pointer;transition:.18s;background:white
+}
+.class-card:hover,.class-card.selected{
+ border-color:#b8d0fa;background:#f8fbff
+}
+.class-thumb{
+ width:94px;height:64px;flex-shrink:0;
+ border-radius:9px;background:var(--soft);
+ object-fit:cover
+}
+.class-info{min-width:0;flex:1}
+.class-info h4{
+ font-size:12px;margin:0 0 6px;
+ white-space:nowrap;overflow:hidden;text-overflow:ellipsis
+}
+.class-info p{font-size:10px;color:var(--muted);margin:3px 0}
+.class-actions{display:flex;align-items:center;gap:8px}
+.pill{
+ display:inline-flex;align-items:center;gap:5px;
+ padding:5px 9px;border-radius:30px;
+ font-size:9px;font-weight:800;white-space:nowrap
+}
+.pill.live{background:var(--redbg);color:var(--red)}
+.pill.scheduled{background:var(--pale);color:var(--dark)}
+.pill.completed{background:#edf1f6;color:#637187}
+.pill.recorded{background:var(--greenbg);color:var(--green)}
+.pill.draft{background:#f1f2f5;color:#758094}
+.pill.cancelled{background:var(--redbg);color:var(--red)}
+.pulse{
+ width:7px;height:7px;background:var(--red);
+ border-radius:50%;animation:pulse 1s infinite
+}
+@keyframes pulse{50%{opacity:.25;box-shadow:0 0 0 5px #e34d5930}}
+.detail-empty{text-align:center;padding:65px 15px;color:var(--muted)}
+.detail-empty .big-icon{font-size:35px;margin-bottom:10px}
+.detail-top{display:flex;justify-content:space-between;gap:10px}
+.detail-top h3{font-size:17px;margin:10px 0 5px}
+.detail-top p{font-size:11px;color:var(--muted);margin:4px 0}
+.detail-thumb{
+ width:100%;aspect-ratio:16/9;object-fit:cover;
+ border-radius:12px;background:var(--soft);margin:15px 0
+}
+.detail-stats{
+ display:grid;grid-template-columns:repeat(3,1fr);
+ gap:8px;margin:13px 0
+}
+.detail-stat{background:var(--soft);padding:12px;border-radius:11px}
+.detail-stat strong{font-size:20px;display:block}
+.detail-stat span{font-size:9px;color:var(--muted)}
+.detail-actions{display:flex;flex-wrap:wrap;gap:7px;margin:13px 0}
+.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:11px}
+table{width:100%;border-collapse:collapse;min-width:540px}
+th,td{
+ padding:11px 12px;text-align:left;
+ border-bottom:1px solid var(--line);font-size:10px
+}
+th{background:#f8fafc;color:#738198;font-size:9px;text-transform:uppercase;letter-spacing:.5px}
+tr:last-child td{border-bottom:0}
+.muted{color:var(--muted)}
+.good{color:var(--green)}
+.bad{color:var(--red)}
+.notice{
+ padding:12px 14px;border-radius:10px;
+ background:#fff8e9;border:1px solid #f3e5c2;
+ color:#8a661e;font-size:10px;line-height:1.6;margin-top:13px
+}
+.success-notice{
+ padding:12px;border-radius:10px;background:var(--greenbg);
+ color:var(--green);font-size:11px;margin-top:12px
+}
+.empty{text-align:center;padding:35px;color:var(--muted);font-size:11px}
+.status-line{font-size:10px;color:var(--muted);margin-top:12px}
+.dot{width:7px;height:7px;display:inline-block;border-radius:50%;background:#c2cad5;margin-right:6px}
+.dot.active{background:var(--green)}
+/* Calendar */
+.calendar-layout{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:16px}
+.calendar-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.calendar-header strong{font-size:15px}
+.calendar-grid{
+ display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px
+}
+.calendar-day-name{text-align:center;padding:9px 2px;color:var(--muted);font-size:9px;font-weight:800}
+.calendar-day{
+ min-height:75px;border:1px solid var(--line);border-radius:10px;
+ padding:8px;background:white;text-align:left;color:var(--ink)
+}
+.calendar-day:hover{border-color:var(--blue);background:#f8fbff}
+.calendar-day.other{opacity:.35}
+.calendar-day.today{border-color:var(--blue);background:var(--pale)}
+.calendar-day.selected{border:2px solid var(--blue);background:#f5f9ff}
+.calendar-day b{font-size:11px}
+.calendar-dots{display:flex;gap:3px;margin-top:10px;flex-wrap:wrap}
+.calendar-dots i{width:6px;height:6px;border-radius:50%;background:var(--blue)}
+.calendar-dots i.live{background:var(--red)}
+.calendar-dots i.recorded{background:var(--green)}
+.calendar-dots i.completed{background:#8d99a9}
+.day-events{display:flex;flex-direction:column;gap:9px}
+.event{
+ border:1px solid var(--line);padding:12px;border-radius:11px;
+ cursor:pointer
+}
+.event:hover{border-color:#b8d0fa;background:#f8fbff}
+.event b{font-size:11px;display:block;margin:7px 0}
+.event small{font-size:10px;color:var(--muted)}
+/* Modal */
+.modal-back{
+ position:fixed;inset:0;background:#12213c85;
+ z-index:100;display:flex;align-items:center;justify-content:center;
+ padding:16px;overflow-y:auto
+}
+.modal{
+ background:white;border-radius:18px;padding:23px;
+ width:min(850px,100%);max-height:94vh;overflow:auto;
+ box-shadow:0 30px 100px #0003
+}
+.modal-head{
+ display:flex;justify-content:space-between;align-items:center;
+ margin-bottom:20px;gap:10px
+}
+.modal-head h2{font-size:18px;margin:0}
+.form-section{
+ padding:15px 0;border-top:1px solid var(--line)
+}
+.form-section:first-of-type{border-top:0}
+.form-section h3{font-size:12px;margin:0 0 14px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.field{display:flex;flex-direction:column;gap:6px;margin-bottom:12px;min-width:0}
+.field label{font-size:10px;color:#526176;font-weight:750}
+.field input,.field select,.field textarea{
+ width:100%;padding:11px 12px;border:1px solid var(--line);
+ border-radius:9px;background:white;color:var(--ink);outline:none
+}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--blue)}
+.field small{font-size:9px;color:var(--muted);line-height:1.5}
+.required{color:var(--red)}
+.source-options{
+ display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:13px
+}
+.source-option{
+ border:1px solid var(--line);border-radius:11px;padding:12px;
+ cursor:pointer;background:white;text-align:left
+}
+.source-option.active{border:2px solid var(--blue);background:#f6f9ff}
+.source-option strong{display:block;font-size:11px;margin-bottom:5px}
+.source-option span{font-size:9px;color:var(--muted)}
+.upload-box{
+ border:1.5px dashed #b9c9df;background:#f9fbff;
+ border-radius:12px;padding:15px;text-align:center
+}
+.upload-box img{
+ max-width:100%;width:260px;aspect-ratio:16/9;
+ object-fit:cover;border-radius:9px;margin:10px auto;display:block
+}
+.upload-box label{display:inline-block}
+.upload-status{font-size:10px;margin-top:7px;color:var(--muted)}
+.modal-footer{
+ display:flex;justify-content:space-between;align-items:center;
+ gap:10px;margin-top:18px;padding-top:16px;border-top:1px solid var(--line)
+}
+.modal-footer-right{display:flex;gap:8px}
+.form-help{
+ background:var(--pale);padding:12px;border-radius:10px;
+ color:var(--dark);font-size:10px;line-height:1.6;margin:10px 0
+}
+.preview-video{
+ width:100%;aspect-ratio:16/9;border:1px solid var(--line);
+ border-radius:11px;background:#111;color:white;display:grid;
+ place-items:center;padding:15px;text-align:center
+}
+.login{
+ max-width:420px;margin:10vh auto;padding:30px;
+ background:white;border:1px solid var(--line);border-radius:18px;
+ box-shadow:var(--shadow)
+}
+.login h2{font-size:20px;margin:18px 0 5px}
+.login p{color:var(--muted);font-size:11px;line-height:1.7}
+#toast{
+ position:fixed;bottom:22px;right:22px;z-index:200;
+ background:#172338;color:white;padding:13px 17px;
+ border-radius:11px;box-shadow:var(--shadow);
+ font-size:11px;max-width:350px;display:none
+}
+#toast.show{display:block}
+@media(max-width:1050px){
+ .stats{grid-template-columns:repeat(3,1fr)}
+ .dashboard-grid{grid-template-columns:1fr}
+ .calendar-layout{grid-template-columns:1fr}
+}
+@media(max-width:650px){
+ .app{padding:13px}
+ .header{align-items:flex-start}
+ .header-right{flex-direction:column;align-items:flex-end}
+ .stats{grid-template-columns:repeat(2,1fr);gap:8px}
+ .stat{padding:13px}
+ .stat strong{font-size:23px}
+ .main-tabs{width:100%;overflow-x:auto}
+ .main-tab{padding:9px 11px;white-space:nowrap}
+ .panel{padding:13px}
+ .class-thumb{width:72px;height:54px}
+ .class-card{gap:8px;padding:9px}
+ .class-actions .pill{display:none}
+ .form-grid{grid-template-columns:1fr}
+ .source-options{grid-template-columns:1fr}
+ .modal{padding:16px}
+ .calendar-day{min-height:55px;padding:5px}
+ .calendar-day-name{font-size:8px}
+ .calendar-day b{font-size:10px}
+ .user-info{display:none}
+}
+</style>
 </head>
+
 <body>
-  <header class="topbar">
-    <div class="topbar-inner">
-      <a class="brand" href="../" aria-label="Zenova Home"><span class="brand-logo">Z</span><span><span class="brand-name" style="display:block">ZENOVA</span><span class="brand-sub" style="display:block">Educations</span></span></a>
-      <nav class="desktop-nav" aria-label="Main navigation">
-        <a href="../">Home</a><a href="../courses/">Courses</a><a href="./" class="active" aria-current="page">Live</a><a href="../revision/">Revision</a><a href="../profile/">Profile</a>
-      </nav>
-      <a id="profileShortcut" class="profile-button" href="../profile/" aria-label="My profile"><img id="profilePhoto" alt="" hidden><i id="profileIcon" class="ri-user-3-line"></i></a>
+
+<section id="login" class="login">
+  <div class="brand-logo">Z</div>
+  <h2>Live Class Control Centre</h2>
+  <p>Super Admin access. Sign in using your authorized Zenova Google account.</p>
+  <button class="btn" id="signin">Continue with Google</button>
+  <p id="loginmsg" class="bad"></p>
+</section>
+
+<main id="app" class="app hidden">
+
+<header class="header">
+ <div class="brand">
+  <div class="brand-logo">Z</div>
+  <div>
+   <h1>Live Class Centre</h1>
+   <p>ZENOVA EDUCATIONS · SUPER ADMIN</p>
+  </div>
+ </div>
+ <div class="header-right">
+  <span class="user-info" id="email"></span>
+  <button class="btn btn-white btn-small" id="refresh">↻ Refresh</button>
+  <button class="btn btn-white btn-small" id="logout">Sign out</button>
+ </div>
+</header>
+
+<div class="eyebrow">LIVE OPERATIONS OVERVIEW</div>
+<div style="height:12px"></div>
+
+<section class="stats">
+ <div class="stat">
+  <div class="stat-top"><span class="stat-label">Total classes</span><span class="stat-icon">▤</span></div>
+  <strong id="totalClasses">0</strong>
+  <div class="stat-foot">All class records</div>
+ </div>
+ <div class="stat">
+  <div class="stat-top"><span class="stat-label">Live now</span><span class="stat-icon" style="color:var(--red);background:var(--redbg)">●</span></div>
+  <strong id="liveClasses">0</strong>
+  <div class="stat-foot">Currently in session</div>
+ </div>
+ <div class="stat">
+  <div class="stat-top"><span class="stat-label">Scheduled</span><span class="stat-icon">◷</span></div>
+  <strong id="scheduledClasses">0</strong>
+  <div class="stat-foot">Upcoming classes</div>
+ </div>
+ <div class="stat">
+  <div class="stat-top"><span class="stat-label">Recordings</span><span class="stat-icon" style="color:var(--green);background:var(--greenbg)">▶</span></div>
+  <strong id="recordedClasses">0</strong>
+  <div class="stat-foot">Recording available</div>
+ </div>
+ <div class="stat">
+  <div class="stat-top"><span class="stat-label">Watching now</span><span class="stat-icon">♙</span></div>
+  <strong id="watchingNow">0</strong>
+  <div class="stat-foot">Active student sessions</div>
+ </div>
+</section>
+
+<nav class="main-tabs">
+ <button class="main-tab active" data-view="dashboard">Overview</button>
+ <button class="main-tab" data-view="classes">All Classes</button>
+ <button class="main-tab" data-view="calendar">Class Calendar</button>
+ <button class="main-tab" data-view="monitoring">Live Monitoring</button>
+</nav>
+
+<!-- DASHBOARD -->
+<section id="view-dashboard" class="view">
+ <div class="dashboard-grid">
+
+  <section class="panel">
+   <div class="panel-head">
+    <div>
+     <h3>Class Management</h3>
+     <p>Create, schedule, monitor and manage all classes.</p>
     </div>
-  </header>
+    <button class="btn btn-small" id="newClass">+ Create Class</button>
+   </div>
 
-  <main class="page wrap">
-    <section id="loadingState" class="state-card" role="status"><div class="spinner"></div><p>Loading your live classroom...</p></section>
-    <section id="errorState" class="state-card error-state hidden"><div class="state-icon"><i class="ri-error-warning-line"></i></div><h2>Unable to load live classes</h2><p id="errorText">Please try again.</p><button id="retryButton" class="primary-button" type="button">Try Again</button></section>
+   <div class="class-toolbar">
+    <input class="search" id="search" placeholder="Search title, subject, chapter or faculty...">
+    <select class="filter-select" id="quickFilter">
+     <option value="all">All statuses</option>
+     <option value="live">Live now</option>
+     <option value="scheduled">Scheduled</option>
+     <option value="completed">Completed</option>
+     <option value="recorded">Recorded</option>
+     <option value="draft">Draft</option>
+     <option value="cancelled">Cancelled</option>
+    </select>
+   </div>
 
-    <div id="liveApp" class="hidden">
-      <section class="intro"><span class="eyebrow">YOUR CLASSROOM</span><h1>Live Classes</h1><p>Attend your scheduled classes, explore every subject and revisit previous lessons.</p></section>
+   <div class="class-list" id="classList">
+    <div class="empty">Loading classes...</div>
+   </div>
+   <div class="status-line" id="syncstatus">Connecting to Firebase...</div>
+  </section>
 
-      <section class="section" aria-labelledby="todayTitle">
-        <div class="section-heading"><div><span class="eyebrow">TODAY</span><h2 class="section-title" id="todayTitle">Today's Classes</h2></div><span id="todayDate" class="date-label"></span></div>
-        <div id="todayClasses" class="today-list"></div>
-        <div id="todayEmpty" class="empty-card hidden"><span class="empty-icon"><i class="ri-calendar-check-line"></i></span><strong>No classes scheduled today</strong><span>Your scheduled classes for today will appear here automatically.</span></div>
-      </section>
-
-      <section class="section" aria-labelledby="calendarTitle">
-        <div class="section-heading"><div><span class="eyebrow">CLASS CALENDAR</span><h2 class="section-title" id="calendarTitle">View Classes by Date</h2><p class="section-subtitle">Choose a date to see its scheduled classes and recordings.</p></div></div>
-        <div class="date-picker-card"><button id="previousDate" class="date-arrow" type="button" aria-label="Previous date"><i class="ri-arrow-left-s-line"></i></button><div class="selected-date"><span>SELECTED DATE</span><strong id="selectedDateText">Today</strong></div><input id="datePicker" type="date" aria-label="Select class date"><button id="nextDate" class="date-arrow" type="button" aria-label="Next date"><i class="ri-arrow-right-s-line"></i></button></div>
-        <div id="selectedDateClasses" class="date-list"></div>
-        <div id="selectedDateEmpty" class="empty-card hidden"><span class="empty-icon"><i class="ri-calendar-line"></i></span><strong>No classes on this date</strong><span>No scheduled class was found for the selected date.</span></div>
-      </section>
-
-      <section class="section" aria-labelledby="subjectsTitle">
-        <div class="section-heading"><div><span class="eyebrow">YOUR BATCH</span><h2 class="section-title" id="subjectsTitle">All Subjects</h2><p class="section-subtitle">Select a subject to view its previous classes and recordings.</p></div></div>
-        <div id="subjectGrid" class="subject-grid"></div>
-        <div id="subjectsEmpty" class="empty-card hidden"><span class="empty-icon"><i class="ri-book-open-line"></i></span><strong>Subjects are being prepared</strong><span>Your subject list will appear here when it is available.</span></div>
-      </section>
-
-      <section id="subjectHistorySection" class="section hidden" aria-labelledby="historySubjectName">
-        <div class="history-header"><div><span class="eyebrow">SUBJECT HISTORY</span><h2 id="historySubjectName">Previous Classes</h2><p id="historySubtitle" class="section-subtitle">Earlier classes for this subject.</p></div><button id="closeHistory" class="close-button" type="button"><i class="ri-close-line"></i> Close</button></div>
-        <div id="subjectHistory" class="history-list"></div>
-        <div id="historyEmpty" class="empty-card hidden"><span class="empty-icon"><i class="ri-history-line"></i></span><strong>No previous classes</strong><span>Previous classes for this subject will appear here once they have been scheduled.</span></div>
-      </section>
+  <section class="panel">
+   <div class="panel-head">
+    <div>
+     <h3>Class Details</h3>
+     <p>Select any class to manage its operations.</p>
     </div>
-  </main>
+   </div>
+   <div id="detail">
+    <div class="detail-empty">
+     <div class="big-icon">▣</div>
+     Select a class to view its details.
+    </div>
+   </div>
+  </section>
 
-  <nav class="bottom-nav" aria-label="Mobile navigation"><div class="bottom-inner">
-    <a class="nav-item" href="../"><i class="ri-home-5-line"></i><span>Home</span></a>
-    <a class="nav-item" href="../courses/"><i class="ri-book-2-line"></i><span>Courses</span></a>
-    <a class="nav-item active" href="./" aria-current="page"><i class="ri-live-line"></i><span>Live</span></a>
-    <a class="nav-item" href="../revision/"><i class="ri-book-open-line"></i><span>Revision</span></a>
-    <a class="nav-item" href="../profile/"><i class="ri-user-3-line"></i><span>Profile</span></a>
-  </div></nav>
-  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+ </div>
 
-  <script type="module">
-    import { auth, db } from "../../firebase/firebase-config.js";
-    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
-    import { collection, doc, getDoc, getDocs, onSnapshot, query, where } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+ <section class="panel" style="margin-top:16px">
+  <div class="panel-head">
+   <div>
+    <h3>Today's Schedule</h3>
+    <p>Classes scheduled for today.</p>
+   </div>
+   <button class="btn btn-light btn-small" onclick="document.querySelector('[data-view=calendar]').click()">Open Calendar →</button>
+  </div>
+  <div id="todayList" class="class-list"></div>
+ </section>
+</section>
 
-    const $ = id => document.getElementById(id);
-    const state = { user:null, student:null, course:null, classes:[], subjects:[], selectedDate:todayISO(), unsubscribeClasses:null, unsubscribeSubjects:null, clock:null, initialized:false };
-    const FALLBACK_SUBJECTS = [
-      {id:"subject-kannada", name:"Kannada", icon:"ri-book-open-line", aliases:["kannada"]},
-      {id:"subject-english", name:"English", icon:"ri-english-input", aliases:["english"]},
-      {id:"subject-hindi", name:"Hindi", icon:"ri-translate-2", aliases:["hindi"]},
-      {id:"subject-maths", name:"Mathematics", icon:"ri-calculator-line", aliases:["maths","mathematics","math"]},
-      {id:"subject-science", name:"Science", icon:"ri-flask-line", aliases:["science"]},
-      {id:"subject-social", name:"Social Science", icon:"ri-globe-line", aliases:["social","social science","social studies"]}
-    ];
+<!-- ALL CLASSES -->
+<section id="view-classes" class="view hidden">
+ <section class="panel">
+  <div class="panel-head">
+   <div>
+    <h3>All Live Classes</h3>
+    <p>Complete class inventory and management.</p>
+   </div>
+   <button class="btn" id="newClass2">+ Create Class</button>
+  </div>
+  <div class="class-toolbar">
+   <input class="search" id="allSearch" placeholder="Search classes...">
+   <select class="filter-select" id="subjectFilter">
+    <option value="">All subjects</option>
+   </select>
+   <select class="filter-select" id="statusFilter">
+    <option value="all">All statuses</option>
+    <option value="live">Live</option>
+    <option value="scheduled">Scheduled</option>
+    <option value="completed">Completed</option>
+    <option value="recorded">Recorded</option>
+    <option value="draft">Draft</option>
+    <option value="cancelled">Cancelled</option>
+   </select>
+  </div>
+  <div id="allClassList" class="class-list"></div>
+ </section>
+</section>
 
-    onAuthStateChanged(auth, async user => {
-      if (!user) { window.location.href = "../../account/login/"; return; }
-      state.user = user;
-      try { await initializePage(); }
-      catch (error) { console.error("Zenova Live page:", error); showError(error?.message || "Unable to load your live classes."); }
-    });
+<!-- CALENDAR -->
+<section id="view-calendar" class="view hidden">
+ <div class="calendar-layout">
+  <section class="panel">
+   <div class="calendar-header">
+    <div>
+     <div class="eyebrow">ACADEMIC SCHEDULE</div>
+     <strong id="calendarMonth"></strong>
+    </div>
+    <div style="display:flex;gap:6px">
+     <button class="icon-btn" id="prevMonth">‹</button>
+     <button class="btn btn-white btn-small" id="todayMonth">Today</button>
+     <button class="icon-btn" id="nextMonth">›</button>
+    </div>
+   </div>
+   <div class="calendar-grid" id="calendarGrid"></div>
+  </section>
+  <section class="panel">
+   <div class="panel-head">
+    <div>
+     <h3 id="selectedDayTitle">Selected date</h3>
+     <p>Scheduled classes and sessions.</p>
+    </div>
+    <button class="btn btn-small" id="calendarCreate">+ Create</button>
+   </div>
+   <div id="dayEvents" class="day-events"></div>
+  </section>
+ </div>
+</section>
 
-    async function initializePage(){
-      showLoading();
-      const studentSnap = await getDoc(doc(db,"zen2Students",state.user.uid));
-      if (!studentSnap.exists()) throw new Error("Your student profile was not found. Please contact your academy administrator.");
-      state.student = {id:studentSnap.id,...studentSnap.data()};
-      renderProfile();
-      state.course = await resolveStudentCourse();
-      if (!state.course) {
-        // Keep the live page useful without sending students to an unrelated course catalogue.
-        state.subjects = FALLBACK_SUBJECTS.map(x=>({...x}));
-        state.classes = [];
-        renderAll(); showApp(); startClock();
-        showToast("Your batch is not linked yet. Please contact your academy administrator.");
-        return;
-      }
-      startClassesListener();
-      startSubjectsListener();
-      state.selectedDate = todayISO();
-      $("datePicker").value = state.selectedDate;
-      renderAll(); showApp(); startClock();
-    }
+<!-- MONITORING -->
+<section id="view-monitoring" class="view hidden">
+ <section class="panel">
+  <div class="panel-head">
+   <div>
+    <h3>Live Session Monitoring</h3>
+    <p>Student playback sessions and viewing activity.</p>
+   </div>
+   <span class="pill live"><span class="pulse"></span> LIVE MONITORING</span>
+  </div>
+  <div class="detail-stats">
+   <div class="detail-stat"><strong id="monitorActive">0</strong><span>Active viewers</span></div>
+   <div class="detail-stat"><strong id="monitorTotal">0</strong><span>Total sessions</span></div>
+   <div class="detail-stat"><strong id="monitorClasses">0</strong><span>Active classes</span></div>
+  </div>
+  <div class="table-wrap">
+   <table>
+    <thead>
+     <tr>
+      <th>Student</th><th>Class</th><th>Course</th>
+      <th>Joined</th><th>Last heartbeat</th><th>Watch time</th><th>Status</th>
+     </tr>
+    </thead>
+    <tbody id="allSessions">
+     <tr><td colspan="7">Loading sessions...</td></tr>
+    </tbody>
+   </table>
+  </div>
+  <div class="notice">
+   Viewer counts depend on the student player writing to livePlaybackSessions.
+   Recommended heartbeat interval: 20–30 seconds. Only recent heartbeats are counted as active.
+  </div>
+ </section>
+</section>
 
-    function renderProfile(){
-      const photo = state.student.photoURL || state.student.photoUrl || state.student.profilePhotoUrl || state.user.photoURL || "";
-      const img = $("profilePhoto"), icon = $("profileIcon");
-      if (photo) { img.src=photo; img.hidden=false; icon.hidden=true; img.onerror=()=>{img.hidden=true;icon.hidden=false;}; }
-    }
+</main>
 
-    async function resolveStudentCourse(){
-      const student=state.student;
-      const directId=String(student.courseId || student.crmCourseId || student.batchId || student.courseID || "");
-      const courseSnap=await getDocs(collection(db,"zen2Courses"));
-      const courses=courseSnap.docs.map(d=>({id:d.id,...d.data()})).filter(c=>c.active!==false && c.isPublished!==false && c.published!==false && !["deleted","archived"].includes(String(c.status||"").toLowerCase()));
-      if (directId) { const found=courses.find(c=>c.id===directId); if(found) return found; }
-      const studentClass=normClass(student.className || student.class || student.standard || student.grade || student.targetClass || "");
-      const studentMedium=norm(student.medium || student.languageMedium || student.studyMedium || "");
-      let found=courses.find(c=>{
-        const courseClass=normClass(c.className || c.courseClass || c.targetClass || c.standard || c.grade || c.crmClass || "");
-        const medium=norm(c.medium || c.languageMedium || "");
-        return studentClass && courseClass===studentClass && (!studentMedium || !medium || medium===studentMedium);
-      });
-      if(found) return found;
-      // Legacy fallback: approved enrollment document.
-      try {
-        const enrollmentSnap=await getDocs(query(collection(db,"studentEnrollments"),where("studentUid","==",state.user.uid)));
-        const enrollment=enrollmentSnap.docs.map(d=>({id:d.id,...d.data()})).find(e=>!e.status || ["approved","active","paid","enrolled","success","completed"].includes(norm(e.status)));
-        const enrollmentCourseId=enrollment && (enrollment.courseId || enrollment.crmCourseId || enrollment.batchId || enrollment.courseID);
-        if(enrollmentCourseId) return courses.find(c=>c.id===String(enrollmentCourseId)) || {id:String(enrollmentCourseId),courseName:enrollment.courseName || enrollment.batchName || "My Batch",className:student.className || student.class || student.standard || ""};
-      } catch(e){ console.warn("Could not read legacy enrollment:",e); }
-      return null;
-    }
+<!-- CREATE / EDIT CLASS MODAL -->
+<div id="classModal" class="modal-back hidden">
+ <div class="modal">
+  <div class="modal-head">
+   <div>
+    <div class="eyebrow">ZENOVA CLASS MANAGEMENT</div>
+    <h2 id="modalTitle">Create New Live Class</h2>
+   </div>
+   <button class="icon-btn" id="closeModal">✕</button>
+  </div>
 
-    function startClassesListener(){
-      if(state.unsubscribeClasses) state.unsubscribeClasses();
-      // Listen to the liveClasses collection so newly published classes and status changes appear without refresh.
-      state.unsubscribeClasses=onSnapshot(collection(db,"liveClasses"), snapshot=>{
-        state.classes=snapshot.docs.map(d=>({id:d.id,...d.data()}))
-          .filter(item=>item.active!==false && item.isDeleted!==true && belongsToCourse(item,state.course))
-          .sort((a,b)=>startMillis(a)-startMillis(b));
-        renderAll();
-      }, error=>{console.error("liveClasses listener:",error);showToast("Live class updates are temporarily unavailable.");});
-    }
+  <form id="classForm">
+   <input type="hidden" id="editId">
 
-    function startSubjectsListener(){
-      if(state.unsubscribeSubjects) state.unsubscribeSubjects();
-      state.unsubscribeSubjects=onSnapshot(collection(db,"zen2Subjects"), snapshot=>{
-        const docs=snapshot.docs.map(d=>({id:d.id,...d.data()})).filter(s=>s.active!==false && s.isDeleted!==true && (!s.courseId || String(s.courseId)===String(state.course?.id)));
-        state.subjects=docs.length ? docs.sort((a,b)=>Number(a.order??a.priority??999)-Number(b.order??b.priority??999)).map(normalizeSubject) : FALLBACK_SUBJECTS.map(x=>({...x}));
-        renderSubjects();
-        if(!$('subjectHistorySection').classList.contains('hidden')) renderSelectedHistory();
-      }, error=>{console.warn("Subject listener:",error);if(!state.subjects.length)state.subjects=FALLBACK_SUBJECTS.map(x=>({...x}));renderSubjects();});
-    }
+   <div class="form-section">
+    <h3>01 · Academic Information</h3>
+    <div class="field">
+     <label>Class Title <span class="required">*</span></label>
+     <input id="title" required placeholder="e.g. Introduction to Trigonometry">
+    </div>
+    <div class="form-grid">
+     <div class="field">
+      <label>Course / Batch <span class="required">*</span></label>
+      <select id="course" required>
+       <option value="">Select course</option>
+      </select>
+     </div>
+     <div class="field">
+      <label>Medium</label>
+      <select id="medium">
+       <option value="kannada">Kannada Medium</option>
+       <option value="english">English Medium</option>
+       <option value="both">Both</option>
+      </select>
+     </div>
+     <div class="field">
+      <label>Subject</label>
+      <select id="subject"><option value="">Select subject</option></select>
+     </div>
+     <div class="field">
+      <label>Chapter</label>
+      <select id="chapter"><option value="">Select chapter</option></select>
+     </div>
+    </div>
+    <div class="form-grid">
+     <div class="field">
+      <label>Faculty / Teacher</label>
+      <input id="teacher" placeholder="Faculty name">
+     </div>
+     <div class="field">
+      <label>Access Type</label>
+      <select id="accessType">
+       <option value="PAID">Paid students</option>
+       <option value="ALL">All enrolled students</option>
+       <option value="FREE">Free access</option>
+      </select>
+     </div>
+    </div>
+    <div class="field">
+     <label>Class Description</label>
+     <textarea id="description" rows="2" placeholder="What will students learn in this session?"></textarea>
+    </div>
+   </div>
 
-    function normalizeSubject(s){
-      const name=s.name || s.subjectName || s.title || s.displayName || s.label || s.nameEnglish || s.subjectNameEnglish || "Subject";
-      return {...s,displayName:String(name).trim(),icon:s.icon || subjectIcon(name)};
-    }
-    function subjectIcon(name){const n=norm(name);if(n.includes("math"))return"ri-calculator-line";if(n.includes("science"))return"ri-flask-line";if(n.includes("social"))return"ri-globe-line";if(n.includes("hindi"))return"ri-translate-2";if(n.includes("english"))return"ri-english-input";return"ri-book-open-line";}
+   <div class="form-section">
+    <h3>02 · Class Schedule</h3>
+    <div class="form-grid">
+     <div class="field">
+      <label>Scheduled Date <span class="required">*</span></label>
+      <input id="date" type="date" required>
+     </div>
+     <div class="field">
+      <label>Start Time <span class="required">*</span></label>
+      <input id="time" type="time" required>
+     </div>
+     <div class="field">
+      <label>Duration (Minutes) <span class="required">*</span></label>
+      <input id="duration" type="number" min="1" max="600" value="60" required>
+     </div>
+     <div class="field">
+      <label>End Time</label>
+      <input id="endPreview" readonly placeholder="Calculated automatically">
+     </div>
+    </div>
+    <div class="form-help">
+     Zenova automatically calculates the class lifecycle using the scheduled start and end time in Indian Standard Time. Normal classes do not require manual status changes.
+    </div>
+   </div>
 
-    function renderAll(){
-      if(!state.initialized){state.initialized=true;}
-      renderToday(); renderSelectedDate(); renderSubjects();
-      if(!$('subjectHistorySection').classList.contains('hidden'))renderSelectedHistory();
-    }
-    function renderToday(){
-      const date=todayISO();$('todayDate').textContent=formatLongDate(date);
-      const list=classesForDate(date);$('todayClasses').innerHTML=list.map(createClassCard).join("");$('todayEmpty').classList.toggle('hidden',list.length>0);
-    }
-    function renderSelectedDate(){
-      $('datePicker').value=state.selectedDate;$('selectedDateText').textContent=formatLongDate(state.selectedDate);
-      const list=classesForDate(state.selectedDate);$('selectedDateClasses').innerHTML=list.map(createDateCard).join("");$('selectedDateEmpty').classList.toggle('hidden',list.length>0);
-    }
-    function renderSubjects(){
-      const subjects=state.subjects.length?state.subjects:FALLBACK_SUBJECTS;
-      $('subjectGrid').innerHTML=subjects.map(subject=>{
-        const count=state.classes.filter(c=>matchesSubject(c,subject)).length;
-        const historyCount=state.classes.filter(c=>matchesSubject(c,subject)&&statusOf(c).phase==="ended").length;
-        return `<button type="button" class="subject-card" data-subject-id="${esc(subject.id)}"><span class="subject-icon"><i class="${esc(subject.icon||subjectIcon(subject.displayName||subject.name))}"></i></span><span class="subject-copy"><strong>${esc(subject.displayName||subject.name||"Subject")}</strong><span>${count} ${count===1?"class":"classes"} · ${historyCount} previous</span></span><i class="ri-arrow-right-s-line subject-arrow"></i></button>`;
-      }).join("");
-      $('subjectsEmpty').classList.toggle('hidden',subjects.length>0);
-      document.querySelectorAll('[data-subject-id]').forEach(btn=>btn.addEventListener('click',()=>openSubjectHistory(btn.dataset.subjectId)));
-    }
-    function openSubjectHistory(id){
-      const subject=state.subjects.find(s=>String(s.id)===String(id))||FALLBACK_SUBJECTS.find(s=>s.id===id);
-      if(!subject)return;
-      state.selectedSubjectId=id;
-      $('historySubjectName').textContent=subject.displayName||subject.name||"Previous Classes";
-      $('historySubtitle').textContent="All previous classes for this subject, newest first.";
-      $('subjectHistorySection').classList.remove('hidden');renderSelectedHistory();$('subjectHistorySection').scrollIntoView({behavior:'smooth',block:'start'});
-    }
-    function renderSelectedHistory(){
-      const subject=state.subjects.find(s=>String(s.id)===String(state.selectedSubjectId))||FALLBACK_SUBJECTS.find(s=>s.id===state.selectedSubjectId);
-      if(!subject)return;
-      const items=state.classes.filter(c=>matchesSubject(c,subject)&&statusOf(c).phase==='ended').sort((a,b)=>startMillis(b)-startMillis(a));
-      $('subjectHistory').innerHTML=items.map(createHistoryCard).join("");$('historyEmpty').classList.toggle('hidden',items.length>0);
-    }
-    $('closeHistory').addEventListener('click',()=>{$('subjectHistorySection').classList.add('hidden');state.selectedSubjectId=null;});
-    $('datePicker').addEventListener('change',e=>{if(e.target.value){state.selectedDate=e.target.value;renderSelectedDate();}});
-    $('previousDate').addEventListener('click',()=>{state.selectedDate=shiftISO(state.selectedDate,-1);renderSelectedDate();});
-    $('nextDate').addEventListener('click',()=>{state.selectedDate=shiftISO(state.selectedDate,1);renderSelectedDate();});
-    $('retryButton').addEventListener('click',()=>window.location.reload());
+   <div class="form-section">
+    <h3>03 · Live Video Configuration</h3>
+    <div class="source-options">
+     <button type="button" class="source-option active" data-source="YOUTUBE_LIVE">
+      <strong>▶ YouTube Live</strong><span>Live broadcast URL</span>
+     </button>
+     <button type="button" class="source-option" data-source="ZOOM">
+      <strong>◉ Zoom</strong><span>Meeting integration</span>
+     </button>
+     <button type="button" class="source-option" data-source="EXTERNAL_VIDEO">
+      <strong>↗ External Video</strong><span>MP4 / HLS stream</span>
+     </button>
+    </div>
+    <input type="hidden" id="delivery" value="YOUTUBE_LIVE">
 
-    document.addEventListener('click',event=>{
-      const join=event.target.closest('[data-join]');if(join){openClass(join.dataset.join,'live');return;}
-      const watch=event.target.closest('[data-recording]');if(watch){openClass(watch.dataset.recording,'recording');}
-    });
+    <div class="field">
+     <label id="sourceUrlLabel">YouTube Live URL <span class="required">*</span></label>
+     <input id="url" type="url" placeholder="https://www.youtube.com/watch?v=..." required>
+     <small id="sourceHelp">Paste your YouTube Live broadcast URL.</small>
+    </div>
 
-    function createClassCard(item){
-      const s=statusOf(item);const action=actionMarkup(item,s);
-      return `<article class="live-card ${s.phase==='live'?'live-now':''}"><div class="live-card-top"><div><h3 class="live-card-title">${esc(item.title||item.classTitle||'Live Class')}</h3><div class="live-card-subject">${esc(subjectName(item))}${item.chapterName?' · '+esc(item.chapterName):''}</div></div><span class="status-pill ${s.phase}">${esc(s.label)}</span></div><div class="class-details"><span><i class="ri-time-line"></i> ${esc(timeRange(item))}</span><span><i class="ri-user-line"></i> ${esc(item.teacherName||item.facultyName||item.teacher||'Faculty')}</span></div><div class="class-action-row"><span class="provider-label">${esc(providerName(item))}</span><div>${action}</div></div></article>`;
-    }
-    function createDateCard(item){
-      const s=statusOf(item);return `<article class="date-class-card"><div class="date-class-main"><div class="date-class-title">${esc(item.title||item.classTitle||'Live Class')}</div><div class="date-class-info">${esc(subjectName(item))}${item.chapterName?' · '+esc(item.chapterName):''}<br>${esc(item.teacherName||item.facultyName||'Faculty')} · ${esc(timeRange(item))}</div></div><div class="date-class-action">${actionMarkup(item,s)}</div></article>`;
-    }
-    function createHistoryCard(item){
-      const available=hasRecording(item);return `<article class="history-card"><div><div class="history-title">${esc(item.title||item.classTitle||'Live Class')}</div><div class="history-info">${esc(item.chapterName||subjectName(item))}<br>${esc(item.teacherName||item.facultyName||'Faculty')} · ${esc(historyDate(item))}</div></div>${available?`<button type="button" class="history-watch" data-recording="${esc(item.id)}">WATCH RECORDING</button>`:`<span class="history-no-recording">NO RECORDING</span>`}</article>`;
-    }
-    function actionMarkup(item,s){
-      if(s.phase==='live')return `<button type="button" class="action-button live-button" data-join="${esc(item.id)}">JOIN LIVE CLASS</button>`;
-      if(s.phase==='upcoming')return `<button type="button" class="action-button" disabled>UPCOMING</button>`;
-      if(s.phase==='cancelled')return `<span class="provider-label">Class cancelled</span>`;
-      if(hasRecording(item))return `<button type="button" class="action-button watch-button" data-recording="${esc(item.id)}">WATCH RECORDING</button>`;
-      return `<span class="provider-label">Class completed</span>`;
-    }
-    function openClass(id,mode){
-      const item=state.classes.find(c=>c.id===id);if(!item){showToast('Class details could not be found.');return;}
-      if(mode==='live' && statusOf(item).phase!=='live'){showToast('This class is not live right now.');return;}
-      if(mode==='recording' && !hasRecording(item)){showToast('Recording is not available yet.');return;}
-      const params=new URLSearchParams({classId:id,liveClassId:id,mode});
-      window.location.href=`../livevideoplayer/?${params.toString()}`;
-    }
+    <div class="form-grid" id="zoomFields" style="display:none">
+     <div class="field">
+      <label>Zoom Meeting ID</label>
+      <input id="zoomMeetingId" placeholder="Meeting ID">
+     </div>
+     <div class="field">
+      <label>Zoom Passcode</label>
+      <input id="zoomPasscode" placeholder="Meeting passcode">
+     </div>
+    </div>
 
-    function statusOf(item){
-      const status=norm(item.status||item.classStatus||'');if(['cancelled','canceled'].includes(status)||item.cancelled===true)return{phase:'cancelled',label:'CANCELLED'};
-      const start=startMillis(item);if(!start)return{phase:'upcoming',label:'SCHEDULED'};
-      const end=endMillis(item)||start+60*60*1000;const now=Date.now();
-      if(now<start)return{phase:'upcoming',label:'UPCOMING'};
-      if(now<end)return{phase:'live',label:'LIVE NOW'};
-      return{phase:'ended',label:hasRecording(item)?'RECORDING AVAILABLE':'COMPLETED'};
-    }
-    function hasRecording(item){return Boolean(item.recordingUrl||item.recordedUrl||item.replayUrl||item.recordedVideoUrl||item.recordingVideoUrl||item.recordingContentId||item.recordingPlaybackUrl||(item.videoUrl&&norm(item.liveType)==='recorded_video'));}
-    function providerName(item){const t=norm(item.liveType||item.provider||'');if(t.includes('zoom'))return'ZOOM CLASSROOM';if(t.includes('youtube'))return'YOUTUBE LIVE';if(t.includes('record'))return'RECORDED CLASS';return'ZENOVA LIVE';}
-    function subjectName(item){return item.subjectName||item.subjectTitle||item.subject||state.subjects.find(s=>String(s.id)===String(item.subjectId))?.displayName||'Class';}
-    function matchesSubject(item,subject){
-      const itemId=String(item.subjectId||item.subjectID||item.subject_id||'');const id=String(subject.id||'');if(itemId&&id&&!id.startsWith('subject-')&&itemId===id)return true;
-      const candidates=[item.subjectName,item.subjectTitle,item.subject,item.subject_name];const subjectNames=[subject.displayName,subject.name,subject.subjectName,...(subject.aliases||[])].filter(Boolean).map(norm);
-      return candidates.filter(Boolean).some(v=>subjectNames.includes(norm(v)) || subjectNames.some(n=>n&&norm(v).includes(n)));
-    }
-    function belongsToCourse(item,course){
-      if(!course)return false;
-      const ids=[item.courseId,item.crmCourseId,item.batchId,item.courseID,item.course_id].filter(v=>v!==undefined&&v!==null&&String(v)!=='').map(String);
-      if(ids.length)return ids.includes(String(course.id));
-      const classA=normClass(item.courseClass||item.className||item.standard||item.targetClass||'');const classB=normClass(course.className||course.courseClass||course.targetClass||course.standard||course.grade||course.crmClass||'');
-      const nameA=norm(item.courseName||item.batchName||item.courseTitle||'');const nameB=norm(course.courseName||course.name||course.title||'');
-      return Boolean((classA&&classB&&classA===classB)||(nameA&&nameB&&nameA===nameB));
-    }
-    function classesForDate(date){return state.classes.filter(c=>classDate(c)===date).sort((a,b)=>startMillis(a)-startMillis(b));}
-    function startMillis(item){
-      const direct=toMillis(item.startDateTime||item.scheduledStartAt||item.startAt||item.startTimestamp);if(direct)return direct;
-      const date=item.scheduledDate||item.date||item.classDate||item.startDate||'';const time=item.scheduledTime||item.startTime||item.time||'';return parseLocalDateTime(date,time);
-    }
-    function endMillis(item){
-      const direct=toMillis(item.endDateTime||item.scheduledEndAt||item.endAt||item.endTimestamp);if(direct)return direct;
-      const date=item.endDate||item.scheduledDate||item.date||item.classDate||'';const time=item.endTime||item.scheduledEndTime||'';const parsed=parseLocalDateTime(date,time);if(parsed)return parsed;
-      const duration=Number(item.durationMinutes||item.duration||item.classDurationMinutes||0);return duration>0?startMillis(item)+duration*60000:0;
-    }
-    function toMillis(value){if(!value)return 0;if(typeof value.toMillis==='function')return value.toMillis();if(typeof value.seconds==='number')return value.seconds*1000;if(typeof value==='number')return value>1e12?value:value*1000;if(typeof value==='string'){const n=Date.parse(value);return Number.isFinite(n)?n:0;}return 0;}
-    function parseLocalDateTime(date,time){if(!date)return 0;if(typeof date==='object'&&date.seconds)return date.seconds*1000;const d=String(date).slice(0,10);const t=String(time||'00:00').slice(0,5);const result=Date.parse(`${d}T${t}:00+05:30`);return Number.isFinite(result)?result:0;}
-    function classDate(item){const ms=startMillis(item);return ms?new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Kolkata',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date(ms)):'';}
-    function timeRange(item){const start=startMillis(item);if(!start)return'Time not set';const end=endMillis(item)||start+60*60000;return `${formatTime(start)} – ${formatTime(end)}`;}
-    function formatTime(ms){return new Intl.DateTimeFormat('en-IN',{timeZone:'Asia/Kolkata',hour:'numeric',minute:'2-digit',hour12:true}).format(new Date(ms));}
-    function historyDate(item){const ms=startMillis(item);return ms?new Intl.DateTimeFormat('en-IN',{timeZone:'Asia/Kolkata',weekday:'short',day:'numeric',month:'short',year:'numeric',hour:'numeric',minute:'2-digit',hour12:true}).format(new Date(ms)):'Date unavailable';}
-    function todayISO(){return new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Kolkata',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());}
-    function formatLongDate(s){if(!s)return'';const d=new Date(`${s}T12:00:00+05:30`);return new Intl.DateTimeFormat('en-IN',{timeZone:'Asia/Kolkata',weekday:'short',day:'numeric',month:'short',year:'numeric'}).format(d);}
-    function shiftISO(s,amount){const [y,m,d]=s.split('-').map(Number);const dt=new Date(Date.UTC(y,m-1,d+amount,6));return `${dt.getUTCFullYear()}-${String(dt.getUTCMonth()+1).padStart(2,'0')}-${String(dt.getUTCDate()).padStart(2,'0')}`;}
-    function norm(v){return String(v??'').trim().toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();}
-    function normClass(v){const n=norm(v).replace(/\s/g,'');if(['10','10th','class10','10thstandard'].includes(n))return'10th';if(['9','9th','class9','9thstandard'].includes(n))return'9th';if(n.includes('1stpuc')||n.includes('puc1'))return'1stpuc';if(n.includes('2ndpuc')||n.includes('puc2'))return'2ndpuc';return n;}
-    function esc(v){return String(v??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;');}
-    function showLoading(){$('loadingState').classList.remove('hidden');$('errorState').classList.add('hidden');$('liveApp').classList.add('hidden');}
-    function showApp(){$('loadingState').classList.add('hidden');$('errorState').classList.add('hidden');$('liveApp').classList.remove('hidden');}
-    function showError(message){$('loadingState').classList.add('hidden');$('liveApp').classList.add('hidden');$('errorState').classList.remove('hidden');$('errorText').textContent=message;}
-    let toastTimer;function showToast(message){const el=$('toast');el.textContent=message;el.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),2600);}
-    function startClock(){if(state.clock)clearInterval(state.clock);state.clock=setInterval(()=>{renderToday();renderSelectedDate();renderSubjects();if(state.selectedSubjectId&&!$('subjectHistorySection').classList.contains('hidden'))renderSelectedHistory();},15000);}
-    window.addEventListener('beforeunload',()=>{if(state.unsubscribeClasses)state.unsubscribeClasses();if(state.unsubscribeSubjects)state.unsubscribeSubjects();if(state.clock)clearInterval(state.clock);});
-  </script>
+    <div class="form-help">
+     YouTube Live URLs are embedded using the YouTube player. Zoom requires a properly configured Zoom Meeting SDK integration and server-generated meeting signature. External video requires a browser-compatible direct MP4 or HLS URL. A normal webpage URL is not automatically playable.
+    </div>
+   </div>
+
+   <div class="form-section">
+    <h3>04 · Thumbnail & Recording</h3>
+    <div class="field">
+     <label>Class Thumbnail</label>
+     <div class="upload-box">
+      <div>Upload a professional 16:9 class thumbnail</div>
+      <img id="thumbnailPreview" class="hidden" alt="Thumbnail preview">
+      <label class="btn btn-light btn-small" for="thumbnailFile">Choose Image</label>
+      <input type="file" id="thumbnailFile" accept="image/*" hidden>
+      <div class="upload-status" id="uploadStatus">Recommended: 1280 × 720 pixels</div>
+     </div>
+     <input id="thumbnail" type="url" placeholder="Thumbnail URL (or upload above)" style="margin-top:9px">
+    </div>
+    <div class="field">
+     <label>Recording URL (optional)</label>
+     <input id="recordingUrl" type="url" placeholder="Paste the recording URL when available">
+     <small>Attach a recording later if it is not available at the time of class creation.</small>
+    </div>
+   </div>
+
+   <div class="form-section">
+    <h3>05 · Additional Settings</h3>
+    <div class="form-grid">
+     <div class="field">
+      <label>Assessment</label>
+      <select id="assessment">
+       <option value="none">No test</option>
+       <option value="optional">Optional post-class test</option>
+       <option value="compulsory">Compulsory post-class test</option>
+      </select>
+     </div>
+     <div class="field">
+      <label>Publication Status</label>
+      <select id="publication">
+       <option value="published">Publish / Schedule</option>
+       <option value="draft">Save as Draft</option>
+      </select>
+     </div>
+    </div>
+   </div>
+
+   <div class="modal-footer">
+    <button type="button" class="btn btn-white btn-small" id="cancelModal">Cancel</button>
+    <div class="modal-footer-right">
+     <button type="button" class="btn btn-light btn-small" id="saveDraft">Save Draft</button>
+     <button type="submit" class="btn btn-small" id="saveClass">Schedule Class</button>
+    </div>
+   </div>
+  </form>
+ </div>
+</div>
+
+<!-- RECORDING MANAGEMENT MODAL -->
+<div id="recordingModal" class="modal-back hidden">
+ <div class="modal" style="max-width:540px">
+  <div class="modal-head">
+   <h2>Recording Management</h2>
+   <button class="icon-btn" id="closeRecording">✕</button>
+  </div>
+  <form id="recordingForm">
+   <input type="hidden" id="recordingClassId">
+   <div class="field">
+    <label>Recording Video URL</label>
+    <input id="recordingInput" type="url" required placeholder="https://...">
+   </div>
+   <div class="field">
+    <label>Recording Thumbnail URL (optional)</label>
+    <input id="recordingThumbInput" type="url" placeholder="https://...">
+   </div>
+   <div class="form-help">
+    Adding a valid recording URL makes the recording available to authorized students through the recorded video player.
+   </div>
+   <div class="modal-footer">
+    <button type="button" class="btn btn-white" id="cancelRecording">Cancel</button>
+    <button class="btn" type="submit" id="saveRecording">Save Recording</button>
+   </div>
+  </form>
+ </div>
+</div>
+
+<!-- QUESTION MODAL -->
+<div id="questionModal" class="modal-back hidden">
+ <div class="modal" style="max-width:600px">
+  <div class="modal-head">
+   <h2>Add Class Question</h2>
+   <button class="icon-btn" id="closeQuestion">✕</button>
+  </div>
+  <form id="questionForm">
+   <input type="hidden" id="questionClassId">
+   <div class="field">
+    <label>Question</label>
+    <textarea id="questionText" rows="3" required></textarea>
+   </div>
+   <div class="field">
+    <label>Question Type</label>
+    <select id="questionType">
+     <option value="MCQ">Multiple Choice</option>
+     <option value="TRUE_FALSE">True / False</option>
+     <option value="SHORT_ANSWER">Short Answer</option>
+    </select>
+   </div>
+   <div id="mcqOptions">
+    <div class="form-grid">
+     <div class="field"><label>Option A</label><input id="optA"></div>
+     <div class="field"><label>Option B</label><input id="optB"></div>
+     <div class="field"><label>Option C</label><input id="optC"></div>
+     <div class="field"><label>Option D</label><input id="optD"></div>
+    </div>
+   </div>
+   <div class="form-grid">
+    <div class="field"><label>Correct Answer</label><input id="correct" required></div>
+    <div class="field"><label>Marks</label><input id="marks" type="number" min="0" value="1"></div>
+   </div>
+   <div class="field"><label>Explanation</label><textarea id="explanation" rows="2"></textarea></div>
+   <div class="modal-footer">
+    <button type="button" class="btn btn-white" id="cancelQuestion">Cancel</button>
+    <button class="btn" type="submit">Add Question</button>
+   </div>
+  </form>
+ </div>
+</div>
+
+<div id="toast"></div>
+
+<script type="module">
+import {auth,db} from '../../firebase/firebase-config.js';
+
+import {
+ GoogleAuthProvider,signInWithPopup,onAuthStateChanged,signOut
+} from 'https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js';
+
+import {
+ collection,doc,getDoc,getDocs,addDoc,updateDoc,
+ onSnapshot,serverTimestamp
+} from 'https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js';
+
+
+/* =========================================================
+   ZENOVA CONFIGURATION
+   ========================================================= */
+
+// ADD YOUR IMGBB API KEY HERE.
+const IMGBB_API_KEY = "PASTE_YOUR_IMGBB_API_KEY_HERE";
+
+// Student live player and recorded player routes.
+const LIVE_PLAYER_PATH = "../../home/livevideoplayer/";
+const RECORDED_PLAYER_PATH = "../../home/videoplayer/";
+
+const ACTIVE_SESSION_MS = 75000;
+const TIME_ZONE = "Asia/Kolkata";
+
+
+/* =========================================================
+   STATE
+   ========================================================= */
+
+const $ = id => document.getElementById(id);
+
+let user = null;
+let adminData = null;
+
+let classes = [];
+let sessions = [];
+let courses = [];
+let subjects = [];
+let chapters = [];
+
+let selectedId = null;
+let selectedSource = "YOUTUBE_LIVE";
+
+let currentMonth = new Date();
+let selectedDate = localDate(new Date());
+
+let unsubscribers = [];
+let clockInterval = null;
+
+
+/* =========================================================
+   HELPERS
+   ========================================================= */
+
+function esc(value){
+ return String(value ?? "").replace(/[&<>"']/g,c=>({
+  "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+ })[c]);
+}
+
+function toast(message){
+ const el=$("toast");
+ el.textContent=message;
+ el.classList.add("show");
+ setTimeout(()=>el.classList.remove("show"),3500);
+}
+
+function localDate(d){
+ const y=d.getFullYear();
+ const m=String(d.getMonth()+1).padStart(2,"0");
+ const day=String(d.getDate()).padStart(2,"0");
+ return `${y}-${m}-${day}`;
+}
+
+function localTime(d){
+ return `${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}`;
+}
+
+function parseDateTime(c){
+ const date=c.scheduledDate||c.date;
+ const time=c.scheduledTime||c.time||"00:00";
+ if(!date)return null;
+ const d=new Date(`${date}T${time}:00+05:30`);
+ return Number.isNaN(d.getTime())?null:d;
+}
+
+function getEndDate(c){
+ const explicit=toDate(c.endAt);
+ if(explicit)return explicit;
+ const start=parseDateTime(c);
+ if(!start)return null;
+ return new Date(start.getTime()+(Number(c.duration)||60)*60000);
+}
+
+function toDate(v){
+ if(!v)return null;
+ if(v.toDate)return v.toDate();
+ if(typeof v==="number")return new Date(v);
+ const d=new Date(v);
+ return Number.isNaN(d.getTime())?null:d;
+}
+
+function formatDate(v){
+ const d=toDate(v);
+ return d?d.toLocaleDateString("en-IN",{day:"2-digit",month:"short",year:"numeric",timeZone:TIME_ZONE}):"—";
+}
+
+function formatTime(v){
+ const d=toDate(v);
+ return d?d.toLocaleTimeString("en-IN",{hour:"2-digit",minute:"2-digit",timeZone:TIME_ZONE}):"—";
+}
+
+function formatDateTime(v){
+ const d=toDate(v);
+ return d?d.toLocaleString("en-IN",{day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit",timeZone:TIME_ZONE}):"—";
+}
+
+function duration(seconds){
+ seconds=Math.max(0,Number(seconds)||0);
+ return `${Math.floor(seconds/60)}m ${Math.floor(seconds%60)}s`;
+}
+
+function courseName(c){
+ return c.courseName||c.title||c.name||c.batchName||"Course";
+}
+
+function className(c){
+ return c.title||c.classTitle||c.name||"Untitled class";
+}
+
+function getSource(c){
+ return c.sourceType||c.liveType||c.mode||"YOUTUBE_LIVE";
+}
+
+function isPublished(c){
+ return c.published!==false && String(c.publicationStatus||"published").toLowerCase()!=="draft";
+}
+
+function statusOf(c){
+ if(c.cancelled || String(c.status||"").toLowerCase()==="cancelled")return "cancelled";
+ if(c.archived || String(c.status||"").toLowerCase()==="archived")return "completed";
+ if(!isPublished(c))return "draft";
+
+ const start=parseDateTime(c);
+ const end=getEndDate(c);
+ const now=new Date();
+
+ if(c.manualEnded===true || c.ended===true || String(c.status||"").toLowerCase()==="ended"){
+  return c.recordingUrl?"recorded":"completed";
+ }
+
+ if(start && now<start)return "scheduled";
+
+ if(start && end && now>=start && now<end)return "live";
+
+ if(end && now>=end){
+  return c.recordingUrl?"recorded":"completed";
+ }
+
+ const oldStatus=String(c.status||"").toLowerCase();
+
+ if(oldStatus==="live" || c.isLive===true)return "live";
+ if(oldStatus==="recorded")return "recorded";
+
+ return "scheduled";
+}
+
+function statusLabel(status){
+ return ({
+  live:"LIVE NOW",
+  scheduled:"SCHEDULED",
+  completed:"COMPLETED",
+  recorded:"RECORDED",
+  draft:"DRAFT",
+  cancelled:"CANCELLED"
+ })[status]||status.toUpperCase();
+}
+
+function statusHTML(status){
+ if(status==="live")return `<span class="pill live"><span class="pulse"></span>LIVE NOW</span>`;
+ return `<span class="pill ${status}">${statusLabel(status)}</span>`;
+}
+
+function activeSession(s){
+ const last=toDate(s.lastHeartbeatAt||s.lastActiveAt||s.updatedAt);
+ return !["ended","left","completed","disconnected"].includes(String(s.status||"").toLowerCase())
+ && last && Date.now()-last.getTime()<ACTIVE_SESSION_MS;
+}
+
+function classSessions(id){
+ return sessions.filter(s=>String(s.classId||s.liveClassId||"")===String(id));
+}
+
+function classURL(c){
+ return getSource(c)==="ZOOM"
+  ? c.zoomJoinUrl||c.studentJoinUrl||c.joinUrl||""
+  : c.sourceUrl||c.studentJoinUrl||c.joinUrl||c.videoUrl||c.playbackUrl||"";
+}
+
+function stopListeners(){
+ unsubscribers.forEach(fn=>fn?.());
+ unsubscribers=[];
+ if(clockInterval)clearInterval(clockInterval);
+}
+
+
+/* =========================================================
+   THUMBNAIL UPLOAD - IMGBB
+   ========================================================= */
+
+async function uploadImage(file){
+ if(!file)throw new Error("Please select an image.");
+ if(!IMGBB_API_KEY || IMGBB_API_KEY.includes("4f7dccfee75e17a570a261e6d5d872db")){
+  throw new Error("Add your ImgBB API key in the configuration section first.");
+ }
+ if(!file.type.startsWith("image/"))throw new Error("Please upload an image file.");
+ if(file.size>15*1024*1024)throw new Error("Image must be smaller than 15 MB.");
+
+ const form=new FormData();
+ form.append("image",file);
+
+ const response=await fetch(
+  `https://api.imgbb.com/1/upload?key=${encodeURIComponent(IMGBB_API_KEY)}`,
+  {method:"POST",body:form}
+ );
+
+ const result=await response.json();
+
+ if(!response.ok || !result.success || !result.data?.url){
+  throw new Error(result.error?.message||"Image upload failed.");
+ }
+
+ return result.data.url;
+}
+
+$("thumbnailFile").addEventListener("change",async e=>{
+ const file=e.target.files[0];
+ if(!file)return;
+
+ $("uploadStatus").textContent="Uploading image to ImgBB...";
+ $("thumbnailFile").disabled=true;
+
+ try{
+  const url=await uploadImage(file);
+  $("thumbnail").value=url;
+  $("thumbnailPreview").src=url;
+  $("thumbnailPreview").classList.remove("hidden");
+  $("uploadStatus").textContent="Image uploaded successfully.";
+  toast("Thumbnail uploaded successfully.");
+ }catch(err){
+  $("uploadStatus").textContent=err.message;
+  toast(err.message);
+ }finally{
+  $("thumbnailFile").disabled=false;
+ }
+});
+
+
+/* =========================================================
+   DASHBOARD STATISTICS
+   ========================================================= */
+
+function renderStats(){
+ const active=classes.filter(c=>statusOf(c)==="live");
+ $("totalClasses").textContent=classes.length;
+ $("liveClasses").textContent=active.length;
+ $("scheduledClasses").textContent=classes.filter(c=>statusOf(c)==="scheduled").length;
+ $("recordedClasses").textContent=classes.filter(c=>statusOf(c)==="recorded").length;
+ $("watchingNow").textContent=sessions.filter(activeSession).length;
+
+ $("monitorActive").textContent=sessions.filter(activeSession).length;
+ $("monitorTotal").textContent=sessions.length;
+ $("monitorClasses").textContent=active.length;
+}
+
+
+/* =========================================================
+   CLASS LIST
+   ========================================================= */
+
+function matchesSearch(c,term){
+ return [
+  className(c),c.subjectName,c.chapterName,c.teacherName,
+  c.facultyName,c.courseName,c.batchName,c.medium
+ ].join(" ").toLowerCase().includes(term);
+}
+
+function renderClassCard(c){
+ const status=statusOf(c);
+ const viewers=classSessions(c.id).filter(activeSession).length;
+ const thumb=c.thumbnailUrl||c.thumbnail||"";
+ const date=parseDateTime(c);
+
+ return `
+ <div class="class-card ${selectedId===c.id?"selected":""}" data-class-id="${esc(c.id)}">
+  <img class="class-thumb" src="${esc(thumb)}" alt="" onerror="this.style.visibility='hidden'">
+  <div class="class-info">
+   <h4>${esc(className(c))}</h4>
+   <p>${esc([c.subjectName,c.chapterName].filter(Boolean).join(" · ")||"Academic class")}</p>
+   <p>${esc(c.teacherName||c.facultyName||"Faculty not assigned")} · ${date?esc(formatDate(date)):"Date not set"}</p>
+   <p>${esc(formatTime(date))} · ${esc(getSource(c).replaceAll("_"," "))}</p>
+  </div>
+  <div class="class-actions">
+   ${statusHTML(status)}
+   <span class="pill">${viewers} watching</span>
+  </div>
+ </div>`;
+}
+
+function bindClassCards(container){
+ container.querySelectorAll("[data-class-id]").forEach(el=>{
+  el.onclick=()=>selectClass(el.dataset.classId);
+ });
+}
+
+function renderClasses(){
+ const term=$("search").value.trim().toLowerCase();
+ const status=$("quickFilter").value;
+
+ const list=classes
+  .filter(c=>(status==="all"||statusOf(c)===status)&&matchesSearch(c,term))
+  .sort((a,b)=>(parseDateTime(b)?.getTime()||0)-(parseDateTime(a)?.getTime()||0));
+
+ $("classList").innerHTML=list.length
+  ?list.map(renderClassCard).join("")
+  :`<div class="empty">No classes found.</div>`;
+
+ bindClassCards($("classList"));
+ renderToday();
+}
+
+function renderAllClasses(){
+ const term=$("allSearch").value.trim().toLowerCase();
+ const subject=$("subjectFilter").value;
+ const status=$("statusFilter").value;
+
+ const list=classes.filter(c=>
+  matchesSearch(c,term)&&
+  (!subject||c.subjectName===subject)&&
+  (status==="all"||statusOf(c)===status)
+ ).sort((a,b)=>(parseDateTime(b)?.getTime()||0)-(parseDateTime(a)?.getTime()||0));
+
+ $("allClassList").innerHTML=list.length
+  ?list.map(renderClassCard).join("")
+  :`<div class="empty">No matching classes.</div>`;
+
+ bindClassCards($("allClassList"));
+}
+
+function renderToday(){
+ const today=localDate(new Date());
+
+ const list=classes.filter(c=>
+  (c.scheduledDate||c.date)===today
+ ).sort((a,b)=>(parseDateTime(a)?.getTime()||0)-(parseDateTime(b)?.getTime()||0));
+
+ $("todayList").innerHTML=list.length
+  ?list.map(renderClassCard).join("")
+  :`<div class="empty">No classes scheduled for today.</div>`;
+
+ bindClassCards($("todayList"));
+}
+
+
+/* =========================================================
+   CLASS DETAILS
+   ========================================================= */
+
+function selectClass(id){
+ selectedId=id;
+ renderClasses();
+ renderAllClasses();
+ renderDetail();
+}
+
+function renderDetail(){
+ const c=classes.find(x=>x.id===selectedId);
+
+ if(!c){
+  $("detail").innerHTML=`
+   <div class="detail-empty">
+    <div class="big-icon">▣</div>
+    Select a class to view its details.
+   </div>`;
+  return;
+ }
+
+ const related=classSessions(c.id);
+ const watching=related.filter(activeSession);
+ const status=statusOf(c);
+ const start=parseDateTime(c);
+ const end=getEndDate(c);
+ const thumb=c.thumbnailUrl||c.thumbnail||"";
+ const source=getSource(c);
+
+ $("detail").innerHTML=`
+  <div class="detail-top">
+   <div>
+    ${statusHTML(status)}
+    <h3>${esc(className(c))}</h3>
+    <p>${esc(c.courseName||"Course")} · ${esc(c.medium||"")}</p>
+    <p>${esc(c.subjectName||"Subject")} · ${esc(c.chapterName||"")}</p>
+    <p>Faculty: ${esc(c.teacherName||c.facultyName||"Not assigned")}</p>
+   </div>
+   <button class="btn btn-light btn-small" id="editSelected">Edit</button>
+  </div>
+
+  ${thumb?`<img class="detail-thumb" src="${esc(thumb)}" alt="Class thumbnail">`:""}
+
+  <div class="detail-stats">
+   <div class="detail-stat"><strong>${watching.length}</strong><span>Watching now</span></div>
+   <div class="detail-stat"><strong>${related.length}</strong><span>Total sessions</span></div>
+   <div class="detail-stat"><strong>${Number(c.duration)||60}m</strong><span>Duration</span></div>
+  </div>
+
+  <div style="padding:12px;background:var(--soft);border-radius:11px;line-height:1.8">
+   <div><b>Start:</b> ${start?esc(formatDateTime(start)):"—"}</div>
+   <div><b>End:</b> ${end?esc(formatDateTime(end)):"—"}</div>
+   <div><b>Source:</b> ${esc(source.replaceAll("_"," "))}</div>
+   <div><b>Access:</b> ${esc(c.accessType||"PAID")}</div>
+   <div><b>Recording:</b> ${c.recordingUrl?"Available":"Not attached"}</div>
+  </div>
+
+  ${c.description?`<p class="muted" style="line-height:1.7">${esc(c.description)}</p>`:""}
+
+  <div class="detail-actions">
+   <button class="btn btn-light btn-small" id="editClassBtn">Edit Class</button>
+   <button class="btn btn-white btn-small" id="recordingBtn">Recording</button>
+   <button class="btn btn-white btn-small" id="questionBtn">+ Question</button>
+   ${status==="live"?`<button class="btn btn-danger btn-small" id="endClassBtn">End Class</button>`:""}
+   ${status==="scheduled"?`<button class="btn btn-white btn-small" id="cancelClassBtn">Cancel Class</button>`:""}
+   ${status==="completed"||status==="recorded"?`<button class="btn btn-light btn-small" id="reopenRecordingBtn">View Recording Settings</button>`:""}
+  </div>
+
+  <div class="panel-head" style="margin-top:18px">
+   <h3>Student Activity</h3>
+   <span class="muted">${related.length} sessions</span>
+  </div>
+
+  <div class="table-wrap">
+   <table>
+    <thead>
+     <tr><th>Student</th><th>Joined</th><th>Watch time</th><th>Status</th></tr>
+    </thead>
+    <tbody>
+     ${related.length?related.map(s=>`
+      <tr>
+       <td><b>${esc(s.studentName||s.name||"Student")}</b><br>${esc(s.studentCode||s.studentUid||"")}</td>
+       <td>${esc(formatDateTime(s.joinedAt||s.startedAt))}</td>
+       <td>${esc(duration(s.totalWatchSeconds||s.watchSeconds||0))}</td>
+       <td>${activeSession(s)?'<span class="good">Watching</span>':'<span class="muted">Inactive</span>'}</td>
+      </tr>`).join("")
+      :`<tr><td colspan="4" class="muted">No student sessions yet.</td></tr>`}
+    </tbody>
+   </table>
+  </div>
+ `;
+
+ $("editSelected").onclick=()=>openClass(c);
+ $("editClassBtn").onclick=()=>openClass(c);
+ $("recordingBtn").onclick=()=>openRecording(c);
+ $("questionBtn").onclick=()=>openQuestion(c.id);
+
+ if($("endClassBtn"))$("endClassBtn").onclick=()=>endClass(c);
+ if($("cancelClassBtn"))$("cancelClassBtn").onclick=()=>cancelClass(c);
+ if($("reopenRecordingBtn"))$("reopenRecordingBtn").onclick=()=>openRecording(c);
+}
+
+
+/* =========================================================
+   LIVE MONITORING
+   ========================================================= */
+
+function renderSessions(){
+ const rows=sessions.filter(activeSession)
+  .sort((a,b)=>(toDate(b.lastHeartbeatAt)?.getTime()||0)-(toDate(a.lastHeartbeatAt)?.getTime()||0));
+
+ $("allSessions").innerHTML=rows.length?rows.map(s=>{
+  const c=classes.find(x=>x.id===String(s.classId||s.liveClassId||""));
+  return `
+   <tr>
+    <td><b>${esc(s.studentName||s.name||"Student")}</b><br><span class="muted">${esc(s.studentCode||s.uid||s.studentUid||"")}</span></td>
+    <td>${esc(c?className(c):s.classTitle||"—")}</td>
+    <td>${esc(s.courseName||s.batchName||s.courseId||"—")}</td>
+    <td>${esc(formatDateTime(s.joinedAt||s.startedAt))}</td>
+    <td>${esc(formatDateTime(s.lastHeartbeatAt||s.lastActiveAt))}</td>
+    <td>${esc(duration(s.totalWatchSeconds||s.watchSeconds||0))}</td>
+    <td><span class="dot active"></span>Watching</td>
+   </tr>`;
+ }).join(""):`<tr><td colspan="7" class="muted">No active playback sessions detected.</td></tr>`;
+}
+
+
+/* =========================================================
+   CALENDAR
+   ========================================================= */
+
+function renderCalendar(){
+ const year=currentMonth.getFullYear();
+ const month=currentMonth.getMonth();
+
+ $("calendarMonth").textContent=currentMonth.toLocaleDateString("en-IN",{
+  month:"long",year:"numeric"
+ });
+
+ const first=new Date(year,month,1);
+ const startDay=first.getDay();
+ const totalDays=new Date(year,month+1,0).getDate();
+ const previousDays=new Date(year,month,0).getDate();
+
+ let html=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"]
+  .map(x=>`<div class="calendar-day-name">${x}</div>`).join("");
+
+ for(let i=0;i<42;i++){
+  let day, date, other=false;
+
+  if(i<startDay){
+   day=previousDays-startDay+i+1;
+   date=localDate(new Date(year,month-1,day));
+   other=true;
+  }else if(i>=startDay+totalDays){
+   day=i-startDay-totalDays+1;
+   date=localDate(new Date(year,month+1,day));
+   other=true;
+  }else{
+   day=i-startDay+1;
+   date=localDate(new Date(year,month,day));
+  }
+
+  const list=classes.filter(c=>(c.scheduledDate||c.date)===date);
+  const today=date===localDate(new Date());
+
+  html+=`
+   <button class="calendar-day ${other?"other":""} ${today?"today":""} ${selectedDate===date?"selected":""}" data-date="${date}">
+    <b>${day}</b>
+    <div class="calendar-dots">
+     ${list.slice(0,5).map(c=>{
+      const s=statusOf(c);
+      return `<i class="${s==="live"?"live":s==="recorded"?"recorded":s==="completed"?"completed":""}"></i>`;
+     }).join("")}
+    </div>
+   </button>`;
+ }
+
+ $("calendarGrid").innerHTML=html;
+
+ $("calendarGrid").querySelectorAll("[data-date]").forEach(el=>{
+  el.onclick=()=>{
+   selectedDate=el.dataset.date;
+   renderCalendar();
+   renderDayEvents();
+  };
+ });
+
+ renderDayEvents();
+}
+
+function renderDayEvents(){
+ const list=classes.filter(c=>(c.scheduledDate||c.date)===selectedDate)
+  .sort((a,b)=>(parseDateTime(a)?.getTime()||0)-(parseDateTime(b)?.getTime()||0));
+
+ $("selectedDayTitle").textContent=new Date(selectedDate+"T12:00:00").toLocaleDateString("en-IN",{
+  day:"numeric",month:"long",year:"numeric"
+ });
+
+ $("dayEvents").innerHTML=list.length?list.map(c=>`
+  <div class="event" data-event-id="${esc(c.id)}">
+   ${statusHTML(statusOf(c))}
+   <b>${esc(className(c))}</b>
+   <small>${esc(c.subjectName||"")} · ${esc(c.teacherName||c.facultyName||"")}</small>
+   <small style="display:block;margin-top:5px">${esc(c.scheduledTime||c.time||"—")} · ${Number(c.duration)||60} minutes</small>
+  </div>
+ `).join(""):`<div class="empty">No classes scheduled for this date.</div>`;
+
+ $("dayEvents").querySelectorAll("[data-event-id]").forEach(el=>{
+  el.onclick=()=>{
+   selectClass(el.dataset.eventId);
+   document.querySelector('[data-view="dashboard"]').click();
+  };
+ });
+}
+
+
+/* =========================================================
+   COURSE / SUBJECT / CHAPTER DATA
+   ========================================================= */
+
+async function loadSubjects(courseId){
+ $("subject").innerHTML='<option value="">Select subject</option>';
+
+ subjects.filter(s=>!courseId||String(s.courseId||"")===String(courseId))
+ .forEach(s=>{
+  const option=document.createElement("option");
+  option.value=s.id;
+  option.textContent=s.subjectName||s.name||s.title||"Subject";
+  $("subject").appendChild(option);
+ });
+}
+
+async function loadChapters(courseId,subjectId){
+ $("chapter").innerHTML='<option value="">Select chapter</option>';
+
+ chapters.filter(c=>
+  (!courseId||String(c.courseId||"")===String(courseId))&&
+  (!subjectId||String(c.subjectId||"")===String(subjectId))
+ ).forEach(c=>{
+  const option=document.createElement("option");
+  option.value=c.id;
+  option.textContent=c.chapterName||c.name||c.title||"Chapter";
+  $("chapter").appendChild(option);
+ });
+}
+
+function renderCourseOptions(){
+ $("course").innerHTML='<option value="">Select course</option>';
+
+ courses.forEach(c=>{
+  const o=document.createElement("option");
+  o.value=c.id;
+  o.textContent=courseName(c);
+  $("course").appendChild(o);
+ });
+}
+
+function renderSubjectFilter(){
+ const names=[...new Set(classes.map(c=>c.subjectName).filter(Boolean))];
+ $("subjectFilter").innerHTML='<option value="">All subjects</option>'+names.map(x=>
+  `<option value="${esc(x)}">${esc(x)}</option>`
+ ).join("");
+}
+
+
+/* =========================================================
+   CLASS FORM
+   ========================================================= */
+
+function updateEndPreview(){
+ const date=$("date").value;
+ const time=$("time").value;
+ const durationMinutes=Number($("duration").value)||60;
+
+ if(!date||!time){
+  $("endPreview").value="";
+  return;
+ }
+
+ const start=new Date(`${date}T${time}:00+05:30`);
+ const end=new Date(start.getTime()+durationMinutes*60000);
+
+ $("endPreview").value=end.toLocaleTimeString("en-IN",{
+  hour:"2-digit",minute:"2-digit",timeZone:TIME_ZONE
+ });
+}
+
+function setSource(type){
+ selectedSource=type;
+ $("delivery").value=type;
+
+ document.querySelectorAll(".source-option").forEach(el=>{
+  el.classList.toggle("active",el.dataset.source===type);
+ });
+
+ const settings={
+  YOUTUBE_LIVE:{
+   label:"YouTube Live URL",
+   placeholder:"https://www.youtube.com/watch?v=...",
+   help:"Paste the YouTube Live broadcast URL."
+  },
+  ZOOM:{
+   label:"Zoom Meeting Join URL",
+   placeholder:"https://zoom.us/j/...",
+   help:"Paste the Zoom meeting join URL. Configure SDK credentials on the server."
+  },
+  EXTERNAL_VIDEO:{
+   label:"External Video URL",
+   placeholder:"https://example.com/video.m3u8",
+   help:"Use a direct MP4 or HLS stream URL."
+  }
+ };
+
+ $("sourceUrlLabel").textContent=settings[type].label+" *";
+ $("url").placeholder=settings[type].placeholder;
+ $("sourceHelp").textContent=settings[type].help;
+ $("zoomFields").style.display=type==="ZOOM"?"grid":"none";
+}
+
+function clearForm(){
+ $("classForm").reset();
+
+ $("editId").value="";
+ $("duration").value=60;
+ $("accessType").value="PAID";
+ $("publication").value="published";
+ $("assessment").value="none";
+ $("medium").value="kannada";
+
+ $("thumbnail").value="";
+ $("recordingUrl").value="";
+ $("thumbnailPreview").classList.add("hidden");
+ $("uploadStatus").textContent="Recommended: 1280 × 720 pixels";
+ $("thumbnailFile").value="";
+
+ setSource("YOUTUBE_LIVE");
+ updateEndPreview();
+}
+
+function openClass(c=null){
+ clearForm();
+
+ $("modalTitle").textContent=c?"Edit Live Class":"Create New Live Class";
+
+ if(c){
+  $("editId").value=c.id;
+  $("title").value=c.title||c.classTitle||"";
+  $("teacher").value=c.teacherName||c.facultyName||"";
+  $("description").value=c.description||"";
+
+  $("date").value=c.scheduledDate||c.date||"";
+  $("time").value=c.scheduledTime||c.time||"";
+  $("duration").value=c.duration||60;
+
+  $("medium").value=c.medium||"kannada";
+  $("accessType").value=c.accessType||"PAID";
+  $("assessment").value=c.assessmentMode||"none";
+  $("publication").value=isPublished(c)?"published":"draft";
+
+  $("thumbnail").value=c.thumbnailUrl||c.thumbnail||"";
+  $("recordingUrl").value=c.recordingUrl||"";
+
+  if($("thumbnail").value){
+   $("thumbnailPreview").src=$("thumbnail").value;
+   $("thumbnailPreview").classList.remove("hidden");
+  }
+
+  $("zoomMeetingId").value=c.zoomMeetingId||"";
+  $("zoomPasscode").value=c.zoomPasscode||"";
+
+  setSource(getSource(c));
+
+  $("url").value=classURL(c);
+
+  $("course").value=c.courseId||"";
+
+  loadSubjects(c.courseId||"").then(()=>{
+   $("subject").value=c.subjectId||"";
+   loadChapters(c.courseId||"",$("subject").value).then(()=>{
+    $("chapter").value=c.chapterId||"";
+   });
+  });
+ }else{
+  $("date").value=localDate(new Date());
+  $("time").value="10:00";
+ }
+
+ updateEndPreview();
+ $("classModal").classList.remove("hidden");
+}
+
+function buildPayload(publication){
+ const cid=$("course").value;
+ const course=courses.find(x=>x.id===cid);
+
+ const sid=$("subject").value;
+ const subject=subjects.find(x=>x.id===sid);
+
+ const chid=$("chapter").value;
+ const chapter=chapters.find(x=>x.id===chid);
+
+ const type=$("delivery").value;
+ const url=$("url").value.trim();
+
+ const date=$("date").value;
+ const time=$("time").value;
+ const durationMinutes=Number($("duration").value)||60;
+
+ const start=new Date(`${date}T${time}:00+05:30`);
+ const end=new Date(start.getTime()+durationMinutes*60000);
+
+ const sourceType=type;
+
+ return {
+  title:$("title").value.trim(),
+  classTitle:$("title").value.trim(),
+
+  courseId:cid,
+  courseName:course?courseName(course):"",
+
+  medium:$("medium").value,
+
+  subjectId:sid,
+  subjectName:subject?(subject.subjectName||subject.name||subject.title||""):"",
+
+  chapterId:chid,
+  chapterName:chapter?(chapter.chapterName||chapter.name||chapter.title||""):"",
+
+  teacherName:$("teacher").value.trim(),
+  facultyName:$("teacher").value.trim(),
+
+  description:$("description").value.trim(),
+
+  scheduledDate:date,
+  scheduledTime:time,
+  duration:durationMinutes,
+
+  startAt:start,
+  endAt:end,
+  timeZone:TIME_ZONE,
+
+  sourceType,
+  liveType:sourceType,
+  mode:sourceType,
+
+  sourceUrl:url,
+  studentJoinUrl:url,
+  joinUrl:url,
+
+  videoUrl:type==="EXTERNAL_VIDEO"?url:"",
+  playbackUrl:type==="EXTERNAL_VIDEO"?url:"",
+  youtubeLiveUrl:type==="YOUTUBE_LIVE"?url:"",
+  zoomJoinUrl:type==="ZOOM"?url:"",
+  zoomMeetingId:$("zoomMeetingId").value.trim(),
+  zoomPasscode:$("zoomPasscode").value.trim(),
+
+  thumbnailUrl:$("thumbnail").value.trim(),
+
+  recordingUrl:$("recordingUrl").value.trim(),
+  recordingStatus:$("recordingUrl").value.trim()?"available":"pending",
+
+  assessmentMode:$("assessment").value,
+  accessType:$("accessType").value,
+
+  status:publication==="draft"?"DRAFT":"SCHEDULED",
+  publicationStatus:publication,
+  published:publication==="published",
+
+  cancelled:false,
+  ended:false,
+  manualEnded:false,
+
+  active:true,
+  updatedAt:serverTimestamp()
+ };
+}
+
+async function saveClass(e,publication){
+ e?.preventDefault();
+
+ if(!$("title").value.trim()){
+  toast("Enter a class title.");
+  return;
+ }
+
+ if(!publication==="draft" && !$("url").value.trim()){
+  toast("Enter a video source URL.");
+  return;
+ }
+
+ const date=$("date").value;
+ const time=$("time").value;
+ const mins=Number($("duration").value);
+
+ if(!date||!time||!mins||mins<1){
+  toast("Check the class schedule.");
+  return;
+ }
+
+ const start=new Date(`${date}T${time}:00+05:30`);
+ if(Number.isNaN(start.getTime())){
+  toast("Invalid date or time.");
+  return;
+ }
+
+ if(publication==="published"&&!$("course").value){
+  toast("Select a course.");
+  return;
+ }
+
+ if(publication==="published"&&!$("url").value.trim()){
+  toast("Enter the video source URL.");
+  return;
+ }
+
+ const payload=buildPayload(publication);
+ const id=$("editId").value;
+
+ $("saveClass").disabled=true;
+ $("saveDraft").disabled=true;
+
+ try{
+  if(id){
+   const existing=classes.find(c=>c.id===id);
+   // Do not silently reactivate an already-ended class when editing.
+   if(existing && (existing.manualEnded||existing.ended)){
+    payload.status=existing.status||"ended";
+    payload.ended=true;
+    payload.manualEnded=true;
+   }
+   await updateDoc(doc(db,"liveClasses",id),payload);
+   toast("Class updated successfully.");
+  }else{
+   payload.createdAt=serverTimestamp();
+   payload.createdBy=user.uid;
+   const ref=await addDoc(collection(db,"liveClasses"),payload);
+   selectedId=ref.id;
+   toast(publication==="draft"?"Draft saved.":"Class scheduled successfully.");
+  }
+
+  $("classModal").classList.add("hidden");
+ }catch(err){
+  console.error(err);
+  toast("Could not save class: "+err.message);
+ }finally{
+  $("saveClass").disabled=false;
+  $("saveDraft").disabled=false;
+ }
+}
+
+
+/* =========================================================
+   CLASS OPERATIONS
+   ========================================================= */
+
+async function endClass(c){
+ if(!confirm("End this class now? Students will no longer be able to join it as a live session."))return;
+
+ try{
+  await updateDoc(doc(db,"liveClasses",c.id),{
+   status:"ended",
+   isLive:false,
+   ended:true,
+   manualEnded:true,
+   endedAt:serverTimestamp(),
+   updatedAt:serverTimestamp()
+  });
+  toast("Class ended.");
+ }catch(e){
+  toast("Could not end class: "+e.message);
+ }
+}
+
+async function cancelClass(c){
+ if(!confirm("Cancel this scheduled class?"))return;
+
+ try{
+  await updateDoc(doc(db,"liveClasses",c.id),{
+   status:"cancelled",
+   cancelled:true,
+   isLive:false,
+   updatedAt:serverTimestamp()
+  });
+  toast("Class cancelled.");
+ }catch(e){
+  toast("Could not cancel class: "+e.message);
+ }
+}
+
+
+/* =========================================================
+   RECORDING MANAGEMENT
+   ========================================================= */
+
+function openRecording(c){
+ $("recordingClassId").value=c.id;
+ $("recordingInput").value=c.recordingUrl||"";
+ $("recordingThumbInput").value=c.recordingThumbnailUrl||"";
+ $("recordingModal").classList.remove("hidden");
+}
+
+$("recordingForm").onsubmit=async e=>{
+ e.preventDefault();
+
+ const id=$("recordingClassId").value;
+ const url=$("recordingInput").value.trim();
+
+ if(!url)return toast("Enter the recording URL.");
+
+ try{
+  $("saveRecording").disabled=true;
+
+  await updateDoc(doc(db,"liveClasses",id),{
+   recordingUrl:url,
+   recordingThumbnailUrl:$("recordingThumbInput").value.trim(),
+   recordingStatus:"available",
+   updatedAt:serverTimestamp()
+  });
+
+  $("recordingModal").classList.add("hidden");
+  toast("Recording saved successfully.");
+ }catch(err){
+  toast("Could not save recording: "+err.message);
+ }finally{
+  $("saveRecording").disabled=false;
+ }
+};
+
+
+/* =========================================================
+   CLASS QUESTIONS
+   ========================================================= */
+
+function openQuestion(id){
+ $("questionForm").reset();
+ $("questionClassId").value=id;
+ $("questionModal").classList.remove("hidden");
+}
+
+$("questionType").onchange=()=>{
+ $("mcqOptions").style.display=$("questionType").value==="MCQ"?"block":"none";
+};
+
+$("questionForm").onsubmit=async e=>{
+ e.preventDefault();
+
+ const id=$("questionClassId").value;
+ const type=$("questionType").value;
+
+ const options=type==="MCQ"
+  ?["A","B","C","D"].map(k=>({key:k,text:$("opt"+k).value.trim()})).filter(x=>x.text)
+  :type==="TRUE_FALSE"
+  ?[{key:"TRUE",text:"True"},{key:"FALSE",text:"False"}]
+  :[];
+
+ try{
+  await addDoc(collection(db,"liveClasses",id,"questions"),{
+   question:$("questionText").value.trim(),
+   questionType:type,
+   options,
+   correctAnswer:$("correct").value.trim(),
+   marks:Number($("marks").value)||1,
+   explanation:$("explanation").value.trim(),
+   active:true,
+   published:true,
+   version:1,
+   createdAt:serverTimestamp(),
+   updatedAt:serverTimestamp(),
+   createdBy:user.uid
+  });
+
+  $("questionModal").classList.add("hidden");
+  toast("Question added.");
+ }catch(err){
+  toast("Could not add question: "+err.message);
+ }
+};
+
+
+/* =========================================================
+   NAVIGATION
+   ========================================================= */
+
+document.querySelectorAll("[data-view]").forEach(button=>{
+ button.onclick=()=>{
+  const view=button.dataset.view;
+
+  document.querySelectorAll("[data-view]").forEach(x=>x.classList.toggle("active",x===button));
+  document.querySelectorAll(".view").forEach(x=>x.classList.add("hidden"));
+
+  $("view-"+view).classList.remove("hidden");
+
+  if(view==="calendar")renderCalendar();
+  if(view==="classes")renderAllClasses();
+  if(view==="monitoring")renderSessions();
+ };
+});
+
+
+/* =========================================================
+   EVENT LISTENERS
+   ========================================================= */
+
+$("signin").onclick=async()=>{
+ try{
+  await signInWithPopup(auth,new GoogleAuthProvider());
+ }catch(e){
+  $("loginmsg").textContent=e.message;
+ }
+};
+
+$("logout").onclick=()=>signOut(auth);
+
+$("refresh").onclick=async()=>{
+ renderStats();
+ renderClasses();
+ renderAllClasses();
+ renderSessions();
+ renderCalendar();
+ toast("Dashboard refreshed.");
+};
+
+$("newClass").onclick=()=>openClass();
+$("newClass2").onclick=()=>openClass();
+$("calendarCreate").onclick=()=>openClass();
+
+$("closeModal").onclick=()=>$("classModal").classList.add("hidden");
+$("cancelModal").onclick=()=>$("classModal").classList.add("hidden");
+
+$("closeRecording").onclick=()=>$("recordingModal").classList.add("hidden");
+$("cancelRecording").onclick=()=>$("recordingModal").classList.add("hidden");
+
+$("closeQuestion").onclick=()=>$("questionModal").classList.add("hidden");
+$("cancelQuestion").onclick=()=>$("questionModal").classList.add("hidden");
+
+$("classForm").onsubmit=e=>saveClass(e,"published");
+
+$("saveDraft").onclick=()=>saveClass(null,"draft");
+
+$("date").onchange=updateEndPreview;
+$("time").onchange=updateEndPreview;
+$("duration").oninput=updateEndPreview;
+
+$("course").onchange=async()=>{
+ await loadSubjects($("course").value);
+ await loadChapters($("course").value,"");
+};
+
+$("subject").onchange=()=>loadChapters($("course").value,$("subject").value);
+
+document.querySelectorAll("[data-source]").forEach(button=>{
+ button.onclick=()=>setSource(button.dataset.source);
+});
+
+$("search").oninput=renderClasses;
+$("quickFilter").onchange=renderClasses;
+$("allSearch").oninput=renderAllClasses;
+$("statusFilter").onchange=renderAllClasses;
+$("subjectFilter").onchange=renderAllClasses;
+
+$("prevMonth").onclick=()=>{
+ currentMonth=new Date(currentMonth.getFullYear(),currentMonth.getMonth()-1,1);
+ renderCalendar();
+};
+
+$("nextMonth").onclick=()=>{
+ currentMonth=new Date(currentMonth.getFullYear(),currentMonth.getMonth()+1,1);
+ renderCalendar();
+};
+
+$("todayMonth").onclick=()=>{
+ currentMonth=new Date();
+ selectedDate=localDate(new Date());
+ renderCalendar();
+};
+
+
+/* =========================================================
+   FIREBASE AUTHENTICATION AND LIVE DATA
+   ========================================================= */
+
+async function enterAdmin(u){
+ stopListeners();
+ user=u;
+
+ try{
+  const adminRef=await getDoc(doc(db,"admins",u.uid));
+
+  if(!adminRef.exists()||adminRef.data().active===false){
+   throw new Error("An active admins/"+u.uid+" record is required.");
+  }
+
+  const data=adminRef.data();
+  const role=String(data.role||"").toLowerCase();
+
+  if(role&&!["admin","superadmin","owner","administrator"].includes(role)){
+   throw new Error("You do not have Super Admin access.");
+  }
+
+  adminData=data;
+
+  $("login").classList.add("hidden");
+  $("app").classList.remove("hidden");
+  $("email").textContent=u.email||u.uid;
+
+  // Main classes collection.
+  unsubscribers.push(onSnapshot(collection(db,"liveClasses"),snap=>{
+   classes=snap.docs.map(d=>({id:d.id,...d.data()}));
+
+   renderStats();
+   renderClasses();
+   renderAllClasses();
+   renderDetail();
+   renderCalendar();
+   renderSessions();
+
+   $("syncstatus").textContent="● Connected · Live data synced";
+  },err=>{
+   $("syncstatus").textContent="Firebase error: "+err.message;
+   toast("Class data error: "+err.message);
+  }));
+
+  // Student live playback sessions.
+  unsubscribers.push(onSnapshot(collection(db,"livePlaybackSessions"),snap=>{
+   sessions=snap.docs.map(d=>({id:d.id,...d.data()}));
+
+   renderStats();
+   renderClasses();
+   renderAllClasses();
+   renderDetail();
+   renderSessions();
+  },err=>{
+   console.error(err);
+   $("allSessions").innerHTML=`<tr><td colspan="7" class="bad">Cannot read sessions: ${esc(err.message)}</td></tr>`;
+  }));
+
+  // Existing academic collections.
+  unsubscribers.push(onSnapshot(collection(db,"zen2Courses"),snap=>{
+   courses=snap.docs.map(d=>({id:d.id,...d.data()}));
+   renderCourseOptions();
+  },err=>console.error("Course loading error:",err)));
+
+  unsubscribers.push(onSnapshot(collection(db,"zen2Subjects"),snap=>{
+   subjects=snap.docs.map(d=>({id:d.id,...d.data()}));
+  },err=>console.error("Subject loading error:",err)));
+
+  unsubscribers.push(onSnapshot(collection(db,"zen2Chapters"),snap=>{
+   chapters=snap.docs.map(d=>({id:d.id,...d.data()}));
+  },err=>console.error("Chapter loading error:",err)));
+
+  // Refresh time-derived class states even if Firestore has not changed.
+  clockInterval=setInterval(()=>{
+   renderStats();
+   renderClasses();
+   renderAllClasses();
+   renderDetail();
+   renderCalendar();
+   renderToday();
+  },15000);
+
+ }catch(err){
+  console.error(err);
+  await signOut(auth).catch(()=>{});
+  $("loginmsg").textContent=err.message;
+ }
+}
+
+onAuthStateChanged(auth,u=>{
+ if(u){
+  enterAdmin(u);
+ }else{
+  stopListeners();
+  $("app").classList.add("hidden");
+  $("login").classList.remove("hidden");
+ }
+});
+
+window.addEventListener("beforeunload",stopListeners);
+
+</script>
 </body>
 </html>
