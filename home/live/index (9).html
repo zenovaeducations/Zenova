@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f7f9fc">
+  <title>Zenova Educations | Live Classes</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.css" rel="stylesheet">
+  <style>
+    :root{--bg:#f7f9fc;--surface:#fff;--surface-soft:#f0f5fb;--ink:#172338;--muted:#7b8799;--line:#e7edf5;--blue:#3978e8;--blue-dark:#245fc9;--blue-soft:#eaf2ff;--green:#159b78;--green-soft:#e8f8f2;--orange:#b87921;--orange-soft:#fff4e7;--purple:#7952cc;--purple-soft:#f1ebff;--red:#dc4545;--red-soft:#fff0f0;--radius:18px;--nav-height:76px}
+    *{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth;background:var(--bg)}body{min-height:100vh;padding-bottom:calc(var(--nav-height) + env(safe-area-inset-bottom));background:var(--bg);color:var(--ink);font-family:Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}button,input{font:inherit}button{cursor:pointer}a{color:inherit;text-decoration:none}button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid #8db5ff;outline-offset:3px}.hidden{display:none!important}.wrap{width:min(100%,1080px);margin-inline:auto}
+    .topbar{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.95);backdrop-filter:blur(16px);border-bottom:1px solid var(--line)}.topbar-inner{width:min(100%,1080px);min-height:72px;margin:auto;padding:12px 18px;display:flex;align-items:center;justify-content:space-between;gap:18px}.brand{display:flex;align-items:center;gap:10px;min-width:0}.brand-logo{width:40px;height:40px;display:grid;place-items:center;border-radius:13px;background:var(--blue);color:#fff;font-size:21px;font-weight:800}.brand-name{font-size:15px;font-weight:800;letter-spacing:-.4px}.brand-sub{margin-top:3px;color:var(--muted);font-size:10px}.desktop-nav{display:flex;align-items:center;gap:5px}.desktop-nav a{padding:11px 13px;border-radius:10px;color:#69778b;font-size:12px;font-weight:650;transition:.18s ease}.desktop-nav a:hover,.desktop-nav a.active{background:var(--blue-soft);color:var(--blue-dark)}.profile-button{display:grid;place-items:center;width:40px;height:40px;overflow:hidden;flex:0 0 40px;border:1px solid var(--line);border-radius:50%;background:var(--surface-soft);color:var(--blue-dark)}.profile-button img{width:100%;height:100%;object-fit:cover}.profile-button img[hidden]{display:none}.page{width:min(100%,1080px);margin:auto;padding:22px 17px 30px}
+    .intro{margin:7px 0 25px;padding:23px 21px;border:1px solid #dce8fb;border-radius:22px;background:linear-gradient(125deg,#fff 0%,#edf4ff 100%);box-shadow:0 5px 20px rgba(36,95,201,.045)}.eyebrow{display:block;margin-bottom:7px;color:var(--blue);font-size:10px;font-weight:800;letter-spacing:1.3px;text-transform:uppercase}.intro h1{font-size:clamp(25px,4vw,32px);font-weight:800;letter-spacing:-1px;line-height:1.2}.intro p{margin-top:8px;max-width:560px;color:var(--muted);font-size:12px;line-height:1.65}
+    .section{margin-top:28px}.section-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:13px}.section-title{font-size:18px;font-weight:800;letter-spacing:-.45px}.section-subtitle{margin-top:5px;color:var(--muted);font-size:11px;line-height:1.5}.date-label{color:var(--muted);font-size:11px}.today-list,.date-list,.history-list{display:grid;gap:11px}.live-card,.date-class-card,.history-card{padding:15px;border:1px solid var(--line);border-radius:16px;background:#fff;box-shadow:0 3px 12px rgba(23,35,56,.025);transition:border-color .18s,box-shadow .18s}.live-card.live-now{border-color:#bfe8d9}.live-card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:13px}.live-card-title,.date-class-title,.history-title{font-size:13px;font-weight:750;line-height:1.5;overflow-wrap:anywhere}.live-card-subject,.date-class-info,.history-info{margin-top:5px;color:var(--muted);font-size:10px;line-height:1.6}.status-pill{flex-shrink:0;padding:6px 9px;border-radius:30px;background:#f0f2f6;color:#718096;font-size:9px;font-weight:800;letter-spacing:.35px}.status-pill.live{background:var(--green-soft);color:var(--green)}.status-pill.upcoming{background:var(--blue-soft);color:var(--blue-dark)}.status-pill.recording{background:var(--purple-soft);color:var(--purple)}.status-pill.completed{background:#f0f2f6;color:#718096}.status-pill.cancelled{background:var(--red-soft);color:var(--red)}.class-details{display:flex;flex-wrap:wrap;gap:7px 14px;margin-top:12px;color:var(--muted);font-size:10px}.class-action-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:14px;padding-top:12px;border-top:1px solid #f0f3f8}.provider-label{color:var(--muted);font-size:9px;font-weight:700}.action-button{min-height:36px;padding:0 13px;border:0;border-radius:9px;background:var(--blue);color:#fff;font-size:10px;font-weight:750}.action-button.live-button{background:var(--green)}.action-button.watch-button{background:var(--purple)}.action-button:disabled{background:#eef1f6;color:#8490a2;cursor:not-allowed}
+    .date-picker-card{display:grid;grid-template-columns:42px minmax(0,1fr) auto 42px;align-items:center;gap:10px;padding:12px;border:1px solid var(--line);border-radius:15px;background:#fff}.date-arrow{width:40px;height:40px;border:1px solid #dce8fb;border-radius:10px;background:var(--blue-soft);color:var(--blue-dark);font-size:24px}.selected-date span{display:block;margin-bottom:3px;color:var(--muted);font-size:8px;font-weight:800;letter-spacing:1px}.selected-date strong{font-size:13px}#datePicker{width:145px;height:40px;padding:0 9px;border:1px solid #dce4ef;border-radius:9px;background:#fff;color:var(--ink);font-size:10px}.date-class-card{display:flex;align-items:center;justify-content:space-between;gap:14px}.date-class-main{min-width:0}.date-class-action{flex-shrink:0}
+    .subject-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:11px}.subject-card{min-width:0;display:flex;align-items:center;gap:10px;padding:13px 11px;border:1px solid var(--line);border-radius:15px;background:#fff;text-align:left;box-shadow:0 3px 12px rgba(23,35,56,.025);transition:transform .18s,border-color .18s,box-shadow .18s}.subject-card:hover{border-color:#c7dafa;box-shadow:0 8px 22px rgba(36,95,201,.07)}.subject-card:active{transform:scale(.99)}.subject-icon{width:39px;height:39px;flex:0 0 39px;display:grid;place-items:center;border-radius:12px;background:var(--blue-soft);color:var(--blue-dark);font-size:17px;font-weight:800}.subject-copy{min-width:0;flex:1}.subject-copy strong{display:block;font-size:10px;font-weight:750;line-height:1.4;overflow-wrap:anywhere}.subject-copy span{display:block;margin-top:4px;color:var(--muted);font-size:9px}.subject-arrow{color:#9aa8bb;font-size:20px}.history-header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:13px}.history-header h2{font-size:18px;font-weight:800}.close-button{padding:8px 12px;border:1px solid var(--line);border-radius:9px;background:#fff;color:var(--blue-dark);font-size:10px;font-weight:750}.history-card{display:flex;align-items:center;justify-content:space-between;gap:12px}.history-watch{min-height:34px;padding:0 12px;border:0;border-radius:9px;background:var(--purple-soft);color:var(--purple);font-size:9px;font-weight:800}.history-no-recording{color:var(--muted);font-size:9px;font-weight:700;text-align:right}
+    .empty-card{display:flex;flex-direction:column;align-items:center;gap:6px;padding:22px 16px;border:1px dashed #dce4ef;border-radius:15px;background:#fff;color:var(--muted);text-align:center;font-size:11px;line-height:1.6}.empty-icon{width:38px;height:38px;display:grid;place-items:center;margin-bottom:3px;border-radius:12px;background:var(--blue-soft);color:var(--blue);font-size:20px}.empty-card strong{color:var(--ink);font-size:12px}.state-card{width:min(100%,440px);margin:45px auto;padding:27px 20px;border:1px solid var(--line);border-radius:18px;background:#fff;text-align:center;box-shadow:0 6px 22px rgba(23,35,56,.035)}.state-card p{margin-top:12px;color:var(--muted);font-size:12px;line-height:1.6}.spinner{width:31px;height:31px;margin:auto;border:3px solid #dce8fb;border-top-color:var(--blue);border-radius:50%;animation:spin .8s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}.state-icon{width:42px;height:42px;display:grid;place-items:center;margin:0 auto 10px;border-radius:13px;background:var(--red-soft);color:var(--red);font-size:20px;font-weight:800}.error-state h2{font-size:17px}.primary-button{margin-top:16px;padding:11px 17px;border:0;border-radius:10px;background:var(--blue);color:#fff;font-size:11px;font-weight:750}
+    .bottom-nav{position:fixed;z-index:100;right:0;bottom:0;left:0;padding:8px 10px calc(8px + env(safe-area-inset-bottom));border-top:1px solid var(--line);background:rgba(255,255,255,.97);backdrop-filter:blur(15px)}.bottom-inner{width:min(100%,520px);margin:auto;display:grid;grid-template-columns:repeat(5,1fr);gap:3px}.nav-item{min-height:51px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;border-radius:11px;color:#8a96a8;font-size:9px;font-weight:700}.nav-item i{font-size:20px}.nav-item.active{background:var(--blue-soft);color:var(--blue-dark)}.toast{position:fixed;z-index:200;bottom:calc(var(--nav-height) + 12px);left:50%;transform:translateX(-50%);width:max-content;max-width:calc(100% - 28px);padding:12px 15px;border-radius:11px;background:#1d2a40;color:#fff;font-size:11px;box-shadow:0 8px 25px #17233820;opacity:0;pointer-events:none;transition:opacity .2s}.toast.show{opacity:1}
+    @media(min-width:700px){body{padding-bottom:20px}.page{padding:27px 25px 36px}.bottom-nav{display:none}.subject-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+    @media(max-width:699px){.desktop-nav{display:none}}
+    @media(max-width:480px){.page{padding-inline:12px}.topbar-inner{padding-inline:12px}.subject-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.date-picker-card{grid-template-columns:36px minmax(0,1fr) auto 36px;gap:6px;padding:9px}.date-arrow{width:35px;height:38px}#datePicker{width:123px;font-size:9px}.live-card,.date-class-card,.history-card{padding:12px}.date-class-card{align-items:flex-start;flex-direction:column}.date-class-action{align-self:flex-end}.intro{padding:20px 17px}}
+    @media(max-width:360px){.subject-grid{grid-template-columns:1fr}.status-pill{font-size:8px;padding:5px 7px}.class-action-row{align-items:flex-start;flex-direction:column}.class-action-row>div{align-self:flex-end}}
+    @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand" href="../" aria-label="Zenova Home"><span class="brand-logo">Z</span><span><span class="brand-name" style="display:block">ZENOVA</span><span class="brand-sub" style="display:block">Educations</span></span></a>
+      <nav class="desktop-nav" aria-label="Main navigation">
+        <a href="../">Home</a><a href="../courses/">Courses</a><a href="./" class="active" aria-current="page">Live</a><a href="../revision/">Revision</a><a href="../profile/">Profile</a>
+      </nav>
+      <a id="profileShortcut" class="profile-button" href="../profile/" aria-label="My profile"><img id="profilePhoto" alt="" hidden><i id="profileIcon" class="ri-user-3-line"></i></a>
+    </div>
+  </header>
+
+  <main class="page wrap">
+    <section id="loadingState" class="state-card" role="status"><div class="spinner"></div><p>Loading your live classroom...</p></section>
+    <section id="errorState" class="state-card error-state hidden"><div class="state-icon"><i class="ri-error-warning-line"></i></div><h2>Unable to load live classes</h2><p id="errorText">Please try again.</p><button id="retryButton" class="primary-button" type="button">Try Again</button></section>
+
+    <div id="liveApp" class="hidden">
+      <section class="intro"><span class="eyebrow">YOUR CLASSROOM</span><h1>Live Classes</h1><p>Attend your scheduled classes, explore every subject and revisit previous lessons.</p></section>
+
+      <section class="section" aria-labelledby="todayTitle">
+        <div class="section-heading"><div><span class="eyebrow">TODAY</span><h2 class="section-title" id="todayTitle">Today's Classes</h2></div><span id="todayDate" class="date-label"></span></div>
+        <div id="todayClasses" class="today-list"></div>
+        <div id="todayEmpty" class="empty-card hidden"><span class="empty-icon"><i class="ri-calendar-check-line"></i></span><strong>No classes scheduled today</strong><span>Your scheduled classes for today will appear here automatically.</span></div>
+      </section>
+
+      <section class="section" aria-labelledby="calendarTitle">
+        <div class="section-heading"><div><span class="eyebrow">CLASS CALENDAR</span><h2 class="section-title" id="calendarTitle">View Classes by Date</h2><p class="section-subtitle">Choose a date to see its scheduled classes and recordings.</p></div></div>
+        <div class="date-picker-card"><button id="previousDate" class="date-arrow" type="button" aria-label="Previous date"><i class="ri-arrow-left-s-line"></i></button><div class="selected-date"><span>SELECTED DATE</span><strong id="selectedDateText">Today</strong></div><input id="datePicker" type="date" aria-label="Select class date"><button id="nextDate" class="date-arrow" type="button" aria-label="Next date"><i class="ri-arrow-right-s-line"></i></button></div>
+        <div id="selectedDateClasses" class="date-list"></div>
+        <div id="selectedDateEmpty" class="empty-card hidden"><span class="empty-icon"><i class="ri-calendar-line"></i></span><strong>No classes on this date</strong><span>No scheduled class was found for the selected date.</span></div>
+      </section>
+
+      <section class="section" aria-labelledby="subjectsTitle">
+        <div class="section-heading"><div><span class="eyebrow">YOUR BATCH</span><h2 class="section-title" id="subjectsTitle">All Subjects</h2><p class="section-subtitle">Select a subject to view its previous classes and recordings.</p></div></div>
+        <div id="subjectGrid" class="subject-grid"></div>
+        <div id="subjectsEmpty" class="empty-card hidden"><span class="empty-icon"><i class="ri-book-open-line"></i></span><strong>Subjects are being prepared</strong><span>Your subject list will appear here when it is available.</span></div>
+      </section>
+
+      <section id="subjectHistorySection" class="section hidden" aria-labelledby="historySubjectName">
+        <div class="history-header"><div><span class="eyebrow">SUBJECT HISTORY</span><h2 id="historySubjectName">Previous Classes</h2><p id="historySubtitle" class="section-subtitle">Earlier classes for this subject.</p></div><button id="closeHistory" class="close-button" type="button"><i class="ri-close-line"></i> Close</button></div>
+        <div id="subjectHistory" class="history-list"></div>
+        <div id="historyEmpty" class="empty-card hidden"><span class="empty-icon"><i class="ri-history-line"></i></span><strong>No previous classes</strong><span>Previous classes for this subject will appear here once they have been scheduled.</span></div>
+      </section>
+    </div>
+  </main>
+
+  <nav class="bottom-nav" aria-label="Mobile navigation"><div class="bottom-inner">
+    <a class="nav-item" href="../"><i class="ri-home-5-line"></i><span>Home</span></a>
+    <a class="nav-item" href="../courses/"><i class="ri-book-2-line"></i><span>Courses</span></a>
+    <a class="nav-item active" href="./" aria-current="page"><i class="ri-live-line"></i><span>Live</span></a>
+    <a class="nav-item" href="../revision/"><i class="ri-book-open-line"></i><span>Revision</span></a>
+    <a class="nav-item" href="../profile/"><i class="ri-user-3-line"></i><span>Profile</span></a>
+  </div></nav>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script type="module">
+    import { auth, db } from "../../firebase/firebase-config.js";
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+    import { collection, doc, getDoc, getDocs, onSnapshot, query, where } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
+    const $ = id => document.getElementById(id);
+    const state = { user:null, student:null, course:null, classes:[], subjects:[], selectedDate:todayISO(), unsubscribeClasses:null, unsubscribeSubjects:null, clock:null, initialized:false };
+    const FALLBACK_SUBJECTS = [
+      {id:"subject-kannada", name:"Kannada", icon:"ri-book-open-line", aliases:["kannada"]},
+      {id:"subject-english", name:"English", icon:"ri-english-input", aliases:["english"]},
+      {id:"subject-hindi", name:"Hindi", icon:"ri-translate-2", aliases:["hindi"]},
+      {id:"subject-maths", name:"Mathematics", icon:"ri-calculator-line", aliases:["maths","mathematics","math"]},
+      {id:"subject-science", name:"Science", icon:"ri-flask-line", aliases:["science"]},
+      {id:"subject-social", name:"Social Science", icon:"ri-globe-line", aliases:["social","social science","social studies"]}
+    ];
+
+    onAuthStateChanged(auth, async user => {
+      if (!user) { window.location.href = "../../account/login/"; return; }
+      state.user = user;
+      try { await initializePage(); }
+      catch (error) { console.error("Zenova Live page:", error); showError(error?.message || "Unable to load your live classes."); }
+    });
+
+    async function initializePage(){
+      showLoading();
+      const studentSnap = await getDoc(doc(db,"zen2Students",state.user.uid));
+      if (!studentSnap.exists()) throw new Error("Your student profile was not found. Please contact your academy administrator.");
+      state.student = {id:studentSnap.id,...studentSnap.data()};
+      renderProfile();
+      state.course = await resolveStudentCourse();
+      if (!state.course) {
+        // Keep the live page useful without sending students to an unrelated course catalogue.
+        state.subjects = FALLBACK_SUBJECTS.map(x=>({...x}));
+        state.classes = [];
+        renderAll(); showApp(); startClock();
+        showToast("Your batch is not linked yet. Please contact your academy administrator.");
+        return;
+      }
+      startClassesListener();
+      startSubjectsListener();
+      state.selectedDate = todayISO();
+      $("datePicker").value = state.selectedDate;
+      renderAll(); showApp(); startClock();
+    }
+
+    function renderProfile(){
+      const photo = state.student.photoURL || state.student.photoUrl || state.student.profilePhotoUrl || state.user.photoURL || "";
+      const img = $("profilePhoto"), icon = $("profileIcon");
+      if (photo) { img.src=photo; img.hidden=false; icon.hidden=true; img.onerror=()=>{img.hidden=true;icon.hidden=false;}; }
+    }
+
+    async function resolveStudentCourse(){
+      const student=state.student;
+      const directId=String(student.courseId || student.crmCourseId || student.batchId || student.courseID || "");
+      const courseSnap=await getDocs(collection(db,"zen2Courses"));
+      const courses=courseSnap.docs.map(d=>({id:d.id,...d.data()})).filter(c=>c.active!==false && c.isPublished!==false && c.published!==false && !["deleted","archived"].includes(String(c.status||"").toLowerCase()));
+      if (directId) { const found=courses.find(c=>c.id===directId); if(found) return found; }
+      const studentClass=normClass(student.className || student.class || student.standard || student.grade || student.targetClass || "");
+      const studentMedium=norm(student.medium || student.languageMedium || student.studyMedium || "");
+      let found=courses.find(c=>{
+        const courseClass=normClass(c.className || c.courseClass || c.targetClass || c.standard || c.grade || c.crmClass || "");
+        const medium=norm(c.medium || c.languageMedium || "");
+        return studentClass && courseClass===studentClass && (!studentMedium || !medium || medium===studentMedium);
+      });
+      if(found) return found;
+      // Legacy fallback: approved enrollment document.
+      try {
+        const enrollmentSnap=await getDocs(query(collection(db,"studentEnrollments"),where("studentUid","==",state.user.uid)));
+        const enrollment=enrollmentSnap.docs.map(d=>({id:d.id,...d.data()})).find(e=>!e.status || ["approved","active","paid","enrolled","success","completed"].includes(norm(e.status)));
+        const enrollmentCourseId=enrollment && (enrollment.courseId || enrollment.crmCourseId || enrollment.batchId || enrollment.courseID);
+        if(enrollmentCourseId) return courses.find(c=>c.id===String(enrollmentCourseId)) || {id:String(enrollmentCourseId),courseName:enrollment.courseName || enrollment.batchName || "My Batch",className:student.className || student.class || student.standard || ""};
+      } catch(e){ console.warn("Could not read legacy enrollment:",e); }
+      return null;
+    }
+
+    function startClassesListener(){
+      if(state.unsubscribeClasses) state.unsubscribeClasses();
+      // Listen to the liveClasses collection so newly published classes and status changes appear without refresh.
+      state.unsubscribeClasses=onSnapshot(collection(db,"liveClasses"), snapshot=>{
+        state.classes=snapshot.docs.map(d=>({id:d.id,...d.data()}))
+          .filter(item=>item.active!==false && item.isDeleted!==true && belongsToCourse(item,state.course))
+          .sort((a,b)=>startMillis(a)-startMillis(b));
+        renderAll();
+      }, error=>{console.error("liveClasses listener:",error);showToast("Live class updates are temporarily unavailable.");});
+    }
+
+    function startSubjectsListener(){
+      if(state.unsubscribeSubjects) state.unsubscribeSubjects();
+      state.unsubscribeSubjects=onSnapshot(collection(db,"zen2Subjects"), snapshot=>{
+        const docs=snapshot.docs.map(d=>({id:d.id,...d.data()})).filter(s=>s.active!==false && s.isDeleted!==true && (!s.courseId || String(s.courseId)===String(state.course?.id)));
+        state.subjects=docs.length ? docs.sort((a,b)=>Number(a.order??a.priority??999)-Number(b.order??b.priority??999)).map(normalizeSubject) : FALLBACK_SUBJECTS.map(x=>({...x}));
+        renderSubjects();
+        if(!$('subjectHistorySection').classList.contains('hidden')) renderSelectedHistory();
+      }, error=>{console.warn("Subject listener:",error);if(!state.subjects.length)state.subjects=FALLBACK_SUBJECTS.map(x=>({...x}));renderSubjects();});
+    }
+
+    function normalizeSubject(s){
+      const name=s.name || s.subjectName || s.title || s.displayName || s.label || s.nameEnglish || s.subjectNameEnglish || "Subject";
+      return {...s,displayName:String(name).trim(),icon:s.icon || subjectIcon(name)};
+    }
+    function subjectIcon(name){const n=norm(name);if(n.includes("math"))return"ri-calculator-line";if(n.includes("science"))return"ri-flask-line";if(n.includes("social"))return"ri-globe-line";if(n.includes("hindi"))return"ri-translate-2";if(n.includes("english"))return"ri-english-input";return"ri-book-open-line";}
+
+    function renderAll(){
+      if(!state.initialized){state.initialized=true;}
+      renderToday(); renderSelectedDate(); renderSubjects();
+      if(!$('subjectHistorySection').classList.contains('hidden'))renderSelectedHistory();
+    }
+    function renderToday(){
+      const date=todayISO();$('todayDate').textContent=formatLongDate(date);
+      const list=classesForDate(date);$('todayClasses').innerHTML=list.map(createClassCard).join("");$('todayEmpty').classList.toggle('hidden',list.length>0);
+    }
+    function renderSelectedDate(){
+      $('datePicker').value=state.selectedDate;$('selectedDateText').textContent=formatLongDate(state.selectedDate);
+      const list=classesForDate(state.selectedDate);$('selectedDateClasses').innerHTML=list.map(createDateCard).join("");$('selectedDateEmpty').classList.toggle('hidden',list.length>0);
+    }
+    function renderSubjects(){
+      const subjects=state.subjects.length?state.subjects:FALLBACK_SUBJECTS;
+      $('subjectGrid').innerHTML=subjects.map(subject=>{
+        const count=state.classes.filter(c=>matchesSubject(c,subject)).length;
+        const historyCount=state.classes.filter(c=>matchesSubject(c,subject)&&statusOf(c).phase==="ended").length;
+        return `<button type="button" class="subject-card" data-subject-id="${esc(subject.id)}"><span class="subject-icon"><i class="${esc(subject.icon||subjectIcon(subject.displayName||subject.name))}"></i></span><span class="subject-copy"><strong>${esc(subject.displayName||subject.name||"Subject")}</strong><span>${count} ${count===1?"class":"classes"} · ${historyCount} previous</span></span><i class="ri-arrow-right-s-line subject-arrow"></i></button>`;
+      }).join("");
+      $('subjectsEmpty').classList.toggle('hidden',subjects.length>0);
+      document.querySelectorAll('[data-subject-id]').forEach(btn=>btn.addEventListener('click',()=>openSubjectHistory(btn.dataset.subjectId)));
+    }
+    function openSubjectHistory(id){
+      const subject=state.subjects.find(s=>String(s.id)===String(id))||FALLBACK_SUBJECTS.find(s=>s.id===id);
+      if(!subject)return;
+      state.selectedSubjectId=id;
+      $('historySubjectName').textContent=subject.displayName||subject.name||"Previous Classes";
+      $('historySubtitle').textContent="All previous classes for this subject, newest first.";
+      $('subjectHistorySection').classList.remove('hidden');renderSelectedHistory();$('subjectHistorySection').scrollIntoView({behavior:'smooth',block:'start'});
+    }
+    function renderSelectedHistory(){
+      const subject=state.subjects.find(s=>String(s.id)===String(state.selectedSubjectId))||FALLBACK_SUBJECTS.find(s=>s.id===state.selectedSubjectId);
+      if(!subject)return;
+      const items=state.classes.filter(c=>matchesSubject(c,subject)&&statusOf(c).phase==='ended').sort((a,b)=>startMillis(b)-startMillis(a));
+      $('subjectHistory').innerHTML=items.map(createHistoryCard).join("");$('historyEmpty').classList.toggle('hidden',items.length>0);
+    }
+    $('closeHistory').addEventListener('click',()=>{$('subjectHistorySection').classList.add('hidden');state.selectedSubjectId=null;});
+    $('datePicker').addEventListener('change',e=>{if(e.target.value){state.selectedDate=e.target.value;renderSelectedDate();}});
+    $('previousDate').addEventListener('click',()=>{state.selectedDate=shiftISO(state.selectedDate,-1);renderSelectedDate();});
+    $('nextDate').addEventListener('click',()=>{state.selectedDate=shiftISO(state.selectedDate,1);renderSelectedDate();});
+    $('retryButton').addEventListener('click',()=>window.location.reload());
+
+    document.addEventListener('click',event=>{
+      const join=event.target.closest('[data-join]');if(join){openClass(join.dataset.join,'live');return;}
+      const watch=event.target.closest('[data-recording]');if(watch){openClass(watch.dataset.recording,'recording');}
+    });
+
+    function createClassCard(item){
+      const s=statusOf(item);const action=actionMarkup(item,s);
+      return `<article class="live-card ${s.phase==='live'?'live-now':''}"><div class="live-card-top"><div><h3 class="live-card-title">${esc(item.title||item.classTitle||'Live Class')}</h3><div class="live-card-subject">${esc(subjectName(item))}${item.chapterName?' · '+esc(item.chapterName):''}</div></div><span class="status-pill ${s.phase}">${esc(s.label)}</span></div><div class="class-details"><span><i class="ri-time-line"></i> ${esc(timeRange(item))}</span><span><i class="ri-user-line"></i> ${esc(item.teacherName||item.facultyName||item.teacher||'Faculty')}</span></div><div class="class-action-row"><span class="provider-label">${esc(providerName(item))}</span><div>${action}</div></div></article>`;
+    }
+    function createDateCard(item){
+      const s=statusOf(item);return `<article class="date-class-card"><div class="date-class-main"><div class="date-class-title">${esc(item.title||item.classTitle||'Live Class')}</div><div class="date-class-info">${esc(subjectName(item))}${item.chapterName?' · '+esc(item.chapterName):''}<br>${esc(item.teacherName||item.facultyName||'Faculty')} · ${esc(timeRange(item))}</div></div><div class="date-class-action">${actionMarkup(item,s)}</div></article>`;
+    }
+    function createHistoryCard(item){
+      const available=hasRecording(item);return `<article class="history-card"><div><div class="history-title">${esc(item.title||item.classTitle||'Live Class')}</div><div class="history-info">${esc(item.chapterName||subjectName(item))}<br>${esc(item.teacherName||item.facultyName||'Faculty')} · ${esc(historyDate(item))}</div></div>${available?`<button type="button" class="history-watch" data-recording="${esc(item.id)}">WATCH RECORDING</button>`:`<span class="history-no-recording">NO RECORDING</span>`}</article>`;
+    }
+    function actionMarkup(item,s){
+      if(s.phase==='live')return `<button type="button" class="action-button live-button" data-join="${esc(item.id)}">JOIN LIVE CLASS</button>`;
+      if(s.phase==='upcoming')return `<button type="button" class="action-button" disabled>UPCOMING</button>`;
+      if(s.phase==='cancelled')return `<span class="provider-label">Class cancelled</span>`;
+      if(hasRecording(item))return `<button type="button" class="action-button watch-button" data-recording="${esc(item.id)}">WATCH RECORDING</button>`;
+      return `<span class="provider-label">Class completed</span>`;
+    }
+    function openClass(id,mode){
+      const item=state.classes.find(c=>c.id===id);if(!item){showToast('Class details could not be found.');return;}
+      if(mode==='live' && statusOf(item).phase!=='live'){showToast('This class is not live right now.');return;}
+      if(mode==='recording' && !hasRecording(item)){showToast('Recording is not available yet.');return;}
+      const params=new URLSearchParams({classId:id,liveClassId:id,mode});
+      window.location.href=`../livevideoplayer/?${params.toString()}`;
+    }
+
+    function statusOf(item){
+      const status=norm(item.status||item.classStatus||'');if(['cancelled','canceled'].includes(status)||item.cancelled===true)return{phase:'cancelled',label:'CANCELLED'};
+      const start=startMillis(item);if(!start)return{phase:'upcoming',label:'SCHEDULED'};
+      const end=endMillis(item)||start+60*60*1000;const now=Date.now();
+      if(now<start)return{phase:'upcoming',label:'UPCOMING'};
+      if(now<end)return{phase:'live',label:'LIVE NOW'};
+      return{phase:'ended',label:hasRecording(item)?'RECORDING AVAILABLE':'COMPLETED'};
+    }
+    function hasRecording(item){return Boolean(item.recordingUrl||item.recordedUrl||item.replayUrl||item.recordedVideoUrl||item.recordingVideoUrl||item.recordingContentId||item.recordingPlaybackUrl||(item.videoUrl&&norm(item.liveType)==='recorded_video'));}
+    function providerName(item){const t=norm(item.liveType||item.provider||'');if(t.includes('zoom'))return'ZOOM CLASSROOM';if(t.includes('youtube'))return'YOUTUBE LIVE';if(t.includes('record'))return'RECORDED CLASS';return'ZENOVA LIVE';}
+    function subjectName(item){return item.subjectName||item.subjectTitle||item.subject||state.subjects.find(s=>String(s.id)===String(item.subjectId))?.displayName||'Class';}
+    function matchesSubject(item,subject){
+      const itemId=String(item.subjectId||item.subjectID||item.subject_id||'');const id=String(subject.id||'');if(itemId&&id&&!id.startsWith('subject-')&&itemId===id)return true;
+      const candidates=[item.subjectName,item.subjectTitle,item.subject,item.subject_name];const subjectNames=[subject.displayName,subject.name,subject.subjectName,...(subject.aliases||[])].filter(Boolean).map(norm);
+      return candidates.filter(Boolean).some(v=>subjectNames.includes(norm(v)) || subjectNames.some(n=>n&&norm(v).includes(n)));
+    }
+    function belongsToCourse(item,course){
+      if(!course)return false;
+      const ids=[item.courseId,item.crmCourseId,item.batchId,item.courseID,item.course_id].filter(v=>v!==undefined&&v!==null&&String(v)!=='').map(String);
+      if(ids.length)return ids.includes(String(course.id));
+      const classA=normClass(item.courseClass||item.className||item.standard||item.targetClass||'');const classB=normClass(course.className||course.courseClass||course.targetClass||course.standard||course.grade||course.crmClass||'');
+      const nameA=norm(item.courseName||item.batchName||item.courseTitle||'');const nameB=norm(course.courseName||course.name||course.title||'');
+      return Boolean((classA&&classB&&classA===classB)||(nameA&&nameB&&nameA===nameB));
+    }
+    function classesForDate(date){return state.classes.filter(c=>classDate(c)===date).sort((a,b)=>startMillis(a)-startMillis(b));}
+    function startMillis(item){
+      const direct=toMillis(item.startDateTime||item.scheduledStartAt||item.startAt||item.startTimestamp);if(direct)return direct;
+      const date=item.scheduledDate||item.date||item.classDate||item.startDate||'';const time=item.scheduledTime||item.startTime||item.time||'';return parseLocalDateTime(date,time);
+    }
+    function endMillis(item){
+      const direct=toMillis(item.endDateTime||item.scheduledEndAt||item.endAt||item.endTimestamp);if(direct)return direct;
+      const date=item.endDate||item.scheduledDate||item.date||item.classDate||'';const time=item.endTime||item.scheduledEndTime||'';const parsed=parseLocalDateTime(date,time);if(parsed)return parsed;
+      const duration=Number(item.durationMinutes||item.duration||item.classDurationMinutes||0);return duration>0?startMillis(item)+duration*60000:0;
+    }
+    function toMillis(value){if(!value)return 0;if(typeof value.toMillis==='function')return value.toMillis();if(typeof value.seconds==='number')return value.seconds*1000;if(typeof value==='number')return value>1e12?value:value*1000;if(typeof value==='string'){const n=Date.parse(value);return Number.isFinite(n)?n:0;}return 0;}
+    function parseLocalDateTime(date,time){if(!date)return 0;if(typeof date==='object'&&date.seconds)return date.seconds*1000;const d=String(date).slice(0,10);const t=String(time||'00:00').slice(0,5);const result=Date.parse(`${d}T${t}:00+05:30`);return Number.isFinite(result)?result:0;}
+    function classDate(item){const ms=startMillis(item);return ms?new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Kolkata',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date(ms)):'';}
+    function timeRange(item){const start=startMillis(item);if(!start)return'Time not set';const end=endMillis(item)||start+60*60000;return `${formatTime(start)} – ${formatTime(end)}`;}
+    function formatTime(ms){return new Intl.DateTimeFormat('en-IN',{timeZone:'Asia/Kolkata',hour:'numeric',minute:'2-digit',hour12:true}).format(new Date(ms));}
+    function historyDate(item){const ms=startMillis(item);return ms?new Intl.DateTimeFormat('en-IN',{timeZone:'Asia/Kolkata',weekday:'short',day:'numeric',month:'short',year:'numeric',hour:'numeric',minute:'2-digit',hour12:true}).format(new Date(ms)):'Date unavailable';}
+    function todayISO(){return new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Kolkata',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());}
+    function formatLongDate(s){if(!s)return'';const d=new Date(`${s}T12:00:00+05:30`);return new Intl.DateTimeFormat('en-IN',{timeZone:'Asia/Kolkata',weekday:'short',day:'numeric',month:'short',year:'numeric'}).format(d);}
+    function shiftISO(s,amount){const [y,m,d]=s.split('-').map(Number);const dt=new Date(Date.UTC(y,m-1,d+amount,6));return `${dt.getUTCFullYear()}-${String(dt.getUTCMonth()+1).padStart(2,'0')}-${String(dt.getUTCDate()).padStart(2,'0')}`;}
+    function norm(v){return String(v??'').trim().toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();}
+    function normClass(v){const n=norm(v).replace(/\s/g,'');if(['10','10th','class10','10thstandard'].includes(n))return'10th';if(['9','9th','class9','9thstandard'].includes(n))return'9th';if(n.includes('1stpuc')||n.includes('puc1'))return'1stpuc';if(n.includes('2ndpuc')||n.includes('puc2'))return'2ndpuc';return n;}
+    function esc(v){return String(v??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;');}
+    function showLoading(){$('loadingState').classList.remove('hidden');$('errorState').classList.add('hidden');$('liveApp').classList.add('hidden');}
+    function showApp(){$('loadingState').classList.add('hidden');$('errorState').classList.add('hidden');$('liveApp').classList.remove('hidden');}
+    function showError(message){$('loadingState').classList.add('hidden');$('liveApp').classList.add('hidden');$('errorState').classList.remove('hidden');$('errorText').textContent=message;}
+    let toastTimer;function showToast(message){const el=$('toast');el.textContent=message;el.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),2600);}
+    function startClock(){if(state.clock)clearInterval(state.clock);state.clock=setInterval(()=>{renderToday();renderSelectedDate();renderSubjects();if(state.selectedSubjectId&&!$('subjectHistorySection').classList.contains('hidden'))renderSelectedHistory();},15000);}
+    window.addEventListener('beforeunload',()=>{if(state.unsubscribeClasses)state.unsubscribeClasses();if(state.unsubscribeSubjects)state.unsubscribeSubjects();if(state.clock)clearInterval(state.clock);});
+  </script>
+</body>
+</html>
