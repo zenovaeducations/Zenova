@@ -1,0 +1,1138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#F7F9FC">
+<title>Zenova | Live Classroom</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+:root{
+ --bg:#F7F9FC;
+ --white:#FFFFFF;
+ --soft:#F0F5FB;
+ --blue:#3978E8;
+ --dark:#245FC9;
+ --pale:#EAF2FF;
+ --ink:#172338;
+ --muted:#7B8799;
+ --line:#E7EDF5;
+ --green:#159B78;
+ --greenbg:#E8F8F2;
+ --red:#E34D59;
+ --redbg:#FFF0F1;
+ --shadow:0 8px 30px rgba(29,54,91,.055);
+ --radius:16px;
+}
+*{box-sizing:border-box}
+body{
+ margin:0;background:var(--bg);color:var(--ink);
+ font-family:Inter,system-ui,sans-serif;
+ font-size:13px;-webkit-font-smoothing:antialiased
+}
+button,input,select{font:inherit}
+button{cursor:pointer}
+button:focus-visible{outline:3px solid #a8c7ff;outline-offset:2px}
+.hidden{display:none!important}
+.app{max-width:1450px;margin:auto;padding:25px}
+.header{
+ display:flex;align-items:center;justify-content:space-between;
+ gap:15px;margin-bottom:27px
+}
+.brand{display:flex;align-items:center;gap:12px}
+.logo{
+ width:44px;height:44px;background:var(--blue);color:white;
+ display:grid;place-items:center;border-radius:14px;
+ font-size:22px;font-weight:800
+}
+.brand h1{font-size:19px;margin:0;letter-spacing:-.5px}
+.brand p{font-size:10px;color:var(--muted);margin:4px 0 0;letter-spacing:1px;font-weight:700}
+.header-right{display:flex;align-items:center;gap:10px}
+.profile{
+ width:37px;height:37px;background:var(--pale);
+ color:var(--dark);border-radius:50%;display:grid;place-items:center;font-weight:800
+}
+.eyebrow{font-size:10px;letter-spacing:1.2px;font-weight:800;color:var(--blue)}
+.page-title{font-size:25px;letter-spacing:-1px;margin:8px 0}
+.subtitle{color:var(--muted);font-size:12px;line-height:1.7;margin:0}
+.section{margin-top:29px}
+.section-head{
+ display:flex;justify-content:space-between;align-items:center;
+ gap:12px;margin-bottom:14px
+}
+.section-head h2{font-size:16px;margin:0;letter-spacing:-.3px}
+.section-head p{font-size:10px;color:var(--muted);margin:5px 0 0}
+.btn{
+ border:0;background:var(--blue);color:white;padding:11px 15px;
+ border-radius:10px;font-weight:750;font-size:11px
+}
+.btn:hover{background:var(--dark)}
+.btn-light{background:var(--pale);color:var(--dark)}
+.btn-light:hover{background:#dce9ff}
+.btn-white{background:white;color:var(--ink);border:1px solid var(--line)}
+.btn-small{padding:8px 11px;font-size:10px}
+.panel{
+ background:white;border:1px solid var(--line);
+ border-radius:var(--radius);padding:18px;box-shadow:var(--shadow)
+}
+.pill{
+ display:inline-flex;align-items:center;gap:6px;
+ padding:5px 9px;border-radius:30px;font-size:9px;font-weight:800
+}
+.live-pill{background:var(--redbg);color:var(--red)}
+.scheduled-pill{background:var(--pale);color:var(--dark)}
+.completed-pill{background:#edf1f6;color:#637187}
+.recorded-pill{background:var(--greenbg);color:var(--green)}
+.pulse{
+ width:7px;height:7px;background:var(--red);
+ border-radius:50%;animation:pulse 1s infinite
+}
+@keyframes pulse{50%{opacity:.2;box-shadow:0 0 0 5px #e34d5930}}
+/* Live hero */
+.live-hero{
+ display:grid;grid-template-columns:minmax(0,1.35fr) minmax(280px,.65fr);
+ background:white;border:1px solid var(--line);
+ border-radius:18px;overflow:hidden;box-shadow:var(--shadow)
+}
+.hero-image{
+ min-height:300px;position:relative;background:#dce7f5;
+ overflow:hidden
+}
+.hero-image img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
+.hero-image:after{
+ content:"";position:absolute;inset:40% 0 0;
+ background:linear-gradient(transparent,#14223d99)
+}
+.hero-label{position:absolute;top:17px;left:17px;z-index:2}
+.hero-content{
+ padding:26px;display:flex;flex-direction:column;
+ justify-content:center;align-items:flex-start
+}
+.hero-content h2{font-size:23px;line-height:1.35;margin:13px 0 8px;letter-spacing:-.6px}
+.hero-content p{color:var(--muted);font-size:11px;line-height:1.8;margin:4px 0}
+.hero-meta{display:flex;gap:15px;flex-wrap:wrap;margin:14px 0;color:var(--muted);font-size:10px}
+.hero-content .btn{margin-top:10px;padding:13px 20px}
+.hero-empty{
+ padding:40px 20px;min-height:260px;
+ display:flex;flex-direction:column;justify-content:center;align-items:center;
+ text-align:center
+}
+.hero-empty h3{font-size:17px;margin:10px 0 5px}
+.hero-empty p{color:var(--muted);font-size:11px;line-height:1.7}
+/* Upcoming cards */
+.upcoming-grid{
+ display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px
+}
+.upcoming-card{
+ border:1px solid var(--line);background:white;
+ border-radius:14px;overflow:hidden;transition:.2s
+}
+.upcoming-card:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+.thumb{width:100%;aspect-ratio:16/9;object-fit:cover;background:var(--soft);display:block}
+.upcoming-body{padding:13px}
+.upcoming-body h3{font-size:12px;line-height:1.5;margin:9px 0 5px}
+.upcoming-body p{font-size:10px;color:var(--muted);margin:5px 0}
+.upcoming-foot{
+ display:flex;align-items:center;justify-content:space-between;
+ border-top:1px solid var(--line);padding-top:10px;margin-top:12px;gap:5px
+}
+/* Calendar */
+.calendar-layout{
+ display:grid;grid-template-columns:minmax(0,1.15fr) minmax(260px,.85fr);gap:15px
+}
+.calendar-head{
+ display:flex;align-items:center;justify-content:space-between;margin-bottom:16px
+}
+.calendar-head strong{font-size:15px}
+.calendar-controls{display:flex;gap:5px}
+.icon-btn{
+ width:32px;height:32px;border:1px solid var(--line);
+ background:white;border-radius:9px
+}
+.calendar-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px}
+.day-name{text-align:center;color:var(--muted);font-size:9px;font-weight:800;padding:8px 2px}
+.day{
+ min-height:65px;border:1px solid var(--line);
+ background:white;border-radius:9px;text-align:left;padding:7px;color:var(--ink)
+}
+.day:hover{border-color:var(--blue)}
+.day.today{background:var(--pale);border-color:var(--blue)}
+.day.selected{border:2px solid var(--blue);background:#f6f9ff}
+.day.other{opacity:.35}
+.day b{font-size:11px}
+.dots{display:flex;gap:3px;margin-top:8px}
+.dots i{width:6px;height:6px;border-radius:50%;background:var(--blue)}
+.dots i.live{background:var(--red)}
+.dots i.recorded{background:var(--green)}
+.dots i.completed{background:#8b97a8}
+.legend{display:flex;gap:13px;flex-wrap:wrap;margin-top:15px}
+.legend span{font-size:9px;color:var(--muted)}
+.legend i{width:7px;height:7px;border-radius:50%;display:inline-block;margin-right:4px}
+.event-list{display:flex;flex-direction:column;gap:9px}
+.event{
+ padding:12px;border:1px solid var(--line);
+ border-radius:11px;cursor:pointer
+}
+.event:hover{border-color:var(--blue);background:#f8fbff}
+.event h4{font-size:11px;margin:8px 0 5px}
+.event p{font-size:10px;color:var(--muted);margin:4px 0}
+/* Six subjects */
+.subject-grid{
+ display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px
+}
+.subject-card{
+ background:white;border:1px solid var(--line);
+ border-radius:14px;overflow:hidden;cursor:pointer;transition:.2s
+}
+.subject-card:hover{border-color:#b7cef5;transform:translateY(-2px);box-shadow:var(--shadow)}
+.subject-image{
+ width:100%;aspect-ratio:16/9;object-fit:cover;background:var(--soft);display:block
+}
+.subject-body{padding:13px}
+.subject-body h3{font-size:13px;margin:0 0 5px}
+.subject-body p{font-size:10px;color:var(--muted);margin:0}
+.subject-body .arrow{color:var(--blue);float:right;font-weight:800}
+/* Library */
+.library-toolbar{display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin-bottom:15px}
+.search{
+ flex:1;min-width:180px;padding:11px;border:1px solid var(--line);
+ border-radius:10px
+}
+.chapter-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.chapter-card{
+ border:1px solid var(--line);padding:15px;border-radius:12px;
+ background:white;text-align:left
+}
+.chapter-card:hover{border-color:var(--blue);background:#f8fbff}
+.chapter-card strong{display:block;font-size:11px;margin-bottom:5px}
+.chapter-card span{font-size:10px;color:var(--muted)}
+.lecture-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}
+.lecture-card{
+ border:1px solid var(--line);border-radius:13px;
+ overflow:hidden;background:white
+}
+.lecture-card .lecture-body{padding:12px}
+.lecture-body h4{font-size:11px;line-height:1.5;margin:7px 0}
+.lecture-body p{font-size:9px;color:var(--muted);margin:5px 0}
+.play-overlay{position:relative}
+.play-overlay:after{
+ content:"▶";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+ background:#172338bd;color:white;border-radius:50%;width:38px;height:38px;
+ display:grid;place-items:center;font-size:13px
+}
+.back-link{border:0;background:none;color:var(--blue);font-weight:750;padding:0;margin-bottom:15px;font-size:11px}
+.empty{
+ text-align:center;padding:35px 15px;color:var(--muted);
+ font-size:11px;line-height:1.8
+}
+.empty-icon{font-size:30px;margin-bottom:8px}
+.breadcrumb{font-size:10px;color:var(--muted);margin-bottom:14px}
+.breadcrumb button{border:0;background:none;color:var(--blue);padding:0;font-size:10px}
+.footer{
+ margin-top:35px;padding:20px 0;border-top:1px solid var(--line);
+ display:flex;justify-content:space-between;gap:10px;
+ color:var(--muted);font-size:10px
+}
+#toast{
+ position:fixed;bottom:20px;right:20px;background:var(--ink);
+ color:white;padding:13px 17px;border-radius:10px;
+ z-index:100;display:none;font-size:11px
+}
+@media(max-width:850px){
+ .live-hero{grid-template-columns:1fr}
+ .hero-image{min-height:230px}
+ .upcoming-grid,.lecture-grid{grid-template-columns:repeat(2,1fr)}
+ .calendar-layout{grid-template-columns:1fr}
+}
+@media(max-width:550px){
+ .app{padding:14px}
+ .brand h1{font-size:16px}
+ .page-title{font-size:22px}
+ .upcoming-grid,.subject-grid,.lecture-grid,.chapter-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .hero-content{padding:19px}
+ .hero-content h2{font-size:19px}
+ .day{min-height:49px;padding:5px}
+ .day-name{font-size:8px}
+ .footer{flex-direction:column}
+}
+</style>
+</head>
+
+<body>
+
+<main class="app">
+
+<header class="header">
+ <div class="brand">
+  <div class="logo">Z</div>
+  <div>
+   <h1>Zenova Educations</h1>
+   <p>YOUR LEARNING CLASSROOM</p>
+  </div>
+ </div>
+ <div class="header-right">
+  <span id="studentName" style="font-size:11px;color:var(--muted)">Welcome</span>
+  <div class="profile" id="profileInitial">S</div>
+ </div>
+</header>
+
+<section>
+ <div class="eyebrow">YOUR CLASSROOM</div>
+ <h1 class="page-title">Live Classes</h1>
+ <p class="subtitle">Attend live lessons, follow your timetable and revisit recorded classes.</p>
+</section>
+
+<!-- LIVE NOW -->
+<section class="section">
+ <div class="section-head">
+  <div>
+   <h2>Happening Now</h2>
+   <p>Join your ongoing classroom session.</p>
+  </div>
+  <span class="pill live-pill"><span class="pulse"></span> LIVE NOW</span>
+ </div>
+
+ <div id="liveHero" class="live-hero">
+  <div class="hero-empty">
+   <div class="empty-icon">◷</div>
+   <h3>Checking live classes...</h3>
+   <p>Your live classroom will appear here.</p>
+  </div>
+ </div>
+</section>
+
+<!-- UPCOMING -->
+<section class="section">
+ <div class="section-head">
+  <div>
+   <h2>Upcoming Classes</h2>
+   <p>Prepare for your next learning session.</p>
+  </div>
+  <span class="eyebrow" id="upcomingCount">0 CLASSES</span>
+ </div>
+ <div id="upcomingGrid" class="upcoming-grid">
+  <div class="empty">Loading classes...</div>
+ </div>
+</section>
+
+<!-- CALENDAR -->
+<section class="section">
+ <div class="section-head">
+  <div>
+   <h2>Class Calendar</h2>
+   <p>Explore your classes by date.</p>
+  </div>
+ </div>
+
+ <div class="calendar-layout">
+  <div class="panel">
+   <div class="calendar-head">
+    <strong id="monthLabel"></strong>
+    <div class="calendar-controls">
+     <button class="icon-btn" id="prevMonth">‹</button>
+     <button class="btn btn-white btn-small" id="todayBtn">Today</button>
+     <button class="icon-btn" id="nextMonth">›</button>
+    </div>
+   </div>
+   <div id="calendarGrid" class="calendar-grid"></div>
+   <div class="legend">
+    <span><i style="background:var(--red)"></i>Live</span>
+    <span><i style="background:var(--blue)"></i>Scheduled</span>
+    <span><i style="background:var(--green)"></i>Recorded</span>
+    <span><i style="background:#8b97a8"></i>Completed</span>
+   </div>
+  </div>
+
+  <div class="panel">
+   <div class="section-head">
+    <div>
+     <h2 id="dayTitle">Today's Classes</h2>
+     <p>Classes for the selected date.</p>
+    </div>
+   </div>
+   <div id="dayEvents" class="event-list"></div>
+  </div>
+ </div>
+</section>
+
+<!-- RECORDED SUBJECTS -->
+<section class="section">
+ <div class="section-head">
+  <div>
+   <h2>Explore Recorded Classes</h2>
+   <p>Choose a subject and continue learning at your own pace.</p>
+  </div>
+ </div>
+ <div id="subjectGrid" class="subject-grid"></div>
+</section>
+
+<!-- RECORDING LIBRARY -->
+<section class="section hidden" id="librarySection">
+ <div class="panel">
+  <button class="back-link" id="backSubjects">← All Subjects</button>
+  <div class="breadcrumb" id="breadcrumb"></div>
+
+  <div id="chapterView">
+   <div class="section-head">
+    <div>
+     <div class="eyebrow">SUBJECT LIBRARY</div>
+     <h2 id="selectedSubjectTitle">Mathematics</h2>
+     <p>Select a chapter to explore its recorded lectures.</p>
+    </div>
+   </div>
+   <div class="chapter-grid" id="chapterGrid"></div>
+  </div>
+
+  <div id="lectureView" class="hidden">
+   <button class="back-link" id="backChapters">← Back to Chapters</button>
+   <div class="section-head">
+    <div>
+     <div class="eyebrow">RECORDED LECTURES</div>
+     <h2 id="selectedChapterTitle"></h2>
+     <p>Choose a lesson to start watching.</p>
+    </div>
+   </div>
+   <div class="library-toolbar">
+    <input class="search" id="lectureSearch" placeholder="Search lectures...">
+   </div>
+   <div class="lecture-grid" id="lectureGrid"></div>
+  </div>
+ </div>
+</section>
+
+<footer class="footer">
+ <span>© 2026 Zenova Educations</span>
+ <span>Learn · Practice · Achieve</span>
+</footer>
+
+</main>
+
+<div id="toast"></div>
+
+<script type="module">
+
+import {auth,db} from '../../firebase/firebase-config.js';
+
+import {
+ onAuthStateChanged
+} from 'https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js';
+
+import {
+ collection,doc,getDoc,getDocs,query,where,onSnapshot
+} from 'https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js';
+
+
+/* ==============================================
+   CONFIGURATION
+============================================== */
+
+const LIVE_PLAYER="../../home/livevideoplayer/";
+const VIDEO_PLAYER="../../home/videoplayer/";
+
+const ACTIVE_SESSION_MS=75000;
+const TIME_ZONE="Asia/Kolkata";
+
+let student=null;
+let studentData={};
+
+let classes=[];
+let courses=[];
+let subjects=[];
+let chapters=[];
+let recordings=[];
+
+let subscriptions=[];
+let selectedDate=localDate(new Date());
+let currentMonth=new Date();
+
+let selectedSubject=null;
+let selectedChapter=null;
+
+const $=id=>document.getElementById(id);
+
+
+/* ==============================================
+   SUBJECT CONFIGURATION
+============================================== */
+
+const SUBJECTS=[
+ {id:"mathematics",name:"Mathematics",aliases:["math","maths"],image:"https://placehold.co/640x360/EAF2FF/3978E8?text=Mathematics"},
+ {id:"science",name:"Science",aliases:[],image:"https://placehold.co/640x360/EAF2FF/3978E8?text=Science"},
+ {id:"social-science",name:"Social Science",aliases:["social"],image:"https://placehold.co/640x360/EAF2FF/3978E8?text=Social+Science"},
+ {id:"english",name:"English",aliases:[],image:"https://placehold.co/640x360/EAF2FF/3978E8?text=English"},
+ {id:"kannada",name:"Kannada",aliases:[],image:"https://placehold.co/640x360/EAF2FF/3978E8?text=Kannada"},
+ {id:"hindi",name:"Hindi",aliases:[],image:"https://placehold.co/640x360/EAF2FF/3978E8?text=Hindi"}
+];
+
+
+/* ==============================================
+   HELPERS
+============================================== */
+
+function esc(v){
+ return String(v??"").replace(/[&<>"']/g,c=>({
+  "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+ })[c]);
+}
+
+function localDate(d){
+ return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+}
+
+function toDate(v){
+ if(!v)return null;
+ if(v.toDate)return v.toDate();
+ const d=new Date(v);
+ return Number.isNaN(d.getTime())?null:d;
+}
+
+function parseStart(c){
+ const date=c.scheduledDate||c.date;
+ const time=c.scheduledTime||c.time||"00:00";
+ if(!date)return null;
+ const d=new Date(`${date}T${time}:00+05:30`);
+ return Number.isNaN(d.getTime())?null:d;
+}
+
+function parseEnd(c){
+ const explicit=toDate(c.endAt);
+ if(explicit)return explicit;
+ const start=parseStart(c);
+ if(!start)return null;
+ return new Date(start.getTime()+(Number(c.duration)||60)*60000);
+}
+
+function formatDate(d){
+ return d?new Date(d).toLocaleDateString("en-IN",{
+  day:"numeric",month:"short",year:"numeric",timeZone:TIME_ZONE
+ }):"";
+}
+
+function formatTime(d){
+ return d?new Date(d).toLocaleTimeString("en-IN",{
+  hour:"2-digit",minute:"2-digit",timeZone:TIME_ZONE
+ }):"";
+}
+
+function courseName(c){
+ return c.courseName||c.title||c.name||c.batchName||"Course";
+}
+
+function classTitle(c){
+ return c.title||c.classTitle||c.name||"Live Class";
+}
+
+function sourceType(c){
+ return c.sourceType||c.liveType||c.mode||"YOUTUBE_LIVE";
+}
+
+function getSourceURL(c){
+ const type=sourceType(c);
+ if(type==="ZOOM")return c.zoomJoinUrl||c.studentJoinUrl||c.joinUrl||"";
+ return c.sourceUrl||c.studentJoinUrl||c.joinUrl||c.videoUrl||c.playbackUrl||"";
+}
+
+function getStatus(c){
+ if(c.cancelled||String(c.status||"").toLowerCase()==="cancelled")return "cancelled";
+ if(c.published===false||String(c.publicationStatus||"").toLowerCase()==="draft")return "draft";
+
+ const now=new Date();
+ const start=parseStart(c);
+ const end=parseEnd(c);
+
+ if(c.manualEnded||c.ended||String(c.status||"").toLowerCase()==="ended"){
+  return c.recordingUrl?"recorded":"completed";
+ }
+
+ if(start&&now<start)return "scheduled";
+ if(start&&end&&now>=start&&now<end)return "live";
+
+ if(end&&now>=end)return c.recordingUrl?"recorded":"completed";
+
+ return "scheduled";
+}
+
+function statusHTML(status){
+ const labels={
+  live:'<span class="pill live-pill"><span class="pulse"></span>LIVE NOW</span>',
+  scheduled:'<span class="pill scheduled-pill">SCHEDULED</span>',
+  recorded:'<span class="pill recorded-pill">RECORDED</span>',
+  completed:'<span class="pill completed-pill">COMPLETED</span>'
+ };
+ return labels[status]||"";
+}
+
+function toast(msg){
+ $("toast").textContent=msg;
+ $("toast").style.display="block";
+ setTimeout(()=>$("toast").style.display="none",3000);
+}
+
+function studentCourseId(){
+ return studentData.courseId||studentData.batchId||studentData.activeCourseId||"";
+}
+
+function hasCourseAccess(c){
+ const courseId=studentCourseId();
+ const access=String(c.accessType||"PAID").toUpperCase();
+
+ if(access==="ALL"||access==="FREE")return true;
+
+ if(!courseId)return false;
+
+ return String(c.courseId||"")===String(courseId);
+}
+
+function classThumbnail(c){
+ return c.thumbnailUrl||c.thumbnail||"https://placehold.co/640x360/EAF2FF/3978E8?text=Zenova+Class";
+}
+
+function safePlayerURL(path,id){
+ return path+"?liveClassId="+encodeURIComponent(id);
+}
+
+
+/* ==============================================
+   LIVE CLASS ACCESS
+============================================== */
+
+function joinClass(c){
+ if(!hasCourseAccess(c)){
+  toast("You do not have access to this class.");
+  return;
+ }
+
+ if(getStatus(c)!=="live"){
+  toast("This class is not live currently.");
+  return;
+ }
+
+ if(!getSourceURL(c)){
+  toast("The live video source is not configured.");
+  return;
+ }
+
+ window.location.href=safePlayerURL(LIVE_PLAYER,c.id);
+}
+
+function openRecording(c){
+ if(!hasCourseAccess(c)){
+  toast("You do not have access to this recording.");
+  return;
+ }
+
+ if(!c.recordingUrl){
+  toast("Recording is not available yet.");
+  return;
+ }
+
+ window.location.href=safePlayerURL(VIDEO_PLAYER,c.id);
+}
+
+
+/* ==============================================
+   LIVE HERO
+============================================== */
+
+function renderHero(){
+ const live=classes.filter(c=>getStatus(c)==="live"&&hasCourseAccess(c))
+  .sort((a,b)=>(parseStart(a)?.getTime()||0)-(parseStart(b)?.getTime()||0));
+
+ const c=live[0];
+
+ if(!c){
+  $("liveHero").innerHTML=`
+   <div class="hero-empty" style="grid-column:1/-1">
+    <div class="empty-icon">◷</div>
+    <h3>No live classes at the moment</h3>
+    <p>Your next scheduled class will appear in Upcoming Classes.<br>Keep checking your timetable.</p>
+   </div>`;
+  return;
+ }
+
+ const start=parseStart(c);
+ const end=parseEnd(c);
+
+ $("liveHero").innerHTML=`
+  <div class="hero-image">
+   <img src="${esc(classThumbnail(c))}" alt="Class thumbnail">
+   <div class="hero-label">
+    <span class="pill live-pill"><span class="pulse"></span> LIVE NOW</span>
+   </div>
+  </div>
+  <div class="hero-content">
+   <div class="eyebrow">${esc(c.subjectName||"LIVE CLASS")} · ${esc(c.chapterName||"")}</div>
+   <h2>${esc(classTitle(c))}</h2>
+   <p>Faculty: ${esc(c.teacherName||c.facultyName||"Zenova Faculty")}</p>
+   <div class="hero-meta">
+    <span>◷ ${esc(formatTime(start))} – ${esc(formatTime(end))}</span>
+    <span>▣ ${Number(c.duration)||60} minutes</span>
+   </div>
+   <button class="btn" id="joinLive">▶ Join Live Class</button>
+  </div>
+ `;
+
+ $("joinLive").onclick=()=>joinClass(c);
+}
+
+
+/* ==============================================
+   UPCOMING CLASSES
+============================================== */
+
+function renderUpcoming(){
+ const now=Date.now();
+
+ const upcoming=classes.filter(c=>
+  getStatus(c)==="scheduled"&&
+  hasCourseAccess(c)&&
+  (parseStart(c)?.getTime()||0)>now
+ ).sort((a,b)=>parseStart(a)-parseStart(b)).slice(0,6);
+
+ $("upcomingCount").textContent=upcoming.length+" CLASSES";
+
+ if(!upcoming.length){
+  $("upcomingGrid").innerHTML='<div class="empty" style="grid-column:1/-1">No upcoming classes scheduled. Check back soon!</div>';
+  return;
+ }
+
+ $("upcomingGrid").innerHTML=upcoming.map(c=>{
+  const start=parseStart(c);
+  return `
+   <article class="upcoming-card">
+    <img class="thumb" src="${esc(classThumbnail(c))}" alt="" onerror="this.src='https://placehold.co/640x360/EAF2FF/3978E8?text=Zenova'">
+    <div class="upcoming-body">
+     ${statusHTML("scheduled")}
+     <h3>${esc(classTitle(c))}</h3>
+     <p>${esc(c.subjectName||"")} · ${esc(c.chapterName||"")}</p>
+     <p>Faculty: ${esc(c.teacherName||c.facultyName||"Zenova Faculty")}</p>
+     <div class="upcoming-foot">
+      <span style="font-size:10px;color:var(--muted)">${esc(formatDate(start))} · ${esc(formatTime(start))}</span>
+      <span style="font-size:9px;color:var(--dark);font-weight:800">UPCOMING</span>
+     </div>
+    </div>
+   </article>`;
+ }).join("");
+}
+
+
+/* ==============================================
+   CALENDAR
+============================================== */
+
+function renderCalendar(){
+ const year=currentMonth.getFullYear();
+ const month=currentMonth.getMonth();
+
+ $("monthLabel").textContent=currentMonth.toLocaleDateString("en-IN",{
+  month:"long",year:"numeric"
+ });
+
+ const first=new Date(year,month,1);
+ const offset=first.getDay();
+ const days=new Date(year,month+1,0).getDate();
+ const prevDays=new Date(year,month,0).getDate();
+
+ let html=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"]
+  .map(d=>`<div class="day-name">${d}</div>`).join("");
+
+ for(let i=0;i<42;i++){
+  let day,date,other=false;
+
+  if(i<offset){
+   day=prevDays-offset+i+1;
+   date=localDate(new Date(year,month-1,day));
+   other=true;
+  }else if(i>=offset+days){
+   day=i-offset-days+1;
+   date=localDate(new Date(year,month+1,day));
+   other=true;
+  }else{
+   day=i-offset+1;
+   date=localDate(new Date(year,month,day));
+  }
+
+  const list=classes.filter(c=>
+   (c.scheduledDate||c.date)===date&&hasCourseAccess(c)
+  );
+
+  const today=date===localDate(new Date());
+
+  html+=`
+   <button class="day ${other?"other":""} ${today?"today":""} ${date===selectedDate?"selected":""}" data-date="${date}">
+    <b>${day}</b>
+    <div class="dots">
+     ${list.slice(0,4).map(c=>{
+      const s=getStatus(c);
+      return `<i class="${s==="live"?"live":s==="recorded"?"recorded":s==="completed"?"completed":""}"></i>`;
+     }).join("")}
+    </div>
+   </button>`;
+ }
+
+ $("calendarGrid").innerHTML=html;
+
+ $("calendarGrid").querySelectorAll("[data-date]").forEach(el=>{
+  el.onclick=()=>{
+   selectedDate=el.dataset.date;
+   renderCalendar();
+   renderDayEvents();
+  };
+ });
+
+ renderDayEvents();
+}
+
+function renderDayEvents(){
+ const list=classes.filter(c=>
+  (c.scheduledDate||c.date)===selectedDate&&hasCourseAccess(c)
+ ).sort((a,b)=>(parseStart(a)?.getTime()||0)-(parseStart(b)?.getTime()||0));
+
+ $("dayTitle").textContent=new Date(selectedDate+"T12:00:00").toLocaleDateString("en-IN",{
+  day:"numeric",month:"long"
+ })+" Classes";
+
+ if(!list.length){
+  $("dayEvents").innerHTML='<div class="empty">No classes scheduled for this date.</div>';
+  return;
+ }
+
+ $("dayEvents").innerHTML=list.map(c=>{
+  const status=getStatus(c);
+  const start=parseStart(c);
+  const end=parseEnd(c);
+  const action=status==="live"?"Join Live":status==="recorded"?"Watch Recording":"";
+
+  return `
+   <div class="event">
+    ${statusHTML(status)}
+    <h4>${esc(classTitle(c))}</h4>
+    <p>${esc(c.subjectName||"")} · ${esc(c.chapterName||"")}</p>
+    <p>◷ ${esc(formatTime(start))} – ${esc(formatTime(end))}</p>
+    ${action?`<button class="btn btn-small event-action" data-id="${esc(c.id)}" data-status="${status}" style="margin-top:9px">${action} →</button>`:""}
+   </div>`;
+ }).join("");
+
+ $("dayEvents").querySelectorAll(".event-action").forEach(btn=>{
+  btn.onclick=()=>{
+   const c=classes.find(x=>x.id===btn.dataset.id);
+   if(!c)return;
+   if(btn.dataset.status==="live")joinClass(c);
+   else openRecording(c);
+  };
+ });
+}
+
+
+/* ==============================================
+   SUBJECT LIBRARY
+============================================== */
+
+function renderSubjects(){
+ $("subjectGrid").innerHTML=SUBJECTS.map(s=>{
+  const count=recordings.filter(r=>
+   String(r.subjectId||"").toLowerCase()===s.id||
+   String(r.subjectName||"").toLowerCase()===s.name.toLowerCase()
+  ).length;
+
+  return `
+   <div class="subject-card" data-subject="${esc(s.id)}">
+    <img class="subject-image" src="${esc(s.image)}" alt="${esc(s.name)}">
+    <div class="subject-body">
+     <h3>${esc(s.name)} <span class="arrow">→</span></h3>
+     <p>${count} recorded lectures</p>
+    </div>
+   </div>`;
+ }).join("");
+
+ $("subjectGrid").querySelectorAll("[data-subject]").forEach(el=>{
+  el.onclick=()=>openSubject(el.dataset.subject);
+ });
+}
+
+function subjectMatches(r,id){
+ const s=SUBJECTS.find(x=>x.id===id);
+ if(!s)return false;
+
+ const rid=String(r.subjectId||"").toLowerCase();
+ const name=String(r.subjectName||"").toLowerCase();
+
+ return rid===id||
+  name===s.name.toLowerCase()||
+  s.aliases.some(a=>name===a);
+}
+
+function openSubject(id){
+ selectedSubject=id;
+ selectedChapter=null;
+
+ const s=SUBJECTS.find(x=>x.id===id);
+ if(!s)return;
+
+ $("librarySection").classList.remove("hidden");
+ $("chapterView").classList.remove("hidden");
+ $("lectureView").classList.add("hidden");
+
+ $("selectedSubjectTitle").textContent=s.name;
+ $("breadcrumb").innerHTML=`<button id="breadcrumbHome">Recorded Classes</button> / ${esc(s.name)}`;
+
+ $("breadcrumbHome").onclick=()=>{
+  $("librarySection").classList.add("hidden");
+  $("librarySection").scrollIntoView({behavior:"smooth"});
+ };
+
+ const subjectRecords=recordings.filter(r=>subjectMatches(r,id));
+
+ const chapterMap=new Map();
+
+ subjectRecords.forEach(r=>{
+  const chapterId=r.chapterId||r.chapterName||"general";
+  const chapterName=r.chapterName||"Other Lectures";
+
+  if(!chapterMap.has(chapterId)){
+   chapterMap.set(chapterId,{id:chapterId,name:chapterName,records:[]});
+  }
+  chapterMap.get(chapterId).records.push(r);
+ });
+
+ const list=[...chapterMap.values()];
+
+ $("chapterGrid").innerHTML=list.length?list.map(ch=>`
+  <button class="chapter-card" data-chapter="${esc(ch.id)}">
+   <strong>${esc(ch.name)} →</strong>
+   <span>${ch.records.length} recorded lectures</span>
+  </button>
+ `).join(""):'<div class="empty">No recorded chapters available yet.</div>';
+
+ $("chapterGrid").querySelectorAll("[data-chapter]").forEach(el=>{
+  el.onclick=()=>openChapter(el.dataset.chapter);
+ });
+
+ $("librarySection").scrollIntoView({behavior:"smooth",block:"start"});
+}
+
+function openChapter(id){
+ selectedChapter=id;
+
+ const list=recordings.filter(r=>
+  subjectMatches(r,selectedSubject)&&
+  String(r.chapterId||r.chapterName||"general")===String(id)
+ );
+
+ const first=list[0];
+ const name=first?.chapterName||"Chapter";
+
+ $("chapterView").classList.add("hidden");
+ $("lectureView").classList.remove("hidden");
+
+ $("selectedChapterTitle").textContent=name;
+ $("breadcrumb").innerHTML=`
+  <button id="crumbSubjects">Recorded Classes</button> /
+  <button id="crumbChapters">${esc(SUBJECTS.find(x=>x.id===selectedSubject)?.name||"Subject")}</button> /
+  ${esc(name)}
+ `;
+
+ $("crumbSubjects").onclick=()=>{
+  $("librarySection").classList.add("hidden");
+ };
+ $("crumbChapters").onclick=()=>openSubject(selectedSubject);
+
+ renderLectures(list);
+}
+
+function renderLectures(list){
+ const term=$("lectureSearch").value.trim().toLowerCase();
+
+ const filtered=list.filter(r=>
+  [r.title,r.lectureTitle,r.description,r.chapterName,r.teacherName]
+   .join(" ").toLowerCase().includes(term)
+ );
+
+ $("lectureGrid").innerHTML=filtered.length?filtered.map(r=>{
+  const thumb=r.thumbnailUrl||r.thumbnail||"https://placehold.co/640x360/EAF2FF/3978E8?text=Recorded+Lecture";
+  return `
+   <article class="lecture-card">
+    <div class="play-overlay">
+     <img class="thumb" src="${esc(thumb)}" alt="" onerror="this.src='https://placehold.co/640x360/EAF2FF/3978E8?text=Zenova'">
+    </div>
+    <div class="lecture-body">
+     <span class="pill recorded-pill">RECORDED</span>
+     <h4>${esc(r.title||r.lectureTitle||"Recorded Class")}</h4>
+     <p>${esc(r.teacherName||r.facultyName||"Zenova Faculty")}</p>
+     <p>${esc(r.duration||"Recorded lecture")}</p>
+     <button class="btn btn-light btn-small play-recording" data-id="${esc(r.id)}" style="width:100%;margin-top:9px">▶ Watch Now</button>
+    </div>
+   </article>`;
+ }).join(""):'<div class="empty">No recordings match your search.</div>';
+
+ $("lectureGrid").querySelectorAll(".play-recording").forEach(btn=>{
+  btn.onclick=()=>playLecture(btn.dataset.id);
+ });
+}
+
+function playLecture(id){
+ const r=recordings.find(x=>x.id===id);
+ if(!r)return;
+
+ const url=r.recordingUrl||r.videoUrl||r.playbackUrl||r.sourceUrl||"";
+
+ if(!url){
+  toast("This recording has no video URL.");
+  return;
+ }
+
+ const target=VIDEO_PLAYER+"?recordingId="+encodeURIComponent(id);
+ window.location.href=target;
+}
+
+$("lectureSearch").oninput=()=>{
+ if(!selectedSubject||!selectedChapter)return;
+ const list=recordings.filter(r=>
+  subjectMatches(r,selectedSubject)&&
+  String(r.chapterId||r.chapterName||"general")===String(selectedChapter)
+ );
+ renderLectures(list);
+};
+
+
+/* ==============================================
+   LIBRARY NAVIGATION
+============================================== */
+
+$("backSubjects").onclick=()=>{
+ $("librarySection").classList.add("hidden");
+ $("librarySection").scrollIntoView({behavior:"smooth"});
+};
+
+$("backChapters").onclick=()=>{
+ $("lectureView").classList.add("hidden");
+ $("chapterView").classList.remove("hidden");
+};
+
+
+/* ==============================================
+   CALENDAR NAVIGATION
+============================================== */
+
+$("prevMonth").onclick=()=>{
+ currentMonth=new Date(currentMonth.getFullYear(),currentMonth.getMonth()-1,1);
+ renderCalendar();
+};
+
+$("nextMonth").onclick=()=>{
+ currentMonth=new Date(currentMonth.getFullYear(),currentMonth.getMonth()+1,1);
+ renderCalendar();
+};
+
+$("todayBtn").onclick=()=>{
+ currentMonth=new Date();
+ selectedDate=localDate(new Date());
+ renderCalendar();
+};
+
+
+/* ==============================================
+   FIRESTORE
+============================================== */
+
+function stopSubscriptions(){
+ subscriptions.forEach(fn=>fn());
+ subscriptions=[];
+}
+
+async function loadStudent(u){
+ stopSubscriptions();
+ student=u;
+
+ try{
+  const snap=await getDoc(doc(db,"zen2students",u.uid));
+
+  if(!snap.exists()){
+   toast("Student profile not found.");
+   return;
+  }
+
+  studentData=snap.data();
+
+  $("studentName").textContent="Welcome, "+(studentData.name||studentData.studentName||"Student");
+  $("profileInitial").textContent=(studentData.name||studentData.studentName||"S").charAt(0).toUpperCase();
+
+  // Live classes: same collection used by Admin.
+  subscriptions.push(onSnapshot(collection(db,"liveClasses"),snap=>{
+   classes=snap.docs.map(d=>({id:d.id,...d.data()}));
+
+   renderHero();
+   renderUpcoming();
+   renderCalendar();
+   renderSubjects();
+  },err=>{
+   console.error("Live class error:",err);
+   toast("Unable to load classes: "+err.message);
+  }));
+
+  // Existing course / chapter data.
+  subscriptions.push(onSnapshot(collection(db,"zen2Courses"),snap=>{
+   courses=snap.docs.map(d=>({id:d.id,...d.data()}));
+  }));
+
+  subscriptions.push(onSnapshot(collection(db,"zen2Subjects"),snap=>{
+   subjects=snap.docs.map(d=>({id:d.id,...d.data()}));
+  }));
+
+  subscriptions.push(onSnapshot(collection(db,"zen2Chapters"),snap=>{
+   chapters=snap.docs.map(d=>({id:d.id,...d.data()}));
+  }));
+
+  // Recorded lectures: this assumes an existing collection
+  // named liveRecordings. If your actual collection differs,
+  // update this collection name to the existing one.
+  subscriptions.push(onSnapshot(collection(db,"liveRecordings"),snap=>{
+   recordings=snap.docs.map(d=>({id:d.id,...d.data()}));
+   renderSubjects();
+
+   if(selectedSubject&&selectedChapter){
+    const list=recordings.filter(r=>
+     subjectMatches(r,selectedSubject)&&
+     String(r.chapterId||r.chapterName||"general")===String(selectedChapter)
+    );
+    renderLectures(list);
+   }
+  },err=>{
+   console.error("Recording library:",err);
+  }));
+
+  // Refresh time-based status independently of Firestore updates.
+  setInterval(()=>{
+   renderHero();
+   renderUpcoming();
+   renderCalendar();
+  },15000);
+
+ }catch(err){
+  console.error(err);
+  toast("Unable to load student profile.");
+ }
+}
+
+
+/* ==============================================
+   AUTHENTICATION
+============================================== */
+
+onAuthStateChanged(auth,u=>{
+ if(u){
+  loadStudent(u);
+ }else{
+  window.location.href="../login/";
+ }
+});
+
+window.addEventListener("beforeunload",stopSubscriptions);
+
+</script>
+
+</body>
+</html>
