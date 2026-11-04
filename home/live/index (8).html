@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="theme-color" content="#f7f9fc">
+<title>Live Classes | Zenova Educations</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"><link href="https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.css" rel="stylesheet">
+<style>
+:root{--bg:#f7f9fc;--surface:#fff;--surface-soft:#f0f5fb;--ink:#172338;--muted:#7b8799;--line:#e7edf5;--blue:#3978e8;--blue-dark:#245fc9;--blue-soft:#eaf2ff;--green:#159b78;--green-soft:#e8f8f2;--radius:18px;--nav-height:76px}*{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth;background:var(--bg)}body{min-height:100vh;padding-bottom:calc(var(--nav-height) + env(safe-area-inset-bottom));background:var(--bg);color:var(--ink);font-family:Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}a{color:inherit;text-decoration:none}button,input{font:inherit}button{cursor:pointer}button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid #8db5ff;outline-offset:3px}.hidden{display:none!important}.wrap{width:min(100%,1080px);margin-inline:auto}.page{padding:23px 17px 34px}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.94);backdrop-filter:blur(16px);border-bottom:1px solid var(--line)}.topbar-inner{width:min(100%,1080px);min-height:72px;margin:auto;padding:12px 18px;display:flex;align-items:center;justify-content:space-between;gap:18px}.brand{display:flex;align-items:center;gap:10px;min-width:0}.brand-logo{width:40px;height:40px;display:grid;place-items:center;flex:0 0 40px;border-radius:13px;background:var(--blue);color:#fff;font-size:21px;font-weight:800}.brand-name{display:block;font-size:15px;font-weight:800;letter-spacing:-.4px}.brand-sub{display:block;margin-top:3px;color:var(--muted);font-size:10px}.desktop-nav{display:flex;align-items:center;gap:5px}.desktop-nav a{padding:11px 13px;border-radius:10px;color:#69778b;font-size:12px;font-weight:650;transition:.18s}.desktop-nav a:hover,.desktop-nav a.active{background:var(--blue-soft);color:var(--blue-dark)}.profile-button{display:grid;place-items:center;width:40px;height:40px;flex:0 0 40px;border:1px solid var(--line);border-radius:50%;background:var(--surface-soft);color:var(--blue-dark)}.profile-button i{font-size:19px}
+.greeting{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin:9px 0 22px}.eyebrow{color:var(--blue);font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase}h1{margin-top:8px;font-size:clamp(25px,4vw,33px);font-weight:800;letter-spacing:-1.1px;line-height:1.2}.greeting p{margin-top:8px;color:var(--muted);font-size:12px;line-height:1.65}.hero{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:22px;padding:20px;border:1px solid #dce8fb;border-radius:18px;background:linear-gradient(120deg,#edf4ff,#f8fbff)}.hero h2{margin-top:5px;font-size:16px;font-weight:800;line-height:1.4}.hero p{margin-top:6px;color:#6f8099;font-size:11px;line-height:1.6}.hero-icon{width:52px;height:52px;flex:0 0 52px;display:grid;place-items:center;border-radius:16px;background:#fff;color:var(--blue);box-shadow:0 5px 18px #243b5b0b}.hero-icon i{font-size:26px}.searchbox{display:flex;align-items:center;gap:10px;min-height:47px;margin-bottom:14px;padding:0 14px;border:1px solid var(--line);border-radius:13px;background:#fff;color:var(--muted)}.searchbox i{font-size:19px}.searchbox input{width:100%;min-width:0;border:0;outline:0;background:transparent;color:var(--ink);font-size:12px}.searchbox input::placeholder{color:#9aa5b5}.filters{display:flex;gap:8px;overflow-x:auto;padding-bottom:3px;margin-bottom:20px;scrollbar-width:none}.filters::-webkit-scrollbar{display:none}.filter-btn{flex:0 0 auto;min-height:36px;padding:0 13px;border:1px solid var(--line);border-radius:10px;background:#fff;color:#69778b;font-size:11px;font-weight:750}.filter-btn.active{border-color:#d5e4fc;background:var(--blue-soft);color:var(--blue-dark)}.section-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:13px}.section-title{font-size:17px;font-weight:800;letter-spacing:-.45px}.section-subtitle{margin-top:5px;color:var(--muted);font-size:11px;line-height:1.5}.count{display:inline-flex;align-items:center;justify-content:center;min-width:27px;height:25px;padding:0 8px;border-radius:8px;background:var(--blue-soft);color:var(--blue-dark);font-size:10px;font-weight:800}.class-list{display:grid;grid-template-columns:1fr;gap:13px}.live-card{display:grid;grid-template-columns:112px minmax(0,1fr);gap:15px;align-items:center;padding:13px;border:1px solid var(--line);border-radius:17px;background:#fff;box-shadow:0 5px 20px #243b5b08;transition:border-color .18s,box-shadow .18s}.live-card:hover{border-color:#cbdcf8;box-shadow:0 8px 25px #243b5b0c}.live-thumb{position:relative;overflow:hidden;display:grid;place-items:center;aspect-ratio:4/3;border-radius:12px;background:var(--blue-soft);color:var(--blue)}.live-thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}.live-thumb i{font-size:30px}.live-badge{position:absolute;top:7px;left:7px;padding:5px 7px;border-radius:6px;background:#e53945;color:#fff;font-size:8px;font-weight:800;letter-spacing:.4px}.live-info{min-width:0}.status{display:inline-flex;align-items:center;gap:5px;color:var(--muted);font-size:9px;font-weight:800;letter-spacing:.3px}.status.live{color:var(--green)}.status.upcoming{color:#b87921}.status.ended{color:#8994a5}.live-info h3{margin-top:6px;font-size:14px;font-weight:800;line-height:1.45;overflow-wrap:anywhere}.live-info p{margin-top:5px;color:var(--muted);font-size:10px;line-height:1.55}.live-time{display:flex;align-items:center;gap:5px;margin-top:8px;color:#53657d;font-size:10px;font-weight:650}.live-time i{color:var(--blue);font-size:14px}.actions{display:flex;gap:8px;grid-column:1/-1}.btn{min-height:40px;padding:0 14px;border:0;border-radius:10px;display:inline-flex;align-items:center;justify-content:center;gap:7px;font-size:11px;font-weight:800;transition:.18s}.btn-primary{flex:1;background:var(--blue);color:#fff}.btn-primary:hover{background:var(--blue-dark)}.btn-secondary{background:var(--blue-soft);color:var(--blue-dark)}.btn:disabled{cursor:not-allowed;background:#eef1f6;color:#8490a2}.empty{padding:28px 17px;border:1px dashed #dce4ef;border-radius:15px;background:#fff;color:var(--muted);text-align:center;font-size:11px;line-height:1.7}.empty i{display:block;margin-bottom:8px;color:#94a9c6;font-size:27px}.empty strong{display:block;margin-bottom:5px;color:var(--ink);font-size:13px}.empty a{display:inline-block;margin-top:10px;color:var(--blue-dark);font-weight:800}.error-note{display:none;margin-bottom:14px;padding:12px 14px;border:1px solid #ffd6db;border-radius:12px;background:#fff0f1;color:#9c2636;font-size:11px;line-height:1.6}.skeleton{height:145px;border-radius:17px;background:linear-gradient(90deg,#edf1f7 25%,#f8faff 50%,#edf1f7 75%);background-size:200% 100%;animation:shimmer 1.3s infinite}@keyframes shimmer{to{background-position:-200% 0}}
+.bottom-nav{position:fixed;z-index:100;right:0;bottom:0;left:0;padding:8px 10px calc(8px + env(safe-area-inset-bottom));border-top:1px solid var(--line);background:rgba(255,255,255,.96);backdrop-filter:blur(15px)}.bottom-inner{width:min(100%,520px);margin:auto;display:grid;grid-template-columns:repeat(5,1fr);gap:3px}.nav-item{min-height:51px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;border-radius:11px;color:#8a96a8;font-size:9px;font-weight:700}.nav-item i{font-size:20px}.nav-item.active{background:var(--blue-soft);color:var(--blue-dark)}.loader{position:fixed;inset:0;z-index:999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:var(--bg);color:var(--blue)}.loader-logo{width:52px;height:52px;display:grid;place-items:center;border-radius:16px;background:var(--blue);color:#fff;font-size:25px;font-weight:800}.loader strong{color:var(--ink);font-size:16px;letter-spacing:2px}.loader span{color:var(--muted);font-size:10px}.spinner{width:24px;height:24px;border:3px solid #dce8fb;border-top-color:var(--blue);border-radius:50%;animation:spin .8s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
+@media(min-width:700px){body{padding-bottom:20px}.page{padding:27px 25px 36px}.bottom-nav{display:none}.live-card{grid-template-columns:150px minmax(0,1fr) auto}.live-thumb{aspect-ratio:16/10}.actions{grid-column:auto;flex-direction:column;min-width:135px}.live-info h3{font-size:16px}.live-info p{font-size:11px}.btn{width:100%}}@media(max-width:699px){.desktop-nav{display:none}}@media(max-width:420px){.page{padding-inline:12px}.topbar-inner{padding-inline:12px}.brand-name{font-size:13px}.brand-sub{font-size:9px}.hero{padding:16px}.live-card{grid-template-columns:88px minmax(0,1fr);gap:11px;padding:10px}.live-info h3{font-size:12px}.btn{padding:0 10px}.live-time{font-size:9px}}@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
+</style></head>
+<body>
+<div id="loader" class="loader" role="status"><div class="loader-logo">Z</div><strong>ZENOVA</strong><span>Preparing your live classes</span><div class="spinner"></div></div>
+<div id="app" class="hidden">
+<header class="topbar"><div class="topbar-inner"><a class="brand" href="../" aria-label="Zenova Home"><span class="brand-logo">Z</span><span><span class="brand-name">ZENOVA</span><span class="brand-sub">Educations</span></span></a><nav class="desktop-nav" aria-label="Main navigation"><a href="../">Home</a><a href="../courses/">Courses</a><a href="./" class="active" aria-current="page">Live</a><a href="../revision/">Revision</a><a href="../profile/">Profile</a></nav><a class="profile-button" href="../profile/" aria-label="My profile"><i class="ri-user-3-line"></i></a></div></header>
+<main class="page wrap"><section class="greeting"><div><span class="eyebrow">LEARN · PRACTICE · EXCEL</span><h1>Live Classes</h1><p>Join your scheduled classes and keep learning with Zenova.</p></div></section><section class="hero"><div><span class="eyebrow">YOUR LIVE CLASSROOM</span><h2>Learn together, in real time.</h2><p>See what's live now, check upcoming sessions, and open your class when it's available.</p></div><div class="hero-icon"><i class="ri-live-line"></i></div></section><div id="errorNote" class="error-note" role="alert"></div><label class="searchbox"><i class="ri-search-line"></i><input id="searchInput" type="search" placeholder="Search class, subject, chapter or teacher…" autocomplete="off" aria-label="Search live classes"></label><div class="filters" role="group" aria-label="Filter live classes"><button class="filter-btn active" data-filter="all" type="button">All classes</button><button class="filter-btn" data-filter="live" type="button">Live now</button><button class="filter-btn" data-filter="upcoming" type="button">Upcoming</button><button class="filter-btn" data-filter="ended" type="button">Ended</button></div><section><div class="section-heading"><div><h2 class="section-title">Your classes</h2><p class="section-subtitle">Live and scheduled learning sessions.</p></div><span class="count" id="classCount">0</span></div><div id="classList" class="class-list"><div class="skeleton"></div><div class="skeleton"></div></div></section></main>
+<nav class="bottom-nav" aria-label="Mobile navigation"><div class="bottom-inner"><a class="nav-item" href="../"><i class="ri-home-5-line"></i><span>Home</span></a><a class="nav-item" href="../courses/"><i class="ri-book-2-line"></i><span>Courses</span></a><a class="nav-item active" href="./" aria-current="page"><i class="ri-live-line"></i><span>Live</span></a><a class="nav-item" href="../revision/"><i class="ri-book-open-line"></i><span>Revision</span></a><a class="nav-item" href="../profile/"><i class="ri-user-3-line"></i><span>Profile</span></a></div></nav></div>
+<script type="module">
+import { auth, db } from "../../firebase/firebase-config.js";
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+import {
+  collection, doc, getDoc, getDocs, query, where, onSnapshot
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
+const $ = id => document.getElementById(id);
+const state = {
+  user: null,
+  student: {},
+  enrollments: [],
+  courses: [],
+  classes: [],
+  filter: "all",
+  authHandled: false
+};
+
+let unsubscribeLiveClasses = null;
+let statusClock = null;
+
+const esc = value => String(value ?? "").replace(/[&<>"']/g, char => ({
+  "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;"
+}[char]));
+const first = (...values) => values.find(value => value !== undefined && value !== null && String(value).trim() !== "") ?? "";
+const normalize = value => String(value || "").trim().toUpperCase().replace(/\s+/g, " ");
+
+function parseDateValue(value) {
+  if (!value) return null;
+  if (value instanceof Date) return Number.isNaN(value.getTime()) ? null : value;
+  if (typeof value?.toDate === "function") {
+    const date = value.toDate();
+    return Number.isNaN(date.getTime()) ? null : date;
+  }
+  if (typeof value === "number") {
+    const date = new Date(value);
+    return Number.isNaN(date.getTime()) ? null : date;
+  }
+  const raw = String(value).trim();
+  if (!raw) return null;
+  // ISO strings with an explicit timezone are absolute timestamps.
+  if (/T.*(?:Z|[+-]\d{2}:?\d{2})$/i.test(raw)) {
+    const date = new Date(raw);
+    return Number.isNaN(date.getTime()) ? null : date;
+  }
+  const match = raw.match(/^(\d{4})-(\d{1,2})-(\d{1,2})(?:[ T](\d{1,2}):(\d{2})(?::(\d{2}))?)?$/);
+  if (match) {
+    // Date-only and local date/time fields are interpreted in the student's device timezone (India for Zenova users).
+    const [, year, month, day, hour = "0", minute = "0", second = "0"] = match;
+    const date = new Date(Number(year), Number(month) - 1, Number(day), Number(hour), Number(minute), Number(second));
+    return Number.isNaN(date.getTime()) ? null : date;
+  }
+  const date = new Date(raw);
+  return Number.isNaN(date.getTime()) ? null : date;
+}
+
+function startOf(item) {
+  const direct = first(item.startDateTime, item.scheduledDateTime, item.scheduledAt, item.startAt, item.startsAt);
+  const parsedDirect = parseDateValue(direct);
+  if (parsedDirect) return parsedDirect;
+  const date = first(item.scheduledDate, item.date, item.classDate, item.liveDate);
+  const time = first(item.scheduledTime, item.startTime, item.time, item.classTime, "00:00");
+  if (!date) return null;
+  return parseDateValue(`${date} ${time}`);
+}
+
+function endOf(item, start) {
+  const direct = first(item.endDateTime, item.scheduledEndDateTime, item.endAt, item.endsAt);
+  const parsedDirect = parseDateValue(direct);
+  if (parsedDirect) return parsedDirect;
+
+  const endDate = first(item.endDate, item.scheduledEndDate, item.date, item.scheduledDate, item.classDate);
+  const endTime = first(item.endTime, item.scheduledEndTime, item.classEndTime);
+  if (endDate && endTime) {
+    const parsed = parseDateValue(`${endDate} ${endTime}`);
+    if (parsed) return parsed;
+  }
+
+  const duration = Number(first(item.durationMinutes, item.classDurationMinutes, item.duration, item.durationInMinutes));
+  const minutes = Number.isFinite(duration) && duration > 0 ? duration : 60;
+  return start ? new Date(start.getTime() + minutes * 60000) : null;
+}
+
+function hasRecording(item) {
+  const recordingFields = [
+    item.recordingUrl, item.recordedUrl, item.replayUrl,
+    item.recordedVideoUrl, item.recordingVideoUrl,
+    item.recordingContentId, item.recordedContentId,
+    item.recordingAvailable === true ? "available" : ""
+  ];
+  if (recordingFields.some(value => Boolean(value && String(value).trim()))) return true;
+  const type = String(first(item.contentType, item.videoType, item.liveType, "")).toLowerCase();
+  return type.includes("record") && Boolean(first(item.videoUrl, item.contentUrl, item.playbackUrl));
+}
+
+function statusOf(item) {
+  const rawStatus = String(item.status || "").trim().toLowerCase();
+  if (["cancelled", "canceled", "deleted", "archived"].includes(rawStatus) || item.cancelled === true) return "cancelled";
+
+  const start = startOf(item);
+  const end = endOf(item, start);
+  const now = Date.now();
+
+  // Schedule time is authoritative when available; stale Firestore status must not hide a live class.
+  if (start && end) {
+    if (now < start.getTime()) return "upcoming";
+    if (now >= start.getTime() && now < end.getTime()) return "live";
+    return "ended";
+  }
+
+  // Fallback only for legacy records that do not contain a usable schedule.
+  if (["live", "live now", "ongoing"].includes(rawStatus) || item.isLive === true) return "live";
+  if (["ended", "completed", "finished"].includes(rawStatus) || item.ended === true) return "ended";
+  return "upcoming";
+}
+
+function displayStatus(item) {
+  const status = statusOf(item);
+  if (status === "ended" && hasRecording(item)) return "RECORDING AVAILABLE";
+  if (status === "live") return "LIVE NOW";
+  if (status === "upcoming") return "UPCOMING";
+  if (status === "cancelled") return "CANCELLED";
+  return "COMPLETED";
+}
+
+function courseName(course) {
+  return first(course.batchName, course.courseName, course.title, course.name, course.courseTitle, "Zenova course");
+}
+
+function isEnrolled(course) {
+  const uid = state.user?.uid || "";
+  const lists = [
+    state.student.purchasedCourseIds,
+    state.student.enrolledCourseIds,
+    state.student.courseIds,
+    state.student.purchasedCourses,
+    state.student.enrolledCourses
+  ];
+  for (const list of lists) {
+    if (Array.isArray(list) && list.some(item => {
+      const id = typeof item === "object" ? (item.courseId || item.id || item.crmCourseId) : item;
+      return String(id) === String(course.id);
+    })) return true;
+  }
+
+  const legacyStatus = String(
+    state.student.courseAccess?.[course.id] ||
+    course.studentAccess?.[uid] ||
+    course.enrollments?.[uid]?.status || ""
+  ).toLowerCase();
+  if (["approved", "active", "paid", "purchased", "enrolled", "success"].includes(legacyStatus)) return true;
+
+  return state.enrollments.some(enrollment => {
+    const id = String(enrollment.crmCourseId || enrollment.courseId || enrollment.courseID || enrollment.batchId || "");
+    const status = String(enrollment.status || enrollment.enrollmentStatus || "").toLowerCase();
+    const active = !status || ["approved", "active", "paid", "purchased", "enrolled", "success", "completed"].includes(status);
+    return id === String(course.id) && active && enrollment.accessGranted !== false;
+  });
+}
+
+function belongsToEnrolledCourse(item) {
+  const courseId = String(item.courseId || item.crmCourseId || item.batchId || item.courseID || "");
+  const name = normalize(item.courseName || item.batchName || item.courseTitle);
+  const enrolledCourses = state.courses.filter(isEnrolled);
+  if (!enrolledCourses.length) return false;
+  if (courseId) return enrolledCourses.some(course => String(course.id) === courseId);
+  if (name) return enrolledCourses.some(course => normalize(courseName(course)) === name);
+  return false;
+}
+
+function formatDateTime(date) {
+  if (!date) return "Time to be announced";
+  return date.toLocaleString("en-IN", {
+    day: "2-digit", month: "short", year: "numeric",
+    hour: "numeric", minute: "2-digit"
+  });
+}
+
+function playerUrl(item, mode) {
+  const params = new URLSearchParams({
+    classId: item.id,
+    liveClassId: item.id,
+    mode
+  });
+  return `../livevideoplayer/?${params.toString()}`;
+}
+
+function render() {
+  const term = $("searchInput").value.trim().toLowerCase();
+  const list = state.classes.filter(item => {
+    const status = statusOf(item);
+    const filterMatch = state.filter === "all" ||
+      (state.filter === "ended" && status === "ended") || state.filter === status;
+    const searchable = [
+      item.title, item.classTitle, item.name, item.subjectName,
+      item.chapterName, item.teacherName, item.facultyName,
+      item.courseName, item.batchName
+    ].join(" ").toLowerCase();
+    return filterMatch && (!term || searchable.includes(term));
+  }).sort((a, b) => {
+    const rank = { live: 0, upcoming: 1, ended: 2, cancelled: 3 };
+    const difference = rank[statusOf(a)] - rank[statusOf(b)];
+    if (difference) return difference;
+    const aDate = startOf(a)?.getTime() ?? Infinity;
+    const bDate = startOf(b)?.getTime() ?? Infinity;
+    return statusOf(a) === "ended" ? bDate - aDate : aDate - bDate;
+  });
+
+  $("classCount").textContent = String(list.length);
+  if (!list.length) {
+    $("classList").innerHTML = `
+      <div class="empty">
+        <i class="ri-calendar-event-line"></i>
+        <strong>No classes found</strong>
+        ${state.classes.length ? "No classes match this filter or search. Try another option." : "No live classes are available for your enrolled courses right now."}
+        <br><a href="../courses/">Explore courses</a>
+      </div>`;
+    return;
+  }
+
+  $("classList").innerHTML = list.map(item => {
+    const status = statusOf(item);
+    const start = startOf(item);
+    const end = endOf(item, start);
+    const recording = status === "ended" && hasRecording(item);
+    const image = first(item.thumbnailUrl, item.imageUrl, item.coverImageUrl);
+    const title = first(item.title, item.classTitle, item.name, "Live class");
+    const details = [item.subjectName, item.chapterName, item.teacherName || item.facultyName].filter(Boolean).join(" · ");
+    const actionLabel = status === "live" ? "Join live class" : recording ? "Watch recording" : status === "upcoming" ? "Not started yet" : status === "cancelled" ? "Class cancelled" : "Class ended";
+    const enabled = status === "live" || recording;
+    const mode = recording ? "recording" : "live";
+
+    return `
+      <article class="live-card">
+        <div class="live-thumb">
+          ${image ? `<img src="${esc(image)}" alt="" loading="lazy" onerror="this.remove()">` : `<i class="ri-live-line"></i>`}
+          ${status === "live" ? `<span class="live-badge">LIVE</span>` : ""}
+        </div>
+        <div class="live-info">
+          <span class="status ${status}">
+            <i class="${status === "live" ? "ri-record-circle-line" : status === "upcoming" ? "ri-calendar-event-line" : status === "cancelled" ? "ri-close-circle-line" : "ri-checkbox-circle-line"}"></i>
+            ${displayStatus(item)}
+          </span>
+          <h3>${esc(title)}</h3>
+          <p>${esc(details || first(item.courseName, item.batchName, "Zenova live learning session"))}</p>
+          <div class="live-time"><i class="ri-time-line"></i>${esc(formatDateTime(start))}${end ? ` – ${esc(end.toLocaleTimeString("en-IN", {hour:"numeric",minute:"2-digit"}))}` : ""}</div>
+        </div>
+        <div class="actions">
+          <button class="btn btn-primary" type="button" data-open-class="${esc(item.id)}" data-mode="${mode}" ${enabled ? "" : "disabled"}>
+            <i class="${recording ? "ri-play-circle-line" : "ri-live-line"}"></i>${actionLabel}
+          </button>
+          ${status === "upcoming" ? `<button class="btn btn-secondary" type="button" data-details="${esc(item.id)}"><i class="ri-information-line"></i>Class details</button>` : ""}
+        </div>
+      </article>`;
+  }).join("");
+
+  $("classList").querySelectorAll("[data-open-class]").forEach(button => {
+    button.addEventListener("click", () => {
+      const item = state.classes.find(entry => entry.id === button.dataset.openClass);
+      if (!item) return;
+      const currentStatus = statusOf(item);
+      const requestedMode = button.dataset.mode;
+      if (requestedMode === "live" && currentStatus !== "live") {
+        render();
+        return;
+      }
+      if (requestedMode === "recording" && !(currentStatus === "ended" && hasRecording(item))) {
+        render();
+        return;
+      }
+      window.location.href = playerUrl(item, requestedMode);
+    });
+  });
+
+  $("classList").querySelectorAll("[data-details]").forEach(button => {
+    button.addEventListener("click", () => {
+      const item = state.classes.find(entry => entry.id === button.dataset.details);
+      if (!item) return;
+      const start = startOf(item);
+      const end = endOf(item, start);
+      const details = [item.subjectName, item.chapterName, item.teacherName || item.facultyName].filter(Boolean).join(" · ");
+      alert(`${first(item.title, item.classTitle, "Live class")}\n${formatDateTime(start)}${end ? ` – ${formatDateTime(end)}` : ""}\n${details || "Zenova live learning session"}`);
+    });
+  });
+}
+
+function startStatusClock() {
+  if (statusClock) clearInterval(statusClock);
+  // Time transitions do not create Firestore events, so refresh the visible status periodically.
+  statusClock = setInterval(render, 15000);
+}
+
+async function loadStudentData(user) {
+  state.user = user;
+  const [studentSnapshot, enrollmentSnapshot, courseSnapshot] = await Promise.all([
+    getDoc(doc(db, "zen2Students", user.uid)),
+    getDocs(query(collection(db, "studentEnrollments"), where("studentUid", "==", user.uid))),
+    getDocs(collection(db, "zen2Courses"))
+  ]);
+
+  state.student = studentSnapshot.exists() ? studentSnapshot.data() : {};
+  state.enrollments = enrollmentSnapshot.docs.map(item => ({ id: item.id, ...item.data() }));
+  state.courses = courseSnapshot.docs.map(item => ({ id: item.id, ...item.data() }));
+}
+
+function listenLiveClasses() {
+  if (unsubscribeLiveClasses) unsubscribeLiveClasses();
+  const liveClassesQuery = query(collection(db, "liveClasses"));
+
+  unsubscribeLiveClasses = onSnapshot(liveClassesQuery, snapshot => {
+    state.classes = snapshot.docs
+      .map(item => ({ id: item.id, ...item.data() }))
+      .filter(item => item.active !== false && item.published !== false)
+      .filter(item => !["deleted", "archived", "inactive", "cancelled", "canceled"].includes(String(item.status || "").toLowerCase()))
+      .filter(belongsToEnrolledCourse);
+    render();
+    $("app").classList.remove("hidden");
+    $("loader").classList.add("hidden");
+    $("errorNote").style.display = "none";
+  }, error => {
+    console.error("ZENOVA LIVE CLASSES LISTENER:", error);
+    $("errorNote").style.display = "block";
+    $("errorNote").textContent = "Live class updates could not be received. Check your connection and refresh the page.";
+  });
+}
+
+document.querySelectorAll("[data-filter]").forEach(button => {
+  button.addEventListener("click", () => {
+    state.filter = button.dataset.filter;
+    document.querySelectorAll("[data-filter]").forEach(item => item.classList.toggle("active", item === button));
+    render();
+  });
+});
+$("searchInput").addEventListener("input", render);
+
+onAuthStateChanged(auth, async user => {
+  if (state.authHandled) return;
+  state.authHandled = true;
+  if (!user) {
+    window.location.replace("../login/");
+    return;
+  }
+
+  try {
+    await loadStudentData(user);
+    $("app").classList.remove("hidden");
+    listenLiveClasses();
+    startStatusClock();
+  } catch (error) {
+    console.error("ZENOVA LIVE PAGE:", error);
+    $("loader").classList.add("hidden");
+    $("app").classList.remove("hidden");
+    $("errorNote").style.display = "block";
+    $("errorNote").textContent = "Live classes couldn't be loaded. Please check your connection and try again.";
+    $("classList").innerHTML = `
+      <div class="empty">
+        <i class="ri-wifi-off-line"></i>
+        <strong>Unable to load classes</strong>
+        Please check your connection and try again.
+        <br><button class="btn btn-secondary" id="retryButton" style="margin-top:12px">Retry</button>
+      </div>`;
+    $("retryButton")?.addEventListener("click", () => location.reload());
+  }
+});
+
+window.addEventListener("beforeunload", () => {
+  if (unsubscribeLiveClasses) unsubscribeLiveClasses();
+  if (statusClock) clearInterval(statusClock);
+});
+</script></body></html>
