@@ -1,0 +1,1026 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#F7F9FC"><title>Zenova | Live Classroom</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.css" rel="stylesheet">
+  <style>
+:root{--bg:#F7F9FC;--white:#fff;--soft:#F0F5FB;--blue:#3978E8;--dark:#245FC9;--light:#EAF2FF;--text:#172338;--muted:#7B8799;--border:#E7EDF5;--green:#159B78;--green-soft:#E8F8F2;--red:#E34D59;--orange:#C98527;--shadow:0 8px 28px rgba(23,35,56,.045)}
+*{box-sizing:border-box;margin:0;padding:0}html{background:var(--bg);scroll-behavior:smooth}body{min-height:100vh;background:var(--bg);color:var(--text);font-family:Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}button,a,textarea{font:inherit}button{cursor:pointer}button:focus-visible,a:focus-visible,textarea:focus-visible{outline:3px solid #9bbdff;outline-offset:2px}.hidden{display:none!important}.wrap{width:min(100%,1040px);margin-inline:auto}.topbar{position:sticky;top:0;z-index:30;background:rgba(255,255,255,.96);border-bottom:1px solid var(--border);backdrop-filter:blur(14px)}.topbar-inner{width:min(100%,1040px);min-height:68px;margin:auto;padding:10px 18px;display:grid;grid-template-columns:1fr auto 1fr;align-items:center}.back-button{justify-self:start;display:flex;align-items:center;gap:7px;border:0;background:transparent;color:var(--text);font-size:12px;font-weight:750}.back-button i{font-size:21px;color:var(--blue)}.brand{display:flex;align-items:center;gap:8px;color:var(--dark);text-decoration:none}.brand-mark{width:35px;height:35px;display:grid;place-items:center;border-radius:11px;background:var(--blue);color:#fff;font-size:20px;font-weight:800}.brand strong,.brand small{display:block}.brand strong{font-size:13px;letter-spacing:1.1px}.brand small{margin-top:2px;color:var(--muted);font-size:8px;letter-spacing:1.4px;font-weight:700}.live-pill{justify-self:end;display:inline-flex;align-items:center;gap:7px;padding:7px 10px;border-radius:8px;background:#fff0f1;color:var(--red);font-size:9px;font-weight:850;letter-spacing:.7px}.pulse-dot{width:7px;height:7px;display:inline-block;flex:0 0 7px;border-radius:50%;background:var(--red);animation:pulse 1.15s infinite}@keyframes pulse{50%{opacity:.25;box-shadow:0 0 0 5px #e34d5920}}.page{padding:25px 18px 48px}.state-card{width:min(100%,460px);margin:9vh auto;padding:34px 24px;border:1px solid var(--border);border-radius:19px;background:#fff;box-shadow:var(--shadow);text-align:center}.state-card>strong{display:block;margin-top:13px;font-size:15px}.state-card h2{font-size:19px;line-height:1.4}.state-card p{margin-top:9px;color:var(--muted);font-size:12px;line-height:1.7}.spinner{width:31px;height:31px;display:block;margin:0 auto 13px;border:3px solid #dce8fb;border-top-color:var(--blue);border-radius:50%;animation:spin .8s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}.state-icon,.waiting-icon{width:49px;height:49px;display:grid;place-items:center;margin:0 auto 13px;border-radius:15px;background:var(--light);color:var(--blue);font-size:23px}.waiting-icon{background:#fff5e7;color:var(--orange)}.eyebrow{display:block;color:var(--blue);font-size:9px;font-weight:850;letter-spacing:1.25px}.countdown{margin:18px 0 3px;color:var(--dark);font-size:27px;font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:1px}.primary-button,.secondary-button{min-height:41px;margin-top:17px;padding:0 16px;border:0;border-radius:10px;background:var(--blue);color:#fff;font-size:11px;font-weight:800}.secondary-button{background:var(--light);color:var(--dark)}.classroom-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;margin:3px 0 17px}.classroom-heading h1{margin-top:6px;font-size:clamp(20px,3vw,27px);line-height:1.3;letter-spacing:-.7px}.classroom-heading p{margin-top:6px;color:var(--muted);font-size:11px;line-height:1.6}.live-pill-large{margin-top:8px;padding:9px 12px}.player-card,.details-card{overflow:hidden;border:1px solid var(--border);border-radius:17px;background:#fff;box-shadow:var(--shadow)}.player-stage{position:relative;isolation:isolate;overflow:hidden;aspect-ratio:16/9;min-height:220px;background:#101827;color:#fff}.player-stage video,.youtube-container,.youtube-container iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:#101827;object-fit:contain}.stage-topline{position:absolute;z-index:5;top:13px;right:14px;left:14px;display:flex;align-items:center;justify-content:space-between;pointer-events:none}.stage-live{display:inline-flex;align-items:center;gap:7px;padding:7px 10px;border-radius:6px;background:#df3545;color:#fff;font-size:9px;font-weight:850;letter-spacing:.7px}.stage-live .pulse-dot{background:#fff}.stage-watermark{padding:5px 8px;border:1px solid #ffffff35;border-radius:5px;background:#11182755;color:#fff;font-size:9px;font-weight:850;letter-spacing:1.2px;opacity:.78}.player-overlay{position:absolute;z-index:4;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;background:#101827;color:#fff;text-align:center;padding:20px}.player-overlay strong{font-size:13px}.player-overlay small{color:#b9c4d5;font-size:10px}.light-spinner{border-color:#ffffff35;border-top-color:#8fb7ff}.center-play{position:absolute;z-index:7;top:50%;left:50%;width:60px;height:60px;transform:translate(-50%,-50%);display:grid;place-items:center;border:1px solid #ffffff50;border-radius:50%;background:#172338bd;color:#fff;font-size:29px}.custom-controls{position:absolute;z-index:8;right:0;bottom:0;left:0;min-height:53px;display:flex;align-items:center;gap:15px;padding:8px 15px;background:linear-gradient(transparent,#07101de8);opacity:1;transition:opacity .2s}.custom-controls button{width:32px;height:32px;display:grid;place-items:center;border:0;border-radius:8px;background:#ffffff18;color:#fff;font-size:19px}.controls-spacer{flex:1}.controls-live{display:inline-flex;align-items:center;gap:6px;color:#fff;font-size:9px;font-weight:850;letter-spacing:.6px}.controls-live .pulse-dot{width:6px;height:6px;flex-basis:6px}.player-foot{min-height:38px;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 13px;color:var(--muted);font-size:9px;font-weight:650}.player-foot i{margin-right:4px;color:var(--green);font-size:13px}.details-card{margin-top:14px;padding:17px}.faculty-block{display:flex;align-items:center;gap:11px;padding-bottom:15px;border-bottom:1px solid var(--border)}.faculty-avatar{width:41px;height:41px;display:grid;place-items:center;border-radius:13px;background:var(--light);color:var(--dark);font-size:17px;font-weight:850}.faculty-block strong,.details-grid strong{display:block;margin-top:4px;font-size:11px;overflow-wrap:anywhere}.field-label{display:block;color:var(--muted);font-size:8px;font-weight:850;letter-spacing:.8px}.details-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px 22px;padding-top:15px}.status-live{color:var(--green)}.class-description{margin-top:15px;padding-top:13px;border-top:1px solid var(--border);color:var(--muted);font-size:11px;line-height:1.7}.interaction-section{margin-top:26px}.section-heading{display:flex;align-items:flex-end;justify-content:space-between;gap:10px;margin-bottom:12px}.section-heading h2{margin-top:5px;font-size:17px;letter-spacing:-.35px}.section-hint{color:var(--muted);font-size:9px}.interaction-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}.interaction-button{min-height:82px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;border:1px solid var(--border);border-radius:13px;background:#fff;color:var(--text);font-size:10px;font-weight:750;box-shadow:0 3px 12px #17233805}.interaction-button i{color:var(--blue);font-size:22px}.interaction-button.selected{border-color:#a9c8fb;background:var(--light);color:var(--dark)}.interaction-button.warning i{color:var(--orange)}.question-box{margin-top:12px;padding:14px;border:1px solid var(--border);border-radius:13px;background:#fff}.question-box label{display:block;margin-bottom:8px;font-size:11px;font-weight:800}.question-box textarea{width:100%;padding:11px;border:1px solid var(--border);border-radius:9px;resize:vertical;color:var(--text);font-size:11px}.question-box .primary-button{display:flex;align-items:center;gap:8px;margin-left:auto}.privacy-note{margin-top:20px;color:var(--muted);font-size:9px;line-height:1.6}.privacy-note i{color:var(--blue)}.toast{position:fixed;z-index:80;right:16px;bottom:18px;left:16px;width:max-content;max-width:calc(100% - 32px);margin:auto;padding:12px 16px;border-radius:10px;background:#172338;color:#fff;font-size:11px;box-shadow:0 8px 25px #17233825;opacity:0;pointer-events:none;transition:opacity .2s}.toast.show{opacity:1}.end-overlay{position:fixed;z-index:100;inset:0;display:grid;place-items:center;padding:20px;background:#172338b8;backdrop-filter:blur(5px)}.end-card{width:min(100%,380px);padding:29px 24px;border:1px solid var(--border);border-radius:19px;background:#fff;text-align:center;box-shadow:0 20px 70px #10182740}.end-icon{width:53px;height:53px;display:grid;place-items:center;margin:0 auto 15px;border-radius:16px;background:var(--green-soft);color:var(--green);font-size:25px}.end-card h2{margin-top:7px;font-size:20px}.end-card p{margin-top:8px;color:var(--muted);font-size:11px;line-height:1.7}.end-loader{width:19px;height:19px;display:block;margin:17px auto 0;border:2px solid #dce8fb;border-top-color:var(--blue);border-radius:50%;animation:spin .8s linear infinite}
+@media(min-width:760px){.page{padding-top:29px}.player-card{max-width:100%}.details-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}@media(max-width:560px){.topbar-inner{min-height:61px;padding-inline:12px}.back-button{font-size:10px}.brand-mark{width:31px;height:31px}.brand strong{font-size:11px}.live-pill{padding:6px 8px;font-size:8px}.page{padding:18px 12px 35px}.classroom-heading{gap:9px}.classroom-heading h1{font-size:19px}.classroom-heading p{font-size:9px}.live-pill-large{margin-top:3px}.player-stage{min-height:190px}.player-foot{font-size:8px}.details-card{padding:14px}.interaction-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.interaction-button{min-height:69px;flex-direction:row;justify-content:flex-start;padding:0 17px}.interaction-button i{font-size:20px}.section-hint{display:none}}@media(max-width:360px){.back-button span{max-width:67px;line-height:1.2}.classroom-heading{flex-direction:column}.live-pill-large{align-self:flex-start}}
+
+  </style>
+</head>
+<body>
+  <header class="topbar"><div class="topbar-inner">
+    <button class="back-button" id="backButton" type="button"><i class="ri-arrow-left-line"></i><span>Back to Classes</span></button>
+    <a class="brand" href="../live/" aria-label="Zenova Live Classes"><span class="brand-mark">Z</span><span><strong>ZENOVA</strong><small>EDUCATIONS</small></span></a>
+    <div class="live-pill hidden" id="headerLive"><span class="pulse-dot"></span> LIVE</div>
+  </div></header>
+
+  <main class="page wrap">
+    <section id="loadingState" class="state-card"><span class="spinner"></span><strong>Preparing your classroom</strong><p>Checking your class schedule and connecting to the stream.</p></section>
+    <section id="errorState" class="state-card hidden"><span class="state-icon"><i class="ri-error-warning-line"></i></span><h2 id="errorTitle">Unable to open classroom</h2><p id="errorText">Please try again.</p><button class="primary-button" id="errorBack" type="button">Back to Live Classes</button></section>
+    <section id="waitingState" class="state-card hidden"><span class="waiting-icon"><i class="ri-time-line"></i></span><span class="eyebrow">YOUR NEXT CLASS</span><h2 id="waitingTitle">Class will start soon</h2><p id="waitingDescription">The classroom will open automatically when the scheduled time begins.</p><div class="countdown" id="countdown">--:--:--</div><button class="secondary-button" id="waitingBack" type="button">Back to Live Classes</button></section>
+
+    <div id="classroom" class="hidden">
+      <div class="classroom-heading"><div><span class="eyebrow" id="subjectName">LIVE CLASSROOM</span><h1 id="classTitle">Class title</h1><p id="classHierarchy">Course · Subject · Chapter</p></div><div class="live-pill live-pill-large"><span class="pulse-dot"></span><span id="liveLabel">LIVE NOW</span></div></div>
+
+      <section class="player-card">
+        <div class="player-stage" id="playerStage">
+          <video id="liveVideo" playsinline webkit-playsinline preload="auto" disablepictureinpicture controlslist="nodownload noplaybackrate noremoteplayback"></video>
+          <div id="youtubeContainer" class="youtube-container hidden"></div>
+          <div class="stage-topline"><span class="stage-live"><i class="pulse-dot"></i> LIVE</span><span class="stage-watermark" id="watermark">ZENOVA</span></div>
+          <div id="playerLoading" class="player-overlay"><span class="spinner light-spinner"></span><strong id="playerMessage">Connecting to your class...</strong><small id="playerSubMessage">Please wait while the stream loads.</small></div>
+          <button id="centerPlay" class="center-play hidden" type="button" aria-label="Play stream"><i class="ri-play-fill"></i></button>
+          <div class="custom-controls" id="customControls">
+            <button id="playButton" type="button" aria-label="Play or pause"><i class="ri-play-fill"></i></button>
+            <button id="muteButton" type="button" aria-label="Mute or unmute"><i class="ri-volume-up-line"></i></button>
+            <span class="controls-spacer"></span><span class="controls-live"><i class="pulse-dot"></i> LIVE</span>
+            <button id="fullscreenButton" type="button" aria-label="Fullscreen"><i class="ri-fullscreen-line"></i></button>
+          </div>
+        </div>
+        <div class="player-foot"><span><i class="ri-shield-check-line"></i> Live playback · Seeking disabled</span><span id="connectionLabel">Connecting</span></div>
+      </section>
+
+      <section class="details-card"><div class="faculty-block"><div class="faculty-avatar" id="facultyAvatar">Z</div><div><span class="field-label">YOUR FACULTY</span><strong id="facultyName">Zenova Faculty</strong></div></div>
+        <div class="details-grid"><div><span class="field-label">SCHEDULED TIME</span><strong id="classTime">--</strong></div><div><span class="field-label">COURSE / BATCH</span><strong id="courseName">Zenova</strong></div><div><span class="field-label">CLASS STATUS</span><strong class="status-live" id="classStatus">LIVE NOW</strong></div><div><span class="field-label">YOUR PROFILE</span><strong id="studentName">Student</strong></div></div>
+        <p id="classDescription" class="class-description hidden"></p>
+      </section>
+
+      <section class="interaction-section"><div class="section-heading"><div><span class="eyebrow">PARTICIPATE</span><h2>Classroom Interaction</h2></div><span class="section-hint">Interact with your faculty</span></div>
+        <div class="interaction-grid">
+          <button class="interaction-button" id="raiseHand" type="button"><i class="ri-hand"></i><span>Raise Hand</span></button>
+          <button class="interaction-button" id="askTeacher" type="button"><i class="ri-message-3-line"></i><span>Ask Teacher</span></button>
+          <button class="interaction-button" id="understood" type="button"><i class="ri-checkbox-circle-line"></i><span>I Understood</span></button>
+          <button class="interaction-button warning" id="reExplain" type="button"><i class="ri-refresh-line"></i><span>Re-explain</span></button>
+        </div>
+        <div id="questionBox" class="question-box hidden"><label for="questionText">Your question</label><textarea id="questionText" rows="3" placeholder="Type your doubt or question..."></textarea><button class="primary-button" id="sendQuestion" type="button">Send Question <i class="ri-send-plane-line"></i></button></div>
+      </section>
+      <p class="privacy-note"><i class="ri-information-line"></i> Your live-class activity may be recorded to support attendance and learning progress.</p>
+    </div>
+  </main>
+  <div id="toast" class="toast" role="status"></div>
+  <div id="endOverlay" class="end-overlay hidden"><div class="end-card"><span class="end-icon"><i class="ri-checkbox-circle-line"></i></span><span class="eyebrow">CLASS COMPLETED</span><h2>Your live class has ended</h2><p>Thank you for attending. Taking you back to your Live Classes.</p><span class="end-loader"></span></div></div>
+  <script type="module">
+import { auth, db } from "../../firebase/firebase-config.js";
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+import {
+  doc, getDoc, getDocs, addDoc, updateDoc, collection, query, where,
+  onSnapshot, serverTimestamp
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
+const $ = id => document.getElementById(id);
+const params = new URLSearchParams(location.search);
+const classId = params.get("liveClassId") || params.get("classId");
+const requestedMode = String(params.get("mode") || "live").toLowerCase();
+const HEARTBEAT_MS = 15000;
+
+let user = null;
+let student = {};
+let classData = {};
+let course = null;
+let subject = null;
+let chapter = null;
+let sessionRef = null;
+let sessionClosed = false;
+let handRaised = false;
+let totalWatched = 0;
+let lastTick = 0;
+let sourceKind = "direct";
+let sourceUrl = "";
+let sourceField = "";
+let youtubePlayer = null;
+let youtubeReady = false;
+let hlsInstance = null;
+let scheduledStartAt = null;
+let scheduledEndAt = null;
+let liveTimer = null;
+let clockTimer = null;
+let heartbeatTimer = null;
+let watchTimer = null;
+let timeGuardTimer = null;
+let classUnsubscribe = null;
+let ending = false;
+let recordedAsLive = false;
+let playerStarted = false;
+
+const video = $("liveVideo");
+const stage = $("playerStage");
+
+function first(...values) {
+  return values.find(value => value !== undefined && value !== null && String(value).trim() !== "") ?? "";
+}
+
+function toast(message) {
+  const el = $("toast");
+  el.textContent = message;
+  el.classList.add("show");
+  clearTimeout(toast.timer);
+  toast.timer = setTimeout(() => el.classList.remove("show"), 2800);
+}
+
+function showState(which) {
+  ["loadingState", "errorState", "waitingState", "classroom"].forEach(id => {
+    $(id).classList.toggle("hidden", id !== which);
+  });
+}
+
+function showError(message, title = "Unable to open classroom") {
+  $("errorTitle").textContent = title;
+  $("errorText").textContent = message;
+  showState("errorState");
+}
+
+function goLivePage(classEnded = false) {
+  location.href = classEnded ? "../live/?notice=class-ended" : "../live/";
+}
+
+function toDate(value) {
+  if (!value) return null;
+  if (value instanceof Date) return Number.isNaN(value.getTime()) ? null : value;
+  if (typeof value?.toDate === "function") {
+    const result = value.toDate();
+    return result instanceof Date && !Number.isNaN(result.getTime()) ? result : null;
+  }
+  if (typeof value === "number") {
+    const result = new Date(value);
+    return Number.isNaN(result.getTime()) ? null : result;
+  }
+  if (typeof value === "string") {
+    const result = new Date(value);
+    return Number.isNaN(result.getTime()) ? null : result;
+  }
+  return null;
+}
+
+function classCourseIds(data = classData) {
+  return [data.courseId, data.crmCourseId, data.courseID, data.batchId]
+    .filter(Boolean).map(String);
+}
+
+function profileHasAccess() {
+  const ids = classCourseIds();
+  const directId = first(student.courseId, student.crmCourseId, student.courseID, student.batchId);
+  if (directId && ids.includes(String(directId))) return true;
+
+  const arrays = [
+    student.purchasedCourseIds,
+    student.enrolledCourseIds,
+    student.courseIds,
+    student.purchasedCourses,
+    student.enrolledCourses
+  ];
+
+  return arrays.some(list => Array.isArray(list) && list.some(item => {
+    const id = typeof item === "object"
+      ? first(item.courseId, item.id, item.crmCourseId, item.batchId)
+      : item;
+    return ids.includes(String(id));
+  }));
+}
+
+function courseProfileAccess() {
+  const status = String(
+    course?.studentAccess?.[user.uid] ||
+    course?.enrollments?.[user.uid]?.status || ""
+  ).toLowerCase();
+  return ["approved", "active", "paid", "enrolled", "success", "completed"].includes(status);
+}
+
+async function validateEnrollment() {
+  if (["FREE", "PUBLIC", "OPEN"].includes(String(classData.accessType || "").toUpperCase())) return true;
+  if (profileHasAccess() || courseProfileAccess()) return true;
+
+  const ids = classCourseIds();
+  if (!ids.length) return true;
+
+  const snapshot = await getDocs(query(
+    collection(db, "studentEnrollments"),
+    where("studentUid", "==", user.uid)
+  ));
+
+  return snapshot.docs.some(item => {
+    const enrollment = item.data();
+    const enrollmentIds = [
+      enrollment.crmCourseId,
+      enrollment.courseId,
+      enrollment.courseID,
+      enrollment.batchId
+    ].filter(Boolean).map(String);
+    const status = String(first(enrollment.status, enrollment.enrollmentStatus)).toLowerCase();
+    const approved = enrollment.accessGranted === true || (
+      enrollment.accessGranted !== false &&
+      (!status || ["active", "approved", "paid", "purchased", "enrolled", "success", "completed"].includes(status))
+    );
+    return approved && enrollmentIds.some(id => ids.includes(id));
+  });
+}
+
+async function getOptionalDoc(collectionName, id) {
+  if (!id) return null;
+  try {
+    const snapshot = await getDoc(doc(db, collectionName, String(id)));
+    return snapshot.exists() ? { id: snapshot.id, ...snapshot.data() } : null;
+  } catch (error) {
+    console.warn(`Optional ${collectionName} lookup failed`, error);
+    return null;
+  }
+}
+
+function parseSchedule() {
+  // The redesigned admin writes startAt/endAt as Firestore timestamps.
+  // scheduledDate + scheduledTime remain as a backwards-compatible fallback.
+  scheduledStartAt = toDate(classData.startAt) || toDate(classData.scheduledStartAt) || null;
+  scheduledEndAt = toDate(classData.endAt) || toDate(classData.endDateTime) || toDate(classData.scheduledEndAt) || null;
+
+  if (!scheduledStartAt) {
+    const date = first(classData.scheduledDate, classData.date, classData.classDate);
+    const time = first(classData.scheduledTime, classData.startTime, classData.time);
+    if (date && time) {
+      const normalizedTime = time.length === 5 ? `${time}:00` : time;
+      const parsed = new Date(`${date}T${normalizedTime}`);
+      if (!Number.isNaN(parsed.getTime())) scheduledStartAt = parsed;
+    }
+  }
+
+  if (!scheduledEndAt && scheduledStartAt) {
+    const duration = Number(first(classData.duration, classData.durationMinutes, classData.classDurationMinutes, 60));
+    scheduledEndAt = new Date(scheduledStartAt.getTime() + Math.max(1, duration) * 60000);
+  }
+}
+
+function classHasEnded() {
+  const status = String(classData.status || "").toLowerCase();
+  return classData.ended === true || classData.cancelled === true ||
+    ["ended", "completed", "cancelled", "canceled"].includes(status) ||
+    Boolean(scheduledEndAt && Date.now() >= scheduledEndAt.getTime());
+}
+
+function extractYouTubeId(value) {
+  try {
+    const input = String(value || "").trim();
+    if (/^[\w-]{11}$/.test(input)) return input;
+    const url = new URL(input);
+    const host = url.hostname.toLowerCase();
+    if (host.includes("youtu.be")) return url.pathname.split("/").filter(Boolean)[0] || null;
+    if (host.includes("youtube.com") || host.includes("youtube-nocookie.com")) {
+      const queryId = url.searchParams.get("v");
+      if (queryId) return queryId;
+      const parts = url.pathname.split("/").filter(Boolean);
+      const marker = parts.findIndex(part => ["embed", "live", "shorts", "v"].includes(part));
+      if (marker >= 0) return parts[marker + 1] || null;
+    }
+  } catch (_) {}
+  return null;
+}
+
+function getSource() {
+  const type = String(first(classData.liveType, classData.mode, classData.sourceType, classData.streamType)).toUpperCase();
+  const explicitRecordedAsLive = classData.recordedAsLive === true ||
+    classData.playAsLive === true || classData.isRecordedAsLive === true;
+
+  // Use the exact fields written by the existing redesigned Live Class admin.
+  if (type === "ZOOM") {
+    throw new Error("This class uses a Zoom meeting link. A Zoom meeting link cannot play inside the Zenova video player. Select YouTube Live or External video URL in the admin page.");
+  }
+
+  const candidates = type === "YOUTUBE_LIVE"
+    ? ["youtubeLiveUrl", "studentJoinUrl", "joinUrl"]
+    : type === "EXTERNAL_URL" || type === "RECORDED_VIDEO"
+      ? ["playbackUrl", "videoUrl", "externalVideoUrl", "streamUrl", "recordingUrl", "recordedUrl", "recordedVideoUrl"]
+      : ["youtubeLiveUrl", "youtubeUrl", "playbackUrl", "streamUrl", "videoUrl", "recordingUrl", "recordedUrl", "recordedVideoUrl", "externalVideoUrl"];
+
+  sourceField = candidates.find(field => typeof classData[field] === "string" && classData[field].trim()) || "";
+  sourceUrl = sourceField ? classData[sourceField].trim() : "";
+  if (!sourceUrl) throw new Error("Your teacher has not added a playable YouTube Live or direct video URL yet.");
+
+  const youtubeId = extractYouTubeId(sourceUrl);
+  if (youtubeId) {
+    sourceKind = "youtube";
+    recordedAsLive = explicitRecordedAsLive || type === "RECORDED_VIDEO" ||
+      ["youtubeUrl", "recordingUrl", "recordedUrl", "recordedVideoUrl"].includes(sourceField);
+    return;
+  }
+
+  sourceKind = "direct";
+  let pathname = "";
+  try { pathname = new URL(sourceUrl, location.href).pathname.toLowerCase(); } catch (_) {}
+  const isHls = pathname.endsWith(".m3u8");
+  const isFileVideo = /\.(mp4|m4v|webm|ogg|ogv)$/.test(pathname);
+
+  if (explicitRecordedAsLive || type === "RECORDED_VIDEO" || isFileVideo) {
+    recordedAsLive = true;
+  } else if (isHls || classData.isLiveStream === true || type === "LIVE_STREAM") {
+    recordedAsLive = false;
+  } else {
+    // EXTERNAL_URL values without a recognizable extension are assumed to be
+    // a pre-recorded file/stream URL being presented as a scheduled live class.
+    recordedAsLive = true;
+  }
+}
+
+function fmtTime(date) {
+  return date ? date.toLocaleTimeString("en-IN", { hour: "numeric", minute: "2-digit" }) : "--";
+}
+
+function renderInfo() {
+  const title = first(classData.title, classData.classTitle, classData.liveTitle, classData.topic, "Live Class");
+  $("classTitle").textContent = title;
+  $("subjectName").textContent = first(classData.subjectName, subject?.subjectName, subject?.name, subject?.title, "LIVE CLASSROOM").toUpperCase();
+  $("classHierarchy").textContent = [
+    first(classData.courseName, course?.courseName, course?.name, course?.title, "Zenova"),
+    first(classData.subjectName, subject?.subjectName, subject?.name, subject?.title, "Subject"),
+    first(classData.chapterName, chapter?.chapterName, chapter?.name, chapter?.title, "Chapter")
+  ].join(" · ");
+
+  const faculty = first(classData.teacherName, classData.facultyName, classData.faculty, classData.teacher, "Zenova Faculty");
+  $("facultyName").textContent = faculty;
+  $("facultyAvatar").textContent = faculty.trim().charAt(0).toUpperCase() || "Z";
+  $("classTime").textContent = scheduledStartAt ? `${fmtTime(scheduledStartAt)} – ${fmtTime(scheduledEndAt)}` : "--";
+  $("courseName").textContent = first(classData.courseName, course?.courseName, course?.name, course?.title, classData.batchName, "Zenova");
+  $("studentName").textContent = first(student.name, student.studentName, student.fullName, user.displayName, "Student");
+  const description = first(classData.description, classData.classDescription);
+  if (description) {
+    $("classDescription").textContent = description;
+    $("classDescription").classList.remove("hidden");
+  }
+  $("watermark").textContent = first(student.name, student.studentName, student.fullName, "ZENOVA").toUpperCase().slice(0, 22);
+}
+
+function showPlayerMessage(title, subtitle) {
+  $("playerLoading").classList.remove("hidden");
+  $("playerMessage").textContent = title;
+  $("playerSubMessage").textContent = subtitle;
+}
+
+function hidePlayerMessage() {
+  $("playerLoading").classList.add("hidden");
+  $("connectionLabel").textContent = "Connected";
+}
+
+function elapsedFromStart() {
+  return scheduledStartAt ? Math.max(0, (Date.now() - scheduledStartAt.getTime()) / 1000) : 0;
+}
+
+function syncRecordedVideo() {
+  if (!recordedAsLive || !scheduledStartAt || video.readyState < 1 || !Number.isFinite(video.duration)) return;
+  if (video.duration <= 0 || elapsedFromStart() >= video.duration) return;
+  const target = Math.max(0, Math.min(elapsedFromStart(), video.duration - 0.25));
+  if (Math.abs(video.currentTime - target) > 2.5) {
+    try { video.currentTime = target; } catch (_) {}
+  }
+}
+
+function syncRecordedYouTube() {
+  if (!recordedAsLive || !scheduledStartAt || !youtubeReady || !youtubePlayer) return;
+  try {
+    const duration = youtubePlayer.getDuration();
+    if (!duration || elapsedFromStart() >= duration) return;
+    const target = Math.max(0, Math.min(elapsedFromStart(), duration - 0.25));
+    if (Math.abs(youtubePlayer.getCurrentTime() - target) > 2.5) youtubePlayer.seekTo(target, true);
+  } catch (_) {}
+}
+
+async function startSession() {
+  try {
+    sessionRef = await addDoc(collection(db, "livePlaybackSessions"), {
+      studentUid: user.uid,
+      studentName: first(student.name, student.studentName, student.fullName, user.displayName),
+      studentCode: first(student.studentCode, student.znvCode, student.code),
+      classId,
+      courseId: first(classData.courseId, classData.crmCourseId, classData.courseID),
+      batchId: first(classData.batchId, classData.courseId),
+      courseName: first(classData.courseName, course?.courseName, course?.name),
+      subjectName: first(classData.subjectName, subject?.subjectName, subject?.name),
+      chapterName: first(classData.chapterName, chapter?.chapterName, chapter?.name),
+      classTitle: first(classData.title, classData.classTitle),
+      mode: "live",
+      joinedAt: serverTimestamp(),
+      startedAt: serverTimestamp(),
+      lastHeartbeat: serverTimestamp(),
+      lastHeartbeatAt: serverTimestamp(),
+      lastActiveAt: serverTimestamp(),
+      totalWatchSeconds: 0,
+      watchSeconds: 0,
+      lastPosition: 0,
+      rejoinCount: 0,
+      status: "active",
+      sessionStatus: "active",
+      completionPercentage: 0
+    });
+    await writeEvent("session_join");
+  } catch (error) {
+    console.warn("Playback session tracking unavailable", error);
+    $("connectionLabel").textContent = "Attendance sync unavailable";
+  }
+}
+
+function currentPosition() {
+  if (sourceKind === "youtube" && youtubeReady && youtubePlayer) {
+    try { return youtubePlayer.getCurrentTime() || 0; } catch (_) { return 0; }
+  }
+  return video.currentTime || 0;
+}
+
+async function saveSession(extra = {}) {
+  if (!sessionRef || sessionClosed) return;
+  try {
+    await updateDoc(sessionRef, {
+      lastHeartbeat: serverTimestamp(),
+      lastHeartbeatAt: serverTimestamp(),
+      lastActiveAt: serverTimestamp(),
+      lastPosition: Number(currentPosition()),
+      totalWatchSeconds: Math.floor(totalWatched),
+      watchSeconds: Math.floor(totalWatched),
+      status: "active",
+      sessionStatus: "active",
+      ...extra
+    });
+  } catch (error) {
+    console.warn("Playback session update failed", error);
+  }
+}
+
+async function writeEvent(eventType, extra = {}) {
+  if (!sessionRef || sessionClosed) return;
+  try {
+    await addDoc(collection(db, "liveWatchEvents"), {
+      studentUid: user.uid,
+      studentCode: first(student.studentCode, student.znvCode, student.code),
+      classId,
+      sessionId: sessionRef.id,
+      eventType,
+      videoPosition: Number(currentPosition()),
+      timestamp: serverTimestamp(),
+      ...extra
+    });
+  } catch (error) {
+    console.warn("Live watch event could not be saved", error);
+  }
+}
+
+async function finishSession(reason) {
+  if (sessionClosed) return;
+  sessionClosed = true;
+  if (!sessionRef) return;
+  try {
+    await updateDoc(sessionRef, {
+      status: reason,
+      sessionStatus: reason,
+      exitedAt: serverTimestamp(),
+      lastHeartbeat: serverTimestamp(),
+      lastHeartbeatAt: serverTimestamp(),
+      lastActiveAt: serverTimestamp(),
+      lastPosition: Number(currentPosition()),
+      totalWatchSeconds: Math.floor(totalWatched),
+      watchSeconds: Math.floor(totalWatched)
+    });
+  } catch (error) {
+    console.warn("Could not close playback session", error);
+  }
+}
+
+function updateWatchTime() {
+  const now = Date.now();
+  if (lastTick && isPlaying()) {
+    const delta = (now - lastTick) / 1000;
+    if (delta > 0 && delta < 4) totalWatched += delta;
+  }
+  lastTick = isPlaying() ? now : 0;
+}
+
+function isPlaying() {
+  if (sourceKind === "youtube" && youtubeReady && youtubePlayer) {
+    try { return youtubePlayer.getPlayerState() === window.YT.PlayerState.PLAYING; } catch (_) { return false; }
+  }
+  return Boolean(video && !video.paused && !video.ended);
+}
+
+function startWatchClock() {
+  if (!lastTick) lastTick = Date.now();
+}
+
+function stopWatchClock() {
+  updateWatchTime();
+  lastTick = 0;
+}
+
+function showPlayPrompt() {
+  $("centerPlay").classList.remove("hidden");
+  $("playerMessage").textContent = "Your class is ready";
+  $("playerSubMessage").textContent = "Tap play to start the stream.";
+  $("playerLoading").classList.add("hidden");
+}
+
+function updateMuteButton() {
+  const muted = sourceKind === "youtube"
+    ? (youtubeReady && youtubePlayer ? youtubePlayer.isMuted() : true)
+    : video.muted;
+  $("muteButton").innerHTML = muted
+    ? '<i class="ri-volume-mute-line"></i>'
+    : '<i class="ri-volume-up-line"></i>';
+}
+
+function onYouTubeReady() {
+  youtubeReady = true;
+  hidePlayerMessage();
+  try {
+    // Muted autoplay is the most reliable browser-permitted start behaviour.
+    youtubePlayer.mute();
+    youtubePlayer.playVideo();
+    if (recordedAsLive) {
+      syncRecordedYouTube();
+      setTimeout(syncRecordedYouTube, 1200);
+    }
+    setTimeout(() => {
+      if (!ending && youtubeReady && youtubePlayer &&
+          youtubePlayer.getPlayerState() !== window.YT.PlayerState.PLAYING) {
+        showPlayPrompt();
+      }
+    }, 2200);
+  } catch (_) {
+    showPlayPrompt();
+  }
+  updateMuteButton();
+}
+
+function onYouTubeState(event) {
+  const state = event.data;
+  if (state === window.YT.PlayerState.PLAYING) {
+    hidePlayerMessage();
+    $("playButton").innerHTML = '<i class="ri-pause-fill"></i>';
+    $("centerPlay").classList.add("hidden");
+    startWatchClock();
+    if (recordedAsLive) syncRecordedYouTube();
+  } else if (state === window.YT.PlayerState.PAUSED) {
+    stopWatchClock();
+    $("playButton").innerHTML = '<i class="ri-play-fill"></i>';
+    if (recordedAsLive) syncRecordedYouTube();
+  } else if (state === window.YT.PlayerState.BUFFERING) {
+    showPlayerMessage("Buffering your class...", "Please wait while the stream reconnects.");
+  } else if (state === window.YT.PlayerState.ENDED) {
+    stopWatchClock();
+    endClass("The video has finished.");
+  }
+}
+
+function onYouTubeError(event) {
+  console.error("YouTube embed error", event);
+  showPlayerMessage("YouTube stream unavailable", "The owner may have disabled embedding, or the broadcast may not be available yet.");
+  $("connectionLabel").textContent = "Stream unavailable";
+}
+
+function loadYouTube() {
+  const videoId = extractYouTubeId(sourceUrl);
+  if (!videoId) throw new Error("The YouTube URL is not valid.");
+  video.classList.add("hidden");
+  $("youtubeContainer").classList.remove("hidden");
+  showPlayerMessage("Connecting to YouTube...", "Opening the broadcast inside Zenova Classroom.");
+
+  const createPlayer = () => {
+    if (ending || youtubePlayer) return;
+    youtubePlayer = new window.YT.Player("youtubeContainer", {
+      videoId,
+      host: "https://www.youtube-nocookie.com",
+      playerVars: {
+        autoplay: 1,
+        controls: 0,
+        disablekb: 1,
+        fs: 0,
+        playsinline: 1,
+        rel: 0,
+        iv_load_policy: 3,
+        origin: location.origin
+      },
+      events: {
+        onReady: onYouTubeReady,
+        onStateChange: onYouTubeState,
+        onError: onYouTubeError
+      }
+    });
+  };
+
+  if (window.YT && window.YT.Player) {
+    createPlayer();
+    return;
+  }
+
+  window.onYouTubeIframeAPIReady = createPlayer;
+  if (!document.querySelector('script[data-youtube-api="1"]')) {
+    const script = document.createElement("script");
+    script.src = "https://www.youtube.com/iframe_api";
+    script.dataset.youtubeApi = "1";
+    script.onerror = () => {
+      showPlayerMessage("YouTube could not be loaded", "Check your internet connection and try again.");
+      $("connectionLabel").textContent = "YouTube unavailable";
+    };
+    document.head.appendChild(script);
+  }
+}
+
+function loadHls(url) {
+  return new Promise((resolve, reject) => {
+    if (window.Hls) {
+      attachHls();
+      return;
+    }
+    const existing = document.querySelector('script[data-hls-api="1"]');
+    if (existing) {
+      existing.addEventListener("load", attachHls, { once: true });
+      existing.addEventListener("error", () => reject(new Error("The HLS playback engine could not load.")), { once: true });
+      return;
+    }
+    const script = document.createElement("script");
+    script.src = "https://cdn.jsdelivr.net/npm/hls.js@1.5.17/dist/hls.min.js";
+    script.dataset.hlsApi = "1";
+    script.onload = attachHls;
+    script.onerror = () => reject(new Error("The HLS playback engine could not load."));
+    document.head.appendChild(script);
+
+    function attachHls() {
+      if (!window.Hls || !window.Hls.isSupported()) {
+        reject(new Error("This browser cannot play this HLS stream."));
+        return;
+      }
+      hlsInstance = new window.Hls({ enableWorker: true, lowLatencyMode: true, backBufferLength: 30 });
+      hlsInstance.loadSource(url);
+      hlsInstance.attachMedia(video);
+      hlsInstance.on(window.Hls.Events.MANIFEST_PARSED, () => resolve());
+      hlsInstance.on(window.Hls.Events.ERROR, (_event, data) => {
+        if (data.fatal) {
+          showPlayerMessage("Stream connection interrupted", "The stream could not be loaded. Please try again.");
+          reject(new Error(data.details || "HLS stream error"));
+        }
+      });
+    }
+  });
+}
+
+async function startDirectVideo() {
+  video.classList.remove("hidden");
+  $("youtubeContainer").classList.add("hidden");
+  video.controls = false;
+  video.disablePictureInPicture = true;
+  video.setAttribute("controlslist", "nodownload noplaybackrate noremoteplayback");
+  video.setAttribute("playsinline", "");
+  video.playbackRate = 1;
+  let pathname = "";
+  try { pathname = new URL(sourceUrl, location.href).pathname.toLowerCase(); } catch (_) {}
+  const useHlsJs = pathname.endsWith(".m3u8") && !video.canPlayType("application/vnd.apple.mpegurl");
+  if (!useHlsJs) {
+    video.src = sourceUrl;
+    video.load();
+  }
+
+  video.addEventListener("loadedmetadata", () => {
+    if (recordedAsLive) syncRecordedVideo();
+  });
+  video.addEventListener("canplay", async () => {
+    hidePlayerMessage();
+    if (recordedAsLive) syncRecordedVideo();
+    try {
+      // Attempt muted autoplay; the student can unmute with the in-page control.
+      video.muted = true;
+      await video.play();
+    } catch (_) {
+      showPlayPrompt();
+    }
+  }, { once: true });
+  video.addEventListener("playing", () => {
+    hidePlayerMessage();
+    $("playButton").innerHTML = '<i class="ri-pause-fill"></i>';
+    $("centerPlay").classList.add("hidden");
+    startWatchClock();
+  });
+  video.addEventListener("waiting", () => showPlayerMessage("Buffering your class...", "Please wait while the stream reconnects."));
+  video.addEventListener("pause", () => {
+    stopWatchClock();
+    $("playButton").innerHTML = '<i class="ri-play-fill"></i>';
+    if (recordedAsLive) syncRecordedVideo();
+  });
+  video.addEventListener("ended", () => endClass("The class video has finished."));
+  video.addEventListener("volumechange", updateMuteButton);
+  video.addEventListener("timeupdate", () => {
+    updateWatchTime();
+    if (recordedAsLive && !video.paused) syncRecordedVideo();
+  });
+  video.addEventListener("seeking", () => {
+    if (recordedAsLive) setTimeout(syncRecordedVideo, 0);
+  });
+  video.addEventListener("ratechange", () => {
+    if (video.playbackRate !== 1) video.playbackRate = 1;
+  });
+  video.addEventListener("error", () => {
+    showPlayerMessage("Video could not be played", "Use a direct MP4 or HLS URL that is publicly accessible and supports browser playback.");
+    $("connectionLabel").textContent = "Stream unavailable";
+  });
+
+  if (useHlsJs) await loadHls(sourceUrl);
+}
+
+function togglePlay() {
+  if (sourceKind === "youtube" && youtubeReady && youtubePlayer) {
+    const state = youtubePlayer.getPlayerState();
+    if (state === window.YT.PlayerState.PLAYING) youtubePlayer.pauseVideo();
+    else {
+      if (recordedAsLive) syncRecordedYouTube();
+      youtubePlayer.playVideo();
+    }
+    return;
+  }
+
+  if (video.paused) {
+    if (recordedAsLive) syncRecordedVideo();
+    video.play().then(hidePlayerMessage).catch(() => showPlayPrompt());
+  } else {
+    video.pause();
+  }
+}
+
+function toggleMute() {
+  if (sourceKind === "youtube" && youtubeReady && youtubePlayer) {
+    if (youtubePlayer.isMuted()) youtubePlayer.unMute();
+    else youtubePlayer.mute();
+  } else {
+    video.muted = !video.muted;
+  }
+  updateMuteButton();
+}
+
+function setupControls() {
+  $("playButton").addEventListener("click", togglePlay);
+  $("centerPlay").addEventListener("click", togglePlay);
+  $("muteButton").addEventListener("click", toggleMute);
+  $("fullscreenButton").addEventListener("click", async () => {
+    try {
+      if (document.fullscreenElement) await document.exitFullscreen();
+      else if (stage.requestFullscreen) await stage.requestFullscreen();
+      else if (video.webkitEnterFullscreen) video.webkitEnterFullscreen();
+    } catch (_) {
+      toast("Fullscreen is not supported on this device.");
+    }
+  });
+  stage.addEventListener("contextmenu", event => event.preventDefault());
+}
+
+function updateCountdown() {
+  if (!scheduledStartAt) return;
+  const seconds = Math.max(0, Math.floor((scheduledStartAt.getTime() - Date.now()) / 1000));
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  const remaining = seconds % 60;
+  $("countdown").textContent = [hours, minutes, remaining].map(value => String(value).padStart(2, "0")).join(":");
+}
+
+function setupSchedule() {
+  if (classHasEnded()) {
+    endClass("This live class has already ended.");
+    return;
+  }
+
+  const now = Date.now();
+  if (scheduledStartAt && now < scheduledStartAt.getTime()) {
+    showState("waitingState");
+    $("waitingTitle").textContent = first(classData.title, classData.classTitle, "Your class will start soon");
+    $("waitingDescription").textContent = `Your class is scheduled for ${fmtTime(scheduledStartAt)}. The player will open automatically at the scheduled time.`;
+    updateCountdown();
+    clockTimer = setInterval(updateCountdown, 1000);
+    liveTimer = setTimeout(beginClass, Math.max(0, scheduledStartAt.getTime() - now));
+    return;
+  }
+  beginClass();
+}
+
+async function beginClass() {
+  if (ending || playerStarted) return;
+  if (classHasEnded()) {
+    endClass("This live class has ended.");
+    return;
+  }
+  playerStarted = true;
+  clearInterval(clockTimer);
+  showState("classroom");
+  $("headerLive").classList.remove("hidden");
+  $("classStatus").textContent = "LIVE NOW";
+  $("liveLabel").textContent = "LIVE NOW";
+  showPlayerMessage("Connecting to your class...", "Please wait while Zenova connects to the stream.");
+  await startSession();
+
+  try {
+    if (sourceKind === "youtube") loadYouTube();
+    else await startDirectVideo();
+  } catch (error) {
+    console.error("Live player source error", error);
+    showPlayerMessage("Unable to load this stream", error.message || "Please check the video URL.");
+    $("connectionLabel").textContent = "Stream unavailable";
+  }
+
+  if (scheduledEndAt) {
+    const remaining = scheduledEndAt.getTime() - Date.now();
+    if (remaining <= 0) endClass("The scheduled class time has ended.");
+    else liveTimer = setTimeout(() => endClass("The scheduled class time has ended."), remaining);
+  }
+}
+
+async function endClass(message = "Your live class has ended.") {
+  if (ending) return;
+  ending = true;
+  clearTimeout(liveTimer);
+  clearInterval(clockTimer);
+  clearInterval(heartbeatTimer);
+  clearInterval(watchTimer);
+  clearInterval(timeGuardTimer);
+  stopWatchClock();
+
+  try {
+    if (youtubePlayer && youtubeReady) youtubePlayer.stopVideo();
+    if (hlsInstance) hlsInstance.destroy();
+    video.pause();
+  } catch (_) {}
+
+  await writeEvent("class_ended", { reason: message });
+  await finishSession("ended");
+  $("endOverlay").classList.remove("hidden");
+  const paragraph = document.querySelector("#endOverlay .end-card p");
+  if (paragraph) paragraph.textContent = `${message} Taking you back to your Live Classes.`;
+  setTimeout(() => goLivePage(true), 3500);
+}
+
+function listenForAdminEnd() {
+  classUnsubscribe = onSnapshot(doc(db, "liveClasses", classId), snapshot => {
+    if (!snapshot.exists()) {
+      endClass("This live class is no longer available.");
+      return;
+    }
+    classData = { id: snapshot.id, ...snapshot.data() };
+    const previousEnd = scheduledEndAt?.getTime() || 0;
+    parseSchedule();
+    if (classData.active === false || classData.published === false || classData.isDeleted === true || classHasEnded()) {
+      endClass("Your live class has been ended by Zenova.");
+    } else if (playerStarted && scheduledEndAt && scheduledEndAt.getTime() !== previousEnd) {
+      clearTimeout(liveTimer);
+      liveTimer = setTimeout(() => endClass("The scheduled class time has ended."), Math.max(0, scheduledEndAt.getTime() - Date.now()));
+    }
+  }, error => console.warn("Live class status listener failed", error));
+}
+
+async function saveInteraction(type, extra = {}) {
+  try {
+    await addDoc(collection(db, "liveClassInteractions"), {
+      studentUid: user.uid,
+      studentName: first(student.name, student.studentName, student.fullName, user.displayName),
+      studentCode: first(student.studentCode, student.znvCode, student.code),
+      classId,
+      sessionId: sessionRef?.id || null,
+      interactionType: type,
+      timestamp: serverTimestamp(),
+      videoPosition: Number(currentPosition()),
+      ...extra
+    });
+    await writeEvent(type, extra);
+    return true;
+  } catch (error) {
+    console.error("Classroom interaction could not be saved", error);
+    toast("Could not save this interaction. Please try again.");
+    return false;
+  }
+}
+
+$("raiseHand").addEventListener("click", async () => {
+  const next = !handRaised;
+  if (await saveInteraction(next ? "hand_raised" : "hand_lowered")) {
+    handRaised = next;
+    $("raiseHand").classList.toggle("selected", handRaised);
+    $("raiseHand").querySelector("span").textContent = handRaised ? "Lower Hand" : "Raise Hand";
+    toast(handRaised ? "Your hand has been raised." : "Your hand has been lowered.");
+  }
+});
+
+$("understood").addEventListener("click", async () => {
+  if (await saveInteraction("understood")) {
+    $("understood").classList.add("selected");
+    $("reExplain").classList.remove("selected");
+    toast("Your response has been recorded.");
+  }
+});
+
+$("reExplain").addEventListener("click", async () => {
+  if (await saveInteraction("re_explain_requested")) {
+    $("reExplain").classList.add("selected");
+    $("understood").classList.remove("selected");
+    toast("Your request has been recorded.");
+  }
+});
+
+$("askTeacher").addEventListener("click", () => $("questionBox").classList.toggle("hidden"));
+$("sendQuestion").addEventListener("click", async () => {
+  const message = $("questionText").value.trim();
+  if (!message) return toast("Please type your question first.");
+  if (await saveInteraction("teacher_question", { message })) {
+    $("questionText").value = "";
+    $("questionBox").classList.add("hidden");
+    toast("Your question has been sent.");
+  }
+});
+
+$("backButton").addEventListener("click", async () => {
+  await writeEvent("student_left_class");
+  await finishSession("left");
+  goLivePage(false);
+});
+$("errorBack").addEventListener("click", goLivePage);
+$("waitingBack").addEventListener("click", goLivePage);
+
+function setupTracking() {
+  heartbeatTimer = setInterval(() => saveSession(), HEARTBEAT_MS);
+  watchTimer = setInterval(updateWatchTime, 1000);
+  timeGuardTimer = setInterval(() => {
+    if (ending) return;
+    if (classHasEnded()) {
+      endClass("The scheduled class time has ended.");
+      return;
+    }
+    if (recordedAsLive && sourceKind === "direct" && !video.paused && document.visibilityState === "visible") syncRecordedVideo();
+    if (recordedAsLive && sourceKind === "youtube" && youtubeReady && document.visibilityState === "visible") syncRecordedYouTube();
+  }, 1500);
+
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) {
+      stopWatchClock();
+      writeEvent("page_hidden");
+      saveSession({ status: "background", sessionStatus: "background" });
+    } else {
+      writeEvent("page_visible");
+      saveSession({ status: "active", sessionStatus: "active" });
+      if (recordedAsLive && sourceKind === "direct") syncRecordedVideo();
+      if (recordedAsLive && sourceKind === "youtube") syncRecordedYouTube();
+    }
+  });
+
+  window.addEventListener("pagehide", () => {
+    if (sessionRef && !sessionClosed) saveSession({ status: "interrupted", sessionStatus: "interrupted" });
+    if (classUnsubscribe) classUnsubscribe();
+  });
+}
+
+async function initialize() {
+  if (!classId) throw new Error("No live class was selected. Return to Live Classes and join again.");
+
+  // The Live Classes page also links completed recordings here. Keep those in
+  // the dedicated recorded-video player instead of presenting them as live.
+  if (requestedMode === "recording") {
+    location.replace(`../videoplayer/?liveClassId=${encodeURIComponent(classId)}`);
+    return;
+  }
+
+  const studentSnapshot = await getDoc(doc(db, "zen2Students", user.uid));
+  if (!studentSnapshot.exists()) throw new Error("Your Zenova student profile could not be found.");
+  student = { id: studentSnapshot.id, ...studentSnapshot.data() };
+
+  const classSnapshot = await getDoc(doc(db, "liveClasses", classId));
+  if (!classSnapshot.exists()) throw new Error("This live class could not be found.");
+  classData = { id: classSnapshot.id, ...classSnapshot.data() };
+  if (classData.active === false || classData.published === false || classData.isDeleted === true) {
+    throw new Error("This class is not currently published.");
+  }
+
+  course = await getOptionalDoc("zen2Courses", first(classData.courseId, classData.crmCourseId, classData.courseID, classData.batchId));
+  subject = await getOptionalDoc("zen2Subjects", classData.subjectId);
+  chapter = await getOptionalDoc("zen2Chapters", classData.chapterId);
+
+  if (!(await validateEnrollment())) {
+    throw new Error("Your account does not have approved access to this course. Please contact Zenova support.");
+  }
+
+  parseSchedule();
+  if (!scheduledStartAt) throw new Error("The class schedule is incomplete. Ask your teacher to check the scheduled date and time.");
+  if (!scheduledEndAt) throw new Error("The class duration could not be determined.");
+
+  getSource();
+  renderInfo();
+  setupControls();
+  setupTracking();
+  listenForAdminEnd();
+  setupSchedule();
+}
+
+onAuthStateChanged(auth, async currentUser => {
+  if (!currentUser) {
+    location.href = "../../account/login/";
+    return;
+  }
+  user = currentUser;
+  try {
+    showState("loadingState");
+    await initialize();
+  } catch (error) {
+    console.error("Zenova live player initialization failed", error);
+    showError(error.message || "Unable to connect to the live classroom.");
+  }
+});
+
+  </script>
+</body></html>
