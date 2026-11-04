@@ -1,162 +1,184 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#F7F9FC">
-<title>Zenova | Live Classroom</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f7f9fc">
+<title>Zenova Educations | Live Classes</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.css" rel="stylesheet">
 
 <style>
 :root{
- --bg:#F7F9FC;
- --white:#FFFFFF;
- --soft:#F0F5FB;
- --blue:#3978E8;
- --dark:#245FC9;
- --pale:#EAF2FF;
+ --bg:#f7f9fc;
+ --surface:#fff;
+ --soft:#f0f5fb;
  --ink:#172338;
- --muted:#7B8799;
- --line:#E7EDF5;
- --green:#159B78;
- --greenbg:#E8F8F2;
- --red:#E34D59;
- --redbg:#FFF0F1;
- --shadow:0 8px 30px rgba(29,54,91,.055);
- --radius:16px;
+ --muted:#7b8799;
+ --line:#e7edf5;
+ --blue:#3978e8;
+ --dark:#245fc9;
+ --pale:#eaf2ff;
+ --green:#159b78;
+ --green-soft:#e8f8f2;
+ --red:#dc4545;
+ --red-soft:#fff0f0;
+ --purple:#7952cc;
+ --purple-soft:#f1ebff;
+ --radius:17px;
 }
-*{box-sizing:border-box}
+*{box-sizing:border-box;margin:0;padding:0}
 body{
- margin:0;background:var(--bg);color:var(--ink);
+ background:var(--bg);color:var(--ink);
  font-family:Inter,system-ui,sans-serif;
- font-size:13px;-webkit-font-smoothing:antialiased
+ min-height:100vh;padding-bottom:85px;
+ -webkit-font-smoothing:antialiased
 }
-button,input,select{font:inherit}
+button,input{font:inherit}
 button{cursor:pointer}
-button:focus-visible{outline:3px solid #a8c7ff;outline-offset:2px}
+a{text-decoration:none;color:inherit}
 .hidden{display:none!important}
-.app{max-width:1450px;margin:auto;padding:25px}
-.header{
- display:flex;align-items:center;justify-content:space-between;
- gap:15px;margin-bottom:27px
+.wrap{width:min(100%,1080px);margin:auto}
+.topbar{
+ position:sticky;top:0;z-index:50;
+ background:#ffffffed;backdrop-filter:blur(16px);
+ border-bottom:1px solid var(--line)
 }
-.brand{display:flex;align-items:center;gap:12px}
-.logo{
- width:44px;height:44px;background:var(--blue);color:white;
- display:grid;place-items:center;border-radius:14px;
- font-size:22px;font-weight:800
+.topbar-inner{
+ max-width:1080px;margin:auto;padding:12px 18px;
+ min-height:70px;display:flex;align-items:center;
+ justify-content:space-between;gap:15px
 }
-.brand h1{font-size:19px;margin:0;letter-spacing:-.5px}
-.brand p{font-size:10px;color:var(--muted);margin:4px 0 0;letter-spacing:1px;font-weight:700}
-.header-right{display:flex;align-items:center;gap:10px}
-.profile{
- width:37px;height:37px;background:var(--pale);
- color:var(--dark);border-radius:50%;display:grid;place-items:center;font-weight:800
+.brand{display:flex;align-items:center;gap:10px}
+.brand-logo{
+ width:40px;height:40px;display:grid;place-items:center;
+ border-radius:13px;background:var(--blue);
+ color:white;font-size:21px;font-weight:800
 }
-.eyebrow{font-size:10px;letter-spacing:1.2px;font-weight:800;color:var(--blue)}
-.page-title{font-size:25px;letter-spacing:-1px;margin:8px 0}
-.subtitle{color:var(--muted);font-size:12px;line-height:1.7;margin:0}
+.brand-name{font-size:15px;font-weight:800}
+.brand-sub{font-size:10px;color:var(--muted);margin-top:3px}
+.desktop-nav{display:flex;gap:5px}
+.desktop-nav a{
+ padding:10px 12px;border-radius:10px;
+ color:#69778b;font-size:11px;font-weight:650
+}
+.desktop-nav a.active,.desktop-nav a:hover{
+ background:var(--pale);color:var(--dark)
+}
+.profile-button{
+ width:40px;height:40px;border-radius:50%;
+ border:1px solid var(--line);background:var(--soft);
+ display:grid;place-items:center;color:var(--dark);
+ overflow:hidden
+}
+.profile-button img{width:100%;height:100%;object-fit:cover}
+.page{padding:24px 18px 35px}
+.intro{
+ padding:24px 22px;border:1px solid #dce8fb;
+ border-radius:21px;
+ background:linear-gradient(125deg,#fff,#edf4ff);
+ box-shadow:0 5px 20px #245fc90b
+}
+.eyebrow{
+ display:block;color:var(--blue);font-size:10px;
+ font-weight:800;letter-spacing:1.2px;margin-bottom:7px
+}
+.intro h1{font-size:30px;letter-spacing:-1px}
+.intro p{font-size:12px;color:var(--muted);margin-top:8px;line-height:1.7}
 .section{margin-top:29px}
-.section-head{
- display:flex;justify-content:space-between;align-items:center;
+.section-heading{
+ display:flex;align-items:center;justify-content:space-between;
  gap:12px;margin-bottom:14px
 }
-.section-head h2{font-size:16px;margin:0;letter-spacing:-.3px}
-.section-head p{font-size:10px;color:var(--muted);margin:5px 0 0}
+.section-title{font-size:18px;font-weight:800;letter-spacing:-.4px}
+.section-subtitle{font-size:11px;color:var(--muted);margin-top:5px;line-height:1.6}
+.panel{
+ padding:17px;background:white;border:1px solid var(--line);
+ border-radius:var(--radius);box-shadow:0 3px 14px #17233808
+}
 .btn{
- border:0;background:var(--blue);color:white;padding:11px 15px;
- border-radius:10px;font-weight:750;font-size:11px
+ border:0;border-radius:9px;background:var(--blue);
+ color:white;padding:11px 15px;font-size:10px;font-weight:800
 }
 .btn:hover{background:var(--dark)}
 .btn-light{background:var(--pale);color:var(--dark)}
-.btn-light:hover{background:#dce9ff}
 .btn-white{background:white;color:var(--ink);border:1px solid var(--line)}
-.btn-small{padding:8px 11px;font-size:10px}
-.panel{
- background:white;border:1px solid var(--line);
- border-radius:var(--radius);padding:18px;box-shadow:var(--shadow)
-}
-.pill{
+.btn-small{padding:8px 11px}
+.status{
  display:inline-flex;align-items:center;gap:6px;
- padding:5px 9px;border-radius:30px;font-size:9px;font-weight:800
+ padding:6px 9px;border-radius:30px;
+ font-size:9px;font-weight:800;white-space:nowrap
 }
-.live-pill{background:var(--redbg);color:var(--red)}
-.scheduled-pill{background:var(--pale);color:var(--dark)}
-.completed-pill{background:#edf1f6;color:#637187}
-.recorded-pill{background:var(--greenbg);color:var(--green)}
+.status.live{background:var(--red-soft);color:var(--red)}
+.status.scheduled{background:var(--pale);color:var(--dark)}
+.status.recorded{background:var(--green-soft);color:var(--green)}
+.status.completed{background:#eff2f6;color:#718096}
+.status.cancelled{background:var(--red-soft);color:var(--red)}
 .pulse{
- width:7px;height:7px;background:var(--red);
- border-radius:50%;animation:pulse 1s infinite
+ width:7px;height:7px;border-radius:50%;
+ background:var(--red);animation:pulse 1s infinite
 }
-@keyframes pulse{50%{opacity:.2;box-shadow:0 0 0 5px #e34d5930}}
-/* Live hero */
-.live-hero{
- display:grid;grid-template-columns:minmax(0,1.35fr) minmax(280px,.65fr);
+@keyframes pulse{50%{opacity:.2;box-shadow:0 0 0 5px #dc454530}}
+/* Live */
+.live-feature{
+ display:grid;grid-template-columns:1.2fr .8fr;
  background:white;border:1px solid var(--line);
- border-radius:18px;overflow:hidden;box-shadow:var(--shadow)
+ border-radius:18px;overflow:hidden;box-shadow:0 5px 20px #17233809
 }
-.hero-image{
- min-height:300px;position:relative;background:#dce7f5;
- overflow:hidden
+.live-image{position:relative;min-height:245px;background:var(--soft)}
+.live-image img{width:100%;height:100%;position:absolute;inset:0;object-fit:cover}
+.live-label{position:absolute;top:15px;left:15px}
+.live-info{padding:24px;display:flex;flex-direction:column;justify-content:center;align-items:flex-start}
+.live-info h2{font-size:21px;line-height:1.4;margin:10px 0 7px}
+.live-info p{font-size:11px;color:var(--muted);line-height:1.8}
+.live-meta{display:flex;gap:13px;flex-wrap:wrap;margin:13px 0;color:var(--muted);font-size:10px}
+.live-empty{
+ grid-column:1/-1;padding:36px;text-align:center;
+ display:grid;place-items:center;gap:9px
 }
-.hero-image img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
-.hero-image:after{
- content:"";position:absolute;inset:40% 0 0;
- background:linear-gradient(transparent,#14223d99)
+.live-empty i{font-size:32px;color:var(--blue)}
+.live-empty h3{font-size:16px}
+.live-empty p{font-size:11px;color:var(--muted);line-height:1.7}
+/* Cards */
+.card-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.class-card,.lecture-card{
+ background:white;border:1px solid var(--line);
+ border-radius:14px;overflow:hidden
 }
-.hero-label{position:absolute;top:17px;left:17px;z-index:2}
-.hero-content{
- padding:26px;display:flex;flex-direction:column;
- justify-content:center;align-items:flex-start
-}
-.hero-content h2{font-size:23px;line-height:1.35;margin:13px 0 8px;letter-spacing:-.6px}
-.hero-content p{color:var(--muted);font-size:11px;line-height:1.8;margin:4px 0}
-.hero-meta{display:flex;gap:15px;flex-wrap:wrap;margin:14px 0;color:var(--muted);font-size:10px}
-.hero-content .btn{margin-top:10px;padding:13px 20px}
-.hero-empty{
- padding:40px 20px;min-height:260px;
- display:flex;flex-direction:column;justify-content:center;align-items:center;
- text-align:center
-}
-.hero-empty h3{font-size:17px;margin:10px 0 5px}
-.hero-empty p{color:var(--muted);font-size:11px;line-height:1.7}
-/* Upcoming cards */
-.upcoming-grid{
- display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px
-}
-.upcoming-card{
- border:1px solid var(--line);background:white;
- border-radius:14px;overflow:hidden;transition:.2s
-}
-.upcoming-card:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
-.thumb{width:100%;aspect-ratio:16/9;object-fit:cover;background:var(--soft);display:block}
-.upcoming-body{padding:13px}
-.upcoming-body h3{font-size:12px;line-height:1.5;margin:9px 0 5px}
-.upcoming-body p{font-size:10px;color:var(--muted);margin:5px 0}
-.upcoming-foot{
+.card-image{width:100%;aspect-ratio:16/9;object-fit:cover;background:var(--soft);display:block}
+.card-body{padding:13px}
+.card-body h3{font-size:12px;line-height:1.5;margin:8px 0 5px}
+.card-body p{font-size:10px;color:var(--muted);margin:5px 0;line-height:1.5}
+.card-footer{
  display:flex;align-items:center;justify-content:space-between;
- border-top:1px solid var(--line);padding-top:10px;margin-top:12px;gap:5px
+ gap:8px;margin-top:12px;padding-top:10px;border-top:1px solid var(--line)
 }
+.class-list{display:grid;gap:10px}
+.list-card{
+ display:flex;justify-content:space-between;align-items:center;
+ gap:13px;padding:14px;background:white;
+ border:1px solid var(--line);border-radius:13px
+}
+.list-card h3{font-size:12px;line-height:1.5}
+.list-card p{font-size:10px;color:var(--muted);margin-top:5px;line-height:1.6}
+.list-action{flex-shrink:0}
 /* Calendar */
-.calendar-layout{
- display:grid;grid-template-columns:minmax(0,1.15fr) minmax(260px,.85fr);gap:15px
-}
-.calendar-head{
- display:flex;align-items:center;justify-content:space-between;margin-bottom:16px
-}
+.calendar-layout{display:grid;grid-template-columns:1.15fr .85fr;gap:13px}
+.calendar-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:15px}
 .calendar-head strong{font-size:15px}
 .calendar-controls{display:flex;gap:5px}
-.icon-btn{
- width:32px;height:32px;border:1px solid var(--line);
- background:white;border-radius:9px
+.calendar-controls button{
+ border:1px solid var(--line);background:white;
+ border-radius:9px;padding:7px 10px;color:var(--dark)
 }
 .calendar-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px}
-.day-name{text-align:center;color:var(--muted);font-size:9px;font-weight:800;padding:8px 2px}
+.day-name{text-align:center;color:var(--muted);font-size:9px;padding:8px 1px;font-weight:800}
 .day{
- min-height:65px;border:1px solid var(--line);
- background:white;border-radius:9px;text-align:left;padding:7px;color:var(--ink)
+ min-height:65px;border:1px solid var(--line);background:white;
+ border-radius:9px;text-align:left;padding:7px;color:var(--ink)
 }
 .day:hover{border-color:var(--blue)}
 .day.today{background:var(--pale);border-color:var(--blue)}
@@ -167,574 +189,1256 @@ button:focus-visible{outline:3px solid #a8c7ff;outline-offset:2px}
 .dots i{width:6px;height:6px;border-radius:50%;background:var(--blue)}
 .dots i.live{background:var(--red)}
 .dots i.recorded{background:var(--green)}
-.dots i.completed{background:#8b97a8}
-.legend{display:flex;gap:13px;flex-wrap:wrap;margin-top:15px}
+.dots i.completed{background:#8793a4}
+.legend{display:flex;gap:12px;flex-wrap:wrap;margin-top:13px}
 .legend span{font-size:9px;color:var(--muted)}
 .legend i{width:7px;height:7px;border-radius:50%;display:inline-block;margin-right:4px}
-.event-list{display:flex;flex-direction:column;gap:9px}
-.event{
- padding:12px;border:1px solid var(--line);
- border-radius:11px;cursor:pointer
-}
-.event:hover{border-color:var(--blue);background:#f8fbff}
-.event h4{font-size:11px;margin:8px 0 5px}
-.event p{font-size:10px;color:var(--muted);margin:4px 0}
-/* Six subjects */
-.subject-grid{
- display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px
-}
+/* Subjects */
+.subject-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:11px}
 .subject-card{
- background:white;border:1px solid var(--line);
- border-radius:14px;overflow:hidden;cursor:pointer;transition:.2s
+ display:flex;align-items:center;gap:11px;
+ padding:13px;background:white;border:1px solid var(--line);
+ border-radius:14px;text-align:left;min-width:0
 }
-.subject-card:hover{border-color:#b7cef5;transform:translateY(-2px);box-shadow:var(--shadow)}
-.subject-image{
- width:100%;aspect-ratio:16/9;object-fit:cover;background:var(--soft);display:block
+.subject-card:hover{border-color:#b8d0fa;background:#f9fbff}
+.subject-icon{
+ width:40px;height:40px;flex:0 0 40px;
+ display:grid;place-items:center;border-radius:12px;
+ background:var(--pale);color:var(--dark);font-size:19px
 }
-.subject-body{padding:13px}
-.subject-body h3{font-size:13px;margin:0 0 5px}
-.subject-body p{font-size:10px;color:var(--muted);margin:0}
-.subject-body .arrow{color:var(--blue);float:right;font-weight:800}
-/* Library */
-.library-toolbar{display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin-bottom:15px}
-.search{
- flex:1;min-width:180px;padding:11px;border:1px solid var(--line);
- border-radius:10px
-}
-.chapter-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.subject-copy{min-width:0;flex:1}
+.subject-copy strong{font-size:11px;display:block}
+.subject-copy small{font-size:9px;color:var(--muted);display:block;margin-top:4px}
+.subject-card>i{color:#9aa8bb;font-size:20px}
+/* Chapters and lectures */
+.breadcrumb{font-size:10px;color:var(--muted);margin-bottom:15px}
+.breadcrumb button{border:0;background:none;color:var(--blue);font-size:10px}
+.chapter-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
 .chapter-card{
- border:1px solid var(--line);padding:15px;border-radius:12px;
- background:white;text-align:left
+ display:flex;align-items:center;gap:12px;padding:14px;
+ border:1px solid var(--line);border-radius:12px;background:white;
+ text-align:left
 }
 .chapter-card:hover{border-color:var(--blue);background:#f8fbff}
-.chapter-card strong{display:block;font-size:11px;margin-bottom:5px}
-.chapter-card span{font-size:10px;color:var(--muted)}
-.lecture-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}
-.lecture-card{
- border:1px solid var(--line);border-radius:13px;
- overflow:hidden;background:white
+.chapter-number{
+ width:35px;height:35px;display:grid;place-items:center;
+ border-radius:10px;background:var(--pale);color:var(--dark);
+ font-weight:800;font-size:12px
 }
-.lecture-card .lecture-body{padding:12px}
-.lecture-body h4{font-size:11px;line-height:1.5;margin:7px 0}
+.chapter-card strong{font-size:11px;display:block}
+.chapter-card small{font-size:9px;color:var(--muted);display:block;margin-top:4px}
+.lecture-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.lecture-card{min-width:0}
+.lecture-body{padding:12px}
+.lecture-body h3{font-size:11px;line-height:1.5;margin:8px 0}
 .lecture-body p{font-size:9px;color:var(--muted);margin:5px 0}
-.play-overlay{position:relative}
-.play-overlay:after{
- content:"▶";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
- background:#172338bd;color:white;border-radius:50%;width:38px;height:38px;
- display:grid;place-items:center;font-size:13px
+.lecture-body .btn{width:100%;margin-top:9px}
+.back-button{
+ border:0;background:none;color:var(--blue);font-size:11px;
+ font-weight:800;margin-bottom:14px
 }
-.back-link{border:0;background:none;color:var(--blue);font-weight:750;padding:0;margin-bottom:15px;font-size:11px}
-.empty{
- text-align:center;padding:35px 15px;color:var(--muted);
- font-size:11px;line-height:1.8
+.empty-card{
+ padding:25px;text-align:center;background:white;
+ border:1px dashed #dce4ef;border-radius:14px;
+ color:var(--muted);font-size:11px;line-height:1.8
 }
-.empty-icon{font-size:30px;margin-bottom:8px}
-.breadcrumb{font-size:10px;color:var(--muted);margin-bottom:14px}
-.breadcrumb button{border:0;background:none;color:var(--blue);padding:0;font-size:10px}
-.footer{
- margin-top:35px;padding:20px 0;border-top:1px solid var(--line);
- display:flex;justify-content:space-between;gap:10px;
- color:var(--muted);font-size:10px
+.empty-card i{font-size:27px;color:var(--blue);display:block;margin-bottom:8px}
+.state-card{
+ max-width:440px;margin:45px auto;padding:25px;
+ border:1px solid var(--line);border-radius:17px;
+ background:white;text-align:center
 }
-#toast{
- position:fixed;bottom:20px;right:20px;background:var(--ink);
- color:white;padding:13px 17px;border-radius:10px;
- z-index:100;display:none;font-size:11px
+.spinner{
+ width:30px;height:30px;border:3px solid var(--pale);
+ border-top-color:var(--blue);border-radius:50%;
+ animation:spin .8s linear infinite;margin:auto
 }
-@media(max-width:850px){
- .live-hero{grid-template-columns:1fr}
- .hero-image{min-height:230px}
- .upcoming-grid,.lecture-grid{grid-template-columns:repeat(2,1fr)}
+@keyframes spin{to{transform:rotate(360deg)}}
+.state-card p{font-size:11px;color:var(--muted);margin-top:12px;line-height:1.7}
+.bottom-nav{
+ position:fixed;bottom:0;left:0;right:0;z-index:100;
+ display:none;padding:8px 10px;
+ border-top:1px solid var(--line);background:#fffffff5
+}
+.bottom-inner{max-width:520px;margin:auto;display:grid;grid-template-columns:repeat(5,1fr)}
+.nav-item{
+ display:flex;flex-direction:column;align-items:center;gap:4px;
+ padding:7px;color:#8793a4;font-size:9px;font-weight:700
+}
+.nav-item i{font-size:19px}
+.nav-item.active{color:var(--dark);background:var(--pale);border-radius:10px}
+.toast{
+ position:fixed;bottom:95px;left:50%;transform:translateX(-50%);
+ background:var(--ink);color:white;padding:12px 16px;
+ border-radius:10px;font-size:11px;z-index:200;
+ opacity:0;pointer-events:none;transition:.2s
+}
+.toast.show{opacity:1}
+@media(max-width:800px){
+ .live-feature{grid-template-columns:1fr}
+ .live-image{min-height:220px}
  .calendar-layout{grid-template-columns:1fr}
+ .card-grid,.lecture-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
-@media(max-width:550px){
- .app{padding:14px}
- .brand h1{font-size:16px}
- .page-title{font-size:22px}
- .upcoming-grid,.subject-grid,.lecture-grid,.chapter-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
- .hero-content{padding:19px}
- .hero-content h2{font-size:19px}
+@media(max-width:699px){
+ .desktop-nav{display:none}
+ .bottom-nav{display:block}
+ .page{padding:17px 12px 30px}
+ .subject-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .chapter-grid{grid-template-columns:1fr}
  .day{min-height:49px;padding:5px}
  .day-name{font-size:8px}
- .footer{flex-direction:column}
+ .day b{font-size:10px}
+}
+@media(max-width:390px){
+ .card-grid,.lecture-grid{grid-template-columns:1fr}
+ .list-card{align-items:flex-start;flex-direction:column}
+ .list-action{align-self:flex-end}
 }
 </style>
 </head>
 
 <body>
 
-<main class="app">
-
-<header class="header">
- <div class="brand">
-  <div class="logo">Z</div>
-  <div>
-   <h1>Zenova Educations</h1>
-   <p>YOUR LEARNING CLASSROOM</p>
-  </div>
- </div>
- <div class="header-right">
-  <span id="studentName" style="font-size:11px;color:var(--muted)">Welcome</span>
-  <div class="profile" id="profileInitial">S</div>
+<header class="topbar">
+ <div class="topbar-inner">
+  <a class="brand" href="../">
+   <span class="brand-logo">Z</span>
+   <span><span class="brand-name" style="display:block">ZENOVA</span><span class="brand-sub" style="display:block">Educations</span></span>
+  </a>
+  <nav class="desktop-nav">
+   <a href="../">Home</a>
+   <a href="../courses/">Courses</a>
+   <a href="./" class="active">Live</a>
+   <a href="../revision/">Revision</a>
+   <a href="../profile/">Profile</a>
+  </nav>
+  <a id="profileShortcut" class="profile-button" href="../profile/">
+   <img id="profilePhoto" alt="" hidden>
+   <i id="profileIcon" class="ri-user-line"></i>
+  </a>
  </div>
 </header>
 
-<section>
- <div class="eyebrow">YOUR CLASSROOM</div>
- <h1 class="page-title">Live Classes</h1>
- <p class="subtitle">Attend live lessons, follow your timetable and revisit recorded classes.</p>
+<main class="page wrap">
+
+<section id="loadingState" class="state-card">
+ <div class="spinner"></div>
+ <p>Connecting to your Zenova classroom...</p>
 </section>
 
-<!-- LIVE NOW -->
-<section class="section">
- <div class="section-head">
-  <div>
-   <h2>Happening Now</h2>
-   <p>Join your ongoing classroom session.</p>
-  </div>
-  <span class="pill live-pill"><span class="pulse"></span> LIVE NOW</span>
- </div>
-
- <div id="liveHero" class="live-hero">
-  <div class="hero-empty">
-   <div class="empty-icon">◷</div>
-   <h3>Checking live classes...</h3>
-   <p>Your live classroom will appear here.</p>
-  </div>
- </div>
+<section id="errorState" class="state-card hidden">
+ <i class="ri-error-warning-line" style="font-size:30px;color:var(--red)"></i>
+ <h3 style="margin-top:10px">Unable to load your classroom</h3>
+ <p id="errorText"></p>
+ <button id="retryButton" class="btn" style="margin-top:15px">Try Again</button>
 </section>
 
-<!-- UPCOMING -->
-<section class="section">
- <div class="section-head">
-  <div>
-   <h2>Upcoming Classes</h2>
-   <p>Prepare for your next learning session.</p>
-  </div>
-  <span class="eyebrow" id="upcomingCount">0 CLASSES</span>
- </div>
- <div id="upcomingGrid" class="upcoming-grid">
-  <div class="empty">Loading classes...</div>
- </div>
+<div id="liveApp" class="hidden">
+
+<section class="intro">
+ <span class="eyebrow">YOUR CLASSROOM</span>
+ <h1>Live Classes</h1>
+ <p>Attend your scheduled lessons, explore all six subjects and revisit recorded classes whenever you need.</p>
 </section>
 
-<!-- CALENDAR -->
 <section class="section">
- <div class="section-head">
-  <div>
-   <h2>Class Calendar</h2>
-   <p>Explore your classes by date.</p>
-  </div>
+ <div class="section-heading">
+  <div><span class="eyebrow">LIVE CLASSROOM</span><h2 class="section-title">Happening Now</h2><p class="section-subtitle">Join your ongoing lesson.</p></div>
+  <span id="liveCount" class="status live"><span class="pulse"></span> LIVE</span>
  </div>
+ <div id="liveNow"></div>
+</section>
 
- <div class="calendar-layout">
-  <div class="panel">
-   <div class="calendar-head">
-    <strong id="monthLabel"></strong>
-    <div class="calendar-controls">
-     <button class="icon-btn" id="prevMonth">‹</button>
-     <button class="btn btn-white btn-small" id="todayBtn">Today</button>
-     <button class="icon-btn" id="nextMonth">›</button>
-    </div>
-   </div>
-   <div id="calendarGrid" class="calendar-grid"></div>
-   <div class="legend">
-    <span><i style="background:var(--red)"></i>Live</span>
-    <span><i style="background:var(--blue)"></i>Scheduled</span>
-    <span><i style="background:var(--green)"></i>Recorded</span>
-    <span><i style="background:#8b97a8"></i>Completed</span>
+<section class="section">
+ <div class="section-heading">
+  <div><span class="eyebrow">YOUR TIMETABLE</span><h2 class="section-title">Upcoming Classes</h2><p class="section-subtitle">Your next scheduled learning sessions.</p></div>
+ </div>
+ <div id="upcomingClasses" class="card-grid"></div>
+ <div id="upcomingEmpty" class="empty-card hidden">No upcoming classes scheduled.</div>
+</section>
+
+<section class="section">
+ <div class="section-heading">
+  <div><span class="eyebrow">TODAY</span><h2 class="section-title">Today's Classes</h2><p class="section-subtitle" id="todayDate"></p></div>
+ </div>
+ <div id="todayClasses" class="class-list"></div>
+ <div id="todayEmpty" class="empty-card hidden">No classes scheduled today.</div>
+</section>
+
+<section class="section">
+ <div class="section-heading">
+  <div><span class="eyebrow">CLASS CALENDAR</span><h2 class="section-title">View Classes by Date</h2><p class="section-subtitle">Select any date to see your classes.</p></div>
+ </div>
+ <div class="panel">
+  <div class="calendar-head">
+   <strong id="calendarTitle"></strong>
+   <div class="calendar-controls">
+    <button id="prevMonth" aria-label="Previous month">‹</button>
+    <button id="todayMonth">Today</button>
+    <button id="nextMonth" aria-label="Next month">›</button>
    </div>
   </div>
-
-  <div class="panel">
-   <div class="section-head">
-    <div>
-     <h2 id="dayTitle">Today's Classes</h2>
-     <p>Classes for the selected date.</p>
-    </div>
-   </div>
-   <div id="dayEvents" class="event-list"></div>
+  <div class="calendar-grid" id="calendarGrid"></div>
+  <div class="legend">
+   <span><i style="background:var(--red)"></i>Live</span>
+   <span><i style="background:var(--blue)"></i>Scheduled</span>
+   <span><i style="background:var(--green)"></i>Recorded</span>
+   <span><i style="background:#8793a4"></i>Completed</span>
   </div>
+ </div>
+ <div class="panel" style="margin-top:12px">
+  <div class="section-heading">
+   <div><h2 class="section-title" id="selectedDateTitle">Selected Date</h2><p class="section-subtitle">Classes for this date.</p></div>
+   <input type="date" id="datePicker" style="padding:9px;border:1px solid var(--line);border-radius:9px">
+  </div>
+  <div id="selectedDateClasses" class="class-list"></div>
+  <div id="selectedDateEmpty" class="empty-card hidden">No classes on this date.</div>
  </div>
 </section>
 
-<!-- RECORDED SUBJECTS -->
 <section class="section">
- <div class="section-head">
-  <div>
-   <h2>Explore Recorded Classes</h2>
-   <p>Choose a subject and continue learning at your own pace.</p>
-  </div>
+ <div class="section-heading">
+  <div><span class="eyebrow">YOUR BATCH</span><h2 class="section-title">All Subjects</h2><p class="section-subtitle">Choose a subject to explore chapters and recorded lectures.</p></div>
  </div>
  <div id="subjectGrid" class="subject-grid"></div>
+ <div id="subjectsEmpty" class="empty-card hidden">Your subjects are being prepared.</div>
 </section>
 
-<!-- RECORDING LIBRARY -->
-<section class="section hidden" id="librarySection">
+<section id="chapterSection" class="section hidden">
  <div class="panel">
-  <button class="back-link" id="backSubjects">← All Subjects</button>
-  <div class="breadcrumb" id="breadcrumb"></div>
-
-  <div id="chapterView">
-   <div class="section-head">
-    <div>
-     <div class="eyebrow">SUBJECT LIBRARY</div>
-     <h2 id="selectedSubjectTitle">Mathematics</h2>
-     <p>Select a chapter to explore its recorded lectures.</p>
-    </div>
-   </div>
-   <div class="chapter-grid" id="chapterGrid"></div>
+  <button class="back-button" id="backSubjects"><i class="ri-arrow-left-line"></i> All Subjects</button>
+  <div class="breadcrumb" id="chapterBreadcrumb"></div>
+  <div class="section-heading">
+   <div><span class="eyebrow">SUBJECT CHAPTERS</span><h2 class="section-title" id="chapterHeading"></h2><p class="section-subtitle">Select a chapter to view its lessons and recordings.</p></div>
   </div>
-
-  <div id="lectureView" class="hidden">
-   <button class="back-link" id="backChapters">← Back to Chapters</button>
-   <div class="section-head">
-    <div>
-     <div class="eyebrow">RECORDED LECTURES</div>
-     <h2 id="selectedChapterTitle"></h2>
-     <p>Choose a lesson to start watching.</p>
-    </div>
-   </div>
-   <div class="library-toolbar">
-    <input class="search" id="lectureSearch" placeholder="Search lectures...">
-   </div>
-   <div class="lecture-grid" id="lectureGrid"></div>
-  </div>
+  <div id="chapterGrid" class="chapter-grid"></div>
+  <div id="chapterEmpty" class="empty-card hidden">No chapters are available for this subject.</div>
  </div>
 </section>
 
-<footer class="footer">
- <span>© 2026 Zenova Educations</span>
- <span>Learn · Practice · Achieve</span>
-</footer>
+<section id="lectureSection" class="section hidden">
+ <div class="panel">
+  <button class="back-button" id="backChapters"><i class="ri-arrow-left-line"></i> Back to Chapters</button>
+  <div class="breadcrumb" id="lectureBreadcrumb"></div>
+  <div class="section-heading">
+   <div><span class="eyebrow">RECORDED LESSONS</span><h2 class="section-title" id="lectureHeading"></h2><p class="section-subtitle">Watch revision lessons and previous live-class recordings.</p></div>
+  </div>
+  <div class="lecture-grid" id="lectureGrid"></div>
+  <div id="lectureEmpty" class="empty-card hidden">No recorded lectures are available for this chapter yet.</div>
+ </div>
+</section>
 
+</div>
 </main>
 
-<div id="toast"></div>
+<nav class="bottom-nav">
+ <div class="bottom-inner">
+  <a class="nav-item" href="../"><i class="ri-home-5-line"></i>Home</a>
+  <a class="nav-item" href="../courses/"><i class="ri-book-2-line"></i>Courses</a>
+  <a class="nav-item active" href="./"><i class="ri-live-line"></i>Live</a>
+  <a class="nav-item" href="../revision/"><i class="ri-book-open-line"></i>Revision</a>
+  <a class="nav-item" href="../profile/"><i class="ri-user-3-line"></i>Profile</a>
+ </div>
+</nav>
+
+<div id="toast" class="toast"></div>
 
 <script type="module">
-
-import {auth,db} from '../../firebase/firebase-config.js';
+import {auth,db} from "../../firebase/firebase-config.js";
 
 import {
  onAuthStateChanged
-} from 'https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js';
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
 
 import {
- collection,doc,getDoc,getDocs,query,where,onSnapshot
-} from 'https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js';
+ collection,doc,getDoc,getDocs,onSnapshot,query,where
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
 
-/* ==============================================
-   CONFIGURATION
-============================================== */
-
-const LIVE_PLAYER="../../home/livevideoplayer/";
-const VIDEO_PLAYER="../../home/videoplayer/";
-
-const ACTIVE_SESSION_MS=75000;
-const TIME_ZONE="Asia/Kolkata";
-
-let student=null;
-let studentData={};
-
-let classes=[];
-let courses=[];
-let subjects=[];
-let chapters=[];
-let recordings=[];
-
-let subscriptions=[];
-let selectedDate=localDate(new Date());
-let currentMonth=new Date();
-
-let selectedSubject=null;
-let selectedChapter=null;
+/* ==========================================
+   ZENOVA EXISTING FIREBASE DATA MODEL
+========================================== */
 
 const $=id=>document.getElementById(id);
 
+const state={
+ user:null,
+ student:null,
+ course:null,
+ enrollments:[],
+ courses:[],
+ classes:[],
+ subjects:[],
+ chapters:[],
+ contents:[],
+ selectedSubject:null,
+ selectedChapter:null,
+ selectedDate:todayISO(),
+ currentMonth:new Date(),
+ unsubscribers:[],
+ clock:null
+};
 
-/* ==============================================
-   SUBJECT CONFIGURATION
-============================================== */
-
-const SUBJECTS=[
- {id:"mathematics",name:"Mathematics",aliases:["math","maths"],image:"https://placehold.co/640x360/EAF2FF/3978E8?text=Mathematics"},
- {id:"science",name:"Science",aliases:[],image:"https://placehold.co/640x360/EAF2FF/3978E8?text=Science"},
- {id:"social-science",name:"Social Science",aliases:["social"],image:"https://placehold.co/640x360/EAF2FF/3978E8?text=Social+Science"},
- {id:"english",name:"English",aliases:[],image:"https://placehold.co/640x360/EAF2FF/3978E8?text=English"},
- {id:"kannada",name:"Kannada",aliases:[],image:"https://placehold.co/640x360/EAF2FF/3978E8?text=Kannada"},
- {id:"hindi",name:"Hindi",aliases:[],image:"https://placehold.co/640x360/EAF2FF/3978E8?text=Hindi"}
+const FALLBACK_SUBJECTS=[
+ {id:"subject-kannada",name:"Kannada",icon:"ri-book-open-line",aliases:["kannada"]},
+ {id:"subject-english",name:"English",icon:"ri-english-input",aliases:["english"]},
+ {id:"subject-hindi",name:"Hindi",icon:"ri-translate-2",aliases:["hindi"]},
+ {id:"subject-maths",name:"Mathematics",icon:"ri-calculator-line",aliases:["maths","mathematics","math"]},
+ {id:"subject-science",name:"Science",icon:"ri-flask-line",aliases:["science"]},
+ {id:"subject-social",name:"Social Science",icon:"ri-globe-line",aliases:["social","social science","social studies"]}
 ];
 
 
-/* ==============================================
-   HELPERS
-============================================== */
+/* ==========================================
+   AUTHENTICATION
+========================================== */
 
-function esc(v){
- return String(v??"").replace(/[&<>"']/g,c=>({
-  "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
- })[c]);
-}
+onAuthStateChanged(auth,async user=>{
+ stopListeners();
 
-function localDate(d){
- return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
-}
-
-function toDate(v){
- if(!v)return null;
- if(v.toDate)return v.toDate();
- const d=new Date(v);
- return Number.isNaN(d.getTime())?null:d;
-}
-
-function parseStart(c){
- const date=c.scheduledDate||c.date;
- const time=c.scheduledTime||c.time||"00:00";
- if(!date)return null;
- const d=new Date(`${date}T${time}:00+05:30`);
- return Number.isNaN(d.getTime())?null:d;
-}
-
-function parseEnd(c){
- const explicit=toDate(c.endAt);
- if(explicit)return explicit;
- const start=parseStart(c);
- if(!start)return null;
- return new Date(start.getTime()+(Number(c.duration)||60)*60000);
-}
-
-function formatDate(d){
- return d?new Date(d).toLocaleDateString("en-IN",{
-  day:"numeric",month:"short",year:"numeric",timeZone:TIME_ZONE
- }):"";
-}
-
-function formatTime(d){
- return d?new Date(d).toLocaleTimeString("en-IN",{
-  hour:"2-digit",minute:"2-digit",timeZone:TIME_ZONE
- }):"";
-}
-
-function courseName(c){
- return c.courseName||c.title||c.name||c.batchName||"Course";
-}
-
-function classTitle(c){
- return c.title||c.classTitle||c.name||"Live Class";
-}
-
-function sourceType(c){
- return c.sourceType||c.liveType||c.mode||"YOUTUBE_LIVE";
-}
-
-function getSourceURL(c){
- const type=sourceType(c);
- if(type==="ZOOM")return c.zoomJoinUrl||c.studentJoinUrl||c.joinUrl||"";
- return c.sourceUrl||c.studentJoinUrl||c.joinUrl||c.videoUrl||c.playbackUrl||"";
-}
-
-function getStatus(c){
- if(c.cancelled||String(c.status||"").toLowerCase()==="cancelled")return "cancelled";
- if(c.published===false||String(c.publicationStatus||"").toLowerCase()==="draft")return "draft";
-
- const now=new Date();
- const start=parseStart(c);
- const end=parseEnd(c);
-
- if(c.manualEnded||c.ended||String(c.status||"").toLowerCase()==="ended"){
-  return c.recordingUrl?"recorded":"completed";
+ if(!user){
+  window.location.href="../../account/login/";
+  return;
  }
 
- if(start&&now<start)return "scheduled";
- if(start&&end&&now>=start&&now<end)return "live";
+ state.user=user;
 
- if(end&&now>=end)return c.recordingUrl?"recorded":"completed";
+ try{
+  await initializePage();
+ }catch(error){
+  console.error("Zenova Live Classes:",error);
+  showError(error.message||"Unable to load your classroom.");
+ }
+});
 
- return "scheduled";
+
+async function initializePage(){
+ showLoading();
+
+ // Actual existing student collection and UID document.
+ const studentSnap=await getDoc(doc(db,"zen2Students",state.user.uid));
+
+ if(!studentSnap.exists()){
+  throw new Error("Your student profile was not found. Please contact your academy administrator.");
+ }
+
+ state.student={id:studentSnap.id,...studentSnap.data()};
+
+ if(state.student.onboardingComplete===false){
+  window.location.href="../../account/onboarding/";
+  return;
+ }
+
+ renderProfile();
+
+ await loadEnrollments();
+ await resolveStudentCourse();
+
+ if(!state.course){
+  throw new Error("Your course or batch is not linked to your student profile. Please contact your academy administrator.");
+ }
+
+ startClassesListener();
+ startSubjectsListener();
+ startContentListener();
+
+ state.selectedDate=todayISO();
+ $("datePicker").value=state.selectedDate;
+
+ renderAll();
+ showApp();
+ startClock();
 }
 
-function statusHTML(status){
- const labels={
-  live:'<span class="pill live-pill"><span class="pulse"></span>LIVE NOW</span>',
-  scheduled:'<span class="pill scheduled-pill">SCHEDULED</span>',
-  recorded:'<span class="pill recorded-pill">RECORDED</span>',
-  completed:'<span class="pill completed-pill">COMPLETED</span>'
+
+/* ==========================================
+   STUDENT PROFILE
+========================================== */
+
+function renderProfile(){
+ const photo=
+  state.student.photoURL||
+  state.student.photoUrl||
+  state.student.profilePhotoUrl||
+  state.user.photoURL||"";
+
+ const img=$("profilePhoto");
+ const icon=$("profileIcon");
+
+ if(photo){
+  img.src=photo;
+  img.hidden=false;
+  icon.hidden=true;
+  img.onerror=()=>{
+   img.hidden=true;
+   icon.hidden=false;
+  };
+ }
+}
+
+
+/* ==========================================
+   COURSE AND ENROLLMENT RESOLUTION
+========================================== */
+
+async function loadEnrollments(){
+ const snap=await getDocs(
+  query(
+   collection(db,"studentEnrollments"),
+   where("studentUid","==",state.user.uid)
+  )
+ );
+
+ state.enrollments=snap.docs.map(d=>({
+  id:d.id,...d.data()
+ }));
+}
+
+
+async function resolveStudentCourse(){
+ const student=state.student;
+
+ const snap=await getDocs(collection(db,"zen2Courses"));
+
+ state.courses=snap.docs.map(d=>({
+  id:d.id,...d.data()
+ })).filter(c=>{
+  const status=norm(c.status);
+  return c.active!==false &&
+   c.isPublished!==false &&
+   c.published!==false &&
+   !["inactive","draft","archived","deleted"].includes(status);
+ });
+
+ const directId=String(
+  student.courseId||
+  student.crmCourseId||
+  student.batchId||
+  student.courseID||""
+ );
+
+ // Existing direct course assignment.
+ if(directId){
+  const found=state.courses.find(c=>c.id===directId);
+  if(found){
+   state.course=found;
+   return;
+  }
+ }
+
+ // Existing course matching by class and medium.
+ const studentClass=normClass(
+  student.className||
+  student.class||
+  student.standard||
+  student.grade||
+  student.targetClass||""
+ );
+
+ const studentMedium=norm(
+  student.medium||
+  student.languageMedium||
+  student.studyMedium||""
+ );
+
+ let found=state.courses.find(c=>{
+  const courseClass=normClass(
+   c.className||
+   c.courseClass||
+   c.targetClass||
+   c.standard||
+   c.grade||
+   c.crmClass||""
+  );
+
+  const medium=norm(c.medium||c.languageMedium||"");
+
+  return studentClass &&
+   courseClass===studentClass &&
+   (!studentMedium||!medium||medium===studentMedium);
+ });
+
+ if(found){
+  state.course=found;
+  return;
+ }
+
+ // Existing approved-enrollment fallback.
+ const enrollment=state.enrollments.find(e=>{
+  const status=norm(e.status||e.enrollmentStatus);
+  return !status||[
+   "approved","active","paid","enrolled","success","completed"
+  ].includes(status);
+ });
+
+ const enrollmentId=enrollment&&(
+  enrollment.crmCourseId||
+  enrollment.courseId||
+  enrollment.courseID||
+  enrollment.batchId
+ );
+
+ if(enrollmentId){
+  state.course=state.courses.find(c=>c.id===String(enrollmentId))||{
+   id:String(enrollmentId),
+   courseName:enrollment.courseName||enrollment.batchName||"My Batch"
+  };
+ }
+}
+
+
+function enrollmentCourseId(e){
+ return String(
+  e.crmCourseId||e.courseId||e.courseID||e.batchId||""
+ );
+}
+
+function hasCourseAccess(course){
+ if(!course)return false;
+
+ const enrollmentAccess=state.enrollments.some(e=>{
+  const status=norm(e.status||e.enrollmentStatus);
+  return enrollmentCourseId(e)===String(course.id)&&
+   (!status||[
+    "approved","active","paid","enrolled","success","completed"
+   ].includes(status));
+ });
+
+ if(enrollmentAccess)return true;
+
+ const lists=[
+  state.student.purchasedCourseIds,
+  state.student.enrolledCourseIds,
+  state.student.courseIds,
+  state.student.purchasedCourses,
+  state.student.enrolledCourses
+ ];
+
+ for(const list of lists){
+  if(!Array.isArray(list))continue;
+
+  if(list.some(item=>{
+   const id=typeof item==="object"
+    ?item.courseId||item.id||item.crmCourseId
+    :item;
+
+   return String(id)===String(course.id);
+  }))return true;
+ }
+
+ const uid=state.user.uid;
+
+ const courseStatus=norm(
+  course.studentAccess?.[uid]||
+  course.enrollments?.[uid]?.status||""
+ );
+
+ if(["approved","active","paid","enrolled","success"].includes(courseStatus)){
+  return true;
+ }
+
+ // Existing live page allows a directly assigned course.
+ const direct=String(
+  state.student.courseId||
+  state.student.crmCourseId||
+  state.student.batchId||
+  state.student.courseID||""
+ );
+
+ return direct===String(course.id);
+}
+
+
+/* ==========================================
+   COURSE FILTER
+========================================== */
+
+function belongsToCourse(item,course){
+ if(!course)return false;
+
+ const ids=[
+  item.courseId,
+  item.crmCourseId,
+  item.batchId,
+  item.courseID,
+  item.course_id
+ ].filter(v=>v!==undefined&&v!==null&&String(v)!=="").map(String);
+
+ if(ids.length){
+  return ids.includes(String(course.id));
+ }
+
+ const a=normClass(
+  item.courseClass||item.className||item.standard||item.targetClass||""
+ );
+
+ const b=normClass(
+  course.className||course.courseClass||
+  course.targetClass||course.standard||course.grade||course.crmClass||""
+ );
+
+ const nameA=norm(item.courseName||item.batchName||item.courseTitle||"");
+ const nameB=norm(course.courseName||course.name||course.title||"");
+
+ return Boolean(
+  (a&&b&&a===b)||
+  (nameA&&nameB&&nameA===nameB)
+ );
+}
+
+
+/* ==========================================
+   LIVE CLASSES - liveClasses
+========================================== */
+
+function startClassesListener(){
+ const unsubscribe=onSnapshot(
+  collection(db,"liveClasses"),
+  snapshot=>{
+   state.classes=snapshot.docs.map(d=>({
+    id:d.id,...d.data()
+   })).filter(item=>
+    item.active!==false &&
+    item.isDeleted!==true &&
+    item.published!==false &&
+    norm(item.publicationStatus)!=="draft" &&
+    belongsToCourse(item,state.course)
+   ).sort((a,b)=>startMillis(a)-startMillis(b));
+
+   renderAll();
+  },
+  error=>{
+   console.error("liveClasses listener:",error);
+   showToast("Unable to synchronize live classes. Check Firestore permissions.");
+  }
+ );
+
+ state.unsubscribers.push(unsubscribe);
+}
+
+
+/* ==========================================
+   SUBJECTS - zen2Subjects
+========================================== */
+
+function startSubjectsListener(){
+ const unsubscribe=onSnapshot(
+  query(
+   collection(db,"zen2Subjects"),
+   where("courseId","==",state.course.id)
+  ),
+  snapshot=>{
+   const docs=snapshot.docs.map(d=>({
+    id:d.id,...d.data()
+   })).filter(s=>s.active!==false&&s.isDeleted!==true);
+
+   state.subjects=docs.length
+    ?docs.sort(sortOrder).map(normalizeSubject)
+    :FALLBACK_SUBJECTS.map(s=>({...s}));
+
+   renderSubjects();
+  },
+  error=>{
+   console.error("zen2Subjects:",error);
+   state.subjects=FALLBACK_SUBJECTS.map(s=>({...s}));
+   renderSubjects();
+  }
+ );
+
+ state.unsubscribers.push(unsubscribe);
+}
+
+
+function normalizeSubject(s){
+ const name=
+  s.name||
+  s.subjectName||
+  s.title||
+  s.displayName||
+  s.label||
+  s.nameEnglish||
+  s.subjectNameEnglish||
+  "Subject";
+
+ return {
+  ...s,
+  displayName:String(name).trim(),
+  icon:s.icon||subjectIcon(name)
  };
- return labels[status]||"";
 }
 
-function toast(msg){
- $("toast").textContent=msg;
- $("toast").style.display="block";
- setTimeout(()=>$("toast").style.display="none",3000);
-}
-
-function studentCourseId(){
- return studentData.courseId||studentData.batchId||studentData.activeCourseId||"";
-}
-
-function hasCourseAccess(c){
- const courseId=studentCourseId();
- const access=String(c.accessType||"PAID").toUpperCase();
-
- if(access==="ALL"||access==="FREE")return true;
-
- if(!courseId)return false;
-
- return String(c.courseId||"")===String(courseId);
-}
-
-function classThumbnail(c){
- return c.thumbnailUrl||c.thumbnail||"https://placehold.co/640x360/EAF2FF/3978E8?text=Zenova+Class";
-}
-
-function safePlayerURL(path,id){
- return path+"?liveClassId="+encodeURIComponent(id);
+function subjectIcon(name){
+ const n=norm(name);
+ if(n.includes("math"))return"ri-calculator-line";
+ if(n.includes("science"))return"ri-flask-line";
+ if(n.includes("social"))return"ri-globe-line";
+ if(n.includes("hindi"))return"ri-translate-2";
+ if(n.includes("english"))return"ri-english-input";
+ return"ri-book-open-line";
 }
 
 
-/* ==============================================
-   LIVE CLASS ACCESS
-============================================== */
+/* ==========================================
+   RECORDED CONTENT - zen2Content
+========================================== */
 
-function joinClass(c){
- if(!hasCourseAccess(c)){
-  toast("You do not have access to this class.");
+function startContentListener(){
+ const unsubscribe=onSnapshot(
+  query(
+   collection(db,"zen2Content"),
+   where("courseId","==",state.course.id)
+  ),
+  snapshot=>{
+   state.contents=snapshot.docs.map(d=>({
+    id:d.id,...d.data()
+   })).filter(item=>item.active!==false);
+
+   renderSubjects();
+
+   if(state.selectedChapter){
+    renderLectures();
+   }
+  },
+  error=>{
+   console.error("zen2Content:",error);
+   showToast("Recorded lesson library could not be loaded.");
+  }
+ );
+
+ state.unsubscribers.push(unsubscribe);
+}
+
+
+/* ==========================================
+   CHAPTERS - zen2Chapters
+========================================== */
+
+async function openSubject(subjectId){
+ const subject=state.subjects.find(s=>s.id===subjectId)||
+  FALLBACK_SUBJECTS.find(s=>s.id===subjectId);
+
+ if(!subject)return;
+
+ if(!hasCourseAccess(state.course)){
+  showToast("Your course access is not active.");
   return;
  }
 
- if(getStatus(c)!=="live"){
-  toast("This class is not live currently.");
-  return;
- }
+ state.selectedSubject=subject;
+ state.selectedChapter=null;
 
- if(!getSourceURL(c)){
-  toast("The live video source is not configured.");
-  return;
- }
+ $("chapterSection").classList.remove("hidden");
+ $("lectureSection").classList.add("hidden");
 
- window.location.href=safePlayerURL(LIVE_PLAYER,c.id);
+ $("chapterHeading").textContent=subject.displayName||subject.name;
+ $("chapterBreadcrumb").innerHTML=
+  `Recorded Classes / <strong>${esc(subject.displayName||subject.name)}</strong>`;
+
+ $("chapterGrid").innerHTML='<div class="empty-card">Loading chapters...</div>';
+ $("chapterSection").scrollIntoView({behavior:"smooth",block:"start"});
+
+ try{
+  const snap=await getDocs(
+   query(
+    collection(db,"zen2Chapters"),
+    where("courseId","==",state.course.id),
+    where("subjectId","==",subject.id)
+   )
+  );
+
+  state.chapters=snap.docs.map(d=>({
+   id:d.id,...d.data()
+  })).filter(c=>c.active!==false&&c.isDeleted!==true).sort(sortOrder);
+
+  renderChapters();
+
+ }catch(error){
+  console.error("zen2Chapters:",error);
+  $("chapterGrid").innerHTML="";
+  $("chapterEmpty").classList.remove("hidden");
+  $("chapterEmpty").textContent="Unable to load chapters. Check Firestore read permissions.";
+ }
 }
 
-function openRecording(c){
- if(!hasCourseAccess(c)){
-  toast("You do not have access to this recording.");
-  return;
- }
 
- if(!c.recordingUrl){
-  toast("Recording is not available yet.");
-  return;
- }
+function renderChapters(){
+ const subject=state.selectedSubject;
 
- window.location.href=safePlayerURL(VIDEO_PLAYER,c.id);
+ const chapters=state.chapters;
+
+ $("chapterEmpty").classList.toggle("hidden",chapters.length>0);
+
+ $("chapterGrid").innerHTML=chapters.map((chapter,index)=>{
+  const number=chapter.chapterNumber??chapter.order??index+1;
+
+  const count=state.contents.filter(c=>
+   String(c.chapterId)===String(chapter.id)&&isVideoContent(c)
+  ).length;
+
+  const liveCount=state.classes.filter(c=>
+   String(c.subjectId)===String(subject.id)&&
+   String(c.chapterId)===String(chapter.id)&&
+   hasRecording(c)
+  ).length;
+
+  return `
+   <button class="chapter-card" data-chapter-id="${esc(chapter.id)}">
+    <span class="chapter-number">${esc(number)}</span>
+    <span>
+     <strong>${esc(itemName(chapter,"chapter"))}</strong>
+     <small>${count+liveCount} recorded lessons</small>
+    </span>
+    <i class="ri-arrow-right-s-line" style="margin-left:auto;color:var(--blue)"></i>
+   </button>`;
+ }).join("");
+
+ $("chapterGrid").querySelectorAll("[data-chapter-id]").forEach(btn=>{
+  btn.onclick=()=>openChapter(btn.dataset.chapterId);
+ });
 }
 
 
-/* ==============================================
-   LIVE HERO
-============================================== */
+async function openChapter(chapterId){
+ const chapter=state.chapters.find(c=>c.id===chapterId);
+ if(!chapter)return;
 
-function renderHero(){
- const live=classes.filter(c=>getStatus(c)==="live"&&hasCourseAccess(c))
-  .sort((a,b)=>(parseStart(a)?.getTime()||0)-(parseStart(b)?.getTime()||0));
+ state.selectedChapter=chapter;
 
- const c=live[0];
+ $("lectureSection").classList.remove("hidden");
+ $("lectureHeading").textContent=itemName(chapter,"chapter");
 
- if(!c){
-  $("liveHero").innerHTML=`
-   <div class="hero-empty" style="grid-column:1/-1">
-    <div class="empty-icon">◷</div>
+ $("lectureBreadcrumb").innerHTML=
+  `Recorded Classes / ${esc(state.selectedSubject.displayName)} / <strong>${esc(itemName(chapter,"chapter"))}</strong>`;
+
+ $("lectureSection").scrollIntoView({behavior:"smooth",block:"start"});
+
+ renderLectures();
+}
+
+
+/* ==========================================
+   RECORDED LECTURES
+========================================== */
+
+function isVideoContent(item){
+ const type=norm(item.contentType||item.type||item.videoType||"");
+
+ return type.includes("video")||
+  Boolean(
+   item.videoUrl||
+   item.youtubeUrl||
+   item.playbackUrl||
+   item.externalVideoUrl
+  );
+}
+
+function hasRecording(item){
+ return Boolean(
+  item.recordingUrl||
+  item.recordedUrl||
+  item.replayUrl||
+  item.recordedVideoUrl||
+  item.recordingVideoUrl||
+  item.recordingPlaybackUrl||
+  item.recordingContentId||
+  item.contentId||
+  (item.videoUrl&&norm(item.liveType)==="recorded video")
+ );
+}
+
+
+function renderLectures(){
+ const chapter=state.selectedChapter;
+ const subject=state.selectedSubject;
+
+ if(!chapter||!subject)return;
+
+ // Normal recorded lessons from zen2Content.
+ const contentLessons=state.contents.filter(c=>
+  String(c.chapterId)===String(chapter.id)&&
+  String(c.subjectId)===String(subject.id)&&
+  isVideoContent(c)
+ ).map(c=>({
+  ...c,
+  sourceKind:"CONTENT"
+ }));
+
+ // Previous live classes with recordings from liveClasses.
+ const liveLessons=state.classes.filter(c=>
+  String(c.chapterId)===String(chapter.id)&&
+  hasRecording(c)&&
+  statusOf(c).phase==="ended"
+ ).map(c=>({
+  ...c,
+  sourceKind:"LIVE_RECORDING"
+ }));
+
+ const items=[
+  ...contentLessons,
+  ...liveLessons
+ ].sort((a,b)=>
+  contentDate(b)-contentDate(a)
+ );
+
+ $("lectureEmpty").classList.toggle("hidden",items.length>0);
+
+ $("lectureGrid").innerHTML=items.map(item=>{
+  const title=item.title||item.contentTitle||item.lectureTitle||item.classTitle||"Recorded Lesson";
+
+  const thumbnail=
+   item.thumbnailUrl||
+   item.thumbnail||
+   item.imageUrl||
+   item.coverImageUrl||
+   "";
+
+  const isLiveRecording=item.sourceKind==="LIVE_RECORDING";
+
+  return `
+   <article class="lecture-card">
+    <img class="card-image"
+     src="${esc(thumbnail||"https://placehold.co/640x360/EAF2FF/3978E8?text=Zenova+Lesson")}"
+     alt=""
+     loading="lazy"
+     onerror="this.src='https://placehold.co/640x360/EAF2FF/3978E8?text=Zenova+Lesson'">
+    <div class="lecture-body">
+     <span class="status recorded">${isLiveRecording?"LIVE RECORDING":"RECORDED LESSON"}</span>
+     <h3>${esc(title)}</h3>
+     <p>${esc(item.teacherName||item.facultyName||item.description||"Zenova Faculty")}</p>
+     <p>${esc(item.duration||item.durationText||"Recorded lecture")}</p>
+     <button class="btn btn-light play-lecture"
+      data-kind="${isLiveRecording?"live":"content"}"
+      data-id="${esc(item.id)}">
+      <i class="ri-play-fill"></i> Watch Lecture
+     </button>
+    </div>
+   </article>`;
+ }).join("");
+
+ $("lectureGrid").querySelectorAll(".play-lecture").forEach(btn=>{
+  btn.onclick=()=>{
+   if(!hasCourseAccess(state.course)){
+    showToast("Your course access is not active.");
+    return;
+   }
+
+   const id=btn.dataset.id;
+
+   if(btn.dataset.kind==="live"){
+    window.location.href=`../videoplayer/?liveClassId=${encodeURIComponent(id)}`;
+   }else{
+    window.location.href=`../videoplayer/?contentId=${encodeURIComponent(id)}`;
+   }
+  };
+ });
+}
+
+
+/* ==========================================
+   CLASS STATUS AND TIME
+========================================== */
+
+function statusOf(item){
+ const status=norm(item.status||item.classStatus||"");
+
+ if(["cancelled","canceled"].includes(status)||item.cancelled===true){
+  return {phase:"cancelled",label:"CANCELLED"};
+ }
+
+ const start=startMillis(item);
+ if(!start)return {phase:"upcoming",label:"SCHEDULED"};
+
+ const end=endMillis(item)||start+60*60*1000;
+ const now=Date.now();
+
+ if(item.manualEnded===true||item.ended===true||status==="ended"){
+  return {phase:"ended",label:hasRecording(item)?"RECORDING AVAILABLE":"COMPLETED"};
+ }
+
+ if(now<start)return {phase:"upcoming",label:"SCHEDULED"};
+ if(now<end)return {phase:"live",label:"LIVE NOW"};
+
+ return {
+  phase:"ended",
+  label:hasRecording(item)?"RECORDING AVAILABLE":"COMPLETED"
+ };
+}
+
+
+function startMillis(item){
+ const direct=toMillis(
+  item.startDateTime||
+  item.scheduledStartAt||
+  item.startAt||
+  item.startTimestamp
+ );
+
+ if(direct)return direct;
+
+ const date=item.scheduledDate||item.date||item.classDate||item.startDate||"";
+ const time=item.scheduledTime||item.startTime||item.time||"";
+
+ return parseLocalDateTime(date,time);
+}
+
+
+function endMillis(item){
+ const direct=toMillis(
+  item.endDateTime||
+  item.scheduledEndAt||
+  item.endAt||
+  item.endTimestamp
+ );
+
+ if(direct)return direct;
+
+ const date=item.endDate||item.scheduledDate||item.date||item.classDate||"";
+ const time=item.endTime||item.scheduledEndTime||"";
+
+ const parsed=parseLocalDateTime(date,time);
+ if(parsed)return parsed;
+
+ const duration=Number(
+  item.durationMinutes||item.duration||item.classDurationMinutes||0
+ );
+
+ return duration>0?startMillis(item)+duration*60000:0;
+}
+
+
+function toMillis(value){
+ if(!value)return 0;
+ if(typeof value.toMillis==="function")return value.toMillis();
+ if(typeof value.seconds==="number")return value.seconds*1000;
+ if(typeof value==="number")return value>1e12?value:value*1000;
+
+ if(typeof value==="string"){
+  const n=Date.parse(value);
+  return Number.isFinite(n)?n:0;
+ }
+
+ return 0;
+}
+
+
+function parseLocalDateTime(date,time){
+ if(!date)return 0;
+
+ const d=String(date).slice(0,10);
+ const t=String(time||"00:00").slice(0,5);
+
+ const value=Date.parse(`${d}T${t}:00+05:30`);
+
+ return Number.isFinite(value)?value:0;
+}
+
+
+function classDate(item){
+ const ms=startMillis(item);
+
+ return ms?new Intl.DateTimeFormat("en-CA",{
+  timeZone:"Asia/Kolkata",
+  year:"numeric",month:"2-digit",day:"2-digit"
+ }).format(new Date(ms)):"";
+}
+
+
+function timeRange(item){
+ const start=startMillis(item);
+ if(!start)return "Time not set";
+
+ const end=endMillis(item)||start+60*60000;
+
+ return `${formatTime(start)} – ${formatTime(end)}`;
+}
+
+
+function formatTime(ms){
+ return new Intl.DateTimeFormat("en-IN",{
+  timeZone:"Asia/Kolkata",
+  hour:"numeric",minute:"2-digit",hour12:true
+ }).format(new Date(ms));
+}
+
+
+function contentDate(item){
+ return toMillis(item.createdAt||item.updatedAt||item.publishedAt)||
+  startMillis(item)||0;
+}
+
+
+/* ==========================================
+   LIVE AND UPCOMING RENDERING
+========================================== */
+
+function renderAll(){
+ renderLive();
+ renderUpcoming();
+ renderToday();
+ renderSelectedDate();
+ renderCalendar();
+ renderSubjects();
+}
+
+
+function renderLive(){
+ const list=state.classes.filter(c=>
+  statusOf(c).phase==="live"
+ ).sort((a,b)=>startMillis(a)-startMillis(b));
+
+ $("liveCount").innerHTML=list.length
+  ?`<span class="pulse"></span> ${list.length} LIVE`
+  :"NO LIVE CLASS";
+
+ if(!list.length){
+  $("liveNow").innerHTML=`
+   <div class="panel live-empty">
+    <i class="ri-calendar-check-line"></i>
     <h3>No live classes at the moment</h3>
-    <p>Your next scheduled class will appear in Upcoming Classes.<br>Keep checking your timetable.</p>
+    <p>Your next scheduled class will appear in Upcoming Classes.</p>
    </div>`;
   return;
  }
 
- const start=parseStart(c);
- const end=parseEnd(c);
+ const item=list[0];
 
- $("liveHero").innerHTML=`
-  <div class="hero-image">
-   <img src="${esc(classThumbnail(c))}" alt="Class thumbnail">
-   <div class="hero-label">
-    <span class="pill live-pill"><span class="pulse"></span> LIVE NOW</span>
+ $("liveNow").innerHTML=`
+  <div class="live-feature">
+   <div class="live-image">
+    <img src="${esc(classThumbnail(item))}" alt="">
+    <span class="live-label status live"><span class="pulse"></span> LIVE NOW</span>
    </div>
-  </div>
-  <div class="hero-content">
-   <div class="eyebrow">${esc(c.subjectName||"LIVE CLASS")} · ${esc(c.chapterName||"")}</div>
-   <h2>${esc(classTitle(c))}</h2>
-   <p>Faculty: ${esc(c.teacherName||c.facultyName||"Zenova Faculty")}</p>
-   <div class="hero-meta">
-    <span>◷ ${esc(formatTime(start))} – ${esc(formatTime(end))}</span>
-    <span>▣ ${Number(c.duration)||60} minutes</span>
+   <div class="live-info">
+    <span class="eyebrow">${esc(subjectName(item))}</span>
+    <h2>${esc(classTitle(item))}</h2>
+    <p>${esc(item.chapterName||"")} · ${esc(item.teacherName||item.facultyName||"Zenova Faculty")}</p>
+    <div class="live-meta">
+     <span><i class="ri-time-line"></i> ${esc(timeRange(item))}</span>
+     <span><i class="ri-live-line"></i> ${esc(providerName(item))}</span>
+    </div>
+    <button class="btn" id="joinLive">
+     <i class="ri-play-fill"></i> Join Live Class
+    </button>
    </div>
-   <button class="btn" id="joinLive">▶ Join Live Class</button>
   </div>
  `;
 
- $("joinLive").onclick=()=>joinClass(c);
+ $("joinLive").onclick=()=>openLive(item);
 }
 
-
-/* ==============================================
-   UPCOMING CLASSES
-============================================== */
 
 function renderUpcoming(){
- const now=Date.now();
+ const list=state.classes.filter(c=>
+  statusOf(c).phase==="upcoming"&&
+  startMillis(c)>Date.now()
+ ).sort((a,b)=>startMillis(a)-startMillis(b)).slice(0,6);
 
- const upcoming=classes.filter(c=>
-  getStatus(c)==="scheduled"&&
-  hasCourseAccess(c)&&
-  (parseStart(c)?.getTime()||0)>now
- ).sort((a,b)=>parseStart(a)-parseStart(b)).slice(0,6);
+ $("upcomingEmpty").classList.toggle("hidden",list.length>0);
 
- $("upcomingCount").textContent=upcoming.length+" CLASSES";
-
- if(!upcoming.length){
-  $("upcomingGrid").innerHTML='<div class="empty" style="grid-column:1/-1">No upcoming classes scheduled. Check back soon!</div>';
-  return;
- }
-
- $("upcomingGrid").innerHTML=upcoming.map(c=>{
-  const start=parseStart(c);
-  return `
-   <article class="upcoming-card">
-    <img class="thumb" src="${esc(classThumbnail(c))}" alt="" onerror="this.src='https://placehold.co/640x360/EAF2FF/3978E8?text=Zenova'">
-    <div class="upcoming-body">
-     ${statusHTML("scheduled")}
-     <h3>${esc(classTitle(c))}</h3>
-     <p>${esc(c.subjectName||"")} · ${esc(c.chapterName||"")}</p>
-     <p>Faculty: ${esc(c.teacherName||c.facultyName||"Zenova Faculty")}</p>
-     <div class="upcoming-foot">
-      <span style="font-size:10px;color:var(--muted)">${esc(formatDate(start))} · ${esc(formatTime(start))}</span>
-      <span style="font-size:9px;color:var(--dark);font-weight:800">UPCOMING</span>
-     </div>
+ $("upcomingClasses").innerHTML=list.map(item=>`
+  <article class="class-card">
+   <img class="card-image" src="${esc(classThumbnail(item))}" alt="" onerror="this.style.display='none'">
+   <div class="card-body">
+    <span class="status scheduled">SCHEDULED</span>
+    <h3>${esc(classTitle(item))}</h3>
+    <p>${esc(subjectName(item))} · ${esc(item.chapterName||"")}</p>
+    <p>${esc(item.teacherName||item.facultyName||"Faculty")}</p>
+    <div class="card-footer">
+     <span style="font-size:9px;color:var(--muted)">${esc(formatDate(startMillis(item)))} · ${esc(formatTime(startMillis(item)))}</span>
+     <span style="font-size:9px;color:var(--dark);font-weight:800">UPCOMING</span>
     </div>
-   </article>`;
- }).join("");
+   </div>
+  </article>
+ `).join("");
 }
 
 
-/* ==============================================
+function renderToday(){
+ const today=todayISO();
+
+ $("todayDate").textContent=formatLongDate(today);
+
+ const list=classesForDate(today);
+
+ $("todayEmpty").classList.toggle("hidden",list.length>0);
+
+ $("todayClasses").innerHTML=list.map(createClassRow).join("");
+
+ bindClassActions($("todayClasses"));
+}
+
+
+function createClassRow(item){
+ const status=statusOf(item);
+
+ return `
+  <article class="list-card">
+   <div>
+    <span class="status ${statusClass(status.phase)}">${status.label}</span>
+    <h3 style="margin-top:8px">${esc(classTitle(item))}</h3>
+    <p>${esc(subjectName(item))} · ${esc(item.chapterName||"")}<br>
+    ${esc(item.teacherName||item.facultyName||"Faculty")} · ${esc(timeRange(item))}</p>
+   </div>
+   <div class="list-action">${actionMarkup(item,status.phase)}</div>
+  </article>`;
+}
+
+
+function actionMarkup(item,phase){
+ if(phase==="live"){
+  return `<button class="btn btn-small" data-join="${esc(item.id)}">JOIN LIVE</button>`;
+ }
+
+ if(phase==="upcoming"){
+  return `<button class="btn btn-white btn-small" disabled>UPCOMING</button>`;
+ }
+
+ if(phase==="ended"&&hasRecording(item)){
+  return `<button class="btn btn-light btn-small" data-recording="${esc(item.id)}">WATCH RECORDING</button>`;
+ }
+
+ if(phase==="cancelled"){
+  return `<span class="status cancelled">CANCELLED</span>`;
+ }
+
+ return `<span class="status completed">COMPLETED</span>`;
+}
+
+
+function bindClassActions(container){
+ container.querySelectorAll("[data-join]").forEach(btn=>{
+  btn.onclick=()=>{
+   const item=state.classes.find(c=>c.id===btn.dataset.join);
+   if(item)openLive(item);
+  };
+ });
+
+ container.querySelectorAll("[data-recording]").forEach(btn=>{
+  btn.onclick=()=>{
+   const item=state.classes.find(c=>c.id===btn.dataset.recording);
+   if(item)openLiveRecording(item);
+  };
+ });
+}
+
+
+/* ==========================================
    CALENDAR
-============================================== */
+========================================== */
 
 function renderCalendar(){
- const year=currentMonth.getFullYear();
- const month=currentMonth.getMonth();
+ const year=state.currentMonth.getFullYear();
+ const month=state.currentMonth.getMonth();
 
- $("monthLabel").textContent=currentMonth.toLocaleDateString("en-IN",{
+ $("calendarTitle").textContent=state.currentMonth.toLocaleDateString("en-IN",{
   month:"long",year:"numeric"
  });
 
  const first=new Date(year,month,1);
  const offset=first.getDay();
- const days=new Date(year,month+1,0).getDate();
- const prevDays=new Date(year,month,0).getDate();
+ const total=new Date(year,month+1,0).getDate();
+ const previous=new Date(year,month,0).getDate();
 
  let html=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"]
   .map(d=>`<div class="day-name">${d}</div>`).join("");
@@ -743,31 +1447,27 @@ function renderCalendar(){
   let day,date,other=false;
 
   if(i<offset){
-   day=prevDays-offset+i+1;
-   date=localDate(new Date(year,month-1,day));
+   day=previous-offset+i+1;
+   date=localISO(year,month-1,day);
    other=true;
-  }else if(i>=offset+days){
-   day=i-offset-days+1;
-   date=localDate(new Date(year,month+1,day));
+  }else if(i>=offset+total){
+   day=i-offset-total+1;
+   date=localISO(year,month+1,day);
    other=true;
   }else{
    day=i-offset+1;
-   date=localDate(new Date(year,month,day));
+   date=localISO(year,month,day);
   }
 
-  const list=classes.filter(c=>
-   (c.scheduledDate||c.date)===date&&hasCourseAccess(c)
-  );
-
-  const today=date===localDate(new Date());
+  const items=classesForDate(date);
 
   html+=`
-   <button class="day ${other?"other":""} ${today?"today":""} ${date===selectedDate?"selected":""}" data-date="${date}">
+   <button class="day ${other?"other":""} ${date===todayISO()?"today":""} ${date===state.selectedDate?"selected":""}" data-date="${date}">
     <b>${day}</b>
     <div class="dots">
-     ${list.slice(0,4).map(c=>{
-      const s=getStatus(c);
-      return `<i class="${s==="live"?"live":s==="recorded"?"recorded":s==="completed"?"completed":""}"></i>`;
+     ${items.slice(0,5).map(c=>{
+      const p=statusOf(c).phase;
+      return `<i class="${p==="live"?"live":p==="ended"?(hasRecording(c)?"recorded":"completed"):""}"></i>`;
      }).join("")}
     </div>
    </button>`;
@@ -775,364 +1475,335 @@ function renderCalendar(){
 
  $("calendarGrid").innerHTML=html;
 
- $("calendarGrid").querySelectorAll("[data-date]").forEach(el=>{
-  el.onclick=()=>{
-   selectedDate=el.dataset.date;
-   renderCalendar();
-   renderDayEvents();
-  };
- });
-
- renderDayEvents();
-}
-
-function renderDayEvents(){
- const list=classes.filter(c=>
-  (c.scheduledDate||c.date)===selectedDate&&hasCourseAccess(c)
- ).sort((a,b)=>(parseStart(a)?.getTime()||0)-(parseStart(b)?.getTime()||0));
-
- $("dayTitle").textContent=new Date(selectedDate+"T12:00:00").toLocaleDateString("en-IN",{
-  day:"numeric",month:"long"
- })+" Classes";
-
- if(!list.length){
-  $("dayEvents").innerHTML='<div class="empty">No classes scheduled for this date.</div>';
-  return;
- }
-
- $("dayEvents").innerHTML=list.map(c=>{
-  const status=getStatus(c);
-  const start=parseStart(c);
-  const end=parseEnd(c);
-  const action=status==="live"?"Join Live":status==="recorded"?"Watch Recording":"";
-
-  return `
-   <div class="event">
-    ${statusHTML(status)}
-    <h4>${esc(classTitle(c))}</h4>
-    <p>${esc(c.subjectName||"")} · ${esc(c.chapterName||"")}</p>
-    <p>◷ ${esc(formatTime(start))} – ${esc(formatTime(end))}</p>
-    ${action?`<button class="btn btn-small event-action" data-id="${esc(c.id)}" data-status="${status}" style="margin-top:9px">${action} →</button>`:""}
-   </div>`;
- }).join("");
-
- $("dayEvents").querySelectorAll(".event-action").forEach(btn=>{
+ $("calendarGrid").querySelectorAll("[data-date]").forEach(btn=>{
   btn.onclick=()=>{
-   const c=classes.find(x=>x.id===btn.dataset.id);
-   if(!c)return;
-   if(btn.dataset.status==="live")joinClass(c);
-   else openRecording(c);
+   state.selectedDate=btn.dataset.date;
+   $("datePicker").value=state.selectedDate;
+   renderCalendar();
+   renderSelectedDate();
   };
  });
 }
 
 
-/* ==============================================
-   SUBJECT LIBRARY
-============================================== */
+function renderSelectedDate(){
+ $("datePicker").value=state.selectedDate;
+ $("selectedDateTitle").textContent=formatLongDate(state.selectedDate);
+
+ const list=classesForDate(state.selectedDate);
+
+ $("selectedDateEmpty").classList.toggle("hidden",list.length>0);
+ $("selectedDateClasses").innerHTML=list.map(createClassRow).join("");
+
+ bindClassActions($("selectedDateClasses"));
+}
+
+
+function classesForDate(date){
+ return state.classes.filter(c=>classDate(c)===date)
+  .sort((a,b)=>startMillis(a)-startMillis(b));
+}
+
+
+/* ==========================================
+   SUBJECTS
+========================================== */
 
 function renderSubjects(){
- $("subjectGrid").innerHTML=SUBJECTS.map(s=>{
-  const count=recordings.filter(r=>
-   String(r.subjectId||"").toLowerCase()===s.id||
-   String(r.subjectName||"").toLowerCase()===s.name.toLowerCase()
-  ).length;
+ const list=state.subjects.length?state.subjects:FALLBACK_SUBJECTS;
+
+ $("subjectsEmpty").classList.toggle("hidden",list.length>0);
+
+ $("subjectGrid").innerHTML=list.map(s=>{
+  const name=s.displayName||s.name||s.subjectName||"Subject";
+
+  const count=state.classes.filter(c=>matchesSubject(c,s)&&hasRecording(c)).length+
+   state.contents.filter(c=>matchesSubject(c,s)&&isVideoContent(c)).length;
 
   return `
-   <div class="subject-card" data-subject="${esc(s.id)}">
-    <img class="subject-image" src="${esc(s.image)}" alt="${esc(s.name)}">
-    <div class="subject-body">
-     <h3>${esc(s.name)} <span class="arrow">→</span></h3>
-     <p>${count} recorded lectures</p>
-    </div>
-   </div>`;
+   <button class="subject-card" data-subject-id="${esc(s.id)}">
+    <span class="subject-icon"><i class="${esc(s.icon||subjectIcon(name))}"></i></span>
+    <span class="subject-copy">
+     <strong>${esc(name)}</strong>
+     <small>${count} recorded lessons</small>
+    </span>
+    <i class="ri-arrow-right-s-line"></i>
+   </button>`;
  }).join("");
 
- $("subjectGrid").querySelectorAll("[data-subject]").forEach(el=>{
-  el.onclick=()=>openSubject(el.dataset.subject);
+ $("subjectGrid").querySelectorAll("[data-subject-id]").forEach(btn=>{
+  btn.onclick=()=>openSubject(btn.dataset.subjectId);
  });
 }
 
-function subjectMatches(r,id){
- const s=SUBJECTS.find(x=>x.id===id);
- if(!s)return false;
 
- const rid=String(r.subjectId||"").toLowerCase();
- const name=String(r.subjectName||"").toLowerCase();
+/* ==========================================
+   NAVIGATION HELPERS
+========================================== */
 
- return rid===id||
-  name===s.name.toLowerCase()||
-  s.aliases.some(a=>name===a);
-}
-
-function openSubject(id){
- selectedSubject=id;
- selectedChapter=null;
-
- const s=SUBJECTS.find(x=>x.id===id);
- if(!s)return;
-
- $("librarySection").classList.remove("hidden");
- $("chapterView").classList.remove("hidden");
- $("lectureView").classList.add("hidden");
-
- $("selectedSubjectTitle").textContent=s.name;
- $("breadcrumb").innerHTML=`<button id="breadcrumbHome">Recorded Classes</button> / ${esc(s.name)}`;
-
- $("breadcrumbHome").onclick=()=>{
-  $("librarySection").classList.add("hidden");
-  $("librarySection").scrollIntoView({behavior:"smooth"});
- };
-
- const subjectRecords=recordings.filter(r=>subjectMatches(r,id));
-
- const chapterMap=new Map();
-
- subjectRecords.forEach(r=>{
-  const chapterId=r.chapterId||r.chapterName||"general";
-  const chapterName=r.chapterName||"Other Lectures";
-
-  if(!chapterMap.has(chapterId)){
-   chapterMap.set(chapterId,{id:chapterId,name:chapterName,records:[]});
-  }
-  chapterMap.get(chapterId).records.push(r);
- });
-
- const list=[...chapterMap.values()];
-
- $("chapterGrid").innerHTML=list.length?list.map(ch=>`
-  <button class="chapter-card" data-chapter="${esc(ch.id)}">
-   <strong>${esc(ch.name)} →</strong>
-   <span>${ch.records.length} recorded lectures</span>
-  </button>
- `).join(""):'<div class="empty">No recorded chapters available yet.</div>';
-
- $("chapterGrid").querySelectorAll("[data-chapter]").forEach(el=>{
-  el.onclick=()=>openChapter(el.dataset.chapter);
- });
-
- $("librarySection").scrollIntoView({behavior:"smooth",block:"start"});
-}
-
-function openChapter(id){
- selectedChapter=id;
-
- const list=recordings.filter(r=>
-  subjectMatches(r,selectedSubject)&&
-  String(r.chapterId||r.chapterName||"general")===String(id)
- );
-
- const first=list[0];
- const name=first?.chapterName||"Chapter";
-
- $("chapterView").classList.add("hidden");
- $("lectureView").classList.remove("hidden");
-
- $("selectedChapterTitle").textContent=name;
- $("breadcrumb").innerHTML=`
-  <button id="crumbSubjects">Recorded Classes</button> /
-  <button id="crumbChapters">${esc(SUBJECTS.find(x=>x.id===selectedSubject)?.name||"Subject")}</button> /
-  ${esc(name)}
- `;
-
- $("crumbSubjects").onclick=()=>{
-  $("librarySection").classList.add("hidden");
- };
- $("crumbChapters").onclick=()=>openSubject(selectedSubject);
-
- renderLectures(list);
-}
-
-function renderLectures(list){
- const term=$("lectureSearch").value.trim().toLowerCase();
-
- const filtered=list.filter(r=>
-  [r.title,r.lectureTitle,r.description,r.chapterName,r.teacherName]
-   .join(" ").toLowerCase().includes(term)
- );
-
- $("lectureGrid").innerHTML=filtered.length?filtered.map(r=>{
-  const thumb=r.thumbnailUrl||r.thumbnail||"https://placehold.co/640x360/EAF2FF/3978E8?text=Recorded+Lecture";
-  return `
-   <article class="lecture-card">
-    <div class="play-overlay">
-     <img class="thumb" src="${esc(thumb)}" alt="" onerror="this.src='https://placehold.co/640x360/EAF2FF/3978E8?text=Zenova'">
-    </div>
-    <div class="lecture-body">
-     <span class="pill recorded-pill">RECORDED</span>
-     <h4>${esc(r.title||r.lectureTitle||"Recorded Class")}</h4>
-     <p>${esc(r.teacherName||r.facultyName||"Zenova Faculty")}</p>
-     <p>${esc(r.duration||"Recorded lecture")}</p>
-     <button class="btn btn-light btn-small play-recording" data-id="${esc(r.id)}" style="width:100%;margin-top:9px">▶ Watch Now</button>
-    </div>
-   </article>`;
- }).join(""):'<div class="empty">No recordings match your search.</div>';
-
- $("lectureGrid").querySelectorAll(".play-recording").forEach(btn=>{
-  btn.onclick=()=>playLecture(btn.dataset.id);
- });
-}
-
-function playLecture(id){
- const r=recordings.find(x=>x.id===id);
- if(!r)return;
-
- const url=r.recordingUrl||r.videoUrl||r.playbackUrl||r.sourceUrl||"";
-
- if(!url){
-  toast("This recording has no video URL.");
+function openLive(item){
+ if(statusOf(item).phase!=="live"){
+  showToast("This class is not live right now.");
   return;
  }
 
- const target=VIDEO_PLAYER+"?recordingId="+encodeURIComponent(id);
- window.location.href=target;
+ if(!hasCourseAccess(state.course)){
+  showToast("Your course access is not active.");
+  return;
+ }
+
+ window.location.href=`../livevideoplayer/?liveClassId=${encodeURIComponent(item.id)}`;
 }
 
-$("lectureSearch").oninput=()=>{
- if(!selectedSubject||!selectedChapter)return;
- const list=recordings.filter(r=>
-  subjectMatches(r,selectedSubject)&&
-  String(r.chapterId||r.chapterName||"general")===String(selectedChapter)
- );
- renderLectures(list);
-};
+
+function openLiveRecording(item){
+ if(!hasRecording(item)){
+  showToast("Recording is not available yet.");
+  return;
+ }
+
+ if(!hasCourseAccess(state.course)){
+  showToast("Your course access is not active.");
+  return;
+ }
+
+ window.location.href=`../videoplayer/?liveClassId=${encodeURIComponent(item.id)}`;
+}
 
 
-/* ==============================================
-   LIBRARY NAVIGATION
-============================================== */
-
-$("backSubjects").onclick=()=>{
- $("librarySection").classList.add("hidden");
- $("librarySection").scrollIntoView({behavior:"smooth"});
-};
-
-$("backChapters").onclick=()=>{
- $("lectureView").classList.add("hidden");
- $("chapterView").classList.remove("hidden");
-};
+function subjectName(item){
+ return item.subjectName||
+  item.subjectTitle||
+  item.subject||
+  state.subjects.find(s=>String(s.id)===String(item.subjectId))?.displayName||
+  "Class";
+}
 
 
-/* ==============================================
-   CALENDAR NAVIGATION
-============================================== */
+function matchesSubject(item,subject){
+ const id=String(item.subjectId||item.subjectID||item.subject_id||"");
+
+ if(id&&subject.id&&!String(subject.id).startsWith("subject-")&&id===String(subject.id)){
+  return true;
+ }
+
+ const names=[
+  subject.displayName,subject.name,subject.subjectName,...(subject.aliases||[])
+ ].filter(Boolean).map(norm);
+
+ const candidates=[
+  item.subjectName,item.subjectTitle,item.subject,item.subject_name
+ ].filter(Boolean).map(norm);
+
+ return candidates.some(v=>names.some(n=>n===v||(n.length>3&&v.includes(n))));
+}
+
+
+function classTitle(item){
+ return item.title||item.classTitle||item.name||"Live Class";
+}
+
+
+function classThumbnail(item){
+ return item.thumbnailUrl||item.thumbnail||"https://placehold.co/640x360/EAF2FF/3978E8?text=Zenova+Class";
+}
+
+
+function providerName(item){
+ const type=norm(item.liveType||item.sourceType||item.provider||"");
+ if(type.includes("zoom"))return "ZOOM CLASSROOM";
+ if(type.includes("youtube"))return "YOUTUBE LIVE";
+ if(type.includes("record"))return "RECORDED CLASS";
+ return "ZENOVA LIVE";
+}
+
+
+/* ==========================================
+   GENERAL HELPERS
+========================================== */
+
+function norm(v){
+ return String(v??"").trim().toLowerCase().replace(/[^a-z0-9]+/g," ").trim();
+}
+
+function normClass(v){
+ const n=norm(v).replace(/\s/g,"");
+ if(["10","10th","class10","10thstandard"].includes(n))return "10th";
+ if(["9","9th","class9","9thstandard"].includes(n))return "9th";
+ if(n.includes("1stpuc")||n.includes("puc1"))return "1stpuc";
+ if(n.includes("2ndpuc")||n.includes("puc2"))return "2ndpuc";
+ return n;
+}
+
+function sortOrder(a,b){
+ return Number(a.order??a.priority??999)-Number(b.order??b.priority??999);
+}
+
+function itemName(item,type){
+ if(type==="chapter"){
+  return item.chapterName||item.name||item.title||"Chapter";
+ }
+ return item.name||item.subjectName||item.title||"Subject";
+}
+
+function statusClass(phase){
+ if(phase==="live")return "live";
+ if(phase==="upcoming")return "scheduled";
+ if(phase==="cancelled")return "cancelled";
+ if(phase==="ended")return "completed";
+ return "completed";
+}
+
+function localISO(y,m,d){
+ const date=new Date(y,m,d);
+ return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,"0")}-${String(date.getDate()).padStart(2,"0")}`;
+}
+
+function todayISO(){
+ return new Intl.DateTimeFormat("en-CA",{
+  timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit"
+ }).format(new Date());
+}
+
+function shiftISO(s,n){
+ const [y,m,d]=s.split("-").map(Number);
+ return localISO(y,m-1,d+n);
+}
+
+function formatDate(ms){
+ return new Intl.DateTimeFormat("en-IN",{
+  timeZone:"Asia/Kolkata",day:"2-digit",month:"short"
+ }).format(new Date(ms));
+}
+
+function formatLongDate(s){
+ if(!s)return "";
+ const d=new Date(`${s}T12:00:00+05:30`);
+ return new Intl.DateTimeFormat("en-IN",{
+  timeZone:"Asia/Kolkata",weekday:"short",day:"numeric",month:"short",year:"numeric"
+ }).format(d);
+}
+
+function esc(v){
+ return String(v??"")
+  .replaceAll("&","&amp;")
+  .replaceAll("<","&lt;")
+  .replaceAll(">","&gt;")
+  .replaceAll('"',"&quot;")
+  .replaceAll("'","&#039;");
+}
+
+function showLoading(){
+ $("loadingState").classList.remove("hidden");
+ $("errorState").classList.add("hidden");
+ $("liveApp").classList.add("hidden");
+}
+
+function showApp(){
+ $("loadingState").classList.add("hidden");
+ $("errorState").classList.add("hidden");
+ $("liveApp").classList.remove("hidden");
+}
+
+function showError(message){
+ $("loadingState").classList.add("hidden");
+ $("liveApp").classList.add("hidden");
+ $("errorState").classList.remove("hidden");
+ $("errorText").textContent=message;
+}
+
+let toastTimer;
+function showToast(message){
+ const el=$("toast");
+ el.textContent=message;
+ el.classList.add("show");
+ clearTimeout(toastTimer);
+ toastTimer=setTimeout(()=>el.classList.remove("show"),2800);
+}
+
+
+/* ==========================================
+   REFRESH AND CLEANUP
+========================================== */
+
+function renderClock(){
+ renderLive();
+ renderUpcoming();
+ renderToday();
+ renderCalendar();
+ renderSelectedDate();
+}
+
+function startClock(){
+ if(state.clock)clearInterval(state.clock);
+ state.clock=setInterval(renderClock,15000);
+}
+
+function stopListeners(){
+ state.unsubscribers.forEach(fn=>fn());
+ state.unsubscribers=[];
+
+ if(state.clock){
+  clearInterval(state.clock);
+  state.clock=null;
+ }
+}
+
+
+/* ==========================================
+   BUTTON EVENTS
+========================================== */
 
 $("prevMonth").onclick=()=>{
- currentMonth=new Date(currentMonth.getFullYear(),currentMonth.getMonth()-1,1);
+ state.currentMonth=new Date(
+  state.currentMonth.getFullYear(),
+  state.currentMonth.getMonth()-1,1
+ );
  renderCalendar();
 };
 
 $("nextMonth").onclick=()=>{
- currentMonth=new Date(currentMonth.getFullYear(),currentMonth.getMonth()+1,1);
+ state.currentMonth=new Date(
+  state.currentMonth.getFullYear(),
+  state.currentMonth.getMonth()+1,1
+ );
  renderCalendar();
 };
 
-$("todayBtn").onclick=()=>{
- currentMonth=new Date();
- selectedDate=localDate(new Date());
+$("todayMonth").onclick=()=>{
+ state.currentMonth=new Date();
+ state.selectedDate=todayISO();
+ $("datePicker").value=state.selectedDate;
  renderCalendar();
+ renderSelectedDate();
 };
 
+$("datePicker").onchange=e=>{
+ if(!e.target.value)return;
+ state.selectedDate=e.target.value;
+ state.currentMonth=new Date(
+  Number(state.selectedDate.slice(0,4)),
+  Number(state.selectedDate.slice(5,7))-1,1
+ );
+ renderCalendar();
+ renderSelectedDate();
+};
 
-/* ==============================================
-   FIRESTORE
-============================================== */
+$("backSubjects").onclick=()=>{
+ $("chapterSection").classList.add("hidden");
+ $("lectureSection").classList.add("hidden");
+ $("chapterSection").scrollIntoView({behavior:"smooth"});
+};
 
-function stopSubscriptions(){
- subscriptions.forEach(fn=>fn());
- subscriptions=[];
-}
+$("backChapters").onclick=()=>{
+ $("lectureSection").classList.add("hidden");
+ $("chapterSection").scrollIntoView({behavior:"smooth"});
+};
 
-async function loadStudent(u){
- stopSubscriptions();
- student=u;
+$("retryButton").onclick=()=>window.location.reload();
 
- try{
-  const snap=await getDoc(doc(db,"zen2students",u.uid));
-
-  if(!snap.exists()){
-   toast("Student profile not found.");
-   return;
-  }
-
-  studentData=snap.data();
-
-  $("studentName").textContent="Welcome, "+(studentData.name||studentData.studentName||"Student");
-  $("profileInitial").textContent=(studentData.name||studentData.studentName||"S").charAt(0).toUpperCase();
-
-  // Live classes: same collection used by Admin.
-  subscriptions.push(onSnapshot(collection(db,"liveClasses"),snap=>{
-   classes=snap.docs.map(d=>({id:d.id,...d.data()}));
-
-   renderHero();
-   renderUpcoming();
-   renderCalendar();
-   renderSubjects();
-  },err=>{
-   console.error("Live class error:",err);
-   toast("Unable to load classes: "+err.message);
-  }));
-
-  // Existing course / chapter data.
-  subscriptions.push(onSnapshot(collection(db,"zen2Courses"),snap=>{
-   courses=snap.docs.map(d=>({id:d.id,...d.data()}));
-  }));
-
-  subscriptions.push(onSnapshot(collection(db,"zen2Subjects"),snap=>{
-   subjects=snap.docs.map(d=>({id:d.id,...d.data()}));
-  }));
-
-  subscriptions.push(onSnapshot(collection(db,"zen2Chapters"),snap=>{
-   chapters=snap.docs.map(d=>({id:d.id,...d.data()}));
-  }));
-
-  // Recorded lectures: this assumes an existing collection
-  // named liveRecordings. If your actual collection differs,
-  // update this collection name to the existing one.
-  subscriptions.push(onSnapshot(collection(db,"liveRecordings"),snap=>{
-   recordings=snap.docs.map(d=>({id:d.id,...d.data()}));
-   renderSubjects();
-
-   if(selectedSubject&&selectedChapter){
-    const list=recordings.filter(r=>
-     subjectMatches(r,selectedSubject)&&
-     String(r.chapterId||r.chapterName||"general")===String(selectedChapter)
-    );
-    renderLectures(list);
-   }
-  },err=>{
-   console.error("Recording library:",err);
-  }));
-
-  // Refresh time-based status independently of Firestore updates.
-  setInterval(()=>{
-   renderHero();
-   renderUpcoming();
-   renderCalendar();
-  },15000);
-
- }catch(err){
-  console.error(err);
-  toast("Unable to load student profile.");
- }
-}
-
-
-/* ==============================================
-   AUTHENTICATION
-============================================== */
-
-onAuthStateChanged(auth,u=>{
- if(u){
-  loadStudent(u);
- }else{
-  window.location.href="../login/";
- }
-});
-
-window.addEventListener("beforeunload",stopSubscriptions);
+window.addEventListener("beforeunload",stopListeners);
 
 </script>
-
 </body>
 </html>
