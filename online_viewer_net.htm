@@ -1,0 +1,894 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#4a101b">
+<title>Zenova Education Initiative</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700&family=Noto+Sans+Kannada:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --maroon: #4a101b;
+  --dark: #2c0911;
+  --gold: #b89552;
+  --gold-light: #e5cc91;
+  --ivory: #f6f0e5;
+  --white: #fffdf8;
+  --ink: #28211f;
+  --muted: #71645d;
+  --serif: 'Cormorant Garamond', Georgia, serif;
+  --sans: 'Inter', 'Noto Sans Kannada', sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 85px;
+}
+
+body {
+  margin: 0;
+  background: var(--ivory);
+  color: var(--ink);
+  font: 15px/1.8 var(--sans);
+}
+
+body.kn { font-family: 'Noto Sans Kannada', sans-serif; }
+
+a { text-decoration: none; color: inherit; }
+
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  min-height: 78px;
+  padding: 12px 5%;
+  background: var(--dark);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  box-shadow: 0 5px 20px #0002;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo {
+  width: 43px;
+  height: 43px;
+  border: 1px solid var(--gold);
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  color: var(--gold-light);
+  font: 700 30px var(--serif);
+}
+
+.brand-text { display: flex; flex-direction: column; line-height: 1.2; }
+.brand-text strong { letter-spacing: 3px; font-size: 13px; }
+.brand-text small { color: var(--gold-light); letter-spacing: 3px; font-size: 9px; }
+
+nav {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+nav a {
+  font-size: 11px;
+  color: #f4e9df;
+}
+
+nav a:hover { color: var(--gold-light); }
+
+.language, .menu {
+  border: 1px solid var(--gold);
+  background: transparent;
+  color: var(--gold-light);
+  padding: 9px 13px;
+  cursor: pointer;
+}
+
+.menu { display: none; }
+
+.hero {
+  min-height: 670px;
+  display: flex;
+  align-items: center;
+  position: relative;
+  color: white;
+  background:
+    linear-gradient(90deg, #25050df2, #3d0c18d9 55%, #3d0c1870),
+    url("https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=1900&q=85")
+    center/cover;
+}
+
+.hero:after {
+  content: "";
+  position: absolute;
+  inset: 18px;
+  border: 1px solid #e5cc9140;
+  pointer-events: none;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  max-width: 900px;
+  padding: 90px 8%;
+}
+
+.eyebrow {
+  color: var(--gold);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+}
+
+.hero h1 {
+  font: 600 clamp(48px, 6vw, 78px)/1 var(--serif);
+  margin: 20px 0;
+  max-width: 800px;
+}
+
+.hero p {
+  max-width: 700px;
+  color: #eee0d5;
+}
+
+.hero-note {
+  margin-top: 28px;
+  border-left: 2px solid var(--gold);
+  padding-left: 15px;
+  font-size: 11px;
+}
+
+.actions { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 30px; }
+
+.btn {
+  display: inline-block;
+  padding: 13px 22px;
+  font-size: 12px;
+  font-weight: 700;
+  border: 1px solid transparent;
+}
+
+.gold { background: var(--gold); color: #241812; }
+.gold:hover { background: var(--gold-light); }
+.outline { border-color: var(--gold-light); color: white; }
+
+.identity {
+  background: var(--white);
+  padding: 25px 5%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 45px;
+  flex-wrap: wrap;
+  border-bottom: 1px solid #e5dac8;
+}
+
+.identity div { display: flex; flex-direction: column; }
+.identity small { color: var(--gold); font-size: 9px; letter-spacing: 2px; }
+.identity strong { color: var(--maroon); font: 600 23px var(--serif); }
+
+.section { padding: 95px 7%; }
+.ivory { background: var(--ivory); }
+.maroon { background: var(--maroon); color: white; }
+
+.section-heading {
+  text-align: center;
+  max-width: 780px;
+  margin: 0 auto 50px;
+}
+
+.section-heading h2,
+.split h2 {
+  color: var(--maroon);
+  font: 600 clamp(40px, 5vw, 62px)/1.05 var(--serif);
+  margin: 10px 0 20px;
+}
+
+.section-heading p { color: var(--muted); }
+.maroon .section-heading h2 { color: white; }
+.maroon .section-heading p { color: #e5d5ca; }
+
+.grid {
+  max-width: 1160px;
+  margin: auto;
+  display: grid;
+  gap: 20px;
+}
+
+.three { grid-template-columns: repeat(3, 1fr); }
+.two { grid-template-columns: repeat(2, 1fr); }
+.four { grid-template-columns: repeat(4, 1fr); }
+
+.card {
+  background: var(--white);
+  padding: 30px;
+  border: 1px solid #e5dac8;
+}
+
+.card-number { color: var(--gold); font: 600 27px var(--serif); }
+
+.card h3 {
+  color: var(--maroon);
+  font: 600 29px var(--serif);
+  margin: 10px 0;
+}
+
+.card p { color: var(--muted); font-size: 13px; }
+
+blockquote {
+  max-width: 850px;
+  margin: 65px auto 0;
+  text-align: center;
+  border-top: 1px solid var(--gold);
+  border-bottom: 1px solid var(--gold);
+  padding: 25px;
+  color: var(--maroon);
+  font: italic 600 34px/1.2 var(--serif);
+}
+
+.org-card {
+  padding: 36px;
+  background: #fffaf1;
+  color: var(--ink);
+}
+
+.org-card.trust { background: #f0e5d2; }
+
+.org-card small {
+  color: #96723c;
+  letter-spacing: 2px;
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.monogram {
+  width: 60px;
+  height: 60px;
+  border: 1px solid var(--gold);
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  margin: 25px 0;
+  font: 700 40px var(--serif);
+  color: var(--maroon);
+}
+
+.trust .monogram { background: var(--maroon); color: var(--gold-light); }
+
+.org-card h3 {
+  font: 600 35px var(--serif);
+  color: var(--maroon);
+  margin: 0;
+}
+
+.org-card p, .org-card li { font-size: 12px; color: var(--muted); }
+.org-card li { padding: 4px 0; }
+
+.transparency {
+  max-width: 1000px;
+  margin: 25px auto 0;
+  padding: 20px;
+  border: 1px solid #e5cc9150;
+  color: #f1e3d8;
+  font-size: 12px;
+}
+
+.split {
+  max-width: 1160px;
+  margin: auto auto 40px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  align-items: end;
+}
+
+.split p { color: var(--muted); }
+
+.taluk {
+  background: var(--white);
+  padding: 30px;
+  border: 1px solid #e5dac8;
+}
+
+.taluk h3 { color: var(--maroon); font: 600 30px var(--serif); }
+
+.notice {
+  max-width: 1160px;
+  margin: 25px auto 0;
+  background: #eee4d5;
+  padding: 20px;
+  font-size: 12px;
+  color: #62564c;
+}
+
+.photo-section {
+  min-height: 440px;
+  display: flex;
+  align-items: center;
+  color: white;
+  background:
+    linear-gradient(90deg, #2c0911f2, #4a101bc9, #4a101b33),
+    url("https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=1800&q=85")
+    center/cover;
+}
+
+.photo-content { max-width: 760px; padding: 75px 8%; }
+.photo-content h2 { font: 600 55px/1.05 var(--serif); }
+.photo-content p { color: #eee0d5; }
+
+.steps { padding: 65px 7%; }
+.steps .grid { grid-template-columns: repeat(5, 1fr); }
+.step { border-top: 1px solid var(--gold); padding-top: 18px; }
+.step span { color: var(--gold); font: 600 25px var(--serif); }
+.step h3 { color: var(--maroon); font: 600 26px var(--serif); }
+.step p { color: var(--muted); font-size: 12px; }
+
+.timeline {
+  max-width: 900px;
+  margin: auto auto 55px;
+  background: var(--maroon);
+  color: white;
+  padding: 30px;
+  display: grid;
+  grid-template-columns: 1fr 120px 1fr;
+  align-items: center;
+  text-align: center;
+}
+
+.timeline strong { font: 600 28px var(--serif); }
+.timeline small { color: var(--gold-light); font-size: 9px; letter-spacing: 1px; }
+
+.days {
+  width: 100px;
+  height: 100px;
+  border: 1px solid var(--gold);
+  border-radius: 50%;
+  display: grid;
+  place-content: center;
+  margin: auto;
+}
+
+.days b { font: 600 40px var(--serif); color: var(--gold-light); }
+
+.hours {
+  max-width: 850px;
+  margin: auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 25px 40px;
+}
+
+.hour {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 7px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.hour strong { color: var(--maroon); font: 600 23px var(--serif); }
+.bar { height: 5px; background: #e5dac8; grid-column: 1/-1; }
+.bar span { display: block; height: 100%; background: var(--gold); }
+
+.workbook {
+  max-width: 950px;
+  margin: 60px auto 0;
+  background: var(--white);
+  padding: 40px;
+  display: grid;
+  grid-template-columns: 230px 1fr;
+  gap: 55px;
+  align-items: center;
+}
+
+.book {
+  height: 330px;
+  background: linear-gradient(145deg, #641e2a, #350a14);
+  border-left: 8px solid #26070e;
+  box-shadow: 9px 12px 0 #d8c9ae;
+  color: var(--gold-light);
+  padding: 25px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.book strong { font: 600 75px/.8 var(--serif); margin-top: 35px; }
+.book em { font-size: 45px; }
+.book span { margin-top: 25px; font-size: 11px; letter-spacing: 2px; }
+.book small { font-size: 8px; letter-spacing: 2px; }
+
+.workbook h3 { color: var(--maroon); font: 600 36px var(--serif); }
+.workbook p, .workbook li { color: var(--muted); font-size: 12px; }
+
+.message {
+  background: #fffaf1;
+  padding: 35px;
+  color: var(--ink);
+}
+
+.message.trust-message { background: #eee2cf; }
+.message h3 { color: var(--maroon); font: 600 34px var(--serif); }
+.message p { font-size: 12px; line-height: 1.9; }
+.message small { color: #96723c; letter-spacing: 2px; }
+.signature { color: var(--maroon); font: italic 600 24px var(--serif); }
+
+.fee-note {
+  max-width: 1160px;
+  margin: 35px auto 65px;
+  background: #eee4d5;
+  padding: 30px;
+}
+
+.fee-note h3 { color: var(--maroon); font: 600 30px var(--serif); }
+.fee-note p { font-size: 12px; color: #62564c; }
+
+.faq { max-width: 850px; margin: auto; }
+.faq h2 { color: var(--maroon); font: 600 42px var(--serif); }
+details { border-top: 1px solid #e5dac8; padding: 17px 0; }
+summary { cursor: pointer; color: var(--maroon); font-weight: 600; }
+details p { color: var(--muted); font-size: 12px; }
+
+.closing {
+  background: linear-gradient(#2c0911ed, #2c0911ed),
+    url("https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&w=1600&q=80") center/cover;
+  color: white;
+  text-align: center;
+  padding: 90px 25px;
+}
+
+.closing h2 { font: 600 58px var(--serif); }
+.closing p { color: #e7d8cd; }
+
+footer {
+  background: #21070e;
+  color: white;
+  padding: 40px 7% 25px;
+}
+
+footer p { color: #c8b5a8; font-size: 11px; }
+.footer-bottom {
+  border-top: 1px solid #e5cc9140;
+  margin-top: 25px;
+  padding-top: 18px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  color: #c8b5a8;
+}
+
+@media(max-width:1000px) {
+  nav { gap: 10px; }
+  nav a { font-size: 10px; }
+}
+
+@media(max-width:850px) {
+  .menu { display: block; }
+  nav {
+    display: none;
+    position: absolute;
+    top: 78px;
+    left: 0;
+    right: 0;
+    background: var(--dark);
+    padding: 20px;
+    flex-direction: column;
+    align-items: stretch;
+  }
+  nav.open { display: flex; }
+  nav a { padding: 10px; border-bottom: 1px solid #ffffff20; }
+  .three, .two { grid-template-columns: 1fr; }
+  .four { grid-template-columns: 1fr 1fr; }
+  .steps .grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media(max-width:600px) {
+  .hero { min-height: 630px; }
+  .hero-content { padding: 70px 25px; }
+  .hero h1 { font-size: 47px; }
+  .identity { align-items: flex-start; flex-direction: column; gap: 15px; }
+  .section { padding: 70px 22px; }
+  .split { grid-template-columns: 1fr; gap: 10px; }
+  .steps .grid { grid-template-columns: 1fr 1fr; }
+  .timeline { grid-template-columns: 1fr 80px 1fr; padding: 20px 8px; }
+  .timeline strong { font-size: 18px; }
+  .days { width: 70px; height: 70px; }
+  .days b { font-size: 30px; }
+  .hours { grid-template-columns: 1fr; }
+  .workbook { grid-template-columns: 1fr; padding: 25px; }
+  .book { width: 220px; margin: auto; }
+  .four { grid-template-columns: 1fr; }
+  .closing h2 { font-size: 42px; }
+  .footer-bottom { flex-direction: column; gap: 8px; }
+}
+</style>
+</head>
+
+<body>
+
+<header class="topbar">
+  <a href="#home" class="brand">
+    <span class="logo">Z</span>
+    <span class="brand-text">
+      <strong>ZENOVA</strong>
+      <small>EDUCATIONS</small>
+    </span>
+  </a>
+
+  <button class="menu" id="menu">☰</button>
+
+  <nav id="nav">
+    <a href="#about">About</a>
+    <a href="#roles">Organisations</a>
+    <a href="#reach">Our Reach</a>
+    <a href="#learning">Learning</a>
+    <a href="#book">100-Day Book</a>
+    <a href="#leadership">Leadership</a>
+    <a href="#impact">Accountability</a>
+  </nav>
+
+  <button class="language" id="language">ಕನ್ನಡ</button>
+</header>
+
+<main id="home">
+
+<section class="hero">
+  <div class="hero-content">
+    <p class="eyebrow">A Focused SSLC Education Initiative</p>
+    <h1 data-en="Education is a foundation. Opportunity opens the future."
+        data-kn="ಶಿಕ್ಷಣವೇ ಅಡಿಪಾಯ. ಅವಕಾಶವೇ ಭವಿಷ್ಯದ ಬಾಗಿಲು.">
+      Education is a foundation.<br>Opportunity opens the future.
+    </h1>
+
+    <p data-en="A structured learning initiative led by Zenova Educations, with charitable support from Devaansh Educational Trust for selected students in Vijayanagara district."
+       data-kn="ಝೆನೋವಾ ಎಜುಕೇಷನ್ಸ್ ಮುನ್ನಡೆಸುವ ವ್ಯವಸ್ಥಿತ ಕಲಿಕಾ ಉಪಕ್ರಮ. ವಿಜಯನಗರ ಜಿಲ್ಲೆಯ ಆಯ್ದ ವಿದ್ಯಾರ್ಥಿಗಳಿಗೆ ದೇವಾಂಶ್ ಎಜುಕೇಷನಲ್ ಟ್ರಸ್ಟ್‌ನಿಂದ ದತ್ತಿ ಬೆಂಬಲ.">
+      A structured learning initiative led by Zenova Educations, with charitable support from Devaansh Educational Trust for selected students in Vijayanagara district.
+    </p>
+
+    <div class="actions">
+      <a href="#about" class="btn gold">Explore the initiative</a>
+      <a href="#book" class="btn outline">The 100-day journey</a>
+    </div>
+
+    <p class="hero-note">
+      Zenova Educations is a private educational programme led by Manjunath and the Zenova team. Trust support is limited to this specific charitable initiative and selected beneficiaries in the stated region.
+    </p>
+  </div>
+</section>
+
+<div class="identity">
+  <div><small>ACADEMIC DELIVERY</small><strong>Zenova Educations</strong></div>
+  <div><small>CHARITABLE SUPPORT</small><strong>Devaansh Educational Trust</strong></div>
+  <div><small>CURRENT FOCUS</small><strong>Vijayanagara District</strong></div>
+</div>
+
+<section class="section ivory" id="about">
+  <div class="section-heading">
+    <p class="eyebrow">01 / OUR PURPOSE</p>
+    <h2>Learning opportunities should reach further.</h2>
+    <p>The initiative aims to make structured SSLC preparation more accessible to students from rural communities and economically disadvantaged backgrounds.</p>
+  </div>
+
+  <div class="grid three">
+    <article class="card">
+      <span class="card-number">01</span>
+      <h3>Access</h3>
+      <p>Connect students with planned teaching, learning resources and academic guidance.</p>
+    </article>
+    <article class="card">
+      <span class="card-number">02</span>
+      <h3>Consistency</h3>
+      <p>Encourage daily learning, practice, assessment and revision.</p>
+    </article>
+    <article class="card">
+      <span class="card-number">03</span>
+      <h3>Confidence</h3>
+      <p>Help students understand concepts, identify gaps and prepare with confidence.</p>
+    </article>
+  </div>
+
+  <blockquote>
+    “A student's background should not decide the quality of learning opportunity available to them.”
+  </blockquote>
+</section>
+
+<section class="section maroon" id="roles">
+  <div class="section-heading">
+    <p class="eyebrow">02 / TWO DISTINCT ROLES</p>
+    <h2>One educational initiative. Clearly defined responsibilities.</h2>
+    <p>Zenova and the Trust have distinct roles. The Trust does not own or operate Zenova's private educational programme.</p>
+  </div>
+
+  <div class="grid two">
+    <article class="org-card">
+      <small>THE EDUCATIONAL PROGRAMME</small>
+      <div class="monogram">Z</div>
+      <h3>Zenova Educations</h3>
+      <p>A private educational programme led by Manjunath and the Zenova team.</p>
+      <ul>
+        <li>Academic planning and syllabus delivery</li>
+        <li>Teachers, online and offline classes</li>
+        <li>Recorded lessons and learning resources</li>
+        <li>Practice, tests and progress tracking</li>
+      </ul>
+    </article>
+
+    <article class="org-card trust">
+      <small>THE CHARITABLE SUPPORT</small>
+      <div class="monogram">D</div>
+      <h3>Devaansh Educational Trust</h3>
+      <p>A separate charitable trust providing support for a defined initiative and selected beneficiaries in the specified region.</p>
+      <ul>
+        <li>Targeted educational assistance</li>
+        <li>Support for eligible selected students</li>
+        <li>Charitable programme oversight and records</li>
+        <li>Support within approved scope and resources</li>
+      </ul>
+    </article>
+  </div>
+
+  <div class="transparency">
+    <strong>Transparency note:</strong>
+    Zenova Educations is a private educational programme led by its founder and team. Devaansh Educational Trust supports only the specified charitable initiative for selected beneficiaries in the stated region. This support should not be interpreted as Trust ownership, management or funding of all Zenova programmes.
+  </div>
+</section>
+
+<section class="section ivory" id="reach">
+  <div class="split">
+    <div>
+      <p class="eyebrow">03 / OUR GEOGRAPHICAL FOCUS</p>
+      <h2>Rooted in the region. Focused on students.</h2>
+    </div>
+    <p>The current charitable initiative is focused on selected students in Vijayanagara district, Karnataka. The initial outreach plan includes Kudligi, Kottur and Hadagali taluks.</p>
+  </div>
+
+  <div class="grid three">
+    <article class="taluk">
+      <span class="card-number">01</span>
+      <h3>Kudligi</h3>
+      <p>School outreach and student engagement, subject to local permissions and programme rollout.</p>
+    </article>
+    <article class="taluk">
+      <span class="card-number">02</span>
+      <h3>Kottur</h3>
+      <p>Connecting with schools and families to explain the learning opportunity.</p>
+    </article>
+    <article class="taluk">
+      <span class="card-number">03</span>
+      <h3>Hadagali</h3>
+      <p>Introducing structured SSLC learning support to interested students.</p>
+    </article>
+  </div>
+
+  <div class="notice">
+    <strong>We report verified activity.</strong>
+    School visits, registrations, active learners, classes and materials distributed will be published only when supported by programme records. Targets will be labelled as targets, not achievements.
+  </div>
+</section>
+
+<section class="photo-section" id="learning">
+  <div class="photo-content">
+    <p class="eyebrow">04 / OUR TEACHING APPROACH</p>
+    <h2>Not just watching lessons. Learning with purpose.</h2>
+    <p>Students need clear explanations, meaningful practice, regular feedback and time to revise. Our academic approach is designed around these connected steps.</p>
+  </div>
+</section>
+
+<section class="steps ivory">
+  <div class="grid five">
+    <article class="step"><span>01</span><h3>Learn</h3><p>Understand concepts through structured lessons.</p></article>
+    <article class="step"><span>02</span><h3>Practise</h3><p>Apply knowledge through questions and exercises.</p></article>
+    <article class="step"><span>03</span><h3>Test</h3><p>Check understanding with regular assessments.</p></article>
+    <article class="step"><span>04</span><h3>Analyse</h3><p>Identify mistakes and topics needing attention.</p></article>
+    <article class="step"><span>05</span><h3>Improve</h3><p>Revise and practise again with a clear plan.</p></article>
+  </div>
+
+  <div class="grid four" style="margin-top:55px">
+    <article class="card"><h3>Daily online classes</h3><p>Scheduled digital lessons to support consistent learning.</p></article>
+    <article class="card"><h3>Weekend offline classes</h3><p>In-person sessions at designated locations, according to the published schedule.</p></article>
+    <article class="card"><h3>Recorded lessons</h3><p>A way to revisit lessons and revise concepts.</p></article>
+    <article class="card"><h3>Practice and tests</h3><p>Regular opportunities to apply learning and review progress.</p></article>
+  </div>
+</section>
+
+<section class="section ivory" id="book">
+  <div class="section-heading">
+    <p class="eyebrow">05 / THE ACADEMIC JOURNEY</p>
+    <h2>A hundred days. A plan for every day.</h2>
+    <p>The 100-Day SSLC learning journey is planned to help students organise study, practice, tests and revision.</p>
+  </div>
+
+  <div class="timeline">
+    <div><small>PROGRAMME START</small><br><strong>12 Dec 2026</strong></div>
+    <div class="days"><b>100</b><small>DAYS</small></div>
+    <div><small>PLANNED EXAM DATE</small><br><strong>22 Mar 2027</strong></div>
+  </div>
+
+  <h3 style="text-align:center">Planned subject-wise learning allocation</h3>
+
+  <div class="hours">
+    <div class="hour"><span>Mathematics</span><strong>200 hours</strong><div class="bar"><span style="width:100%"></span></div></div>
+    <div class="hour"><span>Science</span><strong>200 hours</strong><div class="bar"><span style="width:100%"></span></div></div>
+    <div class="hour"><span>Social Science</span><strong>150 hours</strong><div class="bar"><span style="width:75%"></span></div></div>
+    <div class="hour"><span>English</span><strong>75 hours</strong><div class="bar"><span style="width:37.5%"></span></div></div>
+    <div class="hour"><span>Kannada</span><strong>75 hours</strong><div class="bar"><span style="width:37.5%"></span></div></div>
+    <div class="hour"><span>Hindi</span><strong>100 hours</strong><div class="bar"><span style="width:50%"></span></div></div>
+  </div>
+
+  <div class="workbook">
+    <div class="book">
+      <small>ZENOVA EDUCATIONS</small>
+      <strong>100<br><em>DAYS</em></strong>
+      <span>SSLC LEARNING<br>WORKBOOK</span>
+      <small style="margin-top:auto">LEARN · PRACTISE · REVIEW</small>
+    </div>
+    <div>
+      <p class="eyebrow">THE STUDENT'S DAILY COMPANION</p>
+      <h3>The 100-Day Student Workbook</h3>
+      <p>A printed workbook designed to help students turn a broad preparation goal into manageable daily actions.</p>
+      <ul>
+        <li>Student profile and academic goals</li>
+        <li>100-day calendar and daily targets</li>
+        <li>Subject and chapter completion tracker</li>
+        <li>Practice, test scores and mistake analysis</li>
+        <li>Revision record and final preparation checklist</li>
+      </ul>
+    </div>
+  </div>
+
+  <p style="font-size:10px;color:var(--muted);max-width:950px;margin:20px auto">
+    The subject-hour allocation and programme dates are planning details and should be checked against the final approved timetable and official examination notification before publication.
+  </p>
+</section>
+
+<section class="section maroon" id="leadership">
+  <div class="section-heading">
+    <p class="eyebrow">06 / LEADERSHIP & PURPOSE</p>
+    <h2>A commitment to meaningful learning.</h2>
+  </div>
+
+  <div class="grid two">
+    <article class="message">
+      <small>FOUNDER'S MESSAGE</small>
+      <h3>Manjunath</h3>
+      <p><strong>Founder, Zenova Educations</strong></p>
+      <p>Education can change the direction of a student's life. But ambition needs support: clear teaching, useful learning resources, regular practice and guidance.</p>
+      <p>We built Zenova to create a structured learning environment where students can understand concepts, ask questions, practise and improve.</p>
+      <p>Through this focused initiative, our team aims to extend academic support to selected students in Vijayanagara district, with charitable support from Devaansh Educational Trust.</p>
+      <p>Our responsibility is to make learning more accessible, organised and meaningful.</p>
+      <div class="signature">Manjunath</div>
+    </article>
+
+    <article class="message trust-message">
+      <small>MESSAGE FROM THE TRUST</small>
+      <h3>Devaansh Educational Trust</h3>
+      <p><strong>Charitable educational support</strong></p>
+      <p>Education is an important foundation for individual opportunity and community development.</p>
+      <p>Devaansh Educational Trust seeks to support educational initiatives that help students access learning opportunities.</p>
+      <p>For this specific initiative, the Trust provides charitable support to selected beneficiaries in the identified region, within its approved purpose, resources and records.</p>
+      <p>We believe such support should be delivered responsibly, with care for students and transparency about the scope of assistance.</p>
+      <div class="signature">On behalf of the Trustees</div>
+    </article>
+  </div>
+
+  <p style="font-size:10px;color:#e5d4c9;text-align:center;margin-top:20px">
+    Draft leadership messages — obtain approval from the named individual and trustees before publishing as official statements.
+  </p>
+</section>
+
+<section class="section ivory" id="impact">
+  <div class="section-heading">
+    <p class="eyebrow">07 / ACCOUNTABILITY</p>
+    <h2>Trust is built through clarity.</h2>
+    <p>We aim to communicate what the initiative includes, who it supports and how programme activity is recorded.</p>
+  </div>
+
+  <div class="grid four">
+    <article class="card"><h3>Clear eligibility</h3><p>The criteria for Trust-supported places should be explained to students and parents before enrolment.</p></article>
+    <article class="card"><h3>Clear fee information</h3><p>The ₹49 registration fee, included services and optional paid advanced classes must be disclosed separately and clearly.</p></article>
+    <article class="card"><h3>Programme records</h3><p>Maintain appropriate records of outreach, registrations, classes, materials, assessments and Trust-supported expenditure.</p></article>
+    <article class="card"><h3>Student privacy</h3><p>Publish identifiable photographs, marks or testimonials only with appropriate consent.</p></article>
+  </div>
+
+  <div class="fee-note">
+    <h3>Understand the programme before registering.</h3>
+    <p>The current plan includes a ₹49 registration and optional paid advanced classes. The exact services included in registration, the scope of any Trust-supported benefit, and the price and terms of optional classes should be shown clearly on the registration page and in parent information.</p>
+  </div>
+
+  <div class="faq">
+    <p class="eyebrow">COMMON QUESTIONS</p>
+    <h2>A few things worth knowing.</h2>
+
+    <details>
+      <summary>Is Zenova Educations a trust?</summary>
+      <p>No. Zenova Educations is a private educational programme led by Manjunath and the Zenova team. Devaansh Educational Trust is a separate charitable trust that supports this specific initiative for selected beneficiaries in the stated region.</p>
+    </details>
+
+    <details>
+      <summary>Where is the current initiative focused?</summary>
+      <p>The current charitable initiative is focused on selected students in Vijayanagara district, Karnataka, with initial outreach plans including Kudligi, Kottur and Hadagali taluks.</p>
+    </details>
+
+    <details>
+      <summary>Are all Zenova courses funded by the Trust?</summary>
+      <p>No. The Trust's support is limited to the specific charitable initiative and selected beneficiaries, within the Trust's approved scope. Zenova's other private educational programmes remain separate.</p>
+    </details>
+
+    <details>
+      <summary>What is the 100-Day Student Workbook?</summary>
+      <p>It is a printed planning and progress workbook intended to help students record daily targets, practice, tests, revision and learning progress.</p>
+    </details>
+  </div>
+</section>
+
+<section class="closing">
+  <p class="eyebrow">A SHARED EDUCATIONAL PURPOSE</p>
+  <h2>Every lesson can open a possibility.</h2>
+  <p>Learn more about the initiative, its academic approach and the specific charitable support available to selected students.</p>
+  <a href="#home" class="btn gold">Back to top</a>
+</section>
+
+</main>
+
+<footer>
+  <h3 style="color:var(--gold-light)">ZENOVA EDUCATIONS</h3>
+  <p>Private educational programme led by Manjunath and the Zenova team.</p>
+  <h3 style="color:var(--gold-light)">DEVAANSH EDUCATIONAL TRUST</h3>
+  <p>Specific charitable support for selected beneficiaries in Vijayanagara district.</p>
+  <div class="footer-bottom">
+    <span>© <span id="year"></span> Zenova Educations</span>
+    <span>Education · Opportunity · Progress</span>
+  </div>
+  <p>This website describes a specific educational initiative. Trust support is limited to the stated charitable scope and selected beneficiaries. Organisational, registration, fee and programme details should be verified before publication.</p>
+</footer>
+
+<script>
+const menu = document.getElementById("menu");
+const nav = document.getElementById("nav");
+const languageButton = document.getElementById("language");
+
+document.getElementById("year").textContent = new Date().getFullYear();
+
+menu.addEventListener("click", () => {
+  nav.classList.toggle("open");
+});
+
+nav.querySelectorAll("a").forEach(link => {
+  link.addEventListener("click", () => nav.classList.remove("open"));
+});
+
+let currentLanguage = "en";
+
+languageButton.addEventListener("click", () => {
+  currentLanguage = currentLanguage === "en" ? "kn" : "en";
+
+  document.documentElement.lang = currentLanguage;
+  document.body.classList.toggle("kn", currentLanguage === "kn");
+
+  document.querySelectorAll("[data-en][data-kn]").forEach(element => {
+    element.textContent = element.dataset[currentLanguage];
+  });
+
+  languageButton.textContent =
+    currentLanguage === "en" ? "ಕನ್ನಡ" : "English";
+});
+</script>
+
+</body>
+</html>
