@@ -1303,7 +1303,8 @@
       getDoc,
       getDocs,
       query,
-      where
+      where,
+      onSnapshot
     } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
     const $ = id => document.getElementById(id);
@@ -1320,6 +1321,8 @@
     };
 
     let authHandled = false;
+    let liveClassesUnsubscribe = null;
+    let liveClassesClockTimer = null;
 
     const text = value => String(value ?? "");
 
@@ -1754,19 +1757,192 @@ function startMyCoursesSlider() {
       });
     }
 
-    function parseDateTime(item) {
-      const date = item.scheduledDate || item.date || "";
-      const time = item.scheduledTime || item.time || "00:00";
+    function timestampMillis(value) {
+      if (value === null || value === undefined || value === "") return 0;
 
-      if (!date) return null;
+      if (typeof value === "number") {
+        return value < 1000000000000 ? value * 1000 : value;
+      }
 
-      const value = new Date(`${date}T${time}`);
+      if (typeof value?.toDate === "function") {
+        const date = value.toDate();
+        return date instanceof Date && !Number.isNaN(date.getTime())
+          ? date.getTime()
+          : 0;
+      }
 
-      return Number.isNaN(value.getTime()) ? null : value;
+      if (value instanceof Date) {
+        return Number.isNaN(value.getTime()) ? 0 : value.getTime();
+      }
+
+      const date = new Date(value);
+      return Number.isNaN(date.getTime()) ? 0 : date.getTime();
     }
 
-    function formatDateTime(date) {
-      return date.toLocaleString("en-IN", {
+    function parseLocalSchedule(dateValue, timeValue) {
+      if (!dateValue) return 0;
+
+      const date = String(dateValue).trim();
+      let time = String(timeValue || "00:00").trim();
+
+      if (/^\d{2}:\d{2}$/.test(time)) time += ":00";
+
+      // Admin saves the schedule in India Standard Time (UTC+05:30).
+      const parsed = new Date(`${date}T${time}+05:30`);
+      return Number.isNaN(parsed.getTime()) ? 0 : parsed.getTime();
+    }
+
+    function liveClassStartMillis(item) {
+      const direct = timestampMillis(
+        item.startAt ||
+        item.startDateTime ||
+        item.scheduledStartAt ||
+        item.startTimestamp ||
+        item.startTimeStamp
+      );
+      if (direct) return direct;
+
+      return parseLocalSchedule(
+        item.scheduledDate || item.date || item.classDate || item.startDate,
+        item.scheduledTime || item.startTime || item.time
+      );
+    }
+
+    function liveClassEndMillis(item) {
+      const direct = timestampMillis(
+        item.endAt ||
+        item.endDateTime ||
+        item.scheduledEndAt ||
+        item.endTimestamp ||
+        item.endTimeStamp
+      );
+      if (direct) return direct;
+
+      const start = liveClassStartMillis(item);
+      if (!start) return 0;
+
+      const endDate = item.endDate || item.scheduledDate || item.date || item.classDate;
+      const endTime = item.endTime || item.scheduledEndTime;
+
+      if (endDate && endTime) {
+        const explicitEnd = parseLocalSchedule(endDate, endTime);
+        if (explicitEnd) return explicitEnd;
+      }
+
+      const duration = Number(
+        item.durationMinutes ||
+        item.duration ||
+        item.classDurationMinutes ||
+        60
+      );
+
+      return start + Math.max(1, duration) * 60000;
+    }
+
+    function classSourceType(item) {
+      return String(
+        item.sourceType || item.liveType || item.mode || item.provider || ""
+      ).trim().toUpperCase().replace(/[\s-]+/g, "_");
+    }
+
+    function isRecordedAsLiveClass(item) {
+      const type = classSourceType(item);
+
+      if (item.recordedAsLive === true ||
+          item.playAsLive === true ||
+          item.isRecordedAsLive === true ||
+          type === "RECORDED_VIDEO") {
+        return true;
+      }
+
+      if (type !== "EXTERNAL_VIDEO") return false;
+
+      const url = String(
+        item.videoUrl || item.playbackUrl || item.sourceUrl ||
+        item.externalVideoUrl || item.youtubeLiveUrl || ""
+      ).trim();
+
+      if (!url) return false;
+
+      let pathname = url.toLowerCase();
+      try { pathname = new URL(url, location.href).pathname.toLowerCase(); } catch (_) {}
+
+      return !pathname.endsWith(".m3u8");
+    }
+
+    function classHasRecording(item) {
+      const recordingFields = [
+        item.recordingUrl,
+        item.recordedUrl,
+        item.replayUrl,
+        item.recordedVideoUrl,
+        item.recordingVideoUrl,
+        item.recordingPlaybackUrl,
+        item.recordingContentId,
+        item.contentId
+      ];
+
+      if (recordingFields.some(value =>
+        typeof value === "string" && value.trim()
+      )) return true;
+
+      if (item.recordingStatus &&
+          String(item.recordingStatus).toLowerCase() === "available" &&
+          (item.videoUrl || item.playbackUrl || item.youtubeLiveUrl)) {
+        return true;
+      }
+
+      return isRecordedAsLiveClass(item) && Boolean(
+        item.videoUrl || item.playbackUrl || item.externalVideoUrl ||
+        item.sourceUrl || item.youtubeUrl || item.youtubeLiveUrl
+      );
+    }
+
+    function liveClassPhase(item, now = Date.now()) {
+      const status = String(item.status || item.classStatus || "")
+        .trim().toLowerCase();
+
+      if (item.cancelled === true || ["cancelled", "canceled"].includes(status)) {
+        return "cancelled";
+      }
+
+      if (item.archived === true || item.isDeleted === true ||
+          item.active === false || item.published === false ||
+          ["archived", "deleted", "draft"].includes(status) ||
+          String(item.publicationStatus || "").toLowerCase() === "draft") {
+        return "hidden";
+      }
+
+      const start = liveClassStartMillis(item);
+      const end = liveClassEndMillis(item);
+      const ended = item.manualEnded === true || item.ended === true ||
+        ["ended", "completed"].includes(status);
+
+      if (ended) return classHasRecording(item) ? "recorded" : "completed";
+
+      if (start && now < start) return "scheduled";
+
+      if (start && now >= start && (!end || now < end)) return "live";
+
+      if (end && now >= end) {
+        return classHasRecording(item) ? "recorded" : "completed";
+      }
+
+      // Legacy documents may have a manually maintained live/recorded status
+      // but no usable schedule fields.
+      if (status === "live" || item.isLive === true) return "live";
+      if (status === "recorded" && classHasRecording(item)) return "recorded";
+      if (status === "scheduled") return "scheduled";
+
+      return "completed";
+    }
+
+    function formatDateTime(timestamp) {
+      if (!timestamp) return "Schedule not available";
+
+      return new Date(timestamp).toLocaleString("en-IN", {
+        timeZone: "Asia/Kolkata",
+        weekday: "short",
         day: "numeric",
         month: "short",
         hour: "numeric",
@@ -1774,11 +1950,50 @@ function startMyCoursesSlider() {
       });
     }
 
-    async function loadLiveClasses() {
+    function matchesSelectedCourse(item, course) {
+      if (!course) return false;
+
+      const ids = [
+        item.courseId,
+        item.crmCourseId,
+        item.batchId,
+        item.courseID,
+        item.course_id
+      ].filter(value =>
+        value !== undefined && value !== null && String(value).trim()
+      ).map(String);
+
+      if (ids.length) return ids.includes(String(course.id));
+
+      const className = normalize(
+        item.courseName || item.batchName || item.courseTitle
+      );
+      const selectedName = normalize(courseName(course));
+
+      if (className && selectedName && className === selectedName) return true;
+
+      const classLevel = normalize(
+        item.courseClass || item.className || item.standard || item.targetClass
+      );
+      const selectedLevel = normalize(
+        course.className || course.courseClass ||
+        course.targetClass || course.standard || course.grade
+      );
+
+      return Boolean(classLevel && selectedLevel && classLevel === selectedLevel);
+    }
+
+    function loadLiveClasses() {
       const container = $("liveList");
       const course = state.selectedCourse;
 
       if (!course || !isEnrolled(course)) {
+        if (liveClassesUnsubscribe) {
+          liveClassesUnsubscribe();
+          liveClassesUnsubscribe = null;
+        }
+
+        state.liveClasses = [];
         container.innerHTML = `
           <div class="empty">
             <i class="ri-live-line"></i>
@@ -1788,75 +2003,87 @@ function startMyCoursesSlider() {
         return;
       }
 
-      try {
-        const snapshot = await getDocs(
-          query(
-            collection(db, "liveClasses"),
-            where("active", "==", true)
-          )
-        );
+      if (liveClassesUnsubscribe) {
+        liveClassesUnsubscribe();
+        liveClassesUnsubscribe = null;
+      }
 
-        const enrolledIds = new Set(
-          state.enrolledCourses.map(item => String(item.id))
-        );
+      liveClassesUnsubscribe = onSnapshot(
+        collection(db, "liveClasses"),
+        snapshot => {
+          const matching = snapshot.docs
+            .map(item => ({ id: item.id, ...item.data() }))
+            .filter(item =>
+              item.active !== false &&
+              item.isDeleted !== true &&
+              item.archived !== true &&
+              item.published !== false &&
+              String(item.publicationStatus || "").toLowerCase() !== "draft" &&
+              matchesSelectedCourse(item, state.selectedCourse)
+            )
+            .filter(item => {
+              const phase = liveClassPhase(item);
+              return ["live", "scheduled", "recorded"].includes(phase);
+            });
 
-        const enrolledNames = new Set(
-          state.enrolledCourses.map(item =>
-            normalize(item.courseName || item.name || item.title)
-          )
-        );
+          matching.sort((a, b) => {
+            const phaseA = liveClassPhase(a);
+            const phaseB = liveClassPhase(b);
+            const rank = { live: 0, scheduled: 1, recorded: 2 };
 
-        const matching = snapshot.docs
-          .map(item => ({ id: item.id, ...item.data() }))
-          .filter(item => {
-            const courseId = String(
-              item.courseId ||
-              item.crmCourseId ||
-              item.batchId ||
-              item.courseID ||
-              ""
-            );
-
-            const className = normalize(
-              item.courseName || item.batchName || item.courseTitle
-            );
-
-            // The homepage shows only classes for the selected course.
-            if (courseId) return courseId === String(course.id);
-
-            // Legacy fallback when a class has no course ID.
-            if (className) {
-              return className === normalize(courseName(course)) &&
-                enrolledNames.has(className);
+            if (rank[phaseA] !== rank[phaseB]) {
+              return rank[phaseA] - rank[phaseB];
             }
 
-            return false;
+            if (phaseA === "scheduled") {
+              return liveClassStartMillis(a) - liveClassStartMillis(b);
+            }
+
+            if (phaseA === "recorded") {
+              const aDate = timestampMillis(a.updatedAt || a.endAt || a.createdAt);
+              const bDate = timestampMillis(b.updatedAt || b.endAt || b.createdAt);
+              return bDate - aDate;
+            }
+
+            return liveClassStartMillis(a) - liveClassStartMillis(b);
           });
 
-        const now = Date.now();
+          state.liveClasses = matching;
+          renderLiveClasses(matching.slice(0, 3));
+        },
+        error => {
+          console.error("Could not listen to live classes:", error);
+          container.innerHTML = `
+            <div class="empty">
+              <i class="ri-error-warning-line"></i>
+              Live classes couldn't be loaded. Please try again later.
+            </div>`;
+        }
+      );
 
-        matching.sort((a, b) => {
-          const da = parseDateTime(a)?.getTime() ?? Infinity;
-          const db = parseDateTime(b)?.getTime() ?? Infinity;
+      // Re-evaluate the scheduled lifecycle without requiring a page refresh.
+      if (!liveClassesClockTimer) {
+        liveClassesClockTimer = setInterval(() => {
+          if (state.liveClasses.length) {
+            const visible = state.liveClasses
+              .filter(item => ["live", "scheduled", "recorded"].includes(liveClassPhase(item)))
+              .sort((a, b) => {
+                const rank = { live: 0, scheduled: 1, recorded: 2 };
+                const pa = liveClassPhase(a);
+                const pb = liveClassPhase(b);
+                if (rank[pa] !== rank[pb]) return rank[pa] - rank[pb];
+                if (pa === "scheduled") return liveClassStartMillis(a) - liveClassStartMillis(b);
+                if (pa === "recorded") {
+                  return timestampMillis(b.updatedAt || b.endAt || b.createdAt) -
+                    timestampMillis(a.updatedAt || a.endAt || a.createdAt);
+                }
+                return liveClassStartMillis(a) - liveClassStartMillis(b);
+              });
 
-          const aLive = String(a.status || "").toLowerCase() === "live";
-          const bLive = String(b.status || "").toLowerCase() === "live";
-
-          if (aLive !== bLive) return aLive ? -1 : 1;
-
-          return Math.abs(da - now) - Math.abs(db - now);
-        });
-
-        state.liveClasses = matching;
-        renderLiveClasses(matching.slice(0, 3));
-      } catch (error) {
-        console.error("Could not load live classes:", error);
-
-        container.innerHTML = `
-          <div class="empty">
-            <i class="ri-error-warning-line"></i>
-            Live classes couldn't be loaded. Please try again later.
-          </div>`;
+            state.liveClasses = visible;
+            renderLiveClasses(visible.slice(0, 3));
+          }
+        }, 15000);
       }
     }
 
@@ -1867,20 +2094,16 @@ function startMyCoursesSlider() {
         container.innerHTML = `
           <div class="empty">
             <i class="ri-calendar-check-line"></i>
-            No scheduled classes were found for this course.
-            <br><a href="./live/">View live classes</a>
+            No live classes or upcoming schedules were found for this course.
+            <br><a href="./live/">View all classes</a>
           </div>`;
         return;
       }
 
       container.innerHTML = classes.map(item => {
-        const scheduled = parseDateTime(item);
-        const status = String(item.status || "").toLowerCase();
-        const isLive = status === "live" || item.isLive === true;
-        const isEnded = status === "ended" || item.ended === true;
-        const future = scheduled && scheduled.getTime() > Date.now();
-
-        const title = item.title || item.classTitle || "Live class";
+        const phase = liveClassPhase(item);
+        const start = liveClassStartMillis(item);
+        const title = item.title || item.classTitle || item.name || "Live class";
 
         const details = [
           item.subjectName,
@@ -1888,14 +2111,31 @@ function startMyCoursesSlider() {
           item.teacherName || item.facultyName
         ].filter(Boolean).join(" · ");
 
-        const image = item.thumbnailUrl || item.imageUrl || "";
+        const image = item.thumbnailUrl || item.thumbnail || item.imageUrl || "";
+        const sourceType = classSourceType(item);
+        const isRecordedAsLive = isRecordedAsLiveClass(item);
 
-        let label = "Upcoming";
-        if (isLive) label = "LIVE NOW";
-        else if (isEnded) label = "Ended";
-        else if (future && scheduled) label = formatDateTime(scheduled);
+        let label = "SCHEDULED";
+        let buttonLabel = "View schedule";
+        let buttonAction = "schedule";
 
-        const canJoin = isLive && !isEnded;
+        if (phase === "live") {
+          label = isRecordedAsLive
+            ? "● LIVE NOW · RECORDED VIDEO"
+            : "● LIVE NOW";
+          buttonLabel = "Join";
+          buttonAction = "join";
+        } else if (phase === "scheduled") {
+          label = start
+            ? `SCHEDULED · ${formatDateTime(start)}`
+            : "SCHEDULED";
+          buttonLabel = "View schedule";
+          buttonAction = "schedule";
+        } else if (phase === "recorded") {
+          label = "RECORDING AVAILABLE";
+          buttonLabel = "Watch recording";
+          buttonAction = "recording";
+        }
 
         return `
           <article class="live-card">
@@ -1906,8 +2146,8 @@ function startMyCoursesSlider() {
             </div>
 
             <div class="live-info">
-              <span class="live-status ${!isLive ? "upcoming" : ""}">
-                ${isLive ? "● LIVE NOW" : esc(label)}
+              <span class="live-status ${phase === "scheduled" ? "upcoming" : ""}">
+                ${esc(label)}
               </span>
               <h3>${esc(title)}</h3>
               <p>${esc(details || courseName(state.selectedCourse))}</p>
@@ -1915,28 +2155,43 @@ function startMyCoursesSlider() {
 
             <button class="live-button"
               type="button"
-              data-live-id="${esc(item.id)}"
-              ${canJoin ? "" : "disabled"}>
-              ${canJoin ? "Join" : isEnded ? "Ended" : "Scheduled"}
+              data-live-action="${buttonAction}"
+              data-live-id="${esc(item.id)}">
+              ${esc(buttonLabel)}
             </button>
           </article>`;
       }).join("");
 
-      container.querySelectorAll("[data-live-id]").forEach(button => {
+      container.querySelectorAll("[data-live-action]").forEach(button => {
         button.addEventListener("click", () => {
           const item = state.liveClasses.find(
             liveClass => liveClass.id === button.dataset.liveId
           );
-
           if (!item) return;
 
-          // The existing live page is responsible for access checks and playback.
-          const params = new URLSearchParams({
-            courseId: state.selectedCourse.id,
-            liveClassId: item.id
-          });
+          const action = button.dataset.liveAction;
 
-          window.location.href = `./live/?${params.toString()}`;
+          if (action === "recording") {
+            if (!classHasRecording(item)) {
+              window.location.href = "./live/";
+              return;
+            }
+
+            window.location.href =
+              `./videoplayer/?liveClassId=${encodeURIComponent(item.id)}`;
+            return;
+          }
+
+          if (action === "join") {
+            const params = new URLSearchParams({
+              courseId: state.selectedCourse.id,
+              liveClassId: item.id
+            });
+            window.location.href = `./live/?${params.toString()}`;
+            return;
+          }
+
+          window.location.href = "./live/";
         });
       });
     }
