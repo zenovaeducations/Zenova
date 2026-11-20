@@ -1,115 +1,77 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#f7f9fc">
-  <title>Study | Zenova Educations</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.css" rel="stylesheet">
-  <style>
-    :root{--bg:#f7f9fc;--surface:#fff;--ink:#172338;--muted:#7b8799;--line:#e7edf5;--blue:#3978e8;--blue-dark:#245fc9;--blue-soft:#eaf2ff;--green:#159b78;--green-soft:#e8f8f2;--radius:20px}
-    *{box-sizing:border-box;margin:0;padding:0}
-    body{min-height:100vh;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased;padding-bottom:88px}
-    a{color:inherit;text-decoration:none}
-    .topbar{position:sticky;top:0;z-index:5;background:rgba(255,255,255,.94);backdrop-filter:blur(15px);border-bottom:1px solid var(--line)}
-    .topbar-inner{width:min(100%,980px);min-height:68px;margin:auto;padding:12px 18px;display:flex;align-items:center;justify-content:space-between;gap:14px}
-    .brand{display:flex;align-items:center;gap:10px}.brand-logo{width:40px;height:40px;display:grid;place-items:center;border-radius:13px;background:var(--blue);color:#fff;font-size:21px;font-weight:800}.brand-name{font-size:14px;font-weight:800;letter-spacing:-.3px}.brand-sub{margin-top:3px;color:var(--muted);font-size:10px}
-    .profile{width:39px;height:39px;display:grid;place-items:center;border:1px solid var(--line);border-radius:50%;background:#f0f5fb;color:var(--blue-dark);font-size:19px}
-    main{width:min(100%,900px);margin:auto;padding:30px 18px 35px}
-    .eyebrow{color:var(--blue);font-size:10px;font-weight:800;letter-spacing:1.35px;text-transform:uppercase}
-    h1{margin-top:9px;font-size:clamp(27px,5vw,36px);line-height:1.15;letter-spacing:-1.2px;font-weight:800}
-    .intro{max-width:540px;margin-top:10px;color:var(--muted);font-size:13px;line-height:1.7}
-    .section-label{margin:32px 0 13px;font-size:14px;font-weight:800;letter-spacing:-.2px}
-    .learning-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
-    .option{position:relative;min-height:230px;display:flex;flex-direction:column;align-items:flex-start;padding:22px;border:1px solid var(--line);border-radius:22px;background:var(--surface);box-shadow:0 7px 24px rgba(23,35,56,.035);transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease}
-    .option:hover{transform:translateY(-2px);border-color:#c9daf7;box-shadow:0 12px 30px rgba(23,35,56,.07)}
-    .option-icon{width:53px;height:53px;display:grid;place-items:center;border-radius:16px;font-size:26px}
-    .live .option-icon{background:#fff0f0;color:#e34f5f}.revision .option-icon{background:var(--blue-soft);color:var(--blue)}
-    .option h2{margin-top:20px;font-size:19px;font-weight:800;letter-spacing:-.5px}
-    .option p{margin-top:8px;color:var(--muted);font-size:12px;line-height:1.65;max-width:310px}
-    .option-footer{width:100%;display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:auto;padding-top:22px}
-    .option-cta{display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:800;color:var(--blue-dark)}
-    .live .option-cta{color:#d94355}.option-arrow{width:32px;height:32px;display:grid;place-items:center;border-radius:50%;background:#f3f6fb;color:#52647c;font-size:17px}
-    .note{margin-top:20px;padding:14px 16px;border:1px solid #e1eaf8;border-radius:14px;background:#f0f5fd;color:#65758c;font-size:11px;line-height:1.65}
-    .note i{margin-right:6px;color:var(--blue)}
-    .bottom-nav{position:fixed;z-index:10;right:0;bottom:0;left:0;padding:8px 10px calc(8px + env(safe-area-inset-bottom));border-top:1px solid var(--line);background:rgba(255,255,255,.97);backdrop-filter:blur(15px)}
-    .bottom-inner{width:min(100%,520px);margin:auto;display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
-    .nav-item{min-height:49px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;border-radius:10px;color:#8a96a8;font-size:9px;font-weight:700}.nav-item i{font-size:19px}.nav-item.active{background:var(--blue-soft);color:var(--blue-dark)}
-    .loading{position:fixed;inset:0;z-index:20;display:grid;place-items:center;background:var(--bg);color:var(--muted);font-size:12px}.hidden{display:none!important}
-    @media(max-width:620px){main{padding:25px 14px 30px}.learning-options{grid-template-columns:1fr;gap:12px}.option{min-height:190px;padding:19px}.option h2{margin-top:15px}.option-footer{padding-top:17px}.section-label{margin-top:27px}}
-    @media(prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;scroll-behavior:auto!important}}
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f6f8fc">
+<title>Study | Zenova Educations</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.css" rel="stylesheet">
+<style>
+:root{--bg:#f6f8fc;--ink:#15233d;--muted:#75829a;--line:#e5ebf4;--blue:#3978ed;--navy:#162f62;--soft:#eaf1ff;--red:#df4656;--green:#098968;--surface:#fff}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,-apple-system,sans-serif;-webkit-font-smoothing:antialiased}button,a{font:inherit}a{text-decoration:none;color:inherit}button{cursor:pointer}button:focus-visible,a:focus-visible{outline:3px solid #88aefc;outline-offset:3px}.hidden{display:none!important}
+.top{position:sticky;top:0;z-index:15;background:rgba(255,255,255,.94);backdrop-filter:blur(16px);border-bottom:1px solid var(--line)}.topin{max-width:1100px;margin:auto;min-height:69px;padding:12px 22px;display:flex;align-items:center;gap:16px}.back{display:inline-flex;align-items:center;gap:8px;padding:10px 12px;border:1px solid var(--line);border-radius:11px;background:#fff;font-size:12px;font-weight:800;color:#344a68}.back i{font-size:18px}.logo{display:flex;align-items:center;gap:10px;margin-left:auto}.mark{display:grid;place-items:center;width:35px;height:35px;background:#3978ed;color:#fff;border-radius:11px;font-weight:900;font-size:19px}.brand{font-size:12px;font-weight:900;letter-spacing:.04em}.brand small{display:block;font-size:9px;color:var(--muted);letter-spacing:0;font-weight:600;margin-top:2px}
+.wrap{max-width:1056px;margin:auto;padding:32px 22px 75px}.hero{position:relative;overflow:hidden;background:linear-gradient(115deg,#16346e 0%,#244e9d 65%,#3477e5 100%);border-radius:24px;padding:31px 32px;color:#fff;box-shadow:0 14px 38px rgba(22,58,119,.13)}.hero:after{content:"";position:absolute;width:250px;height:250px;border:42px solid rgba(255,255,255,.06);border-radius:50%;right:-110px;top:-95px;pointer-events:none}.eyebrow{font-size:10px;font-weight:900;letter-spacing:1.7px;text-transform:uppercase;color:#bdd3ff}.hero h1{font-size:clamp(25px,4vw,37px);letter-spacing:-1.3px;line-height:1.2;margin:10px 0}.hero p{font-size:12px;color:#dbe7ff;line-height:1.8;margin:0;max-width:590px}.coursepill{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.2);border-radius:100px;padding:7px 12px;margin-top:20px;font-size:11px;font-weight:700;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.quick{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px;margin-top:20px}.quick a{display:flex;align-items:center;gap:14px;background:#fff;border:1px solid var(--line);border-radius:18px;padding:18px;box-shadow:0 4px 15px rgba(27,53,96,.03);transition:transform .15s}.quick a:hover,.tile:hover,.lesson:hover{transform:translateY(-2px)}.qicon{width:49px;height:49px;display:grid;place-items:center;flex:none;border-radius:14px;font-size:25px}.qicon.live{background:#fff0f1;color:#dc4658}.qicon.rev{background:#eaf1ff;color:#3978ed}.qcopy{flex:1;min-width:0}.qcopy strong{display:block;font-size:15px;letter-spacing:-.3px}.qcopy small{display:block;color:var(--muted);font-size:11px;margin-top:5px;line-height:1.5}.qarr{font-size:20px;color:#8190a7}
+.section{margin-top:35px}.sectionhead{display:flex;align-items:end;justify-content:space-between;gap:12px;margin-bottom:15px}.sectionhead h2{font-size:19px;letter-spacing:-.5px;margin:0}.sectionhead p{color:var(--muted);font-size:11px;line-height:1.5;margin:6px 0 0}.viewall{display:inline-flex;align-items:center;gap:5px;color:#316bdb;font-size:11px;font-weight:800;white-space:nowrap}.livegrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}.tile{background:#fff;border:1px solid var(--line);border-radius:18px;padding:18px;display:flex;flex-direction:column;gap:10px;min-width:0;transition:transform .15s}.tile-top{display:flex;align-items:center;justify-content:space-between;gap:10px}.pill{display:inline-flex;align-items:center;gap:5px;padding:6px 9px;border-radius:7px;background:#eff3f8;color:#52647d;font-size:9px;font-weight:900;letter-spacing:.35px}.pill.live{color:#b72d40;background:#fff0f1}.pill.upcoming{color:#2860b4;background:#eaf2ff}.pill.replay{color:#286b5b;background:#e8f8f1}.dot{width:6px;height:6px;background:currentColor;border-radius:50%;box-shadow:0 0 0 3px rgba(224,70,86,.12)}.tile h3{font-size:15px;line-height:1.4;letter-spacing:-.2px;margin:0}.tile .meta{font-size:11px;color:var(--muted);line-height:1.7}.tile .meta i{margin-right:4px}.tilefoot{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:auto;padding-top:5px}.tilefoot .time{font-size:10px;color:#64738b}.tilebtn{border:0;background:var(--soft);color:#2d65c8;border-radius:9px;padding:9px 12px;font-size:10px;font-weight:800}.tilebtn.live{background:#e44758;color:#fff}.tilebtn.replay{background:#e8f8f1;color:#138268}
+.lessons{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px}.lesson{display:block;min-width:0;text-align:left;border:1px solid var(--line);background:#fff;border-radius:17px;overflow:hidden;box-shadow:0 5px 20px rgba(30,56,94,.03);transition:transform .15s}.thumb{aspect-ratio:16/9;position:relative;background:linear-gradient(130deg,#dfeaff,#f4f7ff);display:grid;place-items:center;overflow:hidden}.thumb img{display:block;width:100%;height:100%;object-fit:cover}.thumb i{font-size:40px;color:#8ba9e9}.play{position:absolute;bottom:11px;right:11px;width:32px;height:32px;display:grid;place-items:center;background:#fff;color:#3978ed;border-radius:50%;box-shadow:0 4px 15px #0002;font-size:19px}.lesson-body{padding:13px 14px 15px}.lesson-body h3{font-size:12px;line-height:1.55;margin:0 0 7px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:37px}.lesson-body p{margin:0;color:var(--muted);font-size:10px;line-height:1.5}.lesson-bottom{display:flex;align-items:center;justify-content:space-between;margin-top:12px;color:#71839d;font-size:10px}.lesson-bottom i{color:#3978ed;font-size:17px}
+.empty{grid-column:1/-1;border:1px dashed #d4dfed;border-radius:17px;padding:27px 18px;text-align:center;background:#fff;color:var(--muted);font-size:11px;line-height:1.7}.empty i{display:block;font-size:30px;color:#a6b6ce;margin-bottom:9px}.empty strong{display:block;color:#344765;font-size:13px;margin-bottom:4px}.notice{margin-top:17px;border-radius:12px;background:#eff4fd;color:#5b7190;padding:13px 15px;font-size:11px;line-height:1.65}.notice a{color:#2e6fe0;font-weight:800}.loader{position:fixed;inset:0;background:var(--bg);display:grid;place-items:center;z-index:40;font-size:12px;color:#687a97}.error{max-width:650px;margin:50px auto;background:#fff;border:1px solid #eed6d9;border-radius:17px;padding:28px;text-align:center}.error h2{font-size:18px}.error p{font-size:12px;color:#65758b;line-height:1.8}.error a{display:inline-block;margin-top:10px;color:#3978ed;font-weight:800;font-size:12px}
+@media(max-width:750px){.lessons{grid-template-columns:repeat(2,minmax(0,1fr))}.livegrid{grid-template-columns:1fr}}@media(max-width:530px){.topin{padding:10px 15px}.wrap{padding:20px 14px 50px}.hero{padding:25px 21px;border-radius:20px}.quick{gap:10px}.quick a{padding:13px;gap:10px}.qicon{width:42px;height:42px;font-size:22px}.qcopy strong{font-size:12px}.qcopy small{font-size:9px}.qarr{font-size:16px}.lessons{gap:10px}.lesson-body{padding:10px}.section{margin-top:29px}.sectionhead h2{font-size:17px}.brand{font-size:11px}}@media(max-width:350px){.quick{grid-template-columns:1fr}.lessons{grid-template-columns:1fr}}@media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+</style>
 </head>
 <body>
-  <div id="loading" class="loading">Opening your study space…</div>
-  <header class="topbar">
-    <div class="topbar-inner">
-      <a class="brand" href="../" aria-label="Zenova Home">
-        <span class="brand-logo">Z</span>
-        <span><span class="brand-name" style="display:block">ZENOVA</span><span class="brand-sub" style="display:block">Educations</span></span>
-      </a>
-      <a class="profile" href="../profile/" aria-label="My profile"><i class="ri-user-3-line"></i></a>
-    </div>
-  </header>
-
-  <main>
-    <span class="eyebrow">YOUR LEARNING SPACE</span>
-    <h1 id="greeting">Study</h1>
-    <p class="intro">Choose how you want to learn today. Join your scheduled classes or strengthen your concepts with revision lessons.</p>
-
-    <h2 class="section-label">Continue your learning</h2>
-    <div class="learning-options">
-      <a id="liveLink" class="option live" href="../live/">
-        <span class="option-icon"><i class="ri-live-line"></i></span>
-        <h2>Live Classes</h2>
-        <p>Join your scheduled online classes, follow lessons and interact with your teachers.</p>
-        <span class="option-footer"><span class="option-cta">Go to Live Classes <i class="ri-arrow-right-line"></i></span><span class="option-arrow"><i class="ri-arrow-right-up-line"></i></span></span>
-      </a>
-      <a id="revisionLink" class="option revision" href="../revision/">
-        <span class="option-icon"><i class="ri-book-open-line"></i></span>
-        <h2>Revision</h2>
-        <p>Watch revision videos, revisit important concepts and strengthen your preparation.</p>
-        <span class="option-footer"><span class="option-cta">Explore Revision <i class="ri-arrow-right-line"></i></span><span class="option-arrow"><i class="ri-arrow-right-up-line"></i></span></span>
-      </a>
-    </div>
-
-    <div class="note"><i class="ri-information-line"></i>Your live classes and revision library open in their respective sections. Your course selection is carried forward automatically when available.</div>
-  </main>
-
-  <nav class="bottom-nav" aria-label="Student navigation">
-    <div class="bottom-inner">
-      <a class="nav-item" href="../"><i class="ri-home-5-line"></i><span>Home</span></a>
-      <a class="nav-item" href="../courses/"><i class="ri-book-2-line"></i><span>Courses</span></a>
-      <a class="nav-item active" href="./" aria-current="page"><i class="ri-graduation-cap-line"></i><span>Study</span></a>
-      <a class="nav-item" href="../profile/"><i class="ri-user-3-line"></i><span>Profile</span></a>
-    </div>
-  </nav>
-
-  <script type="module">
-    import { auth } from "../../firebase/firebase-config.js";
-    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
-
-    const params = new URLSearchParams(location.search);
-    const courseId = params.get("courseId");
-
-    if (courseId) {
-      const encodedCourseId = encodeURIComponent(courseId);
-      document.getElementById("liveLink").href = `../live/?courseId=${encodedCourseId}`;
-      document.getElementById("revisionLink").href = `../revision/?courseId=${encodedCourseId}`;
-    }
-
-    onAuthStateChanged(auth, user => {
-      if (!user) {
-        location.replace("../../login/");
-        return;
-      }
-      const firstName = String(user.displayName || "").trim().split(/\s+/)[0];
-      document.getElementById("greeting").textContent = firstName ? `Ready to learn, ${firstName}?` : "Ready to learn?";
-      document.getElementById("loading").classList.add("hidden");
-    });
-  </script>
+<div id="loader" class="loader"><span><i class="ri-loader-4-line"></i> Loading your study page…</span></div>
+<header class="top"><div class="topin"><a class="back" href="../"><i class="ri-arrow-left-line"></i> Back to Home</a><a class="logo" href="../" aria-label="Zenova Home"><span class="mark">Z</span><span class="brand">ZENOVA<small>Educations</small></span></a></div></header>
+<main class="wrap hidden" id="app">
+<section class="hero"><span class="eyebrow">YOUR STUDY SPACE</span><h1 id="greeting">Welcome to Study</h1><p>Continue learning with your live classes and recently uploaded revision lessons, all in one place.</p><div class="coursepill" id="courseName"><i class="ri-graduation-cap-line"></i> Loading course…</div></section>
+<div class="quick"><a id="liveLink" href="../live/"><span class="qicon live"><i class="ri-live-line"></i></span><span class="qcopy"><strong>Live Classes</strong><small>Live sessions and timetable</small></span><i class="ri-arrow-right-up-line qarr"></i></a><a id="revisionLink" href="../revision/"><span class="qicon rev"><i class="ri-book-open-line"></i></span><span class="qcopy"><strong>Revision</strong><small>All your recorded lessons</small></span><i class="ri-arrow-right-up-line qarr"></i></a></div>
+<section class="section" id="liveSection"><div class="sectionhead"><div><h2>Live Right Now</h2><p>Join a class currently in progress, including recorded-as-live lessons.</p></div><a class="viewall" id="allLiveLink" href="../live/">Live Classes <i class="ri-arrow-right-line"></i></a></div><div class="livegrid" id="liveList"><div class="empty">Checking for live classes…</div></div></section>
+<section class="section"><div class="sectionhead"><div><h2>Upcoming Classes</h2><p>Scheduled lessons for your course.</p></div><a class="viewall" id="scheduleLink" href="../live/">Full Schedule <i class="ri-arrow-right-line"></i></a></div><div class="livegrid" id="upcomingList"><div class="empty">Checking your timetable…</div></div></section>
+<section class="section"><div class="sectionhead"><div><h2>Recently Uploaded Videos</h2><p>The latest video lessons from your Revision library.</p></div><a class="viewall" id="allRevisionLink" href="../revision/">View All <i class="ri-arrow-right-line"></i></a></div><div class="lessons" id="recentList"><div class="empty">Loading revision videos…</div></div></section>
+<div class="notice"><i class="ri-information-line"></i> The Study page is a quick overview. For all live classes, open <a id="noticeLive" href="../live/">Live Classes</a>. For subjects, chapters and all lessons, open <a id="noticeRevision" href="../revision/">Revision</a>.</div>
+</main>
+<div class="error hidden" id="error"><i class="ri-error-warning-line" style="font-size:29px;color:#d8515f"></i><h2>Study page could not load</h2><p id="errorText"></p><a href="../">Return to Home</a></div>
+<script type="module">
+import {auth,db} from "../../firebase/firebase-config.js";
+import {onAuthStateChanged} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+import {collection,doc,getDoc,getDocs,onSnapshot,query,where} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+const $=id=>document.getElementById(id);
+const state={user:null,student:null,course:null,enrollments:[],classes:[],videos:[],subjects:new Map(),chapters:new Map(),unsubs:[]};
+const requestedCourseId=new URLSearchParams(location.search).get("courseId");
+const norm=v=>String(v??"").trim().toLowerCase();
+const text=(...values)=>values.find(v=>typeof v==="string"&&v.trim())?.trim()||"";
+const esc=v=>String(v??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;");
+const safeUrl=v=>{try{const u=new URL(v);return ["https:","http:"].includes(u.protocol)?u.href:""}catch{return ""}};
+const ms=v=>{if(!v)return 0;if(typeof v.toMillis==="function")return v.toMillis();if(typeof v.seconds==="number")return v.seconds*1000;if(typeof v==="number")return v>1e12?v:v*1000;if(typeof v==="string"){const n=Date.parse(v);return Number.isFinite(n)?n:0}return 0};
+const localDateTime=(d,t)=>{if(!d)return 0;const value=Date.parse(`${String(d).slice(0,10)}T${String(t||"00:00").slice(0,5)}:00+05:30`);return Number.isFinite(value)?value:0};
+function startMs(c){return ms(c.startDateTime||c.scheduledStartAt||c.startAt||c.startTimestamp)||localDateTime(c.scheduledDate||c.date||c.classDate||c.startDate,c.scheduledTime||c.startTime||c.time)}
+function endMs(c){return ms(c.endDateTime||c.scheduledEndAt||c.endAt||c.endTimestamp)||localDateTime(c.endDate||c.scheduledDate||c.date||c.classDate,c.endTime||c.scheduledEndTime)||(startMs(c)+(Number(c.durationMinutes||c.duration||c.classDurationMinutes)||60)*60000)}
+function phase(c){const s=norm(c.status||c.classStatus);if(c.cancelled===true||["cancelled","canceled"].includes(s))return "cancelled";if(c.manualEnded===true||c.ended===true||s==="ended")return "ended";const start=startMs(c);if(!start)return "unscheduled";if(Date.now()<start)return "upcoming";return Date.now()<endMs(c)?"live":"ended"}
+const dateTime=t=>t?new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",day:"numeric",month:"short",hour:"numeric",minute:"2-digit",hour12:true}).format(new Date(t)):"Time to be announced";
+const timeOnly=t=>t?new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",hour:"numeric",minute:"2-digit",hour12:true}).format(new Date(t)):"";
+function recordedAsLive(c){const t=norm(c.liveType||c.sourceType||c.provider);return c.recordedAsLive===true||c.playAsLive===true||c.isRecordedAsLive===true||t.includes("record")||t==="external video"||t==="external video mp4 hls"}
+function courseId(e){return String(e.crmCourseId||e.courseId||e.courseID||e.batchId||"")}
+function enrollmentActive(e){const s=norm(e.status||e.enrollmentStatus);return !s||["approved","active","paid","enrolled","success","completed"].includes(s)}
+function access(c){const uid=state.user?.uid;const st=state.student||{};if(state.enrollments.some(e=>courseId(e)===String(c.id)&&enrollmentActive(e)))return true;if([st.courseId,st.crmCourseId,st.courseID,st.batchId].some(id=>String(id||"")===String(c.id)))return true;for(const a of [st.purchasedCourseIds,st.enrolledCourseIds,st.courseIds,st.purchasedCourses,st.enrolledCourses])if(Array.isArray(a)&&a.some(e=>String(typeof e==="object"?(e?.courseId||e?.id||e?.crmCourseId||e?.courseID):e)===String(c.id)))return true;const a=c.studentAccess?.[uid],b=c.enrollments?.[uid];const s=norm(typeof a==="object"?a?.status:(a||b?.status));return ["approved","active","paid","purchased","enrolled","success","completed"].includes(s)}
+function courseMatches(c){if(!state.course)return false;const ids=[c.courseId,c.crmCourseId,c.batchId,c.courseID,c.course_id].filter(v=>v!==null&&v!==undefined&&String(v)!=="").map(String);if(ids.length)return ids.includes(String(state.course.id));const cn=norm(c.courseName||c.batchName||c.courseTitle),target=norm(state.course.courseName||state.course.name||state.course.title);return Boolean(cn&&target&&cn===target)}
+function showError(e){$("loader").classList.add("hidden");$("app").classList.add("hidden");$("error").classList.remove("hidden");$("errorText").textContent=e?.code==="permission-denied"?"Firestore denied access to student or course data. Please check existing student read permissions.":(e?.message||"Please try again.")}
+function openVideo(v){const u=new URL("../videoplayer/",location.href);u.searchParams.set("contentId",v.id);u.searchParams.set("returnUrl",location.href);location.href=u.href}
+function videoTitle(v){return text(v.title,v.videoTitle,v.lessonTitle,v.contentTitle,v.name)||"Revision lesson"}
+function videoDate(v){return ms(v.createdAt||v.updatedAt||v.uploadedAt||v.publishedAt)}
+function youtubeId(v){try{const u=new URL(v);let id=u.hostname.includes("youtu.be")?u.pathname.split("/").filter(Boolean)[0]:u.searchParams.get("v");if(!id&&u.hostname.includes("youtube")){const a=u.pathname.split("/").filter(Boolean),i=a.findIndex(s=>["live","embed","shorts"].includes(s));if(i>=0)id=a[i+1]}return /^[a-zA-Z0-9_-]{11}$/.test(id||"")?id:""}catch{return ""}}
+function videoThumb(v){const given=safeUrl(v.thumbnailUrl);if(given)return given;const id=youtubeId(v.videoUrl);return id?`https://img.youtube.com/vi/${id}/hqdefault.jpg`:""}
+function classTitle(c){return text(c.title,c.classTitle,c.name)||"Live Class"}
+function subjectTitle(c){return text(c.subjectName,c.subjectTitle,c.subject,c.subject_name,state.subjects.get(c.subjectId)?.displayName,state.subjects.get(c.subjectId)?.name)||"Class"}
+function liveCard(c,kind){const isLive=kind==="live",recorded=recordedAsLive(c),start=startMs(c);const button=isLive?"Join Class":"View Schedule";const status=isLive?"LIVE NOW": "SCHEDULED";return `<article class="tile"><div class="tile-top"><span class="pill ${isLive?"live":"upcoming"}">${isLive?'<span class="dot"></span>':""}${status}</span>${recorded?'<span class="pill replay">RECORDED AS LIVE</span>':""}</div><h3>${esc(classTitle(c))}</h3><div class="meta">${esc(subjectTitle(c))}${c.chapterName?` · ${esc(c.chapterName)}`:""}<br><i class="ri-user-voice-line"></i>${esc(text(c.teacherName,c.facultyName)||"Zenova Faculty")}</div><div class="tilefoot"><span class="time"><i class="ri-time-line"></i> ${esc(dateTime(start))}${isLive?` – ${esc(timeOnly(endMs(c)))}`:""}</span><button class="tilebtn ${isLive?"live":""}" data-class-id="${esc(c.id)}" data-kind="${kind}">${button} <i class="ri-arrow-right-line"></i></button></div></article>`}
+function empty(title,message,icon="ri-calendar-check-line"){return `<div class="empty"><i class="${icon}"></i><strong>${esc(title)}</strong>${esc(message)}</div>`}
+function renderClasses(){const live=state.classes.filter(c=>phase(c)==="live").sort((a,b)=>startMs(a)-startMs(b));const upcoming=state.classes.filter(c=>phase(c)==="upcoming").sort((a,b)=>startMs(a)-startMs(b)).slice(0,4);$("liveList").innerHTML=live.length?live.map(c=>liveCard(c,"live")).join(""):empty("No class is live right now","Your active classes will appear here automatically.","ri-live-line");$("upcomingList").innerHTML=upcoming.length?upcoming.map(c=>liveCard(c,"upcoming")).join(""):empty("No upcoming classes","Scheduled classes will appear here when your teachers publish them.");document.querySelectorAll("[data-class-id]").forEach(btn=>btn.onclick=()=>{const c=state.classes.find(x=>x.id===btn.dataset.classId);if(!c)return;if(btn.dataset.kind==="live"&&phase(c)==="live")location.href=`../livevideoplayer/?liveClassId=${encodeURIComponent(c.id)}`;else location.href=$("liveLink").href})}
+function renderVideos(){const list=state.videos.filter(v=>v.active!==false&&v.isDeleted!==true&&norm(v.status)!=="deleted"&&Boolean(v.videoUrl)&&!norm(v.contentType||v.type||v.videoType).includes("pdf")).sort((a,b)=>videoDate(b)-videoDate(a)).slice(0,6);$("recentList").innerHTML=list.length?list.map(v=>{const thumb=videoThumb(v),date=videoDate(v);const subj=state.subjects.get(v.subjectId),chap=state.chapters.get(v.chapterId);return `<button type="button" class="lesson" data-video-id="${esc(v.id)}"><div class="thumb">${thumb?`<img src="${esc(thumb)}" alt="" loading="lazy" onerror="this.style.display='none'">`:'<i class="ri-video-line"></i>'}<span class="play"><i class="ri-play-fill"></i></span></div><div class="lesson-body"><h3>${esc(videoTitle(v))}</h3><p>${esc(text(subj?.displayName,subj?.name,v.subjectName)||"Revision")} ${chap?` · ${esc(text(chap.chapterName,chap.name,chap.title)||"Chapter")}`:""}</p><div class="lesson-bottom"><span>${date?new Intl.DateTimeFormat("en-IN",{day:"numeric",month:"short",year:"numeric",timeZone:"Asia/Kolkata"}).format(new Date(date)):"Revision video"}</span><i class="ri-arrow-right-circle-line"></i></div></div></button>`}).join(""):empty("No revision videos yet","Newly uploaded videos will appear here.","ri-video-line");document.querySelectorAll("[data-video-id]").forEach(b=>b.onclick=()=>{const v=state.videos.find(x=>x.id===b.dataset.videoId);if(v)openVideo(v)})}
+function bindLinks(){const q=`?courseId=${encodeURIComponent(state.course.id)}`;for(const id of ["liveLink","allLiveLink","scheduleLink","noticeLive"])$(id).href=`../live/${q}`;for(const id of ["revisionLink","allRevisionLink","noticeRevision"])$(id).href=`../revision/${q}`}
+function stop(){state.unsubs.forEach(f=>f());state.unsubs=[]}
+async function initialize(){const s=await getDoc(doc(db,"zen2Students",state.user.uid));if(!s.exists()){location.replace("../../account/onboarding/");return}state.student={id:s.id,...s.data()};if(state.student.onboardingComplete===false){location.replace("../../account/onboarding/");return}const [enrollments,courses]=await Promise.all([getDocs(query(collection(db,"studentEnrollments"),where("studentUid","==",state.user.uid))),getDocs(collection(db,"zen2Courses"))]);state.enrollments=enrollments.docs.map(d=>({id:d.id,...d.data()}));const available=courses.docs.map(d=>({id:d.id,...d.data()})).filter(c=>c.active!==false&&c.published!==false&&c.isPublished!==false&&!(["inactive","draft","archived","deleted"].includes(norm(c.status)))).filter(access);state.course=requestedCourseId?available.find(c=>c.id===requestedCourseId):available[0];if(!state.course){throw new Error(requestedCourseId?"This course is not available in your enrolled courses.":"No active enrolled course was found. Please contact Zenova support.")}bindLinks();const name=text(state.student.name,state.student.studentName,state.student.fullName,state.user.displayName).split(/\s+/)[0];$("greeting").textContent=name?`Let's learn, ${name}!`:"Let's learn today!";$("courseName").innerHTML=`<i class="ri-graduation-cap-line"></i> ${esc(text(state.course.courseName,state.course.name,state.course.title)||"My Course")}`;$("loader").classList.add("hidden");$("app").classList.remove("hidden");state.unsubs.push(onSnapshot(collection(db,"liveClasses"),snap=>{state.classes=snap.docs.map(d=>({id:d.id,...d.data()})).filter(c=>c.active!==false&&c.isDeleted!==true&&c.published!==false&&norm(c.publicationStatus)!=="draft"&&courseMatches(c));renderClasses()},err=>{$("liveList").innerHTML=empty("Unable to load live classes",err.message);$("upcomingList").innerHTML=empty("Schedule unavailable","Please check your access and try again.")}));state.unsubs.push(onSnapshot(query(collection(db,"zen2Content"),where("courseId","==",state.course.id)),snap=>{state.videos=snap.docs.map(d=>({id:d.id,...d.data()}));renderVideos()},err=>{$("recentList").innerHTML=empty("Unable to load revision videos",err.message)}));Promise.all([getDocs(query(collection(db,"zen2Subjects"),where("courseId","==",state.course.id))),getDocs(query(collection(db,"zen2Chapters"),where("courseId","==",state.course.id)))]).then(([sub,chap])=>{state.subjects=new Map(sub.docs.map(d=>[d.id,d.data()]));state.chapters=new Map(chap.docs.map(d=>[d.id,d.data()]));renderVideos()}).catch(err=>console.warn("Optional study labels unavailable:",err));state.unsubs.push(()=>clearInterval(clock));const clock=setInterval(renderClasses,30000)}
+onAuthStateChanged(auth,async user=>{stop();if(!user){location.replace("../../account/login/");return}state.user=user;try{await initialize()}catch(e){console.error("Zenova Study:",e);showError(e)}});
+</script>
 </body>
 </html>
