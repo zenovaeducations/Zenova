@@ -1468,7 +1468,7 @@ function renderDetail(){
 
   <div class="detail-actions">
    <button class="btn btn-light btn-small" id="editClassBtn">Edit Class</button>
-   <button class="btn btn-white btn-small" id="openMonitoringBtn">View Details / Monitor</button>
+   <button class="btn btn-white btn-small" id="openMonitoringBtn">View Details / Monitor ↗</button>
    <button class="btn btn-white btn-small" id="recordingBtn">Recording</button>
    <button class="btn btn-white btn-small" id="questionBtn">+ Question</button>
    ${status==="live"?`<button class="btn btn-danger btn-small" id="endClassBtn">End Class</button>`:""}
@@ -1503,7 +1503,7 @@ function renderDetail(){
 
  $("editSelected").onclick=()=>openClass(c);
  $("editClassBtn").onclick=()=>openClass(c);
- $("openMonitoringBtn").onclick=()=>openMonitoringRoom(c.id);
+ $("openMonitoringBtn").onclick=()=>{ window.location.href=`monitor.html?classId=${encodeURIComponent(c.id)}`; };
  $("recordingBtn").onclick=()=>openRecording(c);
  $("questionBtn").onclick=()=>openQuestion(c.id);
 
