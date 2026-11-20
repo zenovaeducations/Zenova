@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f7f9fc">
+  <title>Study | Zenova Educations</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.css" rel="stylesheet">
+  <style>
+    :root{--bg:#f7f9fc;--surface:#fff;--ink:#172338;--muted:#7b8799;--line:#e7edf5;--blue:#3978e8;--blue-dark:#245fc9;--blue-soft:#eaf2ff;--green:#159b78;--green-soft:#e8f8f2;--radius:20px}
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{min-height:100vh;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased;padding-bottom:88px}
+    a{color:inherit;text-decoration:none}
+    .topbar{position:sticky;top:0;z-index:5;background:rgba(255,255,255,.94);backdrop-filter:blur(15px);border-bottom:1px solid var(--line)}
+    .topbar-inner{width:min(100%,980px);min-height:68px;margin:auto;padding:12px 18px;display:flex;align-items:center;justify-content:space-between;gap:14px}
+    .brand{display:flex;align-items:center;gap:10px}.brand-logo{width:40px;height:40px;display:grid;place-items:center;border-radius:13px;background:var(--blue);color:#fff;font-size:21px;font-weight:800}.brand-name{font-size:14px;font-weight:800;letter-spacing:-.3px}.brand-sub{margin-top:3px;color:var(--muted);font-size:10px}
+    .profile{width:39px;height:39px;display:grid;place-items:center;border:1px solid var(--line);border-radius:50%;background:#f0f5fb;color:var(--blue-dark);font-size:19px}
+    main{width:min(100%,900px);margin:auto;padding:30px 18px 35px}
+    .eyebrow{color:var(--blue);font-size:10px;font-weight:800;letter-spacing:1.35px;text-transform:uppercase}
+    h1{margin-top:9px;font-size:clamp(27px,5vw,36px);line-height:1.15;letter-spacing:-1.2px;font-weight:800}
+    .intro{max-width:540px;margin-top:10px;color:var(--muted);font-size:13px;line-height:1.7}
+    .section-label{margin:32px 0 13px;font-size:14px;font-weight:800;letter-spacing:-.2px}
+    .learning-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+    .option{position:relative;min-height:230px;display:flex;flex-direction:column;align-items:flex-start;padding:22px;border:1px solid var(--line);border-radius:22px;background:var(--surface);box-shadow:0 7px 24px rgba(23,35,56,.035);transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease}
+    .option:hover{transform:translateY(-2px);border-color:#c9daf7;box-shadow:0 12px 30px rgba(23,35,56,.07)}
+    .option-icon{width:53px;height:53px;display:grid;place-items:center;border-radius:16px;font-size:26px}
+    .live .option-icon{background:#fff0f0;color:#e34f5f}.revision .option-icon{background:var(--blue-soft);color:var(--blue)}
+    .option h2{margin-top:20px;font-size:19px;font-weight:800;letter-spacing:-.5px}
+    .option p{margin-top:8px;color:var(--muted);font-size:12px;line-height:1.65;max-width:310px}
+    .option-footer{width:100%;display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:auto;padding-top:22px}
+    .option-cta{display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:800;color:var(--blue-dark)}
+    .live .option-cta{color:#d94355}.option-arrow{width:32px;height:32px;display:grid;place-items:center;border-radius:50%;background:#f3f6fb;color:#52647c;font-size:17px}
+    .note{margin-top:20px;padding:14px 16px;border:1px solid #e1eaf8;border-radius:14px;background:#f0f5fd;color:#65758c;font-size:11px;line-height:1.65}
+    .note i{margin-right:6px;color:var(--blue)}
+    .bottom-nav{position:fixed;z-index:10;right:0;bottom:0;left:0;padding:8px 10px calc(8px + env(safe-area-inset-bottom));border-top:1px solid var(--line);background:rgba(255,255,255,.97);backdrop-filter:blur(15px)}
+    .bottom-inner{width:min(100%,520px);margin:auto;display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+    .nav-item{min-height:49px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;border-radius:10px;color:#8a96a8;font-size:9px;font-weight:700}.nav-item i{font-size:19px}.nav-item.active{background:var(--blue-soft);color:var(--blue-dark)}
+    .loading{position:fixed;inset:0;z-index:20;display:grid;place-items:center;background:var(--bg);color:var(--muted);font-size:12px}.hidden{display:none!important}
+    @media(max-width:620px){main{padding:25px 14px 30px}.learning-options{grid-template-columns:1fr;gap:12px}.option{min-height:190px;padding:19px}.option h2{margin-top:15px}.option-footer{padding-top:17px}.section-label{margin-top:27px}}
+    @media(prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;scroll-behavior:auto!important}}
+  </style>
+</head>
+<body>
+  <div id="loading" class="loading">Opening your study space…</div>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand" href="../" aria-label="Zenova Home">
+        <span class="brand-logo">Z</span>
+        <span><span class="brand-name" style="display:block">ZENOVA</span><span class="brand-sub" style="display:block">Educations</span></span>
+      </a>
+      <a class="profile" href="../profile/" aria-label="My profile"><i class="ri-user-3-line"></i></a>
+    </div>
+  </header>
+
+  <main>
+    <span class="eyebrow">YOUR LEARNING SPACE</span>
+    <h1 id="greeting">Study</h1>
+    <p class="intro">Choose how you want to learn today. Join your scheduled classes or strengthen your concepts with revision lessons.</p>
+
+    <h2 class="section-label">Continue your learning</h2>
+    <div class="learning-options">
+      <a id="liveLink" class="option live" href="../live/">
+        <span class="option-icon"><i class="ri-live-line"></i></span>
+        <h2>Live Classes</h2>
+        <p>Join your scheduled online classes, follow lessons and interact with your teachers.</p>
+        <span class="option-footer"><span class="option-cta">Go to Live Classes <i class="ri-arrow-right-line"></i></span><span class="option-arrow"><i class="ri-arrow-right-up-line"></i></span></span>
+      </a>
+      <a id="revisionLink" class="option revision" href="../revision/">
+        <span class="option-icon"><i class="ri-book-open-line"></i></span>
+        <h2>Revision</h2>
+        <p>Watch revision videos, revisit important concepts and strengthen your preparation.</p>
+        <span class="option-footer"><span class="option-cta">Explore Revision <i class="ri-arrow-right-line"></i></span><span class="option-arrow"><i class="ri-arrow-right-up-line"></i></span></span>
+      </a>
+    </div>
+
+    <div class="note"><i class="ri-information-line"></i>Your live classes and revision library open in their respective sections. Your course selection is carried forward automatically when available.</div>
+  </main>
+
+  <nav class="bottom-nav" aria-label="Student navigation">
+    <div class="bottom-inner">
+      <a class="nav-item" href="../"><i class="ri-home-5-line"></i><span>Home</span></a>
+      <a class="nav-item" href="../courses/"><i class="ri-book-2-line"></i><span>Courses</span></a>
+      <a class="nav-item active" href="./" aria-current="page"><i class="ri-graduation-cap-line"></i><span>Study</span></a>
+      <a class="nav-item" href="../profile/"><i class="ri-user-3-line"></i><span>Profile</span></a>
+    </div>
+  </nav>
+
+  <script type="module">
+    import { auth } from "../../firebase/firebase-config.js";
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+
+    const params = new URLSearchParams(location.search);
+    const courseId = params.get("courseId");
+
+    if (courseId) {
+      const encodedCourseId = encodeURIComponent(courseId);
+      document.getElementById("liveLink").href = `../live/?courseId=${encodedCourseId}`;
+      document.getElementById("revisionLink").href = `../revision/?courseId=${encodedCourseId}`;
+    }
+
+    onAuthStateChanged(auth, user => {
+      if (!user) {
+        location.replace("../../login/");
+        return;
+      }
+      const firstName = String(user.displayName || "").trim().split(/\s+/)[0];
+      document.getElementById("greeting").textContent = firstName ? `Ready to learn, ${firstName}?` : "Ready to learn?";
+      document.getElementById("loading").classList.add("hidden");
+    });
+  </script>
+</body>
+</html>
