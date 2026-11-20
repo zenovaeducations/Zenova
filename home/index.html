@@ -2153,12 +2153,17 @@ function startMyCoursesSlider() {
               <p>${esc(details || courseName(state.selectedCourse))}</p>
             </div>
 
-            <button class="live-button"
-              type="button"
-              data-live-action="${buttonAction}"
-              data-live-id="${esc(item.id)}">
-              ${esc(buttonLabel)}
-            </button>
+            ${buttonAction === "recording"
+              ? `<a class="live-button"
+                   href="./videoplayer/?liveClassId=${encodeURIComponent(item.id)}&returnUrl=../">
+                   Watch recording
+                 </a>`
+              : `<button class="live-button"
+                   type="button"
+                   data-live-action="${buttonAction}"
+                   data-live-id="${esc(item.id)}">
+                   ${esc(buttonLabel)}
+                 </button>`}
           </article>`;
       }).join("");
 
@@ -2171,16 +2176,7 @@ function startMyCoursesSlider() {
 
           const action = button.dataset.liveAction;
 
-          if (action === "recording") {
-            if (!classHasRecording(item)) {
-              window.location.href = "./live/";
-              return;
-            }
-
-            window.location.href =
-              `./videoplayer/?liveClassId=${encodeURIComponent(item.id)}`;
-            return;
-          }
+          if (action === "recording") return;
 
           if (action === "join") {
             const params = new URLSearchParams({
