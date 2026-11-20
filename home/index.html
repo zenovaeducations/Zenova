@@ -532,7 +532,7 @@
 }
 
 .course-slider .course-card {
-  flex: 0 0 100%;
+  flex: 0 0 min(82%, 340px);
   min-width: 0;
   scroll-snap-align: start;
 }
@@ -1528,7 +1528,7 @@
   renderCourseCards(myCourses, "myCourses", true);
   renderCourseCards(availableCourses, "availableCourses", false);
 
-  startMyCoursesSlider();
+ 
 }
 
 function renderCourseCards(courses, containerId, enrolledList) {
@@ -1616,42 +1616,7 @@ function renderCourseCards(courses, containerId, enrolledList) {
   });
 }
 
-let myCoursesSliderTimer = null;
 
-function startMyCoursesSlider() {
-  const slider = $("myCourses");
-
-  if (myCoursesSliderTimer) {
-    clearInterval(myCoursesSliderTimer);
-    myCoursesSliderTimer = null;
-  }
-
-  slider.scrollLeft = 0;
-
-  const cards = slider.querySelectorAll(".course-card");
-
-  // One course stays fixed. No automatic sliding is needed.
-  if (cards.length <= 1) return;
-
-  myCoursesSliderTimer = setInterval(() => {
-    const currentCards = slider.querySelectorAll(".course-card");
-
-    if (currentCards.length <= 1) {
-      clearInterval(myCoursesSliderTimer);
-      myCoursesSliderTimer = null;
-      return;
-    }
-
-    const atLastCard =
-      slider.scrollLeft + slider.clientWidth >=
-      slider.scrollWidth - 10;
-
-    slider.scrollTo({
-      left: atLastCard ? 0 : slider.scrollLeft + slider.clientWidth,
-      behavior: "smooth"
-    });
-  }, 3000);
-}
 
     async function selectCourse(course) {
       state.selectedCourse = course;
