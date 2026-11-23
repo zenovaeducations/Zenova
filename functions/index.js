@@ -1279,3 +1279,22 @@ exports.getZoomHostJoinData = onCall(
         }
     }
 );
+// ==========================================
+// ZENOVA AUTHORITATIVE SERVER TIME
+// ==========================================
+
+exports.getServerTime = onCall(async (request) => {
+
+    if (!request.auth) {
+        throw new HttpsError(
+            "unauthenticated",
+            "Student login is required."
+        );
+    }
+
+    return {
+        now: Date.now(),
+        timeZone: "Asia/Kolkata"
+    };
+
+});
