@@ -370,6 +370,9 @@ function hidePlayerMessage() {
 }
 
 function elapsedFromStart() {
+  // Recorded-as-live classes follow the scheduled class clock, not the
+  // student's individual join time. Reopening the player therefore catches
+  // up to the same timeline position instead of restarting from the beginning.
   return scheduledStartAt ? Math.max(0, (Date.now() - scheduledStartAt.getTime()) / 1000) : 0;
 }
 
@@ -411,8 +414,9 @@ function syncRecordedVideo() {
     return;
   }
 
-  // Students may rewind, but cannot jump ahead of the class timeline.
-  if (video.currentTime > target + 2.5) {
+  // Students may rewind, but cannot move ahead of the scheduled class timeline.
+  // Keep a small tolerance for normal decoder/timer drift only.
+  if (video.currentTime > target + 1) {
     try { video.currentTime = target; } catch (_) {}
   }
 }
@@ -433,7 +437,7 @@ function syncRecordedYouTube() {
     }
 
     // No fast-forward: a student can replay earlier content but cannot get ahead.
-    if (current > target + 2.5) youtubePlayer.seekTo(target, true);
+    if (current > target + 1) youtubePlayer.seekTo(target, true);
   } catch (_) {}
 }
 
@@ -583,10 +587,24 @@ function onYouTubeReady() {
   try {
     // Muted autoplay is the most reliable browser-permitted start behaviour.
     youtubePlayer.mute();
-    youtubePlayer.playVideo();
     if (recordedAsLive) {
-      syncRecordedYouTube();
-      setTimeout(syncRecordedYouTube, 1200);
+      // IMPORTANT: seek BEFORE starting playback. Starting first can briefly
+      // play the recording from 00:00 when a student rejoins the classroom.
+      youtubePlayer.pauseVideo();
+      const initialTarget = Math.max(0, elapsedFromStart());
+      youtubePlayer.seekTo(initialTarget, true);
+      setTimeout(() => {
+        if (ending || !youtubeReady || !youtubePlayer) return;
+        // Repeat the seek immediately before playback in case the iframe was
+        // still initializing when it received the first seek request.
+        youtubePlayer.seekTo(Math.max(0, elapsedFromStart()), true);
+        recordedInitialSyncDone = true;
+        setTimeout(() => {
+          if (!ending && youtubeReady && youtubePlayer) youtubePlayer.playVideo();
+        }, 250);
+      }, 500);
+    } else {
+      youtubePlayer.playVideo();
     }
     setTimeout(() => {
       if (!ending && youtubeReady && youtubePlayer &&
@@ -733,7 +751,26 @@ async function startDirectVideo() {
   });
   video.addEventListener("canplay", async () => {
     hidePlayerMessage();
-    if (recordedAsLive) syncRecordedVideo();
+    if (recordedAsLive) {
+      syncRecordedVideo();
+      // Wait for the browser to finish the scheduled-time seek before play().
+      // This prevents a rejoined MP4 from audibly/visibly starting at 00:00.
+      if (video.seeking) {
+        await new Promise(resolve => {
+          let settled = false;
+          const finish = () => {
+            if (settled) return;
+            settled = true;
+            video.removeEventListener("seeked", finish);
+            clearTimeout(fallback);
+            resolve();
+          };
+          const fallback = setTimeout(finish, 1800);
+          video.addEventListener("seeked", finish, { once: true });
+        });
+      }
+      syncRecordedVideo();
+    }
     try {
       // Attempt muted autoplay; the student can unmute with the in-page control.
       video.muted = true;
