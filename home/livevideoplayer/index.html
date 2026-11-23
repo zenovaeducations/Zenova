@@ -433,6 +433,7 @@ async function syncRecordedVideo() {
         let settled = false;
         const cleanup = () => {
           video.removeEventListener("seeked", onSeeked);
+          video.removeEventListener("timeupdate", verifyPosition);
           video.removeEventListener("error", onError);
           clearTimeout(timeout);
         };
@@ -442,9 +443,12 @@ async function syncRecordedVideo() {
           cleanup();
           error ? reject(error) : resolve();
         };
-        const onSeeked = () => {
-          if (Math.abs(video.currentTime - target) <= 2) finish();
+        const verifyPosition = () => {
+          // currentTime can reflect a requested seek before the media element
+          // has completed it. Do not accept the seek while `seeking` is true.
+          if (!video.seeking && Math.abs(video.currentTime - target) <= 2) finish();
         };
+        const onSeeked = () => verifyPosition();
         const onError = () => finish(new Error("The video could not seek to the scheduled class position."));
         const timeout = setTimeout(
           () => finish(new Error("The video is taking too long to reach the scheduled class position.")),
@@ -452,10 +456,11 @@ async function syncRecordedVideo() {
         );
 
         video.addEventListener("seeked", onSeeked);
+        video.addEventListener("timeupdate", verifyPosition);
         video.addEventListener("error", onError);
         try {
           video.currentTime = target;
-          if (!video.seeking && Math.abs(video.currentTime - target) <= 2) finish();
+          verifyPosition();
         } catch (error) {
           finish(error);
         }
@@ -689,8 +694,8 @@ async function onYouTubeReady() {
     }, 2200);
   } catch (error) {
     console.error("Scheduled YouTube seek failed", error);
-    showPlayerMessage("Could not synchronize the class", error.message || "Please retry joining the class.");
-    showPlayPrompt();
+    showPlayerMessage("Could not synchronize the class", `${error.message || "Please retry joining the class."} Tap the play button to retry.`);
+    $("centerPlay").classList.remove("hidden");
   }
   updateMuteButton();
 }
@@ -818,19 +823,6 @@ async function startDirectVideo() {
   let pathname = "";
   try { pathname = new URL(sourceUrl, location.href).pathname.toLowerCase(); } catch (_) {}
   const useHlsJs = pathname.endsWith(".m3u8") && !video.canPlayType("application/vnd.apple.mpegurl");
-  if (!useHlsJs) {
-    video.src = sourceUrl;
-    video.load();
-  }
-
-  video.addEventListener("loadedmetadata", () => {
-    if (recordedAsLive) {
-      syncRecordedVideo().catch(error => {
-        console.error("Initial scheduled video seek failed", error);
-        showPlayerMessage("Synchronizing your class...", error.message || "Waiting for the scheduled position.");
-      });
-    }
-  });
   video.addEventListener("canplay", async () => {
     try {
       // Never allow a recorded-as-live video to autoplay from 00:00.
@@ -846,8 +838,8 @@ async function startDirectVideo() {
       await video.play();
     } catch (error) {
       console.error("Scheduled video start failed", error);
-      showPlayerMessage("Could not synchronize the class", error.message || "Please retry joining the class.");
-      showPlayPrompt();
+      showPlayerMessage("Could not synchronize the class", `${error.message || "Please retry joining the class."} Tap the play button to retry.`);
+      $("centerPlay").classList.remove("hidden");
     }
   }, { once: true });
   video.addEventListener("playing", () => {
@@ -879,7 +871,15 @@ async function startDirectVideo() {
     $("connectionLabel").textContent = "Stream unavailable";
   });
 
-  if (useHlsJs) await loadHls(sourceUrl);
+  // Register playback listeners before loading the source. Cached media can
+  // reach metadata/canplay very quickly, so loading first can miss the event
+  // that gates the initial scheduled seek and autoplay.
+  if (!useHlsJs) {
+    video.src = sourceUrl;
+    video.load();
+  } else {
+    await loadHls(sourceUrl);
+  }
 }
 
 async function togglePlay() {
@@ -904,7 +904,8 @@ async function togglePlay() {
       hidePlayerMessage();
     } catch (error) {
       console.warn("Manual playback start failed", error);
-      showPlayPrompt();
+      showPlayerMessage("Could not synchronize the class", `${error.message || "Please retry joining the class."} Tap the play button to retry.`);
+      $("centerPlay").classList.remove("hidden");
     }
   } else {
     video.pause();
