@@ -101,6 +101,7 @@ let scheduledStartAt = null;
 let scheduledEndAt = null;
 let startedAgoTimer = null;
 let recordedInitialSyncDone = false;
+let recordedInitialSyncPromise = null;
 let lastGestureTap = null;
 let lastGestureActionAt = 0;
 let liveTimer = null;
@@ -370,9 +371,6 @@ function hidePlayerMessage() {
 }
 
 function elapsedFromStart() {
-  // Recorded-as-live classes follow the scheduled class clock, not the
-  // student's individual join time. Reopening the player therefore catches
-  // up to the same timeline position instead of restarting from the beginning.
   return scheduledStartAt ? Math.max(0, (Date.now() - scheduledStartAt.getTime()) / 1000) : 0;
 }
 
@@ -401,43 +399,83 @@ function startStartedAgoClock() {
 }
 
 function syncRecordedVideo() {
-  if (!recordedAsLive || !scheduledStartAt || video.readyState < 1 || !Number.isFinite(video.duration)) return;
-  if (video.duration <= 0 || elapsedFromStart() >= video.duration) return;
-  const target = Math.max(0, Math.min(elapsedFromStart(), video.duration - 0.25));
+  if (!recordedAsLive || !scheduledStartAt || video.readyState < 1 || !Number.isFinite(video.duration)) {
+    return Promise.resolve(false);
+  }
+  if (video.duration <= 0) return Promise.resolve(false);
 
-  // First entry (including a late join) starts at the scheduled clock position.
+  const elapsed = elapsedFromStart();
+  if (elapsed >= video.duration) {
+    // Never let a late join fall back to the beginning after the recording ended.
+    try { video.currentTime = video.duration; } catch (_) {}
+    return Promise.resolve(false);
+  }
+  const target = Math.max(0, Math.min(elapsed, video.duration - 0.25));
+
+  // On every fresh page load, wait for the browser's seeked event before
+  // allowing playback. Setting currentTime alone is asynchronous.
   if (!recordedInitialSyncDone) {
-    try {
-      video.currentTime = target;
+    if (Math.abs((Number(video.currentTime) || 0) - target) <= 1.25) {
       recordedInitialSyncDone = true;
-    } catch (_) {}
-    return;
+      return Promise.resolve(true);
+    }
+    if (recordedInitialSyncPromise) return recordedInitialSyncPromise;
+
+    recordedInitialSyncPromise = new Promise(resolve => {
+      let settled = false;
+      const finish = success => {
+        if (settled) return;
+        settled = true;
+        clearTimeout(timeout);
+        video.removeEventListener("seeked", onSeeked);
+        if (success) recordedInitialSyncDone = true;
+        resolve(success);
+      };
+      const onSeeked = () => {
+        const actual = Number(video.currentTime) || 0;
+        finish(Math.abs(actual - target) <= 2);
+      };
+      const timeout = setTimeout(() => finish(false), 10000);
+      video.addEventListener("seeked", onSeeked);
+      try {
+        video.currentTime = target;
+        if (Math.abs((Number(video.currentTime) || 0) - target) <= 1.25 && !video.seeking) finish(true);
+      } catch (_) {
+        finish(false);
+      }
+    }).finally(() => { recordedInitialSyncPromise = null; });
+    return recordedInitialSyncPromise;
   }
 
-  // Students may rewind, but cannot move ahead of the scheduled class timeline.
-  // Keep a small tolerance for normal decoder/timer drift only.
-  if (video.currentTime > target + 1) {
+  // A student may rewind, but cannot get ahead of the class clock.
+  if (video.currentTime > target + 2.5) {
     try { video.currentTime = target; } catch (_) {}
   }
+  return Promise.resolve(true);
 }
 
 function syncRecordedYouTube() {
   if (!recordedAsLive || !scheduledStartAt || !youtubeReady || !youtubePlayer) return;
   try {
     const duration = youtubePlayer.getDuration();
-    if (!duration || elapsedFromStart() >= duration) return;
-    const target = Math.max(0, Math.min(elapsedFromStart(), duration - 0.25));
-    const current = youtubePlayer.getCurrentTime();
+    if (!duration) return;
+    const elapsed = elapsedFromStart();
+    if (elapsed >= duration) return;
+    const target = Math.max(0, Math.min(elapsed, duration - 0.25));
+    const current = Number(youtubePlayer.getCurrentTime()) || 0;
 
-    // First entry (including a late join) starts at the scheduled clock position.
+    // The first seek must correct BOTH a position behind the clock and one
+    // ahead of it. Do not mark it complete until the iframe reports the target.
     if (!recordedInitialSyncDone) {
-      youtubePlayer.seekTo(target, true);
-      recordedInitialSyncDone = true;
+      if (Math.abs(current - target) <= 2) {
+        recordedInitialSyncDone = true;
+      } else {
+        youtubePlayer.seekTo(target, true);
+      }
       return;
     }
 
-    // No fast-forward: a student can replay earlier content but cannot get ahead.
-    if (current > target + 1) youtubePlayer.seekTo(target, true);
+    if (current > target + 2.5) youtubePlayer.seekTo(target, true);
   } catch (_) {}
 }
 
@@ -585,24 +623,16 @@ function onYouTubeReady() {
   youtubeReady = true;
   hidePlayerMessage();
   try {
-    // Muted autoplay is the most reliable browser-permitted start behaviour.
     youtubePlayer.mute();
     if (recordedAsLive) {
-      // IMPORTANT: seek BEFORE starting playback. Starting first can briefly
-      // play the recording from 00:00 when a student rejoins the classroom.
-      youtubePlayer.pauseVideo();
-      const initialTarget = Math.max(0, elapsedFromStart());
-      youtubePlayer.seekTo(initialTarget, true);
-      setTimeout(() => {
-        if (ending || !youtubeReady || !youtubePlayer) return;
-        // Repeat the seek immediately before playback in case the iframe was
-        // still initializing when it received the first seek request.
-        youtubePlayer.seekTo(Math.max(0, elapsedFromStart()), true);
-        recordedInitialSyncDone = true;
-        setTimeout(() => {
-          if (!ending && youtubeReady && youtubePlayer) youtubePlayer.playVideo();
-        }, 250);
-      }, 500);
+      // Disable autoplay in playerVars for recorded-as-live classes. Load the
+      // video with startSeconds so the iframe never begins at 00:00 first.
+      const target = Math.max(0, elapsedFromStart());
+      const videoId = extractYouTubeId(sourceUrl);
+      youtubePlayer.loadVideoById({ videoId, startSeconds: target, suggestedQuality: "large" });
+      // Verify/correct the iframe's actual position as soon as it reports ready.
+      setTimeout(syncRecordedYouTube, 500);
+      setTimeout(syncRecordedYouTube, 1500);
     } else {
       youtubePlayer.playVideo();
     }
@@ -611,7 +641,7 @@ function onYouTubeReady() {
           youtubePlayer.getPlayerState() !== window.YT.PlayerState.PLAYING) {
         showPlayPrompt();
       }
-    }, 2200);
+    }, 3000);
   } catch (_) {
     showPlayPrompt();
   }
@@ -657,7 +687,7 @@ function loadYouTube() {
       videoId,
       host: "https://www.youtube-nocookie.com",
       playerVars: {
-        autoplay: 1,
+        autoplay: recordedAsLive ? 0 : 1,
         controls: 0,
         disablekb: 1,
         fs: 0,
@@ -746,33 +776,18 @@ async function startDirectVideo() {
     video.load();
   }
 
-  video.addEventListener("loadedmetadata", () => {
-    if (recordedAsLive) syncRecordedVideo();
-  });
   video.addEventListener("canplay", async () => {
     hidePlayerMessage();
     if (recordedAsLive) {
-      syncRecordedVideo();
-      // Wait for the browser to finish the scheduled-time seek before play().
-      // This prevents a rejoined MP4 from audibly/visibly starting at 00:00.
-      if (video.seeking) {
-        await new Promise(resolve => {
-          let settled = false;
-          const finish = () => {
-            if (settled) return;
-            settled = true;
-            video.removeEventListener("seeked", finish);
-            clearTimeout(fallback);
-            resolve();
-          };
-          const fallback = setTimeout(finish, 1800);
-          video.addEventListener("seeked", finish, { once: true });
-        });
+      showPlayerMessage("Synchronizing class time...", "Opening the lesson at the current scheduled position.");
+      const synced = await syncRecordedVideo();
+      if (!synced) {
+        showPlayerMessage("Unable to synchronize the class", "Please check your connection and reload the class. Playback has been paused to avoid starting from the beginning.");
+        return;
       }
-      syncRecordedVideo();
     }
     try {
-      // Attempt muted autoplay; the student can unmute with the in-page control.
+      // Playback is allowed only after the initial scheduled-time seek completes.
       video.muted = true;
       await video.play();
     } catch (_) {
@@ -811,19 +826,25 @@ async function startDirectVideo() {
   if (useHlsJs) await loadHls(sourceUrl);
 }
 
-function togglePlay() {
+async function togglePlay() {
   if (sourceKind === "youtube" && youtubeReady && youtubePlayer) {
     const state = youtubePlayer.getPlayerState();
     if (state === window.YT.PlayerState.PLAYING) youtubePlayer.pauseVideo();
     else {
-      if (recordedAsLive) syncRecordedYouTube();
+      if (recordedAsLive) {
+        syncRecordedYouTube();
+        if (!recordedInitialSyncDone) return toast("Synchronizing the class position. Please wait a moment.");
+      }
       youtubePlayer.playVideo();
     }
     return;
   }
 
   if (video.paused) {
-    if (recordedAsLive) syncRecordedVideo();
+    if (recordedAsLive) {
+      const synced = await syncRecordedVideo();
+      if (!synced) return toast("The class is still synchronizing. Please wait or reload.");
+    }
     video.play().then(hidePlayerMessage).catch(() => showPlayPrompt());
   } else {
     video.pause();
