@@ -1295,8 +1295,7 @@
   <div id="toast" class="toast hidden" role="status"></div>
 
   <script type="module">
-    import { app, auth, db } from "../firebase/firebase-config.js";
-    import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-functions.js";
+    import { auth, db } from "../firebase/firebase-config.js";
     import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
     import {
       collection,
@@ -1324,60 +1323,6 @@
     let authHandled = false;
     let liveClassesUnsubscribe = null;
     let liveClassesClockTimer = null;
-    let lastLiveRenderKey = "";
-
-    // The server clock is authoritative for class scheduling. The device clock
-    // is used only as a temporary fallback until the callable responds.
-    const functions = getFunctions(app, "asia-south1");
-    const getServerTime = httpsCallable(functions, "getServerTime");
-    let serverClockOffsetMs = 0;
-    let serverClockReady = false;
-    let serverClockSyncPromise = null;
-
-    function serverNow() {
-      return Date.now() + serverClockOffsetMs;
-    }
-
-    async function syncServerClock() {
-      if (serverClockSyncPromise) return serverClockSyncPromise;
-
-      serverClockSyncPromise = (async () => {
-        const requestStartedAt = Date.now();
-        const result = await getServerTime();
-        const responseReceivedAt = Date.now();
-        const serverTimestamp = Number(result?.data?.now);
-
-        if (!Number.isFinite(serverTimestamp) || serverTimestamp <= 0) {
-          throw new Error("The server time response was invalid.");
-        }
-
-        // Midpoint compensation reduces the effect of network round-trip time.
-        const estimatedDeviceMidpoint =
-          requestStartedAt + (responseReceivedAt - requestStartedAt) / 2;
-        serverClockOffsetMs = serverTimestamp - estimatedDeviceMidpoint;
-        serverClockReady = true;
-        return serverNow();
-      })();
-
-      try {
-        return await serverClockSyncPromise;
-      } finally {
-        serverClockSyncPromise = null;
-      }
-    }
-
-    function startServerClockSync() {
-      syncServerClock().catch(error => {
-        console.error("Zenova server clock sync failed:", error);
-      });
-
-      // Re-sync periodically to correct clock drift while the page stays open.
-      window.setInterval(() => {
-        syncServerClock().catch(error => {
-          console.error("Zenova server clock re-sync failed:", error);
-        });
-      }, 60000);
-    }
 
     const text = value => String(value ?? "");
 
@@ -1918,7 +1863,7 @@ function renderCourseCards(courses, containerId, enrolledList) {
       );
     }
 
-    function liveClassPhase(item, now = serverNow()) {
+    function liveClassPhase(item, now = Date.now()) {
       const status = String(item.status || item.classStatus || "")
         .trim().toLowerCase();
 
@@ -1955,31 +1900,6 @@ function renderCourseCards(courses, containerId, enrolledList) {
       if (status === "scheduled") return "scheduled";
 
       return "completed";
-    }
-
-    function formatCountdown(milliseconds) {
-      const totalSeconds = Math.max(0, Math.floor(milliseconds / 1000));
-      const days = Math.floor(totalSeconds / 86400);
-      const hours = Math.floor((totalSeconds % 86400) / 3600);
-      const minutes = Math.floor((totalSeconds % 3600) / 60);
-      const seconds = totalSeconds % 60;
-
-      if (days > 0) return `${days}d ${hours}h ${minutes}m`;
-      if (hours > 0) return `${hours}h ${minutes}m ${seconds}s`;
-      if (minutes > 0) return `${minutes}m ${seconds}s`;
-      return `${seconds}s`;
-    }
-
-    function formatStartedAgo(milliseconds) {
-      const totalMinutes = Math.max(0, Math.floor(milliseconds / 60000));
-      if (totalMinutes < 1) return "STARTED JUST NOW";
-      if (totalMinutes < 60) return `STARTED ${totalMinutes} MIN${totalMinutes === 1 ? "" : "S"} AGO`;
-
-      const hours = Math.floor(totalMinutes / 60);
-      const minutes = totalMinutes % 60;
-      return minutes
-        ? `STARTED ${hours} HR ${minutes} MIN AGO`
-        : `STARTED ${hours} HR${hours === 1 ? "" : "S"} AGO`;
     }
 
     function formatDateTime(timestamp) {
@@ -2126,83 +2046,14 @@ function renderCourseCards(courses, containerId, enrolledList) {
               });
 
             state.liveClasses = visible;
-            const topClasses = visible.slice(0, 3);
-            const renderKey = topClasses.map(item =>
-              `${item.id}:${liveClassPhase(item)}`
-            ).join("|");
-
-            // Rebuild the cards only when the class list or lifecycle changes.
-            // Otherwise update just the small timing label once per second.
-            if (renderKey !== lastLiveRenderKey) {
-              renderLiveClasses(topClasses);
-            } else {
-              updateLiveClassTimeLabels(topClasses);
-            }
+            renderLiveClasses(visible.slice(0, 3));
           }
-        }, 1000);
-      }
-    }
-
-    function getStudentZoomJoinUrl(item) {
-      const candidates = [
-        item.zoomJoinUrl,
-        item.studentJoinUrl,
-        item.joinUrl
-      ];
-
-      for (const candidate of candidates) {
-        const raw = String(candidate || "").trim();
-        if (!raw) continue;
-
-        try {
-          const parsed = new URL(raw);
-          const host = parsed.hostname.toLowerCase();
-          const isZoomHost = host === "zoom.us" ||
-            host.endsWith(".zoom.us") ||
-            host === "zoom.com" ||
-            host.endsWith(".zoom.com");
-
-          if (parsed.protocol === "https:" && isZoomHost) {
-            return parsed.href;
-          }
-        } catch (_) {
-          // Ignore malformed or non-HTTPS URLs.
-        }
-      }
-
-      return "";
-    }
-
-    function updateLiveClassTimeLabels(classes) {
-      for (const item of classes) {
-        const statusElement = document.querySelector(
-          `[data-live-status-id="${CSS.escape(item.id)}"]`
-        );
-        if (!statusElement) continue;
-
-        const phase = liveClassPhase(item);
-        const start = liveClassStartMillis(item);
-        const isRecordedAsLive = isRecordedAsLiveClass(item);
-
-        if (phase === "scheduled" && start) {
-          statusElement.textContent =
-            `SCHEDULED · STARTS IN ${formatCountdown(start - serverNow())} · ${formatDateTime(start)}`;
-        } else if (phase === "live") {
-          const startedAgo = start
-            ? formatStartedAgo(serverNow() - start)
-            : "LIVE NOW";
-          statusElement.textContent = isRecordedAsLive
-            ? `● LIVE NOW · RECORDED VIDEO · ${startedAgo}`
-            : `● LIVE NOW · ${startedAgo}`;
-        }
+        }, 15000);
       }
     }
 
     function renderLiveClasses(classes) {
       const container = $("liveList");
-      lastLiveRenderKey = classes.map(item =>
-        `${item.id}:${liveClassPhase(item)}`
-      ).join("|");
 
       if (!classes.length) {
         container.innerHTML = `
@@ -2234,17 +2085,14 @@ function renderCourseCards(courses, containerId, enrolledList) {
         let buttonAction = "schedule";
 
         if (phase === "live") {
-          const startedAgo = start
-            ? formatStartedAgo(serverNow() - start)
-            : "LIVE NOW";
           label = isRecordedAsLive
-            ? `● LIVE NOW · RECORDED VIDEO · ${startedAgo}`
-            : `● LIVE NOW · ${startedAgo}`;
+            ? "● LIVE NOW · RECORDED VIDEO"
+            : "● LIVE NOW";
           buttonLabel = "Join";
           buttonAction = "join";
         } else if (phase === "scheduled") {
           label = start
-            ? `SCHEDULED · STARTS IN ${formatCountdown(start - serverNow())} · ${formatDateTime(start)}`
+            ? `SCHEDULED · ${formatDateTime(start)}`
             : "SCHEDULED";
           buttonLabel = "View schedule";
           buttonAction = "schedule";
@@ -2263,8 +2111,7 @@ function renderCourseCards(courses, containerId, enrolledList) {
             </div>
 
             <div class="live-info">
-              <span class="live-status ${phase === "scheduled" ? "upcoming" : ""}"
-                    data-live-status-id="${esc(item.id)}">
+              <span class="live-status ${phase === "scheduled" ? "upcoming" : ""}">
                 ${esc(label)}
               </span>
               <h3>${esc(title)}</h3>
@@ -2297,14 +2144,6 @@ function renderCourseCards(courses, containerId, enrolledList) {
           if (action === "recording") return;
 
           if (action === "join") {
-            // Zoom classes must open the student's meeting URL directly.
-            // Never use the host/start URL on the student side.
-            const zoomJoinUrl = getStudentZoomJoinUrl(item);
-            if (zoomJoinUrl) {
-              window.location.assign(zoomJoinUrl);
-              return;
-            }
-
             const params = new URLSearchParams({
               courseId: state.selectedCourse.id,
               liveClassId: item.id
@@ -2351,16 +2190,8 @@ function renderCourseCards(courses, containerId, enrolledList) {
       if (authHandled) return;
       authHandled = true;
       state.user = user;
-      startServerClockSync();
 
       try {
-        // Wait for authoritative server time before evaluating class schedules.
-        try {
-          await syncServerClock();
-        } catch (clockError) {
-          console.error("Initial server clock sync failed; using temporary device clock:", clockError);
-        }
-
         await loadStudent();
         await loadEnrollments();
         await loadCourses();
