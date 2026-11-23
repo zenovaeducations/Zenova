@@ -446,6 +446,7 @@ a{text-decoration:none;color:inherit}
 
 <script type="module">
 import {auth,db} from "../../firebase/firebase-config.js";
+import {getFunctions,httpsCallable} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-functions.js";
 
 import {
  onAuthStateChanged
@@ -462,6 +463,31 @@ import {
 
 const $=id=>document.getElementById(id);
 
+// The callable function returns server epoch time. performance.now() then
+// advances that clock without depending on the student's device clock.
+let serverClockBaseMs=0;
+let serverClockPerfBase=0;
+let serverClockLastSync=0;
+const functions=getFunctions(undefined,"asia-south1");
+const getServerTimeCall=httpsCallable(functions,"getServerTime");
+
+function serverNow(){
+ if(!serverClockBaseMs)return Date.now(); // used only before initial sync
+ return serverClockBaseMs+(performance.now()-serverClockPerfBase);
+}
+
+async function syncServerClock(){
+ const response=await getServerTimeCall({});
+ const serverMs=Number(response?.data?.now);
+ if(!Number.isFinite(serverMs)||serverMs<1){
+  throw new Error("Unable to synchronize classroom time. Please try again.");
+ }
+ serverClockBaseMs=serverMs;
+ serverClockPerfBase=performance.now();
+ serverClockLastSync=serverMs;
+ return serverMs;
+}
+
 const state={
  user:null,
  student:null,
@@ -474,10 +500,11 @@ const state={
  contents:[],
  selectedSubject:null,
  selectedChapter:null,
- selectedDate:todayISO(),
- currentMonth:new Date(),
+ selectedDate:"",
+ currentMonth:new Date(0),
  unsubscribers:[],
- clock:null
+ clock:null,
+ serverSyncTimer:null
 };
 
 const FALLBACK_SUBJECTS=[
@@ -516,6 +543,11 @@ onAuthStateChanged(auth,async user=>{
 async function initializePage(){
  showLoading();
 
+ // Do not calculate class status until the authoritative server clock is ready.
+ await syncServerClock();
+ state.selectedDate=todayISO(serverNow());
+ state.currentMonth=new Date(serverNow());
+
  // Actual existing student collection and UID document.
  const studentSnap=await getDoc(doc(db,"zen2Students",state.user.uid));
 
@@ -543,7 +575,8 @@ async function initializePage(){
  startSubjectsListener();
  startContentListener();
 
- state.selectedDate=todayISO();
+ state.selectedDate=todayISO(serverNow());
+ state.currentMonth=new Date(serverNow());
  $("datePicker").value=state.selectedDate;
 
  renderAll();
@@ -1150,7 +1183,7 @@ function statusOf(item){
  if(!start)return {phase:"upcoming",label:"SCHEDULED"};
 
  const end=endMillis(item)||start+60*60*1000;
- const now=Date.now();
+ const now=serverNow();
 
  if(item.manualEnded===true||item.ended===true||status==="ended"){
   return {phase:"ended",label:hasRecording(item)?"RECORDING AVAILABLE":"COMPLETED"};
@@ -1316,6 +1349,7 @@ function renderLive(){
     <div class="live-meta">
      <span><i class="ri-time-line"></i> ${esc(timeRange(item))}</span>
      <span><i class="ri-live-line"></i> ${esc(providerName(item))}</span>
+     <span data-started-ago="${esc(item.id)}">${esc(startedAgoText(startMillis(item)))}</span>
     </div>
     <button class="btn" id="joinLive">
      <i class="ri-play-fill"></i> Join Live Class
@@ -1331,7 +1365,7 @@ function renderLive(){
 function renderUpcoming(){
  const list=state.classes.filter(c=>
   statusOf(c).phase==="upcoming"&&
-  startMillis(c)>Date.now()
+  startMillis(c)>serverNow()
  ).sort((a,b)=>startMillis(a)-startMillis(b)).slice(0,6);
 
  $("upcomingEmpty").classList.toggle("hidden",list.length>0);
@@ -1346,7 +1380,7 @@ function renderUpcoming(){
     <p>${esc(item.teacherName||item.facultyName||"Faculty")}</p>
     <div class="card-footer">
      <span style="font-size:9px;color:var(--muted)">${esc(formatDate(startMillis(item)))} · ${esc(formatTime(startMillis(item)))}</span>
-     <span style="font-size:9px;color:var(--dark);font-weight:800">UPCOMING</span>
+     <span style="font-size:9px;color:var(--dark);font-weight:800" data-countdown="${esc(item.id)}">${esc(countdownText(startMillis(item)))}</span>
     </div>
    </div>
   </article>
@@ -1355,7 +1389,7 @@ function renderUpcoming(){
 
 
 function renderToday(){
- const today=todayISO();
+ const today=todayISO(serverNow());
 
  $("todayDate").textContent=formatLongDate(today);
 
@@ -1378,7 +1412,7 @@ function createClassRow(item){
     <span class="status ${statusClass(status.phase)}">${status.label}</span>
     <h3 style="margin-top:8px">${esc(classTitle(item))}</h3>
     <p>${esc(subjectName(item))} · ${esc(item.chapterName||"")}<br>
-    ${esc(item.teacherName||item.facultyName||"Faculty")} · ${esc(timeRange(item))}</p>
+    ${esc(item.teacherName||item.facultyName||"Faculty")} · ${esc(timeRange(item))}${phase==="live"?`<br><span data-started-ago="${esc(item.id)}">${esc(startedAgoText(startMillis(item)))}</span>`:""}</p>
    </div>
    <div class="list-action">${actionMarkup(item,status.phase)}</div>
   </article>`;
@@ -1462,7 +1496,7 @@ function renderCalendar(){
   const items=classesForDate(date);
 
   html+=`
-   <button class="day ${other?"other":""} ${date===todayISO()?"today":""} ${date===state.selectedDate?"selected":""}" data-date="${date}">
+   <button class="day ${other?"other":""} ${date===todayISO(serverNow())?"today":""} ${date===state.selectedDate?"selected":""}" data-date="${date}">
     <b>${day}</b>
     <div class="dots">
      ${items.slice(0,5).map(c=>{
@@ -1541,6 +1575,65 @@ function renderSubjects(){
    NAVIGATION HELPERS
 ========================================== */
 
+function isZoomClass(item){
+ const type=norm(item.liveType||item.sourceType||item.provider||item.mode||"");
+ return type.includes("zoom");
+}
+
+function zoomStudentJoinUrl(item){
+ const raw=String(
+  item.zoomJoinUrl||item.studentJoinUrl||item.joinUrl||""
+ ).trim();
+ if(!raw)return "";
+ try{
+  const url=new URL(raw);
+  const host=url.hostname.toLowerCase();
+  if(url.protocol!=="https:"||!(host==="zoom.us"||host.endsWith(".zoom.us")||host==="zoom.com"||host.endsWith(".zoom.com")))return "";
+  return url.href;
+ }catch(_){
+  return "";
+ }
+}
+
+function countdownText(startMs){
+ const remaining=Math.max(0,Math.floor((startMs-serverNow())/1000));
+ const days=Math.floor(remaining/86400);
+ const hours=Math.floor((remaining%86400)/3600);
+ const minutes=Math.floor((remaining%3600)/60);
+ const seconds=remaining%60;
+ if(days)return `Starts in ${days}d ${hours}h`;
+ if(hours)return `Starts in ${hours}h ${minutes}m`;
+ if(minutes)return `Starts in ${minutes}m ${seconds}s`;
+ return `Starts in ${seconds}s`;
+}
+
+function startedAgoText(startMs){
+ const elapsed=Math.max(0,Math.floor((serverNow()-startMs)/60000));
+ if(elapsed<1)return "Started just now";
+ if(elapsed===1)return "Started 1 minute ago";
+ const hours=Math.floor(elapsed/60);
+ const minutes=elapsed%60;
+ if(hours)return `Started ${hours}h ${minutes}m ago`;
+ return `Started ${elapsed} minutes ago`;
+}
+
+function updateTimingLabels(){
+ document.querySelectorAll("[data-countdown]").forEach(el=>{
+  const id=el.getAttribute("data-countdown");
+  const item=state.classes.find(c=>c.id===id);
+  if(!item)return;
+  const phase=statusOf(item).phase;
+  if(phase==="upcoming")el.textContent=countdownText(startMillis(item));
+  else if(phase==="live")el.textContent="LIVE NOW";
+  else el.textContent=hasRecording(item)?"RECORDING AVAILABLE":"COMPLETED";
+ });
+ document.querySelectorAll("[data-started-ago]").forEach(el=>{
+  const id=el.getAttribute("data-started-ago");
+  const item=state.classes.find(c=>c.id===id);
+  if(item)el.textContent=startedAgoText(startMillis(item));
+ });
+}
+
 function openLive(item){
  if(statusOf(item).phase!=="live"){
   showToast("This class is not live right now.");
@@ -1549,6 +1642,16 @@ function openLive(item){
 
  if(!hasCourseAccess(state.course)){
   showToast("Your course access is not active.");
+  return;
+ }
+
+ if(isZoomClass(item)){
+  const zoomUrl=zoomStudentJoinUrl(item);
+  if(!zoomUrl){
+   showToast("The Zoom student join link is missing. Please contact your academy.");
+   return;
+  }
+  window.location.href=zoomUrl;
   return;
  }
 
@@ -1663,10 +1766,10 @@ function localISO(y,m,d){
  return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,"0")}-${String(date.getDate()).padStart(2,"0")}`;
 }
 
-function todayISO(){
+function todayISO(ms=serverNow()){
  return new Intl.DateTimeFormat("en-CA",{
   timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit"
- }).format(new Date());
+ }).format(new Date(ms));
 }
 
 function shiftISO(s,n){
@@ -1731,16 +1834,34 @@ function showToast(message){
 ========================================== */
 
 function renderClock(){
- renderLive();
- renderUpcoming();
- renderToday();
- renderCalendar();
- renderSelectedDate();
+ // Re-render only when a scheduled class crosses a start/end boundary.
+ const signature=state.classes.map(c=>`${c.id}:${statusOf(c).phase}`).join("|");
+ if(signature!==state.lastStatusSignature){
+  state.lastStatusSignature=signature;
+  renderLive();
+  renderUpcoming();
+  renderToday();
+  renderCalendar();
+  renderSelectedDate();
+ }else{
+  updateTimingLabels();
+ }
 }
 
 function startClock(){
  if(state.clock)clearInterval(state.clock);
- state.clock=setInterval(renderClock,15000);
+ if(state.serverSyncTimer)clearInterval(state.serverSyncTimer);
+ state.lastStatusSignature="";
+ renderClock();
+ state.clock=setInterval(renderClock,1000);
+ state.serverSyncTimer=setInterval(async()=>{
+  try{
+   await syncServerClock();
+   renderClock();
+  }catch(error){
+   console.warn("Server clock resync failed; keeping last synchronized clock:",error);
+  }
+ },60000);
 }
 
 function stopListeners(){
@@ -1750,6 +1871,10 @@ function stopListeners(){
  if(state.clock){
   clearInterval(state.clock);
   state.clock=null;
+ }
+ if(state.serverSyncTimer){
+  clearInterval(state.serverSyncTimer);
+  state.serverSyncTimer=null;
  }
 }
 
@@ -1776,7 +1901,8 @@ $("nextMonth").onclick=()=>{
 
 $("todayMonth").onclick=()=>{
  state.currentMonth=new Date();
- state.selectedDate=todayISO();
+ state.selectedDate=todayISO(serverNow());
+ state.currentMonth=new Date(serverNow());
  $("datePicker").value=state.selectedDate;
  renderCalendar();
  renderSelectedDate();
