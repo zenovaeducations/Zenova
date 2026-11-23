@@ -446,14 +446,13 @@ a{text-decoration:none;color:inherit}
 
 <script type="module">
 import {auth,db} from "../../firebase/firebase-config.js";
-import {getFunctions,httpsCallable} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-functions.js";
 
 import {
  onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
 
 import {
- collection,doc,getDoc,getDocs,onSnapshot,query,where
+ collection,doc,getDoc,getDocs,onSnapshot,query,where,setDoc,serverTimestamp
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
 
@@ -463,29 +462,34 @@ import {
 
 const $=id=>document.getElementById(id);
 
-// The callable function returns server epoch time. performance.now() then
-// advances that clock without depending on the student's device clock.
+// Firestore server clock: no Cloud Function and no device-clock dependency.
+// serverTimestamp() is resolved by Firestore to request.time. The monotonic
+// performance clock advances the synchronized value between periodic syncs.
 let serverClockBaseMs=0;
 let serverClockPerfBase=0;
-let serverClockLastSync=0;
-const functions=getFunctions(undefined,"asia-south1");
-const getServerTimeCall=httpsCallable(functions,"getServerTime");
 
 function serverNow(){
- if(!serverClockBaseMs)return Date.now(); // used only before initial sync
+ if(!serverClockBaseMs) throw new Error("Classroom clock is not synchronized yet.");
  return serverClockBaseMs+(performance.now()-serverClockPerfBase);
 }
 
 async function syncServerClock(){
- const response=await getServerTimeCall({});
- const serverMs=Number(response?.data?.now);
+ if(!state.user?.uid) throw new Error("Please sign in to synchronize classroom time.");
+ const clockRef=doc(db,"serverClock",state.user.uid);
+ const requestStarted=performance.now();
+ await setDoc(clockRef,{serverTime:serverTimestamp()},{merge:false});
+ const clockSnap=await getDoc(clockRef);
+ const responseReceived=performance.now();
+ if(!clockSnap.exists()) throw new Error("Firebase server clock could not be read.");
+ const stamp=clockSnap.data().serverTime;
+ const serverMs=stamp?.toMillis?.();
  if(!Number.isFinite(serverMs)||serverMs<1){
-  throw new Error("Unable to synchronize classroom time. Please try again.");
+  throw new Error("Firebase server clock returned an invalid timestamp.");
  }
+ // Approximate the server timestamp's position at the midpoint of the request.
  serverClockBaseMs=serverMs;
- serverClockPerfBase=performance.now();
- serverClockLastSync=serverMs;
- return serverMs;
+ serverClockPerfBase=(requestStarted+responseReceived)/2;
+ return serverNow();
 }
 
 const state={
@@ -543,7 +547,7 @@ onAuthStateChanged(auth,async user=>{
 async function initializePage(){
  showLoading();
 
- // Do not calculate class status until the authoritative server clock is ready.
+ // Do not calculate class status until the Firestore server clock is ready.
  await syncServerClock();
  state.selectedDate=todayISO(serverNow());
  state.currentMonth=new Date(serverNow());
