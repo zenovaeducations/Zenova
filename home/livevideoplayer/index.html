@@ -11,13 +11,39 @@
 *{box-sizing:border-box;margin:0;padding:0}html{background:var(--bg);scroll-behavior:smooth}body{min-height:100vh;background:var(--bg);color:var(--text);font-family:Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}button,a,textarea{font:inherit}button{cursor:pointer}button:focus-visible,a:focus-visible,textarea:focus-visible{outline:3px solid #9bbdff;outline-offset:2px}.hidden{display:none!important}.wrap{width:min(100%,1040px);margin-inline:auto}.topbar{position:sticky;top:0;z-index:30;background:rgba(255,255,255,.96);border-bottom:1px solid var(--border);backdrop-filter:blur(14px)}.topbar-inner{width:min(100%,1040px);min-height:68px;margin:auto;padding:10px 18px;display:grid;grid-template-columns:1fr auto 1fr;align-items:center}.back-button{justify-self:start;display:flex;align-items:center;gap:7px;border:0;background:transparent;color:var(--text);font-size:12px;font-weight:750}.back-button i{font-size:21px;color:var(--blue)}.brand{display:flex;align-items:center;gap:8px;color:var(--dark);text-decoration:none}.brand-mark{width:35px;height:35px;display:grid;place-items:center;border-radius:11px;background:var(--blue);color:#fff;font-size:20px;font-weight:800}.brand strong,.brand small{display:block}.brand strong{font-size:13px;letter-spacing:1.1px}.brand small{margin-top:2px;color:var(--muted);font-size:8px;letter-spacing:1.4px;font-weight:700}.live-pill{justify-self:end;display:inline-flex;align-items:center;gap:7px;padding:7px 10px;border-radius:8px;background:#fff0f1;color:var(--red);font-size:9px;font-weight:850;letter-spacing:.7px}.pulse-dot{width:7px;height:7px;display:inline-block;flex:0 0 7px;border-radius:50%;background:var(--red);animation:pulse 1.15s infinite}@keyframes pulse{50%{opacity:.25;box-shadow:0 0 0 5px #e34d5920}}.page{padding:25px 18px 48px}.state-card{width:min(100%,460px);margin:9vh auto;padding:34px 24px;border:1px solid var(--border);border-radius:19px;background:#fff;box-shadow:var(--shadow);text-align:center}.state-card>strong{display:block;margin-top:13px;font-size:15px}.state-card h2{font-size:19px;line-height:1.4}.state-card p{margin-top:9px;color:var(--muted);font-size:12px;line-height:1.7}.spinner{width:31px;height:31px;display:block;margin:0 auto 13px;border:3px solid #dce8fb;border-top-color:var(--blue);border-radius:50%;animation:spin .8s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}.state-icon,.waiting-icon{width:49px;height:49px;display:grid;place-items:center;margin:0 auto 13px;border-radius:15px;background:var(--light);color:var(--blue);font-size:23px}.waiting-icon{background:#fff5e7;color:var(--orange)}.eyebrow{display:block;color:var(--blue);font-size:9px;font-weight:850;letter-spacing:1.25px}.countdown{margin:18px 0 3px;color:var(--dark);font-size:27px;font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:1px}.primary-button,.secondary-button{min-height:41px;margin-top:17px;padding:0 16px;border:0;border-radius:10px;background:var(--blue);color:#fff;font-size:11px;font-weight:800}.secondary-button{background:var(--light);color:var(--dark)}.classroom-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;margin:3px 0 17px}.classroom-heading h1{margin-top:6px;font-size:clamp(20px,3vw,27px);line-height:1.3;letter-spacing:-.7px}.classroom-heading p{margin-top:6px;color:var(--muted);font-size:11px;line-height:1.6}.live-pill-large{margin-top:8px;padding:9px 12px}.player-card,.details-card{overflow:hidden;border:1px solid var(--border);border-radius:17px;background:#fff;box-shadow:var(--shadow)}.player-stage{position:relative;isolation:isolate;overflow:hidden;aspect-ratio:16/9;min-height:220px;background:#101827;color:#fff}.player-stage video,.youtube-container,.youtube-container iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:#101827;object-fit:contain}.gesture-shield{position:absolute;z-index:3;inset:0;touch-action:manipulation;background:transparent;cursor:default;-webkit-tap-highlight-color:transparent}.started-ago{display:inline-block;margin-left:3px;font-size:8px;font-weight:750;letter-spacing:0;text-transform:none;white-space:nowrap;opacity:.9}.stage-topline{position:absolute;z-index:5;top:13px;right:14px;left:14px;display:flex;align-items:center;justify-content:space-between;pointer-events:none}.stage-live{display:inline-flex;align-items:center;gap:7px;padding:7px 10px;border-radius:6px;background:#df3545;color:#fff;font-size:9px;font-weight:850;letter-spacing:.7px}.stage-live .pulse-dot{background:#fff}.stage-watermark{padding:5px 8px;border:1px solid #ffffff35;border-radius:5px;background:#11182755;color:#fff;font-size:9px;font-weight:850;letter-spacing:1.2px;opacity:.78}.player-overlay{position:absolute;z-index:4;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;background:#101827;color:#fff;text-align:center;padding:20px}.player-overlay strong{font-size:13px}.player-overlay small{color:#b9c4d5;font-size:10px}.light-spinner{border-color:#ffffff35;border-top-color:#8fb7ff}.center-play{position:absolute;z-index:7;top:50%;left:50%;width:60px;height:60px;transform:translate(-50%,-50%);display:grid;place-items:center;border:1px solid #ffffff50;border-radius:50%;background:#172338bd;color:#fff;font-size:29px}.custom-controls{position:absolute;z-index:8;right:0;bottom:0;left:0;min-height:53px;display:flex;align-items:center;gap:15px;padding:8px 15px;background:linear-gradient(transparent,#07101de8);opacity:1;transition:opacity .2s}.custom-controls button{width:32px;height:32px;display:grid;place-items:center;border:0;border-radius:8px;background:#ffffff18;color:#fff;font-size:19px}.controls-spacer{flex:1}.controls-live{display:inline-flex;align-items:center;gap:6px;color:#fff;font-size:9px;font-weight:850;letter-spacing:.6px}.controls-live .pulse-dot{width:6px;height:6px;flex-basis:6px}.player-foot{min-height:38px;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 13px;color:var(--muted);font-size:9px;font-weight:650}.player-foot i{margin-right:4px;color:var(--green);font-size:13px}.details-card{margin-top:14px;padding:17px}.faculty-block{display:flex;align-items:center;gap:11px;padding-bottom:15px;border-bottom:1px solid var(--border)}.faculty-avatar{width:41px;height:41px;display:grid;place-items:center;border-radius:13px;background:var(--light);color:var(--dark);font-size:17px;font-weight:850}.faculty-block strong,.details-grid strong{display:block;margin-top:4px;font-size:11px;overflow-wrap:anywhere}.field-label{display:block;color:var(--muted);font-size:8px;font-weight:850;letter-spacing:.8px}.details-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px 22px;padding-top:15px}.status-live{color:var(--green)}.class-description{margin-top:15px;padding-top:13px;border-top:1px solid var(--border);color:var(--muted);font-size:11px;line-height:1.7}.interaction-section{margin-top:26px}.section-heading{display:flex;align-items:flex-end;justify-content:space-between;gap:10px;margin-bottom:12px}.section-heading h2{margin-top:5px;font-size:17px;letter-spacing:-.35px}.section-hint{color:var(--muted);font-size:9px}.interaction-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}.interaction-button{min-height:82px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;border:1px solid var(--border);border-radius:13px;background:#fff;color:var(--text);font-size:10px;font-weight:750;box-shadow:0 3px 12px #17233805}.interaction-button i{color:var(--blue);font-size:22px}.interaction-button.selected{border-color:#a9c8fb;background:var(--light);color:var(--dark)}.interaction-button.warning i{color:var(--orange)}.question-box{margin-top:12px;padding:14px;border:1px solid var(--border);border-radius:13px;background:#fff}.question-box label{display:block;margin-bottom:8px;font-size:11px;font-weight:800}.question-box textarea{width:100%;padding:11px;border:1px solid var(--border);border-radius:9px;resize:vertical;color:var(--text);font-size:11px}.question-box .primary-button{display:flex;align-items:center;gap:8px;margin-left:auto}.privacy-note{margin-top:20px;color:var(--muted);font-size:9px;line-height:1.6}.privacy-note i{color:var(--blue)}.toast{position:fixed;z-index:80;right:16px;bottom:18px;left:16px;width:max-content;max-width:calc(100% - 32px);margin:auto;padding:12px 16px;border-radius:10px;background:#172338;color:#fff;font-size:11px;box-shadow:0 8px 25px #17233825;opacity:0;pointer-events:none;transition:opacity .2s}.toast.show{opacity:1}.end-overlay{position:fixed;z-index:100;inset:0;display:grid;place-items:center;padding:20px;background:#172338b8;backdrop-filter:blur(5px)}.end-card{width:min(100%,380px);padding:29px 24px;border:1px solid var(--border);border-radius:19px;background:#fff;text-align:center;box-shadow:0 20px 70px #10182740}.end-icon{width:53px;height:53px;display:grid;place-items:center;margin:0 auto 15px;border-radius:16px;background:var(--green-soft);color:var(--green);font-size:25px}.end-card h2{margin-top:7px;font-size:20px}.end-card p{margin-top:8px;color:var(--muted);font-size:11px;line-height:1.7}.end-loader{width:19px;height:19px;display:block;margin:17px auto 0;border:2px solid #dce8fb;border-top-color:var(--blue);border-radius:50%;animation:spin .8s linear infinite}
 @media(min-width:760px){.page{padding-top:29px}.player-card{max-width:100%}.details-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}@media(max-width:560px){.topbar-inner{min-height:61px;padding-inline:12px}.back-button{font-size:10px}.brand-mark{width:31px;height:31px}.brand strong{font-size:11px}.live-pill{padding:6px 8px;font-size:8px}.page{padding:18px 12px 35px}.classroom-heading{gap:9px}.classroom-heading h1{font-size:19px}.classroom-heading p{font-size:9px}.live-pill-large{margin-top:3px}.player-stage{min-height:190px}.player-foot{font-size:8px}.details-card{padding:14px}.interaction-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.interaction-button{min-height:69px;flex-direction:row;justify-content:flex-start;padding:0 17px}.interaction-button i{font-size:20px}.section-hint{display:none}}@media(max-width:360px){.back-button span{max-width:67px;line-height:1.2}.classroom-heading{flex-direction:column}.live-pill-large{align-self:flex-start}}
 
-  </style>
+  
+/* Player refinements: fixed 16:9 frame, one LIVE badge, auto-hidden controls */
+.player-stage{width:100%;aspect-ratio:16/9;min-height:0;height:auto;max-height:none;}
+.player-stage video,.youtube-container,.youtube-container iframe{object-fit:contain;}
+.stage-topline{top:12px;left:12px;right:12px;}
+.stage-live{box-shadow:0 2px 12px #0005;}
+.stage-live small{font-size:8px;font-weight:700;letter-spacing:0;text-transform:none;}
+.stage-watermark{font-size:11px;font-weight:900;letter-spacing:1.8px;opacity:.95;}
+.custom-controls{opacity:0;pointer-events:none;transform:translateY(5px);transition:opacity .22s,transform .22s;}
+.player-stage.controls-visible .custom-controls{opacity:1;pointer-events:auto;transform:translateY(0);}
+.player-stage.controls-visible .center-play{opacity:1;}
+.player-stage:not(.controls-visible) .center-play{opacity:0;pointer-events:none;}
+.class-time-status{color:var(--muted);font-size:10px;font-weight:700;}
+.awake-prompt{position:absolute;z-index:20;inset:0;display:grid;place-items:center;background:#07101d99;padding:14px;}
+.awake-card{width:min(88%,330px);padding:20px 18px;border:1px solid #ffffff35;border-radius:16px;background:#fff;color:var(--text);text-align:center;box-shadow:0 14px 50px #0006;}
+.awake-card strong,.awake-card span,.awake-card small{display:block;}
+.awake-card strong{font-size:16px;}
+.awake-card span{margin-top:7px;color:var(--muted);font-size:11px;}
+.awake-card button{width:100%;min-height:44px;margin-top:15px;border:0;border-radius:10px;background:#159b78;color:white;font-weight:850;}
+.awake-card small{margin-top:9px;color:var(--muted);font-size:10px;}
+.player-stage:fullscreen{width:100vw;height:100vh;max-width:none;max-height:none;aspect-ratio:auto;border-radius:0;background:#000;}
+.player-stage:fullscreen video,.player-stage:fullscreen .youtube-container,.player-stage:fullscreen .youtube-container iframe{width:100%;height:100%;object-fit:contain;}
+.player-stage:fullscreen .stage-topline{top:max(14px,env(safe-area-inset-top));}
+.player-stage:fullscreen .custom-controls{padding:12px 22px max(12px,env(safe-area-inset-bottom));}
+@media(max-width:560px){.player-stage{min-height:0;}.page{padding-top:12px;}.player-card{border-radius:12px;}}
+
+</style>
 </head>
 <body>
   <header class="topbar"><div class="topbar-inner">
     <button class="back-button" id="backButton" type="button"><i class="ri-arrow-left-line"></i><span>Back to Classes</span></button>
     <a class="brand" href="../live/" aria-label="Zenova Live Classes"><span class="brand-mark">Z</span><span><strong>ZENOVA</strong><small>EDUCATIONS</small></span></a>
-    <div class="live-pill hidden" id="headerLive"><span class="pulse-dot"></span><span>LIVE</span><small class="started-ago" id="headerStartedAgo">Started just now</small></div>
+    <span aria-hidden="true"></span>
   </div></header>
 
   <main class="page wrap">
@@ -26,21 +52,24 @@
     <section id="waitingState" class="state-card hidden"><span class="waiting-icon"><i class="ri-time-line"></i></span><span class="eyebrow">YOUR NEXT CLASS</span><h2 id="waitingTitle">Class will start soon</h2><p id="waitingDescription">The classroom will open automatically when the scheduled time begins.</p><div class="countdown" id="countdown">--:--:--</div><button class="secondary-button" id="waitingBack" type="button">Back to Live Classes</button></section>
 
     <div id="classroom" class="hidden">
-      <div class="classroom-heading"><div><span class="eyebrow" id="subjectName">LIVE CLASSROOM</span><h1 id="classTitle">Class title</h1><p id="classHierarchy">Course · Subject · Chapter</p></div><div class="live-pill live-pill-large"><span class="pulse-dot"></span><span id="liveLabel">LIVE NOW</span><small class="started-ago" id="classStartedAgo">Started just now</small></div></div>
+      <div class="classroom-heading"><div><span class="eyebrow" id="subjectName">LIVE CLASSROOM</span><h1 id="classTitle">Class title</h1><p id="classHierarchy">Course · Subject · Chapter</p></div><div class="class-time-status"><span id="classStartedAgo">Classroom</span></div></div>
 
       <section class="player-card">
         <div class="player-stage" id="playerStage" tabindex="0" aria-label="Live class video player">
           <video id="liveVideo" playsinline webkit-playsinline preload="auto" disablepictureinpicture controlslist="nodownload noplaybackrate noremoteplayback"></video>
           <div id="youtubeContainer" class="youtube-container hidden"></div>
           <div id="gestureShield" class="gesture-shield" aria-label="Video gesture area"></div>
-          <div class="stage-topline"><span class="stage-live"><i class="pulse-dot"></i> LIVE</span><span class="stage-watermark" id="watermark">ZENOVA</span></div>
+          <div class="stage-topline"><span class="stage-live"><i class="pulse-dot"></i> LIVE <small id="stageStartedAgo">Started just now</small></span><span class="stage-watermark">ZENOVA</span></div>
+          <div id="awakePrompt" class="awake-prompt hidden" role="dialog" aria-live="assertive">
+            <div class="awake-card"><strong>Are you still watching?</strong><span>Tap below to continue your class</span><button id="imAwakeButton" type="button">I'm Awake</button><small id="awakeCountdown">15 seconds remaining</small></div>
+          </div>
           <div id="playerLoading" class="player-overlay"><span class="spinner light-spinner"></span><strong id="playerMessage">Connecting to your class...</strong><small id="playerSubMessage">Please wait while the stream loads.</small></div>
           <button id="centerPlay" class="center-play hidden" type="button" aria-label="Play stream"><i class="ri-play-fill"></i></button>
           <div class="custom-controls" id="customControls">
             <button id="rewindButton" type="button" aria-label="Rewind 10 seconds" title="Rewind 10 seconds"><i class="ri-replay-10-line"></i></button>
             <button id="playButton" type="button" aria-label="Play or pause"><i class="ri-play-fill"></i></button>
             <button id="muteButton" type="button" aria-label="Mute or unmute"><i class="ri-volume-up-line"></i></button>
-            <span class="controls-spacer"></span><span class="controls-live"><i class="pulse-dot"></i> LIVE</span>
+            <span class="controls-spacer"></span>
             <button id="fullscreenButton" type="button" aria-label="Fullscreen"><i class="ri-fullscreen-line"></i></button>
           </div>
         </div>
@@ -71,7 +100,7 @@ import { auth, db } from "../../firebase/firebase-config.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
 import {
   doc, getDoc, getDocs, addDoc, updateDoc, collection, query, where,
-  onSnapshot, serverTimestamp
+  onSnapshot, serverTimestamp, setDoc, getDocFromServer
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
 const $ = id => document.getElementById(id);
@@ -112,6 +141,30 @@ let classUnsubscribe = null;
 let ending = false;
 let recordedAsLive = false;
 let playerStarted = false;
+let serverClockOffset = 0;
+let serverClockReady = false;
+let serverClockTimer = null;
+let controlsHideTimer = null;
+let awakeTimer = null;
+let awakeDeadlineTimer = null;
+let awakeAudio = null;
+let awakePromptActive = false;
+
+function serverNow() { return Date.now() + serverClockOffset; }
+
+async function syncServerClock() {
+  const ref = doc(db, "serverClock", user.uid);
+  const before = Date.now();
+  await setDoc(ref, { serverTime: serverTimestamp() }, { merge: true });
+  const snap = await getDocFromServer(ref);
+  const after = Date.now();
+  const stamp = snap.exists() ? snap.data().serverTime : null;
+  if (!stamp || typeof stamp.toMillis !== "function") throw new Error("Unable to synchronize classroom time. Please check your connection.");
+  serverClockOffset = stamp.toMillis() - (before + after) / 2;
+  serverClockReady = true;
+  clearInterval(serverClockTimer);
+  serverClockTimer = setInterval(() => syncServerClock().catch(err => console.warn("Clock resync failed", err)), 60000);
+}
 
 const video = $("liveVideo");
 const stage = $("playerStage");
@@ -262,7 +315,7 @@ function classHasEnded() {
   const status = String(classData.status || "").toLowerCase();
   return classData.ended === true || classData.cancelled === true ||
     ["ended", "completed", "cancelled", "canceled"].includes(status) ||
-    Boolean(scheduledEndAt && Date.now() >= scheduledEndAt.getTime());
+    Boolean(scheduledEndAt && serverNow() >= scheduledEndAt.getTime());
 }
 
 function extractYouTubeId(value) {
@@ -370,12 +423,12 @@ function hidePlayerMessage() {
 }
 
 function elapsedFromStart() {
-  return scheduledStartAt ? Math.max(0, (Date.now() - scheduledStartAt.getTime()) / 1000) : 0;
+  return scheduledStartAt ? Math.max(0, (serverNow() - scheduledStartAt.getTime()) / 1000) : 0;
 }
 
 function startedAgoText() {
   if (!scheduledStartAt) return "Started just now";
-  const totalMinutes = Math.max(0, Math.floor((Date.now() - scheduledStartAt.getTime()) / 60000));
+  const totalMinutes = Math.max(0, Math.floor((serverNow() - scheduledStartAt.getTime()) / 60000));
   if (totalMinutes < 1) return "Started just now";
   if (totalMinutes < 60) return `Started ${totalMinutes} min ago`;
   const hours = Math.floor(totalMinutes / 60);
@@ -385,7 +438,7 @@ function startedAgoText() {
 
 function updateStartedAgo() {
   const label = startedAgoText();
-  ["headerStartedAgo", "classStartedAgo"].forEach(id => {
+  ["stageStartedAgo", "classStartedAgo"].forEach(id => {
     const element = $(id);
     if (element) element.textContent = label;
   });
@@ -875,17 +928,72 @@ function setupVideoGestures() {
   shield.addEventListener("contextmenu", event => event.preventDefault());
 }
 
+
+function showControlsTemporarily() {
+  stage.classList.add("controls-visible");
+  clearTimeout(controlsHideTimer);
+  controlsHideTimer = setTimeout(() => {
+    if (!awakePromptActive) stage.classList.remove("controls-visible");
+  }, 2800);
+}
+
+function setupAwakeChecks() {
+  if (classData.awakeCheckEnabled !== true) return;
+  const intervalMs = Math.max(30000, Number(classData.awakeIntervalSeconds || 60) * 1000);
+  const graceMs = Math.max(5000, Number(classData.awakeGraceSeconds || 15) * 1000);
+  awakeAudio = new Audio(first(classData.awakeAudioUrl, "../../loud.mp3"));
+  awakeAudio.preload = "auto";
+  function showPrompt() {
+    if (ending || document.hidden || awakePromptActive) return;
+    awakePromptActive = true;
+    $("awakePrompt").classList.remove("hidden");
+    let remaining = Math.ceil(graceMs / 1000);
+    $("awakeCountdown").textContent = `${remaining} seconds remaining`;
+    clearInterval(awakeDeadlineTimer);
+    awakeDeadlineTimer = setInterval(() => {
+      remaining -= 1;
+      $("awakeCountdown").textContent = `${Math.max(0, remaining)} seconds remaining`;
+      if (remaining <= 0) {
+        clearInterval(awakeDeadlineTimer);
+        // Browsers may block audio until the student has interacted with the page.
+        awakeAudio.play().catch(() => toast("Please tap the video once to enable class alerts."));
+      }
+    }, 1000);
+  }
+  $("imAwakeButton").addEventListener("click", () => {
+    awakePromptActive = false;
+    clearInterval(awakeDeadlineTimer);
+    $("awakePrompt").classList.add("hidden");
+    if (awakeAudio) { awakeAudio.pause(); awakeAudio.currentTime = 0; }
+    toast("Thank you! Your attendance check is recorded on this device.");
+  });
+  clearInterval(awakeTimer);
+  awakeTimer = setInterval(showPrompt, intervalMs);
+}
+
 function setupControls() {
   $("rewindButton").addEventListener("click", rewindTenSeconds);
   setupVideoGestures();
+  stage.addEventListener("pointerdown", event => {
+    if (event.target.closest("button") || event.target.closest(".awake-card")) return;
+    showControlsTemporarily();
+  });
+  stage.addEventListener("mousemove", showControlsTemporarily);
+  stage.addEventListener("touchstart", showControlsTemporarily, { passive: true });
   $("playButton").addEventListener("click", togglePlay);
   $("centerPlay").addEventListener("click", togglePlay);
   $("muteButton").addEventListener("click", toggleMute);
   $("fullscreenButton").addEventListener("click", async () => {
     try {
-      if (document.fullscreenElement) await document.exitFullscreen();
-      else if (stage.requestFullscreen) await stage.requestFullscreen();
-      else if (video.webkitEnterFullscreen) video.webkitEnterFullscreen();
+      if (document.fullscreenElement) {
+        await document.exitFullscreen();
+        try { screen.orientation?.unlock?.(); } catch (_) {}
+      } else if (stage.requestFullscreen) {
+        await stage.requestFullscreen();
+        try { await screen.orientation?.lock?.("landscape"); } catch (_) {}
+      } else if (video.webkitEnterFullscreen) {
+        video.webkitEnterFullscreen();
+      }
     } catch (_) {
       toast("Fullscreen is not supported on this device.");
     }
@@ -904,7 +1012,7 @@ function setupControls() {
 
 function updateCountdown() {
   if (!scheduledStartAt) return;
-  const seconds = Math.max(0, Math.floor((scheduledStartAt.getTime() - Date.now()) / 1000));
+  const seconds = Math.max(0, Math.floor((scheduledStartAt.getTime() - serverNow()) / 1000));
   const hours = Math.floor(seconds / 3600);
   const minutes = Math.floor((seconds % 3600) / 60);
   const remaining = seconds % 60;
@@ -917,7 +1025,7 @@ function setupSchedule() {
     return;
   }
 
-  const now = Date.now();
+  const now = serverNow();
   if (scheduledStartAt && now < scheduledStartAt.getTime()) {
     showState("waitingState");
     $("waitingTitle").textContent = first(classData.title, classData.classTitle, "Your class will start soon");
@@ -939,10 +1047,10 @@ async function beginClass() {
   playerStarted = true;
   clearInterval(clockTimer);
   showState("classroom");
-  $("headerLive").classList.remove("hidden");
   $("classStatus").textContent = "LIVE NOW";
-  $("liveLabel").textContent = "LIVE NOW";
   startStartedAgoClock();
+  setupAwakeChecks();
+  showControlsTemporarily();
   showPlayerMessage("Connecting to your class...", "Please wait while Zenova connects to the stream.");
   await startSession();
 
@@ -956,7 +1064,7 @@ async function beginClass() {
   }
 
   if (scheduledEndAt) {
-    const remaining = scheduledEndAt.getTime() - Date.now();
+    const remaining = scheduledEndAt.getTime() - serverNow();
     if (remaining <= 0) endClass("The scheduled class time has ended.");
     else liveTimer = setTimeout(() => endClass("The scheduled class time has ended."), remaining);
   }
@@ -1000,7 +1108,7 @@ function listenForAdminEnd() {
       endClass("Your live class has been ended by Zenova.");
     } else if (playerStarted && scheduledEndAt && scheduledEndAt.getTime() !== previousEnd) {
       clearTimeout(liveTimer);
-      liveTimer = setTimeout(() => endClass("The scheduled class time has ended."), Math.max(0, scheduledEndAt.getTime() - Date.now()));
+      liveTimer = setTimeout(() => endClass("The scheduled class time has ended."), Math.max(0, scheduledEndAt.getTime() - serverNow()));
     }
   }, error => console.warn("Live class status listener failed", error));
 }
@@ -1101,6 +1209,7 @@ function setupTracking() {
   window.addEventListener("pagehide", () => {
     if (sessionRef && !sessionClosed) saveSession({ status: "interrupted", sessionStatus: "interrupted" });
     if (classUnsubscribe) classUnsubscribe();
+    clearInterval(serverClockTimer); clearInterval(awakeTimer); clearInterval(awakeDeadlineTimer); clearTimeout(controlsHideTimer);
   });
 }
 
@@ -1117,6 +1226,7 @@ async function initialize() {
   const studentSnapshot = await getDoc(doc(db, "zen2Students", user.uid));
   if (!studentSnapshot.exists()) throw new Error("Your Zenova student profile could not be found.");
   student = { id: studentSnapshot.id, ...studentSnapshot.data() };
+  await syncServerClock();
 
   const classSnapshot = await getDoc(doc(db, "liveClasses", classId));
   if (!classSnapshot.exists()) throw new Error("This live class could not be found.");
