@@ -1433,9 +1433,10 @@
         .filter(course => {
           const status = String(course.status || "").toLowerCase();
 
-          return course.isPublished !== false &&
+          return course.active !== false &&
+            course.isPublished !== false &&
             course.published !== false &&
-            !["draft", "archived", "deleted"].includes(status);
+            !["draft", "archived", "deleted", "inactive"].includes(status);
         });
 
       state.enrolledCourses = state.courses.filter(isEnrolled);
@@ -1610,7 +1611,7 @@ function renderCourseCards(courses, containerId, enrolledList) {
           `./study/?courseId=${encodeURIComponent(id)}`;
       } else {
         window.location.href =
-          `./batchdetails/?courseId=${encodeURIComponent(id)}`;
+          `./batchdetails/index.html?courseId=${encodeURIComponent(id)}`;
       }
     });
   });
