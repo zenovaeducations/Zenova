@@ -1,0 +1,2013 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#F7F9FC">
+<title>WatchClass | Zenova Educations</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --bg:#F7F9FC;
+  --white:#FFFFFF;
+  --soft:#F0F5FB;
+  --blue:#3978E8;
+  --dark:#245FC9;
+  --pale:#EAF2FF;
+  --ink:#172338;
+  --muted:#7B8799;
+  --line:#E7EDF5;
+  --green:#159B78;
+  --red:#D94C59;
+  --shadow:0 8px 30px rgba(29,54,91,.055);
+}
+
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--ink);
+  font-family:Inter,Arial,sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+.hidden{display:none!important}
+
+.container{
+  max-width:1250px;
+  margin:auto;
+  padding:22px;
+}
+
+.header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:15px;
+  margin-bottom:25px;
+}
+
+.brand{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.logo{
+  width:43px;
+  height:43px;
+  border-radius:13px;
+  background:var(--blue);
+  color:white;
+  display:grid;
+  place-items:center;
+  font-size:21px;
+  font-weight:900;
+}
+
+.brand h1{
+  font-size:17px;
+  margin:0;
+  letter-spacing:-.5px;
+}
+
+.brand p{
+  font-size:9px;
+  color:var(--muted);
+  font-weight:800;
+  letter-spacing:1.4px;
+  margin:5px 0 0;
+}
+
+.student-info{
+  font-size:11px;
+  color:var(--muted);
+  text-align:right;
+}
+
+.page-title{
+  margin-bottom:20px;
+}
+
+.eyebrow{
+  color:var(--blue);
+  font-size:9px;
+  font-weight:900;
+  letter-spacing:1.4px;
+}
+
+.page-title h2{
+  font-size:27px;
+  letter-spacing:-1px;
+  margin:7px 0;
+}
+
+.page-title p{
+  color:var(--muted);
+  font-size:11px;
+  line-height:1.7;
+  margin:0;
+}
+
+.panel{
+  background:white;
+  border:1px solid var(--line);
+  border-radius:17px;
+  padding:19px;
+  box-shadow:var(--shadow);
+  margin-bottom:16px;
+}
+
+.top-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:13px;
+  margin-bottom:15px;
+}
+
+.stat{
+  background:white;
+  border:1px solid var(--line);
+  border-radius:15px;
+  padding:17px;
+}
+
+.stat small{
+  color:var(--muted);
+  font-size:10px;
+  font-weight:700;
+}
+
+.stat strong{
+  display:block;
+  font-size:25px;
+  margin-top:8px;
+  letter-spacing:-1px;
+}
+
+.progress-track{
+  height:9px;
+  border-radius:20px;
+  background:#E9EFF7;
+  overflow:hidden;
+  margin-top:12px;
+}
+
+.progress-fill{
+  height:100%;
+  width:0%;
+  background:var(--blue);
+  border-radius:20px;
+  transition:width .3s;
+}
+
+.row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+}
+
+.section-title{
+  font-size:13px;
+  font-weight:800;
+  margin:0;
+}
+
+.muted{
+  color:var(--muted);
+  font-size:10px;
+  line-height:1.6;
+}
+
+.control{
+  width:100%;
+  border:1px solid var(--line);
+  background:white;
+  border-radius:10px;
+  padding:12px;
+  outline:none;
+  font-size:11px;
+  color:var(--ink);
+}
+
+.control:focus{
+  border-color:#9BBBF4;
+  box-shadow:0 0 0 3px #3978E817;
+}
+
+.btn{
+  border:1px solid var(--line);
+  background:white;
+  color:var(--ink);
+  border-radius:10px;
+  padding:11px 14px;
+  font-size:10px;
+  font-weight:800;
+}
+
+.btn-primary{
+  background:var(--blue);
+  color:white;
+  border-color:var(--blue);
+}
+
+.btn-primary:hover{background:var(--dark)}
+
+.btn-soft{
+  background:var(--pale);
+  color:var(--dark);
+  border-color:transparent;
+}
+
+.btn-danger{
+  background:#FFF0F1;
+  color:var(--red);
+  border-color:transparent;
+}
+
+.field{margin-bottom:13px}
+
+.field label{
+  display:block;
+  font-size:10px;
+  font-weight:800;
+  margin-bottom:7px;
+  color:#5D6B80;
+}
+
+.player-layout{
+  display:grid;
+  grid-template-columns:minmax(0,1.6fr) minmax(270px,.8fr);
+  gap:15px;
+  align-items:start;
+}
+
+.player-box{
+  background:#101827;
+  border-radius:14px;
+  overflow:hidden;
+  aspect-ratio:16/9;
+  display:grid;
+  place-items:center;
+  color:white;
+  position:relative;
+}
+
+.player-box video,
+.player-box iframe{
+  width:100%;
+  height:100%;
+  border:0;
+  display:block;
+}
+
+.player-box video{
+  background:#000;
+  object-fit:contain;
+}
+
+.player-placeholder{
+  text-align:center;
+  padding:20px;
+  color:#D5DFEF;
+  font-size:11px;
+  line-height:1.8;
+}
+
+.now-playing{
+  margin-top:15px;
+}
+
+.now-playing h3{
+  font-size:16px;
+  margin:7px 0;
+  letter-spacing:-.4px;
+}
+
+.video-meta{
+  font-size:10px;
+  color:var(--muted);
+}
+
+.playlist{
+  display:flex;
+  flex-direction:column;
+  gap:9px;
+}
+
+.video-card{
+  background:white;
+  border:1px solid var(--line);
+  border-radius:13px;
+  padding:11px;
+  display:flex;
+  gap:11px;
+  align-items:center;
+  position:relative;
+  overflow:hidden;
+  cursor:pointer;
+}
+
+.video-card.active{
+  border-color:#8DB1F2;
+  background:#F8FAFF;
+}
+
+.video-card.completed{
+  border-color:#CDEBDD;
+}
+
+.thumbnail{
+  width:100px;
+  min-width:100px;
+  aspect-ratio:16/9;
+  border-radius:8px;
+  overflow:hidden;
+  background:#E8EFF8;
+  position:relative;
+}
+
+.thumbnail img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+.thumbnail-default{
+  width:100%;
+  height:100%;
+  display:grid;
+  place-items:center;
+  background:linear-gradient(135deg,#EAF2FF,#DCE8FA);
+  color:var(--blue);
+  font-size:22px;
+  font-weight:900;
+}
+
+.video-card.locked .thumbnail img,
+.video-card.locked .thumbnail-default{
+  filter:blur(4px);
+}
+
+.lock-overlay{
+  position:absolute;
+  inset:0;
+  background:#17233855;
+  display:grid;
+  place-items:center;
+  color:white;
+  font-size:20px;
+}
+
+.video-details{
+  min-width:0;
+  flex:1;
+}
+
+.video-details strong{
+  font-size:10px;
+  display:block;
+  line-height:1.5;
+}
+
+.video-details small{
+  display:block;
+  color:var(--muted);
+  font-size:9px;
+  margin-top:5px;
+}
+
+.status{
+  display:inline-block;
+  font-size:8px;
+  font-weight:900;
+  padding:5px 7px;
+  border-radius:20px;
+  margin-top:7px;
+  background:var(--pale);
+  color:var(--dark);
+}
+
+.status.done{
+  background:#E8F8F2;
+  color:var(--green);
+}
+
+.status.locked{
+  background:#F0F1F4;
+  color:#697386;
+}
+
+.day-selector{
+  display:flex;
+  gap:10px;
+  align-items:center;
+  flex-wrap:wrap;
+}
+
+.day-selector input{max-width:180px}
+
+.message{
+  padding:12px;
+  border-radius:10px;
+  font-size:10px;
+  line-height:1.7;
+  margin-top:12px;
+}
+
+.message.info{
+  background:var(--pale);
+  color:var(--dark);
+}
+
+.message.error{
+  background:#FFF0F1;
+  color:var(--red);
+}
+
+.message.success{
+  background:#E8F8F2;
+  color:var(--green);
+}
+
+.empty{
+  padding:30px;
+  text-align:center;
+  color:var(--muted);
+  font-size:11px;
+}
+
+.setup{
+  min-height:100vh;
+  display:grid;
+  place-items:center;
+  padding:20px;
+}
+
+.setup-box{
+  width:min(100%,420px);
+  background:white;
+  border:1px solid var(--line);
+  border-radius:20px;
+  padding:27px;
+  box-shadow:var(--shadow);
+}
+
+.setup-box h2{
+  font-size:21px;
+  margin:18px 0 7px;
+}
+
+.setup-box p{
+  font-size:11px;
+  line-height:1.7;
+  color:var(--muted);
+}
+
+.setup-box .btn{width:100%;margin-top:10px}
+
+.toast{
+  position:fixed;
+  bottom:20px;
+  right:20px;
+  background:#172338;
+  color:white;
+  padding:13px 16px;
+  border-radius:10px;
+  font-size:10px;
+  z-index:100;
+  max-width:320px;
+}
+
+@media(max-width:850px){
+  .player-layout{grid-template-columns:1fr}
+}
+
+@media(max-width:600px){
+  .container{padding:13px}
+  .header{align-items:flex-start}
+  .page-title h2{font-size:23px}
+  .panel{padding:14px}
+  .top-grid{gap:8px}
+  .stat{padding:13px}
+  .stat strong{font-size:22px}
+  .thumbnail{width:86px;min-width:86px}
+}
+</style>
+</head>
+
+<body>
+
+<!-- FIRST VISIT SETUP -->
+<div id="setupScreen" class="setup hidden">
+  <div class="setup-box">
+    <div class="logo">Z</div>
+    <div class="eyebrow" style="margin-top:20px">ZENOVA WATCHCLASS</div>
+    <h2>Welcome to WatchClass</h2>
+    <p>Enter your name and select your batch to access your scheduled lessons.</p>
+
+    <div class="field">
+      <label>Your name</label>
+      <input id="studentName" class="control" placeholder="Enter your full name">
+    </div>
+
+    <div class="field">
+      <label>Select your batch</label>
+      <select id="batchSelect" class="control">
+        <option value="">Loading available batches...</option>
+      </select>
+    </div>
+
+    <div id="setupMessage" class="message error hidden"></div>
+    <button class="btn btn-primary" id="startBtn">Continue to WatchClass</button>
+  </div>
+</div>
+
+<!-- STUDENT APP -->
+<div id="app" class="container hidden">
+
+  <header class="header">
+    <div class="brand">
+      <div class="logo">Z</div>
+      <div>
+        <h1>Zenova Educations</h1>
+        <p>WATCHCLASS</p>
+      </div>
+    </div>
+
+    <div class="student-info">
+      <strong id="displayStudent">Student</strong>
+      <div id="displayBatch"></div>
+      <button class="btn" id="changeProfileBtn" style="margin-top:7px">Change batch</button>
+    </div>
+  </header>
+
+  <div class="page-title">
+    <div class="eyebrow">YOUR DAILY LEARNING JOURNEY</div>
+    <h2>WatchClass</h2>
+    <p>Complete each lesson in sequence. Your progress is saved automatically.</p>
+  </div>
+
+  <div class="top-grid">
+    <div class="stat">
+      <small>Today's completion</small>
+      <strong id="completionPercent">0%</strong>
+      <div class="progress-track">
+        <div class="progress-fill" id="completionBar"></div>
+      </div>
+      <div class="muted" id="completionText" style="margin-top:8px">0 of 0 lessons completed</div>
+    </div>
+
+    <div class="stat">
+      <small>Learning status</small>
+      <strong id="learningStatus" style="font-size:18px">Ready to begin</strong>
+      <div class="muted" id="learningSub" style="margin-top:8px">Your next scheduled lesson will appear here.</div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="row" style="margin-bottom:13px">
+      <div>
+        <h3 class="section-title">Daily schedule</h3>
+        <div class="muted">Choose a completed day to revise previous lessons.</div>
+      </div>
+    </div>
+
+    <div class="day-selector">
+      <input type="date" class="control" id="datePicker">
+      <button class="btn btn-soft" id="todayBtn">Go to active day</button>
+    </div>
+
+    <div id="dayMessage" class="message info">
+      Your lessons will unlock one after another.
+    </div>
+  </div>
+
+  <div class="player-layout">
+
+    <div>
+      <div class="panel">
+        <div class="row" style="margin-bottom:13px">
+          <h3 class="section-title">Lesson player</h3>
+          <span class="status" id="playerStatus">WAITING</span>
+        </div>
+
+        <div class="player-box" id="playerBox">
+          <div class="player-placeholder">
+            <div style="font-size:35px">▶</div>
+            Select your first lesson to begin.
+          </div>
+        </div>
+
+        <div class="now-playing">
+          <div class="eyebrow" id="nowSubject">WATCHCLASS LESSON</div>
+          <h3 id="nowTitle">No lesson selected</h3>
+          <div class="video-meta" id="nowMeta">Your scheduled video will appear here.</div>
+        </div>
+
+        <div class="row" style="margin-top:16px;flex-wrap:wrap">
+          <button class="btn btn-soft" id="skipRequestBtn" disabled>Ask admin to skip</button>
+          <span class="muted" id="saveStatus">Progress saves automatically</span>
+        </div>
+
+        <div id="skipMessage" class="message info hidden"></div>
+      </div>
+
+      <div class="panel">
+        <h3 class="section-title">Request permission to skip</h3>
+        <p class="muted">If you cannot complete a lesson, explain the reason. An administrator must approve your request.</p>
+
+        <textarea id="skipReason" class="control" rows="3" placeholder="Explain why you need to skip this lesson..." style="resize:vertical"></textarea>
+
+        <button class="btn btn-primary" id="submitSkipBtn" style="margin-top:10px" disabled>Submit skip request</button>
+        <div id="skipRequestStatus" class="muted" style="margin-top:9px"></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="row" style="margin-bottom:14px">
+        <h3 class="section-title">Today's lessons</h3>
+        <span class="status" id="lessonCount">0 LESSONS</span>
+      </div>
+
+      <div class="playlist" id="playlist">
+        <div class="empty">Loading your schedule...</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div id="toast" class="toast hidden"></div>
+
+<script type="module">
+
+import { db } from "../firebase/firebase-config.js";
+
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  onSnapshot,
+  query,
+  where,
+  setDoc,
+  addDoc,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
+
+/* -----------------------------------------
+   CONFIGURATION
+----------------------------------------- */
+
+const $ = id => document.getElementById(id);
+
+const STORAGE_PROFILE = "zenova_watchclass_profile_v1";
+const STORAGE_DEVICE = "zenova_watchclass_device_v1";
+
+let student = null;
+let videos = [];
+let progressMap = {};
+let skipRequests = [];
+
+let selectedDate = "";
+let activeDate = "";
+let selectedVideo = null;
+
+let videoUnsubscribe = null;
+let progressUnsubscribe = null;
+let requestUnsubscribe = null;
+
+let htmlVideo = null;
+let saveTimer = null;
+let lastSavedTime = 0;
+let maxWatchedTime = 0;
+let isReplay = false;
+let isChangingProfile = false;
+
+
+/* -----------------------------------------
+   DEVICE ID
+----------------------------------------- */
+
+function getDeviceId(){
+
+  let id = localStorage.getItem(STORAGE_DEVICE);
+
+  if(!id){
+    id = "wc_" + (
+      crypto.randomUUID
+        ? crypto.randomUUID()
+        : Date.now() + "_" + Math.random().toString(36).slice(2)
+    );
+
+    localStorage.setItem(STORAGE_DEVICE,id);
+  }
+
+  return id;
+}
+
+
+/* -----------------------------------------
+   HELPERS
+----------------------------------------- */
+
+function today(){
+
+  const d = new Date();
+
+  const y = d.getFullYear();
+  const m = String(d.getMonth()+1).padStart(2,"0");
+  const day = String(d.getDate()).padStart(2,"0");
+
+  return `${y}-${m}-${day}`;
+}
+
+function escapeHTML(value){
+
+  return String(value ?? "").replace(/[&<>"']/g,char=>({
+    "&":"&amp;",
+    "<":"&lt;",
+    ">":"&gt;",
+    '"':"&quot;",
+    "'":"&#039;"
+  })[char]);
+}
+
+function toast(message){
+
+  $("toast").textContent = message;
+  $("toast").classList.remove("hidden");
+
+  setTimeout(()=>{
+    $("toast").classList.add("hidden");
+  },3000);
+}
+
+function sortVideos(list){
+
+  return [...list].sort((a,b)=>
+    (Number(a.sequence)||1)-(Number(b.sequence)||1) ||
+    (a.releaseTime||"").localeCompare(b.releaseTime||"")
+  );
+}
+
+function isPublished(v){
+
+  return v.active !== false &&
+    (v.status === "published" || v.published === true);
+}
+
+function isCompleted(videoId){
+
+  return progressMap[videoId]?.completed === true;
+}
+
+function getProgress(videoId){
+
+  return progressMap[videoId] || {};
+}
+
+function videoDate(v){
+
+  return v.releaseDate || "";
+}
+
+function videosForDate(date){
+
+  return sortVideos(
+    videos.filter(v=>
+      isPublished(v) &&
+      v.batchName === student.batchName &&
+      videoDate(v) === date
+    )
+  );
+}
+
+
+/* -----------------------------------------
+   FIRST VISIT / PROFILE
+----------------------------------------- */
+
+async function loadBatchOptions(){
+
+  const select = $("batchSelect");
+
+  select.innerHTML = '<option value="">Loading batches...</option>';
+
+  try{
+
+    const snap = await getDocs(collection(db,"watchClassVideos"));
+
+    const batches = [...new Set(
+      snap.docs
+        .map(d=>d.data())
+        .filter(isPublished)
+        .map(v=>v.batchName)
+        .filter(Boolean)
+    )].sort();
+
+    select.innerHTML = '<option value="">Choose your batch</option>';
+
+    batches.forEach(batch=>{
+
+      const option = document.createElement("option");
+
+      option.value = batch;
+      option.textContent = batch;
+
+      select.appendChild(option);
+    });
+
+    if(!batches.length){
+      select.innerHTML = '<option value="">No published batches yet</option>';
+    }
+
+  }catch(error){
+
+    console.error(error);
+
+    select.innerHTML = '<option value="">Could not load batches</option>';
+  }
+}
+
+
+function showSetup(){
+
+  $("app").classList.add("hidden");
+  $("setupScreen").classList.remove("hidden");
+
+  loadBatchOptions();
+}
+
+
+function showApp(){
+
+  $("setupScreen").classList.add("hidden");
+  $("app").classList.remove("hidden");
+
+  $("displayStudent").textContent = student.name;
+  $("displayBatch").textContent = student.batchName;
+
+  $("datePicker").value = today();
+
+  startListeners();
+}
+
+
+$("startBtn").addEventListener("click",()=>{
+
+  const name = $("studentName").value.trim();
+  const batch = $("batchSelect").value;
+
+  if(!name || !batch){
+
+    $("setupMessage").textContent = "Enter your name and select your batch.";
+    $("setupMessage").classList.remove("hidden");
+
+    return;
+  }
+
+  student = {
+    deviceId:getDeviceId(),
+    name,
+    batchName:batch
+  };
+
+  localStorage.setItem(STORAGE_PROFILE,JSON.stringify(student));
+
+  showApp();
+});
+
+
+$("changeProfileBtn").addEventListener("click",()=>{
+
+  if(!confirm("Change your student name or batch?")) return;
+
+  stopListeners();
+
+  localStorage.removeItem(STORAGE_PROFILE);
+
+  student = null;
+
+  showSetup();
+});
+
+
+/* -----------------------------------------
+   FIRESTORE LISTENERS
+----------------------------------------- */
+
+function stopListeners(){
+
+  if(videoUnsubscribe) videoUnsubscribe();
+  if(progressUnsubscribe) progressUnsubscribe();
+  if(requestUnsubscribe) requestUnsubscribe();
+
+  videoUnsubscribe = null;
+  progressUnsubscribe = null;
+  requestUnsubscribe = null;
+}
+
+
+function startListeners(){
+
+  stopListeners();
+
+  videoUnsubscribe = onSnapshot(
+    collection(db,"watchClassVideos"),
+    snap=>{
+
+      videos = snap.docs.map(d=>({
+        id:d.id,
+        ...d.data()
+      }));
+
+      determineActiveDate();
+      renderPage();
+
+    },
+    error=>{
+
+      console.error(error);
+      toast("Unable to load WatchClass schedule.");
+    }
+  );
+
+
+  progressUnsubscribe = onSnapshot(
+    query(
+      collection(db,"watchClassProgress"),
+      where("studentUid","==",student.deviceId)
+    ),
+    snap=>{
+
+      progressMap = {};
+
+      snap.docs.forEach(d=>{
+
+        const p = d.data();
+
+        progressMap[p.videoId || d.id] = {
+          id:d.id,
+          ...p
+        };
+      });
+
+      determineActiveDate();
+      renderPage();
+      checkApprovedSkip();
+
+    },
+    error=>{
+
+      console.error(error);
+      toast("Unable to load learning progress.");
+    }
+  );
+
+
+  requestUnsubscribe = onSnapshot(
+    query(
+      collection(db,"watchClassSkipRequests"),
+      where("studentUid","==",student.deviceId)
+    ),
+    snap=>{
+
+      skipRequests = snap.docs.map(d=>({
+        id:d.id,
+        ...d.data()
+      }));
+
+      updateSkipStatus();
+
+    },
+    error=>console.error(error)
+  );
+
+}
+
+
+/* -----------------------------------------
+   ACTIVE DAY LOGIC
+----------------------------------------- */
+
+function determineActiveDate(){
+
+  const dates = [...new Set(
+    videos
+      .filter(isPublished)
+      .filter(v=>v.batchName===student.batchName)
+      .map(videoDate)
+      .filter(d=>d && d<=today())
+  )].sort();
+
+  activeDate = today();
+
+  for(const date of dates){
+
+    const daily = videosForDate(date);
+
+    if(daily.length && daily.some(v=>!isCompleted(v.id))){
+
+      activeDate = date;
+      break;
+    }
+  }
+
+  if(!selectedDate){
+    selectedDate = activeDate;
+  }
+}
+
+
+function canOpenDate(date){
+
+  if(date === activeDate) return true;
+
+  const list = videosForDate(date);
+
+  if(!list.length) return false;
+
+  // Earlier days are available for replay only when fully completed.
+  if(date < activeDate){
+    return list.every(v=>isCompleted(v.id));
+  }
+
+  return false;
+}
+
+
+/* -----------------------------------------
+   DAILY COMPLETION
+----------------------------------------- */
+
+function getDayCompletion(date){
+
+  const list = videosForDate(date);
+
+  const completed = list.filter(v=>isCompleted(v.id)).length;
+
+  const percent = list.length
+    ? Math.round(completed/list.length*100)
+    : 0;
+
+  return {
+    total:list.length,
+    completed,
+    percent
+  };
+}
+
+
+function updateCompletion(){
+
+  const data = getDayCompletion(selectedDate);
+
+  $("completionPercent").textContent = data.percent+"%";
+  $("completionBar").style.width = data.percent+"%";
+
+  $("completionText").textContent =
+    `${data.completed} of ${data.total} lessons completed`;
+
+  $("lessonCount").textContent =
+    `${data.total} LESSONS`;
+
+  if(data.total && data.completed===data.total){
+
+    $("learningStatus").textContent = "Day completed";
+    $("learningSub").textContent = "Excellent work. You can revise these lessons again.";
+
+  }else if(data.total){
+
+    $("learningStatus").textContent = "In progress";
+    $("learningSub").textContent = "Continue with your next unlocked lesson.";
+
+  }else{
+
+    $("learningStatus").textContent = "No lessons";
+    $("learningSub").textContent = "No lessons are scheduled for this date.";
+  }
+}
+
+
+/* -----------------------------------------
+   UNLOCK RULE
+----------------------------------------- */
+
+function getUnlockedVideo(list){
+
+  for(const video of list){
+
+    if(!isCompleted(video.id)){
+      return video;
+    }
+  }
+
+  return null;
+}
+
+
+function isVideoUnlocked(video,list){
+
+  if(isCompleted(video.id)) return true;
+
+  const firstIncomplete = getUnlockedVideo(list);
+
+  return firstIncomplete?.id === video.id;
+}
+
+
+/* -----------------------------------------
+   RENDER PLAYLIST
+----------------------------------------- */
+
+function renderPlaylist(){
+
+  const list = videosForDate(selectedDate);
+
+  const container = $("playlist");
+
+  if(!list.length){
+
+    container.innerHTML =
+      '<div class="empty">No lessons are scheduled for this date.</div>';
+
+    return;
+  }
+
+  container.innerHTML = list.map((v,index)=>{
+
+    const done = isCompleted(v.id);
+    const unlocked = isVideoUnlocked(v,list);
+
+    const progress = getProgress(v.id);
+
+    const active = selectedVideo?.id===v.id;
+
+    const thumbnail = v.thumbnailUrl
+      ? `<img src="${escapeHTML(v.thumbnailUrl)}" alt="">`
+      : `<div class="thumbnail-default">Z</div>`;
+
+    let status = "LOCKED";
+    let statusClass = "locked";
+
+    if(done){
+      status = "COMPLETED";
+      statusClass = "done";
+    }else if(unlocked){
+      status = Number(progress.positionSeconds)>0
+        ? "CONTINUE"
+        : "UNLOCKED";
+
+      statusClass = "";
+    }
+
+    return `
+      <div class="video-card
+        ${active?"active":""}
+        ${done?"completed":""}
+        ${!unlocked?"locked":""}"
+        data-video="${escapeHTML(v.id)}">
+
+        <div class="thumbnail">
+          ${thumbnail}
+
+          ${!unlocked?'<div class="lock-overlay">🔒</div>':''}
+          ${done?'<div class="lock-overlay" style="background:#159B7866">✓</div>':''}
+        </div>
+
+        <div class="video-details">
+          <strong>${index+1}. ${escapeHTML(v.title)}</strong>
+
+          <small>
+            ${escapeHTML(v.subjectName||"")}
+            ${v.chapterName?" • "+escapeHTML(v.chapterName):""}
+          </small>
+
+          <span class="status ${statusClass}">${status}</span>
+        </div>
+
+      </div>
+    `;
+  }).join("");
+
+  container.querySelectorAll("[data-video]").forEach(card=>{
+
+    card.addEventListener("click",()=>{
+
+      const video = list.find(v=>v.id===card.dataset.video);
+
+      if(!video) return;
+
+      if(!isVideoUnlocked(video,list)){
+
+        toast("Complete the previous lesson to unlock this video.");
+        return;
+      }
+
+      openVideo(video);
+    });
+
+  });
+
+}
+
+
+/* -----------------------------------------
+   PLAYER
+----------------------------------------- */
+
+function stopCurrentPlayer(){
+
+  clearInterval(saveTimer);
+
+  if(htmlVideo){
+
+    try{
+      htmlVideo.pause();
+      htmlVideo.removeAttribute("src");
+      htmlVideo.load();
+    }catch(e){}
+  }
+
+  htmlVideo = null;
+
+  $("playerBox").innerHTML = `
+    <div class="player-placeholder">
+      Select a lesson to begin.
+    </div>
+  `;
+}
+
+
+function getYouTubeId(url){
+
+  try{
+
+    const u = new URL(url);
+    const host = u.hostname.replace(/^www\./,"");
+
+    if(host==="youtu.be"){
+      return u.pathname.split("/").filter(Boolean)[0];
+    }
+
+    if(host.endsWith("youtube.com")){
+
+      return u.searchParams.get("v") ||
+        u.pathname.split("/").filter(Boolean).pop();
+    }
+
+  }catch(e){}
+
+  return null;
+}
+
+
+function openVideo(video){
+
+  const list = videosForDate(selectedDate);
+
+  if(!isVideoUnlocked(video,list)){
+    toast("This lesson is locked.");
+    return;
+  }
+
+  stopCurrentPlayer();
+
+  selectedVideo = video;
+
+  isReplay = isCompleted(video.id);
+
+  lastSavedTime = 0;
+  maxWatchedTime = Number(getProgress(video.id).positionSeconds)||0;
+
+  $("nowTitle").textContent = video.title||"WatchClass lesson";
+  $("nowSubject").textContent = video.subjectName||"WATCHCLASS LESSON";
+
+  $("nowMeta").textContent =
+    `${video.batchName||""} • ${video.chapterName||""}`;
+
+  $("playerStatus").textContent =
+    isReplay?"REVISION":"IN PROGRESS";
+
+  $("skipRequestBtn").disabled = isReplay;
+  $("submitSkipBtn").disabled = isReplay;
+
+  const sourceType = video.sourceType||"";
+  const url = video.sourceUrl||"";
+  const embed = video.embedUrl||"";
+
+  if(sourceType==="youtube"){
+
+    openYouTube(video);
+
+  }else if(sourceType==="vimeo"){
+
+    openExternalEmbed(embed || url);
+
+  }else if(sourceType==="direct" || /\.(mp4|webm|ogg|mov)(\?|$)/i.test(url)){
+
+    openDirectVideo(url);
+
+  }else if(sourceType==="hls" || /\.m3u8(\?|$)/i.test(url)){
+
+    openHLS(url);
+
+  }else{
+
+    $("playerBox").innerHTML = `
+      <div class="player-placeholder">
+        This link cannot be played inside WatchClass.
+        <br>
+        <a href="${escapeHTML(url)}" target="_blank" rel="noopener" style="color:white">
+          Open video link
+        </a>
+      </div>
+    `;
+
+    $("playerStatus").textContent = "EXTERNAL LINK";
+  }
+
+  renderPlaylist();
+
+  $("saveStatus").textContent =
+    "Your learning progress saves automatically.";
+}
+
+
+function openDirectVideo(url){
+
+  const video = document.createElement("video");
+
+  video.src = url;
+  video.controls = true;
+  video.playsInline = true;
+  video.preload = "metadata";
+  video.disablePictureInPicture = true;
+
+  video.controlsList = "nodownload noplaybackrate";
+
+  $("playerBox").innerHTML = "";
+  $("playerBox").appendChild(video);
+
+  htmlVideo = video;
+
+  video.addEventListener("loadedmetadata",()=>{
+
+    const saved = Number(getProgress(selectedVideo.id).positionSeconds)||0;
+
+    if(saved>0 && !isReplay){
+
+      video.currentTime = Math.min(saved,Math.max(0,video.duration-1));
+
+      maxWatchedTime = saved;
+    }
+
+  });
+
+
+  // Block forward seeking beyond the furthest watched position.
+  video.addEventListener("seeking",()=>{
+
+    if(isReplay) return;
+
+    if(video.currentTime > maxWatchedTime + 1.5){
+
+      video.currentTime = maxWatchedTime;
+
+      toast("Forward seeking is disabled.");
+    }
+
+  });
+
+
+  video.addEventListener("timeupdate",()=>{
+
+    if(!isReplay){
+
+      if(video.currentTime > maxWatchedTime){
+        maxWatchedTime = video.currentTime;
+      }
+    }
+
+    if(Date.now()-lastSavedTime>5000){
+
+      lastSavedTime = Date.now();
+
+      saveProgress(video.currentTime,video.duration,false);
+    }
+
+  });
+
+
+  video.addEventListener("ended",()=>{
+
+    completeCurrentVideo(video.duration);
+
+  });
+
+
+  video.addEventListener("error",()=>{
+
+    toast("Video could not be played. Check the video URL or hosting permissions.");
+  });
+
+}
+
+
+function openYouTube(video){
+
+  const id = getYouTubeId(video.sourceUrl||"");
+
+  if(!id){
+
+    openExternalEmbed(video.embedUrl||video.sourceUrl);
+    return;
+  }
+
+  const start = isReplay
+    ? 0
+    : Math.floor(Number(getProgress(video.id).positionSeconds)||0);
+
+  $("playerBox").innerHTML = `
+    <iframe
+      id="youtubeFrame"
+      src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(id)}?autoplay=0&controls=0&disablekb=1&rel=0&enablejsapi=1&start=${start}"
+      allow="autoplay; encrypted-media; picture-in-picture"
+      allowfullscreen>
+    </iframe>
+  `;
+
+  // The YouTube embed is intentionally presented without seek controls.
+  // Its internal seeking/progress enforcement is provider-dependent.
+  $("playerStatus").textContent = "YOUTUBE VIDEO";
+
+  loadYouTubeAPI();
+}
+
+
+function openExternalEmbed(url){
+
+  if(!url){
+    toast("No playable video URL was provided.");
+    return;
+  }
+
+  $("playerBox").innerHTML = `
+    <iframe
+      src="${escapeHTML(url)}"
+      allow="autoplay; encrypted-media; picture-in-picture"
+      allowfullscreen>
+    </iframe>
+  `;
+
+  $("playerStatus").textContent = "EMBEDDED VIDEO";
+}
+
+
+function openHLS(url){
+
+  $("playerBox").innerHTML = `
+    <video id="hlsVideo" controls playsinline></video>
+  `;
+
+  const video = $("hlsVideo");
+
+  if(video.canPlayType("application/vnd.apple.mpegurl")){
+
+    video.src = url;
+    htmlVideo = video;
+
+  }else{
+
+    const script = document.createElement("script");
+
+    script.src = "https://cdn.jsdelivr.net/npm/hls.js@latest";
+
+    script.onload = ()=>{
+
+      if(window.Hls && Hls.isSupported()){
+
+        const hls = new Hls();
+
+        hls.loadSource(url);
+        hls.attachMedia(video);
+
+        htmlVideo = video;
+
+      }else{
+
+        toast("This browser cannot play this HLS stream.");
+      }
+
+    };
+
+    document.head.appendChild(script);
+  }
+}
+
+
+/* -----------------------------------------
+   YOUTUBE API
+----------------------------------------- */
+
+let youtubeApiLoaded = false;
+
+function loadYouTubeAPI(){
+
+  if(window.YT && window.YT.Player){
+    initializeYouTubePlayer();
+    return;
+  }
+
+  if(youtubeApiLoaded) return;
+
+  youtubeApiLoaded = true;
+
+  const script = document.createElement("script");
+
+  script.src = "https://www.youtube.com/iframe_api";
+
+  document.head.appendChild(script);
+
+  window.onYouTubeIframeAPIReady = initializeYouTubePlayer;
+}
+
+
+let youtubePlayer = null;
+let youtubeInterval = null;
+
+function initializeYouTubePlayer(){
+
+  if(!selectedVideo) return;
+
+  const frame = $("youtubeFrame");
+
+  if(!frame) return;
+
+  if(youtubePlayer){
+
+    try{youtubePlayer.destroy()}catch(e){}
+  }
+
+  youtubePlayer = new YT.Player("youtubeFrame",{
+
+    events:{
+
+      onReady:event=>{
+
+        const saved = Number(getProgress(selectedVideo.id).positionSeconds)||0;
+
+        if(saved>0 && !isReplay){
+          event.target.seekTo(saved,true);
+        }
+
+      },
+
+      onStateChange:event=>{
+
+        if(event.data===YT.PlayerState.PLAYING){
+
+          clearInterval(youtubeInterval);
+
+          youtubeInterval=setInterval(()=>{
+
+            if(!youtubePlayer || !selectedVideo) return;
+
+            const current = youtubePlayer.getCurrentTime();
+            const duration = youtubePlayer.getDuration();
+
+            saveProgress(current,duration,false);
+
+          },5000);
+
+        }
+
+        if(event.data===YT.PlayerState.ENDED){
+
+          clearInterval(youtubeInterval);
+
+          completeCurrentVideo(youtubePlayer.getDuration());
+        }
+
+      }
+
+    }
+
+  });
+
+}
+
+
+/* -----------------------------------------
+   SAVE PROGRESS
+----------------------------------------- */
+
+function progressDocumentId(videoId){
+
+  return `${student.deviceId}_${videoId}`;
+}
+
+
+async function saveProgress(position,duration,completed){
+
+  if(!selectedVideo || isReplay) return;
+
+  const video = selectedVideo;
+
+  const payload = {
+
+    studentUid:student.deviceId,
+    studentName:student.name,
+    studentEmail:"",
+    batchName:student.batchName,
+
+    videoId:video.id,
+    videoTitle:video.title||"",
+
+    positionSeconds:Math.floor(Number(position)||0),
+    durationSeconds:Math.floor(Number(duration)||0),
+
+    completed:completed===true,
+    watched:completed===true,
+
+    updatedAt:serverTimestamp()
+
+  };
+
+  try{
+
+    await setDoc(
+      doc(db,"watchClassProgress",progressDocumentId(video.id)),
+      payload,
+      {merge:true}
+    );
+
+    $("saveStatus").textContent = "Progress saved.";
+
+  }catch(error){
+
+    console.error(error);
+
+    $("saveStatus").textContent = "Progress could not be saved.";
+  }
+
+}
+
+
+async function completeCurrentVideo(duration){
+
+  if(!selectedVideo || isReplay) return;
+
+  const completedVideo = selectedVideo;
+
+  await saveProgress(duration,duration,true);
+
+  toast("Lesson completed. Great work!");
+
+  renderPage();
+
+  const list = videosForDate(selectedDate);
+
+  const index = list.findIndex(v=>v.id===completedVideo.id);
+
+  const next = list[index+1];
+
+  if(next){
+
+    setTimeout(()=>{
+
+      if(isVideoUnlocked(next,list)){
+        openVideo(next);
+      }
+
+    },1200);
+
+  }else{
+
+    $("playerBox").innerHTML = `
+      <div class="player-placeholder">
+        <div style="font-size:35px">✓</div>
+        You have completed all lessons for this day.
+        <br>
+        Excellent work!
+      </div>
+    `;
+
+    $("playerStatus").textContent = "DAY COMPLETED";
+    selectedVideo = null;
+  }
+
+}
+
+
+/* -----------------------------------------
+   SKIP REQUEST
+----------------------------------------- */
+
+$("skipRequestBtn").addEventListener("click",()=>{
+
+  if(!selectedVideo || isReplay) return;
+
+  $("skipReason").focus();
+
+  $("skipMessage").textContent =
+    "Explain your reason below and submit your request for admin approval.";
+
+  $("skipMessage").classList.remove("hidden");
+});
+
+
+$("submitSkipBtn").addEventListener("click",async()=>{
+
+  if(!selectedVideo || isReplay) return;
+
+  const reason = $("skipReason").value.trim();
+
+  if(reason.length<5){
+
+    $("skipRequestStatus").textContent =
+      "Please provide a reason for your request.";
+
+    return;
+  }
+
+  const existing = skipRequests.find(r=>
+    r.videoId===selectedVideo.id &&
+    r.status==="pending"
+  );
+
+  if(existing){
+
+    $("skipRequestStatus").textContent =
+      "You already have a pending request for this lesson.";
+
+    return;
+  }
+
+  $("submitSkipBtn").disabled = true;
+
+  try{
+
+    await addDoc(collection(db,"watchClassSkipRequests"),{
+
+      studentUid:student.deviceId,
+      studentName:student.name,
+      studentEmail:"",
+
+      batchName:student.batchName,
+
+      videoId:selectedVideo.id,
+      videoTitle:selectedVideo.title||"",
+
+      reason,
+
+      status:"pending",
+
+      createdAt:serverTimestamp()
+
+    });
+
+    $("skipReason").value = "";
+
+    $("skipRequestStatus").textContent =
+      "Your request has been sent to the admin.";
+
+    toast("Skip request submitted.");
+
+  }catch(error){
+
+    console.error(error);
+
+    $("skipRequestStatus").textContent =
+      "Unable to submit your request. Please try again.";
+
+  }finally{
+
+    $("submitSkipBtn").disabled = false;
+  }
+
+});
+
+
+function updateSkipStatus(){
+
+  if(!selectedVideo) return;
+
+  const request = [...skipRequests]
+    .filter(r=>r.videoId===selectedVideo.id)
+    .sort((a,b)=>
+      (b.createdAt?.seconds||0)-(a.createdAt?.seconds||0)
+    )[0];
+
+  if(!request){
+
+    $("skipRequestStatus").textContent = "";
+    return;
+  }
+
+  if(request.status==="pending"){
+
+    $("skipRequestStatus").textContent =
+      "Your skip request is waiting for admin approval.";
+
+  }else if(request.status==="approved"){
+
+    $("skipRequestStatus").textContent =
+      "Admin approved your skip request.";
+
+  }else if(request.status==="rejected"){
+
+    $("skipRequestStatus").textContent =
+      "Your skip request was rejected.";
+  }
+
+}
+
+
+function checkApprovedSkip(){
+
+  if(!selectedVideo) return;
+
+  const progress = getProgress(selectedVideo.id);
+
+  if(progress.completed && progress.approvedSkip){
+
+    toast("Admin approved your skip. The next lesson is unlocked.");
+
+    renderPage();
+  }
+
+}
+
+
+/* -----------------------------------------
+   DATE SELECTOR
+----------------------------------------- */
+
+$("datePicker").addEventListener("change",()=>{
+
+  const date = $("datePicker").value;
+
+  if(!date) return;
+
+  if(!canOpenDate(date)){
+
+    toast("Complete the current learning day before opening another day.");
+
+    $("datePicker").value = selectedDate;
+
+    return;
+  }
+
+  selectedDate = date;
+
+  selectedVideo = null;
+
+  stopCurrentPlayer();
+
+  renderPage();
+});
+
+
+$("todayBtn").addEventListener("click",()=>{
+
+  determineActiveDate();
+
+  selectedDate = activeDate;
+
+  $("datePicker").value = activeDate;
+
+  selectedVideo = null;
+
+  stopCurrentPlayer();
+
+  renderPage();
+});
+
+
+/* -----------------------------------------
+   RENDER PAGE
+----------------------------------------- */
+
+function renderPage(){
+
+  if(!student) return;
+
+  if(!selectedDate){
+    selectedDate = activeDate || today();
+  }
+
+  $("datePicker").value = selectedDate;
+
+  const daily = videosForDate(selectedDate);
+
+  const completion = getDayCompletion(selectedDate);
+
+  updateCompletion();
+
+  renderPlaylist();
+
+  const dateAllowed = canOpenDate(selectedDate);
+
+  if(!dateAllowed){
+
+    $("dayMessage").textContent =
+      "This day is locked. Complete your current scheduled lessons first.";
+
+    $("dayMessage").className = "message info";
+
+  }else if(completion.total && completion.completed===completion.total){
+
+    $("dayMessage").textContent =
+      "You have completed this day. You can replay its lessons.";
+
+    $("dayMessage").className = "message success";
+
+  }else{
+
+    $("dayMessage").textContent =
+      "Complete the videos in order. The next lesson unlocks automatically.";
+
+    $("dayMessage").className = "message info";
+  }
+
+  if(!selectedVideo){
+
+    const next = getUnlockedVideo(daily);
+
+    if(next && selectedDate===activeDate){
+
+      $("learningSub").textContent =
+        "Your next lesson: "+next.title;
+
+    }
+  }
+
+}
+
+
+/* -----------------------------------------
+   INITIALIZATION
+----------------------------------------- */
+
+async function init(){
+
+  const saved = localStorage.getItem(STORAGE_PROFILE);
+
+  if(saved){
+
+    try{
+
+      student = JSON.parse(saved);
+
+      if(student.deviceId && student.name && student.batchName){
+
+        student.deviceId = getDeviceId();
+
+        showApp();
+
+        return;
+      }
+
+    }catch(e){
+
+      localStorage.removeItem(STORAGE_PROFILE);
+    }
+  }
+
+  showSetup();
+}
+
+window.addEventListener("beforeunload",()=>{
+
+  if(htmlVideo && selectedVideo && !isReplay){
+
+    saveProgress(
+      htmlVideo.currentTime,
+      htmlVideo.duration,
+      false
+    );
+  }
+
+  stopListeners();
+
+});
+
+init();
+
+</script>
+
+</body>
+</html>
