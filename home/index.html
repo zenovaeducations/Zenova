@@ -172,8 +172,10 @@ async function loadData(){
  const accessSnap = await read("watchClassAccess/{uid}", () => getDoc(doc(db,"watchClassAccess",uid)));
  const videosSnap = await read("watchClassVideos", () => getDocs(collection(db,"watchClassVideos")));
  const progressSnap = await read("watchClassProgress (studentUid filter)", () => getDocs(query(collection(db,"watchClassProgress"),where("studentUid","==",uid))));
- const liveSnap = await read("watchClassLiveSessions", () => getDocs(collection(db,"watchClassLiveSessions")));
- state.student=studentSnap.exists()?studentSnap.data():{};
+ const liveSnap = await read(
+  "liveClasses",
+  () => getDocs(collection(db, "liveClasses"))
+);state.student=studentSnap.exists()?studentSnap.data():{};
  state.access=accessSnap.exists()?accessSnap.data():null;
  state.videos=videosSnap.docs.map(d=>({id:d.id,...d.data()})).filter(isVisibleVideo);
  state.progress=progressSnap.docs.map(d=>({id:d.id,...d.data()}));
