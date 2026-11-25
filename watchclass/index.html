@@ -20,7 +20,7 @@ import {auth,db} from '../firebase/firebase-config.js';
 import {GoogleAuthProvider,signInWithPopup,onAuthStateChanged} from 'https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js';
 import {collection,doc,getDoc,getDocs,onSnapshot,query,where,setDoc,addDoc,serverTimestamp} from 'https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js';
 const $=id=>document.getElementById(id),esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-let user=null,student={},videos=[],progress={},attempts=[],currentVideo=null,player=null,furthest=0,lastSave=0,quizTest=null,quizQuestions=[],unsubs=[],videosReady=false,progressReady=false,autoStarted=false,playbackGeneration=0;
+let user=null,student={},videos=[],progress={},attempts=[],currentVideo=null,player=null,ytPlayer=null,ytProgressTimer=null,ytLastCurrent=0,furthest=0,lastSave=0,quizTest=null,quizQuestions=[],unsubs=[],videosReady=false,progressReady=false,autoStarted=false,playbackGeneration=0;
 const toast=m=>{$('toast').textContent=m;$('toast').classList.remove('hidden');setTimeout(()=>$('toast').classList.add('hidden'),3200)};
 const progressId=id=>`${user.uid}_${id}`;
 function published(v){return v.published===true&&v.active!==false&&(v.status||'published')!=='draft'&&(v.status||'published')!=='deleted'}
@@ -32,10 +32,93 @@ function firstUnlocked(list=videos.filter(v=>availableForSequence(v)).sort((a,b)
 function unlocked(v,list=todaysVideos()){if(isDone(v))return true;return firstUnlocked(list)?.id===v.id}
 function stats(){const list=videos.filter(published),done=list.filter(isDone).length,pct=list.length?Math.round(done/list.length*100):0;$('totalCount').textContent=list.length;$('doneCount').textContent=done;$('percentCount').textContent=pct+'%';$('overallBar').style.width=pct+'%';const daily=todaysVideos(),dd=daily.filter(isDone).length,dp=daily.length?Math.round(dd/daily.length*100):0;$('currentDone').textContent=dd;$('currentLeft').textContent=daily.length-dd;$('currentPct').textContent=dp+'%';$('dayBar').style.width=dp+'%';$('progressText').textContent=`${dd} of ${daily.length} available lessons completed today.`}
 function renderPlaylist(){const list=videos.filter(v=>published(v)&&availableForSequence(v)).sort((a,b)=>(Number(a.sequence||a.lessonNumber)||0)-(Number(b.sequence||b.lessonNumber)||0)||(dateOf(a)||'').localeCompare(dateOf(b)||'')||(a.releaseTime||'').localeCompare(b.releaseTime||''));const term=$('lessonSearch').value.trim().toLowerCase();const shown=list.filter(v=>[v.title,v.subjectName,v.chapterName].join(' ').toLowerCase().includes(term));$('playlistCount').textContent=`${shown.length} lessons`;$('playlist').innerHTML=shown.length?shown.map((v)=>{const done=isDone(v),open=unlocked(v,list),p=progress[v.id]||{},status=done?'COMPLETED':open?(p.positionSeconds>0?'CONTINUE':'UNLOCKED'):'LOCKED';return `<article class="lesson ${done?'done':''} ${open?'':'locked'} ${currentVideo?.id===v.id?'active':''}" data-id="${esc(v.id)}"><div class="thumb ${v.thumbnailUrl?'':'thumbfallback'}">${v.thumbnailUrl?`<img class="thumb" src="${esc(v.thumbnailUrl)}" alt="">`:'Z'}</div><div><strong>${esc(v.title||'Untitled lesson')}</strong><small>${esc(v.subjectName||'')} ${v.chapterName?'· '+esc(v.chapterName):''}</small><span class="pill ${done?'done':open?'ready':'locked'}">${status}</span>${v.testId?'<span class="pill">MCQ ATTACHED</span>':''}</div><i class="stateicon ${done?'ri-checkbox-circle-fill':open?'ri-play-circle-line':'ri-lock-2-line'}"></i></article>`}).join(''):'<div class="empty">No lessons match your search.</div>';stats()}
-function stopPlayer(){playbackGeneration++;if(player){try{player.pause();player.removeAttribute('src');player.load()}catch{}}player=null;$('playerBox').innerHTML='<div class="placeholder"><i class="ri-play-circle-line"></i>Preparing your lesson…</div>';}
+function stopPlayer(){playbackGeneration++;if(ytProgressTimer){clearInterval(ytProgressTimer);ytProgressTimer=null}if(ytPlayer){try{ytPlayer.destroy()}catch{}ytPlayer=null}if(player){try{player.pause();player.removeAttribute('src');player.load()}catch{}}player=null;$('playerBox').innerHTML='<div class="placeholder"><i class="ri-play-circle-line"></i>Preparing your lesson…</div>';}
 function updateNow(v,status,msg){$('nowTitle').textContent=v?.title||'Select a lesson';$('nowMeta').textContent=v?[v.subjectName,v.chapterName].filter(Boolean).join(' · '):'Your next lesson will appear here.';$('playerStatus').textContent=status;$('playerNotice').textContent=msg}
 function autoStartFirstLesson(){if(autoStarted||!videosReady||!progressReady||!user)return;const list=videos.filter(v=>published(v)&&availableForSequence(v)).sort((a,b)=>(Number(a.sequence||a.lessonNumber)||0)-(Number(b.sequence||b.lessonNumber)||0)||(dateOf(a)||'').localeCompare(dateOf(b)||'')||(a.releaseTime||'').localeCompare(b.releaseTime||''));const next=firstUnlocked(list);if(!next)return;autoStarted=true;openLesson(next,{automatic:true});}
-async function openLesson(v,opts={}){const list=videos.filter(x=>published(x)&&availableForSequence(x)).sort((a,b)=>(Number(a.sequence||a.lessonNumber)||0)-(Number(b.sequence||b.lessonNumber)||0)||(dateOf(a)||'').localeCompare(dateOf(b)||'')||(a.releaseTime||'').localeCompare(b.releaseTime||''));if(!unlocked(v,list)){toast('Complete the previous lesson and its MCQ test first.');return}currentVideo=v;furthest=Math.max(0,Number(progress[v.id]?.positionSeconds)||0);lastSave=0;stopPlayer();const generation=playbackGeneration,type=v.sourceType||v.videoProvider||'direct',url=v.sourceUrl||'',youtubeId=getYoutubeId(url);$('soundButton').classList.add('hidden');updateNow(v,isDone(v)?'COMPLETED · REVISION':'LESSON IN PROGRESS',furthest>0?`Resuming from ${formatTime(furthest)} where you previously stopped. Your progress is saved automatically.`:(v.testId?'Watch to the end. Your MCQ assessment will open automatically.':'Watch the complete lesson to unlock the next video.'));if(type==='youtube'||youtubeId){$('playerBox').innerHTML=`<iframe id="ytFrame" src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(youtubeId)}?controls=0&disablekb=1&rel=0&playsinline=1&autoplay=1&start=${Math.floor(furthest)}" allow="autoplay;encrypted-media;picture-in-picture" allowfullscreen></iframe>`;toast('YouTube resume and anti-seek enforcement are limited by the YouTube embed player.');}else if(type==='hls'||/\.m3u8(?:\?|$)/i.test(url)){await playHls(url,generation)}else if(type==='direct'||type==='firebase'||/\.(mp4|webm|mov|ogg)(\?|$)/i.test(url)){playDirect(url,generation)}else{$('playerBox').innerHTML=`<div class="placeholder">This video source is not supported for locked playback.<br><small>${esc(type)}</small></div>`;toast('Please ask your academic team to update this lesson video source.')}renderPlaylist()}
+async function openLesson(v,opts={}){const list=videos.filter(x=>published(x)&&availableForSequence(x)).sort((a,b)=>(Number(a.sequence||a.lessonNumber)||0)-(Number(b.sequence||b.lessonNumber)||0)||(dateOf(a)||'').localeCompare(dateOf(b)||'')||(a.releaseTime||'').localeCompare(b.releaseTime||''));if(!unlocked(v,list)){toast('Complete the previous lesson and its MCQ test first.');return}currentVideo=v;furthest=Math.max(0,Number(progress[v.id]?.positionSeconds)||0);lastSave=0;stopPlayer();const generation=playbackGeneration,type=v.sourceType||v.videoProvider||'direct',url=v.sourceUrl||'',youtubeId=getYoutubeId(url);$('soundButton').classList.add('hidden');updateNow(v,isDone(v)?'COMPLETED · REVISION':'LESSON IN PROGRESS',furthest>0?`Resuming from ${formatTime(furthest)} where you previously stopped. Your progress is saved automatically.`:(v.testId?'Watch to the end. Your MCQ assessment will open automatically.':'Watch the complete lesson to unlock the next video.'));if(type==='youtube'||youtubeId){await playYouTube(youtubeId,generation);}else if(type==='hls'||/\.m3u8(?:\?|$)/i.test(url)){await playHls(url,generation)}else if(type==='direct'||type==='firebase'||/\.(mp4|webm|mov|ogg)(\?|$)/i.test(url)){playDirect(url,generation)}else{$('playerBox').innerHTML=`<div class="placeholder">This video source is not supported for locked playback.<br><small>${esc(type)}</small></div>`;toast('Please ask your academic team to update this lesson video source.')}renderPlaylist()}
+
+let ytApiPromise=null;
+function loadYouTubeApi(){
+  if(window.YT&&window.YT.Player)return Promise.resolve(window.YT);
+  if(ytApiPromise)return ytApiPromise;
+  ytApiPromise=new Promise((resolve,reject)=>{
+    const prior=window.onYouTubeIframeAPIReady;
+    window.onYouTubeIframeAPIReady=()=>{try{if(typeof prior==='function')prior()}catch{}resolve(window.YT)};
+    let script=document.querySelector('script[data-zenova-youtube-api]');
+    if(!script){script=document.createElement('script');script.src='https://www.youtube.com/iframe_api';script.async=true;script.dataset.zenovaYoutubeApi='1';script.onerror=()=>reject(new Error('Unable to load YouTube player API.'));document.head.appendChild(script)}
+    setTimeout(()=>{if(!(window.YT&&window.YT.Player))reject(new Error('YouTube player API timed out.'))},12000);
+  });
+  return ytApiPromise;
+}
+async function playYouTube(videoId,generation){
+  if(!videoId)throw new Error('Invalid YouTube video URL.');
+  $('playerBox').innerHTML='<div id="ytFrame" style="width:100%;height:100%;min-height:220px"></div>';
+  try{
+    const YTApi=await loadYouTubeApi();
+    if(generation!==playbackGeneration)return;
+    completionInProgress=false;
+    ytLastCurrent=furthest;
+    ytPlayer=new YTApi.Player('ytFrame',{
+      videoId,
+      playerVars:{autoplay:1,controls:0,disablekb:1,rel:0,playsinline:1,fs:1,iv_load_policy:3,enablejsapi:1},
+      events:{
+        onReady:event=>{
+          if(generation!==playbackGeneration)return;
+          try{
+            if(furthest>0)event.target.seekTo(furthest,true);
+            event.target.playVideo();
+          }catch{}
+        },
+        onStateChange:event=>{
+          if(generation!==playbackGeneration)return;
+          const state=event.data;
+          if(state===YTApi.PlayerState.PLAYING){
+            if(ytProgressTimer)clearInterval(ytProgressTimer);
+            ytProgressTimer=setInterval(()=>{
+              if(generation!==playbackGeneration||!ytPlayer)return;
+              const now=Number(ytPlayer.getCurrentTime())||0;
+              const dur=Number(ytPlayer.getDuration())||0;
+              if(now>furthest+2.0){
+                try{ytPlayer.seekTo(furthest,true)}catch{}
+                toast('Forward skipping is disabled. Continue watching the lesson in order.');
+                return;
+              }
+              if(now>=ytLastCurrent-0.5)furthest=Math.max(furthest,now);
+              ytLastCurrent=now;
+              if(Date.now()-lastSave>2500){
+                lastSave=Date.now();
+                saveProgress(now,dur,false);
+              }
+              if(dur>0&&now>=dur-0.35)completeYouTubeLesson(dur,generation);
+            },500);
+          }else if(state===YTApi.PlayerState.PAUSED){
+            if(ytProgressTimer){clearInterval(ytProgressTimer);ytProgressTimer=null}
+            if(ytPlayer&&!completionInProgress)saveProgress(ytPlayer.getCurrentTime(),ytPlayer.getDuration(),false);
+          }else if(state===YTApi.PlayerState.ENDED){
+            if(ytProgressTimer){clearInterval(ytProgressTimer);ytProgressTimer=null}
+            completeYouTubeLesson(ytPlayer?.getDuration?.()||furthest,generation);
+          }
+        },
+        onError:event=>{
+          console.error('YouTube player error:',event.data);
+          $('playerNotice').textContent='YouTube could not play this video (error '+event.data+'). Check that the video allows embedding.';
+          toast('YouTube playback error '+event.data+'.');
+        }
+      }
+    });
+  }catch(e){
+    console.error(e);
+    $('playerNotice').textContent=e.message||'Unable to start YouTube playback.';
+    toast(e.message||'Unable to start YouTube playback.');
+  }
+}
+function completeYouTubeLesson(duration,generation){
+  if(generation!==playbackGeneration||completionInProgress)return;
+  completionInProgress=true;
+  if(ytProgressTimer){clearInterval(ytProgressTimer);ytProgressTimer=null}
+  finishVideo(duration);
+}
+
 function formatTime(sec){sec=Math.max(0,Math.floor(Number(sec)||0));return `${Math.floor(sec/60)}:${String(sec%60).padStart(2,'0')}`}
 function getYoutubeId(url){try{const u=new URL(url);return u.hostname.includes('youtu.be')?u.pathname.split('/').filter(Boolean)[0]:u.searchParams.get('v')||u.pathname.split('/').filter(Boolean).pop()}catch{return ''}}
 let completionInProgress=false;
@@ -101,6 +184,6 @@ async function openQuiz(video){try{const testSnap=await getDoc(doc(db,'watchClas
 async function submitQuiz(){if(!currentVideo||!quizTest)return;const answers={};for(const q of quizQuestions){const selected=document.querySelector(`input[name="q_${CSS.escape(q.id)}"]:checked`);if(!selected){toast('Please answer every question before submitting.');return}answers[q.id]=Number(selected.value)}const marks=quizQuestions.reduce((n,q)=>n+(Number(q.marks)||1),0),score=quizQuestions.reduce((n,q)=>n+(answers[q.id]===Number(q.correctOption)?(Number(q.marks)||1):0),0),percentage=marks?Math.round(score/marks*100):0;$('submitQuiz').disabled=true;$('submitQuiz').textContent='Submitting…';try{await addDoc(collection(db,'watchClassTestAttempts'),{studentUid:user.uid,studentName:student.name||user.displayName||'',studentEmail:user.email||'',videoId:currentVideo.id,videoTitle:currentVideo.title||'',testId:quizTest.id,testTitle:quizTest.title||'',answers,score,totalMarks:marks,percentage,submittedAt:serverTimestamp(),status:'submitted'});await setDoc(doc(db,'watchClassProgress',progressId(currentVideo.id)),{studentUid:user.uid,videoId:currentVideo.id,videoTitle:currentVideo.title||'',completed:true,watched:true,testSubmitted:true,testCompleted:true,testId:quizTest.id,testScore:score,testTotalMarks:marks,testPercentage:percentage,completedAt:serverTimestamp(),updatedAt:serverTimestamp()},{merge:true});progress[currentVideo.id]={...(progress[currentVideo.id]||{}),completed:true,watched:true,testSubmitted:true,testCompleted:true,testScore:score};$('quizOverlay').classList.add('hidden');updateNow(currentVideo,'LESSON + TEST COMPLETED',`Assessment submitted. Your score: ${score}/${marks} (${percentage}%). The next lesson is unlocked.`);toast(`Assessment submitted. Score ${score}/${marks}.`);quizTest=null;quizQuestions=[];renderPlaylist();autoNext(currentVideo)}catch(e){console.error(e);toast('Could not submit assessment: '+e.message);$('submitQuiz').disabled=false}finally{$('submitQuiz').textContent='Submit answers'}}
 function attachListeners(){unsubs.forEach(u=>u());unsubs=[];videosReady=false;progressReady=false;autoStarted=false;unsubs.push(onSnapshot(collection(db,'watchClassVideos'),s=>{videos=s.docs.map(d=>({id:d.id,...d.data()})).filter(published);videosReady=true;renderPlaylist();autoStartFirstLesson()},e=>{console.error(e);toast('Unable to load lessons: '+e.message)}));unsubs.push(onSnapshot(query(collection(db,'watchClassProgress'),where('studentUid','==',user.uid)),s=>{progress={};s.docs.forEach(d=>{const p=d.data();if(p.videoId)progress[p.videoId]=p});progressReady=true;renderPlaylist();autoStartFirstLesson()},e=>{console.error(e);toast('Unable to load progress: '+e.message)}))}
 async function enter(userObj){user=userObj;$('loginScreen').classList.add('hidden');try{const [studentSnap,accessSnap]=await Promise.all([getDoc(doc(db,'zen2Students',user.uid)),getDoc(doc(db,'watchClassAccess',user.uid))]);if(!studentSnap.exists())throw new Error('Your Google account is not linked to a Zenova student record. Please contact administration.');student=studentSnap.data();const a=accessSnap.exists()?accessSnap.data():null;if(!(a?.contentAccess===true&&a?.status==='approved')){$('app').classList.add('hidden');$('accessScreen').classList.remove('hidden');return}$('accessScreen').classList.add('hidden');$('app').classList.remove('hidden');$('studentLabel').textContent=student.name||student.fullName||user.displayName||'Student';$('batchLabel').textContent=student.batchName||student.batch||'';if(student.photoURL||user.photoURL){$('avatar').src=student.photoURL||user.photoURL;$('avatar').classList.remove('hidden')}attachListeners()}catch(e){console.error(e);$('loginScreen').classList.remove('hidden');$('loginError').textContent=e.message||'Unable to load your Zenova account.';$('loginError').classList.remove('hidden')}}
-$('loginBtn').addEventListener('click',async()=>{try{await signInWithPopup(auth,new GoogleAuthProvider())}catch(e){$('loginError').textContent=e.message;$('loginError').classList.remove('hidden')}});onAuthStateChanged(auth,u=>{if(u)enter(u);else{user=null;$('loginScreen').classList.remove('hidden');$('app').classList.add('hidden')}});$('playlist').addEventListener('click',e=>{const card=e.target.closest('[data-id]');if(!card)return;const v=videos.find(x=>x.id===card.dataset.id);if(v)openLesson(v)});$('lessonSearch').addEventListener('input',renderPlaylist);$('submitQuiz').addEventListener('click',submitQuiz);document.addEventListener('visibilitychange',()=>{if(document.hidden&&player&&!player.ended)saveProgress(player.currentTime,player.duration,false)});window.addEventListener('pagehide',()=>{if(player&&!player.ended)saveProgress(player.currentTime,player.duration,false);unsubs.forEach(u=>u())});window.addEventListener('beforeunload',()=>{if(player&&!player.ended)saveProgress(player.currentTime,player.duration,false);unsubs.forEach(u=>u())});
+$('loginBtn').addEventListener('click',async()=>{try{await signInWithPopup(auth,new GoogleAuthProvider())}catch(e){$('loginError').textContent=e.message;$('loginError').classList.remove('hidden')}});onAuthStateChanged(auth,u=>{if(u)enter(u);else{user=null;$('loginScreen').classList.remove('hidden');$('app').classList.add('hidden')}});$('playlist').addEventListener('click',e=>{const card=e.target.closest('[data-id]');if(!card)return;const v=videos.find(x=>x.id===card.dataset.id);if(v)openLesson(v)});$('lessonSearch').addEventListener('input',renderPlaylist);$('submitQuiz').addEventListener('click',submitQuiz);function saveCurrentPlayback(){if(player&&!player.ended)saveProgress(player.currentTime,player.duration,false);else if(ytPlayer&&!completionInProgress)saveProgress(ytPlayer.getCurrentTime(),ytPlayer.getDuration(),false)}document.addEventListener('visibilitychange',()=>{if(document.hidden)saveCurrentPlayback()});window.addEventListener('pagehide',()=>{saveCurrentPlayback();unsubs.forEach(u=>u())});window.addEventListener('beforeunload',()=>{saveCurrentPlayback();unsubs.forEach(u=>u())});
 </script>
 </body></html>
