@@ -159,13 +159,20 @@ function showApp(){$("loader").classList.add("hidden");$("app").classList.remove
 function showError(message){$("loader").classList.add("hidden");$("errorScreen").classList.remove("hidden");$("errorMessage").textContent=message;$("retryButton").onclick=()=>location.reload();}
 async function loadData(){
  const uid=state.user.uid;
- const [studentSnap,accessSnap,videosSnap,progressSnap,liveSnap]=await Promise.all([
-  getDoc(doc(db,"zen2Students",uid)),
-  getDoc(doc(db,"watchClassAccess",uid)),
-  getDocs(collection(db,"watchClassVideos")),
-  getDocs(query(collection(db,"watchClassProgress"),where("studentUid","==",uid))),
-  getDocs(collection(db,"watchClassLiveSessions"))
- ]);
+ // Read separately so the console identifies the exact collection denied by Firestore rules.
+ const read = async (label, operation) => {
+  try { return await operation(); }
+  catch (error) {
+   console.error(`ZENOVA FIRESTORE READ FAILED [${label}]`, error);
+   error.zenovaRead = label;
+   throw error;
+  }
+ };
+ const studentSnap = await read("zen2Students/{uid}", () => getDoc(doc(db,"zen2Students",uid)));
+ const accessSnap = await read("watchClassAccess/{uid}", () => getDoc(doc(db,"watchClassAccess",uid)));
+ const videosSnap = await read("watchClassVideos", () => getDocs(collection(db,"watchClassVideos")));
+ const progressSnap = await read("watchClassProgress (studentUid filter)", () => getDocs(query(collection(db,"watchClassProgress"),where("studentUid","==",uid))));
+ const liveSnap = await read("watchClassLiveSessions", () => getDocs(collection(db,"watchClassLiveSessions")));
  state.student=studentSnap.exists()?studentSnap.data():{};
  state.access=accessSnap.exists()?accessSnap.data():null;
  state.videos=videosSnap.docs.map(d=>({id:d.id,...d.data()})).filter(isVisibleVideo);
@@ -186,7 +193,7 @@ async function loadData(){
 onAuthStateChanged(auth,async user=>{
  if(!user){location.replace("../login/");return;}
  state.user=user;
- try{await loadData();}catch(error){console.error("ZENOVA HOME:",error);showError(error.code==="permission-denied"?"Zenova could not access your student or WatchClass records. Please check Firestore permissions.":error.message||"We couldn't load your learning dashboard.");}
+ try{await loadData();}catch(error){console.error("ZENOVA HOME:",error);showError(error.code==="permission-denied"?`Firestore permission denied: ${error.zenovaRead||"unknown read"}. Open Console for details.`:error.message||"We couldn't load your learning dashboard.");}
 });
 </script>
 </body>
